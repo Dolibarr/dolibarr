@@ -128,8 +128,7 @@ class PriceGlobalVariable
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -161,12 +160,10 @@ class PriceGlobalVariable
                 $this->value		= $obj->value;
                 $this->checkParameters();
                 return 1;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else {
+        } else {
             $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -222,8 +219,7 @@ class PriceGlobalVariable
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -278,8 +274,7 @@ class PriceGlobalVariable
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -344,8 +339,7 @@ class PriceGlobalVariable
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }

@@ -96,8 +96,7 @@ if ($action == 'set')
  	if (!$error)
     {
         $db->commit();
-    }
-    else {
+    } else {
         $db->rollback();
     }
 } elseif ($action == 'updateMask') {
@@ -194,8 +193,7 @@ foreach ($dirmodels as $reldir)
 						if ($conf->global->TAKEPOS_REF_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else {
+						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';

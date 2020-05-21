@@ -79,8 +79,7 @@ function getOnlineSignatureUrl($mode, $type, $ref = '')
 			{
 				$out = $langs->trans("FeatureOnlineSignDisabled");
 				return $out;
-			}
-			else {
+			} else {
 				$out .= '&hashp='.$hashp;
 			}
 		}

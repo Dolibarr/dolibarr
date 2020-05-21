@@ -271,8 +271,7 @@ class pdf_paiement
 				$lines[$i][9] = $objp->paiement_amount;
 				$i++;
 			}
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 

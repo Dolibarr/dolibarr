@@ -59,8 +59,7 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	{
 		$db->commit();
 		$action = '';
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -77,8 +76,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 		$db->commit();
 		header('Location: '.DOL_URL_ROOT.'/fourn/facture/paiement.php');
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -97,8 +95,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' &&
 		$db->commit();
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -111,8 +108,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
 	}
 }
@@ -125,8 +121,7 @@ if ($action == 'setdatep' && !empty($_POST['datepday']))
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
 }
@@ -321,8 +316,7 @@ if ($result > 0)
 
 		print "</table>\n";
 		$db->free($resql);
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 
@@ -352,8 +346,7 @@ if ($result > 0)
 			if ($allow_delete)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-			}
-			else {
+			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 			}
 		}
@@ -390,8 +383,7 @@ if ($result > 0)
 	*/
 
 	print '</div></div></div>';
-}
-else {
+} else {
 	$langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");
 }

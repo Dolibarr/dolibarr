@@ -57,13 +57,11 @@ if (GETPOST('action', 'alpha') == 'set')
     {
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         $db->rollback();
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-elseif (GETPOST('action', 'alpha') == 'setmethod')
+} elseif (GETPOST('action', 'alpha') == 'setmethod')
 {
     dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", GETPOST('value', 'alpha'), 'chaine', 0, '', $conf->entity);
 }
@@ -103,8 +101,7 @@ print '</td><td class="center">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
-}
-else {
+} else {
     print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=browser">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
@@ -119,8 +116,7 @@ if ($conf->receiptprinter->enabled) {
 	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter")
 	{
 		print img_picto($langs->trans("Activated"), 'switch_on');
-	}
-	else {
+	} else {
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	}
 	print "</td></tr>\n";
@@ -135,8 +131,7 @@ print '</td><td class="center">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
-}
-else {
+} else {
     print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=takeposconnector">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 }
 print "</td></tr>\n";
@@ -171,8 +166,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 	{
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-	}
-	else {
+	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
 		print $doleditor->Create();
@@ -186,8 +180,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser" || $conf->global->TAKEPOS_P
 	if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 	{
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-	}
-	else {
+	} else {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
 		print $doleditor->Create();

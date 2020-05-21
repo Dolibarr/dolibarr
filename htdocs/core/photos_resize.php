@@ -50,44 +50,37 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 	$result = restrictedArea($user, 'produit|service', $id, 'product&product');
 	if ($modulepart == 'produit|service' && (!$user->rights->produit->lire && !$user->rights->service->lire)) accessforbidden();
 	$accessallowed = 1;
-}
-elseif ($modulepart == 'project')
+} elseif ($modulepart == 'project')
 {
     $result = restrictedArea($user, 'projet', $id);
 	if (!$user->rights->projet->lire) accessforbidden();
 	$accessallowed = 1;
-}
-elseif ($modulepart == 'bom')
+} elseif ($modulepart == 'bom')
 {
 	$result = restrictedArea($user, $modulepart, $id, 'bom_bom');
 	if (!$user->rights->bom->read) accessforbidden();
 	$accessallowed = 1;
-}
-elseif ($modulepart == 'member')
+} elseif ($modulepart == 'member')
 {
 	$result = restrictedArea($user, 'adherent', $id, '', '', 'fk_soc', 'rowid');
 	if (!$user->rights->adherent->lire) accessforbidden();
 	$accessallowed = 1;
-}
-elseif ($modulepart == 'user')
+} elseif ($modulepart == 'user')
 {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
 	if (!$user->rights->user->user->lire) accessforbidden();
 	$accessallowed = 1;
-}
-elseif ($modulepart == 'tax')
+} elseif ($modulepart == 'tax')
 {
 	$result = restrictedArea($user, $modulepart, $id, 'chargesociales', 'charges');
 	if (!$user->rights->tax->charges->lire) accessforbidden();
 	$accessallowed = 1;
-}
-elseif ($modulepart == 'bank')
+} elseif ($modulepart == 'bank')
 {
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
 	if (!$user->rights->banque->lire) accessforbidden();
 	$accessallowed = 1;
-}
-else // ticket, holiday, expensereport, societe...
+} else // ticket, holiday, expensereport, societe...
 {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
 	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) accessforbidden();
@@ -114,8 +107,7 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		if ($object->type == Product::TYPE_PRODUCT) $dir = $conf->product->multidir_output[$object->entity];
 		if ($object->type == Product::TYPE_SERVICE) $dir = $conf->service->multidir_output[$object->entity];
 	}
-}
-elseif ($modulepart == 'project')
+} elseif ($modulepart == 'project')
 {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     $object = new Project($db);
@@ -125,8 +117,7 @@ elseif ($modulepart == 'project')
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
         $dir = $conf->project->multidir_output[$object->entity]; // By default
     }
-}
-elseif ($modulepart == 'propal')
+} elseif ($modulepart == 'propal')
 {
 	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
@@ -136,8 +127,7 @@ elseif ($modulepart == 'propal')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->propal->multidir_output[$object->entity]; // By default
 	}
-}
-elseif ($modulepart == 'holiday')
+} elseif ($modulepart == 'holiday')
 {
 	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 	$object = new Holiday($db);
@@ -147,8 +137,7 @@ elseif ($modulepart == 'holiday')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'member')
+} elseif ($modulepart == 'member')
 {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	$object = new Adherent($db);
@@ -158,8 +147,7 @@ elseif ($modulepart == 'member')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->adherent->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'societe')
+} elseif ($modulepart == 'societe')
 {
     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
     $object = new Societe($db);
@@ -169,8 +157,7 @@ elseif ($modulepart == 'societe')
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
         $dir = $conf->$modulepart->dir_output;
     }
-}
-elseif ($modulepart == 'user')
+} elseif ($modulepart == 'user')
 {
     require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
     $object = new User($db);
@@ -180,8 +167,7 @@ elseif ($modulepart == 'user')
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
         $dir = $conf->$modulepart->dir_output; // By default
     }
-}
-elseif ($modulepart == 'expensereport')
+} elseif ($modulepart == 'expensereport')
 {
     require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
     $object = new ExpenseReport($db);
@@ -191,8 +177,7 @@ elseif ($modulepart == 'expensereport')
         if ($result <= 0) dol_print_error($db, 'Failed to load object');
         $dir = $conf->expensereport->dir_output; // By default
     }
-}
-elseif ($modulepart == 'tax')
+} elseif ($modulepart == 'tax')
 {
 	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 	$object = new ChargeSociales($db);
@@ -202,8 +187,7 @@ elseif ($modulepart == 'tax')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'ticket')
+} elseif ($modulepart == 'ticket')
 {
 	require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 	$object = new Ticket($db);
@@ -213,8 +197,7 @@ elseif ($modulepart == 'ticket')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'bom')
+} elseif ($modulepart == 'bom')
 {
 	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 	$object = new BOM($db);
@@ -224,8 +207,7 @@ elseif ($modulepart == 'bom')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'mrp')
+} elseif ($modulepart == 'mrp')
 {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 	$object = new MO($db);
@@ -235,8 +217,7 @@ elseif ($modulepart == 'mrp')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'bank')
+} elseif ($modulepart == 'bank')
 {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 	$object = new Account($db);
@@ -246,8 +227,7 @@ elseif ($modulepart == 'bank')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->bank->dir_output; // By default
 	}
-}
-else {
+} else {
 	print 'Action crop for modulepart = '.$modulepart.' is not supported yet by photos_resize.php.';
 }
 
@@ -268,8 +248,7 @@ if (empty($backtourl))
     elseif (in_array($modulepart, array('bank')) && preg_match('/\/statement\/([^\/]+)\//', $file, $regs)) {
     	$num = $regs[1];
     	$backtourl = DOL_URL_ROOT."/compta/bank/account_statement_document.php?id=".$id.'&num='.urlencode($num).'&file='.urldecode($file);
-    }
-    elseif (in_array($modulepart, array('bank')))          $backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($file);
+    } elseif (in_array($modulepart, array('bank')))          $backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($file);
     elseif (in_array($modulepart, array('mrp')))           $backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($file);
     else $backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($file);
 }
@@ -285,8 +264,7 @@ if ($cancel)
 	{
 		header("Location: ".$backtourl);
 		exit;
-	}
-	else {
+	} else {
 	    dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
 	    exit;
 	}
@@ -318,8 +296,7 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 
 		    $ecmfile->label = md5_file(dol_osencode($fullpath));
 		    $result = $ecmfile->update($user);
-		}
-		elseif ($result == 0)   // If not found
+		} elseif ($result == 0)   // If not found
 		{
 		    $filename = basename($rel_filename);
 		    $rel_dir = dirname($rel_filename);
@@ -345,13 +322,11 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 		{
 			header("Location: ".$backtourl);
 			exit;
-		}
-		else {
+		} else {
     	    dol_print_error('', 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
     	    exit;
 		}
-	}
-	else {
+	} else {
 		setEventMessages($result, null, 'errors');
 		$_GET['file'] = $_POST["file"];
 		$action = '';
@@ -386,8 +361,7 @@ if ($action == 'confirm_crop')
 
 		    $ecmfile->label = md5_file(dol_osencode($fullpath));
 		    $result = $ecmfile->update($user);
-		}
-		elseif ($result == 0)   // If not found
+		} elseif ($result == 0)   // If not found
 		{
 		    $filename = basename($rel_filename);
 		    $rel_dir = dirname($rel_filename);
@@ -413,13 +387,11 @@ if ($action == 'confirm_crop')
 		{
 			header("Location: ".$backtourl);
 			exit;
-		}
-		else {
+		} else {
     	    dol_print_error('', 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
     	    exit;
 		}
-	}
-	else {
+	} else {
 		setEventMessages($result, null, 'errors');
 		$_GET['file'] = $_POST["file"];
 		$action = '';

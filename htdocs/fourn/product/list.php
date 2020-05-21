@@ -331,8 +331,7 @@ if ($resql)
 	print "</table>";
 
 	print '</form>';
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

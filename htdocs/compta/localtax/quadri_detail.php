@@ -63,15 +63,13 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
-		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-		else {
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
 			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
 			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
-	}
-	else {
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -221,8 +219,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 	elseif ($x_coll == -2)
 		print '<tr><td colspan="'.$columns.'">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 	else print '<tr><td colspan="'.$columns.'">'.$langs->trans("Error").'</td></tr>';
-}
-else {
+} else {
 	$x_both = array();
 
 	//now, from these two arrays, get another array with one rate per line
@@ -368,8 +365,7 @@ else {
 						$product_static->type = $fields['ptype'];
 						print $product_static->getNomUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
-					}
-					else {
+					} else {
 						if ($type) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
 			            if (preg_match('/^\((.*)\)$/', $fields['descr'], $reg))
@@ -411,8 +407,7 @@ else {
 						if ($type == 0)
 						{
 							print $langs->trans("NotUsedForGoods");
-						}
-						else {
+						} else {
 							print price($fields['payment_amount']);
 							if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice * 100, 2).'%)';
 						}
@@ -527,8 +522,7 @@ else {
 						$product_static->type = $fields['ptype'];
 						print $product_static->getNomUrl(1);
 						if (dol_string_nohtmltag($fields['descr'])) print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
-					}
-					else {
+					} else {
 						if ($type) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
 						print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']), 16);
@@ -566,8 +560,7 @@ else {
 						if ($type == 0)
 						{
 							print $langs->trans("NA");
-						}
-						else {
+						} else {
 							print price(price2num($fields['payment_amount'], 'MT'));
 							if (isset($fields['payment_amount'])) {
 								print ' ('.round($ratiopaymentinvoice * 100, 2).'%)';

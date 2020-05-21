@@ -79,8 +79,7 @@ if ($action == 'setdate' && $user->rights->banque->cheque)
         {
 			setEventMessages($object->error, $object->errors, 'errors');
         }
-    }
-    else {
+    } else {
         setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -97,8 +96,7 @@ if ($action == 'setrefext' && $user->rights->banque->cheque)
         {
             setEventMessages($object->error, $object->errors, 'errors');
         }
-    }
-    else {
+    } else {
         setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -115,8 +113,7 @@ if ($action == 'setref' && $user->rights->banque->cheque)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -146,12 +143,10 @@ if ($action == 'create' && $_POST["accountid"] > 0 && $user->rights->banque->che
 
        		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
         	exit;
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'mesgs');
 	    $action = 'new';
 	}
@@ -165,8 +160,7 @@ if ($action == 'remove' && $id > 0 && $_GET["lineid"] > 0 && $user->rights->banq
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -179,8 +173,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->banque->c
 	{
 		header("Location: index.php");
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($paiement->error, $paiement->errors, 'errors');
 	}
 }
@@ -205,8 +198,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->banque->c
 
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -224,8 +216,7 @@ if ($action == 'confirm_reject_check' && $confirm == 'yes' && $user->rights->ban
 		//header("Location: ".DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id);
 		//exit;
 		$action = '';
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = '';
 	}
@@ -252,8 +243,7 @@ if ($action == 'builddoc' && $user->rights->banque->cheque)
 	{
 		dol_print_error($db, $object->error);
 		exit;
-	}
-	else {
+	} else {
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#builddoc'));
 		exit;
 	}
@@ -304,8 +294,7 @@ if ($action == 'new')
 	$h++;
 
 	print load_fiche_titre($langs->trans("Cheques"), '', 'bank_account');
-}
-else {
+} else {
 	$result = $object->fetch($id, $ref);
 	if ($result < 0)
 	{
@@ -498,8 +487,7 @@ if ($action == 'new')
 				if ($paymentstatic->id)
 				{
 					print $paymentstatic->getNomUrl(1);
-				}
-				else {
+				} else {
 					print '&nbsp;';
 				}
 				print '</td>';
@@ -509,8 +497,7 @@ if ($action == 'new')
 				if ($accountlinestatic->rowid)
 				{
 					print $accountlinestatic->getNomUrl(1);
-				}
-				else {
+				} else {
 					print '&nbsp;';
 				}
 				print '</td>';
@@ -530,15 +517,13 @@ if ($action == 'new')
 		if ($user->rights->banque->cheque)
 		{
 			print '<input type="submit" class="button" value="'.$langs->trans('NewCheckDepositOn', $account_label).'">';
-		}
-		else {
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('NewCheckDepositOn', $account_label).'</a>';
 		}
 		print '</div><br>';
 		print '</form>';
 	}
-}
-else {
+} else {
 	$paymentstatic = new Paiement($db);
 	$accountlinestatic = new AccountLine($db);
 	$accountstatic = new Account($db);
@@ -572,8 +557,7 @@ else {
         print $form->selectDate($object->date_bordereau, 'datecreate_', '', '', '', "setdate");
         print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
         print '</form>';
-    }
-    else {
+    } else {
         print $object->date_bordereau ? dol_print_date($object->date_bordereau, 'day') : '&nbsp;';
     }
 
@@ -683,8 +667,7 @@ else {
     			if ($paymentstatic->id)
     			{
     				print $paymentstatic->getNomUrl(1);
-    			}
-    			else {
+    			} else {
     				print '&nbsp;';
     			}
     			print '</td>';
@@ -694,8 +677,7 @@ else {
     			if ($accountlinestatic->rowid)
     			{
     				print $accountlinestatic->getNomUrl(1);
-    			}
-    			else {
+    			} else {
     				print '&nbsp;';
     			}
     			print '</td>';
@@ -718,8 +700,7 @@ else {
 
     			$i++;
     		}
-        }
-        else {
+        } else {
             print '<td colspan="8" class="opacitymedium">';
             print $langs->trans("None");
             print '</td>';
@@ -736,8 +717,7 @@ else {
 		}
 
 		print "</div>";
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 

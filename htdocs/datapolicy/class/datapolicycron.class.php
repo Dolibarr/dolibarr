@@ -505,8 +505,7 @@ class DataPolicyCron
 	                                	$error++;
 	                                }
 	                            }
-                            }
-                            else {
+                            } else {
                             	$errormsg = $object->error;
                             	$error++;
                             }
@@ -537,8 +536,7 @@ class DataPolicyCron
         if (!$error)
         {
         	$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
-        }
-        else {
+        } else {
         	$this->error = $errormsg;
         }
 

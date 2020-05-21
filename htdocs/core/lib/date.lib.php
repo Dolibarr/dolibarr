@@ -94,8 +94,7 @@ function getServerTimeZoneInt($refgmtdate = 'now')
         $localdt = new DateTime($newrefgmtdate, $localtz);
         $tmp = -1 * $localtz->getOffset($localdt);
         //print $refgmtdate.'='.$tmp;
-    }
-    else {
+    } else {
     	$tmp = 0;
     	dol_print_error('', 'PHP version must be 5.3+');
     }
@@ -230,47 +229,37 @@ function convertSecondToTime($iSecond, $format = 'all', $lengthOfDay = 86400, $l
 			{
 				$sTime .= dol_print_date($iSecond, 'hourduration', true);
 			}
-		}
-		elseif ($format == 'allhourminsec')
+		} elseif ($format == 'allhourminsec')
 		{
 		    return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60))).':'.sprintf("%02d", ((int) ($iSecond % 60)));
-		}
-		elseif ($format == 'allhourmin')
+		} elseif ($format == 'allhourmin')
 		{
 		    return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600))).':'.sprintf("%02d", ((int) floor(($iSecond % 3600) / 60)));
-		}
-		elseif ($format == 'allhour')
+		} elseif ($format == 'allhour')
 		{
 			return sprintf("%02d", ($sWeek * $lengthOfWeek * 24 + $sDay * 24 + (int) floor($iSecond / 3600)));
 		}
-	}
-	elseif ($format == 'hour')	// only hour part
+	} elseif ($format == 'hour')	// only hour part
 	{
 		$sTime = dol_print_date($iSecond, '%H', true);
-	}
-	elseif ($format == 'fullhour')
+	} elseif ($format == 'fullhour')
 	{
 		if (!empty($iSecond)) {
 			$iSecond = $iSecond / 3600;
-		}
-		else {
+		} else {
 			$iSecond = 0;
 		}
 		$sTime = $iSecond;
-	}
-	elseif ($format == 'min')	// only min part
+	} elseif ($format == 'min')	// only min part
 	{
 		$sTime = dol_print_date($iSecond, '%M', true);
-	}
-    elseif ($format == 'sec')	// only sec part
+	} elseif ($format == 'sec')	// only sec part
     {
         $sTime = dol_print_date($iSecond, '%S', true);
-    }
-    elseif ($format == 'month')	// only month part
+    } elseif ($format == 'month')	// only month part
     {
         $sTime = dol_print_date($iSecond, '%m', true);
-    }
-    elseif ($format == 'year')	// only year part
+    } elseif ($format == 'year')	// only year part
     {
         $sTime = dol_print_date($iSecond, '%Y', true);
     }
@@ -344,8 +333,7 @@ function dol_stringtotime($string, $gm = 1)
         if ($syear < 50) $syear += 1900;
         if ($syear >= 50 && $syear < 100) $syear += 2000;
         $string = sprintf("%04d%02d%02d%02d%02d%02d", $syear, $smonth, $sday, $shour, $smin, $ssec);
-    }
-    elseif (
+    } elseif (
     	   preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})Z$/i', $string, $reg)	// Convert date with format YYYY-MM-DDTHH:MM:SSZ (RFC3339)
     	|| preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) ([0-9]{2}):([0-9]{2}):([0-9]{2})$/i', $string, $reg)	// Convert date with format YYYY-MM-DD HH:MM:SS
    		|| preg_match('/^([0-9]{4})([0-9]{2})([0-9]{2})T([0-9]{2})([0-9]{2})([0-9]{2})Z$/i', $string, $reg)		// Convert date with format YYYYMMDDTHHMMSSZ
@@ -409,8 +397,7 @@ function dol_get_prev_month($month, $year)
 	{
 		$prev_month = 12;
 		$prev_year  = $year - 1;
-	}
-	else {
+	} else {
 		$prev_month = $month - 1;
 		$prev_year  = $year;
 	}
@@ -429,8 +416,7 @@ function dol_get_next_month($month, $year)
 	{
 		$next_month = 1;
 		$next_year  = $year + 1;
-	}
-	else {
+	} else {
 		$next_month = $month + 1;
 		$next_year  = $year;
 	}
@@ -504,8 +490,7 @@ function dol_get_last_day($year, $month = 12, $gm = false)
 	{
 		$month = 1;
 		$year += 1;
-	}
-	else {
+	} else {
 		$month += 1;
 	}
 
@@ -558,8 +543,7 @@ function dol_get_first_day_week($day, $month, $year, $gm = false)
     		$prev_month = 12;
     		$prev_year  = $year - 1;
     	}
-    }
-    else {
+    } else {
     	$prev_month = $month;
 		$prev_year = $year;
     }
@@ -641,8 +625,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				if ($tmp[2])
 				{
 					if ($tmp[0] == $annee && $tmp[1] == $mois && $tmp[2] == $jour) $ferie = true;
-				}
-				else {
+				} else {
 					if ($tmp[0] == $mois && $tmp[1] == $jour) $ferie = true;
 				}
 			}
@@ -667,8 +650,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 				if (!empty($obj->dayrule) && $obj->dayrule != 'date')		// For example 'easter', '...'
 				{
 					$specialdayrule[$obj->dayrule] = $obj->dayrule;
-				}
-				else {
+				} else {
 					$match = 1;
 					if (!empty($obj->year) && $obj->year != $annee) $match = 0;
 					if ($obj->month != $mois) $match = 0;
@@ -679,8 +661,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 
 				$i++;
 			}
-		}
-		else {
+		} else {
 			dol_syslog($db->lasterror(), LOG_ERR);
 			return 'Error sql '.$db->lasterror();
 		}
@@ -848,8 +829,7 @@ function num_between_day($timestampStart, $timestampEnd, $lastday = 0)
 		if ($lastday == 1)
 		{
 			$bit = 0;
-		}
-		else {
+		} else {
 			$bit = 1;
 		}
 		$nbjours = (int) floor(($timestampEnd - $timestampStart) / (60 * 60 * 24)) + 1 - $bit;
@@ -891,8 +871,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 		$nbOpenDay = ($numdays - $numholidays);
 		if ($inhour == 1 && $nbOpenDay <= 3) $nbOpenDay = ($nbOpenDay * 24);
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
-	}
-	elseif ($timestampStart == $timestampEnd)
+	} elseif ($timestampStart == $timestampEnd)
 	{
 		$numholidays = 0;
 		if ($lastday) {
@@ -904,8 +883,7 @@ function num_open_day($timestampStart, $timestampEnd, $inhour = 0, $lastday = 0,
 
 		if ($inhour == 1) $nbOpenDay = ($nbOpenDay * 24);
 		return $nbOpenDay - (($inhour == 1 ? 12 : 0.5) * abs($halfday));
-	}
-	else {
+	} else {
 		return $langs->trans("Error");
 	}
 }

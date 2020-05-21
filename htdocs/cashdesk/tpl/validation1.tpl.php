@@ -40,8 +40,7 @@ $langs->loadLangs(array("main", "bills", "banks"));
 // Affichage de la tva par taux
 if ($obj_facturation->montantTva()) {
 	echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.price(price2num($obj_facturation->montantTva(), 'MT'), 0, $langs, 0, 0, -1, $conf->currency).'</td></tr>');
-}
-else {
+} else {
 	echo ('<tr><td class="resume_label">'.$langs->trans("VAT").'</td><td>'.$langs->trans("NoVAT").'</td></tr>');
 }
 ?>

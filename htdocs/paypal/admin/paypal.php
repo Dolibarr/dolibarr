@@ -79,8 +79,7 @@ if ($action == 'setvalue' && $user->admin)
   	{
   		$db->commit();
   		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-  	}
-  	else {
+  	} else {
   		$db->rollback();
 		dol_print_error($db);
     }
@@ -94,8 +93,7 @@ if ($action == "setlive")
     if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -149,8 +147,7 @@ if (empty($conf->global->PAYPAL_API_SANDBOX))
 {
     print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
-}
-else {
+} else {
     print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlive&value=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
 }

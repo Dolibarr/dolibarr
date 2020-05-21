@@ -308,8 +308,7 @@ class ExpenseReport extends CommonObject
     	            		$newndfline->rule_warning_message = $line->rule_warning_message;
     	            		$newndfline->fk_c_exp_tax_cat = $line->fk_c_exp_tax_cat;
     	            		$newndfline->fk_ecm_files = $line->fk_ecm_files;
-    	            	}
-    	            	else {
+    	            	} else {
     	            		$newndfline = $line;
     	            	}
     	                //$newndfline=new ExpenseReportLine($this->db);
@@ -351,24 +350,20 @@ class ExpenseReport extends CommonObject
 					{
 						$this->db->commit();
 						return $this->id;
-					}
-					else {
+					} else {
 						$this->db->rollback();
 						return -4;
 					}
-                }
-                else {
+                } else {
                     $this->db->rollback();
                     return -3;
                 }
-            }
-            else {
+            } else {
                 dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -2;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror()." sql=".$sql;
             $this->db->rollback();
             return -1;
@@ -436,8 +431,7 @@ class ExpenseReport extends CommonObject
         {
             $this->db->commit();
             return $this->id;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -499,14 +493,12 @@ class ExpenseReport extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else {
+			} else {
 				$this->db->rollback();
 				$this->error = $this->db->error();
 				return -2;
 			}
-        }
-        else {
+        } else {
 			$this->db->rollback();
             $this->error = $this->db->error();
             return -1;
@@ -598,12 +590,10 @@ class ExpenseReport extends CommonObject
                 $result = $this->fetch_lines();
 
                 return $result;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -649,19 +639,16 @@ class ExpenseReport extends CommonObject
 				{
 					$this->db->commit();
 					return 1;
-				}
-				else {
+				} else {
 					$this->db->rollback();
 					$this->error = $this->db->error();
 					return -2;
 				}
-            }
-            else {
+            } else {
 				$this->db->commit();
                 return 0;
             }
-        }
-        else {
+        } else {
 			$this->db->rollback();
             dol_print_error($this->db);
             return -1;
@@ -768,8 +755,7 @@ class ExpenseReport extends CommonObject
                 }
             }
             $this->db->free($resql);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -933,8 +919,7 @@ class ExpenseReport extends CommonObject
                 print '<td class="right" width="100">'.$langs->trans("TotalTTC").' : '.price($total_TTC).'</td>';
                 print '<td>&nbsp;</td>';
                 print '</tr>';
-            }
-            else {
+            } else {
                 $this->error = $db->lasterror();
                 return -1;
             }
@@ -983,8 +968,7 @@ class ExpenseReport extends CommonObject
                 dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
                 return -3;
             endif;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this)."::recalculer: Error ".$this->error, LOG_ERR);
             return -3;
@@ -1016,8 +1000,7 @@ class ExpenseReport extends CommonObject
         if (!empty($conf->global->EXPENSEREPORT_LINES_SORTED_BY_ROWID))
         {
         	$sql .= ' ORDER BY de.rang ASC, de.rowid ASC';
-        }
-        else {
+        } else {
         	$sql .= ' ORDER BY de.rang ASC, de.date ASC';
         }
 
@@ -1066,8 +1049,7 @@ class ExpenseReport extends CommonObject
             }
             $this->db->free($resql);
             return 1;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this)."::fetch_lines: Error ".$this->error, LOG_ERR);
             return -3;
@@ -1096,15 +1078,13 @@ class ExpenseReport extends CommonObject
             {
                 $this->db->commit();
                 return 1;
-            }
-            else {
+            } else {
                 $this->error = $this->db->error()." sql=".$sql;
                 dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -6;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->error()." sql=".$sql;
             dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
@@ -1139,8 +1119,7 @@ class ExpenseReport extends CommonObject
         if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
         {
             $num = $this->getNextNumRef();
-        }
-        else {
+        } else {
             $num = $this->ref;
         }
         if (empty($num) || $num < 0) return -1;
@@ -1223,14 +1202,12 @@ class ExpenseReport extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else {
+			} else {
 				$this->db->rollback();
 				$this->error = $this->db->error();
 				return -2;
 			}
-        }
-        else {
+        } else {
 			$this->db->rollback();
             $this->error = $this->db->lasterror();
             return -1;
@@ -1271,13 +1248,11 @@ class ExpenseReport extends CommonObject
             if ($this->db->query($sql))
             {
                 return 1;
-            }
-            else {
+            } else {
                 $this->error = $this->db->lasterror();
                 return -1;
             }
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::set_save_from_refuse expensereport already with save status", LOG_WARNING);
         }
     }
@@ -1321,20 +1296,17 @@ class ExpenseReport extends CommonObject
 				{
 					$this->db->commit();
 					return 1;
-				}
-				else {
+				} else {
 					$this->db->rollback();
 					$this->error = $this->db->error();
 					return -2;
 				}
-            }
-            else {
+            } else {
 				$this->db->rollback();
                 $this->error = $this->db->lasterror();
                 return -1;
             }
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::setApproved expensereport already with approve status", LOG_WARNING);
         }
 
@@ -1385,20 +1357,17 @@ class ExpenseReport extends CommonObject
 				{
 					$this->db->commit();
 					return 1;
-				}
-				else {
+				} else {
 					$this->db->rollback();
 					$this->error = $this->db->error();
 					return -2;
 				}
-            }
-            else {
+            } else {
 				$this->db->rollback();
                 $this->error = $this->db->lasterror();
                 return -1;
             }
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::setDeny expensereport already with refuse status", LOG_WARNING);
         }
     }
@@ -1443,20 +1412,17 @@ class ExpenseReport extends CommonObject
 				{
 					$this->db->commit();
 					return 1;
-				}
-				else {
+				} else {
 					$this->db->rollback();
 					$this->error = $this->db->error();
 					return -2;
 				}
-			}
-			else {
+			} else {
 				$this->db->rollback();
 				$this->error = $this->db->error();
 				return -1;
 			}
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::set_unpaid expensereport already with unpaid status", LOG_WARNING);
         }
     }
@@ -1504,20 +1470,17 @@ class ExpenseReport extends CommonObject
 				{
 					$this->db->commit();
 					return 1;
-				}
-				else {
+				} else {
 					$this->db->rollback();
 					$this->error = $this->db->error();
 					return -2;
 				}
-            }
-            else {
+            } else {
 				$this->db->rollback();
                 $this->error = $this->db->error();
                 return -1;
             }
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::set_cancel expensereport already with cancel status", LOG_WARNING);
         }
     }
@@ -1560,15 +1523,13 @@ class ExpenseReport extends CommonObject
             if ($numref != "")
             {
             	return $numref;
-            }
-            else {
+            } else {
 				$this->error = $obj->error;
 				$this->errors = $obj->errors;
             	//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
             	return -1;
             }
-        }
-        else {
+        } else {
             $this->error = "Error_EXPENSEREPORT_ADDON_NotDefined";
             return -2;
         }
@@ -1784,20 +1745,17 @@ class ExpenseReport extends CommonObject
                 {
                     $this->db->commit();
                     return $this->line->id;
-                }
-                else {
+                } else {
                     $this->db->rollback();
                     return -1;
                 }
-            }
-            else {
+            } else {
                 $this->error = $this->line->error;
                 dol_syslog(get_class($this)."::addline error=".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -2;
             }
-		}
-		else {
+		} else {
             dol_syslog(get_class($this)."::addline status of expense report must be Draft to allow use of ->addline()", LOG_ERR);
 			$this->error = 'ErrorExpenseNotDraft';
             return -3;
@@ -1846,8 +1804,7 @@ class ExpenseReport extends CommonObject
 
 					$new_current_total_ttc -= $amount_to_test - $rule->amount; // ex, entered 16€, limit 12€, subtracts 4€;
 					$rule_warning_message_tab[] = $langs->trans('ExpenseReportConstraintViolationError', $rule->id, price($amount_to_test, 0, $langs, 1, -1, -1, $conf->currency), price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency), $langs->trans('by'.$rule->code_expense_rules_type, price($new_current_total_ttc, 0, $langs, 1, -1, -1, $conf->currency)));
-				}
-				else {
+				} else {
 					$this->error = 'ExpenseReportConstraintViolationWarning';
 					$this->errors[] = $this->error;
 
@@ -1870,8 +1827,7 @@ class ExpenseReport extends CommonObject
 			$this->line->total_tva = $tmp[1];
 
 			return false;
-		}
-		else return true;
+		} else return true;
 	}
 
 	/**
@@ -1942,8 +1898,7 @@ class ExpenseReport extends CommonObject
 		{
 			$num = $this->db->num_rows($resql);
 			if ($num > 0) return true;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -2062,8 +2017,7 @@ class ExpenseReport extends CommonObject
             {
                 $this->db->commit();
                 return 1;
-            }
-            else {
+            } else {
                 $this->error = $this->line->error;
                 $this->errors = $this->line->errors;
                 $this->db->rollback();
@@ -2143,12 +2097,10 @@ class ExpenseReport extends CommonObject
 
                 if ($existe) return 1;
                 else return 0;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this)."::periode_existe  Error ".$this->error, LOG_ERR);
             return -1;
@@ -2189,8 +2141,7 @@ class ExpenseReport extends CommonObject
                 $i++;
             }
             return $users_validator;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this)."::fetch_users_approver_expensereport  Error ".$this->error, LOG_ERR);
             return -1;
@@ -2254,8 +2205,7 @@ class ExpenseReport extends CommonObject
                 $ret[$obj->code] = (($langs->trans($obj->code) != $obj->code) ? $langs->trans($obj->code) : $obj->label);
                 $i++;
             }
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
         return $ret;
@@ -2286,8 +2236,7 @@ class ExpenseReport extends CommonObject
             }
             $this->db->free($resql);
             return 1;
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->error();
             return -1;
@@ -2333,8 +2282,7 @@ class ExpenseReport extends CommonObject
 	            $response->label = $langs->trans("ExpenseReportsToApprove");
 	            $response->labelShort = $langs->trans("ToApprove");
 	            $response->url = DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=2';
-	        }
-	        else {
+	        } else {
 	            $response->warning_delay = $conf->expensereport->payment->warning_delay / 60 / 60 / 24;
 	            $response->label = $langs->trans("ExpenseReportsToPay");
 	            $response->labelShort = $langs->trans("StatusToPay");
@@ -2351,8 +2299,7 @@ class ExpenseReport extends CommonObject
 	                if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->approve->warning_delay)) {
 	                    $response->nbtodolate++;
 	                }
-	            }
-	            else {
+	            } else {
                     if ($this->db->jdate($obj->date_valid) < ($now - $conf->expensereport->payment->warning_delay)) {
     	                $response->nbtodolate++;
                     }
@@ -2360,8 +2307,7 @@ class ExpenseReport extends CommonObject
             }
 
             return $response;
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->error();
             return -1;
@@ -2386,8 +2332,7 @@ class ExpenseReport extends CommonObject
         if ($option == 'toapprove')
         {
             return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->approve->warning_delay);
-        }
-        else return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
+        } else return ($this->datevalid ? $this->datevalid : $this->date_valid) < ($now - $conf->expensereport->payment->warning_delay);
     }
 
     /**
@@ -2410,8 +2355,7 @@ class ExpenseReport extends CommonObject
     		{
     			$alreadydispatched = $obj->nb;
     		}
-    	}
-    	else {
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -2444,8 +2388,7 @@ class ExpenseReport extends CommonObject
 			$obj = $this->db->fetch_object($resql);
 			$this->db->free($resql);
 			return $obj->amount;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -2639,8 +2582,7 @@ class ExpenseReportLine
 					$this->errors = $tmpparent->errors;
 				}
 			}
-        }
-		else {
+        } else {
 			$error++;
 		}
 
@@ -2648,8 +2590,7 @@ class ExpenseReportLine
         {
             $this->db->commit();
             return $this->id;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog("ExpenseReportLine::insert Error ".$this->error, LOG_ERR);
             $this->db->rollback();
@@ -2690,8 +2631,7 @@ class ExpenseReportLine
 				$obj = $this->db->fetch_object($resql);
 				$amount = (double) $obj->total_amount;
 			}
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -2754,14 +2694,12 @@ class ExpenseReportLine
                     $this->error = $tmpparent->error;
                     $this->errors = $tmpparent->errors;
                 }
-            }
-            else {
+            } else {
                 $error++;
                 $this->error = $tmpparent->error;
                 $this->errors = $tmpparent->errors;
             }
-        }
-        else {
+        } else {
             $error++;
             dol_print_error($this->db);
         }
@@ -2770,8 +2708,7 @@ class ExpenseReportLine
         {
             $this->db->commit();
             return 1;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog("ExpenseReportLine::update Error ".$this->error, LOG_ERR);
             $this->db->rollback();
@@ -2806,8 +2743,7 @@ function select_expensereport_statut($selected = '', $htmlname = 'fk_statut', $u
         if ($selected != '' && $selected == $key)
         {
             print '<option value="'.$key.'" selected>';
-        }
-        else {
+        } else {
             print '<option value="'.$key.'">';
         }
         print $langs->trans($val);

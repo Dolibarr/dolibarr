@@ -79,8 +79,7 @@ class FormWebsite
                 if ($selected == $obj->rowid)
                 {
                     $out .= '<option value="'.$obj->rowid.'" selected>';
-                }
-                else {
+                } else {
                     $out .= '<option value="'.$obj->rowid.'">';
                 }
                 $out .= $obj->ref;
@@ -88,8 +87,7 @@ class FormWebsite
                 $i++;
             }
             $out .= "</select>";
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
 
@@ -137,8 +135,7 @@ class FormWebsite
     				if ($selected == $obj->rowid || $selected == $obj->code)
     				{
     					print '<option value="'.$obj->code.'" selected>';
-    				}
-    				else {
+    				} else {
     					print '<option value="'.$obj->code.'">';
     				}
     				print $obj->label;
@@ -147,12 +144,10 @@ class FormWebsite
     			}
     			print "</select>";
     			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-    		}
-    		else {
+    		} else {
     			print $langs->trans("NoTypeOfPagePleaseEditDictionary");
     		}
-    	}
-    	else {
+    	} else {
     		dol_print_error($this->db);
     	}
     }
@@ -202,8 +197,7 @@ class FormWebsite
     		if ($selected == $key)
     		{
     			$out .= '<option value="'.$key.'" selected>';
-    		}
-    		else {
+    		} else {
     			$out .= '<option value="'.$key.'">';
     		}
     		$out .= $langs->trans($val);
@@ -238,8 +232,7 @@ class FormWebsite
 	    if ($atleastonepage && $action != 'editsource')
 	    {
 	    	$out .= '<select name="'.$htmlname.'" id="'.$htmlname.'" class="maxwidth300'.($morecss ? ' '.$morecss : '').'">';
-	    }
-	    else {
+	    } else {
 	    	$out .= '<select name="pageidbis" id="pageid" class="maxwidth300'.($morecss ? ' '.$morecss : '').'" disabled="disabled">';
 	    }
 
@@ -287,8 +280,7 @@ class FormWebsite
 	    if ($atleastonepage && $action != 'editsource')
 	    {
 	    	$out .= ajax_combobox($htmlname);
-	    }
-	    else {
+	    } else {
 	    	$out .= '<input type="hidden" name="'.$htmlname.'" value="'.$pageid.'">';
 	    	$out .= ajax_combobox($htmlname);
 	    }

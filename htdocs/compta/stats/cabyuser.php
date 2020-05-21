@@ -96,8 +96,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 	if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
 	if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
-}
-else {
+} else {
 	// TODO We define q
 }
 // $date_start and $date_end are defined. We force $year_start and $nbofyear
@@ -156,8 +155,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	else $description .= $langs->trans("DepositsAreIncluded");
     $builddate = dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByUserAuthorOfInvoice");
 	$calcmode = $langs->trans("CalcModeEngagement");
@@ -166,12 +164,10 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$description .= $langs->trans("DepositsAreIncluded");
     $builddate = dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
 	// TODO
-}
-elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
 {
 	// TODO
 }
@@ -395,8 +391,7 @@ if (count($amount)) {
             } else {
                 //print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
             }
-        }
-        elseif ($modecompta == 'CREANCES-DETTES') {
+        } elseif ($modecompta == 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
             } else {
@@ -415,8 +410,7 @@ if (count($amount)) {
             } else {
                 //print '<a href="'.DOL_URL_ROOT.'/compta/paiement/list.php?userid=-1">';
             }
-        }
-        elseif ($modecompta == 'CREANCES-DETTES') {
+        } elseif ($modecompta == 'CREANCES-DETTES') {
             if ($key > 0) {
                 print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?userid='.$key.'">';
             } else {
@@ -430,8 +424,7 @@ if (count($amount)) {
         	} else {
         		//print '</a>';
         	}
-        }
-        elseif ($modecompta == 'CREANCES-DETTES') {
+        } elseif ($modecompta == 'CREANCES-DETTES') {
         	if ($key > 0) {
         		print '</a>';
         	}

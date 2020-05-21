@@ -49,8 +49,7 @@ if ($action == 'addcomment')
 			setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action = '';
 		}
@@ -66,8 +65,7 @@ if ($action === 'updatecomment')
             setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
             header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1#comment' : ''));
             exit;
-        }
-        else {
+        } else {
             setEventMessages($comment->error, $comment->errors, 'errors');
             $action = '';
         }
@@ -82,8 +80,7 @@ if ($action == 'deletecomment')
 			setEventMessages($langs->trans("CommentDeleted"), null, 'mesgs');
 			header('Location: '.$varpage.'?id='.$id.($withproject ? '&withproject=1' : ''));
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($comment->error, $comment->errors, 'errors');
 			$action = '';
 		}

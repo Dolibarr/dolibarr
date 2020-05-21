@@ -69,8 +69,7 @@ class FormEcm
 		{
 			$cat = new EcmDirectory($this->db);
 			$cate_arbo = $cat->get_full_arbo();
-		}
-		elseif ($module == 'medias')
+		} elseif ($module == 'medias')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$path = $conf->medias->multidir_output[$conf->entity];
@@ -89,8 +88,7 @@ class FormEcm
 					if ($selected && $valueforoption == $selected)
 					{
 						$add = 'selected ';
-					}
-					else {
+					} else {
 						$add = '';
 					}
 					$output .= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';

@@ -541,8 +541,7 @@ class Ticket extends CommonObject
 
 				$this->db->free($resql);
 				return 1;
-			}
-			else {
+			} else {
 				return 0;
 			}
 		} else {
@@ -1181,29 +1180,21 @@ class Ticket extends CommonObject
 
 		if ($status == self::STATUS_NOT_READ) {
 			$statusType = 'status0';
-		}
-		elseif ($status == self::STATUS_READ) {
+		} elseif ($status == self::STATUS_READ) {
 			$statusType = 'status1';
-		}
-		elseif ($status == self::STATUS_ASSIGNED) {
+		} elseif ($status == self::STATUS_ASSIGNED) {
 			$statusType = 'status3';
-		}
-		elseif ($status == self::STATUS_IN_PROGRESS) {
+		} elseif ($status == self::STATUS_IN_PROGRESS) {
 			$statusType = 'status4';
-		}
-		elseif ($status == self::STATUS_WAITING) {
+		} elseif ($status == self::STATUS_WAITING) {
 			$statusType = 'status3';
-		}
-		elseif ($status == self::STATUS_NEED_MORE_INFO) {
+		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
 			$statusType = 'status9';
-		}
-		elseif ($status == self::STATUS_CANCELED) {
+		} elseif ($status == self::STATUS_CANCELED) {
 			$statusType = 'status9';
-		}
-		elseif ($status == self::STATUS_CLOSED) {
+		} elseif ($status == self::STATUS_CLOSED) {
 			$statusType = 'status6';
-		}
-		else {
+		} else {
 			$labelStatus = $langs->trans('Unknown');
 			$labelStatusShort = $langs->trans('Unknown');
 			$statusType = 'status0';
@@ -1261,8 +1252,7 @@ class Ticket extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1352,8 +1342,7 @@ class Ticket extends CommonObject
 		if ($id_assign_user > 0)
 		{
 			$sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
-		}
-		else {
+		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
 		$sql .= " WHERE rowid = ".$this->id;
@@ -2764,8 +2753,7 @@ class Ticket extends CommonObject
 				}
 			}
 			return $response;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -2806,8 +2794,7 @@ class Ticket extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;

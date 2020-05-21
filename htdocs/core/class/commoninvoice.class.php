@@ -140,8 +140,7 @@ abstract class CommonInvoice extends CommonObject
 			$this->db->free($resql);
 			if ($multicurrency) return $obj->multicurrency_amount;
 			else return $obj->amount;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -169,8 +168,7 @@ abstract class CommonInvoice extends CommonObject
 	    if ($result >= 0)
 	    {
 	        return $result;
-	    }
-	    else {
+	    } else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -191,8 +189,7 @@ abstract class CommonInvoice extends CommonObject
 	    if ($result >= 0)
 	    {
 	        return $result;
-	    }
-	    else {
+	    } else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -213,8 +210,7 @@ abstract class CommonInvoice extends CommonObject
 	    if ($result >= 0)
 	    {
 	        return $result;
-	    }
-	    else {
+	    } else {
 	        $this->error = $discountstatic->error;
 	        return -1;
 	    }
@@ -244,8 +240,7 @@ abstract class CommonInvoice extends CommonObject
 				$idarray[] = $row[0];
 				$i++;
 			}
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 		return $idarray;
@@ -279,13 +274,11 @@ abstract class CommonInvoice extends CommonObject
 			{
 				// If there is any
 				return $obj->rowid;
-			}
-			else {
+			} else {
 				// If no invoice replaces it
 				return 0;
 			}
-		}
-		else {
+		} else {
 			return -1;
 		}
 	}
@@ -345,8 +338,7 @@ abstract class CommonInvoice extends CommonObject
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
 				$sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$this->id;
 				$sql .= ' AND (f.type = 2 OR f.type = 0 OR f.type = 3)'; // Find discount coming from credit note or excess received or deposits (payments from deposits are always null except if FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is set)
-			}
-			elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
+			} elseif ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
 			{
 				$sql = 'SELECT rc.amount_ttc as amount, rc.multicurrency_amount_ttc as multicurrency_amount, rc.datec as date, f.ref as ref, rc.description as type';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
@@ -365,14 +357,12 @@ abstract class CommonInvoice extends CommonObject
 						$obj = $this->db->fetch_object($resql);
 						if ($multicurrency) {
 							$retarray[] = array('amount'=>$obj->multicurrency_amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'0', 'ref'=>$obj->ref);
-						}
-						else {
+						} else {
 							$retarray[] = array('amount'=>$obj->amount, 'type'=>$obj->type, 'date'=>$obj->date, 'num'=>'', 'ref'=>$obj->ref);
 						}
 						$i++;
 					}
-				}
-				else {
+				} else {
 					$this->error = $this->db->lasterror();
 					dol_print_error($this->db);
 					return array();
@@ -381,8 +371,7 @@ abstract class CommonInvoice extends CommonObject
 			}
 
 			return $retarray;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return array();
@@ -473,8 +462,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				$alreadydispatched = $obj->nb;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -539,40 +527,33 @@ abstract class CommonInvoice extends CommonObject
 		    if ($status == 0) {
 		        $labelStatus = $langs->trans('BillStatusDraft');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusDraft');
-		    }
-		    elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
+		    } elseif (($status == 3 || $status == 2) && $alreadypaid <= 0) {
 		        $labelStatus = $langs->trans('BillStatusClosedUnpaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedUnpaid');
 		        $statusType = 'status5';
-		    }
-		    elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
+		    } elseif (($status == 3 || $status == 2) && $alreadypaid > 0) {
 		        $labelStatus = $langs->trans('BillStatusClosedPaidPartially');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusClosedPaidPartially');
 		        $statusType = 'status9';
-		    }
-		    elseif ($alreadypaid <= 0) {
+		    } elseif ($alreadypaid <= 0) {
 		        $labelStatus = $langs->trans('BillStatusNotPaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusNotPaid');
 		        $statusType = 'status1';
-		    }
-		    else {
+		    } else {
 		        $labelStatus = $langs->trans('BillStatusStarted');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusStarted');
 		        $statusType = 'status3';
 		    }
-		}
-		else {
+		} else {
 		    $statusType = 'status6';
 
 		    if ($type == self::TYPE_CREDIT_NOTE) {
 		        $labelStatus = $langs->trans('BillStatusPaidBackOrConverted'); // credit note
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaidBackOrConverted'); // credit note
-		    }
-		    elseif ($type == self::TYPE_DEPOSIT) {
+		    } elseif ($type == self::TYPE_DEPOSIT) {
 		        $labelStatus = $langs->trans('BillStatusConverted'); // deposit invoice
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusConverted'); // deposit invoice
-		    }
-		    else {
+		    } else {
 		        $labelStatus = $langs->trans('BillStatusPaid');
 		        $labelStatusShort = $langs->trans('Bill'.$prefix.'StatusPaid');
 		    }
@@ -618,8 +599,7 @@ abstract class CommonInvoice extends CommonObject
 				$cdr_type = $obj->type_cdr;
 				$cdr_decalage = $obj->decalage;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -645,8 +625,7 @@ abstract class CommonInvoice extends CommonObject
 			{
 				$mois = 1;
 				$annee += 1;
-			}
-			else {
+			} else {
 				$mois += 1;
 			}
 			// We move at the beginning of the next month, and we take a day off
@@ -669,8 +648,7 @@ abstract class CommonInvoice extends CommonObject
 
 			if ($diff < 0) $datelim = $date_lim_current;
 			else $datelim = $date_lim_next;
-		}
-		else return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
+		} else return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
 
 		return $datelim;
 	}

@@ -136,8 +136,7 @@ if (empty($reshook))
 		{
 			$langs->load('errors');
 			setEventMessages($langs->trans('ErrorThirdPartyIdIsMandatory', $langs->transnoentitiesnoconv('MergeOriginThirdparty')), null, 'errors');
-		}
-		else {
+		} else {
 			if (!$error && $soc_origin->fetch($soc_origin_id) < 1)
 			{
 				setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
@@ -300,8 +299,7 @@ if (empty($reshook))
 				{
 					setEventMessages($langs->trans('ThirdpartiesMergeSuccess'), null, 'mesgs');
 					$db->commit();
-				}
-				else {
+				} else {
 				    $langs->load("errors");
 					setEventMessages($langs->trans('ErrorsThirdpartyMerge'), null, 'errors');
 					$db->rollback();
@@ -389,8 +387,7 @@ if (empty($reshook))
 	        {
 	        	$ret = $object->fetch($socid);
 				$object->oldcopy = clone $object;
-	        }
-			else $object->canvas = $canvas;
+	        } else $object->canvas = $canvas;
 
 	        if (GETPOST("private", 'int') == 1)	// Ask to create a contact
 	        {
@@ -401,8 +398,7 @@ if (empty($reshook))
 	            // Add non official properties
 	            $object->name_bis = GETPOST('name', 'alpha');
 	            $object->firstname = GETPOST('firstname', 'alpha');
-	        }
-	        else {
+	        } else {
 	            $object->name = GETPOST('name', 'alpha');
 	        }
 	        $object->entity					= (GETPOSTISSET('entity') ?GETPOST('entity', 'int') : $conf->entity);
@@ -605,15 +601,13 @@ if (empty($reshook))
                                 if (!$result > 0)
                                 {
                                     $errors[] = "ErrorFailedToSaveFile";
-                                }
-                                else {
+                                } else {
                                     // Create thumbs
                                     $object->addThumbs($newfile);
                                 }
                             }
                         }
-                    }
-                    else {
+                    } else {
 						switch ($_FILES['photo']['error'])
 						{
 						    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -626,8 +620,7 @@ if (empty($reshook))
 						}
 	                }
                     // Gestion du logo de la société
-                }
-                else {
+                } else {
 				    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') // TODO Sometime errors on duplicate on profid and not on code, so we must manage this case
 					{
 						$duplicate_code_error = true;
@@ -649,8 +642,7 @@ if (empty($reshook))
                 		if (preg_match('/\?/', $backtopage)) $backtopage .= '&socid='.$object->id; // Old method
                		    header("Location: ".$backtopage);
                     	exit;
-                	}
-                	else {
+                	} else {
                 		$url = $_SERVER["PHP_SELF"]."?socid=".$object->id; // Old method
                     	if (($object->client == 1 || $object->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) $url = DOL_URL_ROOT."/comm/card.php?socid=".$object->id;
                     	elseif ($object->fournisseur == 1) $url = DOL_URL_ROOT."/fourn/card.php?socid=".$object->id;
@@ -658,8 +650,7 @@ if (empty($reshook))
                 		header("Location: ".$url);
                     	exit;
                 	}
-                }
-                else {
+                } else {
                     $db->rollback();
                     $action = 'create';
                 }
@@ -675,8 +666,7 @@ if (empty($reshook))
                 	{
                		    header("Location: ".$backtopage);
                     	exit;
-                	}
-                	else {
+                	} else {
                		    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
                     	exit;
                 	}
@@ -750,8 +740,7 @@ if (empty($reshook))
                             if (!$result > 0)
                             {
                                 $errors[] = "ErrorFailedToSaveFile";
-                            }
-                            else {
+                            } else {
                             	// Create thumbs
                             	$object->addThumbs($newfile);
 
@@ -766,12 +755,10 @@ if (empty($reshook))
                                 }
                             }
                         }
-                    }
-                    else {
+                    } else {
                         $errors[] = "ErrorBadImageFormat";
                     }
-                }
-                else {
+                } else {
 					switch ($_FILES['photo']['error'])
 					{
 					    case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -805,19 +792,16 @@ if (empty($reshook))
                 	{
                		    header("Location: ".$backtopage);
                     	exit;
-                	}
-                	else {
+                	} else {
                		    header("Location: ".$_SERVER["PHP_SELF"]."?socid=".$socid);
                     	exit;
                 	}
-                }
-                else {
+                } else {
                     $object->id = $socid;
                     $action = "edit";
                 }
             }
-        }
-        else {
+        } else {
         	$action = ($action == 'add' ? 'create' : 'edit');
         }
     }
@@ -833,8 +817,7 @@ if (empty($reshook))
         {
             header("Location: ".DOL_URL_ROOT."/societe/list.php?restore_lastsearch_values=1&delsoc=".urlencode($object->name));
             exit;
-        }
-        else {
+        } else {
             $langs->load("errors");
            	setEventMessages($object->error, $object->errors, 'errors');
            	$error++;
@@ -903,8 +886,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
     // -----------------------------------------
    	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
     $objcanvas->display_canvas($action); // Show template
-}
-else {
+} else {
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------
@@ -972,8 +954,7 @@ else {
 	        $object->code_client		= GETPOST('customer_code', 'alpha');
 	        $object->fournisseur		= GETPOST('fournisseur') ?GETPOST('fournisseur') : $object->fournisseur;
             $object->code_fournisseur = GETPOST('supplier_code', 'alpha');
-        }
-		else {
+        } else {
 			setEventMessages($langs->trans('NewCustomerSupplierCodeProposed'), '', 'warnings');
 		}
 
@@ -1044,8 +1025,7 @@ else {
                     if (!$result > 0)
                     {
                         $errors[] = "ErrorFailedToSaveFile";
-                    }
-                    else {
+                    } else {
                         // Create thumbs
                         $object->addThumbs($newfile);
                     }
@@ -1186,8 +1166,7 @@ else {
         if ($object->particulier || $private)
         {
 	        print '<span id="TypeName" class="fieldrequired">'.$langs->trans('ThirdPartyName').' / '.$langs->trans('LastName', 'name').'</span>';
-        }
-        else {
+        } else {
 			print '<span id="TypeName" class="fieldrequired">'.$form->editfieldkey('ThirdPartyName', 'name', '', $object, 0).'</span>';
         }
 	    print '</td><td'.(empty($conf->global->SOCIETE_USEPREFIX) ? ' colspan="3"' : '').'>';
@@ -1322,8 +1301,7 @@ else {
             if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
             {
                 print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
-            }
-            else {
+            } else {
                 print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">';
             }
 
@@ -1411,8 +1389,7 @@ else {
                 print "\n";
                 $s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
                 $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
-            }
-            else {
+            } else {
                 $s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
             }
         }
@@ -1431,14 +1408,12 @@ else {
             print '<td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
             print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
             print '</td></tr>';
-        }
-        elseif ($mysoc->localtax1_assuj == "1")
+        } elseif ($mysoc->localtax1_assuj == "1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td colspan="3">';
             print $form->selectyesno('localtax1assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX1 : 0), 1);
             print '</td></tr>';
-        }
-        elseif ($mysoc->localtax2_assuj == "1")
+        } elseif ($mysoc->localtax2_assuj == "1")
         {
             print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td colspan="3">';
             print $form->selectyesno('localtax2assuj_value', (isset($conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2) ? $conf->global->THIRDPARTY_DEFAULT_USELOCALTAX2 : 0), 1);
@@ -1463,8 +1438,7 @@ else {
         if ($object->country_id)
         {
             print $formcompany->select_juridicalstatus($object->forme_juridique_code, $object->country_code, '', 'forme_juridique_code');
-        }
-        else {
+        } else {
             print $countrynotdefined;
         }
         print '</td></tr>';
@@ -1556,16 +1530,14 @@ else {
         {
             print ' &nbsp; &nbsp; ';
             print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-        }
-        else {
+        } else {
             print ' &nbsp; &nbsp; ';
             print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
         }
         print '</div>'."\n";
 
         print '</form>'."\n";
-    }
-    elseif ($action == 'edit')
+    } elseif ($action == 'edit')
     {
         //print load_fiche_titre($langs->trans("EditCompany"));
 
@@ -1813,8 +1785,7 @@ else {
                 {
                     print '<input type="hidden" name="prefix_comm" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                     print $object->prefix_comm;
-                }
-                else {
+                } else {
                     print '<input type="text" size="5" maxlength="5" name="prefix_comm" id="prefix" value="'.dol_escape_htmltag($object->prefix_comm).'">';
                 }
                 print '</td>';
@@ -1835,12 +1806,10 @@ else {
                 if (empty($tmpcode) && !empty($object->oldcopy->code_client)) $tmpcode = $object->oldcopy->code_client; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
                 if (empty($tmpcode) && !empty($modCodeClient->code_auto)) $tmpcode = $modCodeClient->getNextValue($object, 0);
                 print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
-            }
-            elseif ($object->codeclient_modifiable())
+            } elseif ($object->codeclient_modifiable())
             {
             	print '<input type="text" name="customer_code" id="customer_code" size="16" value="'.dol_escape_htmltag($object->code_client).'" maxlength="15">';
-            }
-            else {
+            } else {
                 print $object->code_client;
                 print '<input type="hidden" name="customer_code" value="'.dol_escape_htmltag($object->code_client).'">';
             }
@@ -1875,12 +1844,10 @@ else {
                     if (empty($tmpcode) && !empty($object->oldcopy->code_fournisseur)) $tmpcode = $object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
                     if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) $tmpcode = $modCodeFournisseur->getNextValue($object, 1);
                     print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
-                }
-                elseif ($object->codefournisseur_modifiable())
+                } elseif ($object->codefournisseur_modifiable())
                 {
                     print '<input type="text" name="supplier_code" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
-                }
-                else {
+                } else {
                     print $object->code_fournisseur;
                     print '<input type="hidden" name="supplier_code" value="'.$object->code_fournisseur.'">';
                 }
@@ -1935,8 +1902,7 @@ else {
                 if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
                     print '<tr><td>'.$form->editfieldkey('Region-State', 'state_id', '', $object, 0).'</td><td colspan="3">';
-                }
-                else {
+                } else {
                     print '<tr><td>'.$form->editfieldkey('State', 'state_id', '', $object, 0).'</td><td colspan="3">';
                 }
 
@@ -2022,8 +1988,7 @@ else {
                     print '</span>';
                 }
                 print '</td></tr>';
-            }
-            elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1")
+            } elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1")
             {
                 print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax1IsUsed", $mysoc->country_code), 'localtax1assuj_value', '', $object, 0).'</td><td colspan="3">';
                 print $form->selectyesno('localtax1assuj_value', $object->localtax1_assuj, 1);
@@ -2034,8 +1999,7 @@ else {
                     print '</span>';
                 }
                 print '</td></tr>';
-            }
-            elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1")
+            } elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1")
             {
                 print '<tr><td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td colspan="3">';
                 print $form->selectyesno('localtax2assuj_value', $object->localtax2_assuj, 1);
@@ -2071,8 +2035,7 @@ else {
                     print "\n";
                     $s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
                     $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
-                }
-                else {
+                } else {
                     $s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
                 }
             }
@@ -2214,8 +2177,7 @@ else {
 
             print '</form>';
         }
-    }
-    else {
+    } else {
     	/*
          * View
          */
@@ -2376,8 +2338,7 @@ else {
 			            print '<td class="left">';
 			            $formcompany->select_localtax(1, $object->localtax1_value, "lt1");
 			            print '<input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-			        }
-			        else {
+			        } else {
 			            print '<td>'.$object->localtax1_value.'</td>';
 			        }
 			        print '</tr></form>';
@@ -2397,8 +2358,7 @@ else {
 			        }
 			        print '</tr></form>';
 			    }
-			}
-			elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1")
+			} elseif ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj != "1")
 			{
 			    print '<tr><td>'.$langs->transcountry("LocalTax1IsUsed", $mysoc->country_code).'</td><td>';
 			    print yn($object->localtax1_assuj);
@@ -2418,8 +2378,7 @@ else {
 			        }
 			        print '</tr></form>';
 			    }
-			}
-			elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1")
+			} elseif ($mysoc->localtax2_assuj == "1" && $mysoc->localtax1_assuj != "1")
 			{
 			    print '<tr><td>'.$langs->transcountry("LocalTax2IsUsed", $mysoc->country_code).'</td><td>';
 			    print yn($object->localtax2_assuj);
@@ -2469,14 +2428,12 @@ else {
                     print "\n";
                     $s .= '<a href="#" class="hideonsmartphone" onclick="javascript: CheckVAT( $(\'#tva_intra\').val() );">'.$langs->trans("VATIntraCheck").'</a>';
                     $s = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
-                }
-                else {
+                } else {
                     $s .= '<a href="'.$langs->transcountry("VATIntraCheckURL", $object->country_id).'" class="hideonsmartphone" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
                 }
             }
             print $s;
-        }
-        else {
+        } else {
             print '&nbsp;';
         }
         print '</td>';
@@ -2553,8 +2510,7 @@ else {
         	if ($action != 'editincoterm')
         	{
         		print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-        	}
-        	else {
+        	} else {
         		print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?socid='.$object->id);
         	}
         	print '</td></tr>';
@@ -2587,8 +2543,7 @@ else {
         	if ($action == 'editparentcompany')
         	{
         		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'editparentcompany', 's.rowid <> '.$object->id, 1);
-        	}
-        	else {
+        	} else {
         		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->parent, 'none', 's.rowid <> '.$object->id, 1);
         	}
         	print '</td>';
@@ -2610,8 +2565,7 @@ else {
             {
                 $adh->ref = $adh->getFullName($langs);
                 print $adh->getNomUrl(1);
-            }
-            else {
+            } else {
                 print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
             }
             print '</td>';
@@ -2660,8 +2614,7 @@ else {
 			        {
 			        	$langs->load("mails");
 			        	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-			        }
-			        else {
+			        } else {
 			        	$langs->load("mails");
 			       		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a>';
 			        }
@@ -2692,8 +2645,7 @@ else {
 		            if ($conf->use_javascript_ajax && empty($conf->dol_use_jmobile))	// We can't use preloaded confirm form with jmobile
 		            {
 		                print '<span id="action-delete" class="butActionDelete">'.$langs->trans('Delete').'</span>'."\n";
-		            }
-		            else {
+		            } else {
 		                print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 		            }
 		        }

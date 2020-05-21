@@ -240,8 +240,7 @@ if ($conf->accounting->enabled)
     print $boxlist;
 
     print '</div>';
-}
-else {
+} else {
     print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
 	print $langs->trans("Module10Desc")."<br>\n";

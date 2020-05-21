@@ -65,8 +65,7 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
     {
         $db->commit();
         $action = '';
-    }
-    else {
+    } else {
 	    setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
     }
@@ -86,13 +85,11 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
         {
         	header("Location: ".$backtopage);
         	exit;
-        }
-        else {
+        } else {
         	header("Location: list.php");
         	exit;
         }
-	}
-	else {
+	} else {
 	    $langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
@@ -128,8 +125,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->facture->
 
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id);
 		exit;
-	}
-	else {
+	} else {
 	    $langs->load("errors");
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
@@ -143,8 +139,7 @@ if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentNumberUpdateSucceeded'), null, 'mesgs');
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('PaymentNumberUpdateFailed'), null, 'errors');
 	}
 }
@@ -157,8 +152,7 @@ if ($action == 'setdatep' && !empty($_POST['datepday']))
 	if ($res === 0)
 	{
 		setEventMessages($langs->trans('PaymentDateUpdateSucceeded'), null, 'mesgs');
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans('PaymentDateUpdateFailed'), null, 'errors');
 	}
 }
@@ -407,8 +401,7 @@ if ($resql)
 	print '</div>';
 
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -438,8 +431,7 @@ if ($user->socid == 0 && $action == '')
 		if (!$disable_delete)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else {
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$title_button.'">'.$langs->trans('Delete').'</a>';
 		}
 	}

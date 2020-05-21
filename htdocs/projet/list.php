@@ -233,8 +233,7 @@ if (empty($reshook))
                 } else {
                     setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
                 }
-            }
-            else {
+            } else {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
                 $error++;
                 break;
@@ -246,8 +245,7 @@ if (empty($reshook))
             if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
             else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
             $db->commit();
-        }
-        else {
+        } else {
             $db->rollback();
         }
     }
@@ -282,8 +280,7 @@ if ($resql)
 	{
 		$listofprojectcontacttype[$obj->rowid] = $obj->code;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
@@ -749,8 +746,7 @@ while ($i < min($num, $limit))
 			if ($obj->socid)
 			{
 				print $socstatic->getNomUrl(1);
-			}
-			else {
+			} else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -769,8 +765,7 @@ while ($i < min($num, $limit))
 				if ($nbofsalesrepresentative > 3)   // We print only number
 				{
 					print $nbofsalesrepresentative;
-				}
-				elseif ($nbofsalesrepresentative > 0)
+				} elseif ($nbofsalesrepresentative > 0)
 				{
 					$userstatic = new User($db);
 					$j = 0;
@@ -790,8 +785,7 @@ while ($i < min($num, $limit))
 					}
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
-			}
-			else {
+			} else {
 				print '&nbsp';
 			}
 			print '</td>';

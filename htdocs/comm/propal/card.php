@@ -161,8 +161,7 @@ if (empty($reshook))
 		if (!GETPOST('socid', 3))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-		}
-		else {
+		} else {
 			if ($object->id > 0) {
 				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
 					//Get difference between old and new delivery date and change lines according to difference
@@ -268,9 +267,7 @@ if (empty($reshook))
 			if (count($object->errors) > 0) setEventMessages($object->error, $object->errors, 'errors');
 			else setEventMessages($langs->trans($object->error), null, 'errors');
 		}
-	}
-
-	elseif ($action == 'setdate' && $usercancreate)
+	} elseif ($action == 'setdate' && $usercancreate)
 	{
 		$datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
@@ -284,14 +281,12 @@ if (empty($reshook))
 			if ($result < 0)
 				dol_print_error($db, $object->error);
 		}
-	}
-	elseif ($action == 'setecheance' && $usercancreate)
+	} elseif ($action == 'setecheance' && $usercancreate)
 	{
 		$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
-	}
-	elseif ($action == 'setdate_livraison' && $usercancreate)
+	} elseif ($action == 'setdate_livraison' && $usercancreate)
 	{
 		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
 		if ($result < 0)
@@ -600,13 +595,11 @@ if (empty($reshook))
 
 						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 						exit();
-					}
-					else {
+					} else {
 						$db->rollback();
 						$action = 'create';
 					}
-				}
-				else {
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$db->rollback();
 					$action = 'create';
@@ -630,8 +623,7 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$db->commit();
-		}
-		else {
+		} else {
 			$db->rollback();
 		}
 	}
@@ -657,8 +649,7 @@ if (empty($reshook))
 				if (!$error)
 				{
 					$db->commit();
-				}
-				else {
+				} else {
 					$db->rollback();
 				}
 			}
@@ -682,8 +673,7 @@ if (empty($reshook))
 			if (!$error)
 			{
 				$db->commit();
-			}
-			else {
+			} else {
 				$db->rollback();
 			}
 		}
@@ -705,8 +695,7 @@ if (empty($reshook))
 	        {
 	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'OrderLine';
-	        }
-	        elseif ($fromElement == 'propal')
+	        } elseif ($fromElement == 'propal')
 	        {
 	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'PropaleLigne';
@@ -758,8 +747,7 @@ if (empty($reshook))
 	                } else {
 	                    $error++;
 	                }
-	            }
-	            else {
+	            } else {
 	                $error++;
 	            }
 	        }
@@ -798,9 +786,7 @@ if (empty($reshook))
 			$ret = $object->fetch($id); // Reload to get new records
 			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
-	}
-
-	elseif ($action == "setabsolutediscount" && $usercancreate) {
+	} elseif ($action == "setabsolutediscount" && $usercancreate) {
 		if ($_POST["remise_id"]) {
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
@@ -823,8 +809,7 @@ if (empty($reshook))
 		{
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
-		}
-		else {
+		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -956,8 +941,7 @@ if (empty($reshook))
 							if ($priceforthequantityarray['price_base_type'] == 'HT')
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else {
+							} else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -981,8 +965,7 @@ if (empty($reshook))
 							if ($priceforthequantityarray['price_base_type'] == 'HT')
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else {
+							} else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -1309,9 +1292,7 @@ if (empty($reshook))
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
-	}
-
-	elseif ($action == 'classin' && $usercancreate) {
+	} elseif ($action == 'classin' && $usercancreate) {
         // Set project
         $object->setProject(GETPOST('projectid', 'int'));
 	}
@@ -1329,13 +1310,9 @@ if (empty($reshook))
 	// Terms of payment
 	elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	}
-
-	elseif ($action == 'setremisepercent' && $usercancreate) {
+	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
-	}
-
-	elseif ($action == 'setremiseabsolue' && $usercancreate) {
+	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
 	}
 
@@ -1362,9 +1339,7 @@ if (empty($reshook))
 	// shipping method
 	elseif ($action == 'setshippingmethod' && $usercancreate) {
 		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
-	}
-
-	elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
@@ -1523,8 +1498,7 @@ if ($action == 'create')
 				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
 			}
 		}
-	}
-	else {
+	} else {
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
@@ -2298,8 +2272,7 @@ if ($action == 'create')
 		if ($action != 'editincoterm')
 		{
 			print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-		}
-		else {
+		} else {
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		}
 		print '</td></tr>';
@@ -2466,8 +2439,7 @@ if ($action == 'create')
 					if ($usercanvalidate)
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
-					}
-					else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
+					} else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 				}
 				// Create event
 				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
@@ -2542,8 +2514,7 @@ if ($action == 'create')
 						if ($usercanclose)
 						{
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
-						}
-						else {
+						} else {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}

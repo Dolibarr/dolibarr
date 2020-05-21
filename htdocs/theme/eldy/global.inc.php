@@ -2119,8 +2119,7 @@ a.tmenuimage:hover{
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }'."\n";
-            }
-            else {
+            } else {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
                 print "div.mainmenu.".$val." {\n";
@@ -2128,8 +2127,7 @@ a.tmenuimage:hover{
                 print "}\n";
             }
             $generic++;
-        }
-        else {
+        } else {
             print "div.mainmenu.".$val." {\n";
             print "	background-image: url(".$url.");\n";
             print "}\n";

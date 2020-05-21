@@ -50,8 +50,7 @@ if ($action == 'update' && is_array($arrayofparameters))
 	{
 		$db->commit();
 		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else {
+	} else {
 		$db->rollback();
 		if (empty($nomessageinupdate)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
 	}
@@ -110,8 +109,7 @@ if ($action == 'setModuleOptions')
     {
         $db->commit();
         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         $db->rollback();
         if (empty($nomessageinsetmoduleoptions)) setEventMessages($langs->trans("SetupNotSaved"), null, 'errors');
     }

@@ -140,14 +140,12 @@ class CSMSFile
 				{
 					$this->error = $sms->error;
 					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
-				}
-				else {
+				} else {
 					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
 					//var_dump($res);        // 1973128
 					if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
 				}
-			}
-		    elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+			} elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
 		    {
 		        $tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
 		        $classfile = $tmp[0]; $module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
@@ -174,26 +172,22 @@ class CSMSFile
     				if ($res <= 0)
     				{
     					dol_syslog("CSMSFile::sendfile: sms send error=".$this->error, LOG_ERR);
-    				}
-    				else {
+    				} else {
     					dol_syslog("CSMSFile::sendfile: sms send success with id=".$res, LOG_DEBUG);
     					//var_dump($res);        // 1973128
     					if (!empty($conf->global->MAIN_SMS_DEBUG)) $this->dump_sms_result($res);
     				}
-		        }
-		        catch (Exception $e)
+		        } catch (Exception $e)
 		        {
 		            dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
 		        }
-		    }
-			else {
+		    } else {
 				// Send sms method not correctly defined
 				// --------------------------------------
 
 				return 'Bad value for MAIN_SMS_SENDMODE constant';
 			}
-		}
-		else {
+		} else {
 			$this->error = 'No sms sent. Feature is disabled by option MAIN_DISABLE_ALL_SMS';
 			dol_syslog("CSMSFile::sendfile: ".$this->error, LOG_WARNING);
 		}

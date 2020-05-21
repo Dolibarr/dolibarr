@@ -166,8 +166,7 @@ class FormCompany extends Form
 			}
 
 			print Form::selectarray($htmlname, $options, $selected);
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		if (!empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 		print '</form>';
@@ -241,8 +240,7 @@ class FormCompany extends Form
 					if ($obj->code == '0')		// Le code peut etre une chaine
 					{
 						$out .= '<option value="0">&nbsp;</option>';
-					}
-					else {
+					} else {
 						if (!$country || $country != $obj->country)
 						{
 							// Affiche la rupture si on est en mode liste multipays
@@ -256,8 +254,7 @@ class FormCompany extends Form
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>';
-						}
-						else {
+						} else {
 							$out .= '<option value="'.$obj->rowid.'">';
 						}
 
@@ -266,16 +263,13 @@ class FormCompany extends Form
 						($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')) {
 							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
 								$out .= $obj->region_name.' - '.$obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
-							}
-							else {
+							} else {
 								$out .= $obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
-						}
-						else {
+						} else {
 							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
 								$out .= $obj->region_name.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
-							}
-							else {
+							} else {
 								$out .= ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
 						}
@@ -287,8 +281,7 @@ class FormCompany extends Form
 			}
 			if (!empty($htmlname)) $out .= '</select>';
 			if (!empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -340,8 +333,7 @@ class FormCompany extends Form
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->code == 0) {
 						print '<option value="0">&nbsp;</option>';
-					}
-					else {
+					} else {
 						if ($country == '' || $country != $obj->country)
 						{
 							// Show break
@@ -354,8 +346,7 @@ class FormCompany extends Form
 						if ($selected > 0 && $selected == $obj->code)
 						{
 							print '<option value="'.$obj->code.'" selected>'.$obj->label.'</option>';
-						}
-						else {
+						} else {
 							print '<option value="'.$obj->code.'">'.$obj->label.'</option>';
 						}
 					}
@@ -363,8 +354,7 @@ class FormCompany extends Form
 				}
 			}
 			print '</select>';
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -405,8 +395,7 @@ class FormCompany extends Form
 					if ($selected == $obj->code)
 					{
 						$out .= '<option value="'.$obj->code.'" selected>';
-					}
-					else {
+					} else {
 						$out .= '<option value="'.$obj->code.'">';
 					}
 					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
@@ -417,8 +406,7 @@ class FormCompany extends Form
 			}
 			$out .= '</select>';
 			if ($user->admin) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -519,8 +507,7 @@ class FormCompany extends Form
 					if ($selected > 0 && $selected == $val['code'])
 					{
 						$out .= '<option value="'.$val['code'].'" selected>';
-					}
-					else {
+					} else {
 						$out .= '<option value="'.$val['code'].'">';
 					}
 					// If translation exists, we use it, otherwise we use default label in database
@@ -536,8 +523,7 @@ class FormCompany extends Form
 	        $out .= ajax_combobox($htmlname);
 
 			$out .= '</div>';
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -644,8 +630,7 @@ class FormCompany extends Form
 			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" />';
 			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
-		}
-		else {
+		} else {
 			// Search to list thirdparties
 			$sql = "SELECT s.rowid, s.nom as name FROM";
 			$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -683,8 +668,7 @@ class FormCompany extends Form
 							if ($disabled) print ' disabled';
 							print ' selected>'.dol_trunc($obj->name, 24).'</option>';
 							$firstCompany = $obj->rowid;
-						}
-						else {
+						} else {
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled';
 							print '>'.dol_trunc($obj->name, 24).'</option>';
@@ -695,8 +679,7 @@ class FormCompany extends Form
 				print "</select>\n";
 				print ajax_combobox($htmlname);
 				return $firstCompany;
-			}
-			else {
+			} else {
 				dol_print_error($this->db);
 				return 0;
 			}
@@ -838,8 +821,7 @@ class FormCompany extends Form
         			elseif ($idprof == 3) $formlength = 5; // 4 chiffres et 1 lettre depuis janvier
         			elseif ($idprof == 4) $formlength = 32; // No maximum as we need to include a town name in this id
         		}
-        	}
-        	elseif ($country_code == 'ES')
+        	} elseif ($country_code == 'ES')
         	{
         		if ($idprof == 1) $formlength = 9; //CIF/NIF/NIE 9 digits
         		if ($idprof == 2) $formlength = 12; //NASS 12 digits without /
@@ -902,8 +884,7 @@ class FormCompany extends Form
     				if ($selected == $valors[$i])
     				{
     					print '<option value="'.$valors[$i].'" selected>';
-    				}
-    				else {
+    				} else {
     					print '<option value="'.$valors[$i].'">';
     				}
     				print $valors[$i];

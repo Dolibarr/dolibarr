@@ -130,8 +130,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
 			$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 			$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
 			$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
-		}
-		else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+		} else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}
 
 	$conf->db->type = $dolibarr_main_db_type;
@@ -213,15 +212,13 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
 			{
 				print $langs->trans("AdminLoginCreatedSuccessfuly", $login)."<br>";
 				$success = 1;
-			}
-			else {
+			} else {
 				if ($newuser->error == 'ErrorLoginAlreadyExists')
 				{
 					dolibarr_install_syslog('step5: AdminLoginAlreadyExists', LOG_WARNING);
 					print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists", $login)."</div><br>";
 					$success = 1;
-				}
-				else {
+				} else {
 					dolibarr_install_syslog('step5: FailedToCreateAdminLogin '.$newuser->error, LOG_ERR);
 					print '<br><div class="error">'.$langs->trans("FailedToCreateAdminLogin").' '.$newuser->error.'</div><br><br>';
 				}
@@ -237,8 +234,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
 				{
 					$conf->global->MAIN_VERSION_FIRST_INSTALL = $targetversion;
 					$db->commit();
-				}
-				else {
+				} else {
 					//if (! $resql) dol_print_error($db,'Error in setup program');      // We ignore errors. Key may already exists
 					$db->commit();
 				}
@@ -288,8 +284,7 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
 
 				$db->commit();
 			}
-		}
-		else {
+		} else {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
 	}
@@ -320,16 +315,13 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i', $action))
 				$resql = $db->query("INSERT INTO ".MAIN_DB_PREFIX."const(name,value,type,visible,note,entity) VALUES (".$db->encrypt('MAIN_VERSION_LAST_UPGRADE', 1).",".$db->encrypt($targetversion, 1).",'chaine',0,'Dolibarr version for last upgrade',0)");
 				if (!$resql) dol_print_error($db, 'Error in setup program');
 				$conf->global->MAIN_VERSION_LAST_UPGRADE = $targetversion;
-			}
-			else {
+			} else {
 				dolibarr_install_syslog('step5: we run an upgrade to version '.$targetversion.' but database was already upgraded to '.$conf->global->MAIN_VERSION_LAST_UPGRADE.'. We keep MAIN_VERSION_LAST_UPGRADE as it is.');
 			}
-		}
-		else {
+		} else {
 			print $langs->trans("ErrorFailedToConnect")."<br>";
 		}
-	}
-	else {
+	} else {
 		dol_print_error('', 'step5.php: unknown choice of action');
 	}
 
@@ -380,8 +372,7 @@ if ($action == "set" && $success)
 		print '<div class="center"><a href="../admin/index.php?mainmenu=home&leftmenu=setup'.(isset($login) ? '&username='.urlencode($login) : '').'">';
 		print '<span class="fas fa-external-link-alt"></span> '.$langs->trans("GoToSetupArea");
 		print '</a></div>';
-	}
-	else {
+	} else {
 		// If here MAIN_VERSION_LAST_UPGRADE is not empty
 		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
 		print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b><br>';
@@ -427,8 +418,7 @@ elseif (empty($action) || preg_match('/upgrade/i', $action))
 		print '<div class="center"><a href="../index.php?mainmenu=home'.(isset($login) ? '&username='.urlencode($login) : '').'">';
 		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToDolibarr").'...';
 		print '</a></div><br>';
-	}
-	else {
+	} else {
 		// If here MAIN_VERSION_LAST_UPGRADE is not empty
 		print $langs->trans("VersionLastUpgrade").': <b><span class="ok">'.$conf->global->MAIN_VERSION_LAST_UPGRADE.'</span></b><br>';
 		print $langs->trans("VersionProgram").': <b><span class="ok">'.DOL_VERSION.'</span></b>';
@@ -439,8 +429,7 @@ elseif (empty($action) || preg_match('/upgrade/i', $action))
 		print '<span class="fas fa-link-alt"></span> '.$langs->trans("GoToUpgradePage");
 		print '</a></div>';
 	}
-}
-else {
+} else {
 	dol_print_error('', 'step5.php: unknown choice of action');
 }
 

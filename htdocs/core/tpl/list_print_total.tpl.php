@@ -20,8 +20,7 @@ if (isset($totalarray['pos']))
 			{
 				if ($num < $limit) print '<td class="left">'.$langs->trans("Total").'</td>';
 				else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-			}
-			else print '<td></td>';
+			} else print '<td></td>';
 		}
 	}
 	print '</tr>';

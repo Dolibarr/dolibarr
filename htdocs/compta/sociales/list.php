@@ -80,8 +80,7 @@ if (!GETPOSTISSET('search_typeid'))
 		$part = explode(':', $val);
 		if ($part[0] == 'cs.fk_type') $search_typeid = $part[1];
 	}
-}
-else {
+} else {
 	$search_typeid = GETPOST('search_typeid', 'int');
 }
 
@@ -207,8 +206,7 @@ if ($resql)
 		$countrynotdefined = $langs->trans("ErrorSetACountryFirst");
 		print $countrynotdefined;
 		print '</div>';
-	}
-	else {
+	} else {
 	    print '<div class="div-table-responsive">';
 	    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -311,8 +309,7 @@ if ($resql)
 			if ($obj->periode)
 			{
 				print '<a href="list.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
-			}
-			else {
+			} else {
 				print '&nbsp;';
 			}
 			print "</td>\n";
@@ -342,8 +339,7 @@ if ($resql)
 		print '</div>';
 	}
 	print '</form>';
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

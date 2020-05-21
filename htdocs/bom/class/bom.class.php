@@ -381,14 +381,11 @@ class BOM extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -513,14 +510,12 @@ class BOM extends CommonObject
 	        if ($numref != "")
 	        {
 	            return $numref;
-	        }
-	        else {
+	        } else {
 	            $this->error = $obj->error;
 	            //dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 	            return "";
 	        }
-	    }
-	    else {
+	    } else {
 	        print $langs->trans("Error")." ".$langs->trans("Error_BOM_ADDON_NotDefined");
 	        return "";
 	    }
@@ -565,8 +560,7 @@ class BOM extends CommonObject
 	    {
 	        $this->fetch_product();
 	        $num = $this->getNextNumRef($this->product);
-	    }
-	    else {
+	    } else {
 	        $num = $this->ref;
 	    }
 	    $this->newref = dol_sanitizeFileName($num);
@@ -647,8 +641,7 @@ class BOM extends CommonObject
 	    {
 	        $this->db->commit();
 	        return 1;
-	    }
-	    else {
+	    } else {
 	        $this->db->rollback();
 	        return -1;
 	    }
@@ -784,8 +777,7 @@ class BOM extends CommonObject
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -891,8 +883,7 @@ class BOM extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -914,8 +905,7 @@ class BOM extends CommonObject
 	        $this->error = $this->error;
 	        $this->errors = $this->errors;
 	        return $result;
-	    }
-	    else {
+	    } else {
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
@@ -1207,14 +1197,11 @@ class BOMLine extends CommonObjectLine
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -1328,8 +1315,7 @@ class BOMLine extends CommonObjectLine
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1422,8 +1408,7 @@ class BOMLine extends CommonObjectLine
 			}
 
 			$this->db->free($result);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 	}

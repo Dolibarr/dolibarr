@@ -125,8 +125,7 @@ if ($action == 'addline')
 		// Warning, don't forget lines already added into the $_SESSION['massstockmove']
 		if ($producttmp->hasbatch())
 		{
-		}
-		else {
+		} else {
 		}
 	}
 
@@ -224,8 +223,7 @@ if ($action == 'createmovements')
 						$error++;
 						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
-				}
-				else {
+				} else {
 					$arraybatchinfo = $product->loadBatchInfo($batch);
 					if (count($arraybatchinfo) > 0)
 					{
@@ -233,8 +231,7 @@ if ($action == 'createmovements')
 						$dlc = $firstrecord['eatby'];
 						$dluo = $firstrecord['sellby'];
 						//var_dump($batch); var_dump($arraybatchinfo); var_dump($firstrecord); var_dump($dlc); var_dump($dluo); exit;
-					}
-					else {
+					} else {
 						$dlc = '';
 						$dluo = '';
 					}
@@ -277,8 +274,7 @@ if ($action == 'createmovements')
 						setEventMessages($product->errors, $product->errorss, 'errors');
 					}
 				}
-			}
-			else {
+			} else {
 				// dol_print_error('',"Bad value saved into sessions");
 				$error++;
 			}
@@ -293,8 +289,7 @@ if ($action == 'createmovements')
 		setEventMessages($langs->trans("StockMovementRecorded"), null, 'mesgs');
 		header("Location: ".DOL_URL_ROOT.'/product/stock/index.php'); // Redirect to avoid pb when using back
 		exit;
-	}
-	else {
+	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
@@ -358,8 +353,7 @@ $filtertype = 0;
 if (!empty($conf->global->STOCK_SUPPORTS_SERVICES)) $filtertype = '';
 if ($conf->global->PRODUIT_LIMIT_SIZE <= 0) {
 	$limit = '';
-}
-else {
+} else {
 	$limit = $conf->global->PRODUIT_LIMIT_SIZE;
 }
 

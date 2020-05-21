@@ -73,8 +73,7 @@ abstract class Stats
 				$foundintocache = 1;
 
 				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
-			}
-			else {
+			} else {
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
@@ -83,8 +82,7 @@ abstract class Stats
 		{
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
-		}
-		else {
+		} else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) $year = $year - 1;
@@ -168,8 +166,7 @@ abstract class Stats
         		$foundintocache = 1;
 
         		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
-        	}
-        	else {
+        	} else {
         		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
         	}
         }
@@ -179,8 +176,7 @@ abstract class Stats
         {
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
-        }
-        else {
+        } else {
 			$year = $startyear;
 			$sm = $startmonth - 1;
 			if ($sm != 0) $year = $year - 1;
@@ -216,8 +212,7 @@ abstract class Stats
 				fclose($fp);
 				if (!empty($conf->global->MAIN_UMASK)) $newmask = $conf->global->MAIN_UMASK;
 				@chmod($newpathofdestfile, octdec($newmask));
-			}
-			else dol_syslog("Failed to write cache file", LOG_ERR);
+			} else dol_syslog("Failed to write cache file", LOG_ERR);
 			$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $nowgmt;
 		}
 
@@ -295,8 +290,7 @@ abstract class Stats
         		$foundintocache = 1;
 
         		$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
-        	}
-        	else {
+        	} else {
         		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
         	}
         }
@@ -306,8 +300,7 @@ abstract class Stats
         {
         	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
         	$data = json_decode(file_get_contents($newpathofdestfile), true);
-        }
-        else {
+        } else {
 			$data = $this->getAllByProduct($year, $limit);
 			//					$data[$i][]=$datay[$year][$i][1];	// set yval for x=i
 		}
@@ -360,8 +353,7 @@ abstract class Stats
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 		return $result;
@@ -404,8 +396,7 @@ abstract class Stats
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 		return $result;
@@ -443,8 +434,7 @@ abstract class Stats
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -502,8 +492,7 @@ abstract class Stats
 		  		$i++;
 		  	}
 		  	$this->db->free($resql);
-		}
-        else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		for ($i = 1; $i < 13; $i++)
 		{
@@ -558,8 +547,7 @@ abstract class Stats
 		  		$i++;
 		  	}
 		  	$this->db->free($resql);
-		}
-        else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		for ($i = 1; $i < 13; $i++)
 		{
@@ -613,8 +601,7 @@ abstract class Stats
             }
 		  	if ($num > $limit) $result[$i] = array($langs->transnoentitiesnoconv("Other"), $other);
 		  	$this->db->free($resql);
-		}
-        else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		return $result;
     }

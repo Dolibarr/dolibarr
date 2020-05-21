@@ -108,12 +108,10 @@ if ($action == 'update' && $user->rights->categorie->creer)
 		{
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&type='.$type);
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }

@@ -273,8 +273,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				    $format = $conf->global->MAIN_DOC_USE_TIMING;
 				    if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
-				}
-				else {
+				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
 				}
 				$file = $dir.'/'.$filename;
@@ -306,8 +305,7 @@ class doc_generic_mo_odt extends ModelePDFMo
                			// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
             			$contactobject = $object->contact;
                     }
-				}
-				else {
+				} else {
 					$socobject = $object->thirdparty;
 				}
 
@@ -340,8 +338,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 						'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($e->getMessage(), LOG_INFO);
@@ -357,8 +354,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				// Make substitutions into odt of freetext
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
                     dol_syslog($e->getMessage(), LOG_INFO);
 				}
@@ -389,13 +385,11 @@ class doc_generic_mo_odt extends ModelePDFMo
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else // Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
                         dol_syslog($e->getMessage(), LOG_INFO);
 					}
@@ -405,8 +399,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 					$foundtagforlines = 1;
 					try {
 						$listlines = $odfHandler->setSegment('lines');
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
 						// We may arrive here if tags for lines not present into template
 						$foundtagforlines = 0;
@@ -427,12 +420,10 @@ class doc_generic_mo_odt extends ModelePDFMo
 							{
 								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
-								}
-								catch (OdfException $e)
+								} catch (OdfException $e)
 								{
                                     dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e)
+								} catch (SegmentException $e)
 								{
                                     dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -441,8 +432,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 						}
 						$odfHandler->mergeSegment($listlines);
 					}
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -455,8 +445,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				{
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
                         dol_syslog($e->getMessage(), LOG_INFO);
 					}
@@ -476,8 +465,7 @@ class doc_generic_mo_odt extends ModelePDFMo
                         dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
-				}
-				else {
+				} else {
 					try {
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
@@ -498,8 +486,7 @@ class doc_generic_mo_odt extends ModelePDFMo
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // Success
-			}
-			else {
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

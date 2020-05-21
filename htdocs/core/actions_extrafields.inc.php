@@ -122,8 +122,7 @@ if ($action == 'add')
 	    					$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 	    					$action = 'create';
 	    				}
-	    			}
-	    			else {
+	    			} else {
 	    				$error++;
 	    				$langs->load("errors");
 	    				$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
@@ -148,8 +147,7 @@ if ($action == 'add')
     				{
     					$params['options'] = array($parameters=>null);
     				}
-    			}
-    			else {
+    			} else {
     				//Esle it's separated key/value and coma list
     				foreach ($parameters_array as $param_ligne)
     				{
@@ -189,22 +187,19 @@ if ($action == 'add')
     				setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
-    			}
-    			else {
+    			} else {
                     $error++;
     			    $mesg = $extrafields->error;
                     setEventMessages($mesg, null, 'errors');
     			}
-    		}
-    		else {
+    		} else {
                 $error++;
     		    $langs->load("errors");
     			$mesg = $langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters", $langs->transnoentities("AttributeCode"));
     			setEventMessages($mesg, null, 'errors');
     			$action = 'create';
     		}
-	    }
-	    else {
+	    } else {
 	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
@@ -288,8 +283,7 @@ if ($action == 'update')
 	        				$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 	        				$action = 'edit';
 	        			}
-	        		}
-	        		else {
+	        		} else {
 	        			$error++;
 	        			$langs->load("errors");
 	        			$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
@@ -313,8 +307,7 @@ if ($action == 'update')
     				{
     					$params['options'] = array($parameters=>null);
     				}
-    			}
-    			else {
+    			} else {
     				//Esle it's separated key/value and coma list
     				foreach ($parameters_array as $param_ligne)
     				{
@@ -354,21 +347,18 @@ if ($action == 'update')
     				setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
     				header("Location: ".$_SERVER["PHP_SELF"]);
     				exit;
-    			}
-    			else {
+    			} else {
                     $error++;
     			    $mesg = $extrafields->error;
     			    setEventMessages($mesg, null, 'errors');
     			}
-    		}
-    		else {
+    		} else {
     		    $error++;
     			$langs->load("errors");
     			$mesg = $langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));
     			setEventMessages($mesg, null, 'errors');
     		}
-	    }
-	    else {
+	    } else {
 	    	setEventMessages($mesg, null, 'errors');
 	    }
 	}
@@ -384,10 +374,8 @@ if ($action == 'delete')
         {
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
-        }
-        else $mesg = $extrafields->error;
-	}
-	else {
+        } else $mesg = $extrafields->error;
+	} else {
 	    $error++;
 		$langs->load("errors");
 		$mesg = $langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));

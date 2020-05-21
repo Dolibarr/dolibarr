@@ -66,8 +66,7 @@ function GetResourceTypeDirectory($resourceType, $sCommand)
 
 		// Map the "UserFiles" path to a local directory.
 		return Server_MapPath($Config['QuickUploadPath'][$resourceType]);
-	}
-	else {
+	} else {
 		if (strlen($Config['FileTypesAbsolutePath'][$resourceType]) > 0)
 			return $Config['FileTypesAbsolutePath'][$resourceType];
 
@@ -176,8 +175,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		if (isset($Config['ChmodOnFolderCreate']) && !$Config['ChmodOnFolderCreate'])
 		{
 			mkdir($folderPath);
-		}
-		else {
+		} else {
 			$permissions = '0777';
 			if (isset($Config['ChmodOnFolderCreate']) && $Config['ChmodOnFolderCreate'])
 			{
@@ -199,8 +197,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		ini_restore('error_reporting');
 
 		return $sErrorMsg;
-	}
-	else return '';
+	} else return '';
 }
 
 /**

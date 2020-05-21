@@ -89,8 +89,7 @@ if ($resql)
 	print "</table>";
 	print "<br>\n";
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -209,8 +208,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 			print "<br>\n";
 		}
 		$db->free($resql);
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -262,8 +260,7 @@ if ($resql)
 	print "</table>\n";
 
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

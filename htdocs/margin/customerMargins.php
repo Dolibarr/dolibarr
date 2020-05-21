@@ -108,8 +108,7 @@ if ($socid > 0) {
 		if (!$sortorder) $sortorder = "DESC";
 		if (!$sortfield) $sortfield = "f.datef";
 	}
-}
-else {
+} else {
 	print '<tr><td class="titlefield">'.$langs->trans('ThirdPartyName').'</td>';
 	print '<td class="maxwidthonsmartphone" colspan="4">';
 	print $form->select_company(null, 'socid', '(client=1 OR client=3)', 1, 0, 0);
@@ -125,8 +124,7 @@ if (!$sortfield)
 	{
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
-	}
-	else {
+	} else {
 	    $sortfield = "s.nom";
 	    $sortorder = "ASC";
 	}
@@ -267,8 +265,7 @@ if ($result)
 	if (!empty($client)) {
   		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
   		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;socid=".$socid, 'align="center"', $sortfield, $sortorder);
-	}
-	else print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
+	} else print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
@@ -295,8 +292,7 @@ if ($result)
 			{
 				$marginRate = ($pa != 0) ?-1 * (100 * $marge / $pa) : '';
 				$markRate = ($pv != 0) ?-1 * (100 * $marge / $pv) : '';
-			}
-			else {
+			} else {
 				$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
 				$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
 			}
@@ -310,8 +306,7 @@ if ($result)
 				print "</td>\n";
 				print "<td class=\"center\">";
 				print dol_print_date($db->jdate($objp->datef), 'day')."</td>";
-		  	}
-		  	else {
+		  	} else {
 				$companystatic->id = $objp->socid;
 				$companystatic->name = $objp->name;
 				$companystatic->client = $objp->client;
@@ -363,8 +358,7 @@ if ($result)
 
 	print "</table>";
 	print '</div>';
-}
-else {
+} else {
 	dol_print_error($db);
 }
 $db->free($result);

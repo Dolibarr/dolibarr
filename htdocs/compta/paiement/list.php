@@ -129,8 +129,7 @@ if (GETPOST("orphelins", "alpha"))
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
-}
-else {
+} else {
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql .= " p.statut, p.num_paiement as num_payment,";
     $sql .= " c.code as paiement_code,";
@@ -377,8 +376,7 @@ if ($resql)
     print "</table>\n";
     print "</div>";
     print "</form>\n";
-}
-else {
+} else {
     dol_print_error($db);
 }
 

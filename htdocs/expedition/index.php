@@ -192,8 +192,7 @@ if ($resql)
 		print "</table></div><br>";
 	}
 	$db->free($resql);
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 /*
  * Open orders
@@ -258,8 +257,7 @@ if ($resql)
 
 		print "</table></div><br>";
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 print '</div></div></div>';

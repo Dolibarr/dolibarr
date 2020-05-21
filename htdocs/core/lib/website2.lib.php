@@ -192,8 +192,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					}
 				}
 			}
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 	}
 	// Add canonical reference
 	if ($object->virtualhost) {
@@ -518,8 +517,7 @@ function showWebsiteTemplates(Website $website)
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 

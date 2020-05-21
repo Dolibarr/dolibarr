@@ -175,8 +175,7 @@ if (empty($reshook))
 			if (!$result)
 			{
 				setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
-			}
-			else {
+			} else {
 				// If this account is the default bank account, we disable others
 				if ($companybankaccount->default_rib)
 				{
@@ -229,8 +228,7 @@ if (empty($reshook))
 			if (!$result)
 			{
 				setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
-			}
-			else {
+			} else {
 				// If this account is the default bank account, we disable others
 				if ($companypaymentmode->default_rib)
 				{
@@ -336,8 +334,7 @@ if (empty($reshook))
 				$url = $_SERVER["PHP_SELF"].'?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
-			}
-			else {
+			} else {
 				$db->rollback();
 			}
 		}
@@ -404,8 +401,7 @@ if (empty($reshook))
 				$url = $_SERVER["PHP_SELF"].'?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
-			}
-			else {
+			} else {
 				$db->rollback();
 			}
 		}
@@ -420,8 +416,7 @@ if (empty($reshook))
 			$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 			header('Location: '.$url);
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
@@ -446,12 +441,10 @@ if (empty($reshook))
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
 				header('Location: '.$url);
 				exit;
-			}
-			else {
+			} else {
 				setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 			}
-		}
-		else {
+		} else {
 			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 		}
 	}
@@ -466,12 +459,10 @@ if (empty($reshook))
 				$url = $_SERVER['PHP_SELF']."?socid=".$object->id;
 				header('Location: '.$url);
 				exit;
-			}
-			else {
+			} else {
 				setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
 			}
-		}
-		else {
+		} else {
 			setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
 		}
 	}
@@ -506,16 +497,14 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
-			}
-			else {
+			} else {
 				// Creation of Stripe customer + update of societe_account
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus, 1);
 				if (!$cu)
 				{
 					$error++;
 					setEventMessages($stripe->error, $stripe->errors, 'errors');
-				}
-				else {
+				} else {
 					$stripecu = $cu->id;
 				}
 			}
@@ -529,8 +518,7 @@ if (empty($reshook))
 			{
 				$error++;
 				setEventMessages('ThisPaymentModeIsNotACard', null, 'errors');
-			}
-			else {
+			} else {
 				// Get the Stripe customer
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if (!$cu)
@@ -600,8 +588,7 @@ if (empty($reshook))
 			{
 				$stripecu = $newcu;
 				$db->commit();
-			}
-			else {
+			} else {
 				$db->rollback();
 			}
 		}
@@ -656,8 +643,7 @@ if (empty($reshook))
 			{
 				$stripesupplieracc = $newsup;
 				$db->commit();
-			}
-			else {
+			} else {
 				$db->rollback();
 			}
 		}
@@ -670,22 +656,19 @@ if (empty($reshook))
 				$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		}
-		elseif ($action == 'setassourcedefault')	// Set as default when payment mode defined remotely only
+		} elseif ($action == 'setassourcedefault')	// Set as default when payment mode defined remotely only
 		{
 			try {
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if (preg_match('/pm_/', $source))
 				{
 					$cu->invoice_settings->default_payment_method = (string) $source; // New
-				}
-				else {
+				} else {
 					$cu->default_source = (string) $source; // Old
 				}
 				$result = $cu->save();
@@ -693,14 +676,12 @@ if (empty($reshook))
 				$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
-		}
-		elseif ($action == 'deletecard' && $source)
+		} elseif ($action == 'deletecard' && $source)
 		{
 			try {
 				if (preg_match('/pm_/', $source))
@@ -710,8 +691,7 @@ if (empty($reshook))
 			        {
 					    $payment_method->detach();
 				    }
-				}
-				else {
+				} else {
 				    $cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				    $card = $cu->sources->retrieve("$source");
 				    if ($card) {
@@ -727,8 +707,7 @@ if (empty($reshook))
 				$url = DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id;
 				header('Location: '.$url);
 				exit;
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				$error++;
 				setEventMessages($e->getMessage(), null, 'errors');
@@ -766,8 +745,7 @@ if (!$id)
 {
 	$companybankaccount->fetch(0, $object->id);
 	$companypaymentmode->fetch(0, null, $object->id, 'card');
-}
-else {
+} else {
 	$companybankaccount->fetch($id);
 	$companypaymentmode->fetch($id);
 }
@@ -958,8 +936,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					if (empty($conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION))
 					{
 						$listofsources = $customerstripe->sources->data;
-					}
-					else {
+					} else {
 						$service = 'StripeTest';
 						$servicestatus = 0;
 						if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha'))
@@ -980,16 +957,14 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							}
 
 							$listofsources = $paymentmethodobjs->data;
-						}
-						catch (Exception $e)
+						} catch (Exception $e)
 						{
 							$error++;
 							setEventMessages($e->getMessage(), null, 'errors');
 						}
 					}
 				}
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
 			}
@@ -1086,8 +1061,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								$img = picto_from_langcode($companypaymentmodetemp->country_code);
 								print $img ? $img.' ' : '';
 								print getCountry($companypaymentmodetemp->country_code, 1);
-							}
-							else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+							} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 							print '</td>';
 							// Default
 							print '<td class="center">';
@@ -1134,8 +1108,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						$i++;
 					}
 				}
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 		}
 
 		// Show remote sources (not already shown as local source)
@@ -1175,20 +1148,16 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				if ($src->object == 'card')
 				{
 					print img_credit_card($src->brand);
-				}
-				elseif ($src->object == 'source' && $src->type == 'card')
+				} elseif ($src->object == 'source' && $src->type == 'card')
 				{
 					print img_credit_card($src->card->brand);
-				}
-				elseif ($src->object == 'source' && $src->type == 'sepa_debit')
+				} elseif ($src->object == 'source' && $src->type == 'sepa_debit')
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
-				}
-				elseif ($src->object == 'payment_method' && $src->type == 'card')
+				} elseif ($src->object == 'payment_method' && $src->type == 'card')
 				{
 					print img_credit_card($src->card->brand);
-				}
-				elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit')
+				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit')
 				{
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
@@ -1204,10 +1173,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						$img = picto_from_langcode($src->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->country, 1);
-					}
-					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				}
-				elseif ($src->object == 'source' && $src->type == 'card')
+					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				} elseif ($src->object == 'source' && $src->type == 'card')
 				{
 					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
@@ -1217,10 +1184,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->card->country, 1);
-					}
-					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				}
-				elseif ($src->object == 'source' && $src->type == 'sepa_debit')
+					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				} elseif ($src->object == 'source' && $src->type == 'sepa_debit')
 				{
 					print 'SEPA debit';
 					print '</td><td>';
@@ -1229,10 +1194,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							$img = picto_from_langcode($src->sepa_debit->country);
 							print $img ? $img.' ' : '';
 							print getCountry($src->sepa_debit->country, 1);
-					}
-					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				}
-				elseif ($src->object == 'payment_method' && $src->type == 'card')
+					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				} elseif ($src->object == 'payment_method' && $src->type == 'card')
 				{
 					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
@@ -1242,10 +1205,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						$img = picto_from_langcode($src->card->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->card->country, 1);
-					}
-					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				}
-				elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit')
+					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				} elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit')
 				{
 					print 'SEPA debit';
 					print '</td><td>';
@@ -1254,10 +1215,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 						$img = picto_from_langcode($src->sepa_debit->country);
 						print $img ? $img.' ' : '';
 						print getCountry($src->sepa_debit->country, 1);
-					}
-					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
-				}
-				else {
+					} else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				} else {
 					print '</td><td>';
 				}
 				print '</td>';

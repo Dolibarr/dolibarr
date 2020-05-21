@@ -54,8 +54,7 @@ if (GETPOST('search_actioncode', 'array'))
 {
     $actioncode = GETPOST('search_actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else {
+} else {
     $actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
@@ -282,16 +281,14 @@ if (!empty($actioncode))
             if ($actioncode == 'AC_OTH') $sql .= " AND c.type != 'systemauto'";
             if ($actioncode == 'AC_OTH_AUTO') $sql .= " AND c.type = 'systemauto'";
         }
-    }
-    else {
+    } else {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
         else {
             if (is_array($actioncode))
             {
                 $sql .= " AND c.code IN ('".implode("','", $actioncode)."')";
-            }
-            else {
+            } else {
                 $sql .= " AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
             }
         }
@@ -413,8 +410,7 @@ if ($resql)
     if (empty($reshook))
     {
 		$s .= $hookmanager->resPrint;
-    }
-    elseif ($reshook > 1)
+    } elseif ($reshook > 1)
 	{
     	$s = $hookmanager->resPrint;
     }
@@ -564,8 +560,7 @@ if ($resql)
 			{
 				$userstatic->fetch($obj->fk_user_action);
 				print $userstatic->getNomUrl(-1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print '</td>';
 		}
 
@@ -580,8 +575,7 @@ if ($resql)
 			{
 				if ($actioncomm->type_picto) {
 					$imgpicto = img_picto('', $actioncomm->type_picto);
-				}
-				else {
+				} else {
 					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
@@ -649,8 +643,7 @@ if ($resql)
 				$societestatic->email = $obj->socemail;
 
 				print $societestatic->getNomUrl(1, '', 28);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print '</td>';
 		}
 
@@ -672,8 +665,7 @@ if ($resql)
                             $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 0);
                             $contactList[] = $contact->getNomUrl(1, '', 0);
                         }
-                    }
-                    else {
+                    } else {
                         // use cache
                         $contactList[] = $contactListCache[$socpeopleassigned['id']];
                     }
@@ -681,8 +673,7 @@ if ($resql)
                 if (!empty($contactList)) {
                     print implode(', ', $contactList);
                 }
-            }
-            elseif ($obj->fk_contact > 0) //keep for retrocompatibility with faraway event
+            } elseif ($obj->fk_contact > 0) //keep for retrocompatibility with faraway event
 			{
 				$contactstatic->id = $obj->fk_contact;
 				$contactstatic->email = $obj->email;
@@ -693,8 +684,7 @@ if ($resql)
 				$contactstatic->phone_perso = $obj->phone_perso;
 				$contactstatic->country_id = $obj->country_id;
 				print $contactstatic->getNomUrl(1, '', 0);
-			}
-			else {
+			} else {
 				print "&nbsp;";
 			}
 			print '</td>';
@@ -744,8 +734,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

@@ -82,8 +82,7 @@ $idobject = $myproduct->create($user);
 if ($idobject > 0)
 {
 	print "OK Object created with id ".$idobject."\n";
-}
-else {
+} else {
 	$error++;
 	dol_print_error($db, $myproduct->error);
 }
@@ -94,8 +93,7 @@ if (! $error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else {
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

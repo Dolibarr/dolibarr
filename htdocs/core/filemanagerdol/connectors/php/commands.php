@@ -169,11 +169,9 @@ function CreateFolder($resourceType, $currentFolder)
 						$sErrorNumber = '110';
 						break;
 				}
-			}
-			else $sErrorNumber = '103';
+			} else $sErrorNumber = '103';
 		}
-	}
-	else $sErrorNumber = '102';
+	} else $sErrorNumber = '102';
 
 	// Create the "Error" node.
 	echo '<Error number="'.$sErrorNumber.'" />';
@@ -250,8 +248,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 					$iCounter++;
 					$sFileName = RemoveExtension($sOriginalFileName).'('.$iCounter.').'.$sExtension;
 					$sErrorNumber = '201';
-				}
-				else {
+				} else {
 					move_uploaded_file($oFile['tmp_name'], $sFilePath);
 
 					if (is_file($sFilePath))
@@ -284,17 +281,14 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 				{
 					@unlink($sFilePath);
 					$sErrorNumber = '202';
-				}
-				elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true)
+				} elseif (isset($detectHtml) && $detectHtml === -1 && DetectHtml($sFilePath) === true)
 				{
 					@unlink($sFilePath);
 					$sErrorNumber = '202';
 				}
 			}
-		}
-		else $sErrorNumber = '202';
-	}
-	else $sErrorNumber = '202';
+		} else $sErrorNumber = '202';
+	} else $sErrorNumber = '202';
 
 
 	$sFileUrl = CombinePaths(GetResourceTypePath($resourceType, $sCommand), $currentFolder);
@@ -307,8 +301,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
     {
         // this line already exists so wrap the if block around it
         SendUploadResults($sErrorNumber, $sFileUrl, $sFileName);
-    }
-    else {
+    } else {
 	    //issue the CKEditor Callback
         SendCKEditorResults(
 			$CKEcallback,

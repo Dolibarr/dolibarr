@@ -125,8 +125,7 @@ if ($resql)
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
 	$db->free();
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -218,8 +217,7 @@ if ($resql)
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

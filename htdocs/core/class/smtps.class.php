@@ -372,8 +372,7 @@ class SMTPs
         {
             $this->_setErr(99, $host.' is either offline or is an invalid host name.');
             $_retVal = false;
-        }
-        else {
+        } else {
             //See if we can connect to the SMTP server
             if ($this->socket = @fsockopen(
                 preg_replace('@tls://@i', '', $this->getHost()), // Host to 'hit', IP or domain
@@ -518,8 +517,7 @@ class SMTPs
             if (!$_retVal) {
                 $this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
-        }
-        else {
+        } else {
             $this->_setErr(126, '"'.$host.'" does not support authenticated connections.');
         }
 
@@ -1084,8 +1082,7 @@ class SMTPs
             $_aryEmail['real'] = trim($_tmpAry[0], ' ">');
 
             $_aryEmail['addr'] = $_tmpAry[1];
-        }
-        else $_aryEmail['addr'] = $_tmpAry[0];
+        } else $_aryEmail['addr'] = $_tmpAry[0];
 
         // Pull User Name and Host.tld apart
         list($_aryEmail['user'], $_aryEmail['host']) = explode('@', $_aryEmail['addr']);
@@ -1156,8 +1153,7 @@ class SMTPs
                             {
                                 $_realName = '"'.$_realName.'"';
                                 $_RCPT_list[] = $_realName.' <'.$_addr.'@'.$_host.'>';
-                            }
-                            else {
+                            } else {
                                 $_RCPT_list[] = $_addr.'@'.$_host;
                             }
                         }
@@ -1165,13 +1161,11 @@ class SMTPs
                 }
 
                 return implode(', ', $_RCPT_list);
-            }
-            else {
+            } else {
                 $this->_setErr(101, 'No eMail Address for message to be sent to.');
                 return false;
             }
-        }
-        else {
+        } else {
             $this->_setErr(102, 'eMail type not defined.');
             return false;
         }
@@ -1304,8 +1298,7 @@ class SMTPs
             $_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
             $_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
             $_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
-        }
-        else {
+        } else {
             $_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
         }
         if (!empty($_SERVER['REMOTE_ADDR'])) $_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
@@ -1494,8 +1487,7 @@ class SMTPs
                     $content .= "--".$this->_getBoundary('related')."--\r\n";
                     $content .= "\r\n--".$this->_getBoundary('alternative')."--\r\n";
                     $content .= "\r\n";
-                }
-                else {
+                } else {
                     if (key_exists('image', $this->_msgContent))
                     {
                         $content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";

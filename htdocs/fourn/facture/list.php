@@ -414,8 +414,7 @@ if (!$search_all)
 			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
 		}
 	}
-}
-else {
+} else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
@@ -1300,8 +1299,7 @@ if ($resql)
     $title = '';
 
     print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

@@ -201,8 +201,7 @@ if ($action == 'validatehistory') {
 	if ($error)
 	{
 		$db->rollback();
-	}
-	else {
+	} else {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
@@ -277,15 +276,13 @@ if ($resql) {
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
 			print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -352,16 +349,14 @@ if ($resql) {
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/customer/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
 
 		for ($i = 2; $i <= 12; $i++) {

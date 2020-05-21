@@ -67,8 +67,7 @@ if (!GETPOST('typeid', 'int'))
 		$part = explode(':', $val);
 		if ($part[0] == 's.fk_typepayment') $typeid = $part[1];
 	}
-}
-else {
+} else {
 	$typeid = GETPOST('typeid', 'int');
 }
 
@@ -287,8 +286,7 @@ if ($result)
 				}
 	            $accountstatic->label = $obj->blabel;
 	        	print $accountstatic->getNomUrl(1);
-	        }
-	        else print '&nbsp;';
+	        } else print '&nbsp;';
 	        print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 	    }
@@ -316,8 +314,7 @@ if ($result)
 	print '</form>';
 
     $db->free($result);
-}
-else {
+} else {
     dol_print_error($db);
 }
 

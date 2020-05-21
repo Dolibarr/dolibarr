@@ -168,8 +168,7 @@ if ($result)
 
 		$i++;
 	}
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -238,8 +237,7 @@ foreach ($tabfac as $key => $val)
 				{
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 	    			print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
-				}
-				else {
+				} else {
 					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 				}

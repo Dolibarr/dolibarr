@@ -132,8 +132,7 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-	}
-	else {
+	} else {
 		$langs->load("errors");
 		print $langs->trans("Error");
 	}
@@ -184,8 +183,7 @@ if ($prev_id > 0 || $ref)
 
 		print "</table>";
 		$db->free($resql);
-	}
-	else {
+	} else {
 		print $db->error().' '.$sql;
 	}
 }

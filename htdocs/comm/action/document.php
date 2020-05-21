@@ -215,8 +215,7 @@ if ($object->id > 0)
 			}
 		}
 		$_SESSION['assignedtouser'] = json_encode($listofuserid);
-	}
-	else {
+	} else {
 		if (!empty($_SESSION['assignedtouser']))
 		{
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -262,8 +261,7 @@ if ($object->id > 0)
 	$permission = $user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else {
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

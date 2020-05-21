@@ -93,8 +93,7 @@ function dolKeepOnlyPhpCode($str)
 			if (!empty($partlings))
 			{
 				$newstr .= $partlings[0].'?>';
-			}
-			else {
+			} else {
 				$newstr .= $part.'?>';
 			}
 		}
@@ -241,8 +240,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			$content = preg_replace('/^.*<body(\s[^>]*)*>/ims', '', $content);
 			$content = preg_replace('/<\/body(\s[^>]*)*>.*$/ims', '', $content);
 		}
-	}
-	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
+	} elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
 
@@ -298,8 +296,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		if (empty($includehtmlcontentopened)) {
 			$content = str_replace('!~!~!~', '', $content);
 		}
-	}
-	else // REPLACEMENT OF LINKS When page called from virtual host
+	} else // REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists = 1;
 		if ($website->virtualhost) {
@@ -334,8 +331,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 			// If some links to documents or viewimage remains, we replace with wrapper
 			$content = preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 			$content = preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
-		}
-		else {
+		} else {
 			// <img src="image.png... => <img src="medias/image.png...
 			$content = preg_replace('/(<img[^>]*src=")\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
 			$content = preg_replace('/(url\(["\']?)\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
@@ -423,8 +419,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		if ($result > 0)
 		{
 			$containerref = $tmpwebsitepage->pageurl;
-		}
-		else {
+		} else {
 			print "Error, page contains a redirect to the alternative alias '".$containeraliasalt."' that does not exists in web site (".$website->id." / ".$website->ref.")";
 			exit;
 		}
@@ -460,17 +455,14 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 				{
 					print "Error, page with uri '.$currenturi.' try a redirect to the same alias page '".$containerref."' in web site '".$website->ref."'";
 					exit;
-				}
-				else {
+				} else {
 					$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containerref, $currenturi);
 				}
-			}
-			else {
+			} else {
 				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
-	}
-	else // When page called from virtual host server
+	} else // When page called from virtual host server
 	{
 		$newurl = '/'.$containerref.'.php';
 	}
@@ -482,8 +474,7 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 		header("Location: ".$newurl);
 		exit;
-	}
-	else {
+	} else {
 		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
 		exit;
 	}
@@ -573,8 +564,7 @@ function getStructuredData($type, $data = array())
 			}
 		}'."\n";
 		$ret .= '</script>'."\n";
-	}
-	elseif ($type == 'organization')
+	} elseif ($type == 'organization')
 	{
 		$companyname = $mysoc->name;
 		$url = $mysoc->url;
@@ -600,8 +590,7 @@ function getStructuredData($type, $data = array())
 					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
 				} elseif ($key == 'youtube') {
 					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
-				}
-				else {
+				} else {
 					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
 				}
 				$i++;
@@ -611,8 +600,7 @@ function getStructuredData($type, $data = array())
 		}
 		$ret .= "\n".'}'."\n";
 		$ret .= '</script>'."\n";
-	}
-	elseif ($type == 'blogpost')
+	} elseif ($type == 'blogpost')
 	{
 		if (!empty($websitepage->author_alias))
 		{
@@ -675,8 +663,7 @@ function getStructuredData($type, $data = array())
 			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		}
-	}
-	elseif ($type == 'product')
+	} elseif ($type == 'product')
 	{
 		$ret = '<!-- Add structured data for blog post -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
@@ -796,15 +783,13 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$error++;
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("EmptySearchString");
-	}
-	elseif (dol_strlen($searchstring) < 2)
+	} elseif (dol_strlen($searchstring) < 2)
 	{
 		$weblangs->load("errors");
 		$error++;
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
-	}
-	else {
+	} else {
 		$tmparrayoftype = explode(',', $type);
 		foreach ($tmparrayoftype as $tmptype) {
 			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
@@ -865,8 +850,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$arrayresult['code'] = $db->lasterrno();
 			$arrayresult['message'] = $db->lasterror();
@@ -925,8 +909,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 				$arrayresult['code'] = 'KO';
 				$arrayresult['message'] = $weblangs->trans("NoRecordFound");
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$arrayresult['code'] = 'KO';
 			$arrayresult['message'] = 'No supported algorithm found';
@@ -975,8 +958,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		{
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
 			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
-		}
-		else {
+		} else {
 			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
@@ -1012,14 +994,12 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 					$action = 'create';
-				}
-				elseif ($tmpgeturl['http_code'] != '200')
+				} elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
-				}
-				else {
+				} else {
 					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));
@@ -1050,8 +1030,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		{
 			$urltograbdirrootwithoutslash = getRootURLFromURL($urltograb);
 			$urltograbbis = $urltograbdirrootwithoutslash.$regs[2][$key]; // We use dirroot
-		}
-		else {
+		} else {
 			$urltograbbis = $urltograb.'/'.$regs[2][$key]; // We use dir of grabbed file
 		}
 
@@ -1089,14 +1068,12 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 					$action = 'create';
-				}
-				elseif ($tmpgeturl['http_code'] != '200')
+				} elseif ($tmpgeturl['http_code'] != '200')
 				{
 					$error++;
 					setEventMessages('Error getting '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 					$action = 'create';
-				}
-				else {
+				} else {
 					$alreadygrabbed[$urltograbbis] = 1; // Track that file was alreay grabbed.
 
 					dol_mkdir(dirname($filetosave));

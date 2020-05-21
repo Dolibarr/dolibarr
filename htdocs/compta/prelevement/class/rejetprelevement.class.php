@@ -160,8 +160,7 @@ class RejetPrelevement
 			{
 				$error++;
 				dol_syslog("RejetPrelevement::Create Error creation payment invoice ".$facs[$i][0]);
-			}
-			else {
+			} else {
 				$result = $pai->addPaymentToBank($user, 'payment', '(InvoiceRefused)', $bankaccount, '', '');
 				if ($result < 0)
 				{
@@ -190,8 +189,7 @@ class RejetPrelevement
 		{
 			dol_syslog("RejetPrelevement::Create Commit");
 			$this->db->commit();
-		}
-		else {
+		} else {
 			dol_syslog("RejetPrelevement::Create Rollback");
 			$this->db->rollback();
 		}
@@ -225,8 +223,7 @@ class RejetPrelevement
 				$row = $this->db->fetch_row($resql);
 				$userid = $row[0];
 			}
-		}
-		else {
+		} else {
 			dol_syslog("RejetPrelevement::_send_email Erreur lecture user");
 		}
 
@@ -262,12 +259,10 @@ class RejetPrelevement
 			if ($result)
 			{
 				dol_syslog("RejetPrelevement::_send_email email envoye");
-			}
-			else {
+			} else {
 				dol_syslog("RejetPrelevement::_send_email Erreur envoi email");
 			}
-		}
-		else {
+		} else {
 			dol_syslog("RejetPrelevement::_send_email Userid invalide");
 		}
 	}
@@ -315,8 +310,7 @@ class RejetPrelevement
 				}
 			}
 			$this->db->free($resql);
-		}
-		else {
+		} else {
 			dol_syslog("getListInvoices", LOG_ERR);
 		}
 
@@ -351,13 +345,11 @@ class RejetPrelevement
 				$this->db->free($resql);
 
 				return 0;
-			}
-			else {
+			} else {
 				dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
 				return -1;
 			}
-		}
-		else {
+		} else {
 			dol_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
 			return -2;
 		}

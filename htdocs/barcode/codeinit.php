@@ -71,8 +71,7 @@ if (!empty($conf->global->BARCODE_PRODUCT_ADDON_NUM))
 
 					try {
 						dol_include_once($dirroot.$file.'.php');
-					}
-					catch (Exception $e)
+					} catch (Exception $e)
 					{
 						dol_syslog($e->getMessage(), LOG_ERR);
 					}
@@ -109,13 +108,11 @@ if ($action == 'initbarcodeproducts')
 			if ($resql)
 			{
 				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
-			}
-			else {
+			} else {
 				$error++;
 				dol_print_error($db);
 			}
-		}
-		else {
+		} else {
 			$sql = "SELECT rowid, ref, fk_product_type";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product";
 			$sql .= " WHERE barcode IS NULL or barcode = ''";
@@ -148,8 +145,7 @@ if ($action == 'initbarcodeproducts')
 
 					$i++;
 				}
-			}
-			else {
+			} else {
 				$error++;
 				dol_print_error($db);
 			}
@@ -164,8 +160,7 @@ if ($action == 'initbarcodeproducts')
 		{
 			//$db->rollback();
 			$db->commit();
-		}
-		else {
+		} else {
 			$db->rollback();
 		}
 	}
@@ -216,8 +211,7 @@ if ($conf->societe->enabled)
 	{
 		$obj = $db->fetch_object($resql);
 		$nbno = $obj->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe";
 	$resql = $db->query($sql);
@@ -225,8 +219,7 @@ if ($conf->societe->enabled)
 	{
 		$obj = $db->fetch_object($resql);
 		$nbtotal = $obj->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ThirdParties")).'<br>'."\n";
 
@@ -270,8 +263,7 @@ if ($conf->product->enabled || $conf->product->service)
 
 			$i++;
 		}
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product";
 	$resql = $db->query($sql);
@@ -279,8 +271,7 @@ if ($conf->product->enabled || $conf->product->service)
 	{
 		$obj = $db->fetch_object($resql);
 		$nbtotal = $obj->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	print $langs->trans("CurrentlyNWithoutBarCode", $nbno, $nbtotal, $langs->transnoentitiesnoconv("ProductsOrServices")).'<br>'."\n";
 
@@ -290,8 +281,7 @@ if ($conf->product->enabled || $conf->product->service)
 		$objproduct = new Product($db);
 		print '<b>'.(isset($modBarCodeProduct->name) ? $modBarCodeProduct->name : $modBarCodeProduct->nom).'</b> - '.$langs->trans("NextValue").': <b>'.$modBarCodeProduct->getNextValue($objproduct).'</b><br>';
 		$disabled = 0;
-	}
-	else {
+	} else {
 		$disabled = 1;
 		$titleno = $langs->trans("NoBarcodeNumberingTemplateDefined");
 		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';

@@ -82,8 +82,7 @@ class FormAccounting extends Form
 		{
 		    $options = $this->options_cache[$usecache];
 		    $selected = $selectid;
-		}
-		else {
+		} else {
 			$sql = "SELECT rowid, code, label, nature, entity, active";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 			$sql .= " WHERE active = 1";
@@ -169,8 +168,7 @@ class FormAccounting extends Form
 			$sql .= " AND c.category_type = 0";
             if (empty($allcountries)) $sql .= " AND c.fk_country = ".$mysoc->country_id;
             $sql .= " ORDER BY c.label ASC";
-        }
-        else {
+        } else {
             $sql = "SELECT c.rowid, c.label as type, c.range_account";
             $sql .= " FROM ".MAIN_DB_PREFIX."c_accounting_category as c, ".MAIN_DB_PREFIX."c_country as co";
             $sql .= " WHERE c.active = 1";
@@ -202,12 +200,10 @@ class FormAccounting extends Form
                 }
                 $out .= '</select>';
                 //if ($user->admin && $help) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
-            }
-            else {
+            } else {
                 $out .= $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code);
             }
-        }
-        else {
+        } else {
             dol_print_error($db, $db->lasterror());
         }
 
@@ -283,8 +279,7 @@ class FormAccounting extends Form
 		{
 		    $options = $options + $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
 		    $selected = $selectid;
-		}
-		else {
+		} else {
     		$trunclength = empty($conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT) ? 50 : $conf->global->ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT;
 
     		$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
@@ -310,8 +305,7 @@ class FormAccounting extends Form
 				if (empty($obj->labelshort))
 				{
 					$labeltoshow = $obj->label;
-				}
-				else {
+				} else {
 					$labeltoshow = $obj->labelshort;
 				}
 

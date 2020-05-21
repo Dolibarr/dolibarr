@@ -154,8 +154,7 @@ class UserGroup extends CommonObject
 		if (!empty($groupname))
 		{
 			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
-		}
-		else {
+		} else {
 			$result = $this->fetchCommon($id);
 		}
 
@@ -169,8 +168,7 @@ class UserGroup extends CommonObject
 			}
 
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -198,8 +196,7 @@ class UserGroup extends CommonObject
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
 			$sql .= " AND g.entity IS NOT NULL";
-		}
-		else {
+		} else {
 			$sql .= " AND g.entity IN (0,".$conf->entity.")";
 		}
 		$sql .= " ORDER BY g.nom";
@@ -223,8 +220,7 @@ class UserGroup extends CommonObject
 			$this->db->free($result);
 
 			return $ret;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -253,8 +249,7 @@ class UserGroup extends CommonObject
 		if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && !$user->entity)
 		{
 			$sql .= " AND u.entity IS NOT NULL";
-		}
-		else {
+		} else {
 			$sql .= " AND u.entity IN (0,".$conf->entity.")";
 		}
 		if (!empty($excludefilter)) $sql .= ' AND ('.$excludefilter.')';
@@ -272,8 +267,7 @@ class UserGroup extends CommonObject
 						$newuser = new User($this->db);
 						$newuser->fetch($obj->rowid);
 						$ret[$obj->rowid] = $newuser;
-					}
-					else $ret[$obj->rowid] = $obj->rowid;
+					} else $ret[$obj->rowid] = $obj->rowid;
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity))
 				{
@@ -284,8 +278,7 @@ class UserGroup extends CommonObject
 			$this->db->free($resql);
 
 			return $ret;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -327,8 +320,7 @@ class UserGroup extends CommonObject
 				$module = $obj->module;
 				$perms = $obj->perms;
 				$subperms = $obj->subperms;
-			}
-			else {
+			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
@@ -342,16 +334,14 @@ class UserGroup extends CommonObject
 			// Pour compatibilite, si lowid = 0, on est en mode ajout de tout
 			// TODO A virer quand sera gere par l'appelant
 			//if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
-		}
-		else {
+		} else {
 			// Where pour la liste des droits a ajouter
 			if (!empty($allmodule))
 			{
 				if ($allmodule == 'allmodules')
 				{
 					$whereforadd = 'allmodules';
-				}
-				else {
+				} else {
 					$whereforadd = "module='".$this->db->escape($allmodule)."'";
 					if (!empty($allperms))  $whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
 				}
@@ -386,8 +376,7 @@ class UserGroup extends CommonObject
 
 					$i++;
 				}
-			}
-			else {
+			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
@@ -407,8 +396,7 @@ class UserGroup extends CommonObject
 		if ($error) {
 			$this->db->rollback();
 			return -$error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -450,8 +438,7 @@ class UserGroup extends CommonObject
 				$module = $obj->module;
 				$perms = $obj->perms;
 				$subperms = $obj->subperms;
-			}
-			else {
+			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
@@ -472,8 +459,7 @@ class UserGroup extends CommonObject
 				if ($allmodule == 'allmodules')
 				{
 					$wherefordel = 'allmodules';
-				}
-				else {
+				} else {
 					$wherefordel = "module='".$this->db->escape($allmodule)."'";
 					if (!empty($allperms))  $whereforadd .= " AND perms='".$this->db->escape($allperms)."'";
 				}
@@ -508,8 +494,7 @@ class UserGroup extends CommonObject
 
 					$i++;
 				}
-			}
-			else {
+			} else {
 				$error++;
 				dol_print_error($this->db);
 			}
@@ -529,8 +514,7 @@ class UserGroup extends CommonObject
 		if ($error) {
 			$this->db->rollback();
 			return -$error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -594,8 +578,7 @@ class UserGroup extends CommonObject
 						if (!isset($this->rights->$module->$perms) || !is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = new stdClass();
 						if (empty($this->rights->$module->$perms->$subperms)) $this->nb_rights++;
 						$this->rights->$module->$perms->$subperms = 1;
-					}
-					else {
+					} else {
 						if (empty($this->rights->$module->$perms)) $this->nb_rights++;
 						$this->rights->$module->$perms = 1;
 					}
@@ -611,8 +594,7 @@ class UserGroup extends CommonObject
 			// Si module etait non defini, alors on a tout charge, on peut donc considerer
 			// que les droits sont en cache (car tous charges) pour cet instance de group
 			$this->all_permissions_are_loaded = 1;
-		}
-		else {
+		} else {
 			// If module defined, we flag it as loaded into cache
 		    $this->_tab_loaded[$moduletag] = 1;
 		}
@@ -889,8 +871,7 @@ class UserGroup extends CommonObject
 			if (!empty($conf->global->USERGROUP_ADDON_PDF))
 			{
 				$modele = $conf->global->USERGROUP_ADDON_PDF;
-			}
-			else {
+			} else {
 				$modele = 'grass';
 			}
 		}

@@ -51,8 +51,7 @@ if (preg_match('/set_(.*)/', $action, $reg))
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -64,8 +63,7 @@ if (preg_match('/del_(.*)/', $action, $reg))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }

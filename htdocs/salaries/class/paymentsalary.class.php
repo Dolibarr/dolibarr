@@ -182,8 +182,7 @@ class PaymentSalary extends CommonObject
         {
             $this->db->commit();
             return 1;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -262,8 +261,7 @@ class PaymentSalary extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else {
+        } else {
             $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -478,8 +476,7 @@ class PaymentSalary extends CommonObject
                     if ($bank_line_id > 0)
                     {
                         $this->update_fk_bank($bank_line_id);
-                    }
-                    else {
+                    } else {
                         $this->error = $acc->error;
                         $error++;
                     }
@@ -521,20 +518,17 @@ class PaymentSalary extends CommonObject
                 $result = $this->call_trigger('PAYMENT_SALARY_CREATE', $user);
                 if ($result < 0) $error++;
                 // End call triggers
-            }
-            else $error++;
+            } else $error++;
 
             if (!$error)
             {
                 $this->db->commit();
                 return $this->id;
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 return -2;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->error();
             $this->db->rollback();
             return -1;
@@ -557,8 +551,7 @@ class PaymentSalary extends CommonObject
         if ($result)
         {
             return 1;
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -616,8 +609,7 @@ class PaymentSalary extends CommonObject
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
@@ -669,8 +661,7 @@ class PaymentSalary extends CommonObject
                 $this->date_creation     = $this->db->jdate($obj->datec);
             }
             $this->db->free($result);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }

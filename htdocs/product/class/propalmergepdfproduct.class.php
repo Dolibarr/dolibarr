@@ -139,8 +139,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -197,8 +196,7 @@ class Propalmergepdfproduct extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
             return -1;
@@ -270,8 +268,7 @@ class Propalmergepdfproduct extends CommonObject
     		$this->db->free($resql);
 
     		return 1;
-    	}
-    	else {
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		dol_syslog(get_class($this)."::fetch_by_product ".$this->error, LOG_ERR);
     		return -1;
@@ -330,8 +327,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -372,8 +368,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -421,8 +416,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -463,8 +457,7 @@ class Propalmergepdfproduct extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -518,8 +511,7 @@ class Propalmergepdfproduct extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else {
+		} else {
 			$this->db->rollback();
 			return -1;
 		}

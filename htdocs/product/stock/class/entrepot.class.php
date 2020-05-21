@@ -165,8 +165,7 @@ class Entrepot extends CommonObject
 		{
 			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
-		}
-		else {
+		} else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
 		}
 	}
@@ -234,20 +233,17 @@ class Entrepot extends CommonObject
 				{
 					$this->db->commit();
 					return $id;
-				}
-				else {
+				} else {
 					dol_syslog(get_class($this)."::create return -3");
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else {
+			} else {
 				$this->error = "Failed to get insert id";
 				dol_syslog(get_class($this)."::create return -2");
 				return -2;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::create Error ".$this->db->error());
 			$this->db->rollback();
@@ -422,8 +418,7 @@ class Entrepot extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -456,8 +451,7 @@ class Entrepot extends CommonObject
 		if ($id)
 		{
 			$sql .= " WHERE rowid = '".$id."'";
-		}
-		else {
+		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 			if ($ref) $sql .= " AND ref = '".$this->db->escape($ref)."'";
 		}
@@ -494,13 +488,11 @@ class Entrepot extends CommonObject
 				$this->country_code = $tmp['code'];
 
 				return 1;
-			}
-			else {
+			} else {
                 $this->error = "Record Not Found";
 				return 0;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -546,8 +538,7 @@ class Entrepot extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else {
+		} else {
 	        dol_print_error($this->db);
 		}
 	}
@@ -610,8 +601,7 @@ class Entrepot extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			$ret['nb'] = $obj->nb;
 			$this->db->free($result);
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -644,8 +634,7 @@ class Entrepot extends CommonObject
 			$ret['nb'] = $obj->nb;
 			$ret['value'] = $obj->value;
 			$this->db->free($result);
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -800,10 +789,8 @@ class Entrepot extends CommonObject
                 	$warehousetmp->fetch($parentid);
                 	$TArbo[] = $warehousetmp->label;
                  	$parentid = $objarbo->fk_parent;
-                }
-                else break;
-            }
-            else dol_print_error($this->db);
+                } else break;
+            } else dol_print_error($this->db);
 
             $i++;
         }

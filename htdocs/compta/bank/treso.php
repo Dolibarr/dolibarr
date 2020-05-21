@@ -72,8 +72,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	if ($vline)
 	{
 		$viewline = $vline;
-	}
-	else {
+	} else {
 		$viewline = 20;
 	}
 
@@ -289,8 +288,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 					if ($obj->family == 'invoice') {
 						$mc->getInfo($obj->entity);
 						print "<td>".$mc->label."</td>";
-					}
-					else {
+					} else {
 						print "<td></td>";
 					}
 				}
@@ -303,8 +301,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 			$i++;
 		}
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 
@@ -324,8 +321,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	print "</table>";
     print "</div>";
-}
-else {
+} else {
 	print $langs->trans("ErrorBankAccountNotFound");
 }
 

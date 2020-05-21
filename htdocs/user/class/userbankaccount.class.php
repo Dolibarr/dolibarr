@@ -104,8 +104,7 @@ class UserBankAccount extends Account
 
                 return $this->update($user);
             }
-        }
-        else {
+        } else {
             print $this->db->error();
             return 0;
         }
@@ -148,8 +147,7 @@ class UserBankAccount extends Account
         if ($result)
         {
             return 1;
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             return 0;
         }
@@ -200,8 +198,7 @@ class UserBankAccount extends Account
             $this->db->free($resql);
 
             return 1;
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             return -1;
         }

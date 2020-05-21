@@ -74,8 +74,7 @@ class CoreObject extends CommonObject
             $this->is_clone = false;
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -92,8 +91,7 @@ class CoreObject extends CommonObject
         if (isset($this->fields[$field]) && method_exists($this, 'is_'.$type))
         {
             return $this->{'is_'.$type}($this->fields[$field]);
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -197,8 +195,7 @@ class CoreObject extends CommonObject
 
                         $this->{$className}[] = $o;
                     }
-                }
-                else {
+                } else {
                     $this->errors[] = $this->db->lasterror();
                 }
             }
@@ -253,8 +250,7 @@ class CoreObject extends CommonObject
             $result = $this->call_trigger(strtoupper($this->element).'_UPDATE', $user);
             if ($result < 0) $error++;
             else $this->saveChild($user);
-        }
-        else {
+        } else {
             $error++;
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
@@ -264,8 +260,7 @@ class CoreObject extends CommonObject
         {
             $this->db->commit();
             return $this->id;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -292,8 +287,7 @@ class CoreObject extends CommonObject
             $result = $this->call_trigger(strtoupper($this->element).'_CREATE', $user);
             if ($result < 0) $error++;
             else $this->saveChild($user);
-        }
-        else {
+        } else {
             $error++;
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
@@ -303,8 +297,7 @@ class CoreObject extends CommonObject
         {
             $this->db->commit();
             return $this->id;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -349,8 +342,7 @@ class CoreObject extends CommonObject
         {
             $this->db->commit();
             return 1;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
             $this->db->rollback();
@@ -386,8 +378,7 @@ class CoreObject extends CommonObject
         if (empty($date))
         {
             $this->{$field} = 0;
-        }
-        else {
+        } else {
             require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
             $this->{$field} = dol_stringtotime($date);
         }
@@ -409,15 +400,12 @@ class CoreObject extends CommonObject
             if ($this->checkFieldType($key, 'date'))
             {
                 $this->setDate($key, $value);
-            }
-            elseif ($this->checkFieldType($key, 'float'))
+            } elseif ($this->checkFieldType($key, 'float'))
             {
                 $this->{$key} = (double) price2num($value);
-            }
-            elseif ($this->checkFieldType($key, 'int')) {
+            } elseif ($this->checkFieldType($key, 'int')) {
                 $this->{$key} = (int) price2num($value);
-            }
-            else {
+            } else {
             	$this->{$key} = dol_string_nohtmltag($value);
             }
         }

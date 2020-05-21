@@ -91,8 +91,7 @@ if ($idobject > 0)
 		$error++;
 		dol_print_error($db, $obj->error);
 	}
-}
-else {
+} else {
 	$error++;
 	dol_print_error($db, $obj->error);
 }
@@ -104,8 +103,7 @@ if (! $error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else {
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

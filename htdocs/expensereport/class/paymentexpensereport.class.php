@@ -159,8 +159,7 @@ class PaymentExpenseReport extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_expensereport");
-			}
-			else {
+			} else {
 				$error++;
 			}
 		}
@@ -170,8 +169,7 @@ class PaymentExpenseReport extends CommonObject
 		    $this->amount = $totalamount;
 		    $this->db->commit();
 			return $this->id;
-		}
-		else {
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -238,8 +236,7 @@ class PaymentExpenseReport extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -308,8 +305,7 @@ class PaymentExpenseReport extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -364,8 +360,7 @@ class PaymentExpenseReport extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -414,8 +409,7 @@ class PaymentExpenseReport extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else {
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -568,8 +562,7 @@ class PaymentExpenseReport extends CommonObject
                         }
                     }
                 }
-            }
-            else {
+            } else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -578,8 +571,7 @@ class PaymentExpenseReport extends CommonObject
         if (!$error)
         {
             return 1;
-        }
-        else {
+        } else {
             return -1;
         }
     }
@@ -602,8 +594,7 @@ class PaymentExpenseReport extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -675,8 +666,7 @@ class PaymentExpenseReport extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
     }

@@ -88,8 +88,7 @@ class CdavLib
 					LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON (s.rowid = sc.fk_soc)
 					LEFT JOIN '.MAIN_DB_PREFIX.'socpeople AS sp ON (sp.fk_soc = sc.fk_soc AND sp.rowid = a.fk_contact)
 					LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_cdav AS ac ON (a.id = ac.fk_object)';
-		}
-		else {
+		} else {
 			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON (s.rowid = a.fk_soc)
 					LEFT JOIN '.MAIN_DB_PREFIX.'socpeople AS sp ON (sp.rowid = a.fk_contact)
 					LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_cdav AS ac ON (a.id = ac.fk_object)';
@@ -104,8 +103,7 @@ class CdavLib
 			if ($ouri === false)
 			{
 				$sql .= ' AND a.id = '.intval($oid);
-			}
-			else {
+			} else {
 				$sql .= ' AND (a.id = '.intval($oid).' OR ac.uuidext = \''.$this->db->escape($ouri).'\')';
 			}
 		}
@@ -185,19 +183,16 @@ class CdavLib
 				if (trim($obj->datep2) != '')
 					$caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep2) + 1)."\n";
 				else $caldata .= "DTEND;VALUE=DATE:".date('Ymd', strtotime($obj->datep) + (25 * 3600))."\n";
-			}
-			elseif (trim($obj->datep2) != '')
+			} elseif (trim($obj->datep2) != '')
 				$caldata .= "DUE;VALUE=DATE:".date('Ymd', strtotime($obj->datep2) + 1)."\n";
-		}
-		else {
+		} else {
 			$caldata .= "DTSTART;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 			if ($type == 'VEVENT')
 			{
 				if (trim($obj->datep2) != '')
 					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 				else $caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
-			}
-			elseif (trim($obj->datep2) != '')
+			} elseif (trim($obj->datep2) != '')
 				$caldata .= "DUE;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
 		}
 		$caldata .= "CLASS:PUBLIC\n";
@@ -275,8 +270,7 @@ class CdavLib
 						'size' => strlen($calendardata),
 						'component' => strpos($calendardata, 'BEGIN:VEVENT') > 0 ? 'vevent' : 'vtodo',
 					);
-				}
-				else {
+				} else {
 					$calevents[] = array(
 						// 'calendardata' => $calendardata,  not necessary because etag+size are present
 						'uri' => $obj->id.'-ev-'.constant('CDAV_URI_KEY'),

@@ -97,8 +97,7 @@ function SendError($number, $text)
 	{
 		SendErrorNode($number, $text);
 		CreateXmlFooter();
-	}
-	else {
+	} else {
 		SetXmlHeaders();
 
 		dol_syslog('Error: '.$number.' '.$text, LOG_ERR);

@@ -422,12 +422,10 @@ class CommandeFournisseur extends CommonOrder
             if ($result < 0)
             {
             	return -1;
-            }
-            else {
+            } else {
             	return 1;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->error()." sql=".$sql;
             return -1;
         }
@@ -545,8 +543,7 @@ class CommandeFournisseur extends CommonOrder
     		$this->db->free($result);
 
     		return $num;
-    	}
-    	else {
+    	} else {
     		$this->error = $this->db->error()." sql=".$sql;
     		return -1;
     	}
@@ -582,8 +579,7 @@ class CommandeFournisseur extends CommonOrder
             if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
-            }
-            else {
+            } else {
                 $num = $this->ref;
             }
             $this->newref = dol_sanitizeFileName($num);
@@ -662,13 +658,11 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->db->commit();
                 return 1;
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else {
+        } else {
             $this->error = 'NotAuthorized';
             dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
             return -1;
@@ -875,13 +869,11 @@ class CommandeFournisseur extends CommonOrder
             if ($numref != "")
             {
                 return $numref;
-            }
-            else {
+            } else {
                 $this->error = $obj->error;
                 return -1;
             }
-        }
-        else {
+        } else {
             $this->error = "Error_COMMANDE_SUPPLIER_ADDON_NotDefined";
             return -2;
         }
@@ -915,13 +907,11 @@ class CommandeFournisseur extends CommonOrder
 
         	    $this->db->commit();
         	    return 1;
-        	}
-        	else {
+        	} else {
         	    $this->db->rollback();
                 return -1;
         	}
-        }
-        else {
+        } else {
         	dol_print_error($this->db);
 
         	$this->db->rollback();
@@ -960,8 +950,7 @@ class CommandeFournisseur extends CommonOrder
             if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
             {
                 $num = $this->getNextNumRef($soc);
-            }
-            else {
+            } else {
                 $num = $this->ref;
             }
             $this->newref = dol_sanitizeFileName($num);
@@ -984,8 +973,7 @@ class CommandeFournisseur extends CommonOrder
     	        	    $comment = ' (first level)';
     	        	}
     	        }
-			}
-			else // request a second level approval
+			} else // request a second level approval
 			{
             	$sql .= " date_approve2='".$this->db->idate($now)."',";
             	$sql .= " fk_user_approve2 = ".$user->id;
@@ -1052,8 +1040,7 @@ class CommandeFournisseur extends CommonOrder
 					{
 			            $this->date_approve = $now;
 		    	        $this->user_approve_id = $user->id;
-					}
-					else // request a second level approval
+					} else // request a second level approval
 					{
 			            $this->date_approve2 = $now;
 		    	        $this->user_approve_id2 = $user->id;
@@ -1061,19 +1048,16 @@ class CommandeFournisseur extends CommonOrder
 
                     $this->db->commit();
                     return 1;
-                }
-                else {
+                } else {
                     $this->db->rollback();
                     return -1;
                 }
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
                 return -1;
             }
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::approve Not Authorized", LOG_ERR);
         }
         return -1;
@@ -1112,19 +1096,16 @@ class CommandeFournisseur extends CommonOrder
                     {
                         $error++;
                         $this->db->rollback();
-                    }
-                    else $this->db->commit();
+                    } else $this->db->commit();
 					// End call triggers
                 }
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
                 dol_syslog(get_class($this)."::refuse Error -1");
                 $result = -1;
             }
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::refuse Not Authorized");
         }
         return $result;
@@ -1170,20 +1151,17 @@ class CommandeFournisseur extends CommonOrder
                 {
                     $this->db->commit();
                     return 1;
-                }
-                else {
+                } else {
                     $this->db->rollback();
                     return -1;
                 }
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 $this->error = $this->db->lasterror();
                 dol_syslog(get_class($this)."::cancel ".$this->error);
                 return -1;
             }
-        }
-        else {
+        } else {
             dol_syslog(get_class($this)."::cancel Not Authorized");
             return -1;
         }
@@ -1227,8 +1205,7 @@ class CommandeFournisseur extends CommonOrder
                 $result = $this->call_trigger('ORDER_SUPPLIER_SUBMIT', $user);
                 if ($result < 0) $error++;
                 // End call triggers
-            }
-            else {
+            } else {
                 $error++;
                 $this->error = $this->db->lasterror();
                 $this->errors[] = $this->db->lasterror();
@@ -1237,12 +1214,10 @@ class CommandeFournisseur extends CommonOrder
             if (!$error)
             {
                 $this->db->commit();
-            }
-            else {
+            } else {
                 $this->db->rollback();
             }
-        }
-        else {
+        } else {
             $error++;
             $this->error = $langs->trans('NotAuthorized');
             $this->errors[] = $langs->trans('NotAuthorized');
@@ -1405,8 +1380,7 @@ class CommandeFournisseur extends CommonOrder
 							                $error++;
 							            }
 							        }
-							    }
-							    else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+							    } else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 							    {
 							        $origin_id = $tmp_origin_id;
 									$ret = $this->add_object_linked($origin, $origin_id);
@@ -1440,15 +1414,13 @@ class CommandeFournisseur extends CommonOrder
 
 	                $this->db->commit();
 	                return $this->id;
-	            }
-	            else {
+	            } else {
 	                $this->error = $this->db->lasterror();
 	                $this->db->rollback();
 	                return -2;
 	            }
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             $this->db->rollback();
             return -1;
@@ -1532,8 +1504,7 @@ class CommandeFournisseur extends CommonOrder
         {
             $this->db->commit();
             return $this->id;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -1600,8 +1571,7 @@ class CommandeFournisseur extends CommonOrder
 			if ($price_base_type == 'HT')
 			{
 				$pu = $pu_ht;
-			}
-			else {
+			} else {
 				$pu = $pu_ttc;
 			}
 			$desc = trim($desc);
@@ -1671,8 +1641,7 @@ class CommandeFournisseur extends CommonOrder
                             dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
                             return -1;
                         }
-                    }
-                    else {
+                    } else {
                         $this->error = $prod->error;
                         $this->db->rollback();
                         return -1;
@@ -1687,8 +1656,7 @@ class CommandeFournisseur extends CommonOrder
 					if ($qty < $prod->packaging)
 					{
 						$qty = $prod->packaging;
-					}
-					else {
+					} else {
 						if (($qty % $prod->packaging) > 0)
 						{
 							$coeff = intval($qty / $prod->packaging) + 1;
@@ -1697,8 +1665,7 @@ class CommandeFournisseur extends CommonOrder
 						}
 					}
 				}
-            }
-            else {
+            } else {
                 $product_type = $type;
             }
 
@@ -1811,13 +1778,11 @@ class CommandeFournisseur extends CommonOrder
                 {
                     $this->db->commit();
                     return $this->line->id;
-                }
-                else {
+                } else {
                     $this->db->rollback();
                     return -1;
                 }
-            }
-            else {
+            } else {
                 $this->error = $this->line->error;
                 $this->errors = $this->line->errors;
                 dol_syslog(get_class($this)."::addline error=".$this->error, LOG_ERR);
@@ -1894,8 +1859,7 @@ class CommandeFournisseur extends CommonOrder
                     }
 					// End call triggers
                 }
-            }
-            else {
+            } else {
                 $this->error = $this->db->lasterror();
                 $error++;
             }
@@ -1923,13 +1887,11 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->db->commit();
                 return 1;
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else {
+        } else {
             $this->error = 'BadStatusForObject';
             return -2;
         }
@@ -1957,14 +1919,12 @@ class CommandeFournisseur extends CommonOrder
             {
                 $this->update_price();
                 return 1;
-            }
-            else {
+            } else {
                 $this->error = $line->error;
                 $this->errors = $line->errors;
                 return -1;
             }
-        }
-        else {
+        } else {
             return -2;
         }
     }
@@ -2028,8 +1988,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->errors[] = $this->db->lasterror();
                 $error++;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->db->lasterror();
             $error++;
@@ -2091,8 +2050,7 @@ class CommandeFournisseur extends CommonOrder
 			dol_syslog(get_class($this)."::delete $this->id by $user->id", LOG_DEBUG);
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
 			$this->db->rollback();
 			return -$error;
@@ -2127,8 +2085,7 @@ class CommandeFournisseur extends CommonOrder
                 $i++;
             }
             return 0;
-        }
-        else {
+        } else {
             return -1;
         }
     }
@@ -2178,8 +2135,7 @@ class CommandeFournisseur extends CommonOrder
 
 				$i++;
 			}
-		}
-		else dol_print_error($this->db, 'Failed to execute request to get dispatched lines');
+		} else dol_print_error($this->db, 'Failed to execute request to get dispatched lines');
 
 		return $ret;
     }
@@ -2275,22 +2231,19 @@ class CommandeFournisseur extends CommonOrder
                     if (!$error)
                     {
                         $this->db->commit();
-                    }
-                    else {
+                    } else {
                         $this->statut = $old_statut;
                         $this->db->rollback();
                         $this->error = $this->db->lasterror();
                         $result = -1;
                     }
-                }
-                else {
+                } else {
                     $this->db->rollback();
                     $this->error = $this->db->lasterror();
                     $result = -1;
                 }
             }
-        }
-        else {
+        } else {
             $this->error = $langs->trans('NotAuthorized');
             $this->errors[] = $langs->trans('NotAuthorized');
             dol_syslog(get_class($this)."::Livraison Not Authorized");
@@ -2347,8 +2300,7 @@ class CommandeFournisseur extends CommonOrder
         	{
         		$this->db->commit();
         		return 1;
-        	}
-        	else {
+        	} else {
         		foreach ($this->errors as $errmsg)
         		{
         			dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2357,8 +2309,7 @@ class CommandeFournisseur extends CommonOrder
         		$this->db->rollback();
         		return -1 * $error;
         	}
-        }
-        else {
+        } else {
             return -2;
         }
     }
@@ -2412,8 +2363,7 @@ class CommandeFournisseur extends CommonOrder
             {
             	$this->db->commit();
             	return 1;
-            }
-            else {
+            } else {
             	foreach ($this->errors as $errmsg)
             	{
             		dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2422,8 +2372,7 @@ class CommandeFournisseur extends CommonOrder
             	$this->db->rollback();
             	return -1 * $error;
             }
-        }
-        else {
+        } else {
             return -2;
         }
     }
@@ -2510,8 +2459,7 @@ class CommandeFournisseur extends CommonOrder
             $result = $this->call_trigger("ORDER_SUPPLIER_STATUS_".$triggerName[$status], $user);
             if ($result < 0) { $error++; }
             // End call triggers
-        }
-        else {
+        } else {
             $error++;
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this)."::setStatus ".$this->error);
@@ -2522,8 +2470,7 @@ class CommandeFournisseur extends CommonOrder
             $this->statut = $status;
             $this->db->commit();
             return 1;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -2646,8 +2593,7 @@ class CommandeFournisseur extends CommonOrder
 				if ($qty < $this->line->packaging)
 				{
 					$qty = $this->line->packaging;
-				}
-				else {
+				} else {
 					if (($qty % $this->line->packaging) > 0)
 					{
 						$coeff = intval($qty / $this->line->packaging) + 1;
@@ -2712,14 +2658,12 @@ class CommandeFournisseur extends CommonOrder
                 $this->update_price('', 'auto');
 				$this->db->commit();
 				return $result;
-            }
-            else {
+            } else {
                 $this->error = $this->db->lasterror();
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else {
+        } else {
             $this->error = "Order status makes operation forbidden";
             dol_syslog(get_class($this)."::updateline ".$this->error, LOG_ERR);
             return -2;
@@ -2797,8 +2741,7 @@ class CommandeFournisseur extends CommonOrder
                 $line->total_ttc = 59.8;
                 $line->total_tva = 9.8;
                 $line->remise_percent = 50;
-            }
-            else {
+            } else {
                 $line->total_ht = 100;
                 $line->total_ttc = 119.6;
                 $line->total_tva = 19.6;
@@ -2849,8 +2792,7 @@ class CommandeFournisseur extends CommonOrder
                 $this->date_validation   = $this->db->idate($obj->date_validation);
             }
             $this->db->free($result);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -2889,8 +2831,7 @@ class CommandeFournisseur extends CommonOrder
             }
             $this->db->free($resql);
             return 1;
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->error();
             return -1;
@@ -2923,8 +2864,7 @@ class CommandeFournisseur extends CommonOrder
         $sql .= $clause." c.entity = ".$conf->entity;
         if ($mode === 'awaiting') {
             $sql .= " AND c.fk_statut = ".self::STATUS_ORDERSENT;
-        }
-        else {
+        } else {
             $sql .= " AND c.fk_statut IN (".self::STATUS_VALIDATED.", ".self::STATUS_ACCEPTED.")";
         }
         if ($user->socid) $sql .= " AND c.fk_soc = ".$user->socid;
@@ -2961,8 +2901,7 @@ class CommandeFournisseur extends CommonOrder
             }
 
             return $response;
-        }
-        else {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -2998,8 +2937,7 @@ class CommandeFournisseur extends CommonOrder
                     }
                     return $string;
                 }
-            }
-            else dol_print_error($db);
+            } else dol_print_error($db);
         }
 
         return '';
@@ -3162,8 +3100,7 @@ class CommandeFournisseur extends CommonOrder
     		{
     			$this->error = $supplierorderdispatch->error; $this->errors = $supplierorderdispatch->errors;
     			return $ret;
-    		}
-    		else {
+    		} else {
     			if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0)
     			{
     				$date_liv = dol_now();
@@ -3196,8 +3133,7 @@ class CommandeFournisseur extends CommonOrder
         						return -1;
         					}
     					    return 5;
-    					}
-    					else {
+    					} else {
     					    //Diff => received partially
     					    //$ret=$this->setStatus($user,4);
     						$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
@@ -3235,8 +3171,7 @@ class CommandeFournisseur extends CommonOrder
         						    return -1;
         					    }
     					        return 5;
-    					    }
-    					    else {
+    					    } else {
     					        //Diff => received partially
     					        $ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 							    if ($ret < 0) {
@@ -3244,8 +3179,7 @@ class CommandeFournisseur extends CommonOrder
 							    }
 							    return 4;
 						    }
-					    }
-					    else {
+					    } else {
                             //all the products are not received
 						    $ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
 						    if ($ret < 0) {
@@ -3253,8 +3187,7 @@ class CommandeFournisseur extends CommonOrder
 						    }
 						    return 4;
 					    }
-				    }
-    				else {
+				    } else {
     					//Diff => received partially
     					$ret = $this->Livraison($user, $date_liv, 'par', $comment); // GETPOST("type") is 'tot', 'par', 'nev', 'can'
     					if ($ret < 0) {
@@ -3309,8 +3242,7 @@ class CommandeFournisseur extends CommonOrder
             $this->db->free();
 
             return $num;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -3471,14 +3403,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
 	            $this->db->free($result);
     	        return 1;
-            }
-    	    else {
+            } else {
     	        $this->error = 'Supplier order line  with id='.$rowid.' not found';
     	        dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
     	        return 0;
     	    }
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -3539,8 +3469,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql .= " VALUES (".$this->fk_commande.", '".$this->db->escape($this->label)."','".$this->db->escape($this->desc)."',";
         $sql .= " ".($this->date_start ? "'".$this->db->idate($this->date_start)."'" : "null").",";
         $sql .= " ".($this->date_end ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-        if ($this->fk_product) { $sql .= $this->fk_product.","; }
-        else { $sql .= "null,"; }
+        if ($this->fk_product) { $sql .= $this->fk_product.","; } else { $sql .= "null,"; }
         $sql .= "'".$this->db->escape($this->product_type)."',";
         $sql .= "'".$this->db->escape($this->special_code)."',";
         $sql .= "'".$this->db->escape($this->rang)."',";
@@ -3602,8 +3531,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->errors[] = $this->db->error();
             $this->db->rollback();
             return -2;
@@ -3688,13 +3616,11 @@ class CommandeFournisseurLigne extends CommonOrderLine
             {
                 $this->db->commit();
                 return 1;
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             $this->db->rollback();
             return -1;
@@ -3750,8 +3676,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }

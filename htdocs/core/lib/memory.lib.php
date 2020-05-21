@@ -63,12 +63,10 @@ function dol_setcache($memoryid, $data)
 		if ($rescode == 0)
 		{
 			return count($data);
-		}
-		else {
+		} else {
 			return -$rescode;
 		}
-	}
-	elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
+	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
 		global $dolmemcache;
 		if (empty($dolmemcache) || !is_object($dolmemcache))
@@ -85,8 +83,7 @@ function dol_setcache($memoryid, $data)
 		if ($result)
 		{
 			return count($data);
-		}
-		else {
+		} else {
 			return -1;
 		}
 	}
@@ -131,12 +128,10 @@ function dol_getcache($memoryid)
 		if ($rescode == 0)
 		{
 			return $data;
-		}
-		else {
+		} else {
 			return -$rescode;
 		}
-	}
-	elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
+	} elseif (!empty($conf->memcached->enabled) && class_exists('Memcache'))
 	{
 		global $m;
 		if (empty($m) || !is_object($m))
@@ -155,8 +150,7 @@ function dol_getcache($memoryid)
 		if ($data)
 		{
 			return $data;
-		}
-		else {
+		} else {
 			return -1;
 		}
 	}
@@ -231,8 +225,7 @@ function dol_setshmop($memoryid, $data)
 		}
 		shmop_close($handle);
 		return ($shm_bytes_written1 + $shm_bytes_written2);
-	}
-	else {
+	} else {
 		print 'Error in shmop_open for memoryid='.$memoryid.' shmkey='.$shmkey.' 6+size=6+'.$size;
 		return -1;
 	}
@@ -258,8 +251,7 @@ function dol_getshmop($memoryid)
 		if ($size) $data = unserialize(shmop_read($handle, 6, $size));
 		else return -1;
 		shmop_close($handle);
-	}
-	else {
+	} else {
 		return -2;
 	}
 	return $data;

@@ -110,8 +110,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$paymenttable = 'paiement';
     	$paymentfacturetable = 'paiement_facture';
     	$invoicefieldref = 'ref';
-    }
-    elseif ($direction == 'buy')
+    } elseif ($direction == 'buy')
     {
     	$invoicetable = 'facture_fourn';
     	$invoicedettable = 'facture_fourn_det';
@@ -162,8 +161,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	{
     		$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
     		$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-    	}
-    	elseif ($y)
+    	} elseif ($y)
     	{
     		$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
     		$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -174,8 +172,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
     	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
     	$sql .= " ORDER BY d.rowid, d.".$fk_facture;
-    }
-    else {
+    } else {
     	// Count on payments date
     	$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
     	$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -202,8 +199,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	{
     		$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
     		$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-    	}
-    	elseif ($y)
+    	} elseif ($y)
     	{
     		$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
     		$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -272,8 +268,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
     			$company_id = $assoc['company_id'];
     		}
-    	}
-    	else {
+    	} else {
     		dol_print_error($db);
     		return -3;
     	}
@@ -308,8 +303,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	{
     		$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
     		$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-    	}
-    	elseif ($y)
+    	} elseif ($y)
     	{
     		$sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
     		$sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -320,8 +314,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	$sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
     	if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
     	$sql .= " ORDER BY d.rowid, d.".$fk_facture;
-    }
-    else {
+    } else {
     	// Count on payments date
     	$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
     	$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -348,8 +341,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	{
     		$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
     		$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-    	}
-    	elseif ($y)
+    	} elseif ($y)
     	{
     		$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
     		$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -421,8 +413,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
     			$company_id = $assoc['company_id'];
     		}
-    	}
-    	else {
+    	} else {
     		dol_print_error($db);
     		return -3;
     	}
@@ -451,8 +442,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
     	{
     		$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
     		$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-    	}
-    	elseif ($y)
+    	} elseif ($y)
     	{
     		$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
     		$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -524,8 +514,7 @@ function tax_by_thirdparty($type, $db, $y, $date_start, $date_end, $modetax, $di
 
     				$company_id = $assoc['company_id'];
     			}
-    		}
-    		else {
+    		} else {
     			dol_print_error($db);
     			return -3;
     		}
@@ -574,8 +563,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $paymenttable = 'paiement';
         $paymentfacturetable = 'paiement_facture';
         $invoicefieldref = 'ref';
-    }
-    else {
+    } else {
         $invoicetable = 'facture_fourn';
         $invoicedettable = 'facture_fourn_det';
         $fk_facture = 'fk_facture_fourn';
@@ -625,8 +613,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         {
             $sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
             $sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-        }
-        elseif ($y)
+        } elseif ($y)
         {
             $sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
             $sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -637,8 +624,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $sql .= " AND d.date_start is null AND d.date_end IS NULL)"; // enhance detection of products
         if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
         $sql .= " ORDER BY d.rowid, d.".$fk_facture;
-    }
-    else {
+    } else {
     	// Count on payments date
     	$sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
     	$sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -665,8 +651,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
     	{
     		$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
     		$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-    	}
-    	elseif ($y)
+    	} elseif ($y)
     	{
     		$sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
     		$sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -735,8 +720,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
                 $rate = $assoc['rate'];
             }
-        }
-        else {
+        } else {
             dol_print_error($db);
             return -3;
         }
@@ -771,8 +755,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         {
             $sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
             $sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-        }
-        elseif ($y)
+        } elseif ($y)
         {
             $sql .= " AND f.datef >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
             $sql .= " AND f.datef <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -783,8 +766,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $sql .= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)"; // enhance detection of service
         if (empty($conf->global->MAIN_INCLUDE_ZERO_VAT_IN_REPORTS)) $sql .= " AND (d.".$f_rate." <> 0 OR d.".$total_tva." <> 0)";
         $sql .= " ORDER BY d.rowid, d.".$fk_facture;
-    }
-    else {
+    } else {
         // Count on payments date
         $sql = "SELECT d.rowid, d.product_type as dtype, d.".$fk_facture." as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.".$total_tva." as total_vat, d.description as descr,";
         $sql .= " d.".$total_localtax1." as total_localtax1, d.".$total_localtax2." as total_localtax2, ";
@@ -811,8 +793,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         {
             $sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
             $sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-        }
-        elseif ($y)
+        } elseif ($y)
         {
             $sql .= " AND pa.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
             $sql .= " AND pa.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -884,8 +865,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
                 $rate = $assoc['rate'];
             }
-        }
-        else {
+        } else {
             dol_print_error($db);
             return -3;
         }
@@ -914,8 +894,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		{
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, $m, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, $m, false))."'";
-		}
-		elseif ($y)
+		} elseif ($y)
 		{
 			$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($y, 1, false))."'";
 			$sql .= " AND p.datep <= '".$db->idate(dol_get_last_day($y, 12, false))."'";
@@ -987,8 +966,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 					$rate = $assoc['rate'];
 				}
-			}
-			else {
+			} else {
 				dol_print_error($db);
 				return -3;
 			}

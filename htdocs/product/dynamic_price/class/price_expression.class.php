@@ -123,8 +123,7 @@ class PriceExpression
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -161,12 +160,10 @@ class PriceExpression
                 $this->title = $obj->title;
                 $this->expression = $obj->expression;
                 return 1;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else {
+        } else {
               $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -202,8 +199,7 @@ class PriceExpression
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -232,12 +228,10 @@ class PriceExpression
             if ($obj)
             {
                 return (int) $obj->rowid;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else {
+        } else {
               $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -295,8 +289,7 @@ class PriceExpression
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -352,8 +345,7 @@ class PriceExpression
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->db->commit();
             return 1;
         }

@@ -157,14 +157,12 @@ class Fiscalyear extends CommonObject
 			{
 				$this->db->commit();
 				return $this->id;
-			}
-			else {
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return $result;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -204,8 +202,7 @@ class Fiscalyear extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog($this->error, LOG_ERR);
 			$this->db->rollback();
@@ -239,8 +236,7 @@ class Fiscalyear extends CommonObject
 			$this->statut	    = $obj->statut;
 
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -264,8 +260,7 @@ class Fiscalyear extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -299,27 +294,22 @@ class Fiscalyear extends CommonObject
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
@@ -364,8 +354,7 @@ class Fiscalyear extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -396,8 +385,7 @@ class Fiscalyear extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			$nb = $obj->nb;
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		return $nb;
 	}
@@ -428,8 +416,7 @@ class Fiscalyear extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			$nb = $obj->nb;
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		return $nb;
 	}

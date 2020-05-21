@@ -228,8 +228,7 @@ if (empty($reshook))
 
 		    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		        exit;
-		    }
-		    else {
+		    } else {
 		    	$db->rollback();
 		    }
 	    }
@@ -251,8 +250,7 @@ if (empty($reshook))
 	        {
 	            setEventMessages($object->error, $object->errors, 'warnings');
 	            $action = 'editvalidator';
-	        }
-	        else {
+	        } else {
 	            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            exit;
 	        }
@@ -337,18 +335,15 @@ if (empty($reshook))
 				{
 					setEventMessages($object->error, $object->errors, 'warnings');
 					$action = 'edit';
-				}
-				else {
+				} else {
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 					exit;
 				}
-	        }
-	        else {
+	        } else {
 	        	setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 	        	$action = '';
 	        }
-	    }
-	    else {
+	    } else {
 	    	setEventMessages($langs->trans("ErrorBadStatus"), null, 'errors');
 	    	$action = '';
 	    }
@@ -370,8 +365,7 @@ if (empty($reshook))
 			if ($candelete)
 			{
 				$result = $object->delete($user);
-			}
-			else {
+			} else {
 				$error++;
 				setEventMessages($langs->trans('ErrorCantDeleteCP'), null, 'errors');
 				$action = '';
@@ -383,8 +377,7 @@ if (empty($reshook))
 			$db->commit();
 			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
-		}
-		else {
+		} else {
 			$db->rollback();
 		}
 	}
@@ -477,13 +470,11 @@ if (empty($reshook))
 	            {
 	                setEventMessages($mail->error, $mail->errors, 'warnings');
 	                $action = '';
-	            }
-	            else {
+	            } else {
 	            	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            	exit;
 	            }
-	        }
-	        else {
+	        } else {
 	        	setEventMessages($object->error, $object->errors, 'errors');
 	        	$action = '';
 	        }
@@ -571,8 +562,7 @@ if (empty($reshook))
 	            if (!$emailTo)
 	            {
 	                dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-	            }
-	            else {
+	            } else {
 	                // From
 	                $expediteur = new User($db);
 	                $expediteur->fetch($object->fk_validator);
@@ -615,8 +605,7 @@ if (empty($reshook))
 
 	           	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	           	exit;
-	        }
-	        else {
+	        } else {
 	            $db->rollback();
 	        	$action = '';
 	        }
@@ -657,8 +646,7 @@ if (empty($reshook))
 	                if (!$emailTo)
 	                {
 	                    dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-	                }
-	                else {
+	                } else {
 	                    // From
 	                    $expediteur = new User($db);
 	                    $expediteur->fetch($object->fk_validator);
@@ -694,8 +682,7 @@ if (empty($reshook))
 	                    	$action = '';
 	                    }
 	                }
-	            }
-	            else {
+	            } else {
 	            	$action = '';
 	            }
 
@@ -705,8 +692,7 @@ if (empty($reshook))
 
 	                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	                exit;
-	            }
-	            else {
+	            } else {
 	                $db->rollback();
 	                $action = '';
 	            }
@@ -741,8 +727,7 @@ if (empty($reshook))
 
 	        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	        exit;
-	    }
-	    else {
+	    } else {
 	        $db->rollback();
 	    }
 	}
@@ -790,8 +775,7 @@ if (empty($reshook))
 	        if (!$error)
 	        {
 	        	$db->commit();
-	        }
-	        else {
+	        } else {
 	        	$db->rollback();
 	        }
 
@@ -841,8 +825,7 @@ if (empty($reshook))
 	            {
 	            	setEventMessages($mail->error, $mail->errors, 'warnings');
 	            	$action = '';
-	            }
-	            else {
+	            } else {
 	            	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            	exit;
 	            }
@@ -886,8 +869,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
     if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
         $errors[] = $langs->trans('CantCreateCP');
-    }
-    else {
+    } else {
         // Formulaire de demande de congés payés
         print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
@@ -981,8 +963,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 			print $out;
 
 	        dol_fiche_end();
-        }
-        elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+        } elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
         {
         	print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
         }
@@ -1003,8 +984,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         {
         	print $form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         	//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
-        }
-        else print $form->select_dolusers(GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        } else print $form->select_dolusers(GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         print '</td>';
         print '</tr>';
 
@@ -1107,16 +1087,14 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         print '</from>'."\n";
     }
-}
-else {
+} else {
     if ($error)
     {
         print '<div class="tabBar">';
         print $error;
         print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
         print '</div>';
-    }
-    else {
+    } else {
         // Affichage de la fiche d'une demande de congés payés
         if (($id > 0) || $ref)
         {
@@ -1225,8 +1203,7 @@ else {
 			        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
-                }
-                else {
+                } else {
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
@@ -1246,8 +1223,7 @@ else {
                     print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
-                }
-                else {
+                } else {
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
@@ -1288,8 +1264,7 @@ else {
                     print '<td>'.$langs->trans('DescCP').'</td>';
                     print '<td>'.nl2br($object->description).'</td>';
                     print '</tr>';
-                }
-                else {
+                } else {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
                     print '<td class="tdtop">';
@@ -1472,8 +1447,7 @@ else {
                         {
                             print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
                             print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
-                        }
-                        else {
+                        } else {
                             print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
                             print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
                         }

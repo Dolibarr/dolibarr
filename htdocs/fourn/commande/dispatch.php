@@ -128,8 +128,7 @@ if ($action == 'checkdispatchline' && !((empty($conf->global->MAIN_USE_ADVANCED_
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else {
+	} else {
 		$db->rollback();
 	}
 }
@@ -170,8 +169,7 @@ if ($action == 'uncheckdispatchline' && !((empty($conf->global->MAIN_USE_ADVANCE
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else {
+	} else {
 		$db->rollback();
 	}
 }
@@ -212,8 +210,7 @@ if ($action == 'denydispatchline' && !((empty($conf->global->MAIN_USE_ADVANCED_P
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else {
+	} else {
 		$db->rollback();
 	}
 }
@@ -575,8 +572,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
 					print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
-				}
-				else {
+				} else {
 					print '<td></td>';
 					print '<td></td>';
 					print '<td></td>';
@@ -601,8 +597,7 @@ if ($id > 0 || !empty($ref)) {
 				if (count($listwarehouses) > 1)
 				{
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
-				}
-				elseif (count($listwarehouses) == 1)
+				} elseif (count($listwarehouses) == 1)
 				{
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
 				}
@@ -730,8 +725,7 @@ if ($id > 0 || !empty($ref)) {
 							if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
 							{
 							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
-							}
-							else {
+							} else {
 							    print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
 
@@ -785,8 +779,7 @@ if ($id > 0 || !empty($ref)) {
 							if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
 							{
 							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
-							}
-							else {
+							} else {
 							    print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
 
@@ -802,8 +795,7 @@ if ($id > 0 || !empty($ref)) {
 						if (!empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
 						    $type = 'batch';
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
-						}
-						else {
+						} else {
 						    $type = 'dispatch';
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
@@ -964,8 +956,7 @@ if ($id > 0 || !empty($ref)) {
 			// Status
 			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
 				print '<td class="center" colspan="2">'.$langs->trans("Status").'</td>';
-			}
-			elseif (!empty($conf->reception->enabled)) {
+			} elseif (!empty($conf->reception->enabled)) {
 				print '<td class="center"></td>';
 			}
 

@@ -85,12 +85,10 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	elseif ($element == 'order_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'commande';
-	}
-	elseif ($element == 'invoice_supplier') {
+	} elseif ($element == 'invoice_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'facture';
-	}
-	else $newelement = $element;
+	} else $newelement = $element;
 
 	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
 	$feature = $newelement;
@@ -130,14 +128,12 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$error++;
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
-		}
-		elseif ($type == 'datepicker')
+		} elseif ($type == 'datepicker')
 		{
 			$timestamp = GETPOST('timestamp', 'int', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
-		}
-		elseif ($type == 'select')
+		} elseif ($type == 'select')
 		{
 			$loadmethodname = 'load_cache_'.$loadmethod;
 			$loadcachename = 'cache_'.$loadmethod;
@@ -157,13 +153,11 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 						$loadview = $form->$loadviewname;
 						$view = $loadview[$newvalue];
 					}
-				}
-				else {
+				} else {
 					$error++;
 					$return['error'] = $form->error;
 				}
-			}
-			else {
+			} else {
 				$module = $subelement = $ext_element;
 				if (preg_match('/^([^_]+)_([^_]+)/i', $ext_element, $regs))
 				{
@@ -185,8 +179,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 						$loadview = $object->$loadviewname;
 						$view = $loadview[$newvalue];
 					}
-				}
-				else {
+				} else {
 					$error++;
 					$return['error'] = $object->error;
 				}
@@ -212,15 +205,13 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 
 				$return['value'] = $value;
 				$return['view'] = (!empty($view) ? $view : $value);
-			}
-			else {
+			} else {
 				$return['error'] = $object->error;
 			}
 		}
 
 		echo json_encode($return);
-	}
-	else {
+	} else {
 		echo $langs->trans('NotEnoughPermissions');
 	}
 }

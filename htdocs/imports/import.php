@@ -141,8 +141,7 @@ if ($action == 'builddoc')
 	if ($result < 0)
 	{
 		setEventMessages($objimport->error, $objimport->errors, 'errors');
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans("FileSuccessfullyBuilt"), null, 'mesgs');
 	}
 }
@@ -177,19 +176,16 @@ if ($action == 'add_import_model')
 		if ($result >= 0)
 		{
 			setEventMessages($langs->trans("ImportModelSaved", $objimport->model_name), null, 'mesgs');
-		}
-		else {
+		} else {
 			$langs->load("errors");
 			if ($objimport->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				setEventMessages($langs->trans("ErrorImportDuplicateProfil"), null, 'errors');
-			}
-			else {
+			} else {
 				setEventMessages($objimport->error, null, 'errors');
 			}
 		}
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("ImportModelName")), null, 'errors');
 	}
 }
@@ -205,8 +201,7 @@ if ($step == 3 && $datatoimport)
 		if (dol_move_uploaded_file($_FILES['userfile']['tmp_name'], $fullpath, 1) > 0)
 		{
 			dol_syslog("File ".$fullpath." was added for import");
-		}
-		else {
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 		}
@@ -367,14 +362,12 @@ if ($step == 1 || !$datatoimport)
 			if ($objimport->array_import_perms[$key])
 			{
 				print '<a href="'.DOL_URL_ROOT.'/imports/import.php?step=2&datatoimport='.$objimport->array_import_code[$key].$param.'">'.img_picto($langs->trans("NewImport"), 'filenew').'</a>';
-			}
-			else {
+			} else {
 				print $langs->trans("NotEnoughPermissions");
 			}
 			print '</td></tr>';
 		}
-	}
-	else {
+	} else {
 		print '<tr><td class="oddeven" colspan="3">'.$langs->trans("NoImportableData").'</td></tr>';
 	}
 	print '</table>';
@@ -606,8 +599,7 @@ if ($step == 3 && $datatoimport)
         $langs->load('other');
         $out .= ' ';
         $out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
-	}
-	else {
+	} else {
 	    $out .= ' ('.$langs->trans("UploadDisabled").')';
 	}
 	print $out;
@@ -974,8 +966,7 @@ if ($step == 4 && $datatoimport)
 			{
 				$filecolumntoshow = $filecolumn;
 				$htmltext .= $langs->trans("DataComeFromFileFieldNb", $filecolumntoshow).'<br>';
-			}
-			else {
+			} else {
 				if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref')    $htmltext .= $langs->trans("DataComeFromIdFoundFromRef", $filecolumn, $langs->transnoentitiesnoconv($entitylang)).'<br>';
 				if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromcodeid') $htmltext .= $langs->trans("DataComeFromIdFoundFromCodeId", $filecolumn, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).'<br>';
 			}
@@ -987,8 +978,7 @@ if ($step == 4 && $datatoimport)
 		if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
 		{
 		    if ($example) $htmltext .= $langs->trans("SourceExample").': <b>'.$example.'</b><br>';
-		}
-		else {
+		} else {
 		    if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref')        $htmltext .= $langs->trans("SourceExample").': <b>'.$langs->transnoentitiesnoconv("ExampleAnyRefFoundIntoElement", $entitylang).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
 		    elseif ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromcodeid') $htmltext .= $langs->trans("SourceExample").': <b>'.$langs->trans("ExampleAnyCodeOrIdFoundIntoDictionary", $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$code]['dict'])).($example ? ' ('.$langs->transnoentitiesnoconv("Example").': '.$example.')' : '').'</b><br>';
 		    elseif ($example) $htmltext .= $langs->trans("SourceExample").': <b>'.$example.'</b><br>';
@@ -1004,8 +994,7 @@ if ($step == 4 && $datatoimport)
 		if (empty($objimport->array_import_convertvalue[0][$code]))	// If source file does not need convertion
 		{
 			$htmltext .= $langs->trans("DataIsInsertedInto").'<br>';
-		}
-		else {
+		} else {
 			if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromref')    $htmltext .= $langs->trans("DataIDSourceIsInsertedInto").'<br>';
 			if ($objimport->array_import_convertvalue[0][$code]['rule'] == 'fetchidfromcodeid') $htmltext .= $langs->trans("DataCodeIDSourceIsInsertedInto").'<br>';
 		}
@@ -1115,8 +1104,7 @@ if ($step == 4 && $datatoimport)
 		if ($mandatoryfieldshavesource)
 		{
 			print '<a class="butAction" href="import.php?step=5'.$param.'&filetoimport='.urlencode($filetoimport).'">'.$langs->trans("NextStep").'</a>';
-		}
-		else {
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SomeMandatoryFieldHaveNoSource")).'">'.$langs->trans("NextStep").'</a>';
 		}
 	}
@@ -1177,8 +1165,7 @@ if ($step == 4 && $datatoimport)
 				print '</tr>';
 				$i++;
 			}
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 
@@ -1314,8 +1301,7 @@ if ($step == 5 && $datatoimport)
 	{
 	    print '<input type="number" class="maxwidth50" name="excludefirstlinebis" disabled="disabled" value="'.$excludefirstline.'">';
 	    print '<input type="hidden" name="excludefirstline" value="'.$excludefirstline.'">';
-	}
-	else {
+	} else {
 	    print '<input type="number" class="maxwidth50" name="excludefirstline" value="'.$excludefirstline.'">';
 	    print $form->textwithpicto("", $langs->trans("SetThisValueTo2ToExcludeFirstLine"));
 	}
@@ -1324,8 +1310,7 @@ if ($step == 5 && $datatoimport)
 	{
 	    print '<input type="text" class="maxwidth50" name="endatlinenbbis" disabled="disabled" value="'.$endatlinenb.'">';
 	    print '<input type="hidden" name="endatlinenb" value="'.$endatlinenb.'">';
-	}
-	else {
+	} else {
 	    print '<input type="text" class="maxwidth50" name="endatlinenb" value="'.$endatlinenb.'">';
 	    print $form->textwithpicto("", $langs->trans("KeepEmptyToGoToEndOfFile"));
 	}
@@ -1340,8 +1325,7 @@ if ($step == 5 && $datatoimport)
 		if (count($updatekeys))
 		{
 			print $form->multiselectarray('updatekeysbis', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%', 'disabled');
-		}
-		else {
+		} else {
 			print '<span class="opacitymedium">'.$langs->trans("NoUpdateAttempt").'</span> &nbsp; -';
 		}
 		foreach ($updatekeys as $val) {
@@ -1353,8 +1337,7 @@ if ($step == 5 && $datatoimport)
         {   //TODO dropdown UL is created inside nested SPANS
 			print $form->multiselectarray('updatekeys', $objimport->array_import_updatekeys[0], $updatekeys, 0, 0, '', 1, '80%');
 			print $form->textwithpicto("", $langs->trans("SelectPrimaryColumnsForUpdateAttempt"));
-		}
-		else {
+		} else {
 			print '<span class="opacitymedium">'.$langs->trans("UpdateNotYetSupportedForThisImport").'</span>';
 		}
 	}
@@ -1409,8 +1392,7 @@ if ($step == 5 && $datatoimport)
 			}*/
 			print $newval;
 		}
-	}
-	else print $langs->trans("Error");
+	} else print $langs->trans("Error");
 	print '</td></tr>';
 
 	// Fields imported
@@ -1452,13 +1434,11 @@ if ($step == 5 && $datatoimport)
         if ($user->rights->import->run)
         {
             print '<input type="submit" class="butAction" value="'.$langs->trans("RunSimulateImportFile").'">';
-        }
-        else {
+        } else {
             print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
         }
         print '</div>';
-    }
-    else {
+    } else {
         // Launch import
         $arrayoferrors = array();
         $arrayofwarnings = array();
@@ -1508,8 +1488,7 @@ if ($step == 5 && $datatoimport)
             }
             // Close file
             $obj->import_close_file();
-        }
-        else {
+        } else {
             print $langs->trans("ErrorFailedToOpenFile", $pathfile);
         }
 
@@ -1539,8 +1518,7 @@ if ($step == 5 && $datatoimport)
         	print '<div class="center">'.img_picto($langs->trans("OK"), 'tick').' <b>'.$langs->trans("NoError").'</b></div><br><br>';
 			print $langs->trans("NbInsert", $obj->nbinsert).'<br>';
 			print $langs->trans("NbUpdate", $obj->nbupdate).'<br><br>';
-		}
-        else print $langs->trans("NbOfLinesOK", $nbok).'<br><br>';
+		} else print $langs->trans("NbOfLinesOK", $nbok).'<br><br>';
 
         // Show Errors
         //var_dump($arrayoferrors);
@@ -1607,14 +1585,12 @@ if ($step == 5 && $datatoimport)
             if (empty($nboferrors))
             {
                 print '<a class="butAction" href="'.DOL_URL_ROOT.'/imports/import.php?leftmenu=import&step=6&importid='.$importid.$param.'">'.$langs->trans("RunImportFile").'</a>';
-            }
-            else {
+            } else {
                 //print '<input type="submit" class="butAction" value="'.dol_escape_htmltag($langs->trans("RunSimulateImportFile")).'">';
 
                 print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("CorrectErrorBeforeRunningImport")).'">'.$langs->trans("RunImportFile").'</a>';
             }
-        }
-        else {
+        } else {
             print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunSimulateImportFile").'</a>';
 
             print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("RunImportFile").'</a>';
@@ -1800,8 +1776,7 @@ if ($step == 6 && $datatoimport)
 			}*/
 			print $newval;
 		}
-	}
-	else print $langs->trans("Error");
+	} else print $langs->trans("Error");
 	print '</td></tr>';
 
 	// Fields imported
@@ -1873,8 +1848,7 @@ if ($step == 6 && $datatoimport)
 		}
 		// Close file
 		$obj->import_close_file();
-	}
-	else {
+	} else {
 		print $langs->trans("ErrorFailedToOpenFile", $pathfile);
 	}
 
@@ -1964,8 +1938,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print $langs->trans("NoFields");
 		print '</td>';
 		print '</tr>';
-	}
-	elseif ($key == 'none')	// Empty line
+	} elseif ($key == 'none')	// Empty line
 	{
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';
@@ -1975,8 +1948,7 @@ function show_elem($fieldssource, $pos, $key, $var, $nostyle = '')
 		print '&nbsp;';
 		print '</td>';
 		print '</tr>';
-	}
-	else // Print field of source file
+	} else // Print field of source file
 	{
 		print '<tr'.($nostyle ? '' : ' '.$bc[$var]).' style="height:'.$height.'">';
 		print '<td class="nocellnopadding" width="16" style="font-weight: normal">';

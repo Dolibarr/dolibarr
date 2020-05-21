@@ -77,13 +77,11 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     {
     	curl_setopt($ch, CURLOPT_POST, 1); // POST
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // Setting param x=a&y=z as POST fields
-    }
-    elseif ($postorget == 'POSTALREADYFORMATED')
+    } elseif ($postorget == 'POSTALREADYFORMATED')
     {
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST'); // HTTP request is 'POST' but param string is taken as it is
         curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
-    }
-    elseif ($postorget == 'PUT')
+    } elseif ($postorget == 'PUT')
     {
         $array_param = null;
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
@@ -93,22 +91,18 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
     	    $array_param = $param;
     	}
     	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($array_param)); // Setting param x=a&y=z as PUT fields
-    }
-    elseif ($postorget == 'PUTALREADYFORMATED')
+    } elseif ($postorget == 'PUTALREADYFORMATED')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT'); // HTTP request is 'PUT'
     	curl_setopt($ch, CURLOPT_POSTFIELDS, $param); // param = content of post, like a xml string
-    }
-    elseif ($postorget == 'HEAD')
+    } elseif ($postorget == 'HEAD')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'HEAD'); // HTTP request is 'HEAD'
     	curl_setopt($ch, CURLOPT_NOBODY, true);
-    }
-    elseif ($postorget == 'DELETE')
+    } elseif ($postorget == 'DELETE')
     {
     	curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE'); // POST
-    }
-    else {
+    } else {
     	curl_setopt($ch, CURLOPT_POST, 0); // GET
     }
 
@@ -141,8 +135,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
         $rep['curl_error_msg'] = curl_error($ch);
 
 		dol_syslog("getURLContent response array is ".join(',', $rep));
-    }
-    else {
+    } else {
     	$info = curl_getinfo($ch);
 
     	// Ad keys to $rep
@@ -179,8 +172,7 @@ function getDomainFromURL($url, $mode = 0)
 	if ($mode == 2)
 	{
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)\.([^\.]+)$/', '\1.\2.\3', $tmpdomain); // Remove part 'www.' before 'abc.mydomain.com'
-	}
-	else {
+	} else {
 		$tmpdomain = preg_replace('/^.*\.([^\.]+)\.([^\.]+)$/', '\1.\2', $tmpdomain); // Remove part 'www.abc.' before 'mydomain.com'
 	}
 	if (empty($mode))

@@ -177,8 +177,7 @@ class InterfaceStripe extends DolibarrTriggers
 										//$taxids = $customer->allTaxIds($customer->id);
 										$customer->createTaxId($customer->id, array('type'=>'eu_vat', 'value'=>$vatcleaned));
 									}
-								}
-								else {
+								} else {
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data))
 									{
@@ -192,8 +191,7 @@ class InterfaceStripe extends DolibarrTriggers
 
 							// Update Customer on Stripe
 							$customer->save();
-						}
-						catch (Exception $e)
+						} catch (Exception $e)
 						{
 						    //var_dump(\Stripe\Stripe::getApiVersion());
 							$this->errors[] = $e->getMessage();
@@ -213,8 +211,7 @@ class InterfaceStripe extends DolibarrTriggers
 			{
 				try {
 					$customer->delete();
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					dol_syslog("Failed to delete Stripe customer ".$e->getMessage(), LOG_WARNING);
 				}
@@ -253,8 +250,7 @@ class InterfaceStripe extends DolibarrTriggers
 							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
 								$card->save();
-							}
-							catch (Exception $e)
+							} catch (Exception $e)
 							{
 								$ok = -1;
 								$this->error = $e->getMessages();

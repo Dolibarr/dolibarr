@@ -180,17 +180,13 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 	{
 		if ($numero >= 1 && $numero < 2) {
 			return ("UN PESO ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 0 && $numero < 1) {
+		} elseif ($numero >= 0 && $numero < 1) {
 			return ("CERO PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 1000000 && $numero < 1000001) {
+		} elseif ($numero >= 1000000 && $numero < 1000001) {
 			return ("UN MILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
+		} elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
 			return ("UN BILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-		}
-		else {
+		} else {
 			$entexto = "";
 			$number = $numero;
 			if ($number >= 1000000000) {
@@ -269,13 +265,11 @@ function hundreds2text($hundreds, $tens, $units)
 			$entexto .= $unidades[$units - 1];
 		}
 		return $entexto;
-	}
-	elseif ($tens == 2) {
+	} elseif ($tens == 2) {
 		if ($hundreds != 0) $entexto .= " ";
 		$entexto .= " ".$veintis[$units];
 		return $entexto;
-	}
-	elseif ($tens == 1) {
+	} elseif ($tens == 1) {
 		if ($hundreds != 0) $entexto .= " ";
 		$entexto .= $diecis[$units];
 		return $entexto;

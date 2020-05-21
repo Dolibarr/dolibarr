@@ -64,8 +64,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expensere
         $db->commit();
         header("Location: ".DOL_URL_ROOT."/expensereport/index.php");
         exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
 	}
@@ -101,8 +100,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 
 		header('Location: card.php?id='.$object->id);
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
@@ -278,8 +276,7 @@ if ($resql)
 	print '</div>';
 
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -297,8 +294,7 @@ if ($action == '')
 		if (!$disable_delete)
 		{
 			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-		}
-		else {
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($title_button).'">'.$langs->trans('Delete').'</a>';
 		}
 	}

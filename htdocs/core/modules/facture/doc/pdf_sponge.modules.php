@@ -250,8 +250,7 @@ class pdf_sponge extends ModelePDFFactures
 	            {
 	                $pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 	                $pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
-	            }
-	            else {
+	            } else {
 	                $pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
 	                $pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 	            }
@@ -270,12 +269,10 @@ class pdf_sponge extends ModelePDFFactures
 	                            if ($obj['photo_vignette'])
 	                            {
 	                                $filename = $obj['photo_vignette'];
-	                            }
-	                            else {
+	                            } else {
 	                                $filename = $obj['photo'];
 	                            }
-	                        }
-	                        else {
+	                        } else {
 	                            $filename = $obj['photo'];
 	                        }
 
@@ -305,8 +302,7 @@ class pdf_sponge extends ModelePDFFactures
 	        {
 	            $dir = $conf->facture->dir_output;
 	            $file = $dir."/SPECIMEN.pdf";
-	        }
-	        else {
+	        } else {
 	            $objectref = dol_sanitizeFileName($object->ref);
 	            $dir = $conf->facture->dir_output."/".$objectref;
 	            $file = $dir."/".$objectref.".pdf";
@@ -537,8 +533,7 @@ class pdf_sponge extends ModelePDFFactures
 	                        if ($i > $pageposbeforenote) {
 	                            $height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter);
 	                            $pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-	                        }
-	                        else {
+	                        } else {
 	                            $height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
 	                            $pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
 	                        }
@@ -556,8 +551,7 @@ class pdf_sponge extends ModelePDFFactures
 	                    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 	                    $height_note = $posyafter - $tab_top_newpage;
 	                    $pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-	                }
-	                else // No pagebreak
+	                } else // No pagebreak
 	                {
 	                    $pdf->commitTransaction();
 	                    $posyafter = $pdf->GetY();
@@ -581,8 +575,7 @@ class pdf_sponge extends ModelePDFFactures
 
 	                $tab_height = $tab_height - $height_note;
 	                $tab_top = $posyafter + 6;
-	            }
-	            else {
+	            } else {
 	                $height_note = 0;
 	            }
 
@@ -667,16 +660,14 @@ class pdf_sponge extends ModelePDFFactures
     	                            if (!empty($tplidx)) $pdf->useTemplate($tplidx);
     	                            $pdf->setPage($pageposafter + 1);
     	                        }
-    	                    }
-    	                    else {
+    	                    } else {
     	                        // We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
 								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
 								else $showpricebeforepagebreak = 0;
     	                    }
-    	                }
-    	                else // No pagebreak
+    	                } else // No pagebreak
     	                {
     	                    $pdf->commitTransaction();
     	                }
@@ -840,8 +831,7 @@ class pdf_sponge extends ModelePDFFactures
                         $pdf->setPage($pagenb);
                         if ($pagenb == $pageposbeforeprintlines) {
                             $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
-                        }
-                        else {
+                        } else {
                         	$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code, $outputlangsbis);
                         }
                         $this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -854,8 +844,7 @@ class pdf_sponge extends ModelePDFFactures
                     if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak) {
                         if ($pagenb == $pageposafter) {
                         	$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code, $outputlangsbis);
-                        }
-                        else {
+                        } else {
                         	$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code, $outputlangsbis);
                         }
                         $this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -872,8 +861,7 @@ class pdf_sponge extends ModelePDFFactures
 	            {
 	            	$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code, $outputlangsbis);
 	                $bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-	            }
-	            else {
+	            } else {
 	            	$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code, $outputlangsbis);
 	                $bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 	            }
@@ -915,13 +903,11 @@ class pdf_sponge extends ModelePDFFactures
 	                $this->result = array('fullpath'=>$file);
 
 	                return 1; // No error
-	        }
-	        else {
+	        } else {
 	            $this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 	            return 0;
 	        }
-	    }
-	    else {
+	    } else {
 	        $this->error = $langs->transnoentities("ErrorConstantNotDefined", "FAC_OUTPUTDIR");
 	        return 0;
 	    }
@@ -1018,8 +1004,7 @@ class pdf_sponge extends ModelePDFFactures
 
 				$i++;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1060,8 +1045,7 @@ class pdf_sponge extends ModelePDFFactures
 			}
 
 			return $tab3_top + $y + 3;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1298,8 +1282,7 @@ class pdf_sponge extends ModelePDFFactures
 
 		if (!empty($i)) {
 		    $avancementGlobal = $percent / $i;
-		}
-		else {
+		} else {
 		    $avancementGlobal = 0;
 		}
 
@@ -1318,8 +1301,7 @@ class pdf_sponge extends ModelePDFFactures
 		if (!empty($avancementGlobal)) {
 		    $total_a_payer = $total_a_payer * 100 / $avancementGlobal;
 		    $total_a_payer_ttc = $total_a_payer_ttc * 100 / $avancementGlobal;
-		}
-		else {
+		} else {
 		    $total_a_payer = 0;
 		    $total_a_payer_ttc = 0;
 		}
@@ -1458,8 +1440,7 @@ class pdf_sponge extends ModelePDFFactures
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL) && $tvaisnull)
 			{
 				// Nothing to do
-			}
-			else {
+			} else {
 			    // FIXME amount of vat not supported with multicurrency
 
 				//Local tax 1 before VAT
@@ -1542,8 +1523,7 @@ class pdf_sponge extends ModelePDFFactures
 					    if (!empty($sum_pdf_tva))
 					    {
 							$coef_fix_tva = $object->total_tva / $sum_pdf_tva;
-					    }
-					    else {
+					    } else {
 					        $coef_fix_tva = 1;
 					    }
 
@@ -1884,23 +1864,20 @@ class pdf_sponge extends ModelePDFFactures
 				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
 				{
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				}
-				else {
+				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
 				{
 				    $height = pdf_getHeightForLogo($logo);
 					$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				}
-				else {
+				} else {
 					$pdf->SetTextColor(200, 0, 0);
 					$pdf->SetFont('', 'B', $default_font_size - 2);
 					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 					$pdf->MultiCell($w, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 				}
-			}
-			else {
+			} else {
 				$text = $this->emetteur->name;
 				$pdf->MultiCell($w, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 			}
@@ -1920,8 +1897,7 @@ class pdf_sponge extends ModelePDFFactures
 			if ($object->type == 0) {
 				if ($this->situationinvoice) $title .= $outputlangsbis->transnoentities("InvoiceSituation");
 				$title .= $outputlangsbis->transnoentities("PdfInvoiceTitle");
-			}
-			elseif ($object->type == 1) $title .= $outputlangsbis->transnoentities("InvoiceReplacement");
+			} elseif ($object->type == 1) $title .= $outputlangsbis->transnoentities("InvoiceReplacement");
 			elseif ($object->type == 2) $title .= $outputlangsbis->transnoentities("InvoiceAvoir");
 			elseif ($object->type == 3) $title .= $outputlangsbis->transnoentities("InvoiceDeposit");
 			elseif ($object->type == 4) $title .= $outputlangsbis->transnoentities("InvoiceProForma");
@@ -2373,12 +2349,10 @@ class pdf_sponge extends ModelePDFFactures
 	    if ($reshook < 0)
 	    {
 	        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	    }
-	    elseif (empty($reshook))
+	    } elseif (empty($reshook))
 	    {
 	        $this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
-	    }
-	    else {
+	    } else {
 	        $this->cols = $hookmanager->resArray;
 	    }
 	}

@@ -140,8 +140,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 // Search by status (only expired)
@@ -178,8 +177,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -296,14 +294,12 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
 			}
-		}
-		else {
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -379,8 +375,7 @@ if ($result)
 	$db->free($result);
 
 	print "</table></div>";
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -434,8 +429,7 @@ if ($resql)
             $productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
             print $productstatic->getNomUrl(1, '', 20);
-		}
-		else {
+		} else {
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
             if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
             else print '</a> '.dol_trunc($obj->note, 20);
@@ -456,8 +450,7 @@ if ($resql)
 	$db->free();
 
 	print "</table></div>";
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -512,8 +505,7 @@ if ($resql)
             $productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
             print $productstatic->getNomUrl(1, '', 20);
-		}
-		else {
+		} else {
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
             if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
             else print '</a> '.dol_trunc($obj->note, 20);
@@ -533,8 +525,7 @@ if ($resql)
 	$db->free();
 
 	print "</table></div>";
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -590,8 +581,7 @@ if ($resql)
             $productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
             print $productstatic->getNomUrl(1, '', 20);
-		}
-		else {
+		} else {
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
             if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
             else print '</a> '.dol_trunc($obj->note, 20);
@@ -611,8 +601,7 @@ if ($resql)
 	$db->free();
 
 	print "</table></div>";
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

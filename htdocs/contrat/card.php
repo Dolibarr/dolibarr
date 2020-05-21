@@ -112,13 +112,10 @@ if (empty($reshook))
 		{
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer)
+	} elseif ($action == 'confirm_closeline' && $confirm == 'yes' && $user->rights->contrat->activer)
 	{
 		if (!GETPOST('dateend'))
 		{
@@ -132,8 +129,7 @@ if (empty($reshook))
 			{
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
-			}
-			else {
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -301,13 +297,11 @@ if (empty($reshook))
 										}
 
 										$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["libelle"])) ? $prod->multilangs[$outputlangs->defaultlang]["libelle"] : $lines[$i]->product_label;
-									}
-									else {
+									} else {
 										$label = $lines[$i]->product_label;
 									}
 									$desc = ($lines[$i]->desc && $lines[$i]->desc != $lines[$i]->libelle) ?dol_htmlentitiesbr($lines[$i]->desc) : '';
-								}
-								else {
+								} else {
 									$desc = dol_htmlentitiesbr($lines[$i]->desc);
 								}
 
@@ -352,8 +346,7 @@ if (empty($reshook))
 								}
 							}
 						}
-					}
-					else {
+					} else {
 						setEventMessages($srcobject->error, $srcobject->errors, 'errors');
 						$error++;
 					}
@@ -364,28 +357,23 @@ if (empty($reshook))
 					// modified by hook
 					if ($reshook < 0)
 						$error++;
-				}
-				else {
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-			}
-			else {
+			} else {
 				$result = $object->create($user);
 				if ($result > 0)
 				{
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
-				}
-				else {
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 				$action = 'create';
 			}
 		}
-	}
-
-	elseif ($action == 'classin' && $user->rights->contrat->creer)
+	} elseif ($action == 'classin' && $user->rights->contrat->creer)
 	{
 		$object->setProject(GETPOST('projectid'));
 	}
@@ -402,8 +390,7 @@ if (empty($reshook))
 		{
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx', 'alpha') ? GETPOST('tva_tx', 'alpha') : 0);
-		}
-		else {
+		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -474,8 +461,7 @@ if (empty($reshook))
 					$pu_ttc = $prod->multiprices_ttc[$object->thirdparty->price_level];
 					$price_min = $prod->multiprices_min[$object->thirdparty->price_level];
 					$price_base_type = $prod->multiprices_base_type[$object->thirdparty->price_level];
-				}
-				elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+				} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
@@ -507,8 +493,7 @@ if (empty($reshook))
 					if ($price_base_type != 'HT')
 					{
 						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
-					}
-					else {
+					} else {
 						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 				}
@@ -518,8 +503,7 @@ if (empty($reshook))
 				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
 				$fk_unit = $prod->fk_unit;
-			}
-			else {
+			} else {
 				$pu_ht = GETPOST('price_ht');
 				$price_base_type = 'HT';
 				$tva_tx = GETPOST('tva_tx') ?str_replace('*', '', GETPOST('tva_tx')) : 0; // tva_tx field may be disabled, so we use vat rate 0
@@ -545,8 +529,7 @@ if (empty($reshook))
 			{
 				$object->error = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, -1, $conf->currency));
 				$result = -1;
-			}
-			else {
+			} else {
 				// Insert line
 				$result = $object->addline(
 					$desc,
@@ -619,14 +602,11 @@ if (empty($reshook))
 				unset($_POST['date_endday']);
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
-			}
-			else {
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-
-	elseif ($action == 'updateline' && $user->rights->contrat->creer && !GETPOST('cancel', 'alpha')) {
+	} elseif ($action == 'updateline' && $user->rights->contrat->creer && !GETPOST('cancel', 'alpha')) {
 		$error = 0;
 
 		if (!empty($date_start_update) && !empty($date_end_update) && $date_start_update > $date_end_update)
@@ -732,13 +712,10 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$db->commit();
-		}
-		else {
+		} else {
 			$db->rollback();
 		}
-	}
-
-	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer)
+	} elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		$result = $object->deleteline(GETPOST('lineid'), $user);
 
@@ -746,13 +723,10 @@ if (empty($reshook))
 		{
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
+	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		$result = $object->validate($user);
 
@@ -774,13 +748,10 @@ if (empty($reshook))
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'reopen' && $user->rights->contrat->creer)
+	} elseif ($action == 'reopen' && $user->rights->contrat->creer)
 	{
 		$result = $object->reopen($user);
 		if ($result < 0)
@@ -807,22 +778,17 @@ if (empty($reshook))
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->contrat->supprimer)
 	{
 		$result = $object->delete($user);
 		if ($result >= 0)
 		{
 			header("Location: list.php?restore_lastsearch_values=1");
 			return;
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer)
+	} elseif ($action == 'confirm_move' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 		if (GETPOST('newcid') > 0)
 		{
@@ -834,16 +800,13 @@ if (empty($reshook))
 			{
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 				return;
-			}
-			else {
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-		else {
+		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
-	}
-	elseif ($action == 'update_extras')
+	} elseif ($action == 'update_extras')
 	{
 		$object->oldcopy = dol_clone($object);
 
@@ -863,8 +826,7 @@ if (empty($reshook))
 		if ($error) {
 			$action = 'edit_extras';
 		}
-	}
-	elseif ($action == 'setref_supplier')
+	} elseif ($action == 'setref_supplier')
 	{
 		$cancelbutton = GETPOST('cancel', 'alpha');
 		if (!$cancelbutton) {
@@ -878,13 +840,11 @@ if (empty($reshook))
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-		}
-		else {
+		} else {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	}
-	elseif ($action == 'setref_customer')
+	} elseif ($action == 'setref_customer')
 	{
 		$cancelbutton = GETPOST('cancel', 'alpha');
 
@@ -900,13 +860,11 @@ if (empty($reshook))
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-		}
-		else {
+		} else {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
-	}
-	elseif ($action == 'setref')
+	} elseif ($action == 'setref')
 	{
 		$cancelbutton = GETPOST('cancel', 'alpha');
 
@@ -940,13 +898,11 @@ if (empty($reshook))
 	            header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 	            exit;
 	        }
-	    }
-	    else {
+	    } else {
 	        header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 	        exit;
 	    }
-	}
-	elseif ($action == 'setdate_contrat')
+	} elseif ($action == 'setdate_contrat')
 	{
 		$cancelbutton = GETPOST('cancel', 'alpha');
 
@@ -964,8 +920,7 @@ if (empty($reshook))
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
 			}
-		}
-		else {
+		} else {
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 			exit;
 		}
@@ -996,14 +951,12 @@ if (empty($reshook))
 			{
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
-			}
-			else {
+			} else {
 				if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
 					setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-				}
-				else {
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
@@ -1024,8 +977,7 @@ if (empty($reshook))
 			{
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
-			}
-			else {
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -1037,8 +989,7 @@ if (empty($reshook))
 		if (!GETPOST('socid', 3))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-		}
-		else {
+		} else {
 			if ($object->id > 0) {
 				$result = $object->createFromClone($user, $socid);
 				if ($result > 0) {
@@ -1098,8 +1049,7 @@ if ($action == 'create')
 		if ($element == 'project')
 		{
 			$projectid = GETPOST('originid');
-		}
-		else {
+		} else {
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') { $element = $subelement = 'commande'; }
 			if ($element == 'propal') { $element = 'comm/propal'; $subelement = 'propal'; }
@@ -1126,8 +1076,7 @@ if ($action == 'create')
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
-	}
-	else {
+	} else {
 		$projectid = GETPOST('projectid', 'int');
 		$note_private = GETPOST("note_private");
 		$note_public = GETPOST("note_public");
@@ -1173,8 +1122,7 @@ if ($action == 'create')
 		print $soc->getNomUrl(1);
 		print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 		print '</td>';
-	}
-	else {
+	} else {
 		print '<td>';
 		print $form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, null, 0, 'minwidth300');
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddThirdParty").'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
@@ -1268,8 +1216,7 @@ if ($action == 'create')
 	}
 
 	print "</form>\n";
-}
-else /* *************************************************************************** */
+} else /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue et edition                                                         */
 /*                                                                             */
@@ -1575,8 +1522,7 @@ else /* ************************************************************************
 						echo $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 
 						print '</td>';
-					}
-					else {
+					} else {
 						print '<td>'.img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."</td>\n";
 					}
 					// VAT
@@ -1597,8 +1543,7 @@ else /* ************************************************************************
 					if ($objp->remise_percent > 0)
 					{
 						print '<td class="right">'.$objp->remise_percent."%</td>\n";
-					}
-					else {
+					} else {
 						print '<td>&nbsp;</td>';
 					}
 
@@ -1655,8 +1600,7 @@ else /* ************************************************************************
 								$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
 								print " ".img_warning($textlate);
 							}
-						}
-						else print $langs->trans("Unknown");
+						} else print $langs->trans("Unknown");
 						print ' &nbsp;-&nbsp; ';
 						print $langs->trans("DateEndPlanned").': ';
 						if ($objp->date_fin)
@@ -1667,8 +1611,7 @@ else /* ************************************************************************
 								$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
 								print " ".img_warning($textlate);
 							}
-						}
-						else print $langs->trans("Unknown");
+						} else print $langs->trans("Unknown");
 
 						print '</td>';
 						print '</tr>';
@@ -1696,8 +1639,7 @@ else /* ************************************************************************
 						print $productstatic->getNomUrl(1, '', 32);
 						print $objp->label ? ' - '.dol_trunc($objp->label, 32) : '';
 						print '<br>';
-					}
-					else {
+					} else {
 						print $objp->label ? $objp->label.'<br>' : '';
 					}
 
@@ -1773,8 +1715,7 @@ else /* ************************************************************************
 				}
 
 				$db->free($result);
-			}
-			else {
+			} else {
 				dol_print_error($db);
 			}
 
@@ -1844,8 +1785,7 @@ else /* ************************************************************************
 				if (empty($dateactend))
 				{
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateEndReal")), null, 'errors');
-				}
-				else {
+				} else {
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&ligne=".GETPOST('ligne', 'int')."&date=".$dateactstart."&dateend=".$dateactend."&comment=".urlencode($comment), $langs->trans("CloseService"), $langs->trans("ConfirmCloseService", dol_print_date($dateactend, "%A %d %B %Y")), "confirm_closeline", '', 0, 1);
 				}
 				print '<table class="notopnoleftnoright" width="100%"><tr class="oddeven" height="6"><td></td></tr></table>';
@@ -2121,8 +2061,7 @@ else /* ************************************************************************
 					if ($user->rights->contrat->activer)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" id="btnactivateall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
-					}
-					else {
+					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btnactivateall" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
 					}
 				}
@@ -2131,8 +2070,7 @@ else /* ************************************************************************
 					if ($user->rights->contrat->desactiver)
 					{
 						print '<div class="inline-block divButAction"><a class="butAction" id="btncloseall" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
-					}
-					else {
+					} else {
 						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" id="btncloseall" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
 					}
 
@@ -2151,8 +2089,7 @@ else /* ************************************************************************
 				if (($user->rights->contrat->creer && $object->statut == 0) || $user->rights->contrat->supprimer)
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
-				}
-				else {
+				} else {
 					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotAllowed")).'">'.$langs->trans("Delete").'</a></div>';
 				}
 			}

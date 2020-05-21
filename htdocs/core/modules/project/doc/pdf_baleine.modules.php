@@ -300,8 +300,7 @@ class pdf_baleine extends ModelePDFProjects
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
-				}
-				else {
+				} else {
 					$height_note = 0;
 				}
 
@@ -357,8 +356,7 @@ class pdf_baleine extends ModelePDFProjects
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter + 1);
 							}
-						}
-						else {
+						} else {
 							// We found a page break
 
 							// Allows data in the first page if description is long enough to break in multiples pages
@@ -393,8 +391,7 @@ class pdf_baleine extends ModelePDFProjects
 							}
 						}
 						//var_dump($i.' '.$posybefore.' '.$posyafter.' '.($this->page_hauteur -  ($heightforfooter + $heightforfreetext + $heightforinfotot)).' '.$showpricebeforepagebreak);
-					}
-					else // No pagebreak
+					} else // No pagebreak
 					{
 						$pdf->commitTransaction();
 					}
@@ -448,8 +445,7 @@ class pdf_baleine extends ModelePDFProjects
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
-						}
-						else {
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -463,8 +459,7 @@ class pdf_baleine extends ModelePDFProjects
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
-						}
-						else {
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -507,13 +502,11 @@ class pdf_baleine extends ModelePDFProjects
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // No error
-			}
-			else {
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else {
+		} else {
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "PROJECT_OUTPUTDIR");
 			return 0;
 		}
@@ -604,15 +597,13 @@ class pdf_baleine extends ModelePDFProjects
 			{
 			    $height = pdf_getHeightForLogo($logo);
 			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-			}
-			else {
+			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 			}
-		}
-		else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
+		} else $pdf->MultiCell(100, 4, $outputlangs->transnoentities($this->emetteur->name), 0, 'L');
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);

@@ -209,8 +209,7 @@ class AccountancyCategory // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -268,8 +267,7 @@ class AccountancyCategory // extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -332,8 +330,7 @@ class AccountancyCategory // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -371,8 +368,7 @@ class AccountancyCategory // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -704,8 +700,7 @@ class AccountancyCategory // extends CommonObject
 				$listofaccount .= "'".$cptcursor."'";
 			}
 			$sql .= " AND t.numero_compte IN (".$listofaccount.")";
-		}
-		else {
+		} else {
 			$sql .= " AND t.numero_compte = '".$this->db->escape($cpt)."'";
 		}
 		if (!empty($date_start) && !empty($date_end) && (empty($month) || empty($year)))	// If month/year provided, it is stronger than filter date_start/date_end
@@ -827,8 +822,7 @@ class AccountancyCategory // extends CommonObject
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
 			$sql .= " AND t.entity = ".$conf->entity;
 			$sql .= " ORDER BY t.account_number";
-		}
-		else {
+		} else {
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;

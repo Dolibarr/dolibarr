@@ -50,8 +50,7 @@ if (!$year_start)
 {
 	$year_start = $year_current - 2;
 	$year_end = $year_current;
-}
-else {
+} else {
 	$year_end = $year_start + 2;
 }
 
@@ -106,8 +105,7 @@ if ($resql)
 		$encaiss[$row[1]] = $row[0];
 		$i++;
 	}
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -133,8 +131,7 @@ if ($resql)
 		$decaiss[$row[1]] = -$row[0];
 		$i++;
 	}
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -154,8 +151,7 @@ if (!empty($id))
     if (!preg_match('/,/', $id))
     {
         dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
-    }
-    else {
+    } else {
         $bankaccount = new Account($db);
         $listid = explode(',', $id);
         foreach ($listid as $key => $aId)
@@ -166,8 +162,7 @@ if (!empty($id))
             if ($key < (count($listid) - 1)) print ', ';
         }
     }
-}
-else {
+} else {
 	print $langs->trans("AllAccounts");
 }
 
@@ -252,8 +247,7 @@ if ($resql)
 {
 	$obj = $db->fetch_object($resql);
 	if ($obj) $balance = $obj->total;
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -275,8 +269,7 @@ if ($result < 0)
 	$langs->load("errors");
 	$error++;
 	setEventMessages($langs->trans("ErrorFailedToCreateDir"), null, 'errors');
-}
-else {
+} else {
 	// Calcul de $min et $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -292,8 +285,7 @@ else {
 		$obj = $db->fetch_object($resql);
 		$min = $db->jdate($obj->min);
 		$max = $db->jdate($obj->max);
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 	$log = "graph.php: min=".$min." max=".$max;
@@ -331,8 +323,7 @@ else {
 				$i++;
 			}
 			$db->free($resql);
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -417,8 +408,7 @@ else {
 				$i++;
 			}
 			$db->free($resql);
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}

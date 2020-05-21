@@ -75,8 +75,7 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 		if ($town)    $sql .= " AND z.town LIKE '%".$db->escape($town)."%'";
 		$sql .= " ORDER BY z.zip, z.town";
 		$sql .= $db->plimit(100); // Avoid pb with bad criteria
-	}
-	else // Use table of third parties
+	} else // Use table of third parties
 	{
 		$sql = "SELECT DISTINCT s.zip, s.town, s.fk_departement as fk_county, s.fk_pays as fk_country";
 		$sql .= ", c.code as country_code, c.label as country";
@@ -128,8 +127,7 @@ if (!empty($_GET['zipcode']) || !empty($_GET['town']))
 	}
 
 	echo json_encode($return_arr);
-}
-else {
+} else {
 }
 
 $db->close();

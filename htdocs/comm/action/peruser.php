@@ -94,8 +94,7 @@ if (GETPOST('search_actioncode', 'array'))
 {
     $actioncode = GETPOST('search_actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else {
+} else {
     $actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode", "alpha") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
@@ -375,8 +374,7 @@ if ($conf->use_javascript_ajax)
 	    if (empty($reshook))
 	    {
 			$s .= $hookmanager->resPrint;
-	    }
-	    elseif ($reshook > 1)
+	    } elseif ($reshook > 1)
 		{
 	    	$s = $hookmanager->resPrint;
 	    }
@@ -434,16 +432,14 @@ if (!empty($actioncode))
             if ($actioncode == 'AC_OTH') $sql .= " AND ca.type != 'systemauto'";
             if ($actioncode == 'AC_OTH_AUTO') $sql .= " AND ca.type = 'systemauto'";
         }
-    }
-    else {
+    } else {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND ca.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND ca.type = 'systemauto'";
         else {
             if (is_array($actioncode))
             {
   	        	$sql .= " AND ca.code IN ('".implode("','", $actioncode)."')";
-            }
-            else {
+            } else {
   	        	$sql .= " AND ca.code IN ('".implode("','", explode(',', $actioncode))."')";
             }
         }
@@ -467,8 +463,7 @@ if ($action == 'show_day')
     $sql .= " (a.datep < '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."'";
     $sql .= " AND a.datep2 > '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."')";
     $sql .= ')';
-}
-else {
+} else {
     // To limit array
     $sql .= " AND (";
     $sql .= " (a.datep BETWEEN '".$db->idate($firstdaytoshow - (60 * 60 * 24 * 2))."'"; // Start 2 day before $firstdaytoshow
@@ -551,8 +546,7 @@ if ($resql)
             $event->date_start_in_calendar = $datep;
             if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
             else $event->date_end_in_calendar = $datep;
-        }
-        else {
+        } else {
             $event->date_start_in_calendar = $datep;
             if ($datep2 != '' && $datep2 >= $datep) $event->date_end_in_calendar = $datep2;
             else $event->date_end_in_calendar = $datep;
@@ -569,8 +563,7 @@ if ($resql)
         {
             // This record is out of visible range
             unset($event);
-        }
-        else {
+        } else {
 			//print $i.' - '.dol_print_date($this->date_start_in_calendar, 'dayhour').' - '.dol_print_date($this->date_end_in_calendar, 'dayhour').'<br>'."\n";
         	$event->fetch_userassigned(); // This load $event->userassigned
 
@@ -594,8 +587,7 @@ if ($resql)
 
                 $daykey += 60 * 60 * 24;
                 if ($daykey > $event->date_end_in_calendar) $loop = false;
-            }
-            while ($loop);
+            } while ($loop);
 
             //print 'Event '.$i.' id='.$event->id.' (start='.dol_print_date($event->datep).'-end='.dol_print_date($event->datef);
             //print ' startincalendar='.dol_print_date($event->date_start_in_calendar).'-endincalendar='.dol_print_date($event->date_end_in_calendar).') was added in '.$j.' different index key of array<br>';
@@ -603,8 +595,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-}
-else {
+} else {
     dol_print_error($db);
 }
 
@@ -732,8 +723,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 					$i++;
 		        }
 		    }
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 	}
 	//var_dump($usernamesid);
 	foreach ($usernamesid as $id)
@@ -981,8 +971,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					if (!empty($cacheusers[$event->userownerid]->color)) $color = $cacheusers[$event->userownerid]->color;
 
 					if (!empty($conf->global->AGENDA_USE_COLOR_PER_EVENT_TYPE)) $color = $event->type_color;
-				}
-				elseif ($event->type_code == 'ICALEVENT')
+				} elseif ($event->type_code == 'ICALEVENT')
 				{
 					$numical++;
 					if (!empty($event->icalname))
@@ -995,12 +984,10 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 
 					$color = $event->icalcolor;
 					$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other unsortable');
-				}
-				elseif ($event->type_code == 'BIRTHDAY')
+				} elseif ($event->type_code == 'BIRTHDAY')
 				{
 					$numbirthday++; $colorindex = 2; $cssclass = 'family_birthday unsortable'; $color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
-				}
-				else {
+				} else {
 					$numother++;
 					$color = ($event->icalcolor ? $event->icalcolor : -1);
 					$cssclass = (!empty($event->icalname) ? 'family_ext'.md5($event->icalname) : 'family_other');
@@ -1026,8 +1013,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 					if (isset($colorindexused[$idusertouse]))
 					{
 						$colorindex = $colorindexused[$idusertouse]; // Color already assigned to this user
-					}
-					else {
+					} else {
 						$colorindex = $nextindextouse;
 						$colorindexused[$idusertouse] = $colorindex;
 						if (!empty($theme_datacolor[$nextindextouse + 1])) $nextindextouse++; // Prepare to use next color
@@ -1145,8 +1131,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 								$cases2[$h][$event->id]['string'] .= ', '.$cachecontacts[$event->contactid]->getFullName($langs);
 							}
 						}
-					}
-					else {
+					} else {
 						$busy = $event->transparency;
 						$cases1[$h][$event->id]['busy'] = $busy;
 						$cases2[$h][$event->id]['busy'] = $busy;
@@ -1210,8 +1195,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			if ($output[0]['string']) $title1 .= ($title1 ? ' - ' : '').$output[0]['string'];
 			if ($output[0]['color']) $color1 = $output[0]['color'];
-		}
-		elseif (is_array($cases1[$h]) && count($cases1[$h]) > 1)
+		} elseif (is_array($cases1[$h]) && count($cases1[$h]) > 1)
 		{
 			$title1 = $langs->trans("Ref").' '.$ids1.($title1 ? ' - '.$title1 : '');
 			$color1 = '222222';
@@ -1223,8 +1207,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			if ($output[0]['string']) $title2 .= ($title2 ? ' - ' : '').$output[0]['string'];
 			if ($output[0]['color']) $color2 = $output[0]['color'];
-		}
-		elseif (is_array($cases2[$h]) && count($cases2[$h]) > 1)
+		} elseif (is_array($cases2[$h]) && count($cases2[$h]) > 1)
 		{
 			$title2 = $langs->trans("Ref").' '.$ids2.($title2 ? ' - '.$title2 : '');
 			$color2 = '222222';

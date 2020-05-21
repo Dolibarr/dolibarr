@@ -80,24 +80,20 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 			{
 				//var_dump($i.' '.GETPOST("prod_id_".$i, 'int'), $qty, GETPOST("prod_incdec_".$i, 'int'));
 				$action = 'edit';
-			}
-			else {
+			} else {
 				$error++;
 				$action = 're-edit';
 				if ($object->error == "isFatherOfThis") {
 					setEventMessages($langs->trans("ErrorAssociationIsFatherOfThis"), null, 'errors');
-				}
-				else {
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		}
-		else {
+		} else {
 			if ($object->del_sousproduit($id, GETPOST("prod_id_".$i, 'int')) > 0)
 			{
 				$action = 'edit';
-			}
-			else {
+			} else {
 				$error++;
 				$action = 're-edit';
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -110,8 +106,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit;
 	}
-}
-elseif ($action === 'save_composed_product')
+} elseif ($action === 'save_composed_product')
 {
 	$TProduct = GETPOST('TProduct', 'array');
 	if (!empty($TProduct))
@@ -230,8 +225,7 @@ if ($id > 0 || !empty($ref))
     			if ($object->price_base_type == 'TTC')
     			{
     				print price($object->price_ttc).' '.$langs->trans($object->price_base_type);
-    			}
-    			else {
+    			} else {
     				print price($object->price).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
     			}
     			print '</td></tr>';
@@ -241,8 +235,7 @@ if ($id > 0 || !empty($ref))
     			if ($object->price_base_type == 'TTC')
     			{
     				print price($object->price_min_ttc).' '.$langs->trans($object->price_base_type);
-    			}
-    			else {
+    			} else {
     				print price($object->price_min).' '.$langs->trans($object->price_base_type ? $object->price_base_type : 'HT');
     			}
     			print '</td></tr>';
@@ -292,8 +285,7 @@ if ($id > 0 || !empty($ref))
 				print '<td>'.$value['qty'].'</td>';
 				print '</tr>';
 			}
-		}
-		else {
+		} else {
 			print '<tr class="oddeven">';
 			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
@@ -370,8 +362,7 @@ if ($id > 0 || !empty($ref))
 					if (!empty($conf->global->PRODUIT_MULTIPRICES))
 					{
 						$pricesell = 'Variable';
-					}
-					else {
+					} else {
 						$totallinesell = price2num($value['nb'] * ($pricesell), 'MT');
 						$totalsell += $totallinesell;
 					}
@@ -389,15 +380,13 @@ if ($id > 0 || !empty($ref))
 					{
 						print '<td class="center"><input type="text" value="'.$nb_of_subproduct.'" name="TProduct['.$productstatic->id.'][qty]" size="4" /></td>';
 						print '<td class="center"><input type="checkbox" name="TProduct['.$productstatic->id.'][incdec]" value="1" '.($value['incdec'] == 1 ? 'checked' : '').' /></td>';
-					}
-					else {
+					} else {
 						print '<td>'.$nb_of_subproduct.'</td>';
 						print '<td>'.($value['incdec'] == 1 ? 'x' : '').'</td>';
 					}
 
 					print '</tr>'."\n";
-				}
-				else {
+				} else {
 					$hide = '';
 					if (empty($conf->global->PRODUCT_SHOW_SUB_SUB_PRODUCTS)) $hide = ' hideobject'; // By default, we do not show this. It makes screen very difficult to understand
 
@@ -459,8 +448,7 @@ if ($id > 0 || !empty($ref))
 			}
 			print '</td>';
 			print '</tr>'."\n";
-		}
-		else {
+		} else {
 			$colspan = 8;
 			if (!empty($conf->stock->enabled)) $colspan++;
 
@@ -589,8 +577,7 @@ if ($id > 0 || !empty($ref))
 							//$addchecked = ' checked';
 							$qty = $object->is_sousproduit_qty;
 							$incdec = $object->is_sousproduit_incdec;
-						}
-						else {
+						} else {
 							//$addchecked = '';
 							$qty = 0;
 							$incdec = 0;
@@ -623,8 +610,7 @@ if ($id > 0 || !empty($ref))
 					print '<td></td>';
 					print '</tr>';
 				}
-			}
-			else {
+			} else {
 				dol_print_error($db);
 			}
 			print '</table>';

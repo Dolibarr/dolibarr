@@ -137,13 +137,11 @@ class Localtax extends CommonObject
             {
             	$this->db->commit();
             	return $this->id;
-            }
-            else {
+            } else {
 				$this->db->rollback();
 				return -1;
             }
-        }
-        else {
+        } else {
             $this->error = "Error ".$this->db->lasterror();
             $this->db->rollback();
             return -1;
@@ -204,8 +202,7 @@ class Localtax extends CommonObject
     	{
     		$this->db->commit();
     		return 1;
-    	}
-    	else {
+    	} else {
     		$this->db->rollback();
     		return -1;
     	}
@@ -267,8 +264,7 @@ class Localtax extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -373,13 +369,11 @@ class Localtax extends CommonObject
             	$ret = $obj->amount;
                 $this->db->free($result);
                 return $ret;
-            }
-            else {
+            } else {
             	$this->db->free($result);
 				return 0;
             }
-        }
-        else {
+        } else {
             print $this->db->lasterror();
             return -1;
         }
@@ -412,13 +406,11 @@ class Localtax extends CommonObject
             	$ret = $obj->total_localtax;
                 $this->db->free($result);
                 return $ret;
-            }
-            else {
+            } else {
             	$this->db->free($result);
             	return 0;
             }
-        }
-        else {
+        } else {
             print $this->db->lasterror();
             return -1;
         }
@@ -453,13 +445,11 @@ class Localtax extends CommonObject
                 $ret = $obj->amount;
             	$this->db->free($result);
                 return $ret;
-            }
-            else {
+            } else {
             	$this->db->free($result);
 				return 0;
             }
-        }
-        else {
+        } else {
             print $this->db->lasterror();
             return -1;
         }
@@ -537,8 +527,7 @@ class Localtax extends CommonObject
                     if ($bank_line_id > 0)
 					{
                         $this->update_fk_bank($bank_line_id);
-                    }
-					else {
+                    } else {
 						$this->error = $acc->error;
 						$ok = 0;
 					}
@@ -556,19 +545,16 @@ class Localtax extends CommonObject
 				{
 					$this->db->commit();
 					return $this->id;
-				}
-				else {
+				} else {
 					$this->db->rollback();
 					return -3;
 				}
-            }
-            else {
+            } else {
                 $this->error = $this->db->lasterror();
                 $this->db->rollback();
                 return -2;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             $this->db->rollback();
             return -1;
@@ -590,8 +576,7 @@ class Localtax extends CommonObject
 		$result = $this->db->query($sql);
 		if ($result) {
 			return 1;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}

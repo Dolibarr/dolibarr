@@ -171,12 +171,10 @@ class ChargeSociales extends CommonObject
                 $this->db->free($resql);
 
                 return 1;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -250,13 +248,11 @@ class ChargeSociales extends CommonObject
 			if (empty($error)) {
 				$this->db->commit();
 				return $this->id;
-			}
-			else {
+			} else {
 				$this->db->rollback();
 				return -1 * $error;
 			}
-        }
-        else {
+        } else {
             $this->error = $this->db->error();
             $this->db->rollback();
             return -1;
@@ -325,8 +321,7 @@ class ChargeSociales extends CommonObject
         {
             $this->db->commit();
             return 1;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -382,8 +377,7 @@ class ChargeSociales extends CommonObject
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -416,12 +410,10 @@ class ChargeSociales extends CommonObject
                 $obj = $this->db->fetch_object($result);
                 $this->db->free($result);
                 return $obj->amount;
-            }
-            else {
+            } else {
                 return 0;
             }
-        }
-        else {
+        } else {
             print $this->db->error();
             return -1;
         }
@@ -605,8 +597,7 @@ class ChargeSociales extends CommonObject
 
             $this->db->free($resql);
             return $amount;
-        }
-        else {
+        } else {
             return -1;
         }
     }
@@ -659,8 +650,7 @@ class ChargeSociales extends CommonObject
             }
 
             $this->db->free($result);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }

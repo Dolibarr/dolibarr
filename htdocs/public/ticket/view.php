@@ -187,8 +187,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($action == "add_message")
 		{
 			$action = 'presend';
-		}
-		else {
+		} else {
 			$action = '';
 		}
 	}
@@ -371,8 +370,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		// Message list
 		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'object_conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
-	}
-	else {
+	} else {
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.'">'.$langs->trans('Back').'</a></div>';
 	}
 } else {

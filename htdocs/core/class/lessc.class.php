@@ -1378,8 +1378,7 @@ class Lessc
 			$darkColor  = (isset($args[2][1])) ? $this->assertColor($args[2][1]) : $darkColor;
 			$lightColor = (isset($args[2][2])) ? $this->assertColor($args[2][2]) : $lightColor;
 			$threshold  = (isset($args[2][3])) ? $this->assertNumber($args[2][3]) : $threshold;
-		}
-		else {
+		} else {
 			$inputColor = $this->assertColor($args);
 		}
 

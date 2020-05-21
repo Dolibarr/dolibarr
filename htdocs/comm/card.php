@@ -330,8 +330,7 @@ if ($object->id > 0)
 	if ($action == 'editconditions')
 	{
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 1);
-	}
-	else {
+	} else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->cond_reglement_id, 'none');
 	}
 	print "</td>";
@@ -348,8 +347,7 @@ if ($object->id > 0)
 	if ($action == 'editmode')
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
-	}
-	else {
+	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->mode_reglement_id, 'none');
 	}
 	print "</td>";
@@ -368,8 +366,7 @@ if ($object->id > 0)
 		if ($action == 'editbankaccount')
 		{
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_account, 'fk_account', 1);
-		}
-		else {
+		} else {
 			$form->formSelectAccount($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_account, 'none');
 		}
 		print "</td>";
@@ -475,8 +472,7 @@ if ($object->id > 0)
         if ($action == 'editshipping')
         {
             $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
-        }
-        else {
+        } else {
             $form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->shipping_method_id, 'none');
         }
         print "</td>";
@@ -513,8 +509,7 @@ if ($object->id > 0)
         {
             $adh->ref = $adh->getFullName($langs);
             print $adh->getNomUrl(1);
-        }
-        else {
+        } else {
             print '<span class="opacitymedium">'.$langs->trans("ThirdpartyNotLinkedToMember").'</span>';
         }
         print '</td>';
@@ -541,8 +536,7 @@ if ($object->id > 0)
 	    if ($action == 'editlevel')
 	    {
 	        $formcompany->form_prospect_level($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_prospectlevel, 'prospect_level_id', 1);
-	    }
-	    else {
+	    } else {
 	        print $object->getLibProspLevel();
 	    }
         print "</td>";
@@ -725,8 +719,7 @@ if ($object->id > 0)
 				print "</table>";
 				print '</div>';
 			}
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -810,8 +803,7 @@ if ($object->id > 0)
 				print "</table>";
 				print '</div>';
 			}
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -952,8 +944,7 @@ if ($object->id > 0)
 				print "</table>";
 				print '</div>';
 			}
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -1012,8 +1003,7 @@ if ($object->id > 0)
 				print "</table>";
 				print '</div>';
 			}
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -1082,13 +1072,11 @@ if ($object->id > 0)
 				if ($objp->frequency && $objp->date_last_gen > 0)
 				{
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen), 'day').'</td>';
-				}
-				else {
+				} else {
 					if ($objp->dc > 0)
 					{
 						print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->dc), 'day').'</td>';
-					}
-					else {
+					} else {
 						print '<td class="right"><b>!!!</b></td>';
 					}
 				}
@@ -1117,8 +1105,7 @@ if ($object->id > 0)
 				print "</table>";
 				print '</div>';
 			}
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -1181,8 +1168,7 @@ if ($object->id > 0)
 				if ($objp->df > 0)
 				{
 					print '<td class="right" width="80px">'.dol_print_date($db->jdate($objp->df), 'day').'</td>';
-				}
-				else {
+				} else {
 					print '<td class="right"><b>!!!</b></td>';
 				}
 				print '<td class="right" style="min-width: 60px">';
@@ -1207,8 +1193,7 @@ if ($object->id > 0)
 				print "</table>";
 				print '</div>';
 			}
-		}
-		else {
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -1273,8 +1258,7 @@ if ($object->id > 0)
     			if (empty($user->rights->facture->creer))
     			{
     			    print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
-    			}
-    			else {
+    			} else {
     				$langs->load("bills");
     				$langs->load("orders");
 
@@ -1284,8 +1268,7 @@ if ($object->id > 0)
     				    {
     					    if (!empty($orders2invoice) && $orders2invoice > 0) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/orderstoinvoice.php?socid='.$object->id.'">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
     					    else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-    				    }
-    				    else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+    				    } else print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
     				}
 
     				if ($object->client != 0 && $object->client != 2) print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
@@ -1300,8 +1283,7 @@ if ($object->id > 0)
     		if ($user->rights->agenda->myactions->create)
     		{
     			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddAction").'</a></div>';
-    		}
-    		else {
+    		} else {
     			print '<div class="inline-block divButAction"><a class="butAction" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddAction").'</a></div>';
     		}
     	}
@@ -1325,8 +1307,7 @@ if ($object->id > 0)
         // List of done actions
 		show_actions_done($conf, $langs, $db, $object);
 	}
-}
-else {
+} else {
 	$langs->load("errors");
 	print $langs->trans('ErrorRecordNotFound');
 }

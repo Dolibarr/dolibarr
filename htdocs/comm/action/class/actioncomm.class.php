@@ -417,13 +417,11 @@ class ActionComm extends CommonObject
             {
                 $this->type_id = $cactioncomm->id;
                 $this->type_code = $cactioncomm->code;
-            }
-            elseif ($result == 0)
+            } elseif ($result == 0)
             {
                 $this->error = 'Failed to get record with id '.$this->type_id.' code '.$this->type_code.' from dictionary "type of events"';
                 return -1;
-            }
-            else {
+            } else {
                 $this->error = $cactioncomm->error;
                 return -1;
             }
@@ -577,13 +575,11 @@ class ActionComm extends CommonObject
             {
             	$this->db->commit();
             	return $this->id;
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else {
+        } else {
             $this->db->rollback();
             $this->error = $this->db->lasterror();
             return -1;
@@ -647,8 +643,7 @@ class ActionComm extends CommonObject
         {
             $this->db->commit();
             return $this->id;
-        }
-        else {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -762,8 +757,7 @@ class ActionComm extends CommonObject
                 $this->fetchResources();
             }
             $this->db->free($resql);
-        }
-        else {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -808,8 +802,7 @@ class ActionComm extends CommonObject
             }
 
         	return 1;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -862,8 +855,7 @@ class ActionComm extends CommonObject
             }
 
             return 1;
-        }
-        else {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -945,13 +937,11 @@ class ActionComm extends CommonObject
             {
                 $this->db->commit();
                 return 1;
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 return -2;
             }
-        }
-        else {
+        } else {
             $this->db->rollback();
             $this->error = $this->db->lasterror();
             return -1;
@@ -1097,14 +1087,12 @@ class ActionComm extends CommonObject
             {
                 $this->db->commit();
                 return 1;
-            }
-            else {
+            } else {
                 $this->db->rollback();
                 dol_syslog(get_class($this)."::update ".join(',', $this->errors), LOG_ERR);
                 return -2;
             }
-        }
-        else {
+        } else {
             $this->db->rollback();
             $this->error = $this->db->lasterror();
             return -1;
@@ -1163,8 +1151,7 @@ class ActionComm extends CommonObject
             }
             $db->free($resql);
             return $resarray;
-        }
-        else {
+        } else {
             return $db->lasterror();
         }
     }
@@ -1223,8 +1210,7 @@ class ActionComm extends CommonObject
     		$this->db->free($resql);
     		if (empty($load_state_board)) return $response;
     		else return 1;
-    	}
-    	else {
+    	} else {
     		dol_print_error($this->db);
     		$this->error = $this->db->error();
     		return -1;
@@ -1274,8 +1260,7 @@ class ActionComm extends CommonObject
                 if (!empty($obj->fk_user_mod)) $this->date_modification = $this->db->jdate($obj->datem);
             }
             $this->db->free($result);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -1404,8 +1389,7 @@ class ActionComm extends CommonObject
 		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		    $linkclose = ($hookmanager->resPrint ? $hookmanager->resPrint : $linkclose);
 		    */
-		}
-		else $linkclose .= ' class="'.$classname.'"';
+		} else $linkclose .= ' class="'.$classname.'"';
 
 		$url = '';
 		if ($option == 'birthday')
@@ -1435,8 +1419,7 @@ class ActionComm extends CommonObject
             $libelle = $label;
             if (!empty($conf->global->AGENDA_USE_EVENT_TYPE)) $libelle = $labeltype;
             $libelleshort = '';
-        }
-        else {
+        } else {
             $libelle = (empty($this->libelle) ? $label : $this->libelle.(($label && $label != $this->libelle) ? ' '.$label : ''));
             if (!empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($libelle)) $libelle = $labeltype;
             if ($maxlength < 0) $libelleshort = $this->ref;
@@ -1677,8 +1660,7 @@ class ActionComm extends CommonObject
                     {
                         $dateend = $this->db->jdate($obj->datep2)
                                  - (empty($conf->global->AGENDA_EXPORT_FIX_TZ) ? 0 : ($conf->global->AGENDA_EXPORT_FIX_TZ * 3600));
-                    }
-                    else {
+                    } else {
                         // use start date as fall-back to avoid import erros on empty end date
                         $dateend = $datestart;
                     }
@@ -1734,8 +1716,7 @@ class ActionComm extends CommonObject
 				{
 					$eventarray = $hookmanager->resArray;
 				}
-            }
-            else {
+            } else {
                 $this->error = $this->db->lasterror();
                 return -1;
             }
@@ -1768,15 +1749,13 @@ class ActionComm extends CommonObject
 
                             $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
                             $timestampEnd   = dol_stringtotime($obj->date_end." 12:00:00", 0);
-                        }
-                        elseif ($obj->halfday == 1)
+                        } elseif ($obj->halfday == 1)
                         {
                             $event['fulldayevent'] = false;
 
                             $timestampStart = dol_stringtotime($obj->date_start." 12:00:00", 0);
                             $timestampEnd   = dol_stringtotime($obj->date_end." 23:59:59", 0);
-                        }
-                        else {
+                        } else {
                             $event['fulldayevent'] = true;
 
                             $timestampStart = dol_stringtotime($obj->date_start." 00:00:00", 0);
@@ -1810,8 +1789,7 @@ class ActionComm extends CommonObject
                         {
                             // 2 = leave wait for approval
                             $event['summary'] = $title." - ".$obj->lastname." (wait for approval)";
-                        }
-                        else {
+                        } else {
                             // 3 = leave approved
                             $event['summary'] = $title." - ".$obj->lastname;
                         }
@@ -1836,8 +1814,7 @@ class ActionComm extends CommonObject
                 $title = 'Dolibarr actions '.$mysoc->name.' - '.$more;
                 $desc = $more;
                 $desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
-            }
-            else {
+            } else {
                 $title = 'Dolibarr actions '.$mysoc->name;
                 $desc = $langs->transnoentities('ListOfActions');
                 $desc .= ' ('.$mysoc->name.' - built by Dolibarr)';
@@ -1861,8 +1838,7 @@ class ActionComm extends CommonObject
                     dol_delete_file($outputfiletmp, 0, 1);
                     $result = -1;
                 }
-            }
-            else {
+            } else {
                 dol_syslog(get_class($this)."::build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
                 dol_delete_file($outputfiletmp, 0, 1);
                 $langs->load("errors");

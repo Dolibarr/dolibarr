@@ -472,12 +472,10 @@ class DolGraph
 			{
 				//print 'ee'.join(',',$theme_bgcoloronglet);
 				$this->bgcolor = $theme_bgcoloronglet;
-			}
-			else {
+			} else {
 				$this->bgcolor = $theme_bgcolor;
 			}
-		}
-		else {
+		} else {
 			$this->bgcolor = $bg_color;
 		}
 	}
@@ -500,12 +498,10 @@ class DolGraph
 			{
 				//print 'ee'.join(',',$theme_bgcoloronglet);
 				$this->bgcolorgrid = $theme_bgcoloronglet;
-			}
-			else {
+			} else {
 				$this->bgcolorgrid = $theme_bgcolor;
 			}
-		}
-		else {
+		} else {
 			$this->bgcolorgrid = $bg_colorgrid;
 		}
 	}
@@ -721,8 +717,7 @@ class DolGraph
 				foreach ($values as $x => $y) {
 					if (isset($y)) $serie[$i] .= 'd'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
 				}
-			}
-			else {
+			} else {
 				foreach ($values as $x => $y) {
 					if (isset($y)) $serie[$i] .= 'd'.$i.'.push(['.$x.', '.$y.']);'."\n";
 				}
@@ -753,8 +748,7 @@ class DolGraph
 		if ($nblot < 0)
 		{
 			$this->stringtoshow .= '<!-- No series of data -->'."\n";
-		}
-		else {
+		} else {
 			while ($i < $nblot)
 			{
 				$this->stringtoshow .= '<!-- Serie '.$i.' -->'."\n";
@@ -893,8 +887,7 @@ class DolGraph
                         elseif ($i == $firstlot + 1) $align = 'center';
                         else $align = 'left';
                         $this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.$align.'", barWidth: 0.45 }, ';
-                    }
-				    else $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+                    } else $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
                 }
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow .= 'lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
 				$this->stringtoshow .= 'color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
@@ -1051,8 +1044,7 @@ class DolGraph
 		if ($nblot < 0)
 		{
 			$this->stringtoshow .= '<!-- No series of data -->';
-		}
-		else {
+		} else {
 			while ($i < $nblot)
 			{
 				//$this->stringtoshow .= '<!-- Series '.$i.' -->'."\n";
@@ -1095,8 +1087,7 @@ class DolGraph
 					if (strpos($tmp, '-') !== false) {
 						$foundnegativecolor++;
 						$color = '#FFFFFF'; // If $val is '-123'
-					}
-					else $color = "#".$tmp; // If $val is '123' or '#123'
+					} else $color = "#".$tmp; // If $val is '123' or '#123'
 				}
 				$this->stringtoshow .= "'".$color."'";
 				$i++;

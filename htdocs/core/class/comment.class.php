@@ -156,8 +156,7 @@ class Comment extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -215,8 +214,7 @@ class Comment extends CommonObject
 
 			if ($num_rows) return 1;
 			else return 0;
-		}
-		else {
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -278,8 +276,7 @@ class Comment extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}

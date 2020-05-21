@@ -140,8 +140,7 @@ if ($resql)
 		}
 		$i++;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 //var_dump($listofoppcode);
 
 
@@ -272,8 +271,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
@@ -326,8 +324,7 @@ if ($resql)
 			$companystatic->status = $obj->status;
 
 			print $companystatic->getNomUrl(1);
-		}
-		else {
+		} else {
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
@@ -351,8 +348,7 @@ if ($resql)
 	}
 
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 print "</table>";

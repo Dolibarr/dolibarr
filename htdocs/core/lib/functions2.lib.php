@@ -55,8 +55,7 @@ function jsUnEscape($source)
                 $entity = "&#".$unicode.';';
                 $decodedStr .= utf8_encode($entity);
                 $pos += 4;
-            }
-            else {
+            } else {
                 // we have an escaped ascii character
                 $hexVal = substr($source, $pos, 2);
                 $decodedStr .= chr(hexdec($hexVal));
@@ -159,8 +158,7 @@ function dol_print_file($langs, $filename, $searchalt = 0)
             elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
             else print $content;
             return true;
-        }
-        else dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
+        } else dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
 
         if ($searchalt) {
             // Test si fichier dans repertoire de la langue alternative
@@ -176,8 +174,7 @@ function dol_print_file($langs, $filename, $searchalt = 0)
                 elseif ($isutf8 && $conf->file->character_set_client == 'ISO-8859-1') print utf8_decode($content);
                 else print $content;
                 return true;
-            }
-            else dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
+            } else dol_syslog('functions2::dol_print_file not found', LOG_DEBUG);
         }
     }
 
@@ -232,8 +229,7 @@ function dol_print_object_info($object, $usetable = 0)
         {
         	if ($object->user_creation->id) print $object->user_creation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
-        }
-        else {
+        } else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_creation_id ? $object->user_creation_id : $object->user_creation);
             if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -267,8 +263,7 @@ function dol_print_object_info($object, $usetable = 0)
         {
         	if ($object->user_modification->id) print $object->user_modification->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
-        }
-        else {
+        } else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_modification_id ? $object->user_modification_id : $object->user_modification);
             if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -302,8 +297,7 @@ function dol_print_object_info($object, $usetable = 0)
         {
             if ($object->user_validation->id) print $object->user_validation->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
-        }
-        else {
+        } else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_validation_id ? $object->user_validation_id : $object->user_validation);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -337,8 +331,7 @@ function dol_print_object_info($object, $usetable = 0)
         {
             if ($object->user_approve->id) print $object->user_approve->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
-        }
-        else {
+        } else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_approve_id ? $object->user_approve_id : $object->user_approve);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -400,8 +393,7 @@ function dol_print_object_info($object, $usetable = 0)
         {
 			if ($object->user_cloture->id) print $object->user_cloture->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
-        }
-        else {
+        } else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_cloture);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -435,8 +427,7 @@ function dol_print_object_info($object, $usetable = 0)
         {
 			if ($object->user_rappro->id) print $object->user_rappro->getNomUrl(1, '', 0, 0, 0);
         	else print $langs->trans("Unknown");
-        }
-        else {
+        } else {
             $userstatic = new User($db);
             $userstatic->fetch($object->user_rappro);
 			if ($userstatic->id) print $userstatic->getNomUrl(1, '', 0, 0, 0);
@@ -612,8 +603,7 @@ function clean_url($url, $http = 1)
         $CleanUrl = preg_replace('/^'.preg_quote($proto.$domain, '/').'/i', $newproto.strtolower($domain), $url);
 
         return $CleanUrl;
-    }
-    else return $url;
+    } else return $url;
 }
 
 
@@ -753,8 +743,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         $masktri = $reg[1].(!empty($reg[2]) ? $reg[2] : '').(!empty($reg[3]) ? $reg[3] : '');
         $maskcounter = $reg[1];
         $hasglobalcounter = true;
-    }
-    else {
+    } else {
         // setting some defaults so the rest of the code won't fail if there is a third party counter
         $masktri = '00000';
         $maskcounter = '00000';
@@ -776,8 +765,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         $maskrefclient_clientcode = str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT); //padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode = dol_string_nospecial($maskrefclient_clientcode); //sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
-    }
-    else $maskrefclient = '';
+    } else $maskrefclient = '';
 
     // fail if there is neither a global nor a third party counter
     if (!$hasglobalcounter && ($maskrefclient_maskcounter == ''))
@@ -791,8 +779,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         $masktype = $regType[1];
         $masktype_value = substr(preg_replace('/^TE_/', '', $objsoc->typent_code), 0, dol_strlen($regType[1])); // get n first characters of thirdpaty typent_code (where n is length in mask)
         $masktype_value = str_pad($masktype_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
-    }
-    else {
+    } else {
     	$masktype = '';
     	$masktype_value = '';
     }
@@ -806,8 +793,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     	$maskuser = $regType[1];
     	$maskuser_value = substr($lastname, 0, dol_strlen($regType[1])); // get n first characters of user firstname (where n is length in mask)
     	$maskuser_value = str_pad($maskuser_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
-    }
-    else {
+    } else {
     	$maskuser = '';
     	$maskuser_value = '';
     }
@@ -882,18 +868,12 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         // Define posy, posm and reg
         if ($maskraz > 1)	// if reset is not first month, we need month and year into mask
         {
-            if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 3; }
-            elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 3; $posm = 2; }
-            else return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
+            if (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 3; } elseif (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 3; $posm = 2; } else return 'ErrorCantUseRazInStartedYearIfNoYearMonthInMask';
 
             if (dol_strlen($reg[$posy]) < 2) return 'ErrorCantUseRazWithYearOnOneDigit';
-        }
-        else // if reset is for a specific month in year, we need year
+        } else // if reset is for a specific month in year, we need year
         {
-            if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 3; $posm = 2; }
-        	elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 3; }
-            elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 0; }
-            else return 'ErrorCantUseRazIfNoYearInMask';
+            if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 3; $posm = 2; } elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 3; } elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) { $posy = 2; $posm = 0; } else return 'ErrorCantUseRazIfNoYearInMask';
         }
         // Define length
         $yearlen = $posy ?dol_strlen($reg[$posy]) : 0;
@@ -946,13 +926,11 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
             $sqlwhere .= " (SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp1."'";
             $sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") < '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."') ";
             $sqlwhere .= ')';
-        }
-		elseif ($resetEveryMonth)
+        } elseif ($resetEveryMonth)
 		{
 			$sqlwhere .= "(SUBSTRING(".$field.", ".$yearpos.", ".$yearlen.") = '".$yearcomp."'";
             $sqlwhere .= " AND SUBSTRING(".$field.", ".$monthpos.", ".$monthlen.") = '".str_pad($monthcomp, $monthlen, '0', STR_PAD_LEFT)."')";
-		}
-        else // reset is done on january
+		} else // reset is done on january
         {
             $sqlwhere .= '(SUBSTRING('.$field.', '.$yearpos.', '.$yearlen.") = '".$yearcomp."')";
         }
@@ -964,8 +942,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     if (function_exists('mb_strrpos'))
     	{
     	$posnumstart = mb_strrpos($maskwithnocode, $maskcounter, 'UTF-8');
-	}
-	else {
+	} else {
     	$posnumstart = strrpos($maskwithnocode, $maskcounter);
 	}	// Pos of counter in final string (from 0 to ...)
     if ($posnumstart < 0) return 'ErrorBadMaskFailedToLocatePosOfSequence';
@@ -1010,8 +987,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     {
         $obj = $db->fetch_object($resql);
         $counter = $obj->val;
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
 
     // Check if we must force counter to maskoffset
     if (empty($counter)) $counter = $maskoffset;
@@ -1019,8 +995,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
     {
     	$counter = 0;
     	dol_syslog("Error, the last counter found is '".$counter."' so is not a numeric value. We will restart to 1.", LOG_ERR);
-    }
-    elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter = $maskoffset;
+    } elseif ($counter < $maskoffset && empty($conf->global->MAIN_NUMBERING_OFFSET_ONLY_FOR_FIRST)) $counter = $maskoffset;
 
     if ($mode == 'last')	// We found value for counter = last counter value. Now need to get corresponding ref of invoice.
     {
@@ -1058,12 +1033,10 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         {
             $obj = $db->fetch_object($resql);
             if ($obj) $ref = $obj->ref;
-        }
-        else dol_print_error($db);
+        } else dol_print_error($db);
 
         $numFinal = $ref;
-    }
-    elseif ($mode == 'next')
+    } elseif ($mode == 'next')
     {
         $counter++;
 
@@ -1115,8 +1088,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
             {
                 $maskrefclient_obj = $db->fetch_object($maskrefclient_resql);
                 $maskrefclient_counter = $maskrefclient_obj->val;
-            }
-            else dol_print_error($db);
+            } else dol_print_error($db);
 
             if (empty($maskrefclient_counter) || preg_match('/[^0-9]/i', $maskrefclient_counter)) $maskrefclient_counter = $maskrefclient_maskoffset;
 			$maskrefclient_counter++;
@@ -1131,8 +1103,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	        $numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date) + $yearoffset, $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i', date("y", $date) + $yearoffset, $numFinal);
         	$numFinal = preg_replace('/\{y\}/i', substr(date("y", $date), 1, 1) + $yearoffset, $numFinal);
-		}
-		else // we want yyyy to be current year
+		} else // we want yyyy to be current year
 		{
         	$numFinal = preg_replace('/\{yyyy\}/i', date("Y", $date), $numFinal);
         	$numFinal = preg_replace('/\{yy\}/i', date("y", $date), $numFinal);
@@ -1213,8 +1184,7 @@ function check_value($mask, $value)
         $masktri = $reg[1].(isset($reg[2]) ? $reg[2] : '').(isset($reg[3]) ? $reg[3] : '');
         $maskcounter = $reg[1];
         $hasglobalcounter = true;
-    }
-    else {
+    } else {
         // setting some defaults so the rest of the code won't fail if there is a third party counter
         $masktri = '00000';
         $maskcounter = '00000';
@@ -1235,8 +1205,7 @@ function check_value($mask, $value)
         $maskrefclient_clientcode = str_pad($maskrefclient_clientcode, dol_strlen($maskrefclient_maskclientcode), "#", STR_PAD_RIGHT); //padding maskrefclient_clientcode for having exactly n characters in maskrefclient_clientcode
         $maskrefclient_clientcode = dol_string_nospecial($maskrefclient_clientcode); //sanitize maskrefclient_clientcode for sql insert and sql select like
         if (dol_strlen($maskrefclient_maskcounter) > 0 && dol_strlen($maskrefclient_maskcounter) < 3) return 'ErrorCounterMustHaveMoreThan3Digits';
-    }
-    else $maskrefclient = '';
+    } else $maskrefclient = '';
 
     // fail if there is neither a global nor a third party counter
     if (!$hasglobalcounter && ($maskrefclient_maskcounter == ''))
@@ -1380,16 +1349,13 @@ function numero_semaine($time)
     if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 0) // Dimanche
     {
         $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + 4 * 24 * 60 * 60;
-    }
-    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) < 4) // du Lundi au Mercredi
+    } elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) < 4) // du Lundi au Mercredi
     {
         $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (4 - date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)))) * 24 * 60 * 60;
-    }
-    elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) // du Vendredi au Samedi
+    } elseif (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) > 4) // du Vendredi au Samedi
     {
         $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine)) + (7 - (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) - 4)) * 24 * 60 * 60;
-    }
-    else // Jeudi
+    } else // Jeudi
     {
         $premierJeudiAnnee = mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine));
     }
@@ -1410,8 +1376,7 @@ function numero_semaine($time)
         if (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 4 || (date("w", mktime(12, 0, 0, 1, 1, date("Y", $jeudiSemaine))) == 3 && date("z", mktime(12, 0, 0, 12, 31, date("Y", $jeudiSemaine))) == 365))
         {
             $numeroSemaine = 53;
-        }
-        else {
+        } else {
             $numeroSemaine = 1;
         }
     }
@@ -1515,8 +1480,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
             }
             $user->conf->$key = $value;
             //print "key=".$key." user->conf->key=".$user->conf->$key;
-        }
-        else {
+        } else {
             unset($user->conf->$key);
         }
     }
@@ -1538,8 +1502,7 @@ function dol_print_reduction($reduction, $langs)
     if ($reduction == 100)
     {
         $string = $langs->transnoentities("Offered");
-    }
-    else {
+    } else {
     	$string = vatrate($reduction, true);
     }
 
@@ -1659,12 +1622,10 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                         $max = ($maxfilenamelength ? $maxfilenamelength : 28);
                         $liste[$obj->id.':'.$record['fullname']] = dol_trunc($record['name'], $max, 'middle');
                     }
-                }
-                else {
+                } else {
                     $liste[0] = $obj->label.': '.$langs->trans("None");
                 }
-            }
-            else {
+            } else {
             	if ($type == 'member' && $obj->doc_template_name == 'standard')   // Special case, if member template, we add variant per format
                 {
                     global $_Avery_Labels;
@@ -1673,16 +1634,14 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
                     {
                     	$liste[$obj->id.':'.$key] = ($obj->label ? $obj->label : $obj->doc_template_name).' '.$val['name'];
                     }
-                }
-                else // Common usage
+                } else // Common usage
                 {
                 	$liste[$obj->id] = $obj->label ? $obj->label : $obj->doc_template_name;
                 }
             }
             $i++;
         }
-    }
-    else {
+    } else {
         dol_print_error($db);
         return -1;
     }
@@ -1759,8 +1718,7 @@ function getSoapParams()
                       'proxy_password' => $proxypass,
                       'trace'		   => 1
         );
-    }
-    else {
+    } else {
         $params = array('connection_timeout'=>$timeout,
                       'response_timeout'=>$response_timeout,
                       'proxy_use'      => 0,
@@ -1813,64 +1771,51 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classpath = 'compta/facture/class';
 		$module = 'facture';
 		$myobject = 'facture';
-	}
-	elseif ($objecttype == 'commande' || $objecttype == 'order') {
+	} elseif ($objecttype == 'commande' || $objecttype == 'order') {
 		$classpath = 'commande/class';
 		$module = 'commande';
 		$myobject = 'commande';
-	}
-	elseif ($objecttype == 'propal') {
+	} elseif ($objecttype == 'propal') {
 		$classpath = 'comm/propal/class';
-	}
-	elseif ($objecttype == 'supplier_proposal') {
+	} elseif ($objecttype == 'supplier_proposal') {
 		$classpath = 'supplier_proposal/class';
-	}
-	elseif ($objecttype == 'shipping') {
+	} elseif ($objecttype == 'shipping') {
 		$classpath = 'expedition/class';
 		$myobject = 'expedition';
 		$module = 'expedition_bon';
-	}
-	elseif ($objecttype == 'delivery') {
+	} elseif ($objecttype == 'delivery') {
 		$classpath = 'livraison/class';
 		$myobject = 'livraison';
 		$module = 'livraison_bon';
-	}
-	elseif ($objecttype == 'contract') {
+	} elseif ($objecttype == 'contract') {
 		$classpath = 'contrat/class';
 		$module = 'contrat';
 		$myobject = 'contrat';
-	}
-	elseif ($objecttype == 'member') {
+	} elseif ($objecttype == 'member') {
 		$classpath = 'adherents/class';
 		$module = 'adherent';
 		$myobject = 'adherent';
-	}
-	elseif ($objecttype == 'cabinetmed_cons') {
+	} elseif ($objecttype == 'cabinetmed_cons') {
 		$classpath = 'cabinetmed/class';
 		$module = 'cabinetmed';
 		$myobject = 'cabinetmedcons';
-	}
-	elseif ($objecttype == 'fichinter') {
+	} elseif ($objecttype == 'fichinter') {
 		$classpath = 'fichinter/class';
 		$module = 'ficheinter';
 		$myobject = 'fichinter';
-	}
-	elseif ($objecttype == 'task') {
+	} elseif ($objecttype == 'task') {
 		$classpath = 'projet/class';
 		$module = 'projet';
 		$myobject = 'task';
-	}
-	elseif ($objecttype == 'stock') {
+	} elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
 		$module = 'stock';
 		$myobject = 'stock';
-	}
-	elseif ($objecttype == 'inventory') {
+	} elseif ($objecttype == 'inventory') {
 		$classpath = 'product/inventory/class';
 		$module = 'stock';
 		$myobject = 'inventory';
-	}
-	elseif ($objecttype == 'mo') {
+	} elseif ($objecttype == 'mo') {
 		$classpath = 'mrp/class';
 		$module = 'mrp';
 		$myobject = 'mo';
@@ -1885,14 +1830,12 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 		$classname = 'FactureFournisseur';
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-	}
-	elseif ($objecttype == 'order_supplier') {
+	} elseif ($objecttype == 'order_supplier') {
 		$classfile = 'fournisseur.commande';
 		$classname = 'CommandeFournisseur';
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
-	}
-	elseif ($objecttype == 'stock') {
+	} elseif ($objecttype == 'stock') {
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
 		$classname = 'Entrepot';
@@ -1913,8 +1856,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 					$ret = $langs->trans('Deleted');
 				}
 				unset($object);
-			}
-			else dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
+			} else dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
 		}
 	}
 	return $ret;
@@ -1949,8 +1891,7 @@ function cleanCorruptedTree($db, $tabletocleantree, $fieldfkparent)
 			if ($obj->parent_id > 0) $listofparentid[$obj->rowid] = $obj->parent_id;
 			$i++;
 		}
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 
@@ -2128,8 +2069,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 		{
 			if ($color > 127) $color += ((255 - $color) * ($ratio / 100));
 			if ($color < 128) $color -= ($color * ($ratio / 100));
-		}
-		else // We decrease agressiveness
+		} else // We decrease agressiveness
 		{
 			if ($color > 128) $color -= (($color - 128) * (abs($ratio) / 100));
 			if ($color < 127) $color += ((128 - $color) * (abs($ratio) / 100));
@@ -2137,8 +2077,7 @@ function colorAgressiveness($hex, $ratio = -50, $brightness = 0)
 		if ($brightness > 0)
 		{
 			$color = ($color * (100 + abs($brightness)) / 100);
-		}
-		else {
+		} else {
 			$color = ($color * (100 - abs($brightness)) / 100);
 		}
 
@@ -2221,15 +2160,13 @@ function colorHexToRgb($hex, $alpha = false, $returnArray = false)
     if ($alpha !== false) {
         $rgb['a'] = floatval($alpha);
         $string = 'rgba('.implode(',', $rgb).')';
-    }
-    else {
+    } else {
         $string = 'rgb('.implode(',', $rgb).')';
     }
 
     if ($returnArray) {
         return $rgb;
-    }
-    else {
+    } else {
         return $string;
     }
 }
@@ -2279,71 +2216,49 @@ function getModuleDirForApiClass($module)
 
     if ($module == 'contracts') {
     	$moduledirforclass = 'contrat';
-    }
-    elseif (in_array($module, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents'))) {
+    } elseif (in_array($module, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents'))) {
         $moduledirforclass = 'api';
-    }
-    elseif ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
+    } elseif ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
         $moduledirforclass = 'societe';
-    }
-    elseif ($module == 'propale' || $module == 'proposals') {
+    } elseif ($module == 'propale' || $module == 'proposals') {
         $moduledirforclass = 'comm/propal';
-    }
-    elseif ($module == 'agenda' || $module == 'agendaevents') {
+    } elseif ($module == 'agenda' || $module == 'agendaevents') {
         $moduledirforclass = 'comm/action';
-    }
-    elseif ($module == 'adherent' || $module == 'members' || $module == 'memberstypes' || $module == 'subscriptions') {
+    } elseif ($module == 'adherent' || $module == 'members' || $module == 'memberstypes' || $module == 'subscriptions') {
         $moduledirforclass = 'adherents';
-    }
-    elseif ($module == 'don' || $module == 'donations') {
+    } elseif ($module == 'don' || $module == 'donations') {
         $moduledirforclass = 'don';
-    }
-    elseif ($module == 'banque' || $module == 'bankaccounts') {
+    } elseif ($module == 'banque' || $module == 'bankaccounts') {
         $moduledirforclass = 'compta/bank';
-    }
-    elseif ($module == 'category' || $module == 'categorie') {
+    } elseif ($module == 'category' || $module == 'categorie') {
         $moduledirforclass = 'categories';
-    }
-    elseif ($module == 'order' || $module == 'orders') {
+    } elseif ($module == 'order' || $module == 'orders') {
         $moduledirforclass = 'commande';
-    }
-    elseif ($module == 'shipments') {
+    } elseif ($module == 'shipments') {
         $moduledirforclass = 'expedition';
-    }
-    elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
+    } elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
         $moduledirforclass = 'compta/facture';
-    }
-    elseif ($module == 'products') {
+    } elseif ($module == 'products') {
         $moduledirforclass = 'product';
-    }
-    elseif ($module == 'project' || $module == 'projects' || $module == 'tasks') {
+    } elseif ($module == 'project' || $module == 'projects' || $module == 'tasks') {
         $moduledirforclass = 'projet';
-    }
-    elseif ($module == 'task') {
+    } elseif ($module == 'task') {
         $moduledirforclass = 'projet';
-    }
-    elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
+    } elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
         $moduledirforclass = 'product/stock';
-    }
-    elseif ($module == 'supplierproposals' || $module == 'supplierproposal' || $module == 'supplier_proposal') {
+    } elseif ($module == 'supplierproposals' || $module == 'supplierproposal' || $module == 'supplier_proposal') {
     	$moduledirforclass = 'supplier_proposal';
-    }
-    elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
+    } elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
         $moduledirforclass = 'fourn';
-    }
-    elseif ($module == 'expensereports') {
+    } elseif ($module == 'expensereports') {
         $moduledirforclass = 'expensereport';
-    }
-    elseif ($module == 'users') {
+    } elseif ($module == 'users') {
         $moduledirforclass = 'user';
-    }
-    elseif ($module == 'ficheinter' || $module == 'interventions') {
+    } elseif ($module == 'ficheinter' || $module == 'interventions') {
     	$moduledirforclass = 'fichinter';
-    }
-    elseif ($module == 'tickets') {
+    } elseif ($module == 'tickets') {
     	$moduledirforclass = 'ticket';
-    }
-    elseif ($module == 'boms') {
+    } elseif ($module == 'boms') {
         $moduledirforclass = 'bom';
     }
 
@@ -2410,8 +2325,7 @@ function autoOrManual($automaticmanual, $case = 1, $color = 0)
         if ($case == 3) $result = '<input type="checkbox" value="1" checked disabled> '.$result;
 
         $classname = 'ok';
-    }
-    elseif ($automaticmanual == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
+    } elseif ($automaticmanual == 0 || strtolower($automaticmanual) == 'manual' || strtolower($automaticmanual) == 'false')
     {
         $result = $langs->trans("manual");
         if ($case == 1 || $case == 3) $result = $langs->trans("Manual");

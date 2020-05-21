@@ -141,8 +141,7 @@ class Export
 	    									if (!empty($perm[2]))
 	    									{
 	    										$bool = $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
-	    									}
-	    									else {
+	    									} else {
 	    										$bool = $user->rights->{$perm[0]}->{$perm[1]};
 	    									}
 	    									if ($perm[0] == 'user' && $user->admin) $bool = true;
@@ -303,8 +302,7 @@ class Export
 					$ValueArray = explode("+", $ValueField);
 					$szFilterQuery = "(".$this->conditionDate($NameField, trim($ValueArray[0]), ">=");
 					$szFilterQuery .= " AND ".$this->conditionDate($NameField, trim($ValueArray[1]), "<=").")";
-				}
-				else {
+				} else {
 					if (is_numeric(substr($ValueField, 0, 1)))
 						$szFilterQuery = $this->conditionDate($NameField, trim($ValueField), "=");
 					else $szFilterQuery = $this->conditionDate($NameField, trim(substr($ValueField, 1)), substr($ValueField, 0, 1));
@@ -320,8 +318,7 @@ class Export
 					$ValueArray = explode("+", $ValueField);
 					$szFilterQuery = "(".$NameField.">=".$ValueArray[0];
 					$szFilterQuery .= " AND ".$NameField."<=".$ValueArray[1].")";
-				}
-				else {
+				} else {
 					if (is_numeric(substr($ValueField, 0, 1)))
 						$szFilterQuery = " ".$NameField."=".$ValueField;
 					else $szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).substr($ValueField, 1);
@@ -465,8 +462,7 @@ class Export
 							if (!empty($ValueField) && $ValueField == $obj->rowid)
 							{
 								$szFilterField .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
-							}
-							else {
+							} else {
 								$szFilterField .= '<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
 							}
 							$i++;
@@ -475,8 +471,7 @@ class Export
 					$szFilterField .= "</select>";
 
 					$this->db->free($resql);
-				}
-				else dol_print_error($this->db);
+				} else dol_print_error($this->db);
 				break;
 		}
 
@@ -653,8 +648,7 @@ class Export
 								    $remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;
-							}
-							else {
+							} else {
 							    // TODO FIXME Export of compute field does not work. $obj containt $obj->alias_field and formulat will contains $obj->field
 							    $computestring = $this->array_export_special[$indice][$key];
 							    $tmp = dol_eval($computestring, 1, 0);
@@ -676,14 +670,12 @@ class Export
 				$objmodel->close_file();
 
         		return 1;
-			}
-			else {
+			} else {
 				$this->error = $objmodel->error;
 				dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
 				return -1;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->error()." - sql=".$sql;
 			return -1;
 		}
@@ -725,8 +717,7 @@ class Export
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->errno = $this->db->lasterrno();
 			$this->db->rollback();
@@ -761,13 +752,11 @@ class Export
 				$this->hexafiltervalue = $obj->filter;
 
 				return 1;
-			}
-			else {
+			} else {
 				$this->error = "ModelNotFound";
 				return -2;
 			}
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			return -3;
 		}
@@ -805,8 +794,7 @@ class Export
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}

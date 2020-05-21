@@ -251,8 +251,7 @@ class Conf
 		{
 			try {
 				date_default_timezone_set($this->global->MAIN_SERVER_TZ);
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				dol_syslog("Error: Bad value for parameter MAIN_SERVER_TZ=".$this->global->MAIN_SERVER_TZ, LOG_ERR);
 			}
@@ -334,8 +333,7 @@ class Conf
 
 							// For backward compatibility
 							$this->$module->$dirname = $rootfordata."/".$name;
-						}
-						else {
+						} else {
 							// For multicompany sharings
 							$this->$module->$multidirname = array($this->entity => $rootfortemp."/".$name."/temp");
 

@@ -225,8 +225,7 @@ class BankAccounts extends DolibarrApi
         if ($accountto->currency_code == $accountfrom->currency_code)
         {
             $amount_to = $amount;
-        }
-        else {
+        } else {
             if (!$amount_to || empty($amount_to))
             {
                 throw new RestException(422, 'You must provide amount_to value since bankaccount_from and bankaccount_to does not share the same currency.');
@@ -302,8 +301,7 @@ class BankAccounts extends DolibarrApi
                     'message' => 'Internal wire transfer created successfully.'
                 )
             );
-        }
-        else {
+        } else {
             $this->db->rollback();
             throw new RestException(500, $accountfrom->error.' '.$accountto->error);
         }
@@ -336,8 +334,7 @@ class BankAccounts extends DolibarrApi
         if ($account->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else {
+        } else {
             throw new RestException(500, $account->error);
         }
     }

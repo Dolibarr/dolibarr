@@ -362,7 +362,7 @@ class AccountancyExport
 			if ($line->sens == 'D') {
 				print price($line->montant).$separator;
 				print ''.$separator;
-			}elseif ($line->sens == 'C') {
+			} elseif ($line->sens == 'C') {
 				print ''.$separator;
 				print price($line->montant).$separator;
 			}
@@ -602,8 +602,7 @@ class AccountancyExport
 				$Tab['montant_debit']  =  str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
-			}
-			else {
+			} else {
 				$Tab['montant_debit']  = str_pad(number_format(0, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
 
 				$Tab['montant_crebit'] = str_pad(number_format(abs($data->montant), 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -899,12 +898,10 @@ class AccountancyExport
             if ($aIndex - 2 >= 0 && $objectLines[$aIndex - 2]->piece_num == $line->piece_num)
             {
                 $sammelBuchung = true;
-            }
-            elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
+            } elseif ($aIndex + 2 < $aSize && $objectLines[$aIndex + 2]->piece_num == $line->piece_num)
             {
                 $sammelBuchung = true;
-            }
-            elseif ($aIndex + 1 < $aSize
+            } elseif ($aIndex + 1 < $aSize
                     && $objectLines[$aIndex + 1]->piece_num == $line->piece_num
                     && $aIndex - 1 < $aSize
                     && $objectLines[$aIndex - 1]->piece_num == $line->piece_num
@@ -926,8 +923,7 @@ class AccountancyExport
             if ($line->sens == 'D')
             {
                 print 'S'.$this->separator;
-            }
-            else {
+            } else {
                 print 'H'.$this->separator;
             }
             //Grp
@@ -938,12 +934,10 @@ class AccountancyExport
                 if ($line->piece_num == $thisPieceNum)
                 {
                     print length_accounta($thisPieceAccountNr).$this->separator;
-                }
-                else {
+                } else {
                     print "div".$this->separator;
                 }
-            }
-            else {
+            } else {
                 print length_accounta($line->code_tiers).$this->separator;
             }
             //SId
@@ -959,8 +953,7 @@ class AccountancyExport
             if ($sammelBuchung)
             {
                 print "2".$this->separator;
-            }
-            else {
+            } else {
                 print "1".$this->separator;
             }
             // Code
@@ -969,8 +962,7 @@ class AccountancyExport
             if ($line->montant >= 0)
             {
                 print $line->montant.$this->separator;
-            }
-            else {
+            } else {
                 print ($line->montant * -1).$this->separator;
             }
             // Steuer

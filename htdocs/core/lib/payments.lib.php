@@ -180,8 +180,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 			else $out .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
 		//if ($mode) $out.='&noidempotency=1';
-	}
-	elseif ($type == 'order')
+	} elseif ($type == 'order')
 	{
 	    $out = $urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) $out .= 'order_ref';
@@ -197,8 +196,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 				$out .= ($mode ? '</font>' : '');
 			}
 		}
-	}
-	elseif ($type == 'invoice')
+	} elseif ($type == 'invoice')
 	{
 	    $out = $urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) $out .= 'invoice_ref';
@@ -214,8 +212,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 				$out .= ($mode ? '</font>' : '');
 			}
 		}
-	}
-	elseif ($type == 'contractline')
+	} elseif ($type == 'contractline')
 	{
 	    $out = $urltouse.'/public/payment/newpayment.php?source=contractline&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) $out .= 'contractline_ref';
@@ -231,8 +228,7 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 				$out .= ($mode ? '</font>' : '');
 			}
 		}
-	}
-	elseif ($type == 'member' || $type == 'membersubscription')
+	} elseif ($type == 'member' || $type == 'membersubscription')
 	{
 	    $out = $urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
 		if ($mode == 1) $out .= 'member_ref';

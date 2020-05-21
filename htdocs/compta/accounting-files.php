@@ -334,8 +334,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                    $nofile['sens'] = $objd->sens;
 
 		                    $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
-		                }
-		                else {
+		                } else {
 		                    foreach ($files as $key => $file)
 		                    {
 		                    	$file['id'] = $objd->id;
@@ -382,14 +381,12 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 
 		            $i++;
 		        }
-		    }
-		    else {
+		    } else {
 		        dol_print_error($db);
 		    }
 
 		    $db->free($resd);
-		}
-		else {
+		} else {
 			setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'errors');
 			$error++;
 		}
@@ -489,8 +486,7 @@ if ($result && $action == "dl" && !$error)
         dol_delete_file($zipname);
 
         exit();
-    }
-    else {
+    } else {
     	setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
     }
 }
@@ -622,8 +618,7 @@ if (!empty($date_start) && !empty($date_stop))
         if (empty($TData))
         {
             print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
-        }
-        else {
+        } else {
             // Sort array by date ASC to calculate balance
 
             $totalET_debit = 0;

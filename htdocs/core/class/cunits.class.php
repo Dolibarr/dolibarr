@@ -135,8 +135,7 @@ class CUnits // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -194,8 +193,7 @@ class CUnits // extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -234,14 +232,11 @@ class CUnits // extends CommonObject
     		foreach ($filter as $key => $value) {
     			if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
     				$sqlwhere[] = $key.'='.(int) $value;
-    			}
-    			elseif (strpos($key, 'date') !== false) {
+    			} elseif (strpos($key, 'date') !== false) {
     				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
+    			} elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
     				$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
-    			}
-    			else {
+    			} else {
     				$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
@@ -337,8 +332,7 @@ class CUnits // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -376,8 +370,7 @@ class CUnits // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -395,8 +388,7 @@ class CUnits // extends CommonObject
 
 		if ($mode == 'short_label'){
 			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
-		}
-		elseif ($mode == 'code'){
+		} elseif ($mode == 'code'){
 			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
 		}
 

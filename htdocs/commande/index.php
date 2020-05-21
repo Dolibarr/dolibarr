@@ -173,8 +173,7 @@ if ($resql)
     //if ($totalinprocess != $total)
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
-}
-else {
+} else {
     dol_print_error($db);
 }
 
@@ -231,8 +230,7 @@ if (!empty($conf->commande->enabled))
                 print '</td></tr>';
 				$i++;
 			}
-		}
-		else {
+		} else {
 			print '<tr class="oddeven"><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table></div><br>";
@@ -321,8 +319,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 $max = 10;
 
@@ -408,8 +405,7 @@ if (!empty($conf->commande->enabled))
 		}
 
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 /*
@@ -493,8 +489,7 @@ if (!empty($conf->commande->enabled))
 			}
 		}
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 

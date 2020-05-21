@@ -225,8 +225,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				if ($i < $nbmax)
 				{
 					$dataseries[] = array($obj->label, round($obj->nb));
-				}
-				else {
+				} else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
@@ -246,8 +245,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
-		}
-		else {
+		} else {
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -383,8 +381,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 			print '</div>';
 			print '<br>';
 		}
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }

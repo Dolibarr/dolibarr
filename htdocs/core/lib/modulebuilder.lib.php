@@ -191,8 +191,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 		@chmod($pathoffiletoedittarget, octdec($newmask));
 
 		return $object;
-	}
-	catch (Exception $e)
+	} catch (Exception $e)
 	{
 		print $e->getMessage();
 		return -5;
@@ -240,8 +239,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 			if (class_exists($objectname)) $object = new $objectname($db);
 			else return -1;
 		}
-	}
-	catch (Exception $e)
+	} catch (Exception $e)
 	{
 		print $e->getMessage();
 	}
@@ -289,8 +287,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	if ($result)
 	{
 		@chmod($pathoffiletoedittarget, octdec($newmask));
-	}
-	else {
+	} else {
 		$error++;
 	}
 
@@ -333,8 +330,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 	if ($result)
 	{
 		@chmod($pathoffiletoedittarget, octdec($newmask));
-	}
-	else {
+	} else {
 		$error++;
 	}
 

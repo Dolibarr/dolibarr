@@ -114,8 +114,7 @@ $sql .= " WHERE f.entity IN (".getEntity('invoice').")";
 $sql .= " AND f.fk_statut > 0";
 if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_SITUATION.")";
-}
-else {
+} else {
 	$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_STANDARD.",".Facture::TYPE_CREDIT_NOTE.",".Facture::TYPE_DEPOSIT.",".Facture::TYPE_SITUATION.")";
 }
 
@@ -195,8 +194,7 @@ if ($result)
    		$tabcompany[$obj->rowid] = array('id'=>$obj->socid, 'name'=>$obj->name, 'client'=>$obj->client);
    		$i++;
    	}
-}
-else {
+} else {
     dol_print_error($db);
 }
 
@@ -268,8 +266,7 @@ foreach ($tabfac as $key => $val)
 				{
 					print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
-				}
-				else {
+				} else {
 					print '<td class="right">'.($mt < 0 ?price(-$mt) : '')."</td>";
 	    			print '<td class="right">'.($mt >= 0 ?price($mt) : '')."</td>";
 				}

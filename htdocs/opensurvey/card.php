@@ -241,8 +241,7 @@ print $langs->trans("Title").'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
-}
-else print dol_htmlentities($object->titre);
+} else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
 // Description
@@ -251,8 +250,7 @@ if ($action == 'edit')
 {
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
-}
-else {
+} else {
 	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
@@ -264,8 +262,7 @@ if (!$object->fk_user_creat) {
 	if ($action == 'edit')
 	{
 		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
-	}
-	else print dol_print_email($object->mail_admin, 0, 0, 1);
+	} else print dol_print_email($object->mail_admin, 0, 0, 1);
 	print '</td></tr>';
 }
 
@@ -274,8 +271,7 @@ print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td colspan="2
 if ($action == 'edit')
 {
 	print '<input type="checkbox" name="mailsonde" '.($object->mailsonde ? 'checked="checked"' : '').'">';
-}
-else {
+} else {
 	print yn($object->mailsonde);
 
 	//If option is active and linked user does not have an email, we show a warning
@@ -292,8 +288,7 @@ print '<tr><td>'.$langs->trans('CanComment').'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	print '<input type="checkbox" name="cancomment" '.($object->allow_comments ? 'checked="checked"' : '').'">';
-}
-else print yn($object->allow_comments);
+} else print yn($object->allow_comments);
 print '</td></tr>';
 
 // Users can see others vote
@@ -301,8 +296,7 @@ print '<tr><td>'.$langs->trans('CanSeeOthersVote').'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	print '<input type="checkbox" name="canseeothersvote" '.($object->allow_spy ? 'checked="checked"' : '').'">';
-}
-else print yn($object->allow_spy);
+} else print yn($object->allow_spy);
 print '</td></tr>';
 
 // Expire date
@@ -407,8 +401,7 @@ if ($comments) {
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
 	}
-}
-else {
+} else {
 	print $langs->trans("NoCommentYet").'<br>';
 }
 

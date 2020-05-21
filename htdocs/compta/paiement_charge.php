@@ -141,8 +141,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
                 $loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
                 header('Location: '.$loc);
                 exit;
-            }
-            else {
+            } else {
                 $db->rollback();
             }
         }
@@ -282,8 +281,7 @@ if ($action == 'create')
 		if ($objp->date_ech > 0)
 		{
 			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
-		}
-		else {
+		} else {
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
@@ -303,8 +301,7 @@ if ($action == 'create')
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
-		}
-		else {
+		} else {
 			print '-';
 		}
 		print "</td>";

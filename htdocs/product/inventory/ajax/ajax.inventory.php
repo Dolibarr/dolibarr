@@ -20,8 +20,7 @@ switch ($put)
 			$res = $det->update($user);
 
 			echo $det->qty_view;
-		}
-		else {
+		} else {
 			echo -2;
 		}
 
@@ -39,8 +38,7 @@ switch ($put)
 			$det->update($user);
 
 			echo $det->new_pmp;
-		}
-		else {
+		} else {
 			echo -2;
 		}
 

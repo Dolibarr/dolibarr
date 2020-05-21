@@ -165,8 +165,7 @@ if (!empty($morelogincontent)) {
 				echo $option;
 			}
 		}
-	}
-	else {
+	} else {
 		echo '<!-- Option by hook -->';
 		echo $morelogincontent;
 	}
@@ -329,8 +328,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
-}
-elseif (!empty($moreloginextracontent)) {
+} elseif (!empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }

@@ -114,8 +114,7 @@ if (empty($reshook)) {
 			$object->delete($user);
 			header("Location: ".DOL_URL_ROOT."/user/group/list.php?restore_lastsearch_values=1");
 			exit;
-		}
-		else {
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
 		}
@@ -151,8 +150,7 @@ if (empty($reshook)) {
 
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
-				}
-				else {
+				} else {
 					$db->rollback();
 
 					$langs->load("errors");
@@ -160,8 +158,7 @@ if (empty($reshook)) {
 					$action = "create"; // Go back to create page
 				}
 			}
-		}
-		else {
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
 		}
@@ -186,13 +183,11 @@ if (empty($reshook)) {
 				{
 					header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 					exit;
-				}
-				else {
+				} else {
 					setEventMessages($edituser->error, $edituser->errors, 'errors');
 				}
 			}
-		}
-		else {
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'errors');
 		}
@@ -226,13 +221,11 @@ if (empty($reshook)) {
 			{
 				setEventMessages($langs->trans("GroupModified"), null, 'mesgs');
 				$db->commit();
-			}
-			else {
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 			}
-		}
-		else {
+		} else {
 			$langs->load("errors");
 			setEventMessages($langs->trans('ErrorForbidden'), null, 'mesgs');
 		}
@@ -279,8 +272,7 @@ if ($action == 'create')
 			print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 			print "<td>".$mc->select_entities($conf->entity);
 			print "</td></tr>\n";
-		}
-		else {
+		} else {
 			print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 		}
 	}
@@ -478,14 +470,12 @@ else {
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
 							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
-						}
-						else {
+						} else {
 							print "-";
 						}
 						print "</td></tr>\n";
 					}
-				}
-				else {
+				} else {
 					print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 				}
 				print "</table>";
@@ -545,8 +535,7 @@ else {
 					print "<tr>".'<td class="tdtop">'.$langs->trans("Entity").'</td>';
 					print "<td>".$mc->select_entities($object->entity);
 					print "</td></tr>\n";
-				}
-				else {
+				} else {
 					print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 				}
 			}

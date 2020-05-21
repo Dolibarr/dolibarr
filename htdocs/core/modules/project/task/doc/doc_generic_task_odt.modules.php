@@ -531,8 +531,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 					return -1;
@@ -563,8 +562,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else // Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
@@ -630,8 +628,7 @@ class doc_generic_task_odt extends ModelePDFTask
 									$listlinestaskres->setVars($key, $val, true, 'UTF-8');
 								} catch (OdfException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e) {
+								} catch (SegmentException $e) {
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
 							}
@@ -674,12 +671,10 @@ class doc_generic_task_odt extends ModelePDFTask
 							{
 								try {
 									$listlinestasktime->setVars($key, $val, true, 'UTF-8');
-								}
-								catch (OdfException $e)
+								} catch (OdfException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e)
+								} catch (SegmentException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -708,12 +703,10 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							try {
 								$listtasksfiles->setVars($key, $val, true, 'UTF-8');
-							}
-							catch (OdfException $e)
+							} catch (OdfException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
-							}
-							catch (SegmentException $e)
+							} catch (SegmentException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -723,8 +716,7 @@ class doc_generic_task_odt extends ModelePDFTask
 					//$listlines->merge();
 
 					$odfHandler->mergeSegment($listtasksfiles);
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -750,12 +742,10 @@ class doc_generic_task_odt extends ModelePDFTask
 						{
 							try {
 								$listlines->setVars($key, $val, true, 'UTF-8');
-							}
-							catch (OdfException $e)
+							} catch (OdfException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
-							}
-							catch (SegmentException $e)
+							} catch (SegmentException $e)
 							{
 								dol_syslog($e->getMessage(), LOG_INFO);
 							}
@@ -763,8 +753,7 @@ class doc_generic_task_odt extends ModelePDFTask
 						$listlines->merge();
 					}
 					$odfHandler->mergeSegment($listlines);
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -808,12 +797,10 @@ class doc_generic_task_odt extends ModelePDFTask
 							{
 								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
-								}
-								catch (OdfException $e)
+								} catch (OdfException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e)
+								} catch (SegmentException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -821,8 +808,7 @@ class doc_generic_task_odt extends ModelePDFTask
 							$listlines->merge();
 						}
 						$odfHandler->mergeSegment($listlines);
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
@@ -845,8 +831,7 @@ class doc_generic_task_odt extends ModelePDFTask
                         dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
-				}
-				else {
+				} else {
 					try {
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
@@ -866,8 +851,7 @@ class doc_generic_task_odt extends ModelePDFTask
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // Success
-			}
-			else {
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

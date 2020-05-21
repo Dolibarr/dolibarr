@@ -260,8 +260,7 @@ class Import
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->errno = $this->db->lasterrno();
 			$this->db->rollback();
@@ -294,13 +293,11 @@ class Import
 				$this->datatoimport         = $obj->type;
 				$this->fk_user              = $obj->fk_user;
 				return 1;
-			}
-			else {
+			} else {
 				$this->error = "Model not found";
 				return -2;
 			}
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			return -3;
 		}
@@ -350,8 +347,7 @@ class Import
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else {
+		} else {
 			$this->db->commit();
 			return 1;
 		}

@@ -101,12 +101,10 @@ class FormProduct
 			if (!empty($batch))
 			{
 				$sql .= ", pb.qty as stock";
-			}
-			else {
+			} else {
 				$sql .= ", ps.reel as stock";
 			}
-		}
-		elseif ($sumStock)
+		} elseif ($sumStock)
 		{
 			$sql .= ", sum(ps.reel) as stock";
 		}
@@ -124,8 +122,7 @@ class FormProduct
 		if (count($warehouseStatus))
 		{
 			$sql .= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
-		}
-		else {
+		} else {
 			$sql .= " AND e.statut = 1";
 		}
 
@@ -176,8 +173,7 @@ class FormProduct
 			}
 
 			return $num;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -267,8 +263,7 @@ class FormProduct
 			{
 				if ($arraytypes['stock'] <= 0) {
 					$label .= ' <span class= \'text-warning\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
-				}
-				else {
+				} else {
 					$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
 				}
 			}
@@ -432,8 +427,7 @@ class FormProduct
 		if (!is_array($objectLines) || !count($objectLines))
 		{
 			if (!empty($fk_product)) $productIdArray[] = $fk_product;
-		}
-		else {
+		} else {
 			foreach ($objectLines as $line) {
 				if ($line->fk_product) $productIdArray[] = $line->fk_product;
 			}
@@ -453,8 +447,7 @@ class FormProduct
 		if (!empty($fk_product))
 		{
 			$productIdArray = array($fk_product); // only show lot stock for product
-		}
-		else {
+		} else {
 			foreach ($this->cache_lot as $key => $value)
 			{
 				$productIdArray[] = $key;
@@ -471,8 +464,7 @@ class FormProduct
 					$label .= $arraytypes['batch'];
 					if ($arraytypes['qty'] <= 0) {
 						$label .= ' <span class=\'text-warning\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
-					}
-					else {
+					} else {
 						$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
 					}
 
@@ -520,8 +512,7 @@ class FormProduct
 		if ($cacheLoaded)
 		{
 			return count($this->cache_lot);
-		}
-		else {
+		} else {
 			// clear cache
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
@@ -553,8 +544,7 @@ class FormProduct
 				}
 
 				return $num;
-			}
-			else {
+			} else {
 				dol_print_error($this->db);
 				return -1;
 			}

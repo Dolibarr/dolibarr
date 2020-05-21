@@ -120,16 +120,14 @@ class RemiseCheque extends CommonObject
 				if ($this->statut == 0)
 				{
 					$this->ref = "(PROV".$this->id.")";
-				}
-				else {
+				} else {
 					$this->ref = $obj->ref;
 				}
 			}
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else {
+		} else {
 		    $this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -225,8 +223,7 @@ class RemiseCheque extends CommonObject
 						array_push($lines, $row[0]);
 					}
 					$this->db->free($resql);
-				}
-				else {
+				} else {
 					$this->errno = -1026;
 					dol_syslog("RemiseCheque::Create Error ".$this->errno, LOG_ERR);
 				}
@@ -266,8 +263,7 @@ class RemiseCheque extends CommonObject
 					dol_syslog("RemiseCheque::Create Error update amount ".$this->errno, LOG_ERR);
 				}
 			}
-		}
-		else {
+		} else {
 			$this->errno = -1;
 			$this->error = $this->db->lasterror();
 			$this->errno = $this->db->lasterrno();
@@ -284,8 +280,7 @@ class RemiseCheque extends CommonObject
             $this->db->commit();
             dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->id;
-        }
-        else {
+        } else {
             $this->db->rollback();
             dol_syslog("RemiseCheque::Create end", LOG_DEBUG);
             return $this->errno;
@@ -336,8 +331,7 @@ class RemiseCheque extends CommonObject
 		if ($this->errno === 0)
 		{
 			$this->db->commit();
-		}
-		else {
+		} else {
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::Delete ROLLBACK ($this->errno)");
 		}
@@ -379,13 +373,11 @@ class RemiseCheque extends CommonObject
 				{
 				    $this->ref = $numref;
 					$this->statut = 1;
-				}
-				else {
+				} else {
 					$this->errno = -1029;
 					dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 				}
-			}
-			else {
+			} else {
 				$this->errno = -1033;
 				dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
 			}
@@ -396,8 +388,7 @@ class RemiseCheque extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::Validate ".$this->errno, LOG_ERR);
             return $this->errno;
@@ -479,8 +470,7 @@ class RemiseCheque extends CommonObject
 			}
 
 			return $numref;
-		}
-		else {
+		} else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Bank"));
 			return "";
@@ -534,8 +524,7 @@ class RemiseCheque extends CommonObject
 			}
 
 			return $response;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -573,8 +562,7 @@ class RemiseCheque extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -652,15 +640,13 @@ class RemiseCheque extends CommonObject
 			{
 				//$outputlangs->charset_output=$sav_charset_output;
 				return 1;
-			}
-			else {
+			} else {
 				//$outputlangs->charset_output=$sav_charset_output;
 				dol_syslog("Error");
 				dol_print_error($this->db, $docmodel->error);
 				return 0;
 			}
-		}
-		else {
+		} else {
 			$this->error = $langs->trans("ErrorFileDoesNotExists", $dir.$file);
 			return -1;
 		}
@@ -706,8 +692,7 @@ class RemiseCheque extends CommonObject
 				$this->errno = -1030;
 				dol_syslog("RemiseCheque::updateAmount ERREUR UPDATE ($this->errno)");
 			}
-		}
-		else {
+		} else {
 			$this->errno = -1031;
 			dol_syslog("RemiseCheque::updateAmount ERREUR SELECT ($this->errno)");
 		}
@@ -715,8 +700,7 @@ class RemiseCheque extends CommonObject
 		if ($this->errno === 0)
 		{
 			$this->db->commit();
-		}
-		else {
+		} else {
 			$this->db->rollback();
 			dol_syslog("RemiseCheque::updateAmount ROLLBACK ($this->errno)");
 		}
@@ -745,8 +729,7 @@ class RemiseCheque extends CommonObject
 			if ($resql)
 			{
 				$this->updateAmount();
-			}
-			else {
+			} else {
 				$this->errno = -1032;
 				dol_syslog("RemiseCheque::removeCheck ERREUR UPDATE ($this->errno)");
 			}
@@ -821,27 +804,23 @@ class RemiseCheque extends CommonObject
 					{
     					$this->db->commit();
     					return $rejectedPayment->id;
-					}
-					else {
+					} else {
                         $this->db->rollback();
 					    return -1;
 					}
-				}
-				else {
+				} else {
 				    $this->error = $rejectedPayment->error;
 				    $this->errors = $rejectedPayment->errors;
 				    $this->db->rollback();
 					return -1;
 				}
-			}
-			else {
+			} else {
 				$this->error = $rejectedPayment->error;
 				$this->errors = $rejectedPayment->errors;
 			    $this->db->rollback();
 				return -1;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -914,13 +893,11 @@ class RemiseCheque extends CommonObject
             {
                 $this->date_bordereau = $date;
                 return 1;
-            }
-            else {
+            } else {
                 $this->error = $this->db->error();
                 return -1;
             }
-        }
-        else {
+        } else {
             return -2;
         }
     }
@@ -947,13 +924,11 @@ class RemiseCheque extends CommonObject
 			if ($resql)
 			{
 				return 1;
-			}
-			else {
+			} else {
 				$this->error = $this->db->error();
 				return -1;
 			}
-		}
-		else {
+		} else {
 			return -2;
 		}
 	}
@@ -1021,8 +996,7 @@ class RemiseCheque extends CommonObject
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
         	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';

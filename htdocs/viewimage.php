@@ -192,13 +192,10 @@ $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
-if (!empty($hashp))
-{
+if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-}
-elseif (isset($_GET["publictakepos"]))
-{
+} elseif (isset($_GET["publictakepos"])) {
 	if (! empty($conf->global->TAKEPOS_AUTO_ORDER)) {
 		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
 	}

@@ -424,8 +424,7 @@ if ($action == 'create') {
 		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 		print '</div>';
 		print "</form>\n";
-	}
-	else {
+	} else {
 		dol_print_error('', "Error, no fichinter ".$object->id);
 	}
 } elseif ($action == 'selsocforcreatefrommodel') {
@@ -623,8 +622,7 @@ if ($action == 'create') {
 			print '</td><td>';
 			if ($action == 'nb_gen_max' || $object->frequency > 0) {
 				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $user->rights->facture->creer);
-			}
-			else print '';
+			} else print '';
 
 			print '</td>';
 			print '</tr>';

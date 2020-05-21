@@ -221,8 +221,7 @@ class Products extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -316,8 +315,7 @@ class Products extends DolibarrApi
                     }
                     if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) { $pricemodified = true;
                     }
-                }
-                else {
+                } else {
                     if ($this->product->price != $oldproduct->price) { $pricemodified = true;
                     }
                     if ($this->product->price_min != $oldproduct->price_min) { $pricemodified = true;
@@ -811,8 +809,7 @@ class Products extends DolibarrApi
 
     			$i++;
     		}
-    	}
-    	else {
+    	} else {
     		throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
     	}
     	if (!count($obj_ret)) {

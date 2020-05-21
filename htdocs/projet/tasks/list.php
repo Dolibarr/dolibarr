@@ -245,8 +245,7 @@ if ($resql)
 	{
 		$listofprojectcontacttype[$obj->rowid] = $obj->code;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
 // Get id of types of contacts for tasks (This list never contains a lot of elements)
 $listoftaskcontacttype = array();
@@ -260,8 +259,7 @@ if ($resql)
 	{
 		$listoftaskcontacttype[$obj->rowid] = $obj->code;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0] = '0'; // To avoid sql syntax error if not found
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
@@ -752,8 +750,7 @@ while ($i < min($num, $limit))
 				$socstatic->id = $obj->socid;
 				$socstatic->name = $obj->name;
 				print $socstatic->getNomUrl(1);
-			}
-			else {
+			} else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -854,8 +851,7 @@ while ($i < min($num, $limit))
 		        print convertSecondToTime($obj->tobill, 'allhourmin');
 		        $totalarray['val']['t.tobill'] += $obj->tobill;
 		        $totalarray['totaltobill'] += $obj->tobill;
-		    }
-		    else {
+		    } else {
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';
@@ -872,8 +868,7 @@ while ($i < min($num, $limit))
 		        print convertSecondToTime($obj->billed, 'allhourmin');
 		        $totalarray['val']['t.billed'] += $obj->billed;
 		        $totalarray['totalbilled'] += $obj->billed;
-		    }
-		    else {
+		    } else {
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';
@@ -938,8 +933,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		{
 			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		}
-		elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
+		} elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
 		elseif ($totalarray['totalprogress_calculatedfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';

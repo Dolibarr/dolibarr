@@ -88,8 +88,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 if (!$status)
 {
 	$title = $langs->trans("RequestStandingOrderToTreat");
-}
-else {
+} else {
 	$title = $langs->trans("RequestStandingOrderTreated");
 }
 
@@ -141,8 +140,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else {
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);

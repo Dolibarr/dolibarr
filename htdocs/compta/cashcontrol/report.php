@@ -172,8 +172,7 @@ if ($resql)
             $bankaccounttmp->fetch($objp->bankid);
             $cachebankaccount[$objp->bankid] = $bankaccounttmp;
             $bankaccount = $bankaccounttmp;
-        }
-        else {
+        } else {
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
 
@@ -207,8 +206,7 @@ if ($resql)
 		print $bankaccount->getNomUrl(1);
 		if ($cashcontrol->posmodule == "takepos") {
 			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber;
-		}
-		else {
+		} else {
 			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH';
 		}
 		if ($objp->code == 'CHQ') {
@@ -310,8 +308,7 @@ if ($resql)
     print '</form>';
 
 	$db->free($resql);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
