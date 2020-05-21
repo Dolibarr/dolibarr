@@ -303,7 +303,7 @@ if (empty($reshook))
             $object->canvas             	 = GETPOST('canvas');
             $object->net_measure           = GETPOST('net_measure');
             $object->net_measure_units     = GETPOST('net_measure_units'); // This is not the fk_unit but the power of unit
-            $object->weight             	 = GETPOST('weight');
+            $object->weight             	 = GETPOST('weight')?GETPOST('weight') : 0;
             $object->weight_units       	 = GETPOST('weight_units'); // This is not the fk_unit but the power of unit
             $object->length             	 = GETPOST('size');
             $object->length_units       	 = GETPOST('size_units'); // This is not the fk_unit but the power of unit
