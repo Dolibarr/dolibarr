@@ -54,6 +54,7 @@ $typetext = $type;
 if ($type == Categorie::TYPE_ACCOUNT) 			$title = $langs->trans('AccountsCategoriesArea');
 elseif ($type == Categorie::TYPE_WAREHOUSE) 	$title = $langs->trans('StocksCategoriesArea');
 elseif ($type == Categorie::TYPE_ACTIONCOMM)	$title = $langs->trans('ActionCommCategoriesArea');
+elseif ($type == Categorie::TYPE_WEBSITE_PAGE)	$title = $langs->trans('WebsitePagesCategoriesArea');
 else 											$title = $langs->trans(ucfirst($type).'sCategoriesArea');
 
 $arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
@@ -69,8 +70,6 @@ if (!empty($user->rights->categorie->creer)) {
 
 print load_fiche_titre($title, $newcardbutton, 'object_category');
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
@@ -88,20 +87,9 @@ print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr class="oddeven nohover"><td>';
 print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.$catname.'"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-/*
-// faire une rech dans une sous categorie uniquement
-print '<tr '.$bc[0].'><td>';
-print $langs->trans("SubCatOf").':</td><td>';
-
-print $form->select_all_categories('','subcatof');
-print '</td>';
-print '<td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
-*/
-
 print '</table></form>';
 
 
-//print '</td><td valign="top" width="70%">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -138,7 +126,6 @@ if ($catname || $id > 0)
 else print '&nbsp;';
 
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 print '<div class="fichecenter"><br>';
