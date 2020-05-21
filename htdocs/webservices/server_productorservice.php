@@ -987,8 +987,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
         	'products'=>$arrayproducts
         );
-    }
-    else {
+    } else {
         $objectresp = array(
 			'result'=>array('result_code' => 'OK', 'result_label' => ''),
         	'products'=>$arrayproducts

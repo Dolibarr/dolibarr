@@ -642,20 +642,17 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 							$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>'SUCCESS'), 'id'=>$socid_return);
 							$error = 0;
 						}
-					}
-					else {
+					} else {
 						$error++;
 						$errors = ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors);
 					}
 				}
-			}
-			else {
+			} else {
 				// retour creation KO
 				$error++;
 				$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create';
 			}
-		}
-		else {
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
