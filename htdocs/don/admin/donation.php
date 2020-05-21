@@ -71,14 +71,12 @@ if ($action == 'specimen')
             header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
             return;
         }
-        else
-        {
+        else {
             setEventMessages($obj->error, $obj->errors, 'errors');
             dol_syslog($obj->error, LOG_ERR);
         }
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -130,8 +128,7 @@ if ($action == 'set_DONATION_ACCOUNTINGACCOUNT')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -148,8 +145,7 @@ if ($action == 'set_DONATION_MESSAGE')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -165,8 +161,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }
@@ -179,8 +174,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }
@@ -223,8 +217,7 @@ if ($resql)
 		$i++;
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -276,15 +269,13 @@ if (is_resource($handle))
 						print img_picto($langs->trans("Enabled"), 'switch_on');
 						print '</td>';
 					}
-					else
-					{
+					else {
 						print "<td class=\"center\">\n";
 						print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 						print '</td>';
 					}
 				}
-				else
-				{
+				else {
 					print "<td class=\"center\">\n";
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 					print "</td>";
@@ -297,8 +288,7 @@ if (is_resource($handle))
 					print img_picto($langs->trans("Default"), 'on');
 					print '</td>';
 				}
-				else
-				{
+				else {
 					print "<td class=\"center\">";
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 					print '</td>';
@@ -371,8 +361,7 @@ if (!empty($conf->accounting->enabled))
 {
 	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
 }
-else
-{
+else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="'.$conf->global->DONATION_ACCOUNTINGACCOUNT.'">';
 }
 print '</td><td class="center">';

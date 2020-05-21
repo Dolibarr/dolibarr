@@ -180,8 +180,7 @@ if ($object->id)
 			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
-		else
-		{
+		else {
 			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
@@ -232,8 +231,7 @@ if ($object->id)
     			{
     				$filename = $obj['photo_vignette'];
     			}
-    			else
-    			{
+    			else {
     				$filename = $obj['photo'];
     			}
 
@@ -281,8 +279,7 @@ if ($object->id)
 		}
 	}
 }
-else
-{
+else {
     print $langs->trans("ErrorUnknown");
 }
 

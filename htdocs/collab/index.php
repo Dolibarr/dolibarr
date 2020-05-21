@@ -95,8 +95,7 @@ if ($action == 'add')
 		setEventMessages($langs->trans("PageAdded", $objectpage->pageurl), null, 'mesgs');
 		$action = '';
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 
@@ -130,13 +129,11 @@ if ($action == 'delete')
 			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
 			exit;
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

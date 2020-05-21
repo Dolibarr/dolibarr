@@ -284,8 +284,7 @@ if ($resql)
     print "</form>\n";
     $db->free($resql);
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

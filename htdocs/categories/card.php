@@ -119,8 +119,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
 		}
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 			exit;
 		}
@@ -156,8 +155,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 			$action = 'confirmed';
 			$_POST["addcat"] = '';
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}

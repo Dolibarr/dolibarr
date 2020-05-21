@@ -231,8 +231,7 @@ class Donations extends DolibarrApi
         {
             return $this->get($id);
         }
-        else
-        {
+        else {
         	throw new RestException(500, $this->don->error);
         }
     }
