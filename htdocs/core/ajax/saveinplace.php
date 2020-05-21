@@ -59,49 +59,60 @@ top_httphead();
 if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_element))
 {
 	$ext_element = GETPOST('ext_element', 'alpha', 2);
-	$field				= substr($field, 8); // remove prefix val_
+	$field = substr($field, 8); // remove prefix val_
 	$type = GETPOST('type', 'alpha', 2);
-	$value				= ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
-	$loadmethod			= GETPOST('loadmethod', 'alpha', 2);
-	$savemethod			= GETPOST('savemethod', 'alpha', 2);
+	$value = ($type == 'ckeditor' ? GETPOST('value', '', 2) : GETPOST('value', 'alpha', 2));
+	$loadmethod = GETPOST('loadmethod', 'alpha', 2);
+	$savemethod = GETPOST('savemethod', 'alpha', 2);
 	$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
-	$newelement			= $element;
+	$newelement = $element;
 
 	$view = '';
 	$format = 'text';
 	$return = array();
 	$error = 0;
 
-	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
-	{
+	if ($element != 'order_supplier' && $element != 'invoice_supplier' && preg_match('/^([^_]+)_([^_]+)/i', $element, $regs)) {
 		$element = $regs[1];
 		$subelement = $regs[2];
 	}
 
-	if ($element == 'propal') $newelement = 'propale';
-	elseif ($element == 'fichinter') $newelement = 'ficheinter';
-	elseif ($element == 'product') $newelement = 'produit';
-	elseif ($element == 'member') $newelement = 'adherent';
-	elseif ($element == 'order_supplier') {
+	if ($element == 'propal') {
+		$newelement = 'propale';
+	} elseif ($element == 'fichinter') {
+		$newelement = 'ficheinter';
+	} elseif ($element == 'product') {
+		$newelement = 'produit';
+	} elseif ($element == 'member') {
+		$newelement = 'adherent';
+	} elseif ($element == 'order_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'commande';
 	} elseif ($element == 'invoice_supplier') {
 		$newelement = 'fournisseur';
 		$subelement = 'facture';
-	} else $newelement = $element;
+	} else {
+		$newelement = $element;
+	}
 
 	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
 	$feature = $newelement;
 	$feature2 = $subelement;
 	$object_id = $fk_element;
-	if ($feature == 'expedition' || $feature == 'shipping')
-	{
+	if ($feature == 'expedition' || $feature == 'shipping') {
 		$feature = 'commande';
 		$object_id = 0;
 	}
-	if ($feature == 'shipping') $feature = 'commande';
-	if ($feature == 'payment') { $feature = 'facture'; }
-	if ($feature == 'payment_supplier') { $feature = 'fournisseur'; $feature2 = 'facture'; }
+	if ($feature == 'shipping') {
+		$feature = 'commande';
+	}
+	if ($feature == 'payment') {
+		$feature = 'facture';
+	}
+	if ($feature == 'payment_supplier') {
+		$feature = 'fournisseur';
+		$feature2 = 'facture';
+	}
 	//var_dump(GETPOST('action','aZ09'));
 	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
 	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
@@ -128,13 +139,11 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$error++;
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
-		} elseif ($type == 'datepicker')
-		{
+		} elseif ($type == 'datepicker') {
 			$timestamp = GETPOST('timestamp', 'int', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
-		} elseif ($type == 'select')
-		{
+		} elseif ($type == 'select') {
 			$loadmethodname = 'load_cache_'.$loadmethod;
 			$loadcachename = 'cache_'.$loadmethod;
 			$loadviewname = 'view_'.$loadmethod;
