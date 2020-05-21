@@ -1201,7 +1201,31 @@ class FormMail extends Form
 				if ($type_template == 'body') {
 					// Special case to use this->withbody as content
 					$defaultmessage = $this->withbody;
-				} elseif ($type_template == 'facture_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice"); } elseif ($type_template == 'facture_relance') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); } elseif ($type_template == 'propal_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal"); } elseif ($type_template == 'supplier_proposal_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal"); } elseif ($type_template == 'order_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder"); } elseif ($type_template == 'order_supplier_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder"); } elseif ($type_template == 'invoice_supplier_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); } elseif ($type_template == 'shipping_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping"); } elseif ($type_template == 'fichinter_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter"); } elseif ($type_template == 'thirdparty') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty"); } elseif ($type_template == 'user') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentUser"); } elseif (!empty($type_template)) { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template)); }
+				} elseif ($type_template == 'facture_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
+				} elseif ($type_template == 'facture_relance') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder");
+				} elseif ($type_template == 'propal_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendProposal");
+				} elseif ($type_template == 'supplier_proposal_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal");
+				} elseif ($type_template == 'order_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendOrder");
+				} elseif ($type_template == 'order_supplier_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierOrder");
+				} elseif ($type_template == 'invoice_supplier_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice");
+				} elseif ($type_template == 'shipping_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
+				} elseif ($type_template == 'fichinter_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
+				} elseif ($type_template == 'thirdparty') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
+				} elseif ($type_template == 'user') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentUser");
+				} elseif (!empty($type_template)) {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template));
+				}
 
 				$ret->label = 'default';
 				$ret->lang = $outputlangs->defaultlang;
