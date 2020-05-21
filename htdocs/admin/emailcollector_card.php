@@ -126,8 +126,7 @@ if (GETPOST('addfilter', 'alpha'))
 	if ($result > 0)
 	{
 		$object->fetchFilters();
-	}
-	else {
+	} else {
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
 	}
 }
@@ -140,8 +139,7 @@ if ($action == 'deletefilter')
 	if ($result > 0)
 	{
 		$object->fetchFilters();
-	}
-	else {
+	} else {
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
 	}
 }
@@ -160,8 +158,7 @@ if (GETPOST('addoperation', 'alpha'))
 	if ($result > 0)
 	{
 		$object->fetchActions();
-	}
-	else {
+	} else {
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
@@ -178,8 +175,7 @@ if ($action == 'updateoperation')
     if ($result > 0)
     {
         $object->fetchActions();
-    }
-    else {
+    } else {
         setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
     }
 }
@@ -191,8 +187,7 @@ if ($action == 'deleteoperation')
 	if ($result > 0)
 	{
 		$object->fetchActions();
-	}
-	else {
+	} else {
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
@@ -206,8 +201,7 @@ if ($action == 'confirm_collect')
 	{
 	    $debuginfo = $object->debuginfo;
 	    setEventMessages($object->lastresult, null, 'mesgs');
-	}
-	else {
+	} else {
 	    $debuginfo = $object->debuginfo;
 	    setEventMessages($object->error, null, 'errors');
 	}
@@ -426,23 +420,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
-		}
-		catch (Exception $e)
+		} catch (Exception $e)
 		{
 			print $e->getMessage();
 		}
 
 		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
-	}
-	else {
+	} else {
 		$morehtml .= 'IMAP functions not available on your PHP';
 	}
 
 	if (!$connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
-	}
-	else {
+	} else {
 		$morehtml .= imap_num_msg($connection);
 	}
 
@@ -605,8 +596,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (in_array($ruleaction['type'], array('recordevent')))
 		{
             print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
-		}
-		elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
+		} elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
 		}
 		print '</td>';
@@ -616,8 +606,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		    print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
 		    print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
 		    print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		}
-		else {
+		} else {
 		    print $ruleaction['actionparam'];
 		}
 		print '</td>';

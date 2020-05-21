@@ -71,12 +71,10 @@ if ($action == 'updateMask')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-elseif ($action == 'specimen')
+} elseif ($action == 'specimen')
 {
     $modele = GETPOST('module', 'alpha');
 
@@ -107,13 +105,11 @@ elseif ($action == 'specimen')
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=facture&file=SPECIMEN.pdf");
     		return;
-    	}
-    	else {
+    	} else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
-    }
-    else {
+    } else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -122,9 +118,7 @@ elseif ($action == 'specimen')
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -148,15 +142,13 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-}
-elseif ($action == 'setmod')
+} elseif ($action == 'setmod')
 {
     // TODO Verifier si module numerotation choisi peut etre active
     // par appel methode canBeActivated
 
     dolibarr_set_const($db, "FACTURE_ADDON", $value, 'chaine', 0, '', $conf->entity);
-}
-elseif ($action == 'setribchq')
+} elseif ($action == 'setribchq')
 {
 	$rib = GETPOST('rib', 'alpha');
 	$chq = GETPOST('chq', 'alpha');
@@ -169,12 +161,10 @@ elseif ($action == 'setribchq')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-elseif ($action == 'set_FACTURE_DRAFT_WATERMARK')
+} elseif ($action == 'set_FACTURE_DRAFT_WATERMARK')
 {
 	$draft = GETPOST('FACTURE_DRAFT_WATERMARK', 'alpha');
 
@@ -185,13 +175,10 @@ elseif ($action == 'set_FACTURE_DRAFT_WATERMARK')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'set_INVOICE_FREE_TEXT')
+} elseif ($action == 'set_INVOICE_FREE_TEXT')
 {
 	$freetext = GETPOST('INVOICE_FREE_TEXT', 'none'); // No alpha here, we want exact string
 
@@ -202,12 +189,10 @@ elseif ($action == 'set_INVOICE_FREE_TEXT')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-elseif ($action == 'setforcedate')
+} elseif ($action == 'setforcedate')
 {
 	$forcedate = GETPOST('forcedate', 'alpha');
 
@@ -218,12 +203,10 @@ elseif ($action == 'setforcedate')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-elseif ($action == 'setDefaultPDFModulesByType')
+} elseif ($action == 'setDefaultPDFModulesByType')
 {
     $invoicetypemodels = GETPOST('invoicetypemodels');
 
@@ -240,8 +223,7 @@ elseif ($action == 'setDefaultPDFModulesByType')
         if (!$error)
         {
             setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-        }
-        else {
+        } else {
             setEventMessages($langs->trans("Error"), null, 'errors');
         }
     }
@@ -341,8 +323,7 @@ foreach ($dirmodels as $reldir)
                             if ($conf->global->FACTURE_ADDON == $file || $conf->global->FACTURE_ADDON.'.php' == $file)
                             {
                                 print img_picto($langs->trans("Activated"), 'switch_on');
-                            }
-                            else {
+                            } else {
                                 print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/', '', $file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                             }
                             print '</td>';
@@ -453,8 +434,7 @@ if ($resql)
         array_push($def, $array[0]);
         $i++;
     }
-}
-else {
+} else {
     dol_print_error($db);
 }
 
@@ -524,8 +504,7 @@ foreach ($dirmodels as $reldir)
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
-	                            }
-	                            else {
+	                            } else {
 	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("SetAsDefault"), 'switch_off').'</a>';
 	                                print "</td>";
@@ -536,8 +515,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($conf->global->FACTURE_ADDON_PDF == "$name")
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else {
+	                            } else {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("SetAsDefault"), 'off').'</a>';
 	                            }
 	                            print '</td>';
@@ -570,8 +548,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
-	                            }
-	                            else {
+	                            } else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';
@@ -677,13 +654,11 @@ if (!empty($conf->banque->enabled))
                 $i++;
             }
             print "</select>";
-        }
-        else {
+        } else {
         	print '<span class="opacitymedium">'.$langs->trans("NoActiveBankAccountDefined").'</span>';
         }
     }
-}
-else {
+} else {
     print $langs->trans("BankModuleNotActive");
 }
 print "</td></tr>";
@@ -761,8 +736,7 @@ $variablename = 'INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else {
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();

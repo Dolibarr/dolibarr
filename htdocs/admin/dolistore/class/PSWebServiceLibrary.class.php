@@ -237,8 +237,7 @@ class PrestaShopWebservice
 				throw new PrestaShopWebserviceException('HTTP XML response is not parsable: '.$msg);
 			}
 			return $xml;
-		}
-		else {
+		} else {
 			throw new PrestaShopWebserviceException('HTTP response is empty');
 		}
 	}

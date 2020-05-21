@@ -95,8 +95,7 @@ if ($action == 'setvalue' && $user->admin)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else {
+	} else {
 		$db->rollback();
 		dol_print_error($db);
 	}
@@ -414,8 +413,7 @@ if (function_exists("ldap_connect"))
 			{
 				print img_picto('', 'info').' ';
 				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-			}
-			else {
+			} else {
 				print img_picto('', 'error').' ';
 				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
@@ -427,8 +425,7 @@ if (function_exists("ldap_connect"))
 			print "LDAP input file used for test:<br><br>\n";
 			print nl2br($ldap->dump_content($dn, $info));
 			print "\n<br>";
-		}
-		else {
+		} else {
 			print img_picto('', 'error').' ';
 			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
 			print ': '.$ldap->error;

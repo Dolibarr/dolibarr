@@ -101,13 +101,11 @@ if ($test)
 	{
 		print img_picto('', 'tick.png').' '.$langs->trans("MemcachedAvailableAndSetup");
 		print ' '.$langs->trans("MoreInformation").' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
-	}
-	else {
+	} else {
 		print img_picto('', 'warning').' '.$langs->trans("MemcachedModuleAvailableButNotSetup");
 		print ' <a href="'.dol_buildpath('/memcached/admin/memcached.php', 1).'">Memcached module admin page</a>';
 	}
-}
-else print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
+} else print img_picto('', 'warning').' '.$langs->trans("MemcachedNotAvailable");
 print '</br>';
 
 // OPCode cache
@@ -143,8 +141,7 @@ if (!$foundcache && $test)
 	{
 		$foundcache++;
 		print img_picto('', 'tick.png').' '.$langs->trans("APCInstalled");
-	}
-	else {
+	} else {
 		print img_picto('', 'warning').' '.$langs->trans("APCCacheInstalledButDisabled");
 	}
 }
@@ -157,8 +154,7 @@ if (ini_get('opcache.preload'))
 	print '<br>';
 	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
 	print ini_get('opcache.preload');
-}
-else {
+} else {
 	print '<br>';
 	print '<strong>'.$langs->trans("PreloadOPCode").'</strong>: ';
 	print $langs->trans("No");
@@ -462,8 +458,7 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 	if ($test)
 	{
 		print img_picto('', 'tick.png').' '.$langs->trans("YouUseBestDriver", $conf->db->type);
-	}
-	else {
+	} else {
 		print img_picto('', 'warning.png').' '.$langs->trans("YouDoNotUseBestDriver", $conf->db->type, 'mysqli');
 	}
 	print '<br>';
@@ -488,12 +483,10 @@ if ($resql)
 		if (empty($conf->global->PRODUCT_DONOTSEARCH_ANYWHERE))
 		{
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"), 'PRODUCT_DONOTSEARCH_ANYWHERE');
-		}
-		else {
+		} else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 		}
-	}
-	else {
+	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ProductsOrServices"));
 	}
 	print '<br>';
@@ -516,12 +509,10 @@ if ($resql)
 		if (empty($conf->global->COMPANY_DONOTSEARCH_ANYWHERE))
 		{
 			print img_picto('', 'warning.png').' '.$langs->trans("YouHaveXObjectUseSearchOptim", $nb, $langs->transnoentitiesnoconv("ThirdParties"), 'COMPANY_DONOTSEARCH_ANYWHERE');
-		}
-		else {
+		} else {
 			print img_picto('', 'tick.png').' '.$langs->trans("YouHaveXObjectAndSearchOptimOn", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 		}
-	}
-	else {
+	} else {
 		print img_picto('', 'tick.png').' '.$langs->trans("NbOfObjectIsLowerThanNoPb", $nb, $langs->transnoentitiesnoconv("ThirdParties"));
 	}
 	print '<br>';
@@ -534,8 +525,7 @@ print '<strong>'.$langs->trans("Browser").'</strong>:<br>';
 if (!in_array($conf->browser->name, array('chrome', 'opera', 'safari', 'firefox')))
 {
 	print img_picto('', 'warning.png').' '.$langs->trans("BrowserIsKO", $conf->browser->name);
-}
-else {
+} else {
 	print img_picto('', 'tick.png').' '.$langs->trans("BrowserIsOK", $conf->browser->name);
 }
 print '<br>';

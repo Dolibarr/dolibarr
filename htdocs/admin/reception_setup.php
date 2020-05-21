@@ -74,9 +74,7 @@ if ($action == 'updateMask')
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		else setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-}
-
-elseif ($action == 'set_param')
+} elseif ($action == 'set_param')
 {
 	$freetext = GETPOST('RECEPTION_FREE_TEXT', 'none'); // No alpha here, we want exact string
 	$res = dolibarr_set_const($db, "RECEPTION_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
@@ -98,9 +96,7 @@ elseif ($action == 'set_param')
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-}
-
-elseif ($action == 'specimen')
+} elseif ($action == 'specimen')
 {
 	$modele = GETPOST('module', 'alpha');
 
@@ -131,13 +127,11 @@ elseif ($action == 'specimen')
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=reception&file=SPECIMEN.pdf");
 			return;
-		}
-		else {
+		} else {
 			setEventMessages($module->error, $module->errors, 'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -147,9 +141,7 @@ elseif ($action == 'specimen')
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -174,9 +166,7 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-}
-
-elseif ($action == 'setmodel')
+} elseif ($action == 'setmodel')
 {
 	dolibarr_set_const($db, "RECEPTION_ADDON_NUMBER", $value, 'chaine', 0, '', $conf->entity);
 }
@@ -251,8 +241,7 @@ foreach ($dirmodels as $reldir)
                         $tmp = $module->getExample();
                         if (preg_match('/^Error/', $tmp)) {
 							$langs->load("errors"); print '<div class="error">'.$langs->trans($tmp).'</div>';
-						}
-                        elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
+						} elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
                         else print $tmp;
                         print '</td>'."\n";
 
@@ -260,8 +249,7 @@ foreach ($dirmodels as $reldir)
 						if ($conf->global->RECEPTION_ADDON_NUMBER == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else {
+						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$file.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
@@ -327,8 +315,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else {
+} else {
 	dol_print_error($db);
 }
 
@@ -396,8 +383,7 @@ foreach ($dirmodels as $reldir)
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
-	                            }
-	                            else {
+	                            } else {
 	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
@@ -408,8 +394,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($conf->global->RECEPTION_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else {
+	                            } else {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
@@ -439,8 +424,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_object($langs->trans("Preview"), 'reception').'</a>';
-	                            }
-	                            else {
+	                            } else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';

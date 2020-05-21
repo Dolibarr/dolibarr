@@ -146,8 +146,7 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 	{
 	    $db->commit();
 		dol_syslog($text, LOG_WARNING);
-	}
-	else {
+	} else {
 		$error++;
 		dol_syslog($securityevent->error, LOG_ERR);
 		$db->rollback();
@@ -324,8 +323,7 @@ if ($result)
 			$userstatic->id = $obj->fk_user;
 			$userstatic->login = $obj->login;
 			print $userstatic->getLoginUrl(1);
-		}
-		else print '&nbsp;';
+		} else print '&nbsp;';
 		print '</td>';
 
 		// Description
@@ -378,8 +376,7 @@ if ($result)
 
 	print "</form>";
 	$db->free($result);
-}
-else {
+} else {
 	dol_print_error($db);
 }
 

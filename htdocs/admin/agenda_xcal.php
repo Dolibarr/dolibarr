@@ -54,8 +54,7 @@ if ($actionsave)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else {
+    } else {
         $db->rollback();
         setEventMessages($langs->trans("SaveFailed"), null, 'errors');
     }

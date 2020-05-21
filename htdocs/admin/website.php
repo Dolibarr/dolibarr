@@ -138,8 +138,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
         	$fieldnamekey = $listfield[$f];
 	        setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities($fieldnamekey)), null, 'errors');
 	        break;
-    	}
-		elseif ($value == 'ref' && !preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
+    	} elseif ($value == 'ref' && !preg_match('/^[a-z0-9_\-\.]+$/i', $_POST[$value]))
 	    {
 			$ok = 0;
     	    $fieldnamekey = $listfield[$f];
@@ -212,12 +211,10 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
         {
             setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
         	unset($_POST); // Clean $_POST array, we keep only
-        }
-        else {
+        } else {
             if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
-            }
-            else {
+            } else {
                 dol_print_error($db);
             }
         }
@@ -226,8 +223,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
     // Si verif ok et action modify, on modifie la ligne
     if ($ok && GETPOST('actionmodify', 'alpha'))
     {
-        if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-        else { $rowidcol = "rowid"; }
+        if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
         $db->begin();
 
@@ -272,8 +268,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
             	{
             		$error++;
             		setEventMessages($langs->trans('ErrorDirAlreadyExists', $destfile), null, 'errors');
-            	}
-            	else {
+            	} else {
 	                @rename($srcfile, $destfile);
 
 		            // We must now rename $website->ref into $newname inside files
@@ -285,8 +280,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
 		            }
             	}
             }
-        }
-        else {
+        } else {
         	$error++;
             setEventMessages($db->lasterror(), null, 'errors');
         }
@@ -294,8 +288,7 @@ if (GETPOST('actionadd', 'alpha') || GETPOST('actionmodify', 'alpha'))
         if (!$error)
         {
         	$db->commit();
-        }
-        else {
+        } else {
         	$db->rollback();
         }
     }
@@ -309,8 +302,7 @@ if (GETPOST('actioncancel', 'alpha'))
 
 if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 {
-    if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-    else { $rowidcol = "rowid"; }
+    if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
     $website = new Website($db);
     $website->fetch($rowid);
@@ -333,8 +325,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 	        if ($db->errno() == 'DB_ERROR_CHILD_EXISTS')
 	        {
 	            setEventMessages($langs->transnoentities("ErrorRecordIsUsedByChild"), null, 'errors');
-	        }
-	        else {
+	        } else {
 	            dol_print_error($db);
 	        }
 	    }
@@ -343,8 +334,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 	    {
 	    	dol_delete_dir_recursive($conf->website->dir_output.'/'.$website->ref);
 	    }
-    }
-    else {
+    } else {
     	dol_print_error($db, 'Failed to load website with id '.$rowid);
     }
 }
@@ -352,8 +342,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 // activate
 if ($action == $acts[0])
 {
-    if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-    else { $rowidcol = "rowid"; }
+    if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET status = 1 WHERE rowid ='".$rowid."'";
@@ -369,8 +358,7 @@ if ($action == $acts[0])
 // disable
 if ($action == $acts[1])
 {
-    if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; }
-    else { $rowidcol = "rowid"; }
+    if ($tabrowid[$id]) { $rowidcol = $tabrowid[$id]; } else { $rowidcol = "rowid"; }
 
     if ($rowid) {
         $sql = "UPDATE ".$tabname[$id]." SET status = 0 WHERE rowid ='".$rowid."'";
@@ -469,8 +457,7 @@ if ($id)
            		{
            			if ($value == 'virtualhost') print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value], 1, 'help', '', 0, 2, 'tooltipvirtual');
            			else print $form->textwithpicto($valuetoshow, $tabhelp[$id][$value]);
-           		}
-            	else print $valuetoshow;
+           		} else print $valuetoshow;
                 print '</td>';
             }
             if ($fieldlist[$field] == 'libelle' || $fieldlist[$field] == 'label') $alabelisused = 1;
@@ -580,8 +567,7 @@ if ($id)
 
                     print '<td colspan="3" class="right"><a name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
                     print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
-                }
-                else {
+                } else {
 	              	$tmpaction = 'view';
                     $parameters = array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                     $reshook = $hookmanager->executeHooks('viewWebsiteFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
@@ -629,8 +615,7 @@ if ($id)
 
             print '</form>';
         }
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
@@ -669,11 +654,9 @@ function fieldListWebsites($fieldlist, $obj = '', $tabname = '', $context = '')
 			print '<td>';
 			print $formadmin->select_language($conf->global->MAIN_LANG_DEFAULT, 'lang');
 			print '</td>';
-		}
-		elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
+		} elseif ($fieldlist[$field] == 'code' && isset($obj->$fieldname)) {
 			print '<td><input type="text" class="flat" value="'.(!empty($obj->$fieldname) ? $obj->$fieldname : '').'" size="10" name="'.$fieldlist[$field].'"></td>';
-		}
-		else {
+		} else {
 			print '<td>';
 			$size = '';
 			if ($fieldlist[$field] == 'code') $size = 'size="8" ';

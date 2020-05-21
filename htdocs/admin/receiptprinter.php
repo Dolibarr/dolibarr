@@ -89,8 +89,7 @@ if ($action == 'addprinter' && $user->admin) {
         {
             $db->commit();
             setEventMessages($langs->trans("PrinterAdded", $printername), null);
-        }
-        else {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }
@@ -114,8 +113,7 @@ if ($action == 'deleteprinter' && $user->admin) {
         {
             $db->commit();
             setEventMessages($langs->trans("PrinterDeleted", $printername), null);
-        }
-        else {
+        } else {
             $db->rollback();
             dol_print_error($db);
         }

@@ -100,11 +100,11 @@ if ($action == 'save')
 			$object->fk_user = (int) $fk_user;
 			$object->fk_usergroup = 0;
 			$object->is_for_all = 0;
-		}elseif ($apply_to == 'G') {
+		} elseif ($apply_to == 'G') {
 			$object->fk_usergroup = (int) $fk_usergroup;
 			$object->fk_user = 0;
 			$object->is_for_all = 0;
-		}elseif ($apply_to == 'A') {
+		} elseif ($apply_to == 'A') {
 			$object->is_for_all = 1;
 			$object->fk_user = 0;
 			$object->fk_usergroup = 0;
@@ -122,8 +122,7 @@ if ($action == 'save')
 		header('Location: '.$_SERVER['PHP_SELF']);
 		exit;
 	}
-}
-elseif ($action == 'delete')
+} elseif ($action == 'delete')
 {
 	// TODO add confirm
 	$res = $object->delete($user);
@@ -228,8 +227,7 @@ foreach ($rules as $rule)
 		echo '<div class="float">'.$form->selectarray('apply_to', $tab_apply, $selected, 0).'</div>';
 		echo '<div id="user" class="float">'.$form->select_dolusers($object->fk_user, 'fk_user').'</div>';
 		echo '<div id="group" class="float">'.$form->select_dolgroups($object->fk_usergroup, 'fk_usergroup').'</div>';
-	}
-	else {
+	} else {
 		if ($rule->is_for_all > 0) echo $tab_apply['A'];
 		elseif ($rule->fk_usergroup > 0) echo $tab_apply['G'].' ('.$rule->getGroupLabel().')';
 		elseif ($rule->fk_user > 0) echo $tab_apply['U'].' ('.$rule->getUserName().')';
@@ -241,8 +239,7 @@ foreach ($rules as $rule)
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
 		echo $form->selectExpense($object->fk_c_type_fees, 'fk_c_type_fees', 0, 1, 1);
-	}
-	else {
+	} else {
 		if ($rule->fk_c_type_fees == -1) echo $langs->trans('AllExpenseReport');
 		else {
 			$key = getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
@@ -257,8 +254,7 @@ foreach ($rules as $rule)
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
 		echo $form->selectarray('code_expense_rules_type', $tab_rules_type, $object->code_expense_rules_type, 0);
-	}
-	else {
+	} else {
 		echo $tab_rules_type[$rule->code_expense_rules_type];
 	}
 	echo '</td>';
@@ -268,8 +264,7 @@ foreach ($rules as $rule)
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
 		print $form->selectDate(strtotime(date('Y-m-d', $object->dates)), 'start', '', '', 0, '', 1, 0);
-	}
-	else {
+	} else {
 		echo dol_print_date($rule->dates, 'day');
 	}
 	echo '</td>';
@@ -279,8 +274,7 @@ foreach ($rules as $rule)
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
 		print $form->selectDate(strtotime(date('Y-m-d', $object->datee)), 'end', '', '', 0, '', 1, 0);
-	}
-	else {
+	} else {
 		echo dol_print_date($rule->datee, 'day');
 	}
 	echo '</td>';
@@ -290,8 +284,7 @@ foreach ($rules as $rule)
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
 		echo '<input type="text" value="'.price2num($object->amount).'" name="amount" class="amount" />'.$conf->currency;
-	}
-	else {
+	} else {
 		echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
 	}
 	echo '</td>';
@@ -301,8 +294,7 @@ foreach ($rules as $rule)
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
 		echo $form->selectyesno('restrictive', $object->restrictive, 1);
-	}
-	else {
+	} else {
 		echo yn($rule->restrictive, 1, 1);
 	}
 	echo '</td>';
@@ -313,8 +305,7 @@ foreach ($rules as $rule)
 	{
 		echo '<a href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$rule->id.'">'.img_edit().'</a>&nbsp;';
 		echo '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$rule->id.'">'.img_delete().'</a>';
-	}
-	else {
+	} else {
 		echo '<input type="submit" class="button" value="'.$langs->trans('Update').'" />&nbsp;';
 		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button">'.$langs->trans('Cancel').'</a>';
 	}

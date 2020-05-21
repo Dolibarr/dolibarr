@@ -172,8 +172,7 @@ class MyModuleApi extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieving myobject list: '.$db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -243,8 +242,7 @@ class MyModuleApi extends DolibarrApi
 		if ($this->myobject->update(DolibarrApiAccess::$user, false) > 0)
 		{
 			return $this->get($id);
-		}
-		else {
+		} else {
 			throw new RestException(500, $this->myobject->error);
 		}
 	}
