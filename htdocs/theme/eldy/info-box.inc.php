@@ -226,7 +226,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 .fa-dol-bank_account:before {
 	content: "\f19c";
 }
-.fa-dol-adherent:before {
+.fa-dol-member:before {
 	content: "\f0c0";
 }
 .fa-dol-expensereport:before {
