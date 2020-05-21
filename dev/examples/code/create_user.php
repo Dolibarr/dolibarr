@@ -74,8 +74,7 @@ if ($idobject > 0)
 	// Change status to validated
 	$result=$obj->setStatut(1);
 	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
+	else {
 		$error++;
 		dol_print_error($db, $obj->error);
 	}
@@ -84,8 +83,7 @@ elseif ($obj->error == 'ErrorLoginAlreadyExists')
 {
      print "User with login ".$obj->login." already exists\n";
 }
-else
-{
+else {
 	$error++;
 	dol_print_error($db, $obj->error);
 }
@@ -98,8 +96,7 @@ if (! $error)
 	$db->commit();
 	print '--- end ok'."\n";
 }
-else
-{
+else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

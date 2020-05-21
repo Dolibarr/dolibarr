@@ -124,8 +124,7 @@ if ($db->connected)
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
     $ok = 1;
 }
-else
-{
+else {
     print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
@@ -140,8 +139,7 @@ if ($ok)
         dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
         $ok = 1;
     }
-    else
-    {
+    else {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
         dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok = 0;
@@ -257,8 +255,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	                $fieldname = $obj->Field;
 	                $fieldtype = $obj->Type;
 	            }
-	            else
-	            {
+	            else {
 	                $fieldname = isset($obj->Key) ? $obj->Key : $obj->attname;
 	                $fieldtype = isset($obj->Type) ? $obj->Type : 'varchar';
 	            }
@@ -318,13 +315,11 @@ if ($ok && GETPOST('standard', 'alpha'))
 		                {
 	    	                print "KO ".$db->lasterror."<br>\n";
 	        	        }
-	            	    else
-	                	{
+	            	    else {
 	                    	print "OK<br>\n";
 		                }
 	                }
-	                else
-	                {
+	                else {
 	                	print ' - Mode test, no column added.';
 	                }
 	            }
@@ -332,8 +327,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 
 	        print "</td><td>&nbsp;</td></tr>\n";
 	    }
-	    else
-	    {
+	    else {
 	    	dol_print_error($db);
 	    }
 	}
@@ -399,13 +393,11 @@ if ($ok && GETPOST('standard', 'alpha'))
 
 								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we delete record</td></tr>';
 							}
-							else
-							{
+							else {
 								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
 						}
-						else
-						{
+						else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
 						}
 					}
@@ -472,13 +464,11 @@ if ($ok && GETPOST('standard', 'alpha'))
 
 								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
 							}
-							else
-							{
+							else {
 								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
 						}
-						else
-						{
+						else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
 						}
 					}
@@ -567,8 +557,7 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 			$i++;
 		}
 	}
-	else
-	{
+	else {
 		$ok = 0;
 		dol_print_error($db);
 	}
@@ -671,8 +660,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 			$i++;
 		}
 	}
-	else
-	{
+	else {
 		$ok = 0;
 		dol_print_error($db);
 	}
@@ -730,8 +718,7 @@ if ($ok && GETPOST('rebuild_product_thumbs', 'alpha'))
             $i++;
         }
     }
-    else
-    {
+    else {
         $ok = 0;
         dol_print_error($db);
     }
@@ -816,16 +803,13 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 								$error++;
 								dol_print_error($db);
 							}
-							else
-								print ' - <span class="warning">Cleaned</span>';
+							else print ' - <span class="warning">Cleaned</span>';
 						}
-						else
-						{
+						else {
 							print ' - <span class="warning">Canceled (test mode)</span>';
 						}
 					}
-					else
-					{
+					else {
 						print ' - Module condition '.$modulecond.' is ok, we do nothing.';
 					}
 				}
@@ -840,13 +824,11 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print '<tr><td>No menu entries of disabled menus found</td></tr>';
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -1049,8 +1031,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                                     dol_print_error($db);
                                 }
                             }
-                            else
-                            {
+                            else {
                                 $error++;
                                 dol_print_error($db);
                             }
@@ -1066,13 +1047,11 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                 $i++;
             }
         }
-        else
-        {
+        else {
             print '<tr><td colspan="2">Nothing to do</td></tr>';
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }
@@ -1156,13 +1135,11 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha'))
                 $i++;
             }
         }
-        else
-        {
+        else {
             print '<tr><td>No time spent with empty line on users with a hourly rate defined</td></tr>';
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 }
@@ -1257,16 +1234,13 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
-	                                else
-	                                    print ' - <span class="warning">Cleaned</span>';
+	                                else print ' - <span class="warning">Cleaned</span>';
 	                            }
-	                            else
-	                            {
+	                            else {
 	                                print ' - <span class="warning">Canceled (test mode)</span>';
 	                            }
 	                        }
-	                        else
-	                        {
+	                        else {
 	                            print ' - File of '.$key.' ('.$reloffile.') found, we do nothing.';
 	                        }
 	                    }
@@ -1282,13 +1256,11 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                $i++;
 	            }
 	        }
-	        else
-	        {
+	        else {
 	            print '<tr><td>No active module with missing files found by searching on MAIN_MODULE_(.*)_'.strtoupper($key).'</td></tr>';
 	        }
 	    }
-	    else
-	    {
+	    else {
 	        dol_print_error($db);
 	    }
     }
@@ -1334,13 +1306,11 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print '<tr><td>No lines of a disabled external module (with id > 100000) found into table rights_def</td></tr>';
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -1392,8 +1362,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha'))
         	$resql = $db->query($sql);
         }
     }
-    else
-    {
+    else {
         print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
     }
 }
@@ -1496,8 +1465,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
                 {
 	                $resql_attach = $db->query($sql_attach);
                 }
-                else
-                {
+                else {
                 	$resql_attach = true; // Force success in test mode
                 }
 
@@ -1552,8 +1520,7 @@ if ($oneoptionset)
 	print $langs->trans("GoToDolibarr");
 	print '</a></div>';
 }
-else
-{
+else {
 	print '<div class="center warning" style="padding-top: 10px">';
 	print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
 	print '</div>';

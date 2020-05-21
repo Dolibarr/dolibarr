@@ -68,8 +68,7 @@ $err = error_reporting();
 error_reporting(0);
 if (!empty($conf->global->MAIN_OVERRIDE_TIME_LIMIT))
 	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
-else
-	@set_time_limit(600);
+else @set_time_limit(600);
 error_reporting($err);
 
 $setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
@@ -159,8 +158,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         {
             dolibarr_install_syslog('upgrade2: database connection successful :'.$dolibarr_main_db_name);
         }
-        else
-        {
+        else {
             $error++;
         }
     }
@@ -536,16 +534,14 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
                 print "<!-- (".$reshook.") -->";
                 print '</td></tr>';
             }
-            else
-            {
+            else {
                 print '<tr><td colspan="4">';
                 print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: OK';
                 print "<!-- (".$reshook.") -->";
                 print '</td></tr>';
             }
         }
-        else
-        {
+        else {
             //if (! empty($conf->modules))
             if (!empty($conf->modules_parts['hooks']))     // If there is at least one module with one hook, we show message to say nothing was done
             {
@@ -585,8 +581,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 
     print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
 }
-else
-{
+else {
     print '<div class="error">'.$langs->trans('ErrorWrongParameters').'</div>';
     $error++;
 }
@@ -646,8 +641,7 @@ function migrate_paiements($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
 
@@ -678,19 +672,16 @@ function migrate_paiements($db, $langs, $conf)
                 $db->commit();
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
             }
-            else
-            {
+            else {
                 $db->rollback();
                 print $langs->trans('MigrationUpdateFailed').'<br>';
             }
         }
-        else
-        {
+        else {
             print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
         }
     }
-    else
-    {
+    else {
         print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
     }
 
@@ -753,8 +744,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
 
@@ -794,8 +784,7 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
                         print $langs->trans('MigrationProcessPaymentUpdate', 'facid='.$facid.'-paymentid='.$row[$i]['paymentid'].'-amount='.$row[$i]['pamount'])."<br>\n";
                     }
                 }
-                else
-                {
+                else {
                     print 'ERROR';
                 }
             }
@@ -804,20 +793,17 @@ function migrate_paiements_orphelins_1($db, $langs, $conf)
             {
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
             }
-            else
-            {
+            else {
                 print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
             }
 
             $db->commit();
         }
-        else
-        {
+        else {
             print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
         }
     }
-    else
-    {
+    else {
         print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
     }
 
@@ -879,8 +865,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
         }
 
@@ -921,8 +906,7 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
                         print $langs->trans('MigrationProcessPaymentUpdate', 'facid='.$facid.'-paymentid='.$row[$i]['paymentid'].'-amount='.$row[$i]['pamount'])."<br>\n";
                     }
                 }
-                else
-                {
+                else {
                     print 'ERROR';
                     $nberr++;
                 }
@@ -932,15 +916,13 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
             {
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
             }
-            else
-            {
+            else {
                 print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
             }
 
             $db->commit();
         }
-        else
-        {
+        else {
             print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
         }
 
@@ -954,14 +936,12 @@ function migrate_paiements_orphelins_2($db, $langs, $conf)
         {
             $db->commit();
         }
-        else
-        {
+        else {
             print 'ERROR';
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
     }
 
@@ -1032,8 +1012,7 @@ function migrate_contracts_det($db, $langs, $conf)
                 {
                     print $langs->trans('MigrationContractsLineCreation', $obj->cref)."<br>\n";
                 }
-                else
-                {
+                else {
                     dol_print_error($db);
                     $nberr++;
                 }
@@ -1047,19 +1026,16 @@ function migrate_contracts_det($db, $langs, $conf)
                 $db->commit();
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
             }
-            else
-            {
+            else {
                 $db->rollback();
                 print $langs->trans('MigrationUpdateFailed').'<br>';
             }
         }
-        else
-        {
+        else {
             print $langs->trans('MigrationContractsNothingToUpdate')."<br>\n";
         }
     }
-    else
-    {
+    else {
         print $langs->trans('MigrationContractsFieldDontExist')."<br>\n";
         //    dol_print_error($db);
     }
@@ -1133,8 +1109,7 @@ function migrate_links_transfert($db, $langs, $conf)
                 $db->commit();
                 print $langs->trans('MigrationSuccessfullUpdate')."<br>";
             }
-            else
-            {
+            else {
                 $db->rollback();
                 print $langs->trans('MigrationUpdateFailed').'<br>';
             }
@@ -1143,8 +1118,7 @@ function migrate_links_transfert($db, $langs, $conf)
             print $langs->trans('MigrationBankTransfertsNothingToUpdate')."<br>\n";
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -1172,8 +1146,7 @@ function migrate_contracts_date1($db, $langs, $conf)
     if (!$resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
     print $langs->trans('MigrationContractsEmptyDatesUpdateSuccess')."<br>\n";
-    else
-    print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
+    else print $langs->trans('MigrationContractsEmptyDatesNothingToUpdate')."<br>\n";
 
     $sql = "update ".MAIN_DB_PREFIX."contrat set datec=tms where datec is null";
     dolibarr_install_syslog("upgrade2::migrate_contracts_date1");
@@ -1181,8 +1154,7 @@ function migrate_contracts_date1($db, $langs, $conf)
     if (!$resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
     print $langs->trans('MigrationContractsEmptyCreationDatesUpdateSuccess')."<br>\n";
-    else
-    print $langs->trans('MigrationContractsEmptyCreationDatesNothingToUpdate')."<br>\n";
+    else print $langs->trans('MigrationContractsEmptyCreationDatesNothingToUpdate')."<br>\n";
 
     print '</td></tr>';
 }
@@ -1244,12 +1216,10 @@ function migrate_contracts_date2($db, $langs, $conf)
 
             if ($nbcontratsmodifie)
             print $langs->trans('MigrationContractsInvalidDatesNumber', $nbcontratsmodifie)."<br>\n";
-            else
-            print  $langs->trans('MigrationContractsInvalidDatesNothingToUpdate')."<br>\n";
+            else print  $langs->trans('MigrationContractsInvalidDatesNothingToUpdate')."<br>\n";
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -1277,8 +1247,7 @@ function migrate_contracts_date3($db, $langs, $conf)
     if (!$resql) dol_print_error($db);
     if ($db->affected_rows($resql) > 0)
     print $langs->trans('MigrationContractsIncoherentCreationDateUpdateSuccess')."<br>\n";
-    else
-    print $langs->trans('MigrationContractsIncoherentCreationDateNothingToUpdate')."<br>\n";
+    else print $langs->trans('MigrationContractsIncoherentCreationDateNothingToUpdate')."<br>\n";
 
     print '</td></tr>';
 }
@@ -1333,8 +1302,7 @@ function migrate_contracts_open($db, $langs, $conf)
 
             if ($nbcontratsmodifie)
             print $langs->trans('MigrationReopenedContractsNumber', $nbcontratsmodifie)."<br>\n";
-            else
-            print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
+            else print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
         }
     }
     else print $langs->trans('MigrationReopeningContractsNothingToUpdate')."<br>\n";
@@ -1416,23 +1384,20 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
                             $nb++;
                             print '<td><span style="color:green">'.$langs->trans("OK").'</span></td>';
                         }
-                        else
-                        {
+                        else {
                             print '<td><span style="color:red">Error on insert</span></td>';
                             $error++;
                         }
                         print '</tr>';
                     }
                 }
-                else
-                {
+                else {
                     $error++;
                 }
                 $i++;
             }
         }
-        else
-        {
+        else {
             $error++;
         }
 
@@ -1447,14 +1412,12 @@ function migrate_paiementfourn_facturefourn($db, $langs, $conf)
             $sql = "ALTER TABLE ".MAIN_DB_PREFIX."paiementfourn DROP COLUMN fk_facture_fourn";
             $db->query($sql);
         }
-        else
-        {
+        else {
             print '<tr><td>'.$langs->trans("Error").'</td></tr>';
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print '<tr><td>'.$langs->trans("AlreadyDone").'</td></tr>';
     }
 }
@@ -1540,14 +1503,12 @@ function migrate_price_facture($db, $langs, $conf)
                         {
                             //print $facture->id;
                         }
-                        else
-                        {
+                        else {
                             print "Error id=".$facture->id;
                             $err++;
                         }
                     }
-                    else
-                    {
+                    else {
                         print "Error #3";
                         $err++;
                     }
@@ -1557,16 +1518,14 @@ function migrate_price_facture($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print $langs->trans("AlreadyDone");
         }
         $db->free($resql);
 
         $db->commit();
     }
-    else
-    {
+    else {
         print "Error #1 ".$db->error();
         $err++;
 
@@ -1665,8 +1624,7 @@ function migrate_price_propal($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print $langs->trans("AlreadyDone");
         }
 
@@ -1674,8 +1632,7 @@ function migrate_price_propal($db, $langs, $conf)
 
         $db->commit();
     }
-    else
-    {
+    else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -1754,8 +1711,7 @@ function migrate_price_contrat($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print $langs->trans("AlreadyDone");
         }
 
@@ -1763,8 +1719,7 @@ function migrate_price_contrat($db, $langs, $conf)
 
         $db->commit();
     }
-    else
-    {
+    else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -1861,8 +1816,7 @@ function migrate_price_commande($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print $langs->trans("AlreadyDone");
         }
 
@@ -1880,8 +1834,7 @@ function migrate_price_commande($db, $langs, $conf)
 
         $db->commit();
     }
-    else
-    {
+    else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -1978,8 +1931,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print $langs->trans("AlreadyDone");
         }
 
@@ -1997,8 +1949,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 
         $db->commit();
     }
-    else
-    {
+    else {
         print "Error #1 ".$db->error();
 
         $db->rollback();
@@ -2126,19 +2077,16 @@ function migrate_commande_expedition($db, $langs, $conf)
                 print $langs->trans('FieldRenamed')."<br>\n";
                 $db->query($sql);
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -2202,8 +2150,7 @@ function migrate_commande_livraison($db, $langs, $conf)
                             dol_print_error($db);
                         }
                     }
-                    else
-                    {
+                    else {
                         $error++;
                         dol_print_error($db);
                     }
@@ -2219,19 +2166,16 @@ function migrate_commande_livraison($db, $langs, $conf)
                 print $langs->trans('FieldRenamed')."<br>\n";
                 $db->query($sql);
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -2310,14 +2254,12 @@ function migrate_detail_livraison($db, $langs, $conf)
                                 dol_print_error($db);
                             }
                         }
-                        else
-                        {
+                        else {
                             $error++;
                             dol_print_error($db);
                         }
                     }
-                    else
-                    {
+                    else {
                         $error++;
                         dol_print_error($db);
                     }
@@ -2333,19 +2275,16 @@ function migrate_detail_livraison($db, $langs, $conf)
                 print $langs->trans('FieldRenamed')."<br>\n";
                 $db->query($sql);
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         $result = $db->DDLDescTable(MAIN_DB_PREFIX."livraisondet", "fk_origin_line");
         $obj = $db->fetch_object($result);
         if (!$obj)
@@ -2402,8 +2341,7 @@ function migrate_stocks($db, $langs, $conf)
                 if ($resql2)
                 {
                 }
-                else
-                {
+                else {
                     $error++;
                     dol_print_error($db);
                 }
@@ -2416,13 +2354,11 @@ function migrate_stocks($db, $langs, $conf)
         {
             $db->commit();
         }
-        else
-        {
+        else {
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
         $db->rollback();
     }
@@ -2478,8 +2414,7 @@ function migrate_menus($db, $langs, $conf)
                     if ($resql2)
                     {
                     }
-                    else
-                    {
+                    else {
                         $error++;
                         dol_print_error($db);
                     }
@@ -2492,19 +2427,16 @@ function migrate_menus($db, $langs, $conf)
             {
                 $db->commit();
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -2567,8 +2499,7 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
                     $i++;
                 }
             }
-            else
-            {
+            else {
                 print $langs->trans('AlreadyDone')."<br>\n";
             }
 
@@ -2576,19 +2507,16 @@ function migrate_commande_deliveryaddress($db, $langs, $conf)
             {
                 $db->commit();
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -2670,13 +2598,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
         {
             $db->commit();
         }
-        else
-        {
+        else {
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
         $db->rollback();
     }
@@ -2729,8 +2655,7 @@ function migrate_restore_missing_links($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print $langs->trans('AlreadyDone')."<br>\n";
         }
 
@@ -2738,13 +2663,11 @@ function migrate_restore_missing_links($db, $langs, $conf)
         {
             $db->commit();
         }
-        else
-        {
+        else {
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
         $db->rollback();
     }
@@ -2826,24 +2749,20 @@ function migrate_project_user_resp($db, $langs, $conf)
                 {
                     $db->commit();
                 }
-                else
-                {
+                else {
                     $db->rollback();
                 }
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -2918,24 +2837,20 @@ function migrate_project_task_actors($db, $langs, $conf)
                 {
                     $db->commit();
                 }
-                else
-                {
+                else {
                     $db->rollback();
                 }
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
     print '</td></tr>';
@@ -3006,8 +2921,7 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
                     $i++;
                 }
             }
-            else
-            {
+            else {
                 print $langs->trans('AlreadyDone')."<br>\n";
             }
 
@@ -3018,24 +2932,20 @@ function migrate_relationship_tables($db, $langs, $conf, $table, $fk_source, $so
                 {
                     $db->commit();
                 }
-                else
-                {
+                else {
                     $db->rollback();
                 }
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -3104,8 +3014,7 @@ function migrate_project_task_time($db, $langs, $conf)
                     if (!empty($totaltime[$obj->fk_task])) $totaltime[$obj->fk_task] += $newtime;
                     else $totaltime[$obj->fk_task] = $newtime;
                 }
-                else
-                {
+                else {
                     if (!empty($totaltime[$obj->fk_task])) $totaltime[$obj->fk_task] += $obj->task_duration;
                     else $totaltime[$obj->fk_task] = $obj->task_duration;
                 }
@@ -3131,23 +3040,19 @@ function migrate_project_task_time($db, $langs, $conf)
                         }
                     }
                 }
-                else
-                {
+                else {
                     print $langs->trans('AlreadyDone')."<br>\n";
                 }
             }
-            else
-            {
+            else {
                 dol_print_error($db);
             }
         }
-        else
-        {
+        else {
             print $langs->trans('AlreadyDone')."<br>\n";
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -3155,8 +3060,7 @@ function migrate_project_task_time($db, $langs, $conf)
     {
         $db->commit();
     }
-    else
-    {
+    else {
         $db->rollback();
     }
 
@@ -3229,8 +3133,7 @@ function migrate_customerorder_shipping($db, $langs, $conf)
                         $i++;
                     }
                 }
-                else
-                {
+                else {
                     print $langs->trans('AlreadyDone')."<br>\n";
                 }
 
@@ -3238,26 +3141,22 @@ function migrate_customerorder_shipping($db, $langs, $conf)
                 {
                     $db->commit();
                 }
-                else
-                {
+                else {
                     dol_print_error($db);
                     $db->rollback();
                 }
             }
-            else
-            {
+            else {
                 dol_print_error($db);
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -3331,16 +3230,14 @@ function migrate_shipping_delivery($db, $langs, $conf)
                         }
                         print ". ";
                     }
-                    else
-                    {
+                    else {
                         $error++;
                         dol_print_error($db);
                     }
                     $i++;
                 }
             }
-            else
-            {
+            else {
                 print $langs->trans('AlreadyDone')."<br>\n";
             }
 
@@ -3355,20 +3252,17 @@ function migrate_shipping_delivery($db, $langs, $conf)
                 $sqlDrop = "ALTER TABLE ".MAIN_DB_PREFIX."livraison DROP COLUMN fk_expedition";
                 $db->query($sqlDrop);
             }
-            else
-            {
+            else {
                 dol_print_error($db);
                 $db->rollback();
             }
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         print $langs->trans('AlreadyDone')."<br>\n";
     }
 
@@ -3436,8 +3330,7 @@ function migrate_shipping_delivery2($db, $langs, $conf)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print $langs->trans('AlreadyDone')."<br>\n";
         }
 
@@ -3445,14 +3338,12 @@ function migrate_shipping_delivery2($db, $langs, $conf)
         {
             $db->commit();
         }
-        else
-        {
+        else {
             dol_print_error($db);
             $db->rollback();
         }
     }
-    else
-    {
+    else {
         dol_print_error($db);
         $db->rollback();
     }
@@ -3511,14 +3402,12 @@ function migrate_actioncomm_element($db, $langs, $conf)
 				//$db->query($sqlDrop);
 				//print ". ";
 			}
-			else
-			{
+			else {
 				dol_print_error($db);
 				$db->rollback();
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 	}
@@ -3603,14 +3492,12 @@ function migrate_mode_reglement($db, $langs, $conf)
 					{
 						$db->commit();
 					}
-					else
-					{
+					else {
 						dol_print_error($db);
 						$db->rollback();
 					}
 				}
-				else
-				{
+				else {
 					dol_print_error($db);
 					$db->rollback();
 				}
@@ -3694,16 +3581,14 @@ function migrate_clean_association($db, $langs, $conf)
                         print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
                         $db->commit();
                     }
-                    else
-                    {
+                    else {
                         print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
                         print '<td class="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
                         $db->rollback();
                     }
                 }
             }
-            else
-            {
+            else {
                 print '<tr><td>'.$langs->trans("Error").'</td>';
                 print '<td class="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
             }
@@ -3764,8 +3649,7 @@ function migrate_categorie_association($db, $langs, $conf)
 					$i++;
 				}
 			}
-			else
-			{
+			else {
 				print $langs->trans('AlreadyDone')."<br>\n";
 			}
 
@@ -3786,19 +3670,16 @@ function migrate_categorie_association($db, $langs, $conf)
 
 				$db->commit();
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($db);
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		print $langs->trans('AlreadyDone')."<br>\n";
 	}
 
@@ -3858,8 +3739,7 @@ function migrate_event_assignement($db, $langs, $conf)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 
@@ -3867,13 +3747,11 @@ function migrate_event_assignement($db, $langs, $conf)
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 	}
@@ -3935,8 +3813,7 @@ function migrate_event_assignement_contact($db, $langs, $conf)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 
@@ -3944,13 +3821,11 @@ function migrate_event_assignement_contact($db, $langs, $conf)
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 	}
@@ -4022,8 +3897,7 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							$error++;
 							dol_print_error($db);
 						}
-						else
-						{
+						else {
 							// Add set line
 							$object = new stdClass();
 							$object->id = 1;
@@ -4041,21 +3915,18 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 							}
 						}
 					}
-					else
-					{
+					else {
 						print ' - '.$langs->trans('AlreadyInV7').'<br>';
 					}
 				}
-				else
-				{
+				else {
 					dol_print_error($db);
 				}
 
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('NothingToDo')."<br>\n";
 		}
 
@@ -4063,13 +3934,11 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 	}
@@ -4132,8 +4001,7 @@ function migrate_remise_entity($db, $langs, $conf)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 
@@ -4141,13 +4009,11 @@ function migrate_remise_entity($db, $langs, $conf)
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 	}
@@ -4207,8 +4073,7 @@ function migrate_remise_except_entity($db, $langs, $conf)
 					$sqlSelect2 .= " WHERE fd.rowid = ".$obj->fk_facture_line;
 					$sqlSelect2 .= " AND fd.fk_facture = f.rowid";
 				}
-				else
-				{
+				else {
 					$sqlSelect2 = "SELECT s.entity";
 					$sqlSelect2 .= " FROM ".MAIN_DB_PREFIX."societe as s";
 					$sqlSelect2 .= " WHERE s.rowid = ".$obj->fk_soc;
@@ -4233,8 +4098,7 @@ function migrate_remise_except_entity($db, $langs, $conf)
 						}
 					}
 				}
-				else
-				{
+				else {
 					$error++;
 					dol_print_error($db);
 				}
@@ -4243,8 +4107,7 @@ function migrate_remise_except_entity($db, $langs, $conf)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 
@@ -4252,13 +4115,11 @@ function migrate_remise_except_entity($db, $langs, $conf)
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 	}
@@ -4319,8 +4180,7 @@ function migrate_user_rights_entity($db, $langs, $conf)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 
@@ -4328,13 +4188,11 @@ function migrate_user_rights_entity($db, $langs, $conf)
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 	}
@@ -4395,8 +4253,7 @@ function migrate_usergroup_rights_entity($db, $langs, $conf)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans('AlreadyDone')."<br>\n";
 		}
 
@@ -4404,13 +4261,11 @@ function migrate_usergroup_rights_entity($db, $langs, $conf)
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 		$db->rollback();
 	}
@@ -4774,8 +4629,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				$mod->init($reloadmode);
 			}
 		}
-		else
-		{
+		else {
 			$reg = array();
 			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
 			if (!empty($reg[1]))
@@ -4784,7 +4638,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 				{
 					$moduletoreloadshort = ucfirst(strtolower($reg[1]));
 				}
-				else												// If key is a mix of up and low case
+				else // If key is a mix of up and low case
 				{
 					$moduletoreloadshort = $reg[1];
 				}
@@ -4796,8 +4650,7 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 					//$mod->remove('noboxes');
 					$mod->init($reloadmode);
 				}
-				else
-				{
+				else {
 					dolibarr_install_syslog('Failed to include '.DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php');
 
 					$res = @dol_include_once(strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
@@ -4807,14 +4660,12 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 						//$mod->remove('noboxes');
 						$mod->init($reloadmode);
 					}
-					else
-					{
+					else {
 						dolibarr_install_syslog('Failed to include '.strtolower($moduletoreloadshort).'/core/modules/mod'.$moduletoreloadshort.'.class.php');
 					}
 				}
 			}
-			else
-			{
+			else {
 				dolibarr_install_syslog("Error, can't find module with name ".$moduletoreload, LOG_WARNING);
 				print "Error, can't find module with name ".$moduletoreload;
 			}
@@ -4949,7 +4800,7 @@ function migrate_user_photospath()
 									// dol_delete_dir($origin.'/'.$file);
 			        			}
 			    			}
-			    			else								// it is a file
+			    			else // it is a file
 			    			{
 			    				if (!dol_is_file($destin.'/'.$file))
 			    				{

@@ -231,8 +231,7 @@ if (!$error) {
                 {
                     $databasefortest = 'postgres';
                 }
-                else
-                {
+                else {
                     $databasefortest = 'master';
                 }
             }
@@ -275,8 +274,7 @@ if (!$error) {
             }
         }
     }
-    else
-    {
+    else {
         print "<br>\nFailed to include_once(\"".$main_dir."/core/db/".$db_type.".class.php\")<br>\n";
         print '<div class="error">'.$langs->trans("ErrorWrongValueForParameter", $langs->transnoentities("WebPagesDirectory")).'</div>';
         //print '<a href="#" onClick="javascript: history.back();">';
@@ -286,8 +284,7 @@ if (!$error) {
     }
 }
 
-else
-{
+else {
     if (isset($db)) print $db->lasterror();
     if (isset($db) && !$db->connected) print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
     print $langs->trans("ErrorGoBackAndCorrectParameters");
@@ -318,7 +315,7 @@ if (!$error && $db->connected)
         $defaultCharacterSet = $db->forcecharset;
     	$defaultDBSortingCollation = $db->forcecollate;
     }
-    else	// If already created, we take current value
+    else // If already created, we take current value
     {
         $defaultCharacterSet = $db->getDefaultCharacterSetDatabase();
         $defaultDBSortingCollation = $db->getDefaultCollationDatabase();
@@ -401,8 +398,7 @@ if (!$error && $db->connected && $action == "set")
             print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage", $_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
             $error++;
         }
-        else
-        {
+        else {
             // Create .htaccess file in document directory
             $pathhtaccess = $main_data_dir.'/.htaccess';
             if (!file_exists($pathhtaccess))
@@ -438,8 +434,7 @@ if (!$error && $db->connected && $action == "set")
                 {
                     dolibarr_install_syslog("step1: directory '".$dir[$i]."' exists");
                 }
-                else
-                {
+                else {
                     if (dol_mkdir($dir[$i]) < 0)
                     {
                         print "<tr><td>";
@@ -449,8 +444,7 @@ if (!$error && $db->connected && $action == "set")
                         print "</td></tr>";
                         $error++;
                     }
-                    else
-                    {
+                    else {
                         dolibarr_install_syslog("step1: directory '".$dir[$i]."' created");
                     }
                 }
@@ -472,8 +466,7 @@ if (!$error && $db->connected && $action == "set")
                 print "</td></tr>";
                 print '<tr><td colspan="2"><br>'.$langs->trans("CorrectProblemAndReloadPage", $_SERVER['PHP_SELF'].'?testget=ok').'</td></tr>';
             }
-            else
-            {
+            else {
             	//ODT templates
             	$srcroot = $main_dir.'/install/doctemplates';
             	$destroot = $main_data_dir.'/doctemplates';
@@ -592,8 +585,7 @@ if (!$error && $db->connected && $action == "set")
                         print '</td>';
                         print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
                     }
-                    else
-                    {
+                    else {
                         if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
                         || $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
                         || $db->errno() == 'DB_ERROR_USER_ALREADY_EXISTS')
@@ -605,8 +597,7 @@ if (!$error && $db->connected && $action == "set")
                             print '</td>';
                             print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
                         }
-                        else
-                        {
+                        else {
                             dolibarr_install_syslog("step1: failed to create user", LOG_ERR);
                             print '<tr><td>';
                             print $langs->trans("UserCreation").' : ';
@@ -618,8 +609,7 @@ if (!$error && $db->connected && $action == "set")
 
                     $db->close();
                 }
-                else
-                {
+                else {
                     print '<tr><td>';
                     print $langs->trans("UserCreation").' : ';
                     print $dolibarr_main_db_user;
@@ -668,8 +658,7 @@ if (!$error && $db->connected && $action == "set")
                     //if ($check1 != $dolibarr_main_db_character_set) dolibarr_install_syslog('step1: value for character_set is not the one asked for database creation', LOG_WARNING);
                     //if ($check2 != $dolibarr_main_db_collation)     dolibarr_install_syslog('step1: value for collation is not the one asked for database creation', LOG_WARNING);
                 }
-                else
-                {
+                else {
                     // warning message
                     print '<tr><td colspan="2"><br>';
                     print $langs->trans("ErrorFailedToCreateDatabase", $dolibarr_main_db_name).'<br>';
@@ -735,8 +724,7 @@ if (!$error && $db->connected && $action == "set")
 
                     $error = 0;
                 }
-                else
-                {
+                else {
                     dolibarr_install_syslog("step1: connection to database ".$conf->db->name." by user ".$conf->db->user." failed", LOG_ERR);
                     print "<tr><td>";
                     print $langs->trans("DatabaseConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
@@ -755,8 +743,7 @@ if (!$error && $db->connected && $action == "set")
                     $error++;
                 }
             }
-            else
-            {
+            else {
                 dolibarr_install_syslog("step1: connection to server by user ".$conf->db->user." failed", LOG_ERR);
                 print "<tr><td>";
                 print $langs->trans("ServerConnection")." (".$langs->trans("User")." ".$conf->db->user.") : ";
@@ -1031,8 +1018,7 @@ function write_conf_file($conffile)
 			print '<img src="../theme/eldy/img/tick.png" alt="Ok">';
 			print "</td></tr>";
 		}
-		else
-		{
+		else {
 			$error++;
 		}
 	}

@@ -124,13 +124,11 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
                 }
             }
         }
-        else
-        {
+        else {
             $includeconferror = 'ErrorBadValueForDolibarrMainDocumentRoot';
         }
     }
-    else
-    {
+    else {
         $includeconferror = 'ErrorBadFormatForConfFile';
     }
 }
@@ -210,8 +208,7 @@ if (@file_exists($lockfile))
         print $langs->trans("ClickHereToGoToApp");
         print '</a>';
     }
-    else
-    {
+    else {
         print 'If you always reach this page, you must remove install.lock file manually.<br>';
     }
     exit;
@@ -365,8 +362,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
         $jQueryCustomPath = $forcejqueryurl;
         $jQueryUiCustomPath = $forcejqueryurl;
     }
-    else
-    {
+    else {
         $jQueryCustomPath = (defined('JS_JQUERY') && constant('JS_JQUERY')) ? JS_JQUERY : false;
         $jQueryUiCustomPath = (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) ? JS_JQUERY_UI : false;
     }

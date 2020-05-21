@@ -151,8 +151,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection").": $dolibarr_main_db_host ".$langs->transnoentities("OK"));
         $ok = 1;
     }
-    else
-    {
+    else {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>\n";
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok = 0;
@@ -167,8 +166,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             dolibarr_install_syslog("upgrade: Database connection successful: ".$dolibarr_main_db_name);
             $ok = 1;
         }
-        else
-        {
+        else {
             print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
             dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
             $ok = 0;
@@ -293,8 +291,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             			}
             			$db->free($resql);
             		}
-            		else
-            		{
+            		else {
             			if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
             			{
             				print '<tr><td colspan="2"><span class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
@@ -335,8 +332,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             }
             sort($filesindir);
         }
-        else
-		{
+        else {
             print '<div class="error">'.$langs->trans("ErrorCanNotReadDir", $dir).'</div>';
         }
 
@@ -357,8 +353,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         {
         	print '<div class="error">'.$langs->trans("ErrorNoMigrationFilesFoundForParameters").'</div>';
         }
-		else
-		{
+		else {
 			$listoffileprocessed = array(); // Protection to avoid to process twice the same file
 
 	        // Loop on each migrate files

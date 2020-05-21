@@ -207,15 +207,13 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
             $db->commit();
             print " OK with ref ".$object->ref."\n";
         }
-        else
-        {
+        else {
             print " KO\n";
             $db->rollback();
             dol_print_error($db, $object->error);
         }
     }
-    else
-    {
+    else {
         print " KO\n";
         $db->rollback();
         dol_print_error($db, $object->error);
