@@ -40,11 +40,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if ($module == 'propal') { $permission = $user->rights->propale->creer; } elseif ($module == 'fichinter') { $permission = $user->rights->ficheinter->creer; } elseif ($module == 'order_supplier') { $permission = $user->rights->fournisseur->commande->creer; } elseif ($module == 'invoice_supplier') { $permission = $user->rights->fournisseur->facture->creer; } elseif ($module == 'project') { $permission = $user->rights->projet->creer; } elseif ($module == 'action') { $permission = $user->rights->agenda->myactions->create; } elseif ($module == 'shipping') { $permission = $user->rights->expedition->creer; } elseif ($module == 'reception') { $permission = $user->rights->reception->creer; } elseif ($module == 'project_task') { $permission = $user->rights->projet->creer; } elseif (!isset($permission) && isset($user->rights->$module->creer))
-{
+if ($module == 'propal') {
+	$permission = $user->rights->propale->creer;
+} elseif ($module == 'fichinter') {
+	$permission = $user->rights->ficheinter->creer;
+} elseif ($module == 'order_supplier') {
+	$permission = $user->rights->fournisseur->commande->creer;
+} elseif ($module == 'invoice_supplier') {
+	$permission = $user->rights->fournisseur->facture->creer;
+} elseif ($module == 'project') {
+	$permission = $user->rights->projet->creer;
+} elseif ($module == 'action') {
+	$permission = $user->rights->agenda->myactions->create;
+} elseif ($module == 'shipping') {
+	$permission = $user->rights->expedition->creer;
+} elseif ($module == 'reception') {
+	$permission = $user->rights->reception->creer;
+} elseif ($module == 'project_task') {
+	$permission = $user->rights->projet->creer;
+} elseif (!isset($permission) && isset($user->rights->$module->creer)) {
 	$permission = $user->rights->$module->creer;
-} elseif (!isset($permission) && isset($user->rights->$module->write))
-{
+} elseif (!isset($permission) && isset($user->rights->$module->write)) {
 	$permission = $user->rights->$module->write;
 }
 
@@ -186,8 +202,7 @@ foreach (array('internal', 'external') as $source)
 		if ($contact['source'] == 'internal')
 		{
 			$entry->nature = $langs->trans("User");
-		} elseif ($contact['source'] == 'external')
-		{
+		} elseif ($contact['source'] == 'external') {
 			$entry->nature = $langs->trans("ThirdPartyContact");
 		}
 
@@ -196,8 +211,7 @@ foreach (array('internal', 'external') as $source)
 			$companystatic->fetch($contact['socid']);
 			$entry->thirdparty_html = $companystatic->getNomUrl(1);
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
-		} elseif ($contact['socid'] < 0)
-		{
+		} elseif ($contact['socid'] < 0) {
 			$entry->thirdparty_html = $conf->global->MAIN_INFO_SOCIETE_NOM;
 			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
 		}
@@ -207,8 +221,7 @@ foreach (array('internal', 'external') as $source)
 			$userstatic->fetch($contact['id']);
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
-		} elseif ($contact['source'] == 'external')
-		{
+		} elseif ($contact['source'] == 'external') {
 			$contactstatic->fetch($contact['id']);
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
@@ -217,8 +230,7 @@ foreach (array('internal', 'external') as $source)
 		if ($contact['source'] == 'internal')
 		{
 			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
-		} elseif ($contact['source'] == 'external')
-		{
+		} elseif ($contact['source'] == 'external') {
 			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
 		}
 
@@ -305,9 +317,6 @@ print '</div>';
 
 print "</form>";
 
-
-
-
 print "<!-- TEMPLATE CONTACTS HOOK BEGIN HERE -->\n";
 if (is_object($hookmanager)) {
 	$hookmanager->initHooks(array('contacttpl'));
@@ -315,4 +324,3 @@ if (is_object($hookmanager)) {
 	$reshook = $hookmanager->executeHooks('formContactTpl', $parameters, $object, $action);
 }
 print "<!-- END PHP TEMPLATE CONTACTS -->\n";
-
