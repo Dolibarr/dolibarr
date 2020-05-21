@@ -528,24 +528,24 @@ $listofreferent = array(
 
 // Change rules for benefit calculation
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
-	foreach($listofreferent as $key => $element) {
+	foreach ($listofreferent as $key => $element) {
 		if ($listofreferent[$key]['margin'] == 'add') {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
 	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
-	foreach($newelementforplusmargin as $value) {
+	foreach ($newelementforplusmargin as $value) {
 		$listofreferent[$value]['margin']='add';
 	}
 }
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
-	foreach($listofreferent as $key => $element) {
+	foreach ($listofreferent as $key => $element) {
 		if ($listofreferent[$key]['margin'] == 'add') {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
 	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
-	foreach($newelementforplusmargin as $value) {
+	foreach ($newelementforplusmargin as $value) {
 		$listofreferent[$value]['margin']='minus';
 	}
 }
@@ -686,8 +686,7 @@ foreach ($listofreferent as $key => $value)
 						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
-					else
-					{
+					else {
 						$tmp = $element->getSumOfAmount('', $dates, $datee);
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
@@ -953,8 +952,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					if (method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
 				}
-				else
-				{
+				else {
 					$expensereport = new ExpenseReport($db);
 					$expensereport->fetch($element->fk_expensereport);
 				}
@@ -1000,8 +998,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					print $expensereport->getNomUrl(1);
 				}
-				else
-				{
+				else {
 					// Show ref with link
 					if ($element instanceof Task)
 					{
@@ -1054,8 +1051,7 @@ foreach ($listofreferent as $key => $value)
     				elseif ($tablename == 'supplier_proposal') $date = $element->date_validation; // There is no other date for this
     				elseif ($tablename == 'fichinter') $date = $element->datev; // There is no other date for this
     				elseif ($tablename == 'projet_task') $date = ''; // We show no date. Showing date of beginning of task make user think it is date of time consumed
-					else
-					{
+					else {
     					$date = $element->date; // invoice, ...
     					if (empty($date)) $date = $element->date_contrat;
     					if (empty($date)) $date = $element->datev;
@@ -1145,14 +1141,12 @@ foreach ($listofreferent as $key => $value)
     							$warning = $langs->trans("WarningSomeLinesWithNullHourlyRate", $conf->currency);
     						}
 					    }
-					    else
-					    {
+					    else {
 					        $othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
 					}
                     elseif ($key == 'loan') $total_ht_by_line = $element->capital;
-					else
-					{
+					else {
 						$total_ht_by_line = $element->total_ht;
 					}
 
@@ -1193,14 +1187,12 @@ foreach ($listofreferent as $key => $value)
     						$defaultvat = get_default_tva($mysoc, $mysoc);
     						$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
 					    }
-					    else
-					    {
+					    else {
 					        $othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
 					}
                     elseif ($key == 'loan') $total_ttc_by_line = $element->capital - $element->getSumPayment();
-					else
-					{
+					else {
 						$total_ttc_by_line = $element->total_ttc;
 					}
 
@@ -1248,8 +1240,7 @@ foreach ($listofreferent as $key => $value)
 				{
 					print $element->getLibStatut(3);
 				}
-				else
-				{
+				else {
 					print $element->getLibStatut(5);
 				}
 				print '</td>';
@@ -1324,8 +1315,7 @@ foreach ($listofreferent as $key => $value)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else
-		{
+		else {
 			if (!is_array($elementarray))	// error
 			{
 				print $elementarray;

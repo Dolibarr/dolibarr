@@ -99,8 +99,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 	    print "<br>";
 	}
-	else
-	{
+	else {
 	    dol_print_error($db);
 	}
 }

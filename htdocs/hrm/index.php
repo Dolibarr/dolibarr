@@ -242,8 +242,7 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $i++;
             }
         }
-        else
-        {
+        else {
             print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table>';
@@ -315,8 +314,7 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table>';

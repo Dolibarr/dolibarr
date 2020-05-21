@@ -50,8 +50,7 @@ if (!$vatNumber)
 	print '<br>';
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
 }
-else
-{
+else {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
 	$countryCode = substr($vatNumber, 0, 2);
@@ -127,8 +126,7 @@ else
 		print $langs->trans("ValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
 		//$messagetoshow=$soapclient->response;
 	}
-	else
-	{
+	else {
 		// Syntaxe ok
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="ok">'.$langs->trans("Yes").'</font><br>';
@@ -137,8 +135,7 @@ else
 		{
 			print '<font class="error">'.$langs->trans("ErrorVATCheckMS_UNAVAILABLE", $countryCode).'</font><br>';
 		}
-		else
-		{
+		else {
 			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true'))
 			{
 				print '<font class="ok">'.$langs->trans("Yes").'</font>';
@@ -146,8 +143,7 @@ else
 				print $langs->trans("Name").': '.$result['name'].'<br>';
 				print $langs->trans("Address").': '.$result['address'].'<br>';
 			}
-			else
-			{
+			else {
 				print '<font class="error">'.$langs->trans("No").'</font>';
 				print '<br>'."\n";
 			}

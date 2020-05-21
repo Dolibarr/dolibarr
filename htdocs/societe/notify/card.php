@@ -105,8 +105,7 @@ if (empty($reshook))
                     dol_print_error($db);
                 }
             }
-            else
-            {
+            else {
                 dol_print_error($db);
             }
 
@@ -114,8 +113,7 @@ if (empty($reshook))
             {
                 $db->commit();
             }
-            else
-            {
+            else {
                 $db->rollback();
             }
         }
@@ -264,8 +262,7 @@ if ($result > 0)
         print '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
         print '</tr>';
     }
-    else
-    {
+    else {
         print '<tr class="oddeven"><td colspan="4" class="opacitymedium">';
         print $langs->trans("YouMustCreateContactFirst");
         print '</td></tr>';
@@ -294,8 +291,7 @@ if ($result > 0)
     {
         $num = $db->num_rows($resql);
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -334,8 +330,7 @@ if ($result > 0)
                 {
                     print ' &lt;'.$obj->email.'&gt;';
                 }
-                else
-                {
+                else {
                     $langs->load("errors");
                     print ' &nbsp; '.img_warning().' '.$langs->trans("ErrorBadEMail", $obj->email);
                 }
@@ -444,8 +439,7 @@ if ($result > 0)
     {
         $num = $db->num_rows($resql);
     }
-    else
-    {
+    else {
         dol_print_error($db);
     }
 
@@ -494,8 +488,7 @@ if ($result > 0)
 	            print $contactstatic->getNomUrl(1);
 	            print $obj->email ? ' &lt;'.$obj->email.'&gt;' : $langs->trans("NoMail");
             }
-            else
-			{
+            else {
 				print $obj->email;
             }
             print '</td>';

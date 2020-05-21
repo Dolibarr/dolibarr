@@ -98,8 +98,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Resource")), null, 'errors');
 			$action = '';
 		}
-		else
-		{
+		else {
 			$objstat = fetchObjectByElement($element_id, $element, $element_ref);
 			$objstat->element = $element; // For externals module, we need to keep @xx
 
@@ -266,8 +265,7 @@ if (empty($reshook))
 			header("Location: ".$_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -298,8 +296,7 @@ if ($ret == -1) {
 if (!$ret) {
     print '<div class="warning">'.$langs->trans('NoResourceInDatabase').'</div>';
 }
-else
-{
+else {
 	// Confirmation suppression resource line
 	if ($action == 'delete_resource')
 	{
@@ -412,8 +409,7 @@ else
 				}
 				$_SESSION['assignedtouser'] = json_encode($listofuserid);
 			}
-			else
-			{
+			else {
 				if (!empty($_SESSION['assignedtouser']))
 				{
 					$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -601,8 +597,7 @@ else
 				{
 					$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_add.tpl.php');
 				}
-				else
-				{
+				else {
 					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_add.tpl.php';
 				}
 				if (empty($conf->file->strict_mode)) {
@@ -621,8 +616,7 @@ else
 					{
 						$tpl = dol_buildpath($reldir.'/resource_'.$element_prop['element'].'_view.tpl.php');
 					}
-					else
-					{
+					else {
 						$tpl = DOL_DOCUMENT_ROOT.$reldir.'/resource_view.tpl.php';
 					}
 					if (empty($conf->file->strict_mode)) {

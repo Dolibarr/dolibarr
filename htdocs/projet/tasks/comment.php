@@ -75,8 +75,7 @@ if (!empty($project_ref) && !empty($withproject))
 		{
 			$id = $objectsarray[0]->id;
 		}
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}

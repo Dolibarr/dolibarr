@@ -120,8 +120,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	print $dolgraph->show();
     print '</td></tr>'."\n";
 }
-else
-{
+else {
     if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
     {
         $statstring = "<tr>";
@@ -186,8 +185,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				{
 					$dataseries[] = array($obj->label, round($obj->nb));
 				}
-				else
-				{
+				else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
@@ -207,8 +205,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			$dolgraph->draw('idgraphcateg');
 			print $dolgraph->show();
 		}
-		else
-		{
+		else {
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -335,8 +332,7 @@ if ($result)
         print "<!-- End last thirdparties modified -->\n";
     }
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

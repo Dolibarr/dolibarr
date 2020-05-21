@@ -89,8 +89,7 @@ $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs
 $morehtml .= '</form>';
 
 if ($mine) $tooltiphelp = $langs->trans("MyProjectsDesc");
-else
-{
+else {
 	if (!empty($user->rights->projet->all->lire) && !$socid) $tooltiphelp = $langs->trans("ProjectsDesc");
 	else $tooltiphelp = $langs->trans("ProjectsPublicDesc");
 }
@@ -328,8 +327,7 @@ if ($resql)
 
 			print $companystatic->getNomUrl(1);
 		}
-		else
-		{
+		else {
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
@@ -354,8 +352,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 print "</table>";

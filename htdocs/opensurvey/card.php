@@ -252,8 +252,7 @@ if ($action == 'edit')
 	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
 }
-else
-{
+else {
 	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
@@ -309,8 +308,7 @@ print '</td></tr>';
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
 if ($action == 'edit') print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
-else
-{
+else {
     print dol_print_date($object->date_fin, 'day');
     if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) print img_warning($langs->trans("Expired"));
 }
@@ -410,8 +408,7 @@ if ($comments) {
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
 	}
 }
-else
-{
+else {
 	print $langs->trans("NoCommentYet").'<br>';
 }
 

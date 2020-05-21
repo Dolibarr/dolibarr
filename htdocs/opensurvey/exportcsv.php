@@ -114,8 +114,7 @@ if ($resql)
 				$input .= 'KO;';
 				$somme[$k]++;
 			}
-			else
-			{
+			else {
 				$input .= ';';
 			}
 		}

@@ -137,8 +137,7 @@ if ($conf->use_javascript_ajax)
 
     	print "<br>";
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
 }
@@ -196,8 +195,7 @@ if ($resql)
 	print "</table></div>";
 	print "<br>";
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -249,8 +247,7 @@ if ($resql)
     print "</table></div>";
     print "<br>";
 }
-else
-{
+else {
     dol_print_error($db);
 }
 

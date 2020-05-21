@@ -234,8 +234,7 @@ if (empty($reshook))
                     setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
                 }
             }
-            else
-            {
+            else {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
                 $error++;
                 break;
@@ -248,8 +247,7 @@ if (empty($reshook))
             else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
             $db->commit();
         }
-        else
-        {
+        else {
             $db->rollback();
         }
     }
@@ -459,8 +457,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 // Show description of content
 $texthelp = '';
 if ($search_project_user == $user->id) $texthelp .= $langs->trans("MyProjectsDesc");
-else
-{
+else {
     if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("ProjectsDesc");
     else $texthelp .= $langs->trans("ProjectsPublicDesc");
 }
@@ -753,8 +750,7 @@ while ($i < min($num, $limit))
 			{
 				print $socstatic->getNomUrl(1);
 			}
-			else
-			{
+			else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -795,8 +791,7 @@ while ($i < min($num, $limit))
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
 			}
-			else
-			{
+			else {
 				print '&nbsp';
 			}
 			print '</td>';

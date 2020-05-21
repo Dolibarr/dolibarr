@@ -211,8 +211,7 @@ if (!empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		if ($source && $REF) $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$source.$REF, 2); // Use the source in the hash to avoid duplicates if the references are identical
 		else $token = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 	}
-	else
-	{
+	else {
 		$token = $conf->global->PAYMENT_SECURITY_TOKEN;
 	}
 	if ($SECUREKEY != $token)
@@ -371,8 +370,7 @@ if ($action == 'dopayment')
 	if ($paymentmethod == 'stripe')
 	{
 		if (GETPOST('newamount', 'alpha')) $amount = price2num(GETPOST('newamount', 'alpha'), 'MT');
-		else
-		{
+		else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 			$action = '';
 		}
@@ -469,8 +467,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	    				setEventMessages('Failed to create card record', null, 'errors');
 	    				$action = '';
 	    			}
-	    			else
-	    			{
+	    			else {
 	    				if (!empty($FULLTAG))       $metadata["FULLTAG"] = $FULLTAG;
 	    				if (!empty($dol_id))        $metadata["dol_id"] = $dol_id;
 	    				if (!empty($dol_type))      $metadata["dol_type"] = $dol_type;
@@ -497,8 +494,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 	    			}
     			}
     		}
-    		else
-    		{
+    		else {
     			$vatcleaned = $vatnumber ? $vatnumber : null;
 
     			/*$taxinfo = array('type'=>'vat');
@@ -670,8 +666,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
             setEventMessages($paymentintent->status, null, 'errors');
             $action = '';
         }
-        else
-        {
+        else {
         	// TODO We can alse record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
         	// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
         	//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_stripe');
@@ -701,8 +696,7 @@ if ($action == 'charge' && !empty($conf->stripe->enabled))
 		header("Location: ".$urlko);
 		exit;
 	}
-	else
-	{
+	else {
 		header("Location: ".$urlok);
 		exit;
 	}
@@ -914,8 +908,7 @@ if ($source == 'order')
 		$mesg = $order->error;
 		$error++;
 	}
-	else
-	{
+	else {
 		$result = $order->fetch_thirdparty($order->socid);
 	}
 	$object = $order;
@@ -1009,8 +1002,7 @@ if ($source == 'order')
 		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
 		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
 	}
-	else
-	{
+	else {
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	if (is_object($order->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$order->thirdparty->id.'">'."\n";
@@ -1037,8 +1029,7 @@ if ($source == 'invoice')
 		$mesg = $invoice->error;
 		$error++;
 	}
-	else
-	{
+	else {
 		$result = $invoice->fetch_thirdparty($invoice->socid);
 	}
 	$object = $invoice;
@@ -1103,8 +1094,7 @@ if ($source == 'invoice')
 			print '<input type="hidden" name="newamount" value="'.$amount.'">';
 		}
 	}
-	else
-	{
+	else {
 		print '<b>'.price($object->total_ttc, 1, $langs).'</b>';
 	}
 	// Currency
@@ -1139,8 +1129,7 @@ if ($source == 'invoice')
 		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
 		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
 	}
-	else
-	{
+	else {
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	if (is_object($invoice->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$invoice->thirdparty->id.'">'."\n";
@@ -1168,8 +1157,7 @@ if ($source == 'contractline')
 		$mesg = $contractline->error;
 		$error++;
 	}
-	else
-	{
+	else {
 		if ($contractline->fk_contrat > 0)
 		{
 			$result = $contract->fetch($contractline->fk_contrat);
@@ -1177,14 +1165,12 @@ if ($source == 'contractline')
 			{
 				$result = $contract->fetch_thirdparty($contract->socid);
 			}
-			else
-			{
+			else {
 				$mesg = $contract->error;
 				$error++;
 			}
 		}
-		else
-		{
+		else {
 			$mesg = 'ErrorRecordNotFound';
 			$error++;
 		}
@@ -1207,8 +1193,7 @@ if ($source == 'contractline')
 				$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
 				$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
 			}
-			else
-			{
+			else {
 				$pu_ht = $product->price;
 				$pu_ttc = $product->price_ttc;
 				$price_base_type = $product->price_base_type;
@@ -1294,8 +1279,7 @@ if ($source == 'contractline')
 			{
 				$dur = array("h"=>$langs->trans("Hours"), "d"=>$langs->trans("DurationDays"), "w"=>$langs->trans("DurationWeeks"), "m"=>$langs->trans("DurationMonths"), "y"=>$langs->trans("DurationYears"));
 			}
-			else
-			{
+			else {
 				$dur = array("h"=>$langs->trans("Hour"), "d"=>$langs->trans("DurationDay"), "w"=>$langs->trans("DurationWeek"), "m"=>$langs->trans("DurationMonth"), "y"=>$langs->trans("DurationYear"));
 			}
 			$duration = $contractline->product->duration_value.' '.$dur[$contractline->product->duration_unit];
@@ -1352,8 +1336,7 @@ if ($source == 'contractline')
 		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
 		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
 	}
-	else
-	{
+	else {
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	if (is_object($contract->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$contract->thirdparty->id.'">'."\n";
@@ -1380,8 +1363,7 @@ if ($source == 'membersubscription')
 		$mesg = $member->error;
 		$error++;
 	}
-	else
-	{
+	else {
 		$member->fetch_thirdparty();
 		$subscription = new Subscription($db);
 	}
@@ -1523,8 +1505,7 @@ if ($source == 'membersubscription')
 		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
 		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
 	}
-	else
-	{
+	else {
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	if (is_object($member->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$member->thirdparty->id.'">'."\n";
@@ -1549,8 +1530,7 @@ if ($source == 'donation')
 		$mesg = $don->error;
 		$error++;
 	}
-	else
-	{
+	else {
 		$don->fetch_thirdparty();
 	}
 	$object = $don;
@@ -1668,8 +1648,7 @@ if ($source == 'donation')
 		print '<input type="hidden" name="shipToStreet2" value="'.$shipToStreet2.'">'."\n";
 		print '<input type="hidden" name="phoneNum" value="'.$phoneNum.'">'."\n";
 	}
-	else
-	{
+	else {
 		print '<!-- Shipping address not complete, so we don t use it -->'."\n";
 	}
 	if (is_object($don->thirdparty)) print '<input type="hidden" name="thirdparty_id" value="'.$don->thirdparty->id.'">'."\n";
@@ -1705,8 +1684,7 @@ if ($action != 'dopayment')
 		{
 			print '<br><br><span class="amountpaymentcomplete">'.$langs->trans("DonationPaid").'</span>';
 		}
-		else
-		{
+		else {
 		    // Membership can be paid and we still allow to make renewal
 		    if ($source == 'membersubscription' && $object->datefin > dol_now())
 		    {
@@ -1796,13 +1774,11 @@ if ($action != 'dopayment')
 			}
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error_email('ERRORNEWPAYMENT');
 	}
 }
-else
-{
+else {
 	// Print
 }
 
@@ -1940,8 +1916,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 		    {
                 print '<center>'.$langs->trans("Error").'</center>';
 		    }
-		    else
-		    {
+		    else {
 		        print '<input type="hidden" name="paymentintent_id" value="'.$paymentintent->id.'">';
 		        //$_SESSION["paymentintent_id"] = $paymentintent->id;
 		    }
@@ -1956,8 +1931,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			$langs->load("errors");
 			print info_admin($langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Stripe")), 0, 0, 'error');
 		}
-		else
-		{
+		else {
 			print '<!-- JS Code for Stripe components -->';
     		print '<script src="https://js.stripe.com/v3/"></script>'."\n";
     		print '<!-- urllogofull = '.$urllogofull.' -->'."\n";
@@ -2173,7 +2147,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 
     			<?php
     		}
-    		else		// Old method (not SCA ready)
+    		else // Old method (not SCA ready)
     		{
     			?>
     		// Old code for payment with option STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION off and STRIPE_USE_NEW_CHECKOUT off
@@ -2241,7 +2215,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
     				});
     				<?php
     			}
-    			else											// Ask credit card with 3DS test
+    			else // Ask credit card with 3DS test
     			{
     				?>
     				/* Use 3DS source */

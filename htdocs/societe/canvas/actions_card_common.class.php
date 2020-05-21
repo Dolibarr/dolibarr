@@ -259,8 +259,7 @@ abstract class ActionsCardCommon
                 }
             }
         }
-        else
-        {
+        else {
             $head = societe_prepare_head($this->object);
 
             $this->tpl['showhead'] = dol_get_fiche_head($head, 'card', '', 0, 'company');
@@ -335,8 +334,7 @@ abstract class ActionsCardCommon
                     $adh->ref = $adh->getFullName($langs);
                     $this->tpl['linked_member'] = $adh->getNomUrl(1);
                 }
-                else
-                {
+                else {
                     $this->tpl['linked_member'] = $langs->trans("ThirdpartyNotLinkedToMember");
                 }
             }

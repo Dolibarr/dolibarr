@@ -451,8 +451,7 @@ class Tasks extends DolibarrApi
         {
             return $this->get($id);
         }
-        else
-        {
+        else {
             throw new RestException(500, $this->task->error);
         }
     }

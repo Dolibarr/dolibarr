@@ -161,14 +161,12 @@ class Loan extends CommonObject
 				$this->db->free($resql);
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->free($resql);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -259,8 +257,7 @@ class Loan extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -330,8 +327,7 @@ class Loan extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -376,8 +372,7 @@ class Loan extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -572,8 +567,7 @@ class Loan extends CommonObject
 			$this->db->free($resql);
 			return $amount;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -619,14 +613,12 @@ class Loan extends CommonObject
 				$this->db->free($result);
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->db->free($result);
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

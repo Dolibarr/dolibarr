@@ -84,8 +84,7 @@ class Client extends Societe
             $this->db->free($resql);
             return 1;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             $this->error = $this->db->lasterror();
             return -1;

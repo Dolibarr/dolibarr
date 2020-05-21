@@ -274,16 +274,14 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			{
 				$result = $task->add_contact($_POST["userid"], 'TASKEXECUTIVE', 'internal');
 			}
-			else
-			{
+			else {
 				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("projects");
 					setEventMessages($langs->trans('NewTaskRefSuggested'), '', 'warnings');
 					$duplicate_code_error = true;
 				}
-				else
-				{
+				else {
 					setEventMessages($task->error, $task->errors, 'errors');
 				}
 				$action = 'create';
@@ -306,8 +304,7 @@ if ($action == 'createtask' && $user->rights->projet->creer)
 			$id = $projectid;
 		}
 	}
-	else
-	{
+	else {
 		if (!empty($backtopage))
 		{
 			header("Location: ".$backtopage);
@@ -508,8 +505,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		print $langs->trans("WarningProjectClosed");
 		print '</div>';
 	}
-	else
-	{
+	else {
 		print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="createtask">';
@@ -537,8 +533,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		{
 			print (GETPOSTISSET("ref") ?GETPOST("ref", 'alpha') : $defaultref);
 		}
-		else
-		{
+		else {
 			print $defaultref;
 		}
 		print '<input type="hidden" name="taskref" value="'.($_POST["ref"] ? $_POST["ref"] : $defaultref).'">';
@@ -559,8 +554,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 		{
 			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth300');
 		}
-		else
-		{
+		else {
 			print $langs->trans("NoUserAssignedToTheProject");
 		}
 		print '</td></tr>';
@@ -812,8 +806,7 @@ elseif ($id > 0 || !empty($ref))
 		$j = 0; $level = 0;
 		$nboftaskshown = projectLinesa($j, 0, $tasksarray, $level, true, 0, $tasksrole, $object->id, 1, $object->id, $filterprogresscalc, ($object->usage_bill_time ? 1 : 0), $arrayfields);
 	}
-	else
-	{
+	else {
 		$colspan = 10;
 		if ($object->usage_bill_time) $colspan += 2;
 		print '<tr class="oddeven nobottom"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoTasks").'</span></td></tr>';
@@ -837,8 +830,7 @@ elseif ($id > 0 || !empty($ref))
 				cleanCorruptedTree($db, 'projet_task', 'fk_task_parent');
 			}
 		}
-		else
-		{
+		else {
 			if ($nboftaskshown < count($tasksarray) && !GETPOST('search_user_id', 'int'))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

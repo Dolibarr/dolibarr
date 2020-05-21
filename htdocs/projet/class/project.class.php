@@ -307,8 +307,7 @@ class Project extends CommonObject
 				// End call triggers
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->errno = $this->db->lasterrno();
 			$error++;
@@ -334,8 +333,7 @@ class Project extends CommonObject
 			$this->db->commit();
 			return $ret;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -442,14 +440,12 @@ class Project extends CommonObject
 					$this->db->commit();
 					$result = 1;
 				}
-				else
-				{
+				else {
 					$this->db->rollback();
 					$result = -1;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$this->errors[] = $this->error;
 				$this->db->rollback();
@@ -457,15 +453,13 @@ class Project extends CommonObject
 				{
 					$result = -4;
 				}
-				else
-				{
+				else {
 					$result = -2;
 				}
 				dol_syslog(get_class($this)."::update error ".$result." ".$this->error, LOG_ERR);
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog(get_class($this)."::update ref null");
 			$result = -1;
 		}
@@ -554,8 +548,7 @@ class Project extends CommonObject
 
 			return 0;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -606,12 +599,11 @@ class Project extends CommonObject
 		{
 			$sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$ids.")";
 		}
-		else
-		{
+		else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$ids.") AND entity IN (".getEntity($type).")";
 		}
 
-		if($dates > 0 && $type == 'loan'){
+		if ($dates > 0 && $type == 'loan'){
 			$sql .= " AND (dateend > '".$this->db->idate($dates)."' OR dateend IS NULL)";
 		}
 		elseif ($dates > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
@@ -621,7 +613,7 @@ class Project extends CommonObject
 			$sql .= " AND (".$datefieldname." >= '".$this->db->idate($dates)."' OR ".$datefieldname." IS NULL)";
 		}
 
-		if($datee > 0 && $type == 'loan'){
+		if ($datee > 0 && $type == 'loan'){
 			$sql .= " AND (datestart < '".$this->db->idate($datee)."' OR datestart IS NULL)";
 		}
 		elseif ($datee > 0 && ($type != 'project_task'))	// For table project_taks, we want the filter on date apply on project_time_spent table
@@ -655,8 +647,7 @@ class Project extends CommonObject
 			/* Return array even if empty*/
 			return $elements;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -807,8 +798,7 @@ class Project extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
@@ -901,16 +891,14 @@ class Project extends CommonObject
 					$this->db->commit();
 					return 1;
 				}
-				else
-				{
+				else {
 					$this->db->rollback();
 					$this->error = join(',', $this->errors);
 					dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 					return -1;
 				}
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				return -1;
@@ -961,16 +949,14 @@ class Project extends CommonObject
 					$this->db->commit();
 					return 1;
 				}
-				else
-				{
+				else {
 					$this->db->rollback();
 					$this->error = join(',', $this->errors);
 					dol_syslog(get_class($this)."::setClose ".$this->error, LOG_ERR);
 					return -1;
 				}
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				return -1;
@@ -1077,8 +1063,7 @@ class Project extends CommonObject
 			{
 				$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
 			}
-			else
-			{
+			else {
 				$url = DOL_URL_ROOT.'/projet/card.php?id='.$this->id;
 			}
 			// Add param to save lastsearch_values or not
@@ -1199,8 +1184,7 @@ class Project extends CommonObject
 		{
 			$userAccess = 1;
 		}
-		else
-		{
+		else {
 			foreach (array('internal', 'external') as $source)
 			{
 				$userRole = $this->liste_contact(4, $source);
@@ -1272,7 +1256,7 @@ class Project extends CommonObject
 		$resql = $this->db->query($sql2);
 		if ($resql)
 		{
-			while($obj = $this->db->fetch_object($resql))
+			while ($obj = $this->db->fetch_object($resql))
 			{
 				$listofprojectcontacttype[$obj->rowid]=$obj->code;
 			}
@@ -1325,8 +1309,7 @@ class Project extends CommonObject
 				return $result;
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 
@@ -1434,8 +1417,7 @@ class Project extends CommonObject
 				$clone_project->note_private = '';
 				$clone_project->note_public = '';
 			}
-			else
-			{
+			else {
 				$this->db->begin();
 				$res = $clone_project->update_note(dol_html_entity_decode($clone_project->note_public, ENT_QUOTES), '_public');
 				if ($res < 0)
@@ -1444,8 +1426,7 @@ class Project extends CommonObject
 					$error++;
 					$this->db->rollback();
 				}
-				else
-				{
+				else {
 					$this->db->commit();
 				}
 
@@ -1457,8 +1438,7 @@ class Project extends CommonObject
 					$error++;
 					$this->db->rollback();
 				}
-				else
-				{
+				else {
 					$this->db->commit();
 				}
 			}
@@ -1482,8 +1462,7 @@ class Project extends CommonObject
 							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 							$error++;
 						}
-						else
-						{
+						else {
 							if ($clone_project->error != '')
 							{
 								$this->error .= $clone_project->error;
@@ -1515,8 +1494,7 @@ class Project extends CommonObject
 						}
 					}
 				}
-				else
-				{
+				else {
 					$this->error .= $langs->trans('ErrorInternalErrorDetected').':dol_mkdir';
 					$error++;
 				}
@@ -1546,8 +1524,7 @@ class Project extends CommonObject
 						$this->error .= $result_clone->error;
 						$error++;
 					}
-					else
-					{
+					else {
 						$new_task_id = $result_clone;
 						$taskstatic->fetch($tasktoclone->id);
 
@@ -1586,8 +1563,7 @@ class Project extends CommonObject
 			$this->db->commit();
 			return $clone_project_id;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : ".$this->error, LOG_ERR);
 			return -1;
@@ -1681,8 +1657,7 @@ class Project extends CommonObject
 			$sql .= " SET fk_project=".$this->id;
 			$sql .= " WHERE id=".$elementSelectId;
 		}
-		else
-		{
+		else {
 			$sql .= " SET fk_projet=".$this->id;
 			$sql .= " WHERE rowid=".$elementSelectId;
 		}
@@ -1716,8 +1691,7 @@ class Project extends CommonObject
 		{
 			$sql .= " SET fk_project=NULL";
 			$sql .= " WHERE id=".$elementSelectId;
-		} else
-		{
+		} else {
 			$sql .= " SET ".$projectfield."=NULL";
 			$sql .= " WHERE rowid=".$elementSelectId;
 		}
@@ -1809,8 +1783,7 @@ class Project extends CommonObject
 					$this->weekWorkLoad[$day] = $obj->task_duration;
 					$this->weekWorkLoadPerTask[$day][$obj->fk_task] = $obj->task_duration;
 				}
-				else
-				{
+				else {
 					$this->weekWorkLoad[$day] += $obj->task_duration;
 					$this->weekWorkLoadPerTask[$day][$obj->fk_task] += $obj->task_duration;
 				}
@@ -1820,8 +1793,7 @@ class Project extends CommonObject
 			$this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -1876,8 +1848,7 @@ class Project extends CommonObject
 					$this->monthWorkLoad[$week_number] = $obj->task_duration;
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] = $obj->task_duration;
 				}
-				else
-				{
+				else {
 					$this->monthWorkLoad[$week_number] += $obj->task_duration;
 					$this->monthWorkLoadPerTask[$week_number][$obj->fk_task] += $obj->task_duration;
 				}
@@ -1887,8 +1858,7 @@ class Project extends CommonObject
 			$this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -1958,8 +1928,7 @@ class Project extends CommonObject
 
 			return $response;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -2017,8 +1986,7 @@ class Project extends CommonObject
 			$this->db->free($resql);
 			return 1;
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -2085,8 +2053,7 @@ class Project extends CommonObject
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}

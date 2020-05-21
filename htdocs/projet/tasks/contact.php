@@ -69,8 +69,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
     		{
     			dol_print_error($db, $projectstatic->error, $projectstatic->errors);
     		}
-    		else
-    		{
+    		else {
     			$contactsofproject = $projectstatic->getListContactId('internal');
     			foreach ($contactsofproject as $key => $val)
     			{
@@ -78,8 +77,7 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
     			}
     		}
     	}
-    	else
-    	{
+    	else {
   			$result = $object->add_contact($idfortaskuser, GETPOST("type"), GETPOST("source"));
     	}
     }
@@ -89,15 +87,13 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
 	}
-	else
-	{
+	else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -110,8 +106,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -127,8 +122,7 @@ if ($action == 'deleteline' && $user->rights->projet->creer)
 		header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id.($withproject ? '&withproject=1' : ''));
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -143,8 +137,7 @@ if (!empty($project_ref) && !empty($withproject))
 		{
 			$id = $tasksarray[0]->id;
 		}
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
 			exit;
 		}
@@ -546,8 +539,7 @@ if ($id > 0 || !empty($ref))
 		}
 		print "</table>";
 	}
-	else
-	{
+	else {
 		print "ErrorRecordNotFound";
 	}
 }

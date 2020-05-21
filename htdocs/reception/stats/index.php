@@ -78,8 +78,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/receptionsnbinyear-'.$user->id.'-'.$year.'.png';
 }
-else
-{
+else {
     $filenamenb = $dir.'/receptionsnbinyear-'.$year.'.png';
 }
 

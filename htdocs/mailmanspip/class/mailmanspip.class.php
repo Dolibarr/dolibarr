@@ -291,15 +291,13 @@ class MailmanSpip
                             $mydb->close($result);
                             return 1;
                         }
-                        else
-                        {
+                        else {
                             // nous n'avons pas de reponse => n'existe pas
                             $mydb->close($result);
                             return 0;
                         }
                     }
-                    else
-                    {
+                    else {
                         $this->error = $mydb->lasterror();
                         $mydb->close();
                     }
@@ -378,8 +376,7 @@ class MailmanSpip
 	            }
 	            return count($lists);
 	        }
-	        else
-	        {
+	        else {
 	            $this->error = "ADHERENT_MAILMAN_URL not defined";
 	            return -1;
 	        }
@@ -452,8 +449,7 @@ class MailmanSpip
 	            }
 	            return count($lists);
 	        }
-	        else
-			{
+	        else {
 	            $this->error = "ADHERENT_MAILMAN_UNSUB_URL not defined";
 	            return -1;
 	        }

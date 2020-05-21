@@ -74,15 +74,13 @@ if ($action == 'addcontact' && $user->rights->projet->creer)
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
-	else
-	{
+	else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		}
-		else
-		{
+		else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -95,8 +93,7 @@ if ($action == 'swapstatut' && $user->rights->projet->creer)
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -112,8 +109,7 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->pr
 		header("Location: contact.php?id=".$object->id);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

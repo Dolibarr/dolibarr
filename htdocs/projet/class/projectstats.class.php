@@ -93,8 +93,7 @@ class ProjectStats extends Stats
 					$row[0]
 					);
 				}
-				else
-					$other += $row[1];
+				else $other += $row[1];
 					$i++;
 			}
 			if ($num > $limit)
@@ -282,8 +281,7 @@ class ProjectStats extends Stats
 
 				$this->lastfetchdate[get_class($this).'_'.__FUNCTION__] = $filedate;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
@@ -294,8 +292,7 @@ class ProjectStats extends Stats
 			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
 			$data = json_decode(file_get_contents($newpathofdestfile), true);
 		}
-		else
-		{
+		else {
 			$year = $startyear;
 			while ($year <= $endyear)
 			{

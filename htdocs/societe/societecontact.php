@@ -79,15 +79,13 @@ if ($action == 'addcontact' && $user->rights->societe->creer)
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
-	else
-	{
+	else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
 		}
-		else
-		{
+		else {
 			$mesg = '<div class="error">'.$object->error.'</div>';
 		}
 	}
@@ -100,8 +98,7 @@ elseif ($action == 'swapstatut' && $user->rights->societe->creer)
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -328,16 +325,14 @@ if ($id > 0 || !empty($ref))
 							}
 							print '</td>';
 						}
-						else
-						{
+						else {
 							print '<td class="left nowrap">';
 							if ($objp->subscription == 'yes')
 							{
 								print $langs->trans("SubscriptionNotReceived");
 								if ($objp->statut > 0) print " ".img_warning();
 							}
-							else
-							{
+							else {
 								print '&nbsp;';
 							}
 							print '</td>';
@@ -351,8 +346,7 @@ if ($id > 0 || !empty($ref))
 			}
 		}
 	}
-	else
-	{
+	else {
 		// Contrat non trouve
 		print "ErrorRecordNotFound";
 	}

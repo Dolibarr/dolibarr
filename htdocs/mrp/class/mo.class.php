@@ -763,15 +763,13 @@ class Mo extends CommonObject
 			{
 				return $numref;
 			}
-			else
-			{
+			else {
 				$this->error = $obj->error;
 				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
 		}
-		else
-		{
+		else {
 			print $langs->trans("Error")." ".$langs->trans("Error_MRP_MO_ADDON_NotDefined");
 			return "";
 		}
@@ -817,8 +815,7 @@ class Mo extends CommonObject
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
 		}
-		else
-		{
+		else {
 			$num = $this->ref;
 		}
 		$this->newref = $num;
@@ -900,8 +897,7 @@ class Mo extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1146,8 +1142,7 @@ class Mo extends CommonObject
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}
@@ -1181,8 +1176,7 @@ class Mo extends CommonObject
 	        $this->errors = $this->errors;
 	        return $result;
 	    }
-	    else
-	    {
+	    else {
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
@@ -1329,8 +1323,7 @@ class Mo extends CommonObject
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
 		}
-		else
-		{
+		else {
 			// If origin MRP line is not a product, but another MRP
 			// TODO
 		}

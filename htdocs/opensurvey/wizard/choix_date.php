@@ -320,8 +320,7 @@ if (is_integer($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] 
 {
 	$motmois = dol_print_date(mktime(0, 0, 0, $_SESSION["mois"], 10), '%B');
 }
-else
-{
+else {
 	$motmois = dol_print_date(dol_now(), '%B');
 }
 

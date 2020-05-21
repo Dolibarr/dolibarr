@@ -437,8 +437,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 // Show description of content
 $texthelp = '';
 if ($search_task_user == $user->id) $texthelp .= $langs->trans("MyTasksDesc");
-else
-{
+else {
     if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("TasksOnProjectsDesc");
     else $texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
 }
@@ -754,8 +753,7 @@ while ($i < min($num, $limit))
 				$socstatic->name = $obj->name;
 				print $socstatic->getNomUrl(1);
 			}
-			else
-			{
+			else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -857,8 +855,7 @@ while ($i < min($num, $limit))
 		        $totalarray['val']['t.tobill'] += $obj->tobill;
 		        $totalarray['totaltobill'] += $obj->tobill;
 		    }
-		    else
-		    {
+		    else {
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';
@@ -876,8 +873,7 @@ while ($i < min($num, $limit))
 		        $totalarray['val']['t.billed'] += $obj->billed;
 		        $totalarray['totalbilled'] += $obj->billed;
 		    }
-		    else
-		    {
+		    else {
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';

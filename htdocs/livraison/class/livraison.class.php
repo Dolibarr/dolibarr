@@ -216,24 +216,21 @@ class Livraison extends CommonObject
 					$this->db->commit();
 					return $this->id;
 				}
-				else
-				{
+				else {
 					$error++;
 					$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 					$this->db->rollback();
 					return -3;
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 			$this->db->rollback();
@@ -345,15 +342,13 @@ class Livraison extends CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = 'Delivery with id '.$id.' not found sql='.$sql;
 				dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -400,8 +395,7 @@ class Livraison extends CommonObject
 		            {
 		                $numref = $objMod->livraison_get_num($soc, $this);
 		            }
-		            else
-					{
+		            else {
 		                $numref = $this->ref;
 		            }
             		$this->newref = dol_sanitizeFileName($numref);
@@ -501,16 +495,14 @@ class Livraison extends CommonObject
 			            $this->db->commit();
 			            return 1;
 			        }
-			        else
-					{
+			        else {
 			            $this->db->rollback();
 			            return -1;
 			        }
 				}
 			}
 		}
-		else
-		{
+		else {
 			$this->error = "Non autorise";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -634,8 +626,7 @@ class Livraison extends CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				return 0;
 			}
 		}
@@ -705,22 +696,19 @@ class Livraison extends CommonObject
 
 					return 1;
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -3;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
@@ -991,8 +979,7 @@ class Livraison extends CommonObject
 					{
 						$array[$i]['qty'] = $objSourceLine->qty - $row[1];
 					}
-					else
-					{
+					else {
 						$array[$i]['qty'] = $objSourceLine->qty;
 					}
 
@@ -1010,8 +997,7 @@ class Livraison extends CommonObject
 			}
 			return $array;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error()." - sql=$sqlSourceLine";
 			return -1;
 		}
@@ -1041,14 +1027,12 @@ class Livraison extends CommonObject
 				$this->date_delivery = $date_livraison;
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -2;
 		}
 	}

@@ -50,7 +50,6 @@ if ($result > 0)
 	unset($object->db);
 	echo json_encode($object);
 }
-else
-{
+else {
    	echo 'Failed to load category with id='.$idbom;
 }

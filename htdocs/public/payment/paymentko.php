@@ -78,8 +78,7 @@ if (empty($paymentmethod))
     dol_print_error(null, 'The back url does not contains a parameter fulltag that should help us to find the payment method used');
     exit;
 }
-else
-{
+else {
     dol_syslog("paymentmethod=".$paymentmethod);
 }
 
@@ -187,8 +186,7 @@ if (!empty($_SESSION['ipaddress']))      // To avoid to make action twice
     	{
     		dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
     	}
-    	else
-    	{
+    	else {
     		dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
     	}
     }

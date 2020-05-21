@@ -64,8 +64,7 @@ if ($action == 'updateMask')
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -83,8 +82,7 @@ if ($action == 'updateMaskTask')
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -121,14 +119,12 @@ elseif ($action == 'specimen')
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project&file=SPECIMEN.pdf");
 			return;
 		}
-		else
-		{
+		else {
 			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -166,14 +162,12 @@ elseif ($action == 'specimentask')
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=project_task&file=SPECIMEN.pdf");
 			return;
 		}
-		else
-		{
+		else {
 			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -385,8 +379,7 @@ foreach ($dirmodels as $reldir)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						}
-						else
-						{
+						else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 						}
 						print '</td>';
@@ -405,8 +398,7 @@ foreach ($dirmodels as $reldir)
 							{
 								$htmltooltip .= $nextval.'<br>';
 							}
-							else
-							{
+							else {
 								$htmltooltip .= $langs->trans($module->error).'<br>';
 							}
 						}
@@ -486,8 +478,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 							{
 								print img_picto($langs->trans("Activated"), 'switch_on');
 							}
-							else
-							{
+							else {
 								print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmodtask&amp;value=mod_'.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							}
 							print '</td>';
@@ -506,8 +497,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 								{
 									$htmltooltip .= $nextval.'<br>';
 								}
-								else
-								{
+								else {
 									$htmltooltip .= $langs->trans($module->error).'<br>';
 								}
 							}
@@ -556,8 +546,7 @@ if ($resql)
 		$i++;
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -625,8 +614,7 @@ foreach ($dirmodels as $reldir)
 									print '</a>';
 									print "</td>";
 								}
-								else
-								{
+								else {
 									print "<td class=\"center\">\n";
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
@@ -638,8 +626,7 @@ foreach ($dirmodels as $reldir)
 								{
 									print img_picto($langs->trans("Default"), 'on');
 								}
-								else
-								{
+								else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 								}
 								print '</td>';
@@ -664,8 +651,7 @@ foreach ($dirmodels as $reldir)
 								{
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 								}
-								else
-								{
+								else {
 									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
@@ -713,8 +699,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 			$i++;
 		}
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 
@@ -782,8 +767,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 										print '</a>';
 										print "</td>";
 									}
-									else
-									{
+									else {
 										print "<td class=\"center\">\n";
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=settask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 										print "</td>";
@@ -795,8 +779,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									{
 										print img_picto($langs->trans("Default"), 'on');
 									}
-									else
-									{
+									else {
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoctask&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 									}
 									print '</td>';
@@ -821,8 +804,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 									{
 										print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimentask&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 									}
-									else
-									{
+									else {
 										print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 									}
 									print '</td>';
@@ -863,8 +845,7 @@ if (!$conf->use_javascript_ajax)
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }
-else
-{
+else {
 	print '<td width="60" class="right">';
 	$arrval = array('0'=>$langs->trans("No"),
 		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',

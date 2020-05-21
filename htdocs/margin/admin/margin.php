@@ -48,8 +48,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -62,8 +61,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -74,8 +72,7 @@ if ($action == 'remises')
 	{
 		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -86,8 +83,7 @@ if ($action == 'typemarges')
 	{
 		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -98,8 +94,7 @@ if ($action == 'contact')
 	{
 		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -167,14 +162,12 @@ if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
 }
-else
-{
+else {
 	if (empty($conf->global->DISPLAY_MARGIN_RATES))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
@@ -190,14 +183,12 @@ if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARK_RATES');
 }
-else
-{
+else {
 	if (empty($conf->global->DISPLAY_MARK_RATES))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
@@ -213,14 +204,12 @@ if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
 }
-else
-{
+else {
 	if (empty($conf->global->ForceBuyingPriceIfNull))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }

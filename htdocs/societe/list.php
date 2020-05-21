@@ -1050,8 +1050,7 @@ while ($i < min($num, $limit))
 		{
 		    print $obj->name;
 		}
-		else
-		{
+		else {
 		    print $companystatic->getNomUrl(1, '', 100, 0, 1);
 		}
 		print "</td>\n";

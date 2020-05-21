@@ -467,8 +467,7 @@ class Thirdparties extends DolibarrApi
 
 			throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
 		}
-		else
-		{
+		else {
 			$db->commit();
 		}
 
@@ -1313,8 +1312,7 @@ class Thirdparties extends DolibarrApi
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			throw new RestException(404, 'Bank account not found');
 		}
 
@@ -1331,8 +1329,7 @@ class Thirdparties extends DolibarrApi
 		{
 			return array("success" => $result);
 		}
-		else
-		{
+		else {
 			throw new RestException(500);
 		}
     }

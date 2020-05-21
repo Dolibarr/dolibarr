@@ -380,14 +380,12 @@ if (count($tasksarray) > 0)
 
 		print '</div>';
 	}
-	else
-	{
+	else {
 		$langs->load("admin");
 		print $langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled");
 	}
 }
-else
-{
+else {
 	print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
 }
 

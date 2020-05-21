@@ -126,8 +126,7 @@ if (!$sortfield)
 		$sortfield = "f.datef";
 		$sortorder = "DESC";
 	}
-	else
-	{
+	else {
 	    $sortfield = "s.nom";
 	    $sortorder = "ASC";
 	}
@@ -255,7 +254,7 @@ if ($result)
 
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice = 'BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
+	else // value is 'costprice' or 'pmp'
 	    $labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';
@@ -269,8 +268,7 @@ if ($result)
   		print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
   		print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", "&amp;socid=".$socid, 'align="center"', $sortfield, $sortorder);
 	}
-	else
-  		print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
+	else print_liste_field_titre("Customer", $_SERVER["PHP_SELF"], "s.nom", "", "&amp;socid=".$socid, '', $sortfield, $sortorder);
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
 	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;socid=".$socid, 'align="right"', $sortfield, $sortorder);
@@ -298,8 +296,7 @@ if ($result)
 				$marginRate = ($pa != 0) ?-1 * (100 * $marge / $pa) : '';
 				$markRate = ($pv != 0) ?-1 * (100 * $marge / $pv) : '';
 			}
-			else
-			{
+			else {
 				$marginRate = ($pa != 0) ? (100 * $marge / $pa) : '';
 				$markRate = ($pv != 0) ? (100 * $marge / $pv) : '';
 			}
@@ -353,8 +350,7 @@ if ($result)
 	print '<tr class="liste_total">';
 	if ($client)
 	    print '<td colspan=2>';
-  	else
-    	print '<td>';
+  	else print '<td>';
   	print $langs->trans('TotalMargin')."</td>";
 	print "<td class=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
 	print "<td class=\"right\">".price($cumul_achat, null, null, null, null, $rounding)."</td>\n";
@@ -368,8 +364,7 @@ if ($result)
 	print "</table>";
 	print '</div>';
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 $db->free($result);

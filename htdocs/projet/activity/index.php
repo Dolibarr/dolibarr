@@ -86,8 +86,7 @@ $morehtml .= '</SELECT>';
 $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 if ($mine) $tooltiphelp = $langs->trans("MyTasksDesc");
-else
-{
+else {
 	if ($user->rights->projet->all->lire && !$socid) $tooltiphelp = $langs->trans("TasksDesc");
 	else $tooltiphelp = $langs->trans("TasksPublicDesc");
 }
@@ -171,8 +170,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 print '<tr class="liste_total">';
@@ -228,8 +226,7 @@ if ($resql)
 
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 print '<tr class="liste_total">';
@@ -340,8 +337,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH))
     	}
     	$db->free($resql);
     }
-    else
-    {
+    else {
     	dol_print_error($db);
     }
     print '<tr class="liste_total">';
@@ -392,8 +388,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR))
 		}
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 	print '<tr class="liste_total">';
@@ -581,8 +576,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 
 		$db->free($resql);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }

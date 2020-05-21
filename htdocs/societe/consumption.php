@@ -428,8 +428,7 @@ if ($sql_select)
 		{
 			print $documentstaticline->getLibStatut(2);
 		}
-		else
-		{
+		else {
 			print $documentstatic->getLibStatut(2);
 		}
 		print '</td>';
@@ -472,8 +471,7 @@ if ($sql_select)
 
 				$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
 			}
-			else
-			{
+			else {
 				$label = $objp->product_label;
 			}
 
@@ -522,14 +520,12 @@ if ($sql_select)
 					// Add date of deposit
 					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
 				}
-				else
-				{
+				else {
 					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
 		}
-		else
-		{
+		else {
 			if ($objp->fk_product > 0) {
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 

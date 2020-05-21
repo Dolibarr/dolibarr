@@ -166,8 +166,7 @@ class PaymentLoan extends CommonObject
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
@@ -179,8 +178,7 @@ class PaymentLoan extends CommonObject
 			$this->db->commit();
 			return $this->id;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -255,8 +253,7 @@ class PaymentLoan extends CommonObject
 
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -327,8 +324,7 @@ class PaymentLoan extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -380,8 +376,7 @@ class PaymentLoan extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -460,8 +455,7 @@ class PaymentLoan extends CommonObject
 					if ($result <= 0) dol_print_error($this->db);
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $acc->error;
 				$error++;
 			}
@@ -471,8 +465,7 @@ class PaymentLoan extends CommonObject
 		{
 			return 1;
 		}
-		else
-		{
+		else {
 			return -1;
 		}
 	}
@@ -497,8 +490,7 @@ class PaymentLoan extends CommonObject
 		    $this->fk_bank = $id_bank;
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return 0;
 		}

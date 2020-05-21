@@ -88,8 +88,7 @@ if ($resql)
 			{
 				print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".$objp->societe."</td>\n";
 			}
-			else
-			{
+			else {
 				print "<td>Anonyme Anonyme</td>\n";
 			}
 			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
@@ -99,13 +98,11 @@ if ($resql)
 		}
 		print "</table>";
 	}
-	else
-	{
+	else {
 		print "Aucun don publique";
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 

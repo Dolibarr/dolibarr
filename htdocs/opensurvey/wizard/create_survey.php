@@ -89,8 +89,7 @@ if (GETPOST("creation_sondage_date") || GETPOST("creation_sondage_autre"))
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 		}
-		else
-		{
+		else {
 			$testdate = true;
 			$_SESSION['champdatefin'] = dol_print_date($champdatefin, 'dayrfc');
 			//$testdate = false;
@@ -193,8 +192,7 @@ if (GETPOST('choix_sondage'))
 	print '<input type="hidden" name="choix_sondage" value="'.GETPOST('choix_sondage').'">';
 	print '<br><input type="submit" class="button" name="submit" value="'.$langs->trans("CreatePoll").' ('.(GETPOST('choix_sondage') == 'date' ? $langs->trans("TypeDate") : $langs->trans("TypeClassic")).')">';
 }
-else
-{
+else {
 	// Show image to selecte between date survey or other survey
 	print '<br><table>'."\n";
 	print '<tr><td>'.$langs->trans("CreateSurveyDate").'</td><td></td> '."\n";

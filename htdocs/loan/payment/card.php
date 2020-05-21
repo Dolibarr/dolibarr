@@ -64,8 +64,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->loan->del
 		header("Location: ".DOL_URL_ROOT."/loan/list.php");
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
@@ -102,8 +101,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->wri
 		header('Location: card.php?id='.$payment->id);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($payment->error, $payment->errors, 'errors');
 		$db->rollback();
 	}
@@ -255,8 +253,7 @@ if ($resql)
 	print "</table>\n";
 	$db->free($resql);
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -287,8 +284,7 @@ if (empty($action) && !empty($user->rights->loan->delete))
 	{
 		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 	}
-	else
-	{
+	else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("CantRemovePaymentWithOneInvoicePaid")).'">'.$langs->trans('Delete').'</a>';
 	}
 }

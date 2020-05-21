@@ -407,8 +407,7 @@ if (empty($reshook))
     			$object->generateDocument($model, $outputlangs, 0, 0, 0);
     		}
     	}
-    	else
-    	{
+    	else {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
@@ -593,8 +592,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
 					}
-					else
-					{
+					else {
 						$langs->load("errors");
 						print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 					}

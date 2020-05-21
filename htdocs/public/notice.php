@@ -39,8 +39,7 @@ if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml'
 	print 'Sorry, it seems your internet connexion is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';
 }
-else
-{
+else {
 	$langs->load("error");
 	$langs->load("other");
 

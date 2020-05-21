@@ -69,8 +69,7 @@ if (!empty($keyforcontent))
 		$langs->load("errors");
 		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);
 	}
-	else
-	{
+	else {
 		if (preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent))
 		{
 			print $conf->global->$keyforcontent;
@@ -115,8 +114,7 @@ if (!empty($keyforcontent))
 	print '<div>';
 	llxFooter();
 }
-else
-{
+else {
 	if (preg_match('/^\//', $conf->global->EXTERNALSITE_URL) || preg_match('/^http/i', $conf->global->EXTERNALSITE_URL))
 	{
 		print "
@@ -151,8 +149,7 @@ else
 	</html>
 	";
 	}
-	else
-	{
+	else {
 		llxHeader();
 		print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight'] - 90).'px">';
 		print $conf->global->EXTERNALSITE_URL;

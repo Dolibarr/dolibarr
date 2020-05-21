@@ -119,8 +119,7 @@ if ($action == 'add')
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	}
-	else
-	{
+	else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
@@ -167,8 +166,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 		else header("Location: ".DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1');
 		exit;
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 }
@@ -262,7 +260,7 @@ $formfile = new FormFile($db);
 if ($action == 'create')    // Create. Seems to no be used
 {
 }
-else	// View
+else // View
 {
 	if ($object->id > 0)
 	{
@@ -453,8 +451,7 @@ else	// View
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
 			}
-			else
-			{
+			else {
 				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
 			}
 			print '</td>';
@@ -476,8 +473,7 @@ else	// View
 				{
 					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
 				}
-				else
-				{
+				else {
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 				}
 		        print '</td></tr>';
@@ -575,8 +571,7 @@ else	// View
 
 							$label = (!empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $object->lines[$i]->product_label;
 						}
-						else
-						{
+						else {
 							$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : $object->lines[$i]->product_label);
 						}
 
@@ -597,8 +592,7 @@ else	// View
 							print (!empty($object->lines[$i]->description) && $object->lines[$i]->description != $object->lines[$i]->product_label) ? '<br>'.dol_htmlentitiesbr($object->lines[$i]->description) : '';
 						}
 					}
-					else
-					{
+					else {
 						print "<td>";
 						if ($object->lines[$i]->fk_product_type == 1) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
@@ -675,8 +669,7 @@ else	// View
 					{
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id).'">'.$langs->trans("Delete").'</a>';
 					}
-					else
-					{
+					else {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 					}
 				}
@@ -720,14 +713,12 @@ else	// View
 
 			print '</td></tr></table>';
 		}
-		else
-		{
+		else {
 			/* Expedition non trouvee */
 			print "Expedition inexistante ou acces refuse";
 		}
 	}
-	else
-	{
+	else {
 		/* Expedition non trouvee */
 		print "Expedition inexistante ou acces refuse";
 	}

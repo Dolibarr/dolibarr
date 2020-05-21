@@ -80,8 +80,7 @@ if ($action == 'setvalue' && $user->admin)
   		$db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
   	}
-  	else
-  	{
+  	else {
   		$db->rollback();
 		dol_print_error($db);
     }

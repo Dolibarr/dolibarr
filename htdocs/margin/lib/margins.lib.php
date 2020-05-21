@@ -128,13 +128,11 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 		{
 			$paht_ret = $product->fourn_unitprice * (1 - $product->fourn_remise_percent / 100);
 		}
-		else
-		{
+		else {
 			$paht_ret = $paht;
 		}
 	}
-	else
-	{
+	else {
 		$paht_ret = $paht;
 	}
 
@@ -147,8 +145,7 @@ function getMarginInfos($pvht, $remise_percent, $tva_tx, $localtax1_tx, $localta
 	// calcul marge
 	if ($pu_ht_remise < 0)
 		$marge = -1 * (abs($pu_ht_remise) - $paht_ret);
-	else
-		$marge = $pu_ht_remise - $paht_ret;
+	else $marge = $pu_ht_remise - $paht_ret;
 
 	// calcul taux marge
 	if ($paht_ret != 0)

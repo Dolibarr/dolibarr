@@ -63,8 +63,7 @@ if ($action == 'update')
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -115,8 +114,7 @@ foreach ($list as $key)
 	{
 		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
 	}
-	else
-	{
+	else {
 		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 	print '</td></tr>';

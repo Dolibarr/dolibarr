@@ -80,8 +80,7 @@ if (!empty($project_ref) && !empty($withproject))
 			$id = $tasksarray[0]->id;
 			$object->fetch($id);
 		}
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject ? '&withproject=1' : '').(empty($mode) ? '' : '&mode='.$mode));
 			exit;
 		}
@@ -104,8 +103,7 @@ if ($id > 0 || !empty($ref))
 
 		$upload_dir = $conf->projet->dir_output.'/'.dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref);
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -319,8 +317,7 @@ if ($object->id > 0)
 	$relativepathwithnofile = dol_sanitizeFileName($projectstatic->ref).'/'.dol_sanitizeFileName($object->ref).'/';
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
-else
-{
+else {
 	header('Location: index.php');
 	exit;
 }

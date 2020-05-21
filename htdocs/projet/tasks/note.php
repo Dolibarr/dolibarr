@@ -58,8 +58,7 @@ if ($id > 0 || !empty($ref))
 
 		$object->project = clone $projectstatic;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -76,8 +75,7 @@ if (!empty($project_ref) && !empty($withproject))
 			$id = $tasksarray[0]->id;
 			$object->fetch($id);
 		}
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}

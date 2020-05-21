@@ -64,8 +64,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
         header("Location: ../admin/admin_establishment.php");
         exit;
     }
-    else
-    {
+    else {
         setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -101,18 +100,15 @@ elseif ($action == 'add')
                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                 exit;
 			}
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
         }
-        else
-        {
+        else {
             $action = 'create';
         }
     }
-    else
-    {
+    else {
         header("Location: ../admin/admin_establishment.php");
         exit;
     }
@@ -148,8 +144,7 @@ elseif ($action == 'update')
                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
                 exit;
             }
-			else
-			{
+			else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}

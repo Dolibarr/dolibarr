@@ -467,8 +467,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			}
 			print "</table>";
 		}
-		else
-		{
+		else {
 			print $langs->trans('None');
 		}
 
@@ -476,8 +475,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">'.$langs->trans("Ok").'</a></div>';
 		print "\n</div><br>\n";
 	}
-	else
-	{
+	else {
         // View mode
 
 		/* ************************************************************************** */
@@ -591,8 +589,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 print "</tr>\n";
             }
         }
-        else
-        {
+        else {
             $colspan = 9;
             if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan += 1;
             print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';

@@ -440,8 +440,7 @@ class CompanyPaymentMode extends CommonObject
 			{
 				return 0;
 			}
-			else
-			{
+			else {
 				$obj = $this->db->fetch_object($result1);
 
 				$type = '';
@@ -467,15 +466,13 @@ class CompanyPaymentMode extends CommonObject
 					$this->db->rollback();
 					return -1;
 				}
-				else
-				{
+				else {
 					$this->db->commit();
 					return 1;
 				}
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -566,8 +563,7 @@ class CompanyPaymentMode extends CommonObject
 
 			$this->db->free($result);
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
 		}
 	}

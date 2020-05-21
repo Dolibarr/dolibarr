@@ -165,8 +165,7 @@ class Dolresource extends CommonObject
     		$this->db->rollback();
     		return -1 * $error;
     	}
-    	else
-    	{
+    	else {
     		$this->db->commit();
     		return $this->id;
     	}
@@ -224,8 +223,7 @@ class Dolresource extends CommonObject
 
     		return $this->id;
     	}
-    	else
-    	{
+    	else {
     		$this->error = "Error ".$this->db->lasterror();
     		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
     		return -1;
@@ -330,8 +328,7 @@ class Dolresource extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -389,8 +386,7 @@ class Dolresource extends CommonObject
 
     		return $this->id;
     	}
-    	else
-    	{
+    	else {
     		$this->error = "Error ".$this->db->lasterror();
     		return -1;
     	}
@@ -428,8 +424,7 @@ class Dolresource extends CommonObject
 				$error++;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->lasterror();
 			$error++;
 		}
@@ -476,8 +471,7 @@ class Dolresource extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -568,8 +562,7 @@ class Dolresource extends CommonObject
     		}
     		return $num;
     	}
-    	else
-    	{
+    	else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -646,8 +639,7 @@ class Dolresource extends CommonObject
    			}
    			return $num;
    		}
-   		else
-   		{
+   		else {
    			$this->error = $this->db->lasterror();
    			return -1;
    		}
@@ -725,8 +717,7 @@ class Dolresource extends CommonObject
     		}
     		return $num;
     	}
-    	else
-    	{
+    	else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -817,8 +808,7 @@ class Dolresource extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -925,8 +915,7 @@ class Dolresource extends CommonObject
     		}
     		return $num;
     	}
-    	else
-    	{
+    	else {
     		dol_print_error($this->db);
     		return -1;
     	}

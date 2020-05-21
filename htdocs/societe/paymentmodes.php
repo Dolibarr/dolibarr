@@ -176,8 +176,7 @@ if (empty($reshook))
 			{
 				setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
 			}
-			else
-			{
+			else {
 				// If this account is the default bank account, we disable others
 				if ($companybankaccount->default_rib)
 				{
@@ -231,8 +230,7 @@ if (empty($reshook))
 			{
 				setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 			}
-			else
-			{
+			else {
 				// If this account is the default bank account, we disable others
 				if ($companypaymentmode->default_rib)
 				{
@@ -339,8 +337,7 @@ if (empty($reshook))
 				header('Location: '.$url);
 				exit;
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
@@ -408,8 +405,7 @@ if (empty($reshook))
 				header('Location: '.$url);
 				exit;
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
@@ -425,8 +421,7 @@ if (empty($reshook))
 			header('Location: '.$url);
 			exit;
 		}
-		else
-		{
+		else {
 			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
@@ -452,13 +447,11 @@ if (empty($reshook))
 				header('Location: '.$url);
 				exit;
 			}
-			else
-			{
+			else {
 				setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 			}
 		}
-		else
-		{
+		else {
 			setEventMessages($companypaymentmode->error, $companypaymentmode->errors, 'errors');
 		}
 	}
@@ -474,13 +467,11 @@ if (empty($reshook))
 				header('Location: '.$url);
 				exit;
 			}
-			else
-			{
+			else {
 				setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
 			}
 		}
-		else
-		{
+		else {
 			setEventMessages($companybankaccount->error, $companybankaccount->errors, 'errors');
 		}
 	}
@@ -516,8 +507,7 @@ if (empty($reshook))
 				$error++;
 				setEventMessages('ThisThirdpartyIsNotACustomer', null, 'errors');
 			}
-			else
-			{
+			else {
 				// Creation of Stripe customer + update of societe_account
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus, 1);
 				if (!$cu)
@@ -525,8 +515,7 @@ if (empty($reshook))
 					$error++;
 					setEventMessages($stripe->error, $stripe->errors, 'errors');
 				}
-				else
-				{
+				else {
 					$stripecu = $cu->id;
 				}
 			}
@@ -541,8 +530,7 @@ if (empty($reshook))
 				$error++;
 				setEventMessages('ThisPaymentModeIsNotACard', null, 'errors');
 			}
-			else
-			{
+			else {
 				// Get the Stripe customer
 				$cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				if (!$cu)
@@ -613,8 +601,7 @@ if (empty($reshook))
 				$stripecu = $newcu;
 				$db->commit();
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
@@ -670,8 +657,7 @@ if (empty($reshook))
 				$stripesupplieracc = $newsup;
 				$db->commit();
 			}
-			else
-			{
+			else {
 				$db->rollback();
 			}
 		}
@@ -699,8 +685,7 @@ if (empty($reshook))
 				{
 					$cu->invoice_settings->default_payment_method = (string) $source; // New
 				}
-				else
-				{
+				else {
 					$cu->default_source = (string) $source; // Old
 				}
 				$result = $cu->save();
@@ -726,8 +711,7 @@ if (empty($reshook))
 					    $payment_method->detach();
 				    }
 				}
-				else
-				{
+				else {
 				    $cu = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 				    $card = $cu->sources->retrieve("$source");
 				    if ($card) {
@@ -783,8 +767,7 @@ if (!$id)
 	$companybankaccount->fetch(0, $object->id);
 	$companypaymentmode->fetch(0, null, $object->id, 'card');
 }
-else
-{
+else {
 	$companybankaccount->fetch($id);
 	$companypaymentmode->fetch($id);
 }
@@ -976,8 +959,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					{
 						$listofsources = $customerstripe->sources->data;
 					}
-					else
-					{
+					else {
 						$service = 'StripeTest';
 						$servicestatus = 0;
 						if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha'))

@@ -49,8 +49,7 @@ if (isset($_GET['connect']))
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	}
-	else
-	{
+	else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
         $servicestatus = 1;
@@ -63,8 +62,7 @@ else {
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	}
-	else
-	{
+	else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
 		$servicestatus = 1;

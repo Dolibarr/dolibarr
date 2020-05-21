@@ -391,8 +391,7 @@ if ($action == 'add')
                         {
                     	    $urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
                         }
-                        else
-                        {
+                        else {
                             $urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
@@ -408,8 +407,7 @@ if ($action == 'add')
                     	{
                     		$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
                     	}
-                    	else
-                    	{
+                    	else {
                     		$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                     	}
                     }
@@ -425,8 +423,7 @@ if ($action == 'add')
                         {
                         	$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
                         }
-                        else
-                        {
+                        else {
                         	$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
@@ -442,14 +439,12 @@ if ($action == 'add')
                         {
                         	$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$adh->ref, 2));
                         }
-                        else
-                        {
+                        else {
                         	$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
                 }
-                else
-                {
+                else {
                     dol_print_error('', "Autosubscribe form is setup to ask an online payment for a not managed online payment");
                     exit;
                 }
@@ -458,8 +453,7 @@ if ($action == 'add')
             if (!empty($entity)) $urlback .= '&entity='.$entity;
             dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
         }
-        else
-        {
+        else {
         	$error++;
             $errmsg .= join('<br>', $adh->errors);
         }
@@ -472,8 +466,7 @@ if ($action == 'add')
     	Header("Location: ".$urlback);
     	exit;
     }
-    else
-    {
+    else {
     	$db->rollback();
     }
 }
@@ -575,8 +568,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     print $form->selectarray("type", $adht->liste_array(), GETPOST('type') ?GETPOST('type') : $defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
-else
-{
+else {
     $adht->fetch($conf->global->MEMBER_NEWFORM_FORCETYPE);
     print '<input type="hidden" id="type" name="type" value="'.$conf->global->MEMBER_NEWFORM_FORCETYPE.'">';
 }
@@ -589,8 +581,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
     print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
-else
-{
+else {
     print $morphys[$conf->global->MEMBER_NEWFORM_FORCEMORPHY];
     print '<input type="hidden" id="morphy" name="morphy" value="'.$conf->global->MEMBER_NEWFORM_FORCEMORPHY.'">';
 }
@@ -733,8 +724,7 @@ if (!empty($conf->global->MEMBER_NEWFORM_AMOUNT)
     {
         print '<input type="text" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }
-    else
-    {
+    else {
         print '<input type="text" name="amount" id="amounthidden" class="flat amount" disabled size="6" value="'.$amount.'">';
         print '<input type="hidden" name="amount" id="amount" class="flat amount" size="6" value="'.$amount.'">';
     }

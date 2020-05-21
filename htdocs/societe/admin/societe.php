@@ -54,8 +54,7 @@ if ($action == 'setcodeclient')
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -67,8 +66,7 @@ if ($action == 'setcodecompta')
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -84,8 +82,7 @@ if ($action == 'updateoptions')
 	    {
 		    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	    }
-	    else
-	    {
+	    else {
 		    setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
@@ -99,8 +96,7 @@ if ($action == 'updateoptions')
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
@@ -114,8 +110,7 @@ if ($action == 'updateoptions')
 		{
 			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
-		else
-		{
+		else {
 			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
@@ -178,8 +173,7 @@ if ($action == 'setdoc')
 	{
 		$db->commit();
 	}
-	else
-	{
+	else {
 	    $db->rollback();
 	}
 }
@@ -193,8 +187,7 @@ if ($action == "setaddrefinlist") {
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -208,8 +201,7 @@ if ($action == "setaddadressinlist") {
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -223,8 +215,7 @@ if ($action == "setaskforshippingmet") {
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	else
-	{
+	else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -238,8 +229,7 @@ if ($action == "setdisableprospectcustomer") {
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -255,8 +245,7 @@ if ($action == 'setprofid')
 		//header("Location: ".$_SERVER["PHP_SELF"]);
 		//exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -272,8 +261,7 @@ if ($action == 'setprofidmandatory')
 		//header("Location: ".$_SERVER["PHP_SELF"]);
 		//exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -289,8 +277,7 @@ if ($action == 'setprofidinvoicemandatory')
 		//header("Location: ".$_SERVER["PHP_SELF"]);
 		//exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -305,8 +292,7 @@ if ($action == 'sethideinactivethirdparty')
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
-	else
-	{
+	else {
 		dol_print_error($db);
 	}
 }
@@ -318,8 +304,7 @@ if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -412,8 +397,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers)
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
 	}
-	else
-	{
+	else {
 		$disabled = (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] != $conf->entity) ? true : false);
 		print '<td class="center">';
 		if (!$disabled) print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodeclient&value='.$file.'">';
@@ -498,8 +482,7 @@ foreach ($arrayofmodules as $file => $modCodeCompta)
     	print img_picto($langs->trans("Activated"), 'switch_on');
     	print '</td>';
     }
-    else
-    {
+    else {
     	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setcodecompta&value='.$file.'">';
     	print img_picto($langs->trans("Disabled"), 'switch_off');
     	print '</a></td>';
@@ -538,8 +521,7 @@ if ($resql)
 		$i++;
 	}
 }
-else
-{
+else {
 	dol_print_error($db);
 }
 
@@ -608,16 +590,14 @@ foreach ($dirsociete as $dirroot)
 						//}
 						print "</td>";
 					}
-					else
-					{
+					else {
 						if (versioncompare($module->phpmin, versionphparray()) > 0)
 						{
 							print "<td class=\"center\">\n";
 							print img_picto(dol_escape_htmltag($langs->trans("ErrorModuleRequirePHPVersion", join('.', $module->phpmin))), 'switch_off');
 							print "</td>";
 						}
-						else
-						{
+						else {
 							print "<td class=\"center\">\n";
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 							print "</td>";
@@ -644,8 +624,7 @@ foreach ($dirsociete as $dirroot)
 					{
 						$linkspec = '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
 					}
-					else
-					{
+					else {
 						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
 					}
 					print $linkspec;
@@ -715,8 +694,7 @@ foreach ($profid as $key => $val)
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a></td>';
 		}
-		else
-		{
+		else {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a></td>';
@@ -728,8 +706,7 @@ foreach ($profid as $key => $val)
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a></td>';
 		}
-		else
-		{
+		else {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a></td>';
@@ -741,8 +718,7 @@ foreach ($profid as $key => $val)
 			print img_picto($langs->trans("Activated"), 'switch_on');
 			print '</a></td>';
 		}
-		else
-		{
+		else {
 			print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&value='.$key.'&status=1">';
 			print img_picto($langs->trans("Disabled"), 'switch_off');
 			print '</a></td>';
@@ -784,8 +760,7 @@ if (!$conf->use_javascript_ajax)
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }
-else
-{
+else {
 	print '<td width="60" class="right">';
 	$arrval = array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
@@ -808,8 +783,7 @@ if (!$conf->use_javascript_ajax)
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print "</td>";
 }
-else
-{
+else {
 	print '<td width="60" class="right">';
 	$arrval = array('0'=>$langs->trans("No"),
 	'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
@@ -834,8 +808,7 @@ if (!empty($conf->global->SOCIETE_ADD_REF_IN_LIST))
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
-else
-{
+else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddrefinlist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
@@ -851,8 +824,7 @@ if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
-else
-{
+else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
@@ -870,8 +842,7 @@ if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=0">';
 	print img_picto($langs->trans("Activated"), 'switch_on');
 }
-else
-{
+else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
 }
@@ -888,8 +859,7 @@ if (!empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS))
     print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
 }
-else
-{
+else {
     print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableprospectcustomer&value=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
 }

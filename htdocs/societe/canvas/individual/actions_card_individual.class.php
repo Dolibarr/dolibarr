@@ -111,8 +111,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 		{
 			$this->tpl['select_civility'] = $formcompany->select_civility(GETPOST('civility_id'));
 		}
-		else
-		{
+		else {
 			// Confirm delete third party
 			if ($action == 'delete' || $conf->use_javascript_ajax)
 			{

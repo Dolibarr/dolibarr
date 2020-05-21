@@ -236,8 +236,7 @@ if ($source == 'proposal')
 		$mesg = $proposal->error;
 		$error++;
 	}
-	else
-	{
+	else {
 		$result = $proposal->fetch_thirdparty($proposal->socid);
 	}
 
@@ -277,13 +276,11 @@ if ($action != 'dosign')
     if ($found && !$error)	// We are in a management option and no error
     {
     }
-    else
-    {
+    else {
     	dol_print_error_email('ERRORNEWONLINESIGN');
     }
 }
-else
-{
+else {
     // Print
 }
 

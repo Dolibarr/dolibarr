@@ -200,8 +200,7 @@ class Opensurveysondage extends CommonObject
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return $this->id;
         }
@@ -263,8 +262,7 @@ class Opensurveysondage extends CommonObject
                 $this->date_m = $this->db->jdate($obj->tls);
                 $ret = 1;
             }
-            else
-            {
+            else {
                 $sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
                 $this->error = 'Fetch no poll found for '.$sondage;
                 dol_syslog($this->error, LOG_ERR);
@@ -273,8 +271,7 @@ class Opensurveysondage extends CommonObject
 
             $this->db->free($resql);
         }
-        else
-        {
+        else {
               $this->error = "Error ".$this->db->lasterror();
             $ret = -1;
         }
@@ -343,8 +340,7 @@ class Opensurveysondage extends CommonObject
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }
@@ -409,8 +405,7 @@ class Opensurveysondage extends CommonObject
             $this->db->rollback();
             return -1 * $error;
         }
-        else
-        {
+        else {
             $this->db->commit();
             return 1;
         }

@@ -189,8 +189,7 @@ if ($format == 'ical' || $format == 'vcal')
 		//header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
-	else
-	{
+	else {
 		print 'Error '.$agenda->error;
 
 		exit;
@@ -227,8 +226,7 @@ if ($format == 'rss')
 		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
 		exit;
 	}
-	else
-	{
+	else {
 		print 'Error '.$agenda->error;
 
 		exit;

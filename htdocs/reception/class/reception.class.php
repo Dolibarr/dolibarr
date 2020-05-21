@@ -179,14 +179,12 @@ class Reception extends CommonObject
 			{
 				return $numref;
 			}
-			else
-			{
+			else {
 				dol_print_error($this->db, get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
         }
-	    else
-	    {
+	    else {
 		    print $langs->trans("Error")." ".$langs->trans("Error_RECEPTION_ADDON_NUMBER_NotDefined");
 		    return "";
 	    }
@@ -325,8 +323,7 @@ class Reception extends CommonObject
 					$this->db->commit();
 					return $this->id;
 				}
-				else
-				{
+				else {
 					foreach ($this->errors as $errmsg)
 					{
 						dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
@@ -336,16 +333,14 @@ class Reception extends CommonObject
 					return -1 * $error;
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -2;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$this->error = $this->db->error()." - sql=$sql";
 			$this->db->rollback();
@@ -473,15 +468,13 @@ class Reception extends CommonObject
 
 				return 1;
 			}
-			else
-			{
+			else {
 				dol_syslog(get_class($this).'::Fetch no reception found', LOG_ERR);
 				$this->error = 'Delivery with id '.$id.' not found';
 				return 0;
 			}
 		}
-		else
-		{
+		else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -602,8 +595,7 @@ class Reception extends CommonObject
 							break;
 						}
 					}
-					else
-					{
+					else {
 						// line with batch detail
 
 						// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record.
@@ -618,8 +610,7 @@ class Reception extends CommonObject
 					}
 				}
 			}
-			else
-			{
+			else {
 				$this->db->rollback();
 				$this->error = $this->db->error();
 				return -2;
@@ -694,8 +685,7 @@ class Reception extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::valid ".$errmsg, LOG_ERR);
@@ -867,8 +857,7 @@ class Reception extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return 1;
 		}
@@ -922,8 +911,7 @@ class Reception extends CommonObject
 					$result = $mouvS->livraison($user, $obj->fk_product, $obj->fk_entrepot, $obj->qty, 0, $langs->trans("ReceptionDeletedInDolibarr", $this->ref), '', $obj->eatby, $obj->sellby, $obj->batch); // Price is set to 0, because we don't want to see WAP changed
 				}
 			}
-			else
-			{
+			else {
 				$error++; $this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
@@ -1000,35 +988,30 @@ class Reception extends CommonObject
 
 							return 1;
 						}
-						else
-						{
+						else {
 							$this->db->rollback();
 							return -1;
 						}
 					}
-					else
-					{
+					else {
 						$this->error = $this->db->lasterror()." - sql=$sql";
 						$this->db->rollback();
 						return -3;
 					}
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -2;
 				}
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1274,14 +1257,12 @@ class Reception extends CommonObject
 				$this->date_delivery = $date_livraison;
 				return 1;
 			}
-			else
-			{
+			else {
 				$this->error = $this->db->error();
 				return -1;
 			}
 		}
-		else
-		{
+		else {
 			return -2;
 		}
 	}
@@ -1365,8 +1346,7 @@ class Reception extends CommonObject
             $sql .= " VALUES ('".$this->db->escape($this->update['code'])."','".$this->db->escape($this->update['libelle'])."','".$this->db->escape($this->update['description'])."','".$this->db->escape($this->update['tracking'])."')";
             $resql = $this->db->query($sql);
         }
-        else
-        {
+        else {
             $sql = "UPDATE ".MAIN_DB_PREFIX."c_shipment_mode SET";
             $sql .= " code='".$this->db->escape($this->update['code'])."'";
             $sql .= ",libelle='".$this->db->escape($this->update['libelle'])."'";
@@ -1442,8 +1422,7 @@ class Reception extends CommonObject
 			$url = str_replace('{TRACKID}', $value, $tracking);
 			$this->tracking_url = sprintf('<a target="_blank" href="%s">'.($value ? $value : 'url').'</a>', $url, $url);
 		}
-		else
-		{
+		else {
 			$this->tracking_url = $value;
 		}
 	}
@@ -1545,8 +1524,7 @@ class Reception extends CommonObject
 								$error++; break;
 							}
 						}
-						else
-						{
+						else {
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
@@ -1560,8 +1538,7 @@ class Reception extends CommonObject
 						}
 					}
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror();
 					$error++;
 				}
@@ -1576,8 +1553,7 @@ class Reception extends CommonObject
     			}
 			}
 		}
-		else
-		{
+		else {
 			dol_print_error($this->db);
             $error++;
 		}
@@ -1587,8 +1563,7 @@ class Reception extends CommonObject
 		    $this->db->commit();
 		    return 1;
 		}
-		else
-		{
+		else {
 		    $this->db->rollback();
 		    return -1;
 		}
@@ -1633,8 +1608,7 @@ class Reception extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1710,8 +1684,7 @@ class Reception extends CommonObject
 								$error++; break;
 							}
 						}
-						else
-						{
+						else {
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
@@ -1724,8 +1697,7 @@ class Reception extends CommonObject
 						}
 					}
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror();
 					$error++;
 				}
@@ -1755,8 +1727,7 @@ class Reception extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1846,8 +1817,7 @@ class Reception extends CommonObject
 								break;
 							}
 						}
-						else
-						{
+						else {
 							// line with batch detail
 
 							// We decrement stock of product (and sub-products) -> update table llx_product_stock (key of this table is fk_product+fk_entrepot) and add a movement record
@@ -1860,8 +1830,7 @@ class Reception extends CommonObject
 						}
 					}
 				}
-				else
-				{
+				else {
 					$this->error = $this->db->lasterror();
 					$error++;
 				}
@@ -1912,8 +1881,7 @@ class Reception extends CommonObject
                 return -1;
             }
         }
-        else
-        {
+        else {
             $this->error = $this->db->error();
             $this->db->rollback();
             return -1;

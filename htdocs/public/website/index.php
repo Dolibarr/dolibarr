@@ -106,8 +106,7 @@ if (empty($pageid))
 			}
 		}
 	}
-	else
-	{
+	else {
 		if ($object->fk_default_home > 0)
 		{
 			$result = $objectpage->fetch($object->fk_default_home);
@@ -165,8 +164,7 @@ if ($pageid == 'css')   // No more used ?
 	header('Cache-Control: no-cache');
 	$original_file = $dolibarr_main_data_root.'/website/'.$websitekey.'/styles.css.php';
 }
-else
-{
+else {
 	$original_file = $dolibarr_main_data_root.'/website/'.$websitekey.'/page'.$pageid.'.tpl.php';
 }
 

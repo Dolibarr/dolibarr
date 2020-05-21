@@ -49,8 +49,7 @@ if (isset($_GET['connect']))
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	}
-	else
-	{
+	else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
         $servicestatus = 1;
@@ -63,8 +62,7 @@ else {
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	}
-	else
-	{
+	else {
 		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
 		$servicestatus = 1;
@@ -189,8 +187,7 @@ if ($event->type == 'payout.created') {
         http_response_code(200); // PHP 5.4 or greater
         return 1;
 	}
-	else
-	{
+	else {
 		$error++;
 		http_response_code(500); // PHP 5.4 or greater
 		return -1;
@@ -270,8 +267,7 @@ elseif ($event->type == 'payout.paid') {
 		http_response_code(200); // PHP 5.4 or greater
 		return 1;
 	}
-	else
-	{
+	else {
 		$error++;
 		http_response_code(500); // PHP 5.4 or greater
 		return -1;
@@ -344,8 +340,7 @@ elseif ($event->type == 'payment_method.attached') {
 		{
 			$db->commit();
 		}
-		else
-		{
+		else {
 			$db->rollback();
 		}
 	}
@@ -381,8 +376,7 @@ elseif ($event->type == 'payment_method.updated') {
 	{
 		$db->commit();
 	}
-	else
-	{
+	else {
 		$db->rollback();
 	}
 }

@@ -114,8 +114,7 @@ if ($action == 'update' && !$_POST["cancel"] && $user->rights->projet->creer)
 			}
 		}
 	}
-	else
-	{
+	else {
 		$action = 'edit';
 	}
 }
@@ -132,8 +131,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject ? '&withproject=1' : ''));
 			exit;
 		}
-		else
-		{
+		else {
 		    setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
@@ -150,8 +148,7 @@ if (!empty($project_ref) && !empty($withproject))
 		{
 			$id = $tasksarray[0]->id;
 		}
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}
@@ -463,8 +460,7 @@ if ($id > 0 || !empty($ref))
 
 			print '</form>';
 		}
-		else
-		{
+		else {
 			/*
 			 * Fiche tache en mode visu
 			 */
@@ -606,8 +602,7 @@ if ($id > 0 || !empty($ref))
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit&amp;withproject='.$withproject.'">'.$langs->trans('Modify').'</a>';
 				}
-				else
-				{
+				else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Modify').'</a>';
 				}
 
@@ -618,13 +613,11 @@ if ($id > 0 || !empty($ref))
 				    {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;withproject='.$withproject.'">'.$langs->trans('Delete').'</a>';
 				    }
-				    else
-				    {
+				    else {
 				        print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }
 				}
-				else
-				{
+				else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 				}
 

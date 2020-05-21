@@ -222,8 +222,7 @@ if (!empty($conf->paypal->enabled))
 		        	// Nothing to do
 		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack, LOG_DEBUG, 0, '_payment');
 		        }
-		        else
-		        {
+		        else {
 		        	dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING, '_payment');
 		        }
 
@@ -251,8 +250,7 @@ if (!empty($conf->paypal->enabled))
 
 		            $ispaymentok = true;
 		        }
-		        else
-		        {
+		        else {
 		        	dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING, 0, '_payment');
 
 		            //Display a user friendly Error on the page using any of the following error information returned by PayPal
@@ -262,13 +260,11 @@ if (!empty($conf->paypal->enabled))
 		            $ErrorSeverityCode = urldecode($resArray2["L_SEVERITYCODE0"]);
 		        }
 		    }
-		    else
-		    {
+		    else {
 		        dol_print_error('', 'Session expired');
 		    }
 		}
-		else
-		{
+		else {
 		    dol_print_error('', '$PAYPALTOKEN not defined');
 		}
 	}
@@ -420,8 +416,7 @@ if ($ispaymentok)
 						$postactionmessages[] = $errmsg;
 						$ispostactionok = -1;
 					}
-					else
-					{
+					else {
 						$postactionmessages[] = 'Subscription created';
 						$ispostactionok = 1;
 					}
@@ -443,8 +438,7 @@ if ($ispaymentok)
 						$postactionmessages = array_merge($postactionmessages, $object->errors);
 						$ispostactionok = -1;
 					}
-					else
-					{
+					else {
 						if ($option == 'bankviainvoice')
 						{
 							$postactionmessages[] = 'Invoice, payment and bank record created';
@@ -523,8 +517,7 @@ if ($ispaymentok)
 				{
 					$db->commit();
 				}
-				else
-				{
+				else {
 					$db->rollback();
 				}
 
@@ -590,8 +583,7 @@ if ($ispaymentok)
 							$postactionmessages[] = $errmsg;
 							$ispostactionok = -1;
 						}
-						else
-						{
+						else {
 							if ($file) $postactionmessages[] = 'Email sent to member (with invoice document attached)';
 							else $postactionmessages[] = 'Email sent to member (without any attached document)';
 
@@ -600,14 +592,12 @@ if ($ispaymentok)
 					}
 				}
 			}
-			else
-			{
+			else {
 				$postactionmessages[] = 'Failed to get a valid value for "amount paid" or "payment type" to record the payment of subscription for member '.$tmptag['MEM'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		}
-		else
-		{
+		else {
 			$postactionmessages[] = 'Member '.$tmptag['MEM'].' for subscription payed was not found';
 			$ispostactionok = -1;
 		}
@@ -648,8 +638,7 @@ if ($ispaymentok)
 				{
 					$paiement->amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching with invoice id
 				}
-				else
-				{
+				else {
 					$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
 
 					$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
@@ -672,8 +661,7 @@ if ($ispaymentok)
 						$ispostactionok = -1;
 						$error++;
 					}
-					else
-					{
+					else {
 						$postactionmessages[] = 'Payment created';
 						$ispostactionok = 1;
 					}
@@ -697,14 +685,12 @@ if ($ispaymentok)
 							$ispostactionok = -1;
 							$error++;
 						}
-						else
-						{
+						else {
 							$postactionmessages[] = 'Bank transaction of payment created';
 							$ispostactionok = 1;
 						}
 					}
-					else
-					{
+					else {
 						$postactionmessages[] = 'Setup of bank account to use in module '.$paymentmethod.' was not set. No way to record the payment.';
 						$ispostactionok = -1;
 						$error++;
@@ -715,25 +701,21 @@ if ($ispaymentok)
 				{
 					$db->commit();
 				}
-				else
-				{
+				else {
 					$db->rollback();
 				}
 			}
-			else
-			{
+			else {
 				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['INV'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		}
-		else
-		{
+		else {
 			$postactionmessages[] = 'Invoice payed '.$tmptag['INV'].' was not found';
 			$ispostactionok = -1;
 		}
 	}
-	else
-	{
+	else {
 		// Nothing done
 	}
 }
@@ -811,8 +793,7 @@ if ($ispaymentok)
 			//$content.=$companylangs->trans("ThirdPartyId").': '.$tmptag['CUS']."<br>\n";
 			$content .= $companylangs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
 		}
-		else
-		{
+		else {
 			$content .= $companylangs->transnoentitiesnoconv("NewOnlinePaymentReceived")."<br>\n";
 		}
 		$content .= $companylangs->transnoentities("PostActionAfterPayment").' : ';
@@ -825,8 +806,7 @@ if ($ispaymentok)
 		{
 			$content .= $companylangs->transnoentitiesnoconv("None");
 		}
-		else
-		{
+		else {
 			$topic .= ($ispostactionok ? '' : ' ('.$companylangs->trans("WarningPostActionErrorAfterPayment").')');
 			$content .= '<font color="red">'.$companylangs->transnoentitiesnoconv("Error").'</font>';
 		}
@@ -865,15 +845,13 @@ if ($ispaymentok)
 			dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
 			//dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0);
 		}
-		else
-		{
+		else {
 			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			//dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0);
 		}
 	}
 }
-else
-{
+else {
     // Get on url call
 	$onlinetoken = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
     $payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
@@ -952,8 +930,7 @@ else
         {
             dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
         }
-        else
-        {
+        else {
             dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
         }
     }

@@ -127,8 +127,7 @@ class FormResource
     				{
     					$out .= '<option value="'.$resourcestat->lines[$i]->id.'" selected>'.$label.'</option>';
     				}
-    				else
-    				{
+    				else {
     					$out .= '<option value="'.$resourcestat->lines[$i]->id.'">'.$label.'</option>';
     				}
 
@@ -147,8 +146,7 @@ class FormResource
         		$out .= '</form>';
     		}
     	}
-    	else
-    	{
+    	else {
     		dol_print_error($this->db);
     	}
 
