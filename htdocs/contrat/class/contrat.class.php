@@ -2716,7 +2716,22 @@ class ContratLigne extends CommonObjectLine
 		global $langs;
 		$langs->load("contracts");
 
-		if ($status == self::STATUS_INITIAL) { $labelStatus = $langs->trans("ServiceStatusInitial"); $labelStatusShort = $langs->trans("ServiceStatusInitial"); } elseif ($status == self::STATUS_OPEN && $expired == -1) { $labelStatus = $langs->trans("ServiceStatusRunning"); $labelStatusShort = $langs->trans("ServiceStatusRunning"); } elseif ($status == self::STATUS_OPEN && $expired == 0) { $labelStatus = $langs->trans("ServiceStatusNotLate"); $labelStatusShort = $langs->trans("ServiceStatusNotLateShort"); } elseif ($status == self::STATUS_OPEN && $expired == 1) { $labelStatus = $langs->trans("ServiceStatusLate"); $labelStatusShort = $langs->trans("ServiceStatusLateShort"); } elseif ($status == self::STATUS_CLOSED) { $labelStatus = $langs->trans("ServiceStatusClosed"); $labelStatusShort = $langs->trans("ServiceStatusClosed"); }
+        if ($status == self::STATUS_INITIAL) {
+            $labelStatus = $langs->trans("ServiceStatusInitial");
+            $labelStatusShort = $langs->trans("ServiceStatusInitial");
+        } elseif ($status == self::STATUS_OPEN && $expired == -1) {
+            $labelStatus = $langs->trans("ServiceStatusRunning");
+            $labelStatusShort = $langs->trans("ServiceStatusRunning");
+        } elseif ($status == self::STATUS_OPEN && $expired == 0) {
+            $labelStatus = $langs->trans("ServiceStatusNotLate");
+            $labelStatusShort = $langs->trans("ServiceStatusNotLateShort");
+        } elseif ($status == self::STATUS_OPEN && $expired == 1) {
+            $labelStatus = $langs->trans("ServiceStatusLate");
+            $labelStatusShort = $langs->trans("ServiceStatusLateShort");
+        } elseif ($status == self::STATUS_CLOSED) {
+            $labelStatus = $langs->trans("ServiceStatusClosed");
+            $labelStatusShort = $langs->trans("ServiceStatusClosed");
+        }
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_OPEN && $expired == 1) $statusType = 'status1';

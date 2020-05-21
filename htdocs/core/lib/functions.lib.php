@@ -492,19 +492,48 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		{
 			$loopnb++; $newout = '';
 
-			if ($reg[1] == 'DAY') { $tmp = dol_getdate(dol_now(), true); $newout = $tmp['mday']; } elseif ($reg[1] == 'MONTH') { $tmp = dol_getdate(dol_now(), true); $newout = $tmp['mon']; } elseif ($reg[1] == 'YEAR') { $tmp = dol_getdate(dol_now(), true); $newout = $tmp['year']; } elseif ($reg[1] == 'PREVIOUS_DAY') { $tmp = dol_getdate(dol_now(), true); $tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; } elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp = dol_getdate(dol_now(), true); $tmp2 = dol_get_prev_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; } elseif ($reg[1] == 'PREVIOUS_YEAR') { $tmp = dol_getdate(dol_now(), true); $newout = ($tmp['year'] - 1); } elseif ($reg[1] == 'NEXT_DAY') { $tmp = dol_getdate(dol_now(), true); $tmp2 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; } elseif ($reg[1] == 'NEXT_MONTH') { $tmp = dol_getdate(dol_now(), true); $tmp2 = dol_get_next_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; } elseif ($reg[1] == 'NEXT_YEAR') { $tmp = dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); } elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
-			{
+			if ($reg[1] == 'DAY') {
+				$tmp = dol_getdate(dol_now(), true);
+				$newout = $tmp['mday'];
+			} elseif ($reg[1] == 'MONTH') {
+				$tmp = dol_getdate(dol_now(), true);
+				$newout = $tmp['mon'];
+			} elseif ($reg[1] == 'YEAR') {
+				$tmp = dol_getdate(dol_now(), true);
+				$newout = $tmp['year'];
+			} elseif ($reg[1] == 'PREVIOUS_DAY') {
+				$tmp = dol_getdate(dol_now(), true);
+				$tmp2 = dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+				$newout = $tmp2['day'];
+			} elseif ($reg[1] == 'PREVIOUS_MONTH') {
+				$tmp = dol_getdate(dol_now(), true);
+				$tmp2 = dol_get_prev_month($tmp['mon'], $tmp['year']);
+				$newout = $tmp2['month'];
+			} elseif ($reg[1] == 'PREVIOUS_YEAR') {
+				$tmp = dol_getdate(dol_now(), true);
+				$newout = ($tmp['year'] - 1);
+			} elseif ($reg[1] == 'NEXT_DAY') {
+				$tmp = dol_getdate(dol_now(), true);
+				$tmp2 = dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
+				$newout = $tmp2['day'];
+			} elseif ($reg[1] == 'NEXT_MONTH') {
+				$tmp = dol_getdate(dol_now(), true);
+				$tmp2 = dol_get_next_month($tmp['mon'], $tmp['year']);
+				$newout = $tmp2['month'];
+			} elseif ($reg[1] == 'NEXT_YEAR') {
+				$tmp = dol_getdate(dol_now(), true);
+				$newout = ($tmp['year'] + 1);
+			} elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID') {
 				$newout = $mysoc->country_id;
-			} elseif ($reg[1] == 'USER_ID' || $reg[1] == 'USERID')
-			{
+			} elseif ($reg[1] == 'USER_ID' || $reg[1] == 'USERID') {
 				$newout = $user->id;
-			} elseif ($reg[1] == 'USER_SUPERVISOR_ID' || $reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID')
-			{
+			} elseif ($reg[1] == 'USER_SUPERVISOR_ID' || $reg[1] == 'SUPERVISOR_ID' || $reg[1] == 'SUPERVISORID') {
 				$newout = $user->fk_user;
-			} elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID')
-			{
+			} elseif ($reg[1] == 'ENTITY_ID' || $reg[1] == 'ENTITYID') {
 				$newout = $conf->entity;
-			} else $newout = ''; // Key not found, we replace with empty string
+			} else {
+				$newout = ''; // Key not found, we replace with empty string
+			}
 			//var_dump('__'.$reg[1].'__ -> '.$newout);
 			$out = preg_replace('/__'.preg_quote($reg[1], '/').'__/', $newout, $out);
 		}
@@ -522,8 +551,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			if (preg_match('/[^0-9,-]+/i', $out)) $out = '';
 			break;
 		case 'alpha':
-			if (!is_array($out))
-			{
+			if (!is_array($out)) {
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
 				$out = str_replace(array('"', '../'), '', trim($out));
@@ -3285,7 +3313,25 @@ function img_action($titlealt, $numaction)
 
 	if (empty($titlealt) || $titlealt == 'default')
 	{
-		if ($numaction == '-1' || $numaction == 'ST_NO') { $numaction = -1; $titlealt = $langs->transnoentitiesnoconv('ChangeDoNotContact'); } elseif ($numaction == '0' || $numaction == 'ST_NEVER') { $numaction = 0; $titlealt = $langs->transnoentitiesnoconv('ChangeNeverContacted'); } elseif ($numaction == '1' || $numaction == 'ST_TODO') { $numaction = 1; $titlealt = $langs->transnoentitiesnoconv('ChangeToContact'); } elseif ($numaction == '2' || $numaction == 'ST_PEND') { $numaction = 2; $titlealt = $langs->transnoentitiesnoconv('ChangeContactInProcess'); } elseif ($numaction == '3' || $numaction == 'ST_DONE') { $numaction = 3; $titlealt = $langs->transnoentitiesnoconv('ChangeContactDone'); } else { $titlealt = $langs->transnoentitiesnoconv('ChangeStatus '.$numaction); $numaction = 0; }
+		if ($numaction == '-1' || $numaction == 'ST_NO') {
+			$numaction = -1;
+			$titlealt = $langs->transnoentitiesnoconv('ChangeDoNotContact');
+		} elseif ($numaction == '0' || $numaction == 'ST_NEVER') {
+			$numaction = 0;
+			$titlealt = $langs->transnoentitiesnoconv('ChangeNeverContacted');
+		} elseif ($numaction == '1' || $numaction == 'ST_TODO') {
+			$numaction = 1;
+			$titlealt = $langs->transnoentitiesnoconv('ChangeToContact');
+		} elseif ($numaction == '2' || $numaction == 'ST_PEND') {
+			$numaction = 2;
+			$titlealt = $langs->transnoentitiesnoconv('ChangeContactInProcess');
+		} elseif ($numaction == '3' || $numaction == 'ST_DONE') {
+			$numaction = 3;
+			$titlealt = $langs->transnoentitiesnoconv('ChangeContactDone');
+		} else {
+			$titlealt = $langs->transnoentitiesnoconv('ChangeStatus '.$numaction);
+			$numaction = 0;
+		}
 	}
 	if (!is_numeric($numaction)) $numaction = 0;
 
@@ -3570,7 +3616,9 @@ function img_left($titlealt = 'default', $selected = 0, $moreatt = '')
 {
 	global $langs;
 
-	if ($titlealt == 'default') $titlealt = $langs->trans('Left');
+	if ($titlealt == 'default') {
+		$titlealt = $langs->trans('Left');
+	}
 
 	return img_picto($titlealt, ($selected ? '1leftarrow_selected.png' : '1leftarrow.png'), $moreatt);
 }
@@ -3613,15 +3661,29 @@ function img_allow($allow, $titlealt = 'default')
 /**
  *	Return image of a credit card according to its brand name
  *
- *	@param	string	$brand		Brand name of credit card
- *  @param	string	$morecss	More CSS
+ *	@param  string	$brand		Brand name of credit card
+ *  @param  string	$morecss	More CSS
  *	@return string     			Return img tag
  */
 function img_credit_card($brand, $morecss = null)
 {
 	if (is_null($morecss)) $morecss = 'fa-2x';
 
-	if ($brand == 'visa' || $brand == 'Visa') {$brand = 'cc-visa'; } elseif ($brand == 'mastercard' || $brand == 'MasterCard') {$brand = 'cc-mastercard'; } elseif ($brand == 'amex' || $brand == 'American Express') {$brand = 'cc-amex'; } elseif ($brand == 'discover' || $brand == 'Discover') {$brand = 'cc-discover'; } elseif ($brand == 'jcb' || $brand == 'JCB') {$brand = 'cc-jcb'; } elseif ($brand == 'diners' || $brand == 'Diners club') {$brand = 'cc-diners-club'; } elseif (!in_array($brand, array('cc-visa', 'cc-mastercard', 'cc-amex', 'cc-discover', 'cc-jcb', 'cc-diners-club'))) {$brand = 'credit-card'; }
+	if ($brand == 'visa' || $brand == 'Visa') {
+		$brand = 'cc-visa';
+	} elseif ($brand == 'mastercard' || $brand == 'MasterCard') {
+		$brand = 'cc-mastercard';
+	} elseif ($brand == 'amex' || $brand == 'American Express') {
+		$brand = 'cc-amex';
+	} elseif ($brand == 'discover' || $brand == 'Discover') {
+		$brand = 'cc-discover';
+	} elseif ($brand == 'jcb' || $brand == 'JCB') {
+		$brand = 'cc-jcb';
+	} elseif ($brand == 'diners' || $brand == 'Diners club') {
+		$brand = 'cc-diners-club';
+	} elseif (!in_array($brand, array('cc-visa', 'cc-mastercard', 'cc-amex', 'cc-discover', 'cc-jcb', 'cc-diners-club'))) {
+		$brand = 'credit-card';
+	}
 
 	return '<span class="fa fa-'.$brand.' fa-fw'.($morecss ? ' '.$morecss : '').'"></span>';
 }

@@ -72,9 +72,39 @@ if ($action == "SavePrinter2") {
 $categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT) { $title = $langs->trans("ProductsCategoriesArea"); $typetext = 'product'; } elseif ($type == Categorie::TYPE_SUPPLIER) { $title = $langs->trans("SuppliersCategoriesArea"); $typetext = 'supplier'; } elseif ($type == Categorie::TYPE_CUSTOMER) { $title = $langs->trans("CustomersCategoriesArea"); $typetext = 'customer'; } elseif ($type == Categorie::TYPE_MEMBER) { $title = $langs->trans("MembersCategoriesArea"); $typetext = 'member'; } elseif ($type == Categorie::TYPE_CONTACT) { $title = $langs->trans("ContactsCategoriesArea"); $typetext = 'contact'; } elseif ($type == Categorie::TYPE_ACCOUNT) { $title = $langs->trans("AccountsCategoriesArea"); $typetext = 'bank_account'; } elseif ($type == Categorie::TYPE_PROJECT) { $title = $langs->trans("ProjectsCategoriesArea"); $typetext = 'project'; } elseif ($type == Categorie::TYPE_USER) { $title = $langs->trans("UsersCategoriesArea"); $typetext = 'user'; } else { $title = $langs->trans("CategoriesArea"); $typetext = 'unknown'; }
+if ($type == Categorie::TYPE_PRODUCT) {
+	$title = $langs->trans("ProductsCategoriesArea");
+	$typetext = 'product';
+} elseif ($type == Categorie::TYPE_SUPPLIER) {
+	$title = $langs->trans("SuppliersCategoriesArea");
+	$typetext = 'supplier';
+} elseif ($type == Categorie::TYPE_CUSTOMER) {
+	$title = $langs->trans("CustomersCategoriesArea");
+	$typetext = 'customer';
+} elseif ($type == Categorie::TYPE_MEMBER) {
+	$title = $langs->trans("MembersCategoriesArea");
+	$typetext = 'member';
+} elseif ($type == Categorie::TYPE_CONTACT) {
+	$title = $langs->trans("ContactsCategoriesArea");
+	$typetext = 'contact';
+} elseif ($type == Categorie::TYPE_ACCOUNT) {
+	$title = $langs->trans("AccountsCategoriesArea");
+	$typetext = 'bank_account';
+} elseif ($type == Categorie::TYPE_PROJECT) {
+	$title = $langs->trans("ProjectsCategoriesArea");
+	$typetext = 'project';
+} elseif ($type == Categorie::TYPE_USER) {
+	$title = $langs->trans("UsersCategoriesArea");
+	$typetext = 'user';
+} else {
+	$title = $langs->trans("CategoriesArea");
+	$typetext = 'unknown';
+}
 
-$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofjs = array(
+	'/includes/jquery/plugins/jquerytreeview/jquery.treeview.js',
+	'/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js',
+);
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
