@@ -266,8 +266,7 @@ if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERV
 			{
 				$newurl = preg_replace('/^http:/i', 'https:', $_SERVER["SCRIPT_URI"]);
 			}
-		}
-		else {
+		} else {
 			// Check HTTPS environment variable (Apache/mod_ssl only)
 			$newurl = preg_replace('/^http:/i', 'https:', DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
 		}
@@ -860,14 +859,12 @@ if (!GETPOST('nojs', 'int'))   // If javascript was not disabled on URL
 	{
 		$conf->use_javascript_ajax = !$user->conf->MAIN_DISABLE_JAVASCRIPT;
 	}
-}
-else $conf->use_javascript_ajax = 0;
+} else $conf->use_javascript_ajax = 0;
 // Set MAIN_OPTIMIZEFORTEXTBROWSER
 if (GETPOST('textbrowser', 'int') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks') || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))   // If we must enable text browser
 {
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 1;
-}
-elseif (!empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))
+} elseif (!empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))
 {
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
 }
@@ -1134,8 +1131,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 			// default-src http: https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
 		}
-	}
-	elseif (constant('FORCECSP'))
+	} elseif (constant('FORCECSP'))
 	{
 		header("Content-Security-Policy: ".constant('FORCECSP'));
 	}
@@ -1553,10 +1549,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if (preg_match('/\d\.\d/', $appli))
 			{
 				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-			}
-			else $appli .= " ".DOL_VERSION;
-		}
-		else $appli .= " ".DOL_VERSION;
+			} else $appli .= " ".DOL_VERSION;
+		} else $appli .= " ".DOL_VERSION;
 
 		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
@@ -1727,8 +1721,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     {
         $userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
         $userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
-    }
-    else {
+    } else {
         $nophoto = '/public/theme/common/user_anonymous.png';
         if ($user->gender == 'man') $nophoto = '/public/theme/common/user_man.png';
         if ($user->gender == 'woman') $nophoto = '/public/theme/common/user_woman.png';
@@ -1781,8 +1774,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     {
         if ($result == 0) {
             $dropdownBody .= $hookmanager->resPrint; // add
-        }
-        else {
+        } else {
             $dropdownBody = $hookmanager->resPrint; // replace
         }
     }
@@ -1808,10 +1800,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     	if (preg_match('/\d\.\d/', $appli))
     	{
     		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-    	}
-    	else $appli .= " ".DOL_VERSION;
-    }
-    else $appli .= " ".DOL_VERSION;
+    	} else $appli .= " ".DOL_VERSION;
+    } else $appli .= " ".DOL_VERSION;
 
     if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	    $btnUser = '<!-- div for user link -->
@@ -2202,10 +2192,8 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				if (preg_match('/\d\.\d/', $appli))
 				{
 					if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-				else $appli .= " ".DOL_VERSION;
-			}
-			else $appli .= " ".DOL_VERSION;
+				} else $appli .= " ".DOL_VERSION;
+			} else $appli .= " ".DOL_VERSION;
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 			if ($doliurl) print '<a class="help" target="_blank" rel="noopener" href="'.$doliurl.'">';
 			else print '<span class="help">';
@@ -2259,8 +2247,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			if (empty($reshook))
 			{
 				$bugbaseurl .= $hookmanager->resPrint;
-			}
-			else $bugbaseurl = $hookmanager->resPrint;
+			} else $bugbaseurl = $hookmanager->resPrint;
 
 			$bugbaseurl .= urlencode("\n");
 			$bugbaseurl .= urlencode("## Report\n");
@@ -2580,8 +2567,7 @@ if (!function_exists("llxFooter"))
 				// No ping done if we are into an alpha version
 				if (strpos('alpha', DOL_VERSION) > 0 && !$forceping) {
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
-				}
-				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping)	// Cookie is set when we uncheck the checkbox in the installation wizard.
+				} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping)	// Cookie is set when we uncheck the checkbox in the installation wizard.
 				{
 					// MAIN_LAST_PING_KO_DATE
 					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent

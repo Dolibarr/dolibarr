@@ -325,8 +325,7 @@ if ($error || $mode != 'confirm')
 {
     print "\nRollback any changes.\n";
     $db->rollback();
-}
-else {
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }
