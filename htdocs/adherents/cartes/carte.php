@@ -192,8 +192,7 @@ if ((!empty($foruserid) || !empty($foruserlogin) || !empty($mode)) && !$mesg) {
             	$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DescADHERENT_CARD_TYPE"));
             }
             if (!$mesg) $result = members_card_pdf_create($db, $arrayofmembers, $model, $outputlangs);
-        }
-        elseif ($mode == 'label') {
+        } elseif ($mode == 'label') {
             if (!count($arrayofmembers)) {
                 $mesg = $langs->trans("ErrorRecordNotFound");
             }

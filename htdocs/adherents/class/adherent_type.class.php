@@ -190,8 +190,7 @@ class AdherentType extends CommonObject
                     $this->error = $this->db->lasterror();
                     return -1;
                 }
-            }
-            elseif (isset($this->multilangs[$key])) {
+            } elseif (isset($this->multilangs[$key])) {
                 $sql = "SELECT rowid";
                 $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
                 $sql .= " WHERE fk_type=".$this->id;
@@ -550,8 +549,7 @@ class AdherentType extends CommonObject
 							$memberstatic->fetch($obj->rowid);
 						}
 						$ret[$obj->rowid] = $memberstatic;
-					}
-					else $ret[$obj->rowid] = $obj->rowid;
+					} else $ret[$obj->rowid] = $obj->rowid;
 				}
 			}
 
@@ -575,9 +573,7 @@ class AdherentType extends CommonObject
 	public function getmorphylib($morphy = '')
 	{
 		global $langs;
-		if ($morphy == 'phy') { return $langs->trans("Physical"); }
-		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
-        else return $langs->trans("MorPhy");
+		if ($morphy == 'phy') { return $langs->trans("Physical"); } elseif ($morphy == 'mor') { return $langs->trans("Moral"); } else return $langs->trans("MorPhy");
 		//return $morphy;
 	}
 

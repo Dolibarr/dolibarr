@@ -344,8 +344,7 @@ if (GETPOSTISSET("statut")) {
 	if ($statut == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
 	if ($statut == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
 	if ($statut == '0') { $titre = $langs->trans("MembersListResiliated"); }
-}
-elseif ($action == 'search') {
+} elseif ($action == 'search') {
 	$titre = $langs->trans("MembersListQualified");
 }
 

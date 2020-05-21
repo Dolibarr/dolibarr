@@ -67,8 +67,7 @@ if ($action == 'dolibarr2ldap') {
 
 	if ($result >= 0) {
 		setEventMessages($langs->trans("MemberSynchronized"), null, 'mesgs');
-	}
-	else {
+	} else {
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
 	}
 }

@@ -121,12 +121,10 @@ if ($action == 'confirm_create_thirdparty' && $confirm == 'yes' && $user->rights
 		if ($result < 0) {
 			$langs->load("errors");
 			setEventMessages($company->error, $company->errors, 'errors');
-		}
-		else {
+		} else {
 			$action = 'addsubscription';
 		}
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -246,15 +244,13 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
         	setEventMessages($errmsg, null, 'errors');
             $error++;
             $action = 'addsubscription';
-		}
-        else {
+		} else {
             if (!empty($conf->banque->enabled) && $_POST["paymentsave"] != 'none') {
                 if ($_POST["subscription"]) {
                     if (!$_POST["label"])     $errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label"));
                     if ($_POST["paymentsave"] != 'invoiceonly' && !$_POST["operation"]) $errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode"));
                     if ($_POST["paymentsave"] != 'invoiceonly' && !($_POST["accountid"] > 0)) $errmsg = $langs->trans("ErrorFieldRequired", $langs->transnoentities("FinancialAccount"));
-                }
-                else {
+                } else {
                     if ($_POST["accountid"])   $errmsg = $langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
                 }
                 if ($errmsg) {
@@ -284,16 +280,14 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
-			}
-			else {
+			} else {
 				// If an invoice was created, it is into $object->invoice
 			}
         }
 
         if (!$error) {
             $db->commit();
-        }
-        else {
+        } else {
             $db->rollback();
             $action = 'addsubscription';
         }
@@ -355,12 +349,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
                 if ($result < 0) {
                 	$errmsg = $object->error;
                 	setEventMessages($object->error, $object->errors, 'errors');
-                }
-                else {
+                } else {
                 	setEventMessages($langs->trans("EmailSentToMember", $object->email), null, 'mesgs');
                 }
-            }
-            else {
+            } else {
             	setEventMessages($langs->trans("NoEmailSentToMember"), null, 'mesgs');
             }
         }
@@ -491,13 +483,11 @@ if ($rowid > 0) {
 	    if ($object->hasDelay()) {
 	        print " ".img_warning($langs->trans("Late"));
 	    }
-	}
-	else {
+	} else {
 	    if (!$adht->subscription) {
 	        print $langs->trans("SubscriptionNotRecorded");
 	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
-	    }
-	    else {
+	    } else {
 	        print $langs->trans("SubscriptionNotReceived");
 	        if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 	    }
@@ -525,14 +515,12 @@ if ($rowid > 0) {
 			print '</td>';
 			print '<td class="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 			print '</tr></table></form>';
-		}
-		else {
+		} else {
 			if ($object->fk_soc) {
 				$company = new Societe($db);
 				$result = $company->fetch($object->fk_soc);
 				print $company->getNomUrl(1);
-			}
-			else {
+			} else {
 				print $langs->trans("NoThirdPartyAssociatedToMember");
 			}
 		}
@@ -555,12 +543,10 @@ if ($rowid > 0) {
 	print '</td><td colspan="2" class="valeur">';
 	if ($action == 'editlogin') {
 		$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', '');
-	}
-	else {
+	} else {
 		if ($object->user_id) {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
-		}
-		else print $langs->trans("NoDolibarrAccess");
+		} else print $langs->trans("NoDolibarrAccess");
 	}
 	print '</td></tr>';
 

@@ -123,8 +123,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	if (empty($object->label)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	else {
+	} else {
 		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
@@ -142,13 +141,11 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		if ($id > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		}
-		else {
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
-	}
-	else {
+	} else {
 		$action = 'create';
 	}
 }
@@ -176,8 +173,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 
 	if ($ret >= 0 && !count($object->errors)) {
 		setEventMessages($langs->trans("MemberTypeModified"), null, 'mesgs');
-	}
-	else {
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -193,8 +189,7 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
 		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else {
+	} else {
 		setEventMessages($langs->trans("MemberTypeCanNotBeDeleted"), null, 'errors');
 		$action = '';
 	}
@@ -277,9 +272,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
             print '<td class="center">';
-			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
-			elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
-			else print $langs->trans("MorPhy");
+			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); } elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); } else print $langs->trans("MorPhy");
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
@@ -296,8 +289,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		print '</div>';
 
 		print '</form>';
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -424,8 +416,7 @@ if ($rowid > 0) {
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
 		if ($object->duration_value > 1) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-		}
-		elseif ($object->duration_value > 0) {
+		} elseif ($object->duration_value > 0) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 		}
 		print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
@@ -535,14 +526,8 @@ if ($rowid > 0) {
 
 		    $titre = $langs->trans("MembersList");
 		    if ($status != '') {
-		        if ($status == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
-		        elseif ($status == '-1') { $titre = $langs->trans("MembersListToValid"); }
-		        elseif ($status == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); }
-		        elseif ($status == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
-		        elseif ($status == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
-		        elseif ($status == '0') { $titre = $langs->trans("MembersListResiliated"); }
-		    }
-		    elseif ($action == 'search') {
+		        if ($status == '-1,1') { $titre = $langs->trans("MembersListQualified"); } elseif ($status == '-1') { $titre = $langs->trans("MembersListToValid"); } elseif ($status == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); } elseif ($status == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); } elseif ($status == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); } elseif ($status == '0') { $titre = $langs->trans("MembersListResiliated"); }
+		    } elseif ($action == 'search') {
 		        $titre = $langs->trans("MembersListQualified");
 		    }
 
@@ -623,8 +608,7 @@ if ($rowid > 0) {
 		        print '<tr class="oddeven">';
 		        if ($objp->company != '') {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
-		        }
-		        else {
+		        } else {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 32).'</a></td>'."\n";
 		        }
 
@@ -655,19 +639,16 @@ if ($rowid > 0) {
 			        print '<td class="nowrap center">';
 		            if ($datefin < dol_now() && $objp->statut > 0) {
 		                print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
-		            }
-		            else {
+		            } else {
 		                print dol_print_date($datefin, 'day');
 		            }
 		            print '</td>';
-		        }
-		        else {
+		        } else {
 			        print '<td class="nowrap left">';
 			        if ($objp->subscription == 'yes') {
 		                print $langs->trans("SubscriptionNotReceived");
 		                if ($objp->statut > 0) print " ".img_warning();
-			        }
-			        else {
+			        } else {
 			            print '&nbsp;';
 			        }
 		            print '</td>';
@@ -695,8 +676,7 @@ if ($rowid > 0) {
 			if ($num > $conf->liste_limit) {
 			    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 			}
-		}
-		else {
+		} else {
 		    dol_print_error($db);
 		}
 	}

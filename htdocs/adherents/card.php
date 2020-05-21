@@ -539,8 +539,7 @@ if (empty($reshook)) {
 
 				$action = 'create';
 			}
-		}
-		else {
+		} else {
 			$action = 'create';
 		}
 	}
@@ -599,8 +598,7 @@ if (empty($reshook)) {
 					//fallback on the old configuration.
 					setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
 					$error++;
-				}
-				else {
+				} else {
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
@@ -669,8 +667,7 @@ if (empty($reshook)) {
 						//fallback on the old configuration.
 						setEventMessages('WarningMandatorySetupNotComplete', null, 'errors');
 						$error++;
-					}
-					else {
+					} else {
 						$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
 						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
@@ -1215,8 +1212,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td colspan="2" class="valeur">';
 		if ($object->user_id) {
 			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
-		}
-		else print $langs->trans("NoDolibarrAccess");
+		} else print $langs->trans("NoDolibarrAccess");
 		print '</td></tr>';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -1502,8 +1498,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		} else {
 			if ($object->need_subscription == 0) {
                 print $langs->trans("SubscriptionNotNeeded");
-            }
-            elseif (!$adht->subscription) {
+            } elseif (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
 				if ($object->statut > 0) print " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			} else {

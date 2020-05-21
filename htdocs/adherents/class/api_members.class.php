@@ -149,8 +149,7 @@ class Members extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve member list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {

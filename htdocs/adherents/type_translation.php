@@ -72,8 +72,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 		$object->label			= $_POST["libelle"];
 		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
-	}
-	else {
+	} else {
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
 		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->multilangs[$_POST["forcelangprod"]]["other"]		= dol_htmlcleanlastbr($_POST["other"]);
@@ -82,8 +81,7 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $user->rights->ad
 	// backup into database
 	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
-	}
-	else {
+	} else {
 		$action = 'add';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -100,8 +98,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 			$object->label			= $_POST["libelle-".$key];
 			$object->description = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->other			= dol_htmlcleanlastbr($_POST["other-".$key]);
-		}
-		else {
+		} else {
 			$object->multilangs[$key]["label"]			= $_POST["libelle-".$key];
 			$object->multilangs[$key]["description"] = dol_htmlcleanlastbr($_POST["desc-".$key]);
 			$object->multilangs[$key]["other"]			= dol_htmlcleanlastbr($_POST["other-".$key]);
@@ -110,8 +107,7 @@ if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $user->rights->a
 
 	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
-	}
-	else {
+	} else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -126,8 +122,7 @@ if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $user->rights-
 
 	if ($object->delMultiLangs($langtodelete, $user) > 0) {
 		$action = '';
-	}
-	else {
+	} else {
 		$action = 'edit';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -229,8 +224,7 @@ if ($action == 'edit') {
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($action != 'add') {
+} elseif ($action != 'add') {
 	if (!empty($object->multilangs)) {
 		foreach ($object->multilangs as $key => $value) {
 			$s = picto_from_langcode($key);

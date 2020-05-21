@@ -166,8 +166,7 @@ abstract class ActionsAdherentCardCommon
 				$dolibarr_user = new User($this->db);
 				$result = $dolibarr_user->fetch($this->object->user_id);
 				$this->tpl['dolibarr_user'] = $dolibarr_user->getLoginUrl(1);
-			}
-			else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+			} else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
         }
 
         if ($action == 'view' || $action == 'delete') {
