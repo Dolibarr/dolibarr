@@ -127,8 +127,7 @@ if (GETPOST("cache", 'alpha'))
     {
         header('Cache-Control: max-age=3600, public, must-revalidate');
         header('Pragma: cache'); // This is to avoid having Pragma: no-cache
-    }
-    else header('Cache-Control: no-cache');
+    } else header('Cache-Control: no-cache');
     //print $dolibarr_nocache; exit;
 }
 

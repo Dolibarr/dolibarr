@@ -365,8 +365,7 @@ class FactureTest extends PHPUnit\Framework\TestCase
         if (get_class($oA) !== get_class($oB))
         {
             $retAr[]="Supplied objects are not of same class.";
-        }
-        else {
+        } else {
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
