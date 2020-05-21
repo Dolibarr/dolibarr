@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 /**
  *  Class of triggers for stripe module
  */
-class InterfaceStripe
+class InterfaceStripe extends DolibarrTriggers
 {
     /**
      * @var DoliDB Database handler.
@@ -53,7 +53,7 @@ class InterfaceStripe
 	    $this->family = 'stripe';
         $this->description = "Triggers of the module Stripe";
         $this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
-        $this->picto = 'stripe@stripe';
+        $this->picto = 'stripe';
     }
 
 	/**
@@ -75,29 +75,6 @@ class InterfaceStripe
 	public function getDesc()
 	{
 		return $this->description;
-	}
-
-	/**
-	 * Trigger version
-	 *
-	 * @return string Version of trigger file
-	 */
-	public function getVersion()
-	{
-		global $langs;
-		$langs->load("admin");
-
-		if ($this->version == 'development') {
-			return $langs->trans("Development");
-		} elseif ($this->version == 'experimental') {
-			return $langs->trans("Experimental");
-		} elseif ($this->version == 'dolibarr') {
-			return DOL_VERSION;
-		} elseif ($this->version) {
-			return $this->version;
-		} else {
-			return $langs->trans("Unknown");
-		}
 	}
 
 	/**
@@ -127,7 +104,7 @@ class InterfaceStripe
 
 		$service = 'StripeTest';
 		$servicestatus = 0;
-		if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox', 'alpha'))
+		if (!empty($conf->global->STRIPE_LIVE) && !GETPOST('forcesandbox', 'alpha'))
 		{
 			$service = 'StripeLive';
 			$servicestatus = 1;
@@ -135,16 +112,16 @@ class InterfaceStripe
 
 		// If customer is linked to Stripe, we update/delete Stripe too
 		if ($action == 'COMPANY_MODIFY') {
-			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this. May return '' if no Oauth defined.
+			$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
 
 			if ($object->client != 0) {
-				$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);	// This make a network request
+				$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus); // This make a network request
 				if ($customer)
 				{
 					$namecleaned = $object->name ? $object->name : null;
-					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// Example of valid numbers are 'FR12345678901' or 'FR12345678902'
+					$vatcleaned = $object->tva_intra ? $object->tva_intra : null; // Example of valid numbers are 'FR12345678901' or 'FR12345678902'
 					$desccleaned = $object->name_alias ? $object->name_alias : null;
 					$taxexemptcleaned = $object->tva_assuj ? 'none' : 'exempt';
 					$langcleaned = $object->default_lang ? array(substr($object->default_lang, 0, 2)) : null;
@@ -158,7 +135,7 @@ class InterfaceStripe
 
 					// Detect if we change a Stripe info (email, description, vat id)
 					$changerequested = 0;
-					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
+					if (!empty($object->email) && $object->email != $customer->email) $changerequested++;
 					/* if ($namecleaned != $customer->description) $changerequested++;
 					if (! isset($customer->tax_info['tax_id']) && ! is_null($vatcleaned)) $changerequested++;
 					elseif (isset($customer->tax_info['tax_id']) && is_null($vatcleaned)) $changerequested++;
@@ -168,12 +145,12 @@ class InterfaceStripe
 					} */
 					if ($namecleaned != $customer->name) $changerequested++;
 					if ($desccleaned != $customer->description) $changerequested++;
-					if (($customer->tax_exempt == 'exempt' && ! $object->tva_assuj) || (! $customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) $changerequested++;
-					if (! isset($customer->tax_ids['data']) && ! is_null($vatcleaned)) $changerequested++;
+					if (($customer->tax_exempt == 'exempt' && !$object->tva_assuj) || (!$customer->tax_exempt == 'exempt' && empty($object->tva_assuj))) $changerequested++;
+					if (!isset($customer->tax_ids['data']) && !is_null($vatcleaned)) $changerequested++;
 					elseif (isset($customer->tax_ids['data']))
 					{
 						$taxinfo = reset($customer->tax_ids['data']);
-						if (empty($taxinfo) && ! empty($vatcleaned)) $changerequested++;
+						if (empty($taxinfo) && !empty($vatcleaned)) $changerequested++;
 						if (isset($taxinfo->value) && $vatcleaned != $taxinfo->value) $changerequested++;
 					}
 
@@ -190,11 +167,11 @@ class InterfaceStripe
 
 						try {
 							// Update Tax info on Stripe
-							if (! empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
+							if (!empty($conf->global->STRIPE_SAVE_TAX_IDS))	// We setup to save Tax info on Stripe side. Warning: This may result in error when saving customer
 							{
-								if (! empty($vatcleaned))
+								if (!empty($vatcleaned))
 								{
-									$isineec=isInEEC($object);
+									$isineec = isInEEC($object);
 									if ($object->country_code && $isineec)
 									{
 										//$taxids = $customer->allTaxIds($customer->id);
@@ -206,7 +183,7 @@ class InterfaceStripe
 									$taxids = $customer->allTaxIds($customer->id);
 									if (is_array($taxids->data))
 									{
-										foreach($taxids->data as $taxidobj)
+										foreach ($taxids->data as $taxidobj)
 										{
 											$customer->deleteTaxId($customer->id, $taxidobj->id);
 										}
@@ -217,7 +194,7 @@ class InterfaceStripe
 							// Update Customer on Stripe
 							$customer->save();
 						}
-						catch(Exception $e)
+						catch (Exception $e)
 						{
 						    //var_dump(\Stripe\Stripe::getApiVersion());
 							$this->errors[] = $e->getMessage();
@@ -228,9 +205,9 @@ class InterfaceStripe
 			}
 		}
 		if ($action == 'COMPANY_DELETE') {
-			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this. May return '' if no Oauth defined.
+			$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
 
 			$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
 			if ($customer)
@@ -238,14 +215,14 @@ class InterfaceStripe
 				try {
 					$customer->delete();
 				}
-				catch(Exception $e)
+				catch (Exception $e)
 				{
 					dol_syslog("Failed to delete Stripe customer ".$e->getMessage(), LOG_WARNING);
 				}
 			}
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
-			$sql.= " WHERE site='stripe' AND fk_soc = " . $object->id;
+			$sql .= " WHERE site='stripe' AND fk_soc = ".$object->id;
 			$this->db->query($sql);
 		}
 
@@ -254,12 +231,12 @@ class InterfaceStripe
 			// For creation of credit card, we do not create in Stripe automatically
 		}
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
-			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (! empty($object->stripe_card_ref))
+			if (!empty($object->stripe_card_ref))
 			{
-				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this. May return '' if no Oauth defined.
-				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
+				$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
+				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc); // No need of network access for this
 
 				if ($stripecu)
 				{
@@ -274,11 +251,11 @@ class InterfaceStripe
 					{
 						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
 						if ($card) {
-							$card->metadata=array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']));
+							$card->metadata = array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']));
 							try {
 								$card->save();
 							}
-							catch(Exception $e)
+							catch (Exception $e)
 							{
 								$ok = -1;
 								$this->error = $e->getMessages();
@@ -289,12 +266,12 @@ class InterfaceStripe
 			}
 		}
 		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card') {
-			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
-			if (! empty($object->stripe_card_ref))
+			if (!empty($object->stripe_card_ref))
 			{
-				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this. May return '' if no Oauth defined.
-				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
+				$stripeacc = $stripe->getStripeAccount($service); // No need of network access for this. May return '' if no Oauth defined.
+				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc); // No need of network access for this
 
 				if ($stripecu)
 				{

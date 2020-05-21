@@ -57,7 +57,7 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
@@ -657,7 +657,7 @@ if ($id)
 					print "</td>";
 
 					// Modify link
-					if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+					if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
 					else print '<td>&nbsp;</td>';
 
 					// Delete link

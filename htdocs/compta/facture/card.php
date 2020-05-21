@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
  * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
@@ -139,7 +139,11 @@ if ($user->socid) $socid = $user->socid;
 $isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
 
-
+// retained warranty invoice available type
+$retainedWarrantyInvoiceAvailableType = array();
+if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+	$retainedWarrantyInvoiceAvailableType = explode('+', $conf->global->INVOICE_USE_RETAINED_WARRANTY);
+}
 
 
 /*
@@ -297,31 +301,34 @@ if (empty($reshook))
 
 			// Also negative lines should not be allowed on 'non Credit notes' invoices. A test is done when adding or updating lines but we must
 			// do it again in validation to avoid cases where invoice is created from another object that allow negative lines.
-			// Note that we can accept the negative line if sum with other lines with same vat is positivie: Because all the lines will be merged together
+			// Note that we can accept the negative line if sum with other lines with same vat makes total positive: Because all the lines will be merged together
 			// when converted into 'available credit' and we will get a positive available credit line.
 			// Note: Other solution if you want to add a negative line on invoice, is to create a discount for customer and consumme it (but this is possible on standard invoice only).
-			$array_of_pu_ht_per_vat_rate = array();
-			$array_of_pu_ht_devise_per_vat_rate = array();
+			$array_of_total_ht_per_vat_rate = array();
+			$array_of_total_ht_devise_per_vat_rate = array();
 			foreach ($object->lines as $line) {
-				if (empty($array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				if (empty($array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code])) $array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] = 0;
-				$array_of_pu_ht_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->subprice;
-				$array_of_pu_ht_devise_per_vat_rate[$line->tva_tx.'_'.$line->vat_src_code] += $line->multicurrency_subprice;
+				//$vat_src_code_for_line = $line->vat_src_code;		// TODO We chek sign of total per vat without taking into account the vat code because for the moment the vat code is lost/unknown when we add a down payment.
+				$vat_src_code_for_line = '';
+				if (empty($array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				if (empty($array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line])) $array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] = 0;
+				$array_of_total_ht_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->total_ht;
+				$array_of_total_ht_devise_per_vat_rate[$line->tva_tx.'_'.$vat_src_code_for_line] += $line->multicurrency_total_ht;
 			}
-			//var_dump($array_of_pu_ht_per_vat_rate);exit;
-			foreach ($array_of_pu_ht_per_vat_rate as $vatrate => $tmpvalue)
-			{
-				$pu_ht = $array_of_pu_ht_per_vat_rate[$vatrate];
-				$pu_ht_devise = $array_of_pu_ht_devise_per_vat_rate[$vatrate];
 
-				if (($pu_ht < 0 || $pu_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
+			//var_dump($array_of_total_ht_per_vat_rate);exit;
+			foreach ($array_of_total_ht_per_vat_rate as $vatrate => $tmpvalue)
+			{
+				$tmp_total_ht = $array_of_total_ht_per_vat_rate[$vatrate];
+				$tmp_total_ht_devise = $array_of_total_ht_devise_per_vat_rate[$vatrate];
+
+				if (($tmp_total_ht < 0 || $tmp_total_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
 				{
 					$langs->load("errors");
 					if ($object->type == $object::TYPE_DEPOSIT) {
 						// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
 						setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
 					} else {
-						setEventMessages($langs->trans("ErrorFieldCantBeNegativeOnInvoice", $langs->transnoentitiesnoconv("UnitPriceHT"), $langs->transnoentitiesnoconv("CustomerAbsoluteDiscountShort")), null, 'errors');
+						setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate"), null, 'errors');
 					}
 					$error++;
 					$action = '';
@@ -411,7 +418,9 @@ if (empty($reshook))
 		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setdate_pointoftax' && $usercancreate)
@@ -420,7 +429,9 @@ if (empty($reshook))
 		$date_pointoftax = dol_mktime(12, 0, 0, $_POST['date_pointoftaxmonth'], $_POST['date_pointoftaxday'], $_POST['date_pointoftaxyear']);
 		$object->date_pointoftax = $date_pointoftax;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setconditions' && $usercancreate)
@@ -436,7 +447,9 @@ if (empty($reshook))
 		if ($new_date_lim_reglement > $old_date_lim_reglement) $object->date_lim_reglement = $new_date_lim_reglement;
 		if ($object->date_lim_reglement < $object->date) $object->date_lim_reglement = $object->date;
 		$result = $object->update($user);
-		if ($result < 0) dol_print_error($db, $object->error);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setpaymentterm' && $usercancreate)
@@ -448,8 +461,9 @@ if (empty($reshook))
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
 		}
 		$result = $object->update($user);
-		if ($result < 0)
+		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		}
 	}
 
 	elseif ($action == 'setrevenuestamp' && $usercancreate)
@@ -458,8 +472,28 @@ if (empty($reshook))
 		$object->revenuestamp = GETPOST('revenuestamp');
 		$result = $object->update($user);
 		$object->update_price(1);
-		if ($result < 0)
+		if ($result < 0) {
 			dol_print_error($db, $object->error);
+		} else {
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+					$outputlangs->load('products');
+				}
+				$model = $object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+			}
+		}
 	}
 
 	// Set incoterm
@@ -485,10 +519,10 @@ if (empty($reshook))
 		// POST[remise_id] or POST[remise_id_for_payment]
 
 		// We use the credit to reduce amount of invoice
-		if (!empty($_POST["remise_id"])) {
+		if (GETPOST("remise_id", 'int') > 0) {
 			$ret = $object->fetch($id);
 			if ($ret > 0) {
-				$result = $object->insert_discount($_POST["remise_id"]);
+				$result = $object->insert_discount(GETPOST("remise_id", 'int'));
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -497,11 +531,11 @@ if (empty($reshook))
 			}
 		}
 		// We use the credit to reduce remain to pay
-		if (!empty($_POST["remise_id_for_payment"]))
+		if (GETPOST("remise_id_for_payment", 'int') > 0)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($db);
-			$discount->fetch($_POST["remise_id_for_payment"]);
+			$discount->fetch(GETPOST("remise_id_for_payment", 'int'));
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
@@ -809,14 +843,16 @@ if (empty($reshook))
 			$i = 0;
 			foreach ($object->lines as $line)
 			{
-				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9
-				{ 	// no need to create discount if amount is null
-					$amount_ht[$line->tva_tx] += $line->total_ht;
-					$amount_tva[$line->tva_tx] += $line->total_tva;
-					$amount_ttc[$line->tva_tx] += $line->total_ttc;
-					$multicurrency_amount_ht[$line->tva_tx] += $line->multicurrency_total_ht;
-					$multicurrency_amount_tva[$line->tva_tx] += $line->multicurrency_total_tva;
-					$multicurrency_amount_ttc[$line->tva_tx] += $line->multicurrency_total_ttc;
+				if ($line->product_type < 9 && $line->total_ht != 0) // Remove lines with product_type greater than or equal to 9 and no need to create discount if amount is null
+				{
+					$keyforvatrate = $line->tva_tx.($line->vat_src_code ? ' ('.$line->vat_src_code.')' : '');
+
+					$amount_ht[$keyforvatrate] += $line->total_ht;
+					$amount_tva[$keyforvatrate] += $line->total_tva;
+					$amount_ttc[$keyforvatrate] += $line->total_ttc;
+					$multicurrency_amount_ht[$keyforvatrate] += $line->multicurrency_total_ht;
+					$multicurrency_amount_tva[$keyforvatrate] += $line->multicurrency_total_tva;
+					$multicurrency_amount_ttc[$keyforvatrate] += $line->multicurrency_total_ttc;
 					$i++;
 				}
 			}
@@ -830,9 +866,9 @@ if (empty($reshook))
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ht[$line->tva_tx] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_tva[$line->tva_tx] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
-						$multicurrency_amount_ttc[$line->tva_tx] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ht[$vatrate] = price2num($multicurrency_amount_ht[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_tva[$vatrate] = price2num($multicurrency_amount_tva[$vatrate] * $ratio, 'MU');
+						$multicurrency_amount_ttc[$vatrate] = price2num($multicurrency_amount_ttc[$vatrate] * $ratio, 'MU');
 					}
 				}
 			}
@@ -887,6 +923,7 @@ if (empty($reshook))
 				$discount->amount_ht = $discount->amount_ttc = $total_paiements + $total_creditnote_and_deposit - $object->total_ttc;
 				$discount->amount_tva = 0;
 				$discount->tva_tx = 0;
+				$discount->vat_src_code = '';
 
 				$result = $discount->create($user);
 				if ($result < 0)
@@ -904,7 +941,18 @@ if (empty($reshook))
 					$discount->multicurrency_amount_ht = abs($multicurrency_amount_ht[$tva_tx]);
 					$discount->multicurrency_amount_tva = abs($multicurrency_amount_tva[$tva_tx]);
 					$discount->multicurrency_amount_ttc = abs($multicurrency_amount_ttc[$tva_tx]);
+
+					// Clean vat code
+					$reg = array();
+					$vat_src_code = '';
+					if (preg_match('/\((.*)\)/', $tva_tx, $reg))
+					{
+						$vat_src_code = $reg[1];
+						$tva_tx = preg_replace('/\s*\(.*\)/', '', $tva_tx); // Remove code into vatrate.
+					}
+
 					$discount->tva_tx = abs($tva_tx);
+					$discount->vat_src_code = $vat_src_code;
 
 					$result = $discount->create($user);
 					if ($result < 0)
@@ -1098,7 +1146,7 @@ if (empty($reshook))
 						foreach ($facture_source->lines as $line)
 						{
 							// Extrafields
-							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($line, 'fetch_optionals')) {
+							if (method_exists($line, 'fetch_optionals')) {
 								// load extrafields
 								$line->fetch_optionals();
 							}
@@ -1312,17 +1360,22 @@ if (empty($reshook))
 					$object->situation_counter = 1;
 					$object->situation_final = 0;
 					$object->situation_cycle_ref = $object->newCycle();
+				}
 
-
+				if (in_array($object->type, $retainedWarrantyInvoiceAvailableType)) {
 					$object->retained_warranty = GETPOST('retained_warranty', 'int');
 					$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-
-				    $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
-				    if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
-				        $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
-				    }
-				    $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
 				}
+				else {
+					$object->retained_warranty = 0;
+					$object->retained_warranty_fk_cond_reglement = 0;
+				}
+
+			    $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
+			    if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
+			        $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
+			    }
+			    $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
 
 				$object->fetch_thirdparty();
 
@@ -1523,7 +1576,7 @@ if (empty($reshook))
 								// If we create a deposit with all lines and a percent, we change amount
 								if ($_POST['type'] == Facture::TYPE_DEPOSIT && $typeamount == 'variablealllines') {
 									if (is_array($lines)) {
-										foreach($lines as $line) {
+										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
 											$line->qty = price2num($line->qty * $valuedeposit / 100, 'MS');
 										}
@@ -1591,8 +1644,8 @@ if (empty($reshook))
 										}
 
 										// Extrafields
-										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-											$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										if (method_exists($lines[$i], 'fetch_optionals')) {
+											$lines[$i]->fetch_optionals();
 											$array_options = $lines[$i]->array_options;
 										}
 
@@ -1715,16 +1768,50 @@ if (empty($reshook))
 
 				if (!empty($origin) && !empty($originid))
 				{
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
 					$object->origin = $origin;
 					$object->origin_id = $originid;
+
+					// retained warranty
+					if (!empty($conf->global->INVOICE_USE_RETAINED_WARRANTY))
+					{
+					    $retained_warranty = GETPOST('retained_warranty', 'int');
+					    if (price2num($retained_warranty) > 0)
+					    {
+					        $object->retained_warranty = price2num($retained_warranty);
+					    }
+
+					    if (GETPOST('retained_warranty_fk_cond_reglement', 'int') > 0)
+					    {
+                			$object->retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+					    }
+
+				        $retained_warranty_date_limit = GETPOST('retained_warranty_date_limit');
+				        if (!empty($retained_warranty_date_limit) && $db->jdate($retained_warranty_date_limit)) {
+				            $object->retained_warranty_date_limit = $db->jdate($retained_warranty_date_limit);
+				        }
+					    $object->retained_warranty_date_limit = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : $object->calculate_date_lim_reglement($object->retained_warranty_fk_cond_reglement);
+                	}
 
 					foreach ($object->lines as $i => &$line)
 					{
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
 						$line->fk_prev_id = $line->id;
-						$line->fetch_optionals($line->id);
+						$line->fetch_optionals();
 						$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
+
+						// The $line->situation_percent has been modified, so we must recalculate all amounts
+						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $line->situation_percent);
+						$line->total_ht = $tabprice[0];
+						$line->total_tva = $tabprice[1];
+						$line->total_ttc = $tabprice[2];
+						$line->total_localtax1 = $tabprice[9];
+						$line->total_localtax2 = $tabprice[10];
+						$line->multicurrency_total_ht  = $tabprice[16];
+						$line->multicurrency_total_tva = $tabprice[17];
+						$line->multicurrency_total_ttc = $tabprice[18];
 
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
 						if ($line->fk_remise_except)
@@ -1770,6 +1857,7 @@ if (empty($reshook))
 				{
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
+
 					// create extrafields with data from create form
 					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
 					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
@@ -2529,7 +2617,7 @@ if (empty($reshook))
                 $originLine = new $lineClassName($db);
                 if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
                 {
-                    $originLine->fetch_optionals($lineId);
+                    $originLine->fetch_optionals();
                     $desc = $originLine->desc;
                     $pu_ht = $originLine->subprice;
                     $qty = $originLine->qty;
@@ -2555,7 +2643,12 @@ if (empty($reshook))
                     $pa_ht = $originLine->pa_ht;
                     $label = $originLine->label;
                     $array_options = $originLine->array_options;
-                    $situation_percent = 100;
+                    if ($object->type == Facture::TYPE_SITUATION) {
+                        $situation_percent = 0;
+                    }
+                    else {
+                        $situation_percent = 100;
+                    }
                     $fk_prev_id = '';
                     $fk_unit = $originLine->fk_unit;
                     $pu_ht_devise = $originLine->multicurrency_subprice;
@@ -2691,7 +2784,7 @@ if ($action == 'create')
 	$facturestatic = new Facture($db);
 	$extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-	print load_fiche_titre($langs->trans('NewBill'), '', 'invoicing');
+	print load_fiche_titre($langs->trans('NewBill'), '', 'bill');
 
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
@@ -2779,7 +2872,7 @@ if ($action == 'create')
 				$remise_absolue 	= (!empty($expesrc->remise_absolue) ? $expesrc->remise_absolue : (!empty($soc->remise_absolue) ? $soc->remise_absolue : 0));
 
 				//Replicate extrafields
-				$expesrc->fetch_optionals($expeoriginid);
+				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
 			}
 			else
@@ -2797,7 +2890,7 @@ if ($action == 'create')
 				}
 
 				// Replicate extrafields
-				$objectsrc->fetch_optionals($originid);
+				$objectsrc->fetch_optionals();
 				$object->array_options = $objectsrc->array_options;
 			}
 		}
@@ -2839,7 +2932,7 @@ if ($action == 'create')
 	}
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	if ($soc->id > 0) print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
@@ -3035,7 +3128,7 @@ if ($action == 'create')
 			// First situation invoice
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 			$tmp = '<input id="radio_situation" type="radio" name="type" value="5"'.(GETPOST('type') == 5 ? ' checked' : '').'> ';
-			$tmp  = $tmp.'<label for="radio_situation invoice" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
+			$tmp  = $tmp.'<label for="radio_situation" >'.$langs->trans("InvoiceFirstSituationAsk").'</label>';
 			$desc = $form->textwithpicto($tmp, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', '', 0, 3);
 			print $desc;
 			print '</div></div>';
@@ -3313,40 +3406,55 @@ if ($action == 'create')
 	$form->select_conditions_paiements(GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $cond_reglement_id, 'cond_reglement_id');
 	print '</td></tr>';
 
-	if (!empty($conf->global->INVOICE_USE_SITUATION))
-	{
-	    if ($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY) {
-	        $rwStyle = 'display:none;';
-	        if (GETPOST('type', 'int') == Facture::TYPE_SITUATION) {
-	            $rwStyle = '';
-	        }
 
-	        $retained_warranty = GETPOST('retained_warranty', 'int');
-	        $retained_warranty = !empty($retained_warranty) ? $retained_warranty : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
-	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
-	        print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
+	if ($conf->global->INVOICE_USE_RETAINED_WARRANTY) {
+		$rwStyle = 'display:none;';
+		if (in_array(GETPOST('type', 'int'), $retainedWarrantyInvoiceAvailableType)) {
+			$rwStyle = '';
+		}
 
-	        // Retained warranty payment term
-	        print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
-	        $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-	        $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-	        $form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
-	        print '</td></tr>';
+		$retained_warranty = GETPOST('retained_warranty', 'int');
+		if (empty($retained_warranty)) {
+			if (!empty($objectsrc->retained_warranty)) { // use previous situation value
+				$retained_warranty = $objectsrc->retained_warranty;
+			}
+		}
+		$retained_warranty_js_default = !empty($retained_warranty) ? $retained_warranty : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT;
 
-	        print '<script type="text/javascript" language="javascript">
-    		$(document).ready(function() {
-    			$("[name=\'type\'").change(function() {
-    				if($( this ).prop("checked") && $( this ).val() == '.Facture::TYPE_SITUATION.')
-                    {
-                        $(".retained-warranty-line").show();
-                    }
-                    else{
-                        $(".retained-warranty-line").hide();
-                    }
-    			});
-    		});
-    		</script>';
-	    }
+		print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('RetainedWarranty').'</td><td colspan="2">';
+		print '<input id="new-situation-invoice-retained-warranty" name="retained_warranty" type="number" value="'.$retained_warranty.'" step="0.01" min="0" max="100" />%';
+
+		// Retained warranty payment term
+		print '<tr class="retained-warranty-line" style="'.$rwStyle.'" ><td class="nowrap">'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td><td colspan="2">';
+		$retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+		if (empty($retained_warranty_fk_cond_reglement)) {
+			$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+			if (!empty($objectsrc->retained_warranty_fk_cond_reglement)) { // use previous situation value
+				$retained_warranty_fk_cond_reglement = $objectsrc->retained_warranty_fk_cond_reglement;
+			} else {
+				$retained_warranty_fk_cond_reglement = $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+			}
+		}
+		$form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+		print '</td></tr>';
+
+		print '<script type="text/javascript" language="javascript">
+		$(document).ready(function() {
+		$("[name=\'type\']").change(function() {
+				if($( this ).prop("checked") && $.inArray($( this ).val(), '.json_encode($retainedWarrantyInvoiceAvailableType).' ) !== -1)
+				{
+					$(".retained-warranty-line").show();
+					$("#new-situation-invoice-retained-warranty").val("'.doubleval($retained_warranty_js_default).'");
+				}
+				else{
+					$(".retained-warranty-line").hide();
+					$("#new-situation-invoice-retained-warranty").val("");
+				}
+			});
+
+			$("[name=\'type\']").trigger("change");
+		});
+		</script>';
 	}
 
 	// Payment mode
@@ -3368,7 +3476,7 @@ if ($action == 'create')
 	{
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1);
+		$numprojet = $formproject->select_projects(($socid > 0 ? $socid : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("AddProject").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -3911,6 +4019,20 @@ elseif ($id > 0 || !empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 250);
 	}
 
+	if ($action == "remove_file_comfirm")
+	{
+		$file = GETPOST('file', 'alpha');
+
+		$formconfirm = $form->formconfirm(
+			$_SERVER["PHP_SELF"].'?facid='.$object->id.'&file='.$file,
+			$langs->trans('DeleteFileHeader'),
+			$langs->trans('DeleteFileText')."<br><br>".$file,
+			'remove_file',
+			'',
+			'no',
+			2);
+	}
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid, 'remainingtopay' => &$resteapayer);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -4247,89 +4369,79 @@ elseif ($id > 0 || !empty($ref))
 		print '</td></tr>';
 	}
 
-	$displayWarranty = false;
-	if (($object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY))))
-	{
-	    // Check if this situation invoice is 100% for real
-	    if (!empty($object->situation_final) && !empty($object->lines)) {
-	        $displayWarranty = true;
-	        foreach ($object->lines as $i => $line) {
-	            if ($line->product_type < 2 && $line->situation_percent < 100) {
-	                $displayWarranty = false;
-	                break;
-	            }
-	        }
-	    }
 
 
+	if (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_RETAINED_WARRANTY)) {
+        $displayWarranty = true;
+		if (!in_array($object->type, $retainedWarrantyInvoiceAvailableType) && empty($object->retained_warranty)) {
+			$displayWarranty = false;
+		}
 
-    	// Retained Warranty
-    	print '<tr class="retained-warranty-lines"  ><td>';
-    	print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
-    	print $langs->trans('RetainedWarranty');
-    	print '</td>';
-    	if ($action != 'editretainedwarranty' && $user->rights->facture->creer) {
-    	    print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&amp;facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
-    	}
+		if($displayWarranty) {
+			// Retained Warranty
+			print '<tr class="retained-warranty-lines"  ><td>';
+			print '<table id="retained-warranty-table" class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('RetainedWarranty');
+			print '</td>';
+			if ($action != 'editretainedwarranty' && $user->rights->facture->creer) {
+			    print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarranty&amp;facid='.$object->id.'">'.img_edit($langs->trans('setretainedwarranty'), 1).'</a></td>';
+			}
 
-        print '</tr></table>';
-        print '</td><td>';
-        if ($action == 'editretainedwarranty')
-        {
-            print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
-            print '<input type="hidden" name="action" value="setretainedwarranty">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
-            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            print '</form>';
-        }
-        else
-        {
-            print price($object->retained_warranty).'%';
-        }
-        print '</td></tr>';
+		    print '</tr></table>';
+		    print '</td><td>';
+		    if ($action == 'editretainedwarranty')
+		    {
+		        print '<form  id="retained-warranty-form"  method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+		        print '<input type="hidden" name="action" value="setretainedwarranty">';
+		        print '<input type="hidden" name="token" value="'.newToken().'">';
+		        print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
+		        print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		        print '</form>';
+		    }
+		    else
+		    {
+		        print price($object->retained_warranty).'%';
+		    }
+		    print '</td></tr>';
 
-        // Retained warranty payment term
-        print '<tr class="retained-warranty-lines"  ><td>';
-        print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
-        print $langs->trans('PaymentConditionsShortRetainedWarranty');
-        print '</td>';
-        if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer) {
-            print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&amp;facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
-        }
+		    // Retained warranty payment term
+		    print '<tr class="retained-warranty-lines"  ><td>';
+		    print '<table id="retained-warranty-cond-reglement-table"  class="nobordernopadding" width="100%"><tr><td>';
+		    print $langs->trans('PaymentConditionsShortRetainedWarranty');
+		    print '</td>';
+		    if ($action != 'editretainedwarrantypaymentterms' && $user->rights->facture->creer) {
+		        print '<td align="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editretainedwarrantypaymentterms&amp;facid='.$object->id.'">'.img_edit($langs->trans('setPaymentConditionsShortRetainedWarranty'), 1).'</a></td>';
+		    }
 
-        print '</tr></table>';
-        print '</td><td>';
-        $defaultDate = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : strtotime('-1 years', $object->date_lim_reglement);
-        if ($object->date > $defaultDate) {
-            $defaultDate = $object->date;
-        }
+		    print '</tr></table>';
+		    print '</td><td>';
+		    $defaultDate = !empty($object->retained_warranty_date_limit) ? $object->retained_warranty_date_limit : strtotime('-1 years', $object->date_lim_reglement);
+		    if ($object->date > $defaultDate) {
+		        $defaultDate = $object->date;
+		    }
 
-        if ($action == 'editretainedwarrantypaymentterms')
-        {
-            //date('Y-m-d',$object->date_lim_reglement)
-            print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
-            print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
-            print '<input type="hidden" name="token" value="'.newToken().'">';
-            $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
-            $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
-            $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
-            $form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
-            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-            print '</form>';
-        }
-        else
-        {
-            $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
-            if (!$displayWarranty) {
-                print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
-            }
-        }
-        print '</td></tr>';
+		    if ($action == 'editretainedwarrantypaymentterms')
+		    {
+		        //date('Y-m-d',$object->date_lim_reglement)
+		        print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+		        print '<input type="hidden" name="action" value="setretainedwarrantyconditions">';
+		        print '<input type="hidden" name="token" value="'.newToken().'">';
+		        $retained_warranty_fk_cond_reglement = GETPOST('retained_warranty_fk_cond_reglement', 'int');
+		        $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $object->retained_warranty_fk_cond_reglement;
+		        $retained_warranty_fk_cond_reglement = !empty($retained_warranty_fk_cond_reglement) ? $retained_warranty_fk_cond_reglement : $conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID;
+		        $form->select_conditions_paiements($retained_warranty_fk_cond_reglement, 'retained_warranty_fk_cond_reglement', -1, 1);
+		        print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		        print '</form>';
+		    }
+		    else
+		    {
+		        $form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
+		        if (!$displayWarranty) {
+		            print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
+		        }
+		    }
+		    print '</td></tr>';
 
-
-        if ($displayWarranty)
-        {
             // Retained Warranty payment date limit
             print '<tr class="retained-warranty-lines"  ><td>';
             print '<table id="retained-warranty-date-limit-table"  class="nobordernopadding" width="100%"><tr><td>';
@@ -4430,12 +4542,12 @@ elseif ($id > 0 || !empty($ref))
 		print '</td><td>';
 		if ($action == 'editrevenuestamp') {
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setrevenuestamp">';
 			print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
 			print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
 			print ' &rarr; <span id="revenuestamp_span"></span>';
-			print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+			print ' <input type="submit" class="button buttongen" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 			print " <script>
                 $(document).ready(function(){
@@ -4521,7 +4633,7 @@ elseif ($id > 0 || !empty($ref))
 
 	        $current_situation_counter = array();
 	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-	            $totalpaye_prev = $prev_invoice->getSommePaiement();
+	            $tmptotalpaidforthisinvoice = $prev_invoice->getSommePaiement();
 	            $total_prev_ht += $prev_invoice->total_ht;
 	            $total_prev_ttc += $prev_invoice->total_ttc;
 	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ?-1 : 1) * $prev_invoice->situation_counter;
@@ -4532,7 +4644,7 @@ elseif ($id > 0 || !empty($ref))
 	            if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">'.price($prev_invoice->total_ht).'</td>';
 	            print '<td class="right">'.price($prev_invoice->total_ttc).'</td>';
-	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye_prev).'</td>';
+	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalpaidforthisinvoice).'</td>';
 	            print '</tr>';
 	        }
 	    }
@@ -4934,7 +5046,7 @@ elseif ($id > 0 || !empty($ref))
 	}
 
 	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid')).'" method="POST">
-	<input type="hidden" name="token" value="' . $_SESSION ['newtoken'].'">
+	<input type="hidden" name="token" value="' . newToken().'">
 	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
 	<input type="hidden" name="mode" value="">
 	<input type="hidden" name="id" value="' . $object->id.'">
@@ -4948,8 +5060,9 @@ elseif ($id > 0 || !empty($ref))
 	print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 	// Show object lines
-	if (!empty($object->lines))
+	if (!empty($object->lines)) {
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
+	}
 
 	// Form to add new line
 	if ($object->statut == 0 && $usercancreate && $action != 'valid' && $action != 'editline')
@@ -5039,14 +5152,16 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Send by mail
-			if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || !empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
-				if ($objectidnext) {
-					print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
-				} else {
-					if ($usercansend) {
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-					} else
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+			if (empty($user->socid)) {
+				if (($object->statut == Facture::STATUS_VALIDATED || $object->statut == Facture::STATUS_CLOSED) || !empty($conf->global->FACTURE_SENDBYEMAIL_FOR_ALL_STATUS)) {
+					if ($objectidnext) {
+						print '<span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendMail').'</span>';
+					} else {
+						if ($usercansend) {
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+						} else
+							print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+					}
 				}
 			}
 
@@ -5099,7 +5214,7 @@ elseif ($id > 0 || !empty($ref))
 			// Reverse back money or convert to reduction
 			if ($object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) {
 				// For credit note only
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercanissuepayment)
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment)
 				{
 					if ($resteapayer == 0)
 					{
@@ -5112,12 +5227,12 @@ elseif ($id > 0 || !empty($ref))
 				}
 
 				// For standard invoice with excess received
-				if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && empty($object->paye) && $resteapayer < 0 && $usercancreate && empty($discount->id))
+				if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_SITUATION) && $object->statut == Facture::STATUS_VALIDATED && empty($object->paye) && $resteapayer < 0 && $usercancreate && empty($discount->id))
 				{
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a>';
 				}
 				// For credit note
-				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $usercancreate
+				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercancreate
 					&& (!empty($conf->global->INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 					) {
 					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReduc2")).'">'.$langs->trans('ConvertToReduc').'</a>';
@@ -5130,7 +5245,7 @@ elseif ($id > 0 || !empty($ref))
 			}
 
 			// Classify paid
-			if (($object->statut == 1 && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
+			if (($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $usercanissuepayment && (($object->type != Facture::TYPE_CREDIT_NOTE && $object->type != Facture::TYPE_DEPOSIT && $resteapayer <= 0) || ($object->type == Facture::TYPE_CREDIT_NOTE && $resteapayer >= 0)))
 				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $usercanissuepayment && empty($discount->id))
 			)
 			{
@@ -5139,7 +5254,7 @@ elseif ($id > 0 || !empty($ref))
 
 			// Classify 'closed not completely paid' (possible si validee et pas encore classee payee)
 
-			if ($object->statut == 1 && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment)
+			if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $resteapayer > 0 && $usercanissuepayment)
 			{
 				if ($totalpaye > 0 || $totalcreditnotes > 0)
 				{
@@ -5167,7 +5282,7 @@ elseif ($id > 0 || !empty($ref))
 			{
 				if (!$objectidnext)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').''.$object->id.'&amp;action=create&amp;type=2'.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').''.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
 				}
 			}
 
@@ -5287,7 +5402,11 @@ elseif ($id > 0 || !empty($ref))
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments(
+			'facture', $filename, $filedir, $urlsource, $genallowed,
+			$delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '',
+			$soc->default_lang, '', $object, 0, 'remove_file_comfirm');
+
 		$somethingshown = $formfile->numoffiles;
 
 		// Show links to link elements

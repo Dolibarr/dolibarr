@@ -7,7 +7,7 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017-2018 Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Pierre Ardoin      	<mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -439,6 +439,11 @@ class pdf_azur extends ModelePDFPropales
 						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote)) {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
 				if (!empty($conf->global->MAIN_ADD_CREATOR_IN_NOTE) && $object->user_author_id > 0)
 				{
 				    $tmpuser = new User($this->db);
@@ -923,7 +928,7 @@ class pdf_azur extends ModelePDFPropales
 		}
 
 		// Show payments conditions
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -939,7 +944,7 @@ class pdf_azur extends ModelePDFPropales
 			$posy = $pdf->GetY() + 3;
 		}
 
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMMODE))
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTMODE))
 		{
 			// Check a payment mode is defined
 			/* Not required on a proposal

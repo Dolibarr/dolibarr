@@ -348,7 +348,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	if ($thirdparty instanceof Societe) {
 		$socname .= $thirdparty->name;
 		if (($includealias || !empty($conf->global->PDF_INCLUDE_ALIAS_IN_THIRDPARTY_NAME)) && !empty($thirdparty->name_alias)) {
-		    $socname .= "\n".$thirdparty->name_alias;
+		    $socname .= " - ".$thirdparty->name_alias;
 		}
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
@@ -386,7 +386,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 	$stringaddress = '';
 	if (is_object($hookmanager))
 	{
-		$parameters = array('sourcecompany'=>&$sourcecompany, 'targetcompany'=>&$targetcompany, 'targetcontact'=>&$targetcontact, 'outputlangs'=>$outputlangs, 'mode'=>$mode, 'usecontact'=>$usecontact);
+		$parameters = array('sourcecompany' => &$sourcecompany, 'targetcompany' => &$targetcompany, 'targetcontact' => &$targetcontact, 'outputlangs' => $outputlangs, 'mode' => $mode, 'usecontact' => $usecontact);
 		$action = '';
 		$reshook = $hookmanager->executeHooks('pdf_build_address', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		$stringaddress .= $hookmanager->resPrint;
@@ -914,7 +914,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 		// become
 		// <img alt="" src="'.DOL_DATA_ROOT.'/medias/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
-		$newfreetext = preg_replace('/(<img.*src=")[^\"]*viewimage\.php[^\"]*modulepart=medias[^\"]*file=([^\"]*)("[^\/]*\/>)/', '\1'.DOL_DATA_ROOT.'/medias/\2\3', $newfreetext);
+		$newfreetext = preg_replace('/(<img.*src=")[^\"]*viewimage\.php[^\"]*modulepart=medias[^\"]*file=([^\"]*)("[^\/]*\/>)/', '\1file:/'.DOL_DATA_ROOT.'/medias/\2\3', $newfreetext);
 
 		$line .= $outputlangs->convToOutputCharset($newfreetext);
 	}

@@ -1,6 +1,6 @@
 <?php
 //define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
+define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 
 require '../../main.inc.php';
 
@@ -8,9 +8,9 @@ if ($dolibarr_main_prod) {
 	accessforbidden();
 }
 
-$usedolheader=1;	// 1 = Test inside a dolibarr page, 0 = Use hard coded header
+$usedolheader = 1; // 1 = Test inside a dolibarr page, 0 = Use hard coded header
 
-$form=new Form($db);
+$form = new Form($db);
 
 
 
@@ -31,7 +31,7 @@ if (empty($usedolheader))
 	<!-- Includes for JQuery (Ajax library) -->
 	<link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/css/base/jquery-ui.css" />
 	<!-- <link rel="stylesheet" type="text/css" href="<?php echo DOL_URL_ROOT ?>/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css" /> -->
-	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1)?'?dol_use_jmobile=1&dol_optimize_smallscreen=1':''; ?>" />
+	<link rel="stylesheet" type="text/css" title="default" href="<?php echo DOL_URL_ROOT ?>/theme/eldy/style.css.php<?php echo ($_GET["dol_use_jmobile"] == 1) ? '?dol_use_jmobile=1&dol_optimize_smallscreen=1' : ''; ?>" />
 	<!-- Includes JS for JQuery -->
 	<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/includes/jquery/js/jquery.min.js"></script>
 	<!-- migration fixes for removed Jquery functions -->
@@ -48,9 +48,9 @@ if (empty($usedolheader))
 }
 else
 {
-    $arraycss=array();
-    $arrayjs=array();
-    /*
+	$arraycss = array();
+	$arrayjs = array();
+	/*
 	$arraycss=array('/includes/jquery/plugins/datatables/media/css/jquery.dataTables.css',
 			'/includes/jquery/plugins/datatables/extensions/Buttons/css/buttons.dataTables.min.css',
 			'/includes/jquery/plugins/datatables/extensions/ColReorder/css/colReorder.dataTables.min.css'
@@ -153,71 +153,71 @@ $(document).ready(function() {
 
 <?php
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-$productspecimen=new Product($db);
+$productspecimen = new Product($db);
 $productspecimen->initAsSpecimen();
 
-$sortfield='aaa';
-$sortorder='ASC';
-$tasksarray=array(1,2,3);	// To force having several lines
-$tagidfortablednd='tablelines3';
-if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+$sortfield = 'aaa';
+$sortorder = 'ASC';
+$tasksarray = array(1, 2, 3); // To force having several lines
+$tagidfortablednd = 'tablelines3';
+if (!empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 
-$nav='';
-$nav.='<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
-if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav.='<input type="hidden" name="status" value="'.$status.'">';
-if ($filter)  $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-if ($filtert) $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-if ($socid)   $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
-if ($showbirthday)  $nav.='<input type="hidden" name="showbirthday" value="1">';
-if ($pid)    $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-if ($type)   $nav.='<input type="hidden" name="type" value="'.$type.'">';
-if ($usergroup) $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
-$nav.= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
-$nav.= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
-$nav.= '</form>';
+$nav = '';
+$nav .= '<form name="dateselect" action="'.$_SERVER["PHP_SELF"].'?action=show_peruser'.$param.'">';
+if ($actioncode || isset($_GET['actioncode']) || isset($_POST['actioncode'])) $nav .= '<input type="hidden" name="actioncode" value="'.$actioncode.'">';
+if ($status || isset($_GET['status']) || isset($_POST['status']))  $nav .= '<input type="hidden" name="status" value="'.$status.'">';
+if ($filter)  $nav .= '<input type="hidden" name="filter" value="'.$filter.'">';
+if ($filtert) $nav .= '<input type="hidden" name="filtert" value="'.$filtert.'">';
+if ($socid)   $nav .= '<input type="hidden" name="socid" value="'.$socid.'">';
+if ($showbirthday)  $nav .= '<input type="hidden" name="showbirthday" value="1">';
+if ($pid)    $nav .= '<input type="hidden" name="projectid" value="'.$pid.'">';
+if ($type)   $nav .= '<input type="hidden" name="type" value="'.$type.'">';
+if ($usergroup) $nav .= '<input type="hidden" name="usergroup" value="'.$usergroup.'">';
+$nav .= $form->selectDate($dateselect, 'dateselect', 0, 0, 1, '', 1, 0);
+$nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav .= '</form>';
 
-$limit=10;
+$limit = 10;
 print_barre_liste('Title of my list', 12, $_SERVER["PHP_SELF"], '', '', '', 'Text in middle', 20, 500, '', 0, $nav, '', $limit);
 
 
-$moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.=$langs->trans('This is a select list for a filter A'). ': ';
-$cate_arbo = array('field1'=>'value1a into the select list A','field2'=>'value2a');
-$moreforfilter.=$form->selectarray('search_aaa', $cate_arbo, '', 1);		// List without js combo
-$moreforfilter.='</div>';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('This is a select list for a filter A').': ';
+$cate_arbo = array('field1'=>'value1a into the select list A', 'field2'=>'value2a');
+$moreforfilter .= $form->selectarray('search_aaa', $cate_arbo, '', 1); // List without js combo
+$moreforfilter .= '</div>';
 
-$moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.=$langs->trans('This is a select list for a filter B'). ': ';
-$cate_arbo = array('field1'=>'value1b into the select list B','field2'=>'value2b');
-$moreforfilter.=$form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
-$moreforfilter.='</div>';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('This is a select list for a filter B').': ';
+$cate_arbo = array('field1'=>'value1b into the select list B', 'field2'=>'value2b');
+$moreforfilter .= $form->selectarray('search_bbb', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1); // List with js combo
+$moreforfilter .= '</div>';
 
-$moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.=$langs->trans('This is a select list for a filter C'). ': ';
-$cate_arbo = array('field1'=>'value1c into the select list C','field2'=>'value2c');
-$moreforfilter.=$form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
-$moreforfilter.='</div>';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('This is a select list for a filter C').': ';
+$cate_arbo = array('field1'=>'value1c into the select list C', 'field2'=>'value2c');
+$moreforfilter .= $form->selectarray('search_ccc', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1); // List with js combo
+$moreforfilter .= '</div>';
 
-$moreforfilter.='<div class="divsearchfield">';
-$moreforfilter.=$langs->trans('This is a select list for a filter D'). ': ';
-$cate_arbo = array('field1'=>'value1d into the select list D','field2'=>'value2d');
-$moreforfilter.=$form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1);		// List with js combo
-$moreforfilter.='</div>';
+$moreforfilter .= '<div class="divsearchfield">';
+$moreforfilter .= $langs->trans('This is a select list for a filter D').': ';
+$cate_arbo = array('field1'=>'value1d into the select list D', 'field2'=>'value2d');
+$moreforfilter .= $form->selectarray('search_ddd', $cate_arbo, '', 1, 0, 0, '', 0, 0, 0, 0, '', 1); // List with js combo
+$moreforfilter .= '</div>';
 
-if (! empty($moreforfilter))
+if (!empty($moreforfilter))
 {
-    print '<div class="liste_titre liste_titre_bydiv centpercent">';
-    print $moreforfilter;
-    $parameters=array();
-    $reshook=$hookmanager->executeHooks('printFieldPreListTitle', $parameters);    // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-    print '</div>';
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+	print '</div>';
 }
 
 ?>
 
-<table class="stripe row-border order-column centpercent tagtable liste<?php echo $moreforfilter?" listwithfilterbefore":""; ?>" id="tablelines3">
+<table class="stripe row-border order-column centpercent tagtable liste<?php echo $moreforfilter ? " listwithfilterbefore" : ""; ?>" id="tablelines3">
 <thead>
 <tr class="liste_titre">
 <?php print getTitleFieldOfList($langs->trans('title1'), 0, $_SERVER["PHP_SELF"], 'aaa', '', '', 'align="left"', $sortfield, $sortorder); ?>
@@ -245,12 +245,12 @@ if (! empty($moreforfilter))
 $(document).ready(function(){
     $('#idtableexample2').dataTable( {
     	<?php
-    	if ($optioncss=='print') {
-    	 	print '\'dom\': \'lfrtip\',';
-    	} else {
-    		print '\'dom\': \'Blfrtip\',';
-    	}
-    	?>
+		if ($optioncss == 'print') {
+		 	print '\'dom\': \'lfrtip\',';
+		} else {
+			print '\'dom\': \'Blfrtip\',';
+		}
+		?>
     	"colReorder": true,
 		'buttons': [
 		          'colvis','copy', 'csv', 'excel', 'pdf', 'print'
@@ -292,9 +292,9 @@ $(document).ready(function(){
 
 
 <?php
-	$tasksarray=array(1,2,3);	// To force having several lines
-	$tagidfortablednd='tablelines';
-	if (! empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+	$tasksarray = array(1, 2, 3); // To force having several lines
+	$tagidfortablednd = 'tablelines';
+	if (!empty($conf->use_javascript_ajax)) include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
 ?>
 <div class="tagtable centpercent liste_titre_bydiv" id="tablelines">
     <div class="tagtr liste_titre">
@@ -340,7 +340,7 @@ $(document).ready(function(){
 
 
 <?php
-if (! empty($usedolheader))
+if (!empty($usedolheader))
 {
 	llxFooter();
 } else { ?>

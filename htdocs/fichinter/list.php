@@ -67,7 +67,7 @@ $diroutputmassaction = $conf->ficheinter->dir_output.'/temp/massgeneration/'.$us
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -202,7 +202,7 @@ foreach ($arrayfields as $tmpkey => $tmpval)
 }
 
 $sql = "SELECT";
-$sql .= " f.ref, f.rowid, f.fk_statut, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
+$sql .= " f.ref, f.rowid, f.fk_statut as status, f.description, f.datec as date_creation, f.tms as date_update, f.note_private,";
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS) && $atleastonefieldinlines) $sql .= "fd.rowid as lineid, fd.description as descriptiondetail, fd.date as dp, fd.duree,";
 $sql .= " s.nom as name, s.rowid as socid, s.client, s.fournisseur, s.email, s.status as thirdpartystatus";
 if (!empty($conf->projet->enabled)) {
@@ -249,7 +249,7 @@ if ($search_desc) {
 	else $sql .= natural_search(array('f.description'), $search_desc);
 }
 if ($search_status != '' && $search_status >= 0) {
-	$sql .= ' AND f.fk_statut = '.$search_status;
+	$sql .= ' AND f.fk_statut = '.urlencode($search_status);
 }
 if (!$user->rights->societe->client->voir && empty($socid))
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -329,12 +329,11 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "Information";
 	$modelmail = "intervention";
@@ -477,14 +476,15 @@ if ($resql)
 
 		$objectstatic->id = $obj->rowid;
 		$objectstatic->ref = $obj->ref;
-		$objectstatic->statut = $obj->fk_statut;
+		$objectstatic->statut = $obj->status;
+		$objectstatic->status = $obj->status;
 
-		$companystatic->name=$obj->name;
-		$companystatic->id=$obj->socid;
-		$companystatic->client=$obj->client;
-		$companystatic->fournisseur=$obj->fournisseur;
-		$companystatic->email=$obj->email;
-		$companystatic->status=$obj->thirdpartystatus;
+		$companystatic->name = $obj->name;
+		$companystatic->id = $obj->socid;
+		$companystatic->client = $obj->client;
+		$companystatic->fournisseur = $obj->fournisseur;
+		$companystatic->email = $obj->email;
+		$companystatic->status = $obj->thirdpartystatus;
 
 		print '<tr class="oddeven">';
 
@@ -516,109 +516,109 @@ if ($resql)
 
 			// Other picto tool
 			print '<td width="16" class="right nobordernopadding hideonsmartphone">';
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->ficheinter->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+			$filename = dol_sanitizeFileName($obj->ref);
+			$filedir = $conf->ficheinter->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print "</td>\n";
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
-		if (! empty($arrayfields['s.nom']['checked']))
+		if (!empty($arrayfields['s.nom']['checked']))
 		{
 			print '<td>';
 			print $companystatic->getNomUrl(1, '', 44);
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
-        if (! empty($arrayfields['pr.ref']['checked']))
+        if (!empty($arrayfields['pr.ref']['checked']))
         {
             print '<td>';
-            $projetstatic->id=$obj->projet_id;
-            $projetstatic->ref=$obj->projet_ref;
-            $projetstatic->title=$obj->projet_title;
+            $projetstatic->id = $obj->projet_id;
+            $projetstatic->ref = $obj->projet_ref;
+            $projetstatic->title = $obj->projet_title;
             if ($projetstatic->id > 0) {
                 print $projetstatic->getNomUrl(1, '');
             }
             print '</td>';
-            if (! $i) $totalarray['nbfield']++;
+            if (!$i) $totalarray['nbfield']++;
         }
-        if (! empty($arrayfields['c.ref']['checked']))
+        if (!empty($arrayfields['c.ref']['checked']))
         {
             print '<td>';
-            $contratstatic->id=$obj->contrat_id;
-            $contratstatic->ref=$obj->contrat_ref;
-            $contratstatic->ref_customer=$obj->contrat_ref_customer;
-            $contratstatic->ref_supplier=$obj->contrat_ref_supplier;
+            $contratstatic->id = $obj->contrat_id;
+            $contratstatic->ref = $obj->contrat_ref;
+            $contratstatic->ref_customer = $obj->contrat_ref_customer;
+            $contratstatic->ref_supplier = $obj->contrat_ref_supplier;
             if ($contratstatic->id > 0) {
                 print $contratstatic->getNomUrl(1, '');
                 print '</td>';
             }
-            if (! $i) $totalarray['nbfield']++;
+            if (!$i) $totalarray['nbfield']++;
         }
-		if (! empty($arrayfields['f.description']['checked']))
+		if (!empty($arrayfields['f.description']['checked']))
 		{
 			print '<td>'.dol_trunc(dolGetFirstLineOfText($obj->description), 48).'</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters);    // Note that $action and $object may have been modified by hook
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
-		if (! empty($arrayfields['f.datec']['checked']))
+		if (!empty($arrayfields['f.datec']['checked']))
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Date modification
-		if (! empty($arrayfields['f.tms']['checked']))
+		if (!empty($arrayfields['f.tms']['checked']))
 		{
 			print '<td class="center">';
 			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Status
-		if (! empty($arrayfields['f.fk_statut']['checked']))
+		if (!empty($arrayfields['f.fk_statut']['checked']))
 		{
-			print '<td class="right">'.$objectstatic->LibStatut($obj->fk_statut, 5).'</td>';
-			if (! $i) $totalarray['nbfield']++;
+			print '<td class="right">'.$objectstatic->getLibStatut(5).'</td>';
+			if (!$i) $totalarray['nbfield']++;
 		}
 		// Fields of detail of line
-		if (! empty($arrayfields['fd.description']['checked']))
+		if (!empty($arrayfields['fd.description']['checked']))
 		{
 		    print '<td>'.dolGetFirstLineOfText($obj->descriptiondetail).'</td>';
-		    if (! $i) $totalarray['nbfield']++;
+		    if (!$i) $totalarray['nbfield']++;
 		}
-		if (! empty($arrayfields['fd.date']['checked']))
+		if (!empty($arrayfields['fd.date']['checked']))
 		{
 		    print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
-		    if (! $i) $totalarray['nbfield']++;
+		    if (!$i) $totalarray['nbfield']++;
 		}
-		if (! empty($arrayfields['fd.duree']['checked']))
+		if (!empty($arrayfields['fd.duree']['checked']))
 		{
 		    print '<td class="right">'.convertSecondToTime($obj->duree, 'allhourmin').'</td>';
-		    if (! $i) $totalarray['nbfield']++;
-		    if (! $i) $totalarray['pos'][$totalarray['nbfield']]='fd.duree';
+		    if (!$i) $totalarray['nbfield']++;
+		    if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'fd.duree';
 		    $totalarray['val']['fd.duree'] += $obj->duree;
 		}
 		// Action column
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
-			$selected=0;
-			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+			$selected = 0;
+			if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
+			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['nbfield']++;
 
 		print "</tr>\n";
 

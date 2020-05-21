@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2013-2017 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,21 @@ if ($action == 'update')
         }
     }
 
-    if (! $error)
+    $report_include_varpay = GETPOST('ACCOUNTING_REPORTS_INCLUDE_VARPAY', 'alpha');
+    if (!empty($report_include_varpay))
+        if ($report_include_varpay == 'yes')
+            if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', 1, 'chaine', 0, '', $conf->entity)) $error++;
+        if ($report_include_varpay == 'no')
+            if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_VARPAY', $conf->entity)) $error++;
+
+    $report_include_loan = GETPOST('ACCOUNTING_REPORTS_INCLUDE_LOAN', 'alpha');
+    if (!empty($report_include_loan))
+        if ($report_include_loan == 'yes')
+            if (!dolibarr_set_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', 1, 'chaine', 0, '', $conf->entity)) $error++;
+        if ($report_include_loan == 'no')
+            if (!dolibarr_del_const($db, 'ACCOUNTING_REPORTS_INCLUDE_LOAN', $conf->entity)) $error++;
+
+    if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -99,9 +114,9 @@ if ($action == 'update')
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ComptaSetup'), $linkback, 'title_setup');
 
 print '<br>';
@@ -157,6 +172,20 @@ foreach ($list as $key)
 	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	print '</td></tr>';
 }
+
+// Option to include various payment in results
+print '<tr class="oddeven value">'."\n";
+print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_VARPAY">'.$langs->trans('IncludeVarpaysInResults').'</label></td>'."\n";
+print '<td class="center">'."\n";
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_VARPAY', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_VARPAY)));
+print '</td></tr>';
+
+// Option to include loan in results
+print '<tr class="oddeven value">'."\n";
+print '<td><label for="ACCOUNTING_REPORTS_INCLUDE_LOAN">'.$langs->trans('IncludeLoansInResults').'</label></td>'."\n";
+print '<td class="center">'."\n";
+print $form->selectyesno('ACCOUNTING_REPORTS_INCLUDE_LOAN', (!empty($conf->global->ACCOUNTING_REPORTS_INCLUDE_LOAN)));
+print '</td></tr>';
 
 print "</table>\n";
 

@@ -222,7 +222,7 @@ print '</td></tr>';
 // Payment type (VIR, LIQ, ...)
 $labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype;
-print $object->num_payment? ' - '.$object->num_payment : '';
+print $object->num_payment ? ' - '.$object->num_payment : '';
 print '</td></tr>';
 
 // Amount
@@ -342,7 +342,7 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
-	if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)print '<td>'.$langs->trans('Entity').'</td>';
+	if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) print '<td>'.$langs->trans('Entity').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
     print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
     print '<td class="right">'.$langs->trans('RemainderToPay').'</td>';
@@ -379,7 +379,7 @@ if ($resql)
 			print '</td>';
 
 			// Expected to pay
-			if ($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED) {
+			if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_INVOICE_SHARING_ENABLED)) {
 				print '<td>';
 				$mc->getInfo($objp->entity);
 				print $mc->label;

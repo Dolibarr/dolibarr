@@ -48,7 +48,7 @@ $result = restrictedArea($user, 'cheque', $id, 'bordereau_cheque', '', 'fk_user_
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "b.dateo,b.rowid";
 if (empty($page) || $page == -1) { $page = 0; }
@@ -306,13 +306,14 @@ $formfile = new FormFile($db);
 
 if ($action == 'new')
 {
+	$head = array();
 	$h = 0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].'?action=new';
 	$head[$h][1] = $langs->trans("MenuChequeDeposits");
 	$hselected = $h;
 	$h++;
 
-	print load_fiche_titre($langs->trans("Cheques"));
+	print load_fiche_titre($langs->trans("Cheques"), '', 'bank_account');
 }
 else
 {

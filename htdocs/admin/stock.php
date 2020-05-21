@@ -43,7 +43,7 @@ $action = GETPOST('action', 'alpha');
  */
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
+    $code = $reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -57,7 +57,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
+    $code = $reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -75,21 +75,21 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 
 llxHeader('', $langs->trans("StockSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("StockSetup"), $linkback, 'title_setup');
 
 $head = stock_admin_prepare_head();
 
 dol_fiche_head($head, 'general', $langs->trans("StockSetup"), -1, 'stock');
 
-$form=new Form($db);
+$form = new Form($db);
 
 
-$disabled='';
-if (! empty($conf->productbatch->enabled))
+$disabled = '';
+if (!empty($conf->productbatch->enabled))
 {
 	$langs->load("productbatch");
-	$disabled=' disabled';
+	$disabled = ' disabled';
 	print info_admin($langs->trans("WhenProductBatchModuleOnOptionAreForced"));
 }
 
@@ -106,12 +106,12 @@ print "<td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
 print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
-$found=0;
+$found = 0;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnBill").'</td>';
 print '<td class="right">';
-if (! empty($conf->facture->enabled))
+if (!empty($conf->facture->enabled))
 {
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('STOCK_CALCULATE_ON_BILL');
@@ -131,7 +131,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (! empty($conf->commande->enabled))
+if (!empty($conf->commande->enabled))
 {
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('STOCK_CALCULATE_ON_VALIDATE_ORDER');
@@ -153,7 +153,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
 print '<td class="right">';
-if (! empty($conf->expedition->enabled))
+if (!empty($conf->expedition->enabled))
 {
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT');
@@ -173,7 +173,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
 print '<td class="right">';
-if (! empty($conf->expedition->enabled))
+if (!empty($conf->expedition->enabled))
 {
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('STOCK_CALCULATE_ON_SHIPMENT_CLOSE');
@@ -208,12 +208,12 @@ print "<td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
 print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
-$found=0;
+$found = 0;
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnBill").'</td>';
 print '<td class="right">';
-if (! empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 {
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_BILL');
@@ -234,7 +234,7 @@ $found++;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
 print '<td class="right">';
-if (! empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 {
     if ($conf->use_javascript_ajax) {
         print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER');
@@ -285,7 +285,7 @@ else
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
     print '<td class="right">';
-	if (! empty($conf->fournisseur->enabled))
+	if (!empty($conf->fournisseur->enabled))
 	{
         if ($conf->use_javascript_ajax) {
             print ajax_constantonoff('STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER');
@@ -334,7 +334,7 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if($conf->invoice->enabled)
+if ($conf->invoice->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
@@ -349,7 +349,7 @@ if($conf->invoice->enabled)
     print "</tr>\n";
 }
 
-if($conf->order->enabled)
+if ($conf->order->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
@@ -364,7 +364,7 @@ if($conf->order->enabled)
 	print "</tr>\n";
 }
 
-if($conf->expedition->enabled)
+if ($conf->expedition->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
@@ -382,12 +382,12 @@ print '</table>';
 
 print '<br>';
 
-$virtualdiffersfromphysical=0;
+$virtualdiffersfromphysical = 0;
 if (
-    ! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-    || ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+    !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+    || !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
 ) {
-    $virtualdiffersfromphysical=1;		// According to increase/decrease stock options, virtual and physical stock may differs.
+    $virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
 
 if ($virtualdiffersfromphysical)

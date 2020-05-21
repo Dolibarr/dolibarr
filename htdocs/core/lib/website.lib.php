@@ -21,7 +21,6 @@
  *      \brief      Library for website module
  */
 
-
 /**
  * Remove PHP code part from a string.
  *
@@ -38,8 +37,8 @@ function dolStripPhpCode($str, $replacewith = '')
 	$parts = explode('<?php', $str);
 	if (!empty($parts))
 	{
-		$i=0;
-		foreach($parts as $part)
+		$i = 0;
+		foreach ($parts as $part)
 		{
 			if ($i == 0) 	// The first part is never php code
 			{
@@ -51,11 +50,14 @@ function dolStripPhpCode($str, $replacewith = '')
 			$partlings = explode('?>', $part);
 			if (!empty($partlings))
 			{
-				$phppart = $partlings[0];
+				//$phppart = $partlings[0];
 				//remove content before closing tag
-				if (count($partlings) > 1) $partlings[0] = '';	// Todo why a count > 1 and not >= 1 ?
+				if (count($partlings) > 1) $partlings[0] = ''; // Todo why a count > 1 and not >= 1 ?
 				//append to out string
-				$newstr .= '<span class="phptag" class="tooltip" title="'.dol_escape_htmltag(dolGetFirstLineOfText($phppart).'...').'">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				//$newstr .= '<span class="phptag" class="tooltip" title="'.dol_escape_htmltag(dolGetFirstLineOfText($phppart).'...').'">'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				//$newstr .= '<span>'.$replacewith.'<!-- '.$phppart.' --></span>'.implode('', $partlings);
+				$newstr .= '<span phptag>'.$replacewith.'</span>'.implode('', $partlings);
+				//$newstr .= $replacewith.implode('', $partlings);
 			}
 		}
 	}
@@ -85,7 +87,7 @@ function dolKeepOnlyPhpCode($str)
 				$i++;
 				continue;
 			}
-			$newstr.='<?php';
+			$newstr .= '<?php';
 			//split on closing tag
 			$partlings = explode('?>', $part, 2);
 			if (!empty($partlings))
@@ -117,33 +119,33 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 {
 	$nbrep = 0;
 
-	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'').')', LOG_DEBUG);
+	dol_syslog('dolWebsiteReplacementOfLinks start (contenttype='.$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')', LOG_DEBUG);
 	//if ($contenttype == 'html') { print $content;exit; }
 
 	// Replace php code. Note $content may come from database and does not contains body tags.
-	$replacewith='...php...';
-	if ($removephppart) $replacewith='';
+	$replacewith = '...php...';
+	if ($removephppart) $replacewith = '';
 	$content = preg_replace('/value="<\?php((?!\?>).)*\?>\n*/ims', 'value="'.$replacewith.'"', $content);
 
-	$replacewith='"callto=#';
-	if ($removephppart) $replacewith='';
+	$replacewith = '"callto=#';
+	if ($removephppart) $replacewith = '';
 	$content = preg_replace('/"callto:<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
-	$replacewith='"mailto=#';
-	if ($removephppart) $replacewith='';
+	$replacewith = '"mailto=#';
+	if ($removephppart) $replacewith = '';
 	$content = preg_replace('/"mailto:<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
-	$replacewith='src="php';
-	if ($removephppart) $replacewith='';
+	$replacewith = 'src="php';
+	if ($removephppart) $replacewith = '';
 	$content = preg_replace('/src="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
-	$replacewith='href="php';
-	if ($removephppart) $replacewith='';
+	$replacewith = 'href="php';
+	if ($removephppart) $replacewith = '';
 	$content = preg_replace('/href="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
 	//$replacewith='<span class="phptag">...php...</span>';
-	$replacewith='...php...';
-	if ($removephppart) $replacewith='';
+	$replacewith = '...php...';
+	if ($removephppart) $replacewith = '';
 	//$content = preg_replace('/<\?php((?!\?toremove>).)*\?toremove>\n*/ims', $replacewith, $content);
 	/*if ($content === null) {
 		if (preg_last_error() == PREG_JIT_STACKLIMIT_ERROR) $content = 'preg_replace error (when removing php tags) PREG_JIT_STACKLIMIT_ERROR';
@@ -163,15 +165,15 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content = str_replace('href="'.DOL_URL_ROOT.'/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 
 	// Replace relative link '/' with dolibarr URL
-	$content = preg_replace('/(href=")\/\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'"', $content, -1, $nbrep);
+	$content = preg_replace('/(href=")\/(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageid='.$website->fk_default_home.'\2"', $content, -1, $nbrep);
 	// Replace relative link /xxx.php#aaa or /xxx.php with dolibarr URL (we discard param ?...)
 	$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2\3"', $content, -1, $nbrep);
 	// Replace relative link /xxx.php?a=b&c=d#aaa or /xxx.php?a=b&c=d with dolibarr URL
 	$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
 
 	// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
-	$content = preg_replace('/url\((["\']?)medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-	$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	$content = preg_replace('/url\((["\']?)\/?medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+	$content = preg_replace('/data-slide-bg=(["\']?)\/?medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 
 	// <img src="medias/...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
 	// <img src="...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
@@ -185,11 +187,11 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart = 0, $c
 	$content = preg_replace('/(action=")\/?([^:\"]*)(\.php\")/', '\1!~!~!~'.DOL_URL_ROOT.'/website/index.php?website='.$website->ref.'&pageref=\2"', $content, -1, $nbrep);
 
 	// Fix relative link /document.php with correct URL after the DOL_URL_ROOT:  ...href="/document.php?modulepart="
-	$content=preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
-	$content=preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+	$content = preg_replace('/(href=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+	$content = preg_replace('/(src=")(\/?document\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 	// Fix relative link /viewimage.php with correct URL after the DOL_URL_ROOT:  ...href="/viewimage.php?modulepart="
-	$content=preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
+	$content = preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 	// Fix relative URL
 	$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
@@ -217,12 +219,18 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
+	global $website;
+	global $includehtmlcontentopened;
 
-	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR')?'1':'')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER')?'1':'').')');
+	$nbrep = 0;
+
+	dol_syslog("dolWebsiteOutput start - contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').' includehtmlcontentopened='.$includehtmlcontentopened);
+
+	//print $containerid.' '.$content;
 
 	// Define $urlwithroot
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
 	if (defined('USEDOLIBARREDITOR'))		// REPLACEMENT OF LINKS When page called from Dolibarr editor
@@ -237,8 +245,6 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	}
 	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
-		global $website;
-
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
 
 		// Protect the link styles.css.php to any replacement that we make after.
@@ -247,7 +253,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace('href="//', 'href="!~!~!~//', $content);
 		$content = str_replace(array('src="viewimage.php', 'src="/viewimage.php'), 'src="!~!~!~/viewimage.php', $content);
 		$content = str_replace('src="'.DOL_URL_ROOT.'/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
-		$content = str_replace(array('href="document.php','href="/document.php'), 'href="!~!~!~/document.php', $content);
+		$content = str_replace(array('href="document.php', 'href="/document.php'), 'href="!~!~!~/document.php', $content);
 		$content = str_replace('href="'.DOL_URL_ROOT.'/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 
 		// Replace relative link / with dolibarr URL:  ...href="/"...
@@ -255,6 +261,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		// Replace relative link /xxx.php#aaa or /xxx.php with dolibarr URL:  ...href="....php" (we discard param ?...)
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3"', $content, -1, $nbrep);
 		// Replace relative link /xxx.php?a=b&c=d#aaa or /xxx.php?a=b&c=d with dolibarr URL
+		// Warning: we may replace twice if href="..." was inside an include (dolWebsiteOutput called by include and the by final page), that's why
+		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
@@ -269,8 +277,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = preg_replace('/(url\(")(\/?viewimage\.php\?[^\"]*modulepart=[^\"]*)(\")/', '\1!~!~!~'.DOL_URL_ROOT.'\2\3', $content, -1, $nbrep);
 
 		// Fix relative link into medias with correct URL after the DOL_URL_ROOT: ../url("medias/
-		$content = preg_replace('/url\((["\']?)medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
-		$content = preg_replace('/data-slide-bg=(["\']?)medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/url\((["\']?)\/?medias\//', 'url(\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
+		$content = preg_replace('/data-slide-bg=(["\']?)\/?medias\//', 'data-slide-bg=\1!~!~!~'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file=', $content, -1, $nbrep);
 
 		// <img src="medias/...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
 		// <img src="...image.png... => <img src="dolibarr/viewimage.php/modulepart=medias&file=image.png...
@@ -287,67 +295,77 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		$content = str_replace('href="!~!~!~/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 
-		// Remove the protection tag !~!~!~
-		$content = str_replace('!~!~!~', '', $content);
+		// Remove the protection tag !~!~!~, but only if this is the parent page and not an include
+		if (empty($includehtmlcontentopened)) {
+			$content = str_replace('!~!~!~', '', $content);
+		}
 	}
 	else									// REPLACEMENT OF LINKS When page called from virtual host
 	{
-		$symlinktomediaexists=1;
+		$symlinktomediaexists = 1;
+		if ($website->virtualhost) {
+			$content = preg_replace('/^(<link[^>]*rel="canonical" href=")\//m', '\1'.$website->virtualhost.'/', $content, -1, $nbrep);
+		}
+		//print 'rrrrrrrrr'.$website->virtualhost.$content;
+
 
 		// Make a change into HTML code to allow to include images from medias directory correct with direct link for virtual server
 		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 		// become
 		// <img alt="" src="'.$urlwithroot.'/medias/image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
-		$nbrep=0;
-		if (! $symlinktomediaexists)
+		if (!$symlinktomediaexists)
 		{
 			// <img src="image.png... => <img src="medias/image.png...
-			$content=preg_replace('/(<img[^>]*src=")\/?image\//', '\1/wrapper.php?modulepart=medias&file=medias/image/', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)\/?image\//', '\1/wrapper.php?modulepart=medias&file=medias/image/', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")\/?image\//', '\1/wrapper.php?modulepart=medias&file=medias/image/', $content, -1, $nbrep);
+			$content = preg_replace('/(url\(["\']?)\/?image\//', '\1/wrapper.php?modulepart=medias&file=medias/image/', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1/wrapper.php\2modulepart=medias\3file=\4\5', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp\3\4', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content = preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp\3\4', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 
 			// If some links to documents or viewimage remains, we replace with wrapper
-			$content=preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
-			$content=preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")\/?documents\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 		}
 		else
 		{
 			// <img src="image.png... => <img src="medias/image.png...
-			$content=preg_replace('/(<img[^>]*src=")\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
+			$content = preg_replace('/(url\(["\']?)\/?image\//', '\1/medias/image/', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<script[^>]*src=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")[^\"]*document\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/medias/\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)modulepart=medias([^\)]*)file=([^\)]*)(["\']?\))/', '\1/medias/\4\5', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
-			$content=preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)hashp=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
+			$content = preg_replace('/(url\(["\']?)[^\)]*viewimage\.php([^\)]*)hashp=([^\)]*)(["\']?\))/', '\1/wrapper.php\2hashp=\3\4', $content, -1, $nbrep);
 
-			$content=preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")[^\"]*viewimage\.php([^\"]*)modulepart=mycompany([^\"]*)file=([^\"]*)("[^>]*>)/', '\1/wrapper.php\2modulepart=mycompany\3file=\4\5', $content, -1, $nbrep);
 
 			// If some links to documents or viewimage remains, we replace with wrapper
-			$content=preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
-			$content=preg_replace('/(<a[^>]*href=")\/?document\.php/', '\1/wrapper.php', $content, -1, $nbrep);
+			$content = preg_replace('/(<img[^>]*src=")\/?viewimage\.php/', '\1/wrapper.php', $content, -1, $nbrep);
+			$content = preg_replace('/(<a[^>]*href=")\/?document\.php/', '\1/wrapper.php', $content, -1, $nbrep);
 		}
 	}
 
-	$content=preg_replace('/ contenteditable="true"/', ' contenteditable="false"', $content, -1, $nbrep);
+	$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
+
+	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
+		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
+	}
 
 	dol_syslog("dolWebsiteOutput end");
 
@@ -487,23 +505,26 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
  */
 function includeContainer($containerref)
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running included containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
 
-	$MAXLEVEL=20;
+	$MAXLEVEL = 20;
 
-	if (! preg_match('/\.php$/i', $containerref)) $containerref.='.php';
+	if (!preg_match('/\.php$/i', $containerref)) $containerref .= '.php';
 
-	$fullpathfile=DOL_DATA_ROOT.'/website/'.$websitekey.'/'.$containerref;
+	$fullpathfile = DOL_DATA_ROOT.'/website/'.$websitekey.'/'.$containerref;
 
-	if (empty($includehtmlcontentopened)) $includehtmlcontentopened=0;
+	if (empty($includehtmlcontentopened)) $includehtmlcontentopened = 0;
 	$includehtmlcontentopened++;
 	if ($includehtmlcontentopened > $MAXLEVEL)
 	{
 		print 'ERROR: RECURSIVE CONTENT LEVEL. Depth of recursive call is more than the limit of '.$MAXLEVEL.".\n";
 		return;
 	}
+
+	//dol_syslog("Include container ".$containerref.' includehtmlcontentopened='.$includehtmlcontentopened);
+
 	// file_get_contents is not possible. We must execute code with include
 	//$content = file_get_contents($fullpathfile);
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
@@ -513,7 +534,7 @@ function includeContainer($containerref)
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
-	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
+	print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
 	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 	if (!$res)
@@ -526,14 +547,15 @@ function includeContainer($containerref)
 
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
+ * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software'...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
 function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
 
 	if ($type == 'software')
 	{
@@ -542,9 +564,9 @@ function getStructuredData($type, $data = array())
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
-			"name": "'.$data['name'].'",
-			"operatingSystem": "'.$data['os'].'",
-			"applicationCategory": "https://schema.org/GameApplication",
+			"name": "'.dol_escape_json($data['name']).'",
+			"operatingSystem": "'.dol_escape_json($data['os']).'",
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
 			"aggregateRating": {
 				"@type": "AggregateRating",
 				"ratingValue": "'.$data['ratingvalue'].'",
@@ -553,155 +575,287 @@ function getStructuredData($type, $data = array())
 			"offers": {
 				"@type": "Offer",
 				"price": "'.$data['price'].'",
-				"priceCurrency": "'.($data['currency']?$data['currency']:$conf->currency).'"
+				"priceCurrency": "'.($data['currency'] ? $data['currency'] : $conf->currency).'"
 			}
 		}'."\n";
 		$ret .= '</script>'."\n";
 	}
+	elseif ($type == 'organization')
+	{
+		$companyname = $mysoc->name;
+		$url = $mysoc->url;
+
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
+			"contactPoint": {
+				"@type": "ContactPoint",
+				"contactType": "Contact",
+				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+			},'."\n";
+		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
+			$ret .= '"sameAs": [';
+			$i = 0;
+			foreach($mysoc->socialnetworks as $key => $value) {
+				if ($key == 'linkedin') {
+					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
+				} elseif ($key == 'youtube') {
+					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+				}
+				else {
+					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
+				}
+				$i++;
+				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
+			}
+			$ret .= '],'."\n";
+		}
+		$ret .= "\n".'}'."\n";
+		$ret .= '</script>'."\n";
+	}
 	elseif ($type == 'blogpost')
 	{
-		if ($websitepage->fk_user_creat > 0)
+		if (!empty($websitepage->author_alias))
 		{
-			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-			$tmpuser = new User($db);
-			$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
+			//include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+			//$tmpuser = new User($db);
+			//$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
 
-			if ($restmpuser > 0)
-			{
-				$ret = '<!-- Add structured data for blog post -->'."\n";
-				$ret .= '<script type="application/ld+json">'."\n";
-				$ret .= '{
-					  "@context": "https://schema.org",
-					  "@type": "NewsArticle",
-					  "mainEntityOfPage": {
-					    "@type": "WebPage",
-					    "@id": "'.$websitepage->pageurl.'"
-					  },
-					  "headline": "'.$websitepage->title.'",
-					  "image": [
-					    "'.$websitepage->image.'"
-					   ],
-					  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
-					  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
-					  "author": {
-					    "@type": "Person",
-					    "name": "'.$tmpuser->getFullName($weblangs).'"
-					  },
-					  "publisher": {
-					     "@type": "Organization",
-					     "name": "'.$mysoc->name.'",
-					     "logo": {
-					        "@type": "ImageObject",
-					        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
-					     }
-					   },
-					  "description": "'.$websitepage->description.'"
-					}'."\n";
-				$ret .= '</script>'."\n";
+			$pageurl = $websitepage->pageurl;
+			$title = $websitepage->title;
+			$image = $websitepage->image;
+			$companyname = $mysoc->name;
+			$description = $websitepage->description;
+
+			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
+			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
+			$image = 'medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
+			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
+
+			$ret = '<!-- Add structured data for blog post -->'."\n";
+			$ret .= '<script type="application/ld+json">'."\n";
+			$ret .= '{
+				  "@context": "https://schema.org",
+				  "@type": "NewsArticle",
+				  "mainEntityOfPage": {
+				    "@type": "WebPage",
+				    "@id": "'.dol_escape_json($pageurl).'"
+				  },
+				  "headline": "'.dol_escape_json($title).'",
+				  "image": [
+				    "'.dol_escape_json($image).'"
+				   ],
+				  "dateCreated": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
+				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
+				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
+				  "author": {
+				    "@type": "Person",
+				    "name": "'.dol_escape_json($websitepage->author_alias).'"
+				  },
+				  "publisher": {
+				     "@type": "Organization",
+				     "name": "'.dol_escape_json($companyname).'",
+				     "logo": {
+				        "@type": "ImageObject",
+				        "url": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				     }
+				   },'."\n";
+			if ($websitepage->keywords) {
+				$ret .= '"keywords": [';
+				$i = 0;
+				$arrayofkeywords = explode(',', $websitepage->keywords);
+				foreach($arrayofkeywords as $keyword) {
+					$ret.= '"'.dol_escape_json($keyword).'"';
+					$i++;
+					if ($i < count($arrayofkeywords)) $ret .= ', ';
+				}
+				$ret .= '],'."\n";
 			}
+			$ret .= '"description": "'.dol_escape_json($description).'"';
+			$ret .= "\n".'}'."\n";
+			$ret .= '</script>'."\n";
 		}
 	}
 	elseif ($type == 'product')
 	{
 		$ret = '<!-- Add structured data for blog post -->'."\n";
-		$ret.= '<script type="application/ld+json">'."\n";
-		$ret.= '{
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
 				"@context": "https://schema.org/",
 				"@type": "Product",
-				"name": "'.$data['label'].'",
+				"name": "'.dol_escape_json($data['label']).'",
 				"image": [
-					"'.$data['image'].'",
+					"'.dol_escape_json($data['image']).'",
 				],
-				"description": "'.$data['description'].'",
-				"sku": "'.$data['ref'].'",
+				"description": "'.dol_escape_json($data['description']).'",
+				"sku": "'.dol_escape_json($data['ref']).'",
 				"brand": {
 					"@type": "Thing",
-					"name": "'.$data['brand'].'"
+					"name": "'.dol_escape_json($data['brand']).'"
 				},
 				"author": {
 					"@type": "Person",
-					"name": "'.$data['author'].'"
+					"name": "'.dol_escape_json($data['author']).'"
 				}
 				},
 				"offers": {
 					"@type": "Offer",
 					"url": "https://example.com/anvil",
-					"priceCurrency": "'.($data['currency']?$data['currency']:$conf->currency).'",
+					"priceCurrency": "'.($data['currency'] ? $data['currency'] : $conf->currency).'",
 					"price": "'.$data['price'].'",
 					"itemCondition": "https://schema.org/UsedCondition",
 					"availability": "https://schema.org/InStock",
 					"seller": {
 						"@type": "Organization",
-						"name": "'.$mysoc->name.'"
+						"name": "'.dol_escape_json($mysoc->name).'"
 					}
 				}
 			}'."\n";
-		$ret.= '</script>'."\n";
+		$ret .= '</script>'."\n";
 	}
 	return $ret;
+}
+
+/**
+ * Return HTML content to add structured data for an article, news or Blog Post.
+ *
+ * @return  string							HTML content
+ */
+function getSocialNetworkSharingLinks()
+{
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+
+	$fullurl = $website->alias.'/'.$websitepage->pageurl.'.php';
+	$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
+
+	$out = '<!-- section for social network sharing of page -->'."\n";
+	$out .= '<div class="dol-social-share">'."\n";
+
+	// Twitter
+	$out .= '<div class="dol-social-share-tw">'."\n";
+	$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+	$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+	$out .= '</div>'."\n";
+
+	// Reddit
+	$out .= '<div class="dol-social-share-reddit">'."\n";
+	$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+	$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+	$out .= '</div>'."\n";
+
+	// Facebook
+	$out .= '<div class="dol-social-share-fbl">'."\n";
+	$out .= '<div id="fb-root"></div>'."\n";
+	$out .= '<script>(function(d, s, id) {
+			  var js, fjs = d.getElementsByTagName(s)[0];
+			  if (d.getElementById(id)) return;
+			  js = d.createElement(s); js.id = id;
+			  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
+			  fjs.parentNode.insertBefore(js, fjs);
+			}(document, \'script\', \'facebook-jssdk\'));</script>
+			        <fb:like
+			        href="'.$fullurl.'"
+			        layout="button_count"
+			        show_faces="false"
+			        width="90"
+			        colorscheme="light"
+			        share="1"
+			        action="like" ></fb:like>'."\n";
+	$out .= '</div>'."\n";
+
+	$out .= "\n</div>\n";
+	$out .= '<!-- section end for social network sharing of page -->'."\n";
+
+	return $out;
 }
 
 /**
  * Return list of containers object that match a criteria.
  * WARNING: This function can be used by websites.
  *
- * @param 	string		$type				Type of container to search into (Example: 'page')
- * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination, ...)
+ * @param 	string		$type				Type of container to search into (Example: '', 'page', 'blogpost', 'page,blogpost', ...)
+ * @param 	string		$algo				Algorithm used for search (Example: 'meta' is searching into meta information like title and description, 'content', 'sitefiles', or any combination 'meta,content,...')
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
+ * @param	string		$sortfield			Sort Fields
+ * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '')
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs;	// Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
 	$error = 0;
 	$arrayresult = array('code'=>'', 'list'=>array());
 
-	if (! is_object($weblangs)) $weblangs = $langs;
+	if (!is_object($weblangs)) $weblangs = $langs;
 
 	if (empty($searchstring))
 	{
 		$error++;
-		$arrayresult['code']='KO';
-		$arrayresult['message']=$weblangs->trans("EmptySearchString");
+		$arrayresult['code'] = 'KO';
+		$arrayresult['message'] = $weblangs->trans("EmptySearchString");
 	}
 	elseif (dol_strlen($searchstring) < 2)
 	{
 		$weblangs->load("errors");
 		$error++;
-		$arrayresult['code']='KO';
-		$arrayresult['message']=$weblangs->trans("ErrorSearchCriteriaTooSmall");
+		$arrayresult['code'] = 'KO';
+		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	}
-	elseif (! in_array($type, array('', 'page')))
+	else
 	{
-		$error++;
-		$arrayresult['code']='KO';
-		$arrayresult['message']='Bad value for parameter $type';
+		$tmparrayoftype = explode(',', $type);
+		foreach ($tmparrayoftype as $tmptype) {
+			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+				$error++;
+				$arrayresult['code'] = 'KO';
+				$arrayresult['message'] = 'Bad value for parameter type';
+				break;
+			}
+		}
 	}
 
 	$searchdone = 0;
 	$found = 0;
 
-	if (! $error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo)))
+	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo)))
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
-		$sql.= " WHERE fk_website = ".$website->id;
-		if ($type) $sql.= " AND type_container = '".$db->escape($type)."'";
-		$sql.= " AND (";
+		$sql .= " WHERE fk_website = ".$website->id;
+		if ($langcode) {
+			$sql .= " AND lang ='".$db->escape($langcode)."'";
+		}
+		if ($type) {
+			$tmparrayoftype = explode(',', $type);
+			$typestring = '';
+			foreach ($tmparrayoftype as $tmptype) {
+				$typestring .= ($typestring ? ", " : "")."'".trim($tmptype)."'";
+			}
+			$sql .= " AND type_container IN (".$typestring.")";
+		}
+		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo))
 		{
-			$searchalgo.= ($searchalgo?' OR ':'')."title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
-			$searchalgo.= ($searchalgo?' OR ':'')."keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%'";		// TODO Use a better way to scan keywords
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%'"; // TODO Use a better way to scan keywords
 		}
 		if (preg_match('/content/', $algo))
 		{
-			$searchalgo.= ($searchalgo?' OR ':'')."content LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."content LIKE '%".$db->escape($searchstring)."%'";
 		}
-		$sql.=$searchalgo;
-		$sql.= ")";
-		$sql.= $db->plimit($max);
+		$sql .= $searchalgo;
+		$sql .= ")";
+		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $db->plimit($max);
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -713,7 +867,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 				{
 					$tmpwebsitepage = new WebsitePage($db);
 					$tmpwebsitepage->fetch($obj->rowid);
-					if ($tmpwebsitepage->id > 0) $arrayresult['list'][]=$tmpwebsitepage;
+					if ($tmpwebsitepage->id > 0) $arrayresult['list'][$obj->rowid] = $tmpwebsitepage;
 					$found++;
 				}
 				$i++;
@@ -722,69 +876,69 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25)
 		else
 		{
 			$error++;
-			$arrayresult['code']=$db->lasterrno();
-			$arrayresult['message']=$db->lasterror();
+			$arrayresult['code'] = $db->lasterrno();
+			$arrayresult['message'] = $db->lasterror();
 		}
 
 		$searchdone = 1;
 	}
 
-	if (! $error && (empty($max) || ($found < $max)) && (preg_match('/sitefiles/', $algo)))
+	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/sitefiles/', $algo)))
 	{
 		global $dolibarr_main_data_root;
 
-		$pathofwebsite=$dolibarr_main_data_root.'/website/'.$website->ref;
-		$filehtmlheader=$pathofwebsite.'/htmlheader.html';
-		$filecss=$pathofwebsite.'/styles.css.php';
-		$filejs=$pathofwebsite.'/javascript.js.php';
-		$filerobot=$pathofwebsite.'/robots.txt';
-		$filehtaccess=$pathofwebsite.'/.htaccess';
-		$filemanifestjson=$pathofwebsite.'/manifest.json.php';
-		$filereadme=$pathofwebsite.'/README.md';
+		$pathofwebsite = $dolibarr_main_data_root.'/website/'.$website->ref;
+		$filehtmlheader = $pathofwebsite.'/htmlheader.html';
+		$filecss = $pathofwebsite.'/styles.css.php';
+		$filejs = $pathofwebsite.'/javascript.js.php';
+		$filerobot = $pathofwebsite.'/robots.txt';
+		$filehtaccess = $pathofwebsite.'/.htaccess';
+		$filemanifestjson = $pathofwebsite.'/manifest.json.php';
+		$filereadme = $pathofwebsite.'/README.md';
 
 		$filecontent = file_get_contents($filehtmlheader);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
 		{
-			$arrayresult['list'][]=array('type'=>'website_htmlheadercontent');
+			$arrayresult['list'][] = array('type'=>'website_htmlheadercontent');
 		}
 
 		$filecontent = file_get_contents($filecss);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
 		{
-			$arrayresult['list'][]=array('type'=>'website_csscontent');
+			$arrayresult['list'][] = array('type'=>'website_csscontent');
 		}
 
 		$filecontent = file_get_contents($filejs);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
 		{
-			$arrayresult['list'][]=array('type'=>'website_jscontent');
+			$arrayresult['list'][] = array('type'=>'website_jscontent');
 		}
 
 		$filerobot = file_get_contents($filerobot);
 		if ((empty($max) || ($found < $max)) && preg_match('/'.preg_quote($searchstring, '/').'/', $filecontent))
 		{
-			$arrayresult['list'][]=array('type'=>'website_robotcontent');
+			$arrayresult['list'][] = array('type'=>'website_robotcontent');
 		}
 
 		$searchdone = 1;
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		if ($searchdone)
 		{
-			$arrayresult['code']='OK';
+			$arrayresult['code'] = 'OK';
 			if (empty($arrayresult['list']))
 			{
-				$arrayresult['code']='KO';
-				$arrayresult['message']=$weblangs->trans("NoRecordFound");
+				$arrayresult['code'] = 'KO';
+				$arrayresult['message'] = $weblangs->trans("NoRecordFound");
 			}
 		}
 		else
 		{
 			$error++;
-			$arrayresult['code']='KO';
-			$arrayresult['message']='No supported algorithm found';
+			$arrayresult['code'] = 'KO';
+			$arrayresult['message'] = 'No supported algorithm found';
 		}
 	}
 
@@ -819,6 +973,7 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 	$urltograb = dirname($urltograb); // So urltograb is now http://www.nltechno.com or http://www.nltechno.com/dir1
 
 	// Search X in "img...src=X"
+	$regs = array();
 	preg_match_all('/<img([^\.\/]+)src="([^>"]+)"([^>]*)>/i', $tmp, $regs);
 
 	foreach ($regs[0] as $key => $val)

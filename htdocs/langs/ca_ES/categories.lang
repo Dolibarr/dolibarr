@@ -78,6 +78,7 @@ CatMemberList=Llistat d'etiquetes de socis
 CatContactList=Llistat d'etiquetes de contactes
 CatSupLinks=Enllaços entre proveïdors i etiquetes
 CatCusLinks=Enllaços entre clients/clients potencials i etiquetes
+CatContactsLinks=Enllaços entre contactes / adreces i etiquetes / categories
 CatProdLinks=Enllaços entre productes/serveis i etiquetes
 CatProJectLinks=Enllaços entre projectes i etiquetes
 DeleteFromCat=Elimina de l'etiqueta

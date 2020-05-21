@@ -168,9 +168,9 @@ elseif ($action == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
 	exit;
 }
 
-if ($action == 'maj_pattern')
+if ($action == 'updatepattern')
 {
-    $pattern = GETPOST("pattern");
+    $pattern = GETPOST("pattern", "alpha");
     $explodePattern = explode(';', $pattern);
 
     $patternInError = false;
@@ -184,6 +184,7 @@ if ($action == 'maj_pattern')
 
     if (!$patternInError) {
 	    dolibarr_set_const($db, "USER_PASSWORD_PATTERN", $pattern, 'chaine', 0, '', $conf->entity);
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	    header("Location: security.php");
 	    exit;
     }
@@ -336,11 +337,9 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 	print '</table>';
 
 	print '<br>';
-	print '<table class="right">';
-	print '<tr><td>';
+	print '<div class="center">';
 	print '<a class="button" id="linkChangePattern">'.$langs->trans("Save").'</a>';
-	print '</td></tr>';
-	print '</table>';
+	print '</div>';
 	print '<br><br>';
 
 	print '<script type="text/javascript">';
@@ -369,10 +368,11 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso") {
 	print '	}';
 
 	print '	function generatelink(){';
-	print '		return "security.php?action=maj_pattern&pattern="+getStringArg();';
+	print '		return "security.php?action=updatepattern&pattern="+getStringArg();';
 	print '	}';
 
 	print '	function valuePatternChange(){';
+	print '     console.log("valuePatternChange");';
 	print '		var lang_save = "'.$langs->trans("Save").'";';
 	print '		var lang_error = "'.$langs->trans("Error").'";';
 	print '		var lang_Disabled = "'.$langs->trans("Disabled").'";';

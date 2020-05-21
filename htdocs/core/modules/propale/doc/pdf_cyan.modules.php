@@ -564,9 +564,7 @@ class pdf_cyan extends ModelePDFPropales
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
 
-				$iniY = $tab_top + $this->tabTitleHeight + 2;
-				$curY = $tab_top + $this->tabTitleHeight + 2;
-				$nexY = $tab_top + $this->tabTitleHeight + 2;
+				$nexY = $tab_top + $this->tabTitleHeight;
 
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
@@ -621,15 +619,17 @@ class pdf_cyan extends ModelePDFPropales
 					if ($this->getColumnStatus('desc'))
 					{
     					$pdf->startTransaction();
-    					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                        $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
     					$pageposafter = $pdf->getPage();
+
     					if ($pageposafter > $pageposbefore)	// There is a pagebreak
     					{
     						$pdf->rollbackTransaction(true);
-    						$pageposafter = $pageposbefore;
-    						//print $pageposafter.'-'.$pageposbefore;exit;
+
     						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-    						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                            $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 
     						$pageposafter = $pdf->getPage();
     						$posyafter = $pdf->GetY();
@@ -726,8 +726,8 @@ class pdf_cyan extends ModelePDFPropales
 					}
 
                     // Extrafields
-                    if(!empty($object->lines[$i]->array_options)){
-                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                    if (!empty($object->lines[$i]->array_options)) {
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
                             if ($this->getColumnStatus($extrafieldColKey))
                             {
                                 $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
@@ -794,11 +794,11 @@ class pdf_cyan extends ModelePDFPropales
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
+						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY += 2; // Add space between lines
+
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -1053,7 +1053,7 @@ class pdf_cyan extends ModelePDFPropales
 		}
 
 		// Show payments conditions
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMCOND) && ($object->cond_reglement_code || $object->cond_reglement))
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTTERM) && ($object->cond_reglement_code || $object->cond_reglement))
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -1069,7 +1069,7 @@ class pdf_cyan extends ModelePDFPropales
 			$posy = $pdf->GetY() + 3;
 		}
 
-		if (empty($conf->global->PROPALE_PDF_HIDE_PAYMENTTERMMODE))
+		if (empty($conf->global->PROPOSAL_PDF_HIDE_PAYMENTMODE))
 		{
 			// Check a payment mode is defined
 			/* Not required on a proposal
@@ -1840,7 +1840,7 @@ class pdf_cyan extends ModelePDFPropales
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
@@ -1877,10 +1877,11 @@ class pdf_cyan extends ModelePDFPropales
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
-	            'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	            'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
 	            'align' => 'L',
+                'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	    );
 
@@ -1983,7 +1984,7 @@ class pdf_cyan extends ModelePDFPropales
 	    );
 
         // Add extrafields cols
-        if(!empty($object->lines)) {
+        if (!empty($object->lines)) {
             $line = reset($object->lines);
             $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
         }

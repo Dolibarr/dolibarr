@@ -71,7 +71,7 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
@@ -162,8 +162,8 @@ if ($conf->expedition->enabled)        $elementList['shipping_send'] = $langs->t
 if ($conf->reception->enabled) 		   $elementList['reception_send'] = $langs->trans('MailToSendReception');
 if ($conf->ficheinter->enabled)        $elementList['fichinter_send'] = $langs->trans('MailToSendIntervention');
 if ($conf->supplier_proposal->enabled) $elementList['supplier_proposal_send'] = $langs->trans('MailToSendSupplierRequestForQuotation');
-if ($conf->fournisseur->enabled)       $elementList['order_supplier_send'] = $langs->trans('MailToSendSupplierOrder');
-if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send'] = $langs->trans('MailToSendSupplierInvoice');
+if ($conf->fournisseur->enabled && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || $conf->supplier_order->enabled)	$elementList['order_supplier_send'] = $langs->trans('MailToSendSupplierOrder');
+if ($conf->fournisseur->enabled && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || $conf->supplier_invoice->enabled)	$elementList['invoice_supplier_send'] = $langs->trans('MailToSendSupplierInvoice');
 if ($conf->societe->enabled)           $elementList['thirdparty'] = $langs->trans('MailToThirdparty');
 if ($conf->adherent->enabled)          $elementList['member'] = $langs->trans('MailToMember');
 if ($conf->contrat->enabled)           $elementList['contract'] = $langs->trans('MailToSendContract');
@@ -536,7 +536,7 @@ $errors = $hookmanager->errors;
 
 
 // Line to enter new values (input fields)
-print "<tr ".$bcnd[$var].">";
+print '<tr class="oddeven">';
 
 if (empty($reshook))
 {
@@ -754,9 +754,9 @@ if ($resql)
                 print '<td class="center">';
                 print '<input type="hidden" name="page" value="'.$page.'">';
                 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-                print '<input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                print '<input type="submit" class="button buttongen" name="actionmodify" value="'.$langs->trans("Modify").'">';
                 print '<div name="'.(!empty($obj->rowid) ? $obj->rowid : $obj->code).'"></div>';
-                print '<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'">';
+                print '<input type="submit" class="button buttongen" name="actioncancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
 
                 $fieldsforcontent = array('topic', 'joinfiles', 'content');
@@ -902,10 +902,10 @@ if ($resql)
 
                 // Modify link / Delete link
                 print '<td class="center nowraponall" width="64">';
-                if ($canbemodified) print '<a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a>';
+                if ($canbemodified) print '<a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a>';
                 if ($iserasable)
                 {
-                    print ' &nbsp; <a href="'.$url.'action=delete">'.img_delete().'</a>';
+                    print '<a class="marginleftonly" href="'.$url.'action=delete">'.img_delete().'</a>';
                     //else print '<a href="#">'.img_delete().'</a>';    // Some dictionary can be edited by other profile than admin
                 }
                 print '</td>';
@@ -976,12 +976,9 @@ function fieldList($fieldlist, $obj = '', $tabname = '', $context = '')
 {
 	global $conf, $langs, $user, $db;
 	global $form;
-	global $region_id;
-	global $elementList, $sourceList, $localtax_typeList;
-	global $bc;
+	global $elementList, $sourceList;
 
 	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
 
 	foreach ($fieldlist as $field => $value)
 	{

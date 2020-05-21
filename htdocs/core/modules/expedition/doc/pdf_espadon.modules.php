@@ -179,6 +179,7 @@ class pdf_espadon extends ModelePdfExpedition
 
         // Loop on each lines to detect if there is at least one image to show
         $realpatharray = array();
+        $this->atleastonephoto = false;
         if (!empty($conf->global->MAIN_GENERATE_SHIPMENT_WITH_PICTURE))
         {
             $objphoto = new Product($this->db);
@@ -190,8 +191,16 @@ class pdf_espadon extends ModelePdfExpedition
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
 
-				$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
-				$dir = $conf->product->dir_output.'/'.$pdir;
+				if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+				{
+					$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product') . $object->lines[$i]->fk_product ."/photos/";
+					$dir = $conf->product->dir_output.'/'.$pdir;
+				}
+				else
+				{
+					$pdir = get_exdir(0, 2, 0, 0, $objphoto, 'product') . dol_sanitizeFileName($objphoto->ref).'/';
+					$dir = $conf->product->dir_output.'/'.$pdir;
+				}
 
 				$realpath = '';
 
@@ -213,7 +222,8 @@ class pdf_espadon extends ModelePdfExpedition
                         $filename = $obj['photo'];
                     }
 
-                    $realpath = $dir.$filename;
+					$realpath = $dir.$filename;
+					$this->atleastonephoto = true;
                     break;
                 }
 
@@ -418,9 +428,7 @@ class pdf_espadon extends ModelePdfExpedition
 				$pdf->rollbackTransaction(true);
 
 
-				$iniY = $tab_top + $this->tabTitleHeight + 2;
-				$curY = $tab_top + $this->tabTitleHeight + 2;
-				$nexY = $tab_top + $this->tabTitleHeight + 2;
+				$nexY = $tab_top + $this->tabTitleHeight;
 
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++)
@@ -454,7 +462,7 @@ class pdf_espadon extends ModelePdfExpedition
 					        $curY = $tab_top_newpage;
 
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;
@@ -473,15 +481,15 @@ class pdf_espadon extends ModelePdfExpedition
 					if ($this->getColumnStatus('desc'))
 					{
 					    $pdf->startTransaction();
-					    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
-					    $pageposafter = $pdf->getPage();
+
+                        $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+
+                        $pageposafter = $pdf->getPage();
 					    if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					    {
 					        $pdf->rollbackTransaction(true);
-					        $pageposafter = $pageposbefore;
-					        //print $pageposafter.'-'.$pageposbefore;exit;
-					        $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-					        pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                            $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
 
 					        $pageposafter = $pdf->getPage();
 					        $posyafter = $pdf->GetY();
@@ -500,7 +508,7 @@ class pdf_espadon extends ModelePdfExpedition
 					        {
 					            // We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
 								else
 									$showpricebeforepagebreak = 0;
@@ -571,8 +579,8 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
                     // Extrafields
-                    if(!empty($object->lines[$i]->array_options)){
-                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                    if (!empty($object->lines[$i]->array_options)) {
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
                             if ($this->getColumnStatus($extrafieldColKey))
                             {
                                 $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
@@ -582,16 +590,13 @@ class pdf_espadon extends ModelePdfExpedition
                         }
                     }
 
-					$nexY += 3;
-					if ($weighttxt && $voltxt) $nexY += 2;
-
 					// Add line
 					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY - 1, $this->page_largeur - $this->marge_droite, $nexY - 1);
+						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
@@ -1121,7 +1126,7 @@ class pdf_espadon extends ModelePdfExpedition
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+            'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
@@ -1158,10 +1163,10 @@ class pdf_espadon extends ModelePdfExpedition
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
-	            'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+                'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
-	            'align' => 'L',
+                'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	    );
 
@@ -1180,7 +1185,7 @@ class pdf_espadon extends ModelePdfExpedition
 	        'border-left' => false, // remove left line separator
 	    );
 
-	    if (!empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE) && !empty($this->atleastonephoto))
+	    if (!empty($conf->global->MAIN_GENERATE_SHIPMENT_WITH_PICTURE) && !empty($this->atleastonephoto))
 	    {
 	        $this->cols['photo']['status'] = true;
 	    }
@@ -1248,7 +1253,7 @@ class pdf_espadon extends ModelePdfExpedition
 	    );
 
         // Add extrafields cols
-        if(!empty($object->lines)) {
+        if (!empty($object->lines)) {
             $line = reset($object->lines);
             $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
         }

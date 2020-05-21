@@ -60,7 +60,7 @@ MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=شحنة%s التأكد من صلاحيتها
 ShipmentClassifyClosedInDolibarr=الشحنة %sتم تصنيفها مدفوعة
-ShipmentUnClassifyCloseddInDolibarr=الشحنة %s تم تصنيفها معاد فتحها
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=الشحنة%sتم حذفها
 OrderCreatedInDolibarr=الطلب %s تم إنشاؤة
@@ -123,6 +123,7 @@ AgendaUrlOptionsNotAdmin=<b>لوجينا=!%s</b> لمنع اخراج الجرا�
 AgendaUrlOptions4=<b>لوجينت =%s</b> لتقييد الإخراج على الإجراءات المعينة للمستخدم <b>%s</b> (المالك والآخرين).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=عرض تواريخ ميلاد جهات الإتصال
 AgendaHideBirthdayEvents=إخفاء تواريخ ميلاد جهات الإتصال
 Busy=مشغول

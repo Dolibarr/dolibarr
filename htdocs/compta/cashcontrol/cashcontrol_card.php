@@ -47,13 +47,19 @@ $sday = (GETPOSTISSET('closeday') ?GETPOST('closeday', 'int') : dol_print_date($
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'rowid';
 if (!$sortorder) $sortorder = 'ASC';
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'thirdpartylist';
+
+if ($contextpage == 'takepos')
+{
+    $_GET['optioncss'] = 'print';
+}
 
 // Security check
 if (!$user->rights->cashdesk->run && !$user->rights->takepos->run)
@@ -77,6 +83,9 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('cashcontrolcard', 'globalcard'));
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+
 
 /*
  * Actions
@@ -96,7 +105,22 @@ if (empty($conf->global->CASHDESK_ID_BANKACCOUNT_CASH) && empty($conf->global->C
 
 if (GETPOST('cancel', 'alpha'))
 {
-	$action = 'create';
+	if ($action == 'valid') {
+		$action = 'view';
+	}
+	else {
+		$action = 'create';
+	}
+}
+
+if ($action == "reopen")
+{
+	$result = $object->setStatut($object::STATUS_DRAFT, null, '', 'CASHFENCE_REOPEN');
+	if ($result < 0) {
+		dol_print_error($db, $object->error, $object->error);
+	}
+
+	$action = 'view';
 }
 
 if ($action == "start")
@@ -160,22 +184,53 @@ elseif ($action == "add")
 			$action = "view";
 		}
 	}
+	if ($contextpage == 'takepos') {
+		print "
+		<script>
+		parent.location.href='../../takepos/index.php?place='+parent.place;
+		</script>";
+		exit;
+	}
 }
 
-if ($action == "close")
+if ($action == "valid")	// validate = close
 {
 	$object->fetch($id);
 
-    $result = $object->valid($user);
+	$db->begin();
+
+	/*
+	$object->day_close = GETPOST('closeday', 'int');
+	$object->month_close = GETPOST('closemonth', 'int');
+	$object->year_close = GETPOST('closeyear', 'int');
+	*/
+
+	$object->cash = price2num(GETPOST('cash_amount', 'alpha'));
+	$object->card = price2num(GETPOST('card_amount', 'alpha'));
+	$object->cheque = price2num(GETPOST('cheque_amount', 'alpha'));
+
+	$result = $object->update($user);
+
+	$result = $object->valid($user);
+
 	if ($result <= 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
+		$db->rollback();
 	}
 	else
 	{
 		setEventMessages($langs->trans("CashFenceDone"), null);
+		$db->commit();
 	}
 
+	if ($contextpage == 'takepos') {
+		print "
+		<script>
+		parent.location.href='../../takepos/index.php?place='+parent.place;
+		</script>";
+		exit;
+	}
     $action = "view";
 }
 
@@ -213,15 +268,22 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 
 $form = new Form($db);
 
-if ($action == "create" || $action == "start")
+$initialbalanceforterminal = array();
+$theoricalamountforterminal = array();
+$theoricalnbofinvoiceforterminal = array();
+
+if ($action == "create" || $action == "start" || $action == 'close')
 {
-	llxHeader();
+	if ($action == 'close') {
+		$posmodule = $object->posmodule;
+		$terminalid = $object->posnumber;
+		$terminaltouse = $terminalid;
 
-	$initialbalanceforterminal = array();
-	$theoricalamountforterminal = array();
-	$theoricalnbofinvoiceforterminal = array();
-
-	if (GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '-1')
+		$syear = $object->year_close;
+		$smonth = $object->month_close;
+		$sday = $object->day_close;
+	}
+	elseif (GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '-1')
 	{
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
@@ -234,7 +296,10 @@ if ($action == "create" || $action == "start")
 			setEventMessages($langs->trans("OnlyTerminal1IsAvailableForCashDeskModule"), null, 'errors');
 			$error++;
 		}
+	}
 
+	if ($terminalid != '')
+	{
 		// Calculate $initialbalanceforterminal for terminal 0
 		foreach ($arrayofpaymentmode as $key => $val)
 		{
@@ -246,9 +311,7 @@ if ($action == "create" || $action == "start")
 
 			// Get the bank account dedicated to this point of sale module/terminal
 			$vartouse = 'CASHDESK_ID_BANKACCOUNT_CASH'.$terminaltouse;
-			$bankid = $conf->global->$vartouse; // This value is ok for 'Terminal 0' for module 'CashDesk' and 'TakePos' (they manage only 1 terminal)
-			// Hook to get the good bank id according to posmodule and posnumber.
-			// @todo add hook here
+			$bankid = $conf->global->$vartouse;
 
 			if ($bankid > 0)
 			{
@@ -274,11 +337,9 @@ if ($action == "create" || $action == "start")
 			}
 		}
 
-		// Calculate $theoricalamountforterminal for terminal 0
+		// Calculate $theoricalamountforterminal
 		foreach ($arrayofpaymentmode as $key => $val)
 		{
-			/*$sql = "SELECT SUM(amount) as total FROM ".MAIN_DB_PREFIX."bank";
-			$sql.= " WHERE fk_account = ".$bankid;*/
 			$sql = "SELECT SUM(pf.amount) as total, COUNT(*) as nb";
 			$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as cp";
 			$sql .= " WHERE pf.fk_facture = f.rowid AND p.rowid = pf.fk_paiement AND cp.id = p.fk_paiement";
@@ -315,197 +376,231 @@ if ($action == "create" || $action == "start")
 		}
 	}
 
-	print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
+	//var_dump($theoricalamountforterminal); var_dump($theoricalnbofinvoiceforterminal);
+	if ($action != 'close') {
+		llxHeader();
 
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-    print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
-    if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
-    {
-	    print '<input type="hidden" name="action" value="add">';
-    }
-    else
-    {
-    	print '<input type="hidden" name="action" value="start">';
-    }
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre">';
-    print '<td>'.$langs->trans("Module").'</td>';
-    print '<td>'.$langs->trans("Terminal").'</td>';
-    print '<td>'.$langs->trans("Year").'</td>';
-    print '<td>'.$langs->trans("Month").'</td>';
-    print '<td>'.$langs->trans("Day").'</td>';
-    print '<td></td>';
-    print "</tr>\n";
+		print load_fiche_titre($langs->trans("CashControl")." - ".$langs->trans("New"), '', 'cash-register');
 
-	$disabled = 0;
-	$prefix = 'close';
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	    print '<input type="hidden" name="token" value="'.newToken().'">';
+		if ($contextpage == 'takepos') print '<input type="hidden" name="contextpage" value="takepos">';
+	    if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
+	    {
+		    print '<input type="hidden" name="action" value="add">';
+	    }
+	    elseif ($action == 'close')
+	    {
+	    	print '<input type="hidden" name="action" value="valid">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
+	    }
+		else
+	    {
+	    	print '<input type="hidden" name="action" value="start">';
+	    }
 
-    print '<tr class="oddeven">';
-    print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule', 'alpha'), (count($arrayofposavailable) > 1 ? 1 : 0)).'</td>';
-    print '<td>';
+	    print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder centpercent">';
+	    print '<tr class="liste_titre">';
+	    print '<td>'.$langs->trans("Module").'</td>';
+	    print '<td>'.$langs->trans("Terminal").'</td>';
+	    print '<td>'.$langs->trans("Year").'</td>';
+	    print '<td>'.$langs->trans("Month").'</td>';
+	    print '<td>'.$langs->trans("Day").'</td>';
+	    print '<td></td>';
+	    print "</tr>\n";
 
-    $array = array();
-    $numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
-    for($i = 1; $i <= $numterminals; $i++) {
-    	$array[$i] = $i;
-    }
-    $selectedposnumber = 0; $showempty = 1;
-    if ($conf->global->TAKEPOS_NUM_TERMINALS == '1')
-    {
-        $selectedposnumber = 1; $showempty = 0;
-    }
-    print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
-    //print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
-    print '</td>';
-	// Year
-	print '<td>';
-	$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
-	for ($year = $syear - 10; $year < $syear + 10; $year++)
-	{
-		$retstring .= '<option value="'.$year.'"'.($year == $syear ? ' selected' : '').'>'.$year.'</option>';
-	}
-	$retstring .= "</select>\n";
-	print $retstring;
-	print '</td>';
-	// Month
-	print '<td>';
-	$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'month" name="'.$prefix.'month">';
-	$retstring .= '<option value="0"></option>';
-	for ($month = 1; $month <= 12; $month++)
-	{
-		$retstring .= '<option value="'.$month.'"'.($month == $smonth ? ' selected' : '').'>';
-		$retstring .= dol_print_date(mktime(12, 0, 0, $month, 1, 2000), "%b");
-		$retstring .= "</option>";
-	}
-	$retstring .= "</select>";
-	print $retstring;
-	print '</td>';
-	// Day
-	print '<td>';
-	$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
-	$retstring .= '<option value="0" selected>&nbsp;</option>';
-	for ($day = 1; $day <= 31; $day++)
-	{
-		$retstring .= '<option value="'.$day.'"'.($day == $sday ? ' selected' : '').'>'.$day.'</option>';
-	}
-	$retstring .= "</select>";
-	print $retstring;
-	print '</td>';
-	// Button Start
-	print '<td>';
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
-	{
-		print '';
-	}
-	else
-	{
-		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Start").'">';
-	}
-	print '</td>';
-	print '</table>';
+		$disabled = 0;
+		$prefix = 'close';
 
-	// Table to see/enter balance
-	if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
-	{
-		$posmodule = GETPOST('posmodule', 'alpha');
-		$terminalid = GETPOST('posnumber', 'alpha');
+	    print '<tr class="oddeven">';
+	    print '<td>'.$form->selectarray('posmodule', $arrayofposavailable, GETPOST('posmodule', 'alpha'), (count($arrayofposavailable) > 1 ? 1 : 0)).'</td>';
+	    print '<td>';
 
-		print '<br>';
-
-		print '<table class="noborder centpercent">';
-
-		print '<tr class="liste_titre">';
-		print '<td></td>';
-		print '<td class="center">'.$langs->trans("InitialBankBalance");
-		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
-		print '</td>';
-		print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
-		print $langs->trans("AmountAtEndOfPeriod");
-		print '</td>';
-		print '<td></td>';
-		print '</tr>';
-
-		print '<tr class="liste_titre">';
-		print '<td></td>';
-		print '<td class="center">'.$langs->trans("Cash");
-		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
-		print '</td>';
-		$i = 0;
-		foreach ($arrayofpaymentmode as $key => $val)
+	    $array = array();
+	    $numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+	    for ($i = 1; $i <= $numterminals; $i++) {
+	    	$array[$i] = $i;
+	    }
+	    $selectedposnumber = 0; $showempty = 1;
+	    if ($conf->global->TAKEPOS_NUM_TERMINALS == '1')
+	    {
+	        $selectedposnumber = 1; $showempty = 0;
+	    }
+	    print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty);
+	    //print '<input name="posnumber" type="text" class="maxwidth50" value="'.(GETPOSTISSET('posnumber')?GETPOST('posnumber', 'alpha'):'0').'">';
+	    print '</td>';
+		// Year
+		print '<td>';
+		$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'year" name="'.$prefix.'year">';
+		for ($year = $syear - 10; $year < $syear + 10; $year++)
 		{
-			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>'.$langs->trans($val);
+			$retstring .= '<option value="'.$year.'"'.($year == $syear ? ' selected' : '').'>'.$year.'</option>';
+		}
+		$retstring .= "</select>\n";
+		print $retstring;
+		print '</td>';
+		// Month
+		print '<td>';
+		$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth75imp" id="'.$prefix.'month" name="'.$prefix.'month">';
+		$retstring .= '<option value="0"></option>';
+		for ($month = 1; $month <= 12; $month++)
+		{
+			$retstring .= '<option value="'.$month.'"'.($month == $smonth ? ' selected' : '').'>';
+			$retstring .= dol_print_date(mktime(12, 0, 0, $month, 1, 2000), "%b");
+			$retstring .= "</option>";
+		}
+		$retstring .= "</select>";
+		print $retstring;
+		print '</td>';
+		// Day
+		print '<td>';
+		$retstring = '<select'.($disabled ? ' disabled' : '').' class="flat valignmiddle maxwidth50imp" id="'.$prefix.'day" name="'.$prefix.'day">';
+		$retstring .= '<option value="0" selected>&nbsp;</option>';
+		for ($day = 1; $day <= 31; $day++)
+		{
+			$retstring .= '<option value="'.$day.'"'.($day == $sday ? ' selected' : '').'>'.$day.'</option>';
+		}
+		$retstring .= "</select>";
+		print $retstring;
+		print '</td>';
+		// Button Start
+		print '<td>';
+		if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
+		{
+			print '';
+		}
+		else
+		{
+			print '<input type="submit" name="add" class="button" value="'.$langs->trans("Start").'">';
+		}
+		print '</td>';
+		print '</table>';
+		print '</div>';
+
+		// Table to see/enter balance
+		if (($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') || $action == 'close')
+		{
+			$posmodule = GETPOST('posmodule', 'alpha');
+			$terminalid = GETPOST('posnumber', 'alpha');
+
+			print '<br>';
+
+			print '<div class="div-table-responsive-no-min">';
+			print '<table class="noborder centpercent">';
+
+			print '<tr class="liste_titre">';
+			print '<td></td>';
+			print '<td class="center">'.$langs->trans("InitialBankBalance");
 			//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 			print '</td>';
-			$i++;
-		}
-		print '<td></td>';
-		print '</tr>';
 
-		print '<tr>';
-		// Initial amount
-		print '<td>'.$langs->trans("NbOfInvoices").'</td>';
-		print '<td class="center">';
-		print '</td>';
-		// Amount per payment type
-		$i = 0;
-		foreach ($arrayofpaymentmode as $key => $val)
-		{
-		    print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
-		    print $theoricalnbofinvoiceforterminal[$terminalid][$key];
-		    print '</td>';
-		    $i++;
-		}
-		// Save
-		print '<td align="center"></td>';
-		print '</tr>';
-
-		print '<tr>';
-		// Initial amount
-		print '<td>'.$langs->trans("TheoricalAmount").'</td>';
-		print '<td class="center">';
-		print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
-		print '</td>';
-		// Amount per payment type
-		$i = 0;
-		foreach ($arrayofpaymentmode as $key => $val)
-		{
-			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
-			print price($theoricalamountforterminal[$terminalid][$key]).'<br>';
+			/*
+			print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
+			print $langs->trans("AmountAtEndOfPeriod");
 			print '</td>';
-			$i++;
-		}
-		// Save
-		print '<td align="center"></td>';
-		print '</tr>';
+			*/
+			print '<td></td>';
+			print '</tr>';
 
-		print '<tr>';
-		print '<td>'.$langs->trans("RealAmount").'</td>';
-		// Initial amount
-		print '<td class="center">';
-		print '<input name="opening" type="text" class="maxwidth100 center" value="'.(GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash'])).'">';
-		print '</td>';
-		// Amount per payment type
-		$i = 0;
-		foreach ($arrayofpaymentmode as $key => $val)
-		{
-			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
-			print '<input name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
+			print '<tr class="liste_titre">';
+			print '<td></td>';
+			print '<td class="center">'.$langs->trans("Cash");
+			//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
 			print '</td>';
-			$i++;
-		}
-		// Save
-		print '<td class="center">';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
-		print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
-		print '</td>';
-		print '</tr>';
+			/*
+			$i = 0;
+			foreach ($arrayofpaymentmode as $key => $val)
+			{
+				print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>'.$langs->trans($val);
+				//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+				print '</td>';
+				$i++;
+			}*/
+			print '<td></td>';
+			print '</tr>';
 
-		print '</form>';
+			/*print '<tr>';
+			// Initial amount
+			print '<td>'.$langs->trans("NbOfInvoices").'</td>';
+			print '<td class="center">';
+			print '</td>';
+			// Amount per payment type
+			$i = 0;
+			foreach ($arrayofpaymentmode as $key => $val)
+			{
+			    print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
+			    print $theoricalnbofinvoiceforterminal[$terminalid][$key];
+			    print '</td>';
+			    $i++;
+			}
+			// Save
+			print '<td align="center"></td>';
+			print '</tr>';
+			*/
+
+			print '<tr>';
+			// Initial amount
+			print '<td>'.$langs->trans("TheoricalAmount").'</td>';
+			print '<td class="center">';
+			print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
+			print '</td>';
+			// Amount per payment type
+			/*$i = 0;
+			foreach ($arrayofpaymentmode as $key => $val)
+			{
+				print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
+				print price($theoricalamountforterminal[$terminalid][$key]).'<br>';
+				print '</td>';
+				$i++;
+			}*/
+			// Save
+			print '<td></td>';
+			print '</tr>';
+
+			print '<tr>';
+			print '<td>'.$langs->trans("RealAmount").'</td>';
+			// Initial amount
+			print '<td class="center">';
+			print '<input ';
+			if ($action == 'close') print 'disabled '; // To close cash user can't set opening cash
+			print 'name="opening" type="text" class="maxwidth100 center" value="';
+			if ($action == 'close')
+			{
+				$object->fetch($id);
+				print $object->opening;
+			}
+			else print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+			print '">';
+			print '</td>';
+			// Amount per payment type
+			/*$i = 0;
+			foreach ($arrayofpaymentmode as $key => $val)
+			{
+				print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
+				print '<input ';
+				if ($action == 'start') print 'disabled '; // To start cash user only can set opening cash
+				print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
+				print '</td>';
+				$i++;
+			}*/
+			// Save
+			print '<td class="center">';
+			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			if ($action == 'start') print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
+			elseif ($action == 'close') print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Validate").'">';
+			print '</td>';
+			print '</tr>';
+
+			print '</table>';
+			print '</div>';
+		}
+
+	    print '</form>';
 	}
-    print '</form>';
 }
 
-if (empty($action) || $action == "view")
+if (empty($action) || $action == "view" || $action == "close")
 {
     $result = $object->fetch($id);
 
@@ -517,10 +612,10 @@ if (empty($action) || $action == "view")
     else {
     	$head = array();
     	$head[0][0] = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$object->id;
-    	$head[0][1] = $langs->trans("Card");
+    	$head[0][1] = $langs->trans("CashControl");
     	$head[0][2] = 'cashcontrol';
 
-	    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'cashcontrol');
+	    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'account');
 
     	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -533,7 +628,7 @@ if (empty($action) || $action == "view")
 	    print '<div class="fichecenter">';
 	    print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
-	    print '<table class="border tableforfield" width="100%">';
+		print '<table class="border tableforfield" width="100%">';
 
 		print '<tr><td class="titlefield nowrap">';
 		print $langs->trans("Ref");
@@ -587,17 +682,213 @@ if (empty($action) || $action == "view")
 
 	    dol_fiche_end();
 
-		print '<div class="tabsAction">';
-		print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
-		if ($object->status == CashControl::STATUS_DRAFT)
-		{
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close">'.$langs->trans('ValidateAndClose').'</a></div>';
+	    if ($action != 'close') {
+			print '<div class="tabsAction">';
 
-			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
-		}
-		print '</div>';
+			print '<div class="inline-block divButAction"><a target="_blank" class="butAction" href="report.php?id='.$id.'">'.$langs->trans('PrintTicket').'</a></div>';
 
-		print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
+			if ($object->status == CashControl::STATUS_DRAFT)
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=close&amp;contextpage='.$contextpage.'">'.$langs->trans('Close').'</a></div>';
+
+				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=confirm_delete">'.$langs->trans('Delete').'</a></div>';
+			} else {
+				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=reopen">'.$langs->trans('ReOpen').'</a></div>';
+			}
+
+			print '</div>';
+
+			if ($contextpage != 'takepos') print '<center><iframe src="report.php?id='.$id.'" width="60%" height="800"></iframe></center>';
+	    } else {
+	    	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formclose">';
+	    	print '<input type="hidden" name="token" value="'.newToken().'">';
+			if ($contextpage == 'takepos') print '<input type="hidden" name="contextpage" value="takepos">';
+	    	if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
+	    	{
+	    		print '<input type="hidden" name="action" value="add">';
+	    	}
+	    	elseif ($action == 'close')
+	    	{
+	    		print '<input type="hidden" name="action" value="valid">';
+	    		print '<input type="hidden" name="id" value="'.$id.'">';
+	    	}
+	    	else
+	    	{
+	    		print '<input type="hidden" name="action" value="start">';
+	    	}
+
+	    	/*
+	    	print '<div class="div-table-responsive-no-min">';
+	    	print '<table class="noborder centpercent">';
+	    	print '<tr class="liste_titre">';
+	    	print '<td>'.$langs->trans("Module").'</td>';
+	    	print '<td>'.$langs->trans("Terminal").'</td>';
+	    	print '<td>'.$langs->trans("Year").'</td>';
+	    	print '<td>'.$langs->trans("Month").'</td>';
+	    	print '<td>'.$langs->trans("Day").'</td>';
+	    	print '<td></td>';
+	    	print "</tr>\n";
+
+	    	$disabled = 1;
+	    	$prefix = 'close';
+
+	    	print '<tr class="oddeven">';
+	    	print '<td>'.$form->selectarray('posmodulebis', $arrayofposavailable, $object->posmodule, (count($arrayofposavailable) > 1 ? 1 : 0), 0, 0, '', 0, 0, $disabled).'</td>';
+	    	print '<input type="hidden" name="posmodule" value="'.$object->posmodule.'">';
+	    	print '<td>';
+
+	    	$array = array();
+	    	$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
+	    	for($i = 1; $i <= $numterminals; $i++) {
+	    		$array[$i] = $i;
+	    	}
+	    	$selectedposnumber = $object->posnumber; $showempty = 1;
+	    	//print $form->selectarray('posnumber', $array, GETPOSTISSET('posnumber') ?GETPOST('posnumber', 'int') : $selectedposnumber, $showempty, 0, 0, '', 0, 0, $disabled);
+	    	print '<input name="posnumberbis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->posnumber.'">';
+	    	print '<input type="hidden" name="posnumber" value="'.$object->posmodule.'">';
+	    	print '</td>';
+	    	// Year
+	    	print '<td>';
+	    	print '<input name="yearbis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->year_close.'">';
+	    	print '<input type="hidden" name="year_close" value="'.$object->year_close.'">';
+	    	print '</td>';
+	    	// Month
+	    	print '<td>';
+	    	print '<input name="monthbis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->month_close.'">';
+	    	print '<input type="hidden" name="month_close" value="'.$object->month_close.'">';
+	    	print '</td>';
+	    	// Day
+	    	print '<td>';
+	    	print '<input name="daybis" disabled="disabled" type="text" class="maxwidth50" value="'.$object->date_close.'">';
+	    	print '<input type="hidden" name="day_close" value="'.$object->date_close.'">';
+	    	print '</td>';
+
+			print '<td></td>';
+	    	print '</table>';
+	    	print '</div>';
+	    	*/
+
+	    	// Table to see/enter balance
+	    	if (($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1') || $action == 'close')
+	    	{
+	    		$posmodule = $object->posmodule;
+	    		$terminalid = $object->posnumber;
+
+	    		print '<br>';
+
+	    		print '<div class="div-table-responsive-no-min">';
+	    		print '<table class="noborder centpercent">';
+
+	    		print '<tr class="liste_titre">';
+	    		print '<td></td>';
+	    		print '<td class="center">'.$langs->trans("InitialBankBalance");
+	    		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+	    		print '</td>';
+
+	    		print '<td align="center" class="hide0" colspan="'.count($arrayofpaymentmode).'">';
+	    		print $langs->trans("AmountAtEndOfPeriod");
+	    		print '</td>';
+	    		print '<td></td>';
+	    		print '</tr>';
+
+	    		print '<tr class="liste_titre">';
+	    		print '<td></td>';
+	    		print '<td class="center">'.$langs->trans("Cash");
+	    		//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+	    		print '</td>';
+	    		$i = 0;
+	    		foreach ($arrayofpaymentmode as $key => $val)
+	    		{
+	    			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>'.$langs->trans($val);
+	    			//print '<br>'.$langs->trans("TheoricalAmount").'<br>'.$langs->trans("RealAmount");
+	    			print '</td>';
+	    			$i++;
+	    		}
+	    		print '<td></td>';
+	    		print '</tr>';
+
+	    		print '<tr>';
+	    		// Initial amount
+	    		print '<td>'.$langs->trans("NbOfInvoices").'</td>';
+	    		print '<td class="center">';
+	    		print '</td>';
+	    		// Amount per payment type
+	    		$i = 0;
+	    		foreach ($arrayofpaymentmode as $key => $val)
+	    		{
+	    			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
+	    			print $theoricalnbofinvoiceforterminal[$terminalid][$key];
+	    			print '</td>';
+	    			$i++;
+	    		}
+	    		// Save
+	    		print '<td align="center"></td>';
+	    		print '</tr>';
+
+	    		print '<tr>';
+	    		// Initial amount
+	    		print '<td>'.$langs->trans("TheoricalAmount").'</td>';
+	    		print '<td class="center">';
+	    		print price($initialbalanceforterminal[$terminalid]['cash']).'<br>';
+	    		print '</td>';
+	    		// Amount per payment type
+	    		$i = 0;
+	    		foreach ($arrayofpaymentmode as $key => $val)
+	    		{
+	    			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
+	    			if ($key == 'cash') {
+	    				$deltaforcash = ($object->opening - $initialbalanceforterminal[$terminalid]['cash']);
+	    				print price($theoricalamountforterminal[$terminalid][$key] + $deltaforcash).'<br>';
+	    			} else {
+	    				print price($theoricalamountforterminal[$terminalid][$key]).'<br>';
+	    			}
+	    			print '</td>';
+	    			$i++;
+	    		}
+	    		// Save
+	    		print '<td align="center"></td>';
+	    		print '</tr>';
+
+	    		print '<tr>';
+	    		print '<td>'.$langs->trans("RealAmount").'</td>';
+	    		// Initial amount
+	    		print '<td class="center">';
+	    		print '<input ';
+	    		if ($action == 'close') print 'disabled '; // To close cash user can't set opening cash
+	    		print 'name="opening" type="text" class="maxwidth100 center" value="';
+	    		if ($action == 'close')
+	    		{
+	    			$object->fetch($id);
+	    			print $object->opening;
+	    		}
+	    		else print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+	    		print '">';
+	    		print '</td>';
+	    		// Amount per payment type
+	    		$i = 0;
+	    		foreach ($arrayofpaymentmode as $key => $val)
+	    		{
+	    			print '<td align="center"'.($i == 0 ? ' class="hide0"' : '').'>';
+	    			print '<input ';
+	    			if ($action == 'start') print 'disabled '; // To start cash user only can set opening cash
+	    			print 'name="'.$key.'_amount" type="text"'.($key == 'cash' ? ' autofocus' : '').' class="maxwidth100 center" value="'.GETPOST($key.'_amount', 'alpha').'">';
+	    			print '</td>';
+	    			$i++;
+	    		}
+	    		// Save
+	    		print '<td class="center">';
+	    		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+	    		if ($action == 'start') print '<input type="submit" name="add" class="button" value="'.$langs->trans("Save").'">';
+	    		elseif ($action == 'close') print '<input type="submit" name="valid" class="button" value="'.$langs->trans("Close").'">';
+	    		print '</td>';
+	    		print '</tr>';
+
+	    		print '</table>';
+	    		print '</div>';
+	    	}
+
+	    	print '</form>';
+	    }
     }
 }
 

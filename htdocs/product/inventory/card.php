@@ -148,7 +148,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewInventory"), '', 'products');
+	print load_fiche_titre($langs->trans("NewInventory"), '', 'product');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -183,7 +183,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("Inventory"), '', 'products');
+	print load_fiche_titre($langs->trans("Inventory"), '', 'product');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -329,7 +329,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+    		if (empty($user->socid)) {
+    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+    		}
 
         	if ($permissiontoadd)
     		{
@@ -392,11 +394,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $MAXEVENT = 10;
 
 	    $morehtmlright = '<a href="'.dol_buildpath('/product/inventory/inventory_info.php', 1).'?id='.$object->id.'">';
-	    $morehtmlright.= $langs->trans("SeeAll");
-	    $morehtmlright.= '</a>';
+	    $morehtmlright .= $langs->trans("SeeAll");
+	    $morehtmlright .= '</a>';
 
 	    // List of actions on element
-	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	    $formactions = new FormActions($db);
 	    $somethingshown = $formactions->showactions($object, 'inventory', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
 

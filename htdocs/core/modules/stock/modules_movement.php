@@ -33,7 +33,7 @@ abstract class ModelePDFMovement extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -49,10 +49,10 @@ abstract class ModelePDFMovement extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type='mouvement';
-		$liste=array();
+		$type = 'mouvement';
+		$liste = array();
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 		return $liste;
 	}
 }

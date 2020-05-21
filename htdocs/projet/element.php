@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
@@ -525,6 +525,32 @@ $listofreferent = array(
     'test'=>$conf->agenda->enabled && $user->rights->agenda->myactions->read),
 */
 );
+
+// Change rules for benefit calculation
+if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
+	foreach($listofreferent as $key => $element) {
+		if ($listofreferent[$key]['margin'] == 'add') {
+			unset($listofreferent[$key]['margin']);
+		}
+	}
+	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
+	foreach($newelementforplusmargin as $value) {
+		$listofreferent[$value]['margin']='add';
+	}
+}
+if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
+	foreach($listofreferent as $key => $element) {
+		if ($listofreferent[$key]['margin'] == 'add') {
+			unset($listofreferent[$key]['margin']);
+		}
+	}
+	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	foreach($newelementforplusmargin as $value) {
+		$listofreferent[$value]['margin']='minus';
+	}
+}
+
+
 
 $parameters = array('listofreferent'=>$listofreferent);
 $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);

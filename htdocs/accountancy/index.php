@@ -66,7 +66,7 @@ if ($conf->accounting->enabled)
 
     $resultboxes = FormOther::getBoxesArea($user, "27"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
-	$helpisexpanded = empty($resultboxes['boxactivated']); // If there is no widget, the tooltip help is expanded by default.
+    $helpisexpanded = empty($resultboxes['boxactivated']) || (empty($resultboxes['boxlista']) && empty($resultboxes['boxlistb'])); // If there is no widget, the tooltip help is expanded by default.
 	$showtutorial = '';
 
 	if (!$helpisexpanded)
@@ -88,12 +88,12 @@ if ($conf->accounting->enabled)
 	}
 
 
-	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'accountancy', 0, '', '', $showtutorial);
+	print load_fiche_titre($langs->trans("AccountancyArea"), $resultboxes['selectboxlist'], 'title_accountancy', 0, '', '', $showtutorial);
 
-    print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; 	// hideobject is to start hidden
+    print '<div class="'.($helpisexpanded ? '' : 'hideobject').'" id="idfaq">'; // hideobject is to start hidden
     print "<br>\n";
     print '<span class="opacitymedium">'.$langs->trans("AccountancyAreaDescIntro")."</span><br>\n";
-	print "<br>\n";print "<br>\n";
+	print "<br>\n"; print "<br>\n";
 
 	print load_fiche_titre('<span class="fa fa-calendar-check-o"></span> '.$langs->trans("AccountancyAreaDescActionOnce"), '', '')."\n";
 	print '<hr>';
@@ -101,13 +101,13 @@ if ($conf->accounting->enabled)
 
 	// STEPS
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescJournalSetup", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/journals_list.php?id=35">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("AccountingJournals").'</strong>'.'</a>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescJournalSetup", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/journals_list.php?id=35"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("AccountingJournals").'</strong></a>');
 	print "<br>\n";
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChartModel", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/accountmodel.php">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Pcg_version").'</strong>'.'</a>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChartModel", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/accountmodel.php"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Pcg_version").'</strong></a>');
 	print "<br>\n";
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChart", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Chartofaccounts").'</strong>'.'</a>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescChart", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/account.php"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("Chartofaccounts").'</strong></a>');
 	print "<br>\n";
 
 	print "<br>\n";
@@ -116,20 +116,20 @@ if ($conf->accounting->enabled)
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/defaultaccounts.php">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>'.'</a>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/defaultaccounts.php"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong></a>');
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuBankAccounts").'</strong>'.'</a>')."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBank", $step, '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuBankAccounts").'</strong></a>')."\n";
 	print "<br>\n";
 
 	$step++;
-	$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=10&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuVatAccounts").'</strong>'.'</a>';
+	$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=10&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuVatAccounts").'</strong></a>';
 	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescVat", $step, $textlink);
 	print "<br>\n";
 	if (!empty($conf->tax->enabled))
 	{
-	     $textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong>'.'</a>';
+		$textlink = '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=7&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuTaxAccounts").'</strong></a>';
 	    $step++;
 	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescContrib", $step, $textlink);
 	    print "<br>\n";
@@ -145,7 +145,7 @@ if ($conf->accounting->enabled)
 	if (!empty($conf->expensereport->enabled))  // TODO Move this in the default account page because this is only one accounting account per purpose, not several.
 	{
 	    $step++;
-	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong>'.'</a>');
+	    print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescExpenseReport", $step, '<a href="'.DOL_URL_ROOT.'/admin/dict.php?id=17&from=accountancy"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("MenuExpenseReportAccounts").'</strong></a>');
 	    print "<br>\n";
 	}
 	/*
@@ -169,7 +169,7 @@ if ($conf->accounting->enabled)
 	}*/
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/productaccount.php">'.'<strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("ProductsBinding").'</strong>'.'</a>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<a href="'.DOL_URL_ROOT.'/accountancy/admin/productaccount.php"><strong>'.$langs->transnoentitiesnoconv("Setup").' - '.$langs->transnoentitiesnoconv("ProductsBinding").'</strong></a>');
 	print "<br>\n";
 
 
@@ -186,17 +186,17 @@ if ($conf->accounting->enabled)
 	$langs->loadLangs(array('bills', 'trips'));
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '<a href="'.DOL_URL_ROOT.'/accountancy/customer/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("CustomersVentilation").'</strong>'.'</a>')."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsCustomers"), '<a href="'.DOL_URL_ROOT.'/accountancy/customer/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("CustomersVentilation").'</strong></a>')."\n";
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("SuppliersVentilation").'</strong>'.'</a>')."\n";
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("BillsSuppliers"), '<a href="'.DOL_URL_ROOT.'/accountancy/supplier/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("SuppliersVentilation").'</strong></a>')."\n";
 	print "<br>\n";
 
 	if (!empty($conf->expensereport->enabled) || !empty($conf->deplacement->enabled))
 	{
 		$step++;
-		print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php">'.'<strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong>'.'</a>')."\n";
+		print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescBind", chr(64 + $step), $langs->transnoentitiesnoconv("ExpenseReports"), '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/index.php"><strong>'.$langs->transnoentitiesnoconv("TransferInAccounting").' - '.$langs->transnoentitiesnoconv("ExpenseReportsVentilation").'</strong></a>')."\n";
 	    print "<br>\n";
 	}
 
@@ -222,10 +222,6 @@ if ($conf->accounting->enabled)
     $boxlist .= '<div class="twocolumns">';
 
     $boxlist .= '<div class="firstcolumn fichehalfleft boxhalfleft" id="boxhalfleft">';
-    if (!empty($nbworkboardcount))
-    {
-        $boxlist .= $boxwork;
-    }
 
     $boxlist .= $resultboxes['boxlista'];
 
@@ -233,7 +229,6 @@ if ($conf->accounting->enabled)
 
     $boxlist .= '<div class="secondcolumn fichehalfright boxhalfright" id="boxhalfright">';
 
-    $boxlist .= $boxstat;
     $boxlist .= $resultboxes['boxlistb'];
 
     $boxlist .= '</div>';

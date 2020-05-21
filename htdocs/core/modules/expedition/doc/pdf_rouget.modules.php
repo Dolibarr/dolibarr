@@ -214,9 +214,16 @@ class pdf_rouget extends ModelePdfExpedition
 
 				$objphoto = new Product($this->db);
 				$objphoto->fetch($object->lines[$i]->fk_product);
-
-				$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
-				$dir = $conf->product->dir_output.'/'.$pdir;
+				if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+				{
+					$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
+					$dir = $conf->product->dir_output.'/'.$pdir;
+				}
+				else
+				{
+					$pdir = get_exdir(0, 2, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
+					$dir = $conf->product->dir_output.'/'.$pdir;
+				}
 
 				$realpath = '';
 
@@ -454,7 +461,7 @@ class pdf_rouget extends ModelePdfExpedition
 						$curY = $tab_top_newpage;
 
 						// Allows data in the first page if description is long enough to break in multiples pages
-						if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+						if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 							$showpricebeforepagebreak = 1;
 						else
 							$showpricebeforepagebreak = 0;
@@ -501,7 +508,7 @@ class pdf_rouget extends ModelePdfExpedition
 							// We found a page break
 
 							// Allows data in the first page if description is long enough to break in multiples pages
-							if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
 							else
 								$showpricebeforepagebreak = 0;

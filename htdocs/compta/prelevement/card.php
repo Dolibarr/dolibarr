@@ -49,7 +49,7 @@ $socid = GETPOST('socid', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -58,12 +58,13 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'pl.fk_soc';
 if (!$sortorder) $sortorder = 'DESC';
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
+
 
 /*
  * Actions
@@ -271,10 +272,6 @@ if ($id > 0 || $ref)
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-        /*print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
-		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-		print '<input class="flat" type="file" name="userfile"><br>';
-		print '</td></tr>';*/
 		print '</table><br>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
@@ -321,7 +318,7 @@ if ($id > 0 || $ref)
 	}
 
 
-	$ligne = new LignePrelevement($db, $user);
+	$ligne = new LignePrelevement($db);
 
 	/*
 	 * Lines into withdraw request

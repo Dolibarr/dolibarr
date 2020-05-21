@@ -33,7 +33,7 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 
@@ -47,22 +47,22 @@ print load_fiche_titre($langs->trans("Statistics"));
 
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
-$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
-$sql.= " AND pb.entity = ".$conf->entity;
-$resql=$db->query($sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql .= " AND pb.entity = ".$conf->entity;
+$resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    if ( $num > 0 )
-    {
-        $row = $db->fetch_row($resql);
-        $total = $row[0];
-        $nbtotal = $row[1];
-    }
+	if ($num > 0)
+	{
+		$row = $db->fetch_row($resql);
+		$total = $row[0];
+		$nbtotal = $row[1];
+	}
 }
 
 
@@ -73,16 +73,16 @@ if ($resql)
 print '<br>';
 print load_fiche_titre($langs->trans("WithdrawStatistics"), '', '');
 
-$ligne=new LignePrelevement($db, $user);
+$ligne = new LignePrelevement($db);
 
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
-$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
-$sql.= " AND pb.entity = ".$conf->entity;
-$sql.= " GROUP BY pl.statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql .= " AND pb.entity = ".$conf->entity;
+$sql .= " GROUP BY pl.statut";
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -106,14 +106,14 @@ if ($resql)
 		print $row[1];
 
 		print '</td><td class="right">';
-		print round($row[1]/$nbtotal*100, 2)." %";
+		print round($row[1] / $nbtotal * 100, 2)." %";
 
 		print '</td><td class="right">';
 
 		print price($row[0]);
 
 		print '</td><td class="right">';
-		print round($row[0]/$total*100, 2)." %";
+		print round($row[0] / $total * 100, 2)." %";
 		print '</td></tr>';
 
 		$i++;
@@ -142,40 +142,40 @@ print load_fiche_titre($langs->trans("WithdrawRejectStatistics"), '', '');
 
 // Define total and nbtotal
 $sql = "SELECT sum(pl.amount), count(pl.amount)";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
-$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
-$sql.= " AND pb.entity = ".$conf->entity;
-$sql.= " AND pl.statut = 3";
-$resql=$db->query($sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql .= " AND pb.entity = ".$conf->entity;
+$sql .= " AND pl.statut = 3";
+$resql = $db->query($sql);
 if ($resql)
 {
-    $num = $db->num_rows($resql);
-    $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-    if ( $num > 0 )
-    {
-        $row = $db->fetch_row($resql);
-        $total = $row[0];
-        $nbtotal = $row[1];
-    }
+	if ($num > 0)
+	{
+		$row = $db->fetch_row($resql);
+		$total = $row[0];
+		$nbtotal = $row[1];
+	}
 }
 
 /*
  * Stats sur les rejets
  */
 $sql = "SELECT sum(pl.amount), count(pl.amount) as cc, pr.motif";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
-$sql.= ", ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql.= " WHERE pl.fk_prelevement_bons = pb.rowid";
-$sql.= " AND pb.entity = ".$conf->entity;
-$sql.= " AND pl.statut = 3";
-$sql.= " AND pr.fk_prelevement_lignes = pl.rowid";
-$sql.= " GROUP BY pr.motif";
-$sql.= " ORDER BY cc DESC";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_bons as pb";
+$sql .= ", ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql .= " WHERE pl.fk_prelevement_bons = pb.rowid";
+$sql .= " AND pb.entity = ".$conf->entity;
+$sql .= " AND pl.statut = 3";
+$sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
+$sql .= " GROUP BY pr.motif";
+$sql .= " ORDER BY cc DESC";
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -200,13 +200,13 @@ if ($resql)
 		print '</td><td align="center">'.$row[1];
 
 		print '</td><td class="right">';
-		print round($row[1]/$nbtotal*100, 2)." %";
+		print round($row[1] / $nbtotal * 100, 2)." %";
 
 		print '</td><td class="right">';
 		print price($row[0]);
 
 		print '</td><td class="right">';
-		print round($row[0]/$total*100, 2)." %";
+		print round($row[0] / $total * 100, 2)." %";
 
 		print '</td></tr>';
 

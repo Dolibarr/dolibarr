@@ -51,13 +51,13 @@ class CommandeFournisseurDispatch extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='commandefournisseurdispatch';
+	public $element = 'commandefournisseurdispatch';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
-	public $lines=array();
+	public $table_element = 'commande_fournisseur_dispatch'; //!< Name of table without prefix where object is stored
+	public $lines = array();
 
     /**
 	 * @var int ID
@@ -91,7 +91,7 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public $fk_user;
 
-	public $datec='';
+	public $datec = '';
 	public $comment;
 
 	/**
@@ -99,10 +99,10 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public $status;
 
-	public $tms='';
+	public $tms = '';
 	public $batch;
-	public $eatby='';
-	public $sellby='';
+	public $eatby = '';
+	public $sellby = '';
 
 
 
@@ -136,20 +136,20 @@ class CommandeFournisseurDispatch extends CommonObject
     public function create($user, $notrigger = 0)
     {
     	global $conf, $langs, $hookmanager;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->fk_commande)) $this->fk_commande=trim($this->fk_commande);
-		if (isset($this->fk_product)) $this->fk_product=trim($this->fk_product);
-		if (isset($this->fk_commandefourndet)) $this->fk_commandefourndet=trim($this->fk_commandefourndet);
-		if (isset($this->qty)) $this->qty=trim($this->qty);
-		if (isset($this->fk_entrepot)) $this->fk_entrepot=trim($this->fk_entrepot);
-		if (isset($this->fk_user)) $this->fk_user=trim($this->fk_user);
-		if (isset($this->comment)) $this->comment=trim($this->comment);
-		if (isset($this->status)) $this->status=trim($this->status);
-		if (isset($this->batch)) $this->batch=trim($this->batch);
-		if(empty($this->datec)) $this->datec = dol_now();
+		if (isset($this->fk_commande)) $this->fk_commande = trim($this->fk_commande);
+		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
+		if (isset($this->fk_commandefourndet)) $this->fk_commandefourndet = trim($this->fk_commandefourndet);
+		if (isset($this->qty)) $this->qty = trim($this->qty);
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->fk_user)) $this->fk_user = trim($this->fk_user);
+		if (isset($this->comment)) $this->comment = trim($this->comment);
+		if (isset($this->status)) $this->status = trim($this->status);
+		if (isset($this->batch)) $this->batch = trim($this->batch);
+		if (empty($this->datec)) $this->datec = dol_now();
 
 
 		// Check parameters
@@ -157,48 +157,48 @@ class CommandeFournisseurDispatch extends CommonObject
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-		$sql.= "fk_commande,";
-		$sql.= "fk_product,";
-		$sql.= "fk_commandefourndet,";
-		$sql.= "qty,";
-		$sql.= "fk_entrepot,";
-		$sql.= "fk_user,";
-		$sql.= "datec,";
-		$sql.= "comment,";
-		$sql.= "status,";
-		$sql.= "batch,";
-		$sql.= "eatby,";
-		$sql.= "sellby,";
-		$sql.= "fk_reception";
+		$sql .= "fk_commande,";
+		$sql .= "fk_product,";
+		$sql .= "fk_commandefourndet,";
+		$sql .= "qty,";
+		$sql .= "fk_entrepot,";
+		$sql .= "fk_user,";
+		$sql .= "datec,";
+		$sql .= "comment,";
+		$sql .= "status,";
+		$sql .= "batch,";
+		$sql .= "eatby,";
+		$sql .= "sellby,";
+		$sql .= "fk_reception";
 
 
-        $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->fk_commande)?'NULL':"'".$this->db->escape($this->fk_commande)."'").",";
-		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->db->escape($this->fk_product)."'").",";
-		$sql.= " ".(! isset($this->fk_commandefourndet)?'NULL':"'".$this->db->escape($this->fk_commandefourndet)."'").",";
-		$sql.= " ".(! isset($this->qty)?'NULL':"'".$this->db->escape($this->qty)."'").",";
-		$sql.= " ".(! isset($this->fk_entrepot)?'NULL':"'".$this->db->escape($this->fk_entrepot)."'").",";
-		$sql.= " ".(! isset($this->fk_user)?'NULL':"'".$this->db->escape($this->fk_user)."'").",";
-		$sql.= " ".(! isset($this->datec) || dol_strlen($this->datec)==0?'NULL':"'".$this->db->idate($this->datec)."'").",";
-		$sql.= " ".(! isset($this->comment)?'NULL':"'".$this->db->escape($this->comment)."'").",";
-		$sql.= " ".(! isset($this->status)?'NULL':"'".$this->db->escape($this->status)."'").",";
-		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
-		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
-		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'").",";
-		$sql.= " ".(! isset($this->fk_reception)?'NULL':"'".$this->db->escape($this->fk_reception)."'")."";
-		$sql.= ")";
+        $sql .= ") VALUES (";
+		$sql .= " ".(!isset($this->fk_commande) ? 'NULL' : "'".$this->db->escape($this->fk_commande)."'").",";
+		$sql .= " ".(!isset($this->fk_product) ? 'NULL' : "'".$this->db->escape($this->fk_product)."'").",";
+		$sql .= " ".(!isset($this->fk_commandefourndet) ? 'NULL' : "'".$this->db->escape($this->fk_commandefourndet)."'").",";
+		$sql .= " ".(!isset($this->qty) ? 'NULL' : "'".$this->db->escape($this->qty)."'").",";
+		$sql .= " ".(!isset($this->fk_entrepot) ? 'NULL' : "'".$this->db->escape($this->fk_entrepot)."'").",";
+		$sql .= " ".(!isset($this->fk_user) ? 'NULL' : "'".$this->db->escape($this->fk_user)."'").",";
+		$sql .= " ".(!isset($this->datec) || dol_strlen($this->datec) == 0 ? 'NULL' : "'".$this->db->idate($this->datec)."'").",";
+		$sql .= " ".(!isset($this->comment) ? 'NULL' : "'".$this->db->escape($this->comment)."'").",";
+		$sql .= " ".(!isset($this->status) ? 'NULL' : "'".$this->db->escape($this->status)."'").",";
+		$sql .= " ".(!isset($this->batch) ? 'NULL' : "'".$this->db->escape($this->batch)."'").",";
+		$sql .= " ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : "'".$this->db->idate($this->eatby)."'").",";
+		$sql .= " ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : "'".$this->db->idate($this->sellby)."'").",";
+		$sql .= " ".(!isset($this->fk_reception) ? 'NULL' : "'".$this->db->escape($this->fk_reception)."'")."";
+		$sql .= ")";
 
 		$this->db->begin();
 
 	   	dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
 	            // want this action calls a trigger.
@@ -210,34 +210,23 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
         }
 
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('commandefournisseurdispatchdao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action);    // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
+        // Create extrafields
+        if (!$error)
+        {
+        	$result = $this->insertExtraFields();
+        	if ($result < 0) $error++;
         }
 
         // Commit or rollback
         if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -258,37 +247,37 @@ class CommandeFournisseurDispatch extends CommonObject
     {
     	global $langs;
         $sql = "SELECT";
-		$sql.= " t.rowid,";
+		$sql .= " t.rowid,";
 
-		$sql.= " t.fk_commande,";
-		$sql.= " t.fk_product,";
-		$sql.= " t.fk_commandefourndet,";
-		$sql.= " t.qty,";
-		$sql.= " t.fk_entrepot,";
-		$sql.= " t.fk_user,";
-		$sql.= " t.datec,";
-		$sql.= " t.comment,";
-		$sql.= " t.status,";
-		$sql.= " t.tms,";
-		$sql.= " t.batch,";
-		$sql.= " t.eatby,";
-		$sql.= " t.sellby,";
-		$sql.= " t.fk_reception";
+		$sql .= " t.fk_commande,";
+		$sql .= " t.fk_product,";
+		$sql .= " t.fk_commandefourndet,";
+		$sql .= " t.qty,";
+		$sql .= " t.fk_entrepot,";
+		$sql .= " t.fk_user,";
+		$sql .= " t.datec,";
+		$sql .= " t.comment,";
+		$sql .= " t.status,";
+		$sql .= " t.tms,";
+		$sql .= " t.batch,";
+		$sql .= " t.eatby,";
+		$sql .= " t.sellby,";
+		$sql .= " t.fk_reception";
 
 
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
-        if ($ref) $sql.= " WHERE t.ref = '".$ref."'";
-        else $sql.= " WHERE t.rowid = ".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        if ($ref) $sql .= " WHERE t.ref = '".$ref."'";
+        else $sql .= " WHERE t.rowid = ".$id;
 
     	dol_syslog(get_class($this)."::fetch");
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->rowid;
+                $this->id = $obj->rowid;
 
 				$this->fk_commande = $obj->fk_commande;
 				$this->fk_product = $obj->fk_product;
@@ -303,6 +292,7 @@ class CommandeFournisseurDispatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
+                                $this->fetch_optionals();
             }
             $this->db->free($resql);
 
@@ -310,7 +300,7 @@ class CommandeFournisseurDispatch extends CommonObject
         }
         else
         {
-            $this->error="Error ".$this->db->lasterror();
+            $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -326,19 +316,19 @@ class CommandeFournisseurDispatch extends CommonObject
     public function update($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->fk_commande)) $this->fk_commande=trim($this->fk_commande);
-		if (isset($this->fk_product)) $this->fk_product=trim($this->fk_product);
-		if (isset($this->fk_commandefourndet)) $this->fk_commandefourndet=trim($this->fk_commandefourndet);
-		if (isset($this->qty)) $this->qty=trim($this->qty);
-		if (isset($this->fk_entrepot)) $this->fk_entrepot=trim($this->fk_entrepot);
-		if (isset($this->fk_user)) $this->fk_user=trim($this->fk_user);
-		if (isset($this->comment)) $this->comment=trim($this->comment);
-		if (isset($this->status)) $this->status=trim($this->status);
-		if (isset($this->batch)) $this->batch=trim($this->batch);
+		if (isset($this->fk_commande)) $this->fk_commande = trim($this->fk_commande);
+		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
+		if (isset($this->fk_commandefourndet)) $this->fk_commandefourndet = trim($this->fk_commandefourndet);
+		if (isset($this->qty)) $this->qty = trim($this->qty);
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->fk_user)) $this->fk_user = trim($this->fk_user);
+		if (isset($this->comment)) $this->comment = trim($this->comment);
+		if (isset($this->status)) $this->status = trim($this->status);
+		if (isset($this->batch)) $this->batch = trim($this->batch);
 
 
 
@@ -348,45 +338,45 @@ class CommandeFournisseurDispatch extends CommonObject
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 
-		$sql.= " fk_commande=".(isset($this->fk_commande)?$this->fk_commande:"null").",";
-		$sql.= " fk_product=".(isset($this->fk_product)?$this->fk_product:"null").",";
-		$sql.= " fk_commandefourndet=".(isset($this->fk_commandefourndet)?$this->fk_commandefourndet:"null").",";
-		$sql.= " qty=".(isset($this->qty)?$this->qty:"null").",";
-		$sql.= " fk_entrepot=".(isset($this->fk_entrepot)?$this->fk_entrepot:"null").",";
-		$sql.= " fk_user=".(isset($this->fk_user)?$this->fk_user:"null").",";
-		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql.= " comment=".(isset($this->comment)?"'".$this->db->escape($this->comment)."'":"null").",";
-		$sql.= " status=".(isset($this->status)?$this->status:"null").",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " batch=".(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").",";
-		$sql.= " eatby=".(dol_strlen($this->eatby)!=0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql.= " sellby=".(dol_strlen($this->sellby)!=0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
+		$sql .= " fk_commande=".(isset($this->fk_commande) ? $this->fk_commande : "null").",";
+		$sql .= " fk_product=".(isset($this->fk_product) ? $this->fk_product : "null").",";
+		$sql .= " fk_commandefourndet=".(isset($this->fk_commandefourndet) ? $this->fk_commandefourndet : "null").",";
+		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
+		$sql .= " fk_entrepot=".(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").",";
+		$sql .= " fk_user=".(isset($this->fk_user) ? $this->fk_user : "null").",";
+		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+		$sql .= " comment=".(isset($this->comment) ? "'".$this->db->escape($this->comment)."'" : "null").",";
+		$sql .= " status=".(isset($this->status) ? $this->status : "null").",";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
+		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
+		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null')."";
 
 
-        $sql.= " WHERE rowid=".$this->id;
+        $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
-				if(empty($this->id) && !empty($this->rowid))$this->id=$this->rowid;
-				$result=$this->insertExtraFields();
+				if (empty($this->id) && !empty($this->rowid))$this->id = $this->rowid;
+				$result = $this->insertExtraFields();
 				if ($result < 0)
 				{
 					$error++;
 				}
 			}
 
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 	            // Uncomment this and change MYOBJECT to your own tag if you
-	            $result=$this->call_trigger('LINERECEPTION_UPDATE', $user);
+	            $result = $this->call_trigger('LINERECEPTION_UPDATE', $user);
 	            if ($result < 0) $error++;
 	            //// End call triggers
 			}
@@ -395,13 +385,13 @@ class CommandeFournisseurDispatch extends CommonObject
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -421,13 +411,13 @@ class CommandeFournisseurDispatch extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 		        // want this action calls a trigger.
@@ -439,26 +429,36 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
 		}
 
-		if (! $error)
+                // Remove extrafields
+		if (!$error) {
+			$result = $this->deleteExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+				dol_syslog(get_class($this)."::delete error deleteExtraFields ".$this->error, LOG_ERR);
+			}
+		}
+
+		if (!$error)
 		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-    		$sql.= " WHERE rowid=".$this->id;
+    		$sql .= " WHERE rowid=".$this->id;
 
     		dol_syslog(__METHOD__);
     		$resql = $this->db->query($sql);
-        	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -478,39 +478,39 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		$error=0;
+		$error = 0;
 
-		$object=new Commandefournisseurdispatch($this->db);
+		$object = new Commandefournisseurdispatch($this->db);
 
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+		$object->id = 0;
+		$object->statut = 0;
 
 		// Clear fields
 		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result=$object->create($user);
+		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
-			$this->error=$object->error;
+			$this->error = $object->error;
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return $object->id;
@@ -563,21 +563,21 @@ class CommandeFournisseurDispatch extends CommonObject
         }
         elseif ($mode == 3)
         {
-            if ($status==0) return img_picto($langs->trans($this->statuts[$status]), 'statut0');
-            elseif ($status==1) return img_picto($langs->trans($this->statuts[$status]), 'statut4');
-            elseif ($status==2) return img_picto($langs->trans($this->statuts[$status]), 'statut8');
+            if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut0');
+            elseif ($status == 1) return img_picto($langs->trans($this->statuts[$status]), 'statut4');
+            elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut8');
         }
         elseif ($mode == 4)
         {
-            if ($status==0) return img_picto($langs->trans($this->statuts[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
-            elseif ($status==1) return img_picto($langs->trans($this->statuts[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-            elseif ($status==2) return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
+            if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
+            elseif ($status == 1) return img_picto($langs->trans($this->statuts[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
+            elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
         }
         elseif ($mode == 5)
         {
-            if ($status==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut0');
-            elseif ($status==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut4');
-            elseif ($status==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut8');
+            if ($status == 0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut0');
+            elseif ($status == 1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut4');
+            elseif ($status == 2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut8');
         }
     }
 
@@ -590,21 +590,21 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->id=0;
+		$this->id = 0;
 
-		$this->fk_commande='';
-		$this->fk_product='';
-		$this->fk_commandefourndet='';
-		$this->qty='';
-		$this->fk_entrepot='';
-		$this->fk_user='';
-		$this->datec='';
-		$this->comment='';
-		$this->status='';
-		$this->tms='';
-		$this->batch='';
-		$this->eatby='';
-		$this->sellby='';
+		$this->fk_commande = '';
+		$this->fk_product = '';
+		$this->fk_commandefourndet = '';
+		$this->qty = '';
+		$this->fk_entrepot = '';
+		$this->fk_user = '';
+		$this->datec = '';
+		$this->comment = '';
+		$this->status = '';
+		$this->tms = '';
+		$this->batch = '';
+		$this->eatby = '';
+		$this->sellby = '';
 	}
 
 	/**
@@ -624,46 +624,46 @@ class CommandeFournisseurDispatch extends CommonObject
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
  		$sql = "SELECT";
-		$sql.= " t.rowid,";
+		$sql .= " t.rowid,";
 
-		$sql.= " t.fk_commande,";
-		$sql.= " t.fk_product,";
-		$sql.= " t.fk_commandefourndet,";
-		$sql.= " t.qty,";
-		$sql.= " t.fk_entrepot,";
-		$sql.= " t.fk_user,";
-		$sql.= " t.datec,";
-		$sql.= " t.comment,";
-		$sql.= " t.status,";
-		$sql.= " t.tms,";
-		$sql.= " t.batch,";
-		$sql.= " t.eatby,";
-		$sql.= " t.sellby";
+		$sql .= " t.fk_commande,";
+		$sql .= " t.fk_product,";
+		$sql .= " t.fk_commandefourndet,";
+		$sql .= " t.qty,";
+		$sql .= " t.fk_entrepot,";
+		$sql .= " t.fk_user,";
+		$sql .= " t.datec,";
+		$sql .= " t.comment,";
+		$sql .= " t.status,";
+		$sql .= " t.tms,";
+		$sql .= " t.batch,";
+		$sql .= " t.eatby,";
+		$sql .= " t.sellby";
 
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." as t";
 
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key=='t.comment') {
-					$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
-				} elseif ($key=='t.datec' || $key=='t.tms' || $key=='t.eatby' || $key=='t.sellby' || $key=='t.batch') {
-					$sqlwhere [] = $key . ' = \'' . $this->db->escape($value) . '\'';
+				if ($key == 't.comment') {
+					$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				} elseif ($key == 't.datec' || $key == 't.tms' || $key == 't.eatby' || $key == 't.sellby' || $key == 't.batch') {
+					$sqlwhere [] = $key.' = \''.$this->db->escape($value).'\'';
 				} else {
-					$sqlwhere [] = $key . ' = ' . $this->db->escape($value);
+					$sqlwhere [] = $key.' = '.$this->db->escape($value);
 				}
 			}
 		}
 		if (count($sqlwhere) > 0) {
-			$sql .= ' WHERE ' . implode(' '.$filtermode.' ', $sqlwhere);
+			$sql .= ' WHERE '.implode(' '.$filtermode.' ', $sqlwhere);
 		}
 
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
-			$sql .=  ' ' . $this->db->plimit($limit, $offset);
+			$sql .= ' '.$this->db->plimit($limit, $offset);
 		}
 		$this->lines = array();
 
@@ -674,7 +674,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			while ($obj = $this->db->fetch_object($resql)) {
 				$line = new self($this->db);
 
-				$line->id    = $obj->rowid;
+				$line->id = $obj->rowid;
 
 				$line->fk_commande = $obj->fk_commande;
 				$line->fk_product = $obj->fk_product;
@@ -689,6 +689,7 @@ class CommandeFournisseurDispatch extends CommonObject
 				$line->batch = $obj->batch;
 				$line->eatby = $this->db->jdate($obj->eatby);
 				$line->sellby = $this->db->jdate($obj->sellby);
+                                $line->fetch_optionals();
 
 				$this->lines[$line->id] = $line;
 			}
@@ -696,10 +697,10 @@ class CommandeFournisseurDispatch extends CommonObject
 
 			return $num;
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 }

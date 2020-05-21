@@ -85,8 +85,8 @@ $id = GETPOST('id', 'int');
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -107,34 +107,24 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 if (!$sortfield) $sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
 if (!$sortorder) $sortorder = "ASC";
 
-// Security check
-if (empty($conf->mymodule->enabled)) accessforbidden('Module not enabled');
-$socid = 0;
-if ($user->socid > 0)	// Protection if external user
-{
-	//$socid = $user->socid;
-	accessforbidden();
-}
-//$result = restrictedArea($user, 'mymodule', $id, '');
-
 // Initialize array of search criterias
-$search_all=trim(GETPOST("search_all", 'alpha'));
-$search=array();
-foreach($object->fields as $key => $val)
+$search_all = GETPOST('search_all', 'alphanohtml') ? trim(GETPOST('search_all', 'alphanohtml')) : trim(GETPOST('sall', 'alphanohtml'));
+$search = array();
+foreach ($object->fields as $key => $val)
 {
-	if (GETPOST('search_'.$key, 'alpha') !== '') $search[$key]=GETPOST('search_'.$key, 'alpha');
+	if (GETPOST('search_'.$key, 'alpha') !== '') $search[$key] = GETPOST('search_'.$key, 'alpha');
 }
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
-foreach($object->fields as $key => $val)
+foreach ($object->fields as $key => $val)
 {
-	if ($val['searchall']) $fieldstosearchall['t.'.$key]=$val['label'];
+	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
 }
 
 // Definition of fields for list
-$arrayfields=array();
-foreach($object->fields as $key => $val)
+$arrayfields = array();
+foreach ($object->fields as $key => $val)
 {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) $arrayfields['t.'.$key] = array('label'=>$val['label'], 'checked'=>(($val['visible'] < 0) ? 0 : 1), 'enabled'=>($val['enabled'] && ($val['visible'] != 3)), 'position'=>$val['position']);
@@ -160,6 +150,18 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $permissiontoread = $user->rights->mymodule->myobject->read;
 $permissiontoadd = $user->rights->mymodule->myobject->write;
 $permissiontodelete = $user->rights->mymodule->myobject->delete;
+
+// Security check
+if (empty($conf->mymodule->enabled)) accessforbidden('Module not enabled');
+$socid = 0;
+if ($user->socid > 0)	// Protection if external user
+{
+	//$socid = $user->socid;
+	accessforbidden();
+}
+//$result = restrictedArea($user, 'mymodule', $id, '');
+//if (!$permissiontoread) accessforbidden();
+
 
 
 /*
@@ -256,7 +258,7 @@ $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $objec
 $sql .= $hookmanager->resPrint;
 
 /* If a group by is required
-$sql.= " GROUP BY "
+$sql.= " GROUP BY ";
 foreach($object->fields as $key => $val)
 {
 	$sql.='t.'.$key.', ';
@@ -342,8 +344,8 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&co
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 foreach ($search as $key => $val)
 {
-    if (is_array($search[$key]) && count($search[$key])) foreach ($search[$key] as $skey) $param .= '&search_'.$key.'[]='.urlencode($skey);
-    else $param .= '&search_'.$key.'='.urlencode($search[$key]);
+	if (is_array($search[$key]) && count($search[$key])) foreach ($search[$key] as $skey) $param .= '&search_'.$key.'[]='.urlencode($skey);
+	else $param .= '&search_'.$key.'='.urlencode($search[$key]);
 }
 if ($optioncss != '')     $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
@@ -351,10 +353,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 // List of mass actions available
 $arrayofmassactions = array(
-    //'validate'=>$langs->trans("Validate"),
-    //'generate_doc'=>$langs->trans("ReGeneratePDF"),
-    //'builddoc'=>$langs->trans("PDFMerge"),
-    //'presend'=>$langs->trans("SendByMail"),
+	//'validate'=>$langs->trans("Validate"),
+	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
+	//'builddoc'=>$langs->trans("PDFMerge"),
+	//'presend'=>$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
@@ -367,12 +369,12 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
+//print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', dol_buildpath('/mymodule/myobject_card.php', 1).'?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail = "SendMyObjectRef";
@@ -409,7 +411,7 @@ $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfi
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
 // Fields title search
@@ -502,15 +504,16 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	foreach ($object->fields as $key => $val)
 	{
 		$cssforfield = (empty($val['css']) ? '' : $val['css']);
-	    if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
-	    elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
+		elseif ($key == 'status') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 
-	    if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-	    elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
+		elseif ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
 
-	    if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield .= ($cssforfield ? ' ' : '').'right';
+		if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && $key != 'status') $cssforfield .= ($cssforfield ? ' ' : '').'right';
+		//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
-	    if (!empty($arrayfields['t.'.$key]['checked']))
+		if (!empty($arrayfields['t.'.$key]['checked']))
 		{
 			print '<td'.($cssforfield ? ' class="'.$cssforfield.'"' : '').'>';
 			if ($key == 'status') print $object->getLibStatut(5);

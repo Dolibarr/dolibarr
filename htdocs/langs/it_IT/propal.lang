@@ -77,7 +77,7 @@ TypeContact_propal_external_CUSTOMER=Responsabile per il cliente
 TypeContact_propal_external_SHIPPING=Contatto cliente per la consegna
 # Document models
 DocModelAzurDescription=A complete proposal model 
-DocModelCyanDescription=A complete proposal model
+DocModelCyanDescription=Modello di preventivo completo
 DefaultModelPropalCreate=Creazione del modello predefinito
 DefaultModelPropalToBill=Modello predefinito quando si chiude un preventivo (da fatturare)
 DefaultModelPropalClosed=Modello predefinito quando si chiude un preventivo (da non fatturare)

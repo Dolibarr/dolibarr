@@ -48,7 +48,7 @@ $action = GETPOST('action', 'alpha');
 $mode = GETPOST('mode', 'alpha') ?GETPOST('mode', 'alpha') : 'real';
 $format = GETPOST('format', 'aZ09');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
@@ -252,7 +252,7 @@ if ($resql)
 		print '<input type="hidden" name="limit" value="'.$limit.'"/>';
 	}
 
-    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

@@ -34,30 +34,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (! empty($conf->expedition_bon->enabled))
+if (!empty($conf->expedition_bon->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-if (! empty($conf->stock->enabled))
+if (!empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
+$langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
 $extrafields = new ExtraFields($db);
@@ -515,9 +515,8 @@ else	// View
 			// Other attributes
 			if ($action == 'create_delivery') {
 				// copy from expedition
-				$expeditionExtrafields = new Extrafields($db);
-				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id) > 0) {
+				$extrafields->fetch_name_optionals_label($expedition->table_element);
+				if ($expedition->fetch_optionals() > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
@@ -625,12 +624,14 @@ else	// View
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals($object->lines[$i]->id);
+						$object->lines[$i]->fetch_optionals();
+
 						if ($action == 'create_delivery') {
 							$srcLine = new ExpeditionLigne($db);
 
 							$extrafields->fetch_name_optionals_label($srcLine->table_element);
-							$srcLine->fetch_optionals($expedition->lines[$i]->id);
+							$srcLine->id = $expedition->lines[$i]->id;
+							$srcLine->fetch_optionals();
 
 							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 						}

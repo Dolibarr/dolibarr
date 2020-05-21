@@ -49,7 +49,7 @@ $socid      = GETPOST('socid', 'int');
 
 $sortfield	= GETPOST('sortfield', 'alpha');
 $sortorder	= GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 $amounts = array();
 $amountsresttopay = array();
@@ -357,11 +357,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 
 		// Invoice with Paypal transaction
-		// TODO add hook possibility (regis)
-		if (!empty($conf->paypalplus->enabled) && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_int))
+		// TODO add hook here
+		if (!empty($conf->paypalplus->enabled) && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext))
 		{
 			if (!empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
-			$paymentnum = $facture->ref_int;
+			$paymentnum = $facture->ref_ext;
 		}
 
 		// Add realtime total information

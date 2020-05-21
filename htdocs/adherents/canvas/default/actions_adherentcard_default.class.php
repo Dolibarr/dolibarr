@@ -42,7 +42,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	public function __construct($db, $dirmodule, $targetmodule, $canvas, $card)
 	{
         $this->db               = $db;
-        $this->dirmodule		= $dirmodule;
+        $this->dirmodule = $dirmodule;
         $this->targetmodule     = $targetmodule;
         $this->canvas           = $canvas;
         $this->card             = $card;
@@ -56,13 +56,13 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	private function getTitle($action)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
-		$out='';
+		$out = '';
 
-		if ($action == 'view') 		$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
-		if ($action == 'edit') 		$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
-		if ($action == 'create')	$out.= (! empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
+		if ($action == 'view') 		$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("Adherent") : $langs->trans("ContactAddress"));
+		if ($action == 'edit') 		$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("EditAdherent") : $langs->trans("EditAdherentAddress"));
+		if ($action == 'create')	$out .= (!empty($conf->global->ADHERENT_ADDRESSES_MANAGEMENT) ? $langs->trans("NewAdherent") : $langs->trans("NewAdherentAddress"));
 
 		return $out;
 	}
@@ -88,7 +88,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 
         $this->tpl['title'] = $this->getTitle($action);
         $this->tpl['error'] = $this->error;
-        $this->tpl['errors']= $this->errors;
+        $this->tpl['errors'] = $this->errors;
 
 		if ($action == 'view')
 		{
@@ -96,15 +96,15 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
             $head = member_prepare_head($this->object);
             $title = $this->getTitle($action);
 
-		    $this->tpl['showhead']=dol_get_fiche_head($head, 'card', $title, 0, 'adherent');
-		    $this->tpl['showend']=dol_get_fiche_end();
+		    $this->tpl['showhead'] = dol_get_fiche_head($head, 'card', $title, 0, 'adherent');
+		    $this->tpl['showend'] = dol_get_fiche_end();
 
         	$objsoc = new Societe($db);
             $objsoc->fetch($this->object->socid);
 
-            $this->tpl['actionstodo']=show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
+            $this->tpl['actionstodo'] = show_actions_todo($conf, $langs, $db, $objsoc, $this->object, 1);
 
-            $this->tpl['actionsdone']=show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
+            $this->tpl['actionsdone'] = show_actions_done($conf, $langs, $db, $objsoc, $this->object, 1);
 		}
 		else
 		{

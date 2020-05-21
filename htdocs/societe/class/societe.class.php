@@ -14,7 +14,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
- * Copyright (C) 2019	    Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -87,7 +87,6 @@ class Societe extends CommonObject
 	 */
 	protected $childtablesoncascade = array(
 		"societe_prices",
-		"societe_log",
 		"societe_address",
 		"product_fournisseur_price",
 		"product_customer_price_log",
@@ -125,7 +124,7 @@ class Societe extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'parent' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
@@ -133,17 +132,16 @@ class Societe extends CommonObject
 		'nom' =>array('type'=>'varchar(128)', 'label'=>'Nom', 'enabled'=>1, 'visible'=>-1, 'position'=>35, 'showoncombobox'=>1),
 		'name_alias' =>array('type'=>'varchar(128)', 'label'=>'Name alias', 'enabled'=>1, 'visible'=>-1, 'position'=>36, 'showoncombobox'=>1),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
-		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>45),
-		'ref_int' =>array('type'=>'varchar(60)', 'label'=>'Ref int', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'code_client' =>array('type'=>'varchar(24)', 'label'=>'Code client', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'Code fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'Code compta', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
-		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'Code compta fournisseur', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
+		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'RefExt', 'enabled'=>1, 'visible'=>0, 'position'=>45),
+		'code_client' =>array('type'=>'varchar(24)', 'label'=>'CustomerCode', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'code_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'SupplierCode', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'code_compta' =>array('type'=>'varchar(24)', 'label'=>'CodeCompta', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'code_compta_fournisseur' =>array('type'=>'varchar(24)', 'label'=>'CodeComptaSupplier', 'enabled'=>1, 'visible'=>-1, 'position'=>70),
 		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
 		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
-		'fk_departement' =>array('type'=>'integer', 'label'=>'Fk departement', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
-		'fk_pays' =>array('type'=>'integer', 'label'=>'Fk pays', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+		'fk_departement' =>array('type'=>'integer', 'label'=>'State', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+		'fk_pays' =>array('type'=>'integer:Ccountry:core/class/ccountry.class.php', 'label'=>'Country', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
 		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'fax' =>array('type'=>'varchar(20)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'url' =>array('type'=>'varchar(255)', 'label'=>'Url', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
@@ -160,8 +158,8 @@ class Societe extends CommonObject
 		'twitter' =>array('type'=>'varchar(255)', 'label'=>'Twitter', 'enabled'=>1, 'visible'=>-1, 'position'=>165),*/
 		'fk_effectif' =>array('type'=>'integer', 'label'=>'Fk effectif', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
 		'fk_typent' =>array('type'=>'integer', 'label'=>'Fk typent', 'enabled'=>1, 'visible'=>-1, 'position'=>175),
-		'fk_forme_juridique' =>array('type'=>'integer', 'label'=>'Fk forme juridique', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
-		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Fk currency', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
+		'fk_forme_juridique' =>array('type'=>'integer', 'label'=>'JuridicalStatus', 'enabled'=>1, 'visible'=>-1, 'position'=>180),
+		'fk_currency' =>array('type'=>'varchar(3)', 'label'=>'Currency', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'siren' =>array('type'=>'varchar(128)', 'label'=>'Idprof1', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
 		'siret' =>array('type'=>'varchar(128)', 'label'=>'Idprof2', 'enabled'=>1, 'visible'=>-1, 'position'=>195),
 		'ape' =>array('type'=>'varchar(128)', 'label'=>'Idprof3', 'enabled'=>1, 'visible'=>-1, 'position'=>200),
@@ -625,13 +623,13 @@ class Societe extends CommonObject
 
 	/**
 	 * @var string Internal ref
+	 * @deprecated
 	 */
 	public $ref_int;
 
 	/**
 	 * External user reference.
-	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to
-	 * build.
+	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to build.
 	 * @var string
 	 */
 	public $ref_ext;
@@ -711,6 +709,7 @@ class Societe extends CommonObject
      * @var string Multicurrency code
      */
 	public $multicurrency_code;
+
 
 	/**
 	 *    Constructor
@@ -877,7 +876,7 @@ class Societe extends CommonObject
 		$contact->firstname         = $this->firstname;
 		$contact->civility_id       = $this->civility_id;
 		$contact->socid             = $this->id; // fk_soc
-		$contact->statut            = 1;	// deprecated
+		$contact->statut            = 1; // deprecated
 		$contact->status            = 1;
 		$contact->priv              = 0;
 		$contact->country_id        = $this->country_id;
@@ -966,7 +965,7 @@ class Societe extends CommonObject
 				}
 				elseif ($rescode == -5)
 				{
-					$this->errors[] = 'ErrorprefixRequired';
+					$this->errors[] = 'ErrorPrefixRequired';
 				}
 				$result = -3;
 			}
@@ -1394,9 +1393,18 @@ class Societe extends CommonObject
 				$action = 'update';
 
 				// Actions on extra fields
-				if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+				// Actions on extra languages
+				if (!$error && empty($conf->global->MAIN_EXTRALANGUAGES_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result = $this->insertExtraLanguages();
 					if ($result < 0)
 					{
 						$error++;
@@ -1454,7 +1462,7 @@ class Societe extends CommonObject
 	 *    @param	int		$rowid			Id of third party to load
 	 *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
 	 *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-	 *    @param    string	$ref_int       	Internal reference of third party (not used by dolibarr)
+	 *    @param    string	$notused       	Not used
 	 *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
@@ -1465,12 +1473,12 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-    public function fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
 		global $langs;
 		global $conf;
 
-		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($ref_int) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
+		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
 
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status';
@@ -1515,7 +1523,7 @@ class Societe extends CommonObject
 		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_alias) $sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
 		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
-		if ($ref_int)   $sql .= " AND s.ref_int = '".$this->db->escape($ref_int)."'";
+		if ($notused)   $sql .= " AND s.ref_int = '".$this->db->escape($notused)."'";
 		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
 		if ($idprof2)   $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
 		if ($idprof3)   $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
@@ -1763,7 +1771,7 @@ class Societe extends CommonObject
 			}
 
 			// Removed extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
@@ -1986,11 +1994,11 @@ class Societe extends CommonObject
 	 *    	@param	float	$remise     	Amount of discount
 	 *    	@param  User	$user       	User adding discount
 	 *    	@param  string	$desc			Reason of discount
-	 *      @param  float	$tva_tx     	VAT rate
+	 *      @param  string	$vatrate     	VAT rate (may contain the vat code too). Exemple: '1.23', '1.23 (ABC)', ...
 	 *      @param	int		$discount_type	0 => customer discount, 1 => supplier discount
-	 *		@return	int					<0 if KO, id of discount record if OK
+	 *		@return	int						<0 if KO, id of discount record if OK
 	 */
-    public function set_remise_except($remise, User $user, $desc, $tva_tx = 0, $discount_type = 0)
+    public function set_remise_except($remise, User $user, $desc, $vatrate = '', $discount_type = 0)
 	{
         // phpcs:enable
 		global $langs;
@@ -2011,8 +2019,17 @@ class Societe extends CommonObject
 			return -2;
 		}
 
-		if ($this->id)
+		if ($this->id > 0)
 		{
+			// Clean vat code
+			$reg = array();
+			$vat_src_code = '';
+			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
+			}
+
 			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 			$discount = new DiscountAbsolute($this->db);
@@ -2021,10 +2038,12 @@ class Societe extends CommonObject
 			$discount->discount_type = $discount_type;
 
 			$discount->amount_ht = $discount->multicurrency_amount_ht = price2num($remise, 'MT');
-			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $tva_tx / 100, 'MT');
+			$discount->amount_tva = $discount->multicurrency_amount_tva = price2num($remise * $vatrate / 100, 'MT');
 			$discount->amount_ttc = $discount->multicurrency_amount_ttc = price2num($discount->amount_ht + $discount->amount_tva, 'MT');
 
-			$discount->tva_tx = price2num($tva_tx, 'MT');
+			$discount->tva_tx = price2num($vatrate, 'MT');
+			$discount->vat_src_code = $vat_src_code;
+
 			$discount->description = $desc;
 
 			$result = $discount->create($user);
@@ -2111,7 +2130,7 @@ class Societe extends CommonObject
 					$reparray[$i]['email'] = $obj->email;
 					$reparray[$i]['phone'] = $obj->office_phone;
 					$reparray[$i]['job'] = $obj->job;
-					$reparray[$i]['statut'] = $obj->status;	// deprecated
+					$reparray[$i]['statut'] = $obj->status; // deprecated
 					$reparray[$i]['status'] = $obj->status;
 					$reparray[$i]['entity'] = $obj->entity;
 					$reparray[$i]['login'] = $obj->login;
@@ -2386,7 +2405,7 @@ class Societe extends CommonObject
 		// By default
 		if (empty($linkstart))
 		{
-			$label .= '<u>'.$langs->trans("ShowCompany").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$this->id;
 		}
 
@@ -2459,7 +2478,7 @@ class Societe extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valignmiddle"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($name, $maxlen) : $name);
 		$result .= $linkend;
 
@@ -3604,6 +3623,7 @@ class Societe extends CommonObject
 		$this->phone = $member->phone; // Prof phone
 		$this->email = $member->email;
         $this->socialnetworks = $member->socialnetworks;
+		$this->entity = $member->entity;
 
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
@@ -3725,6 +3745,13 @@ class Societe extends CommonObject
 		$this->instagram_url = empty($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL;
 		$this->youtube_url = empty($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL;
 		$this->github_url = empty($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_GITHUB_URL;
+		$this->socialnetworks = array();
+		if (! empty($this->facebook_url)) $this->socialnetworks['facebook'] = $this->facebook_url;
+		if (! empty($this->twitter_url)) $this->socialnetworks['twitter'] = $this->twitter_url;
+		if (! empty($this->linkedin_url)) $this->socialnetworks['linkedin'] = $this->linkedin_url;
+		if (! empty($this->instagram_url)) $this->socialnetworks['instagram'] = $this->instagram_url;
+		if (! empty($this->youtube_url)) $this->socialnetworks['youtube'] = $this->youtube_url;
+		if (! empty($this->github_url)) $this->socialnetworks['github'] = $this->github_url;
 
 		// Id prof generiques
 		$this->idprof1 = empty($conf->global->MAIN_INFO_SIREN) ? '' : $conf->global->MAIN_INFO_SIREN;
@@ -4402,7 +4429,6 @@ class Societe extends CommonObject
 		$tables = array(
 			'societe_address',
 			'societe_commerciaux',
-			'societe_log',
 			'societe_prices',
 			'societe_remise',
 			'societe_remise_except',

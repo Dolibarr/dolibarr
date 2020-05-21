@@ -231,7 +231,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
     $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-	$page = GETPOST("page", 'int');
+	$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;
 	$pageprev = $page - 1;
@@ -256,7 +256,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="socid" value="'.$object->id.'">';
 		print '<table class="border centpercent">';
@@ -334,7 +334,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 		}
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="'.$prodcustprice->id.'">';
 		print '<table class="border centpercent">';

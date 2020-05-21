@@ -31,15 +31,21 @@ if (!defined('NOREQUIREMENU'))		define('NOREQUIREMENU', '1');
 if (!defined('NOREQUIREHTML'))		define('NOREQUIREHTML', '1');
 if (!defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX', '1');
 
-require '../main.inc.php'; // Load $user and permissions
+if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	// Decode place if it is an order from customer phone
+	$key = GETPOST('key');
+	$place = dol_decode($key);
+}
+else $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
+$idproduct = GETPOST('idproduct', 'int');
 
 if ($setterminal > 0)
 {
@@ -47,6 +53,10 @@ if ($setterminal > 0)
 }
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter"));
+
+if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+	accessforbidden();
+}
 
 /*
  * View
@@ -61,48 +71,82 @@ $head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 
-?>
-<link rel="stylesheet" href="css/phone.css">
-<script language="javascript">
-<?php
-$categorie = new Categorie($db);
-$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
+print '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/takepos/css/phone.css">';
 
-// Search root category to know its level
-//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
-$levelofrootcategory = 0;
-if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
-{
-    foreach ($categories as $key => $categorycursor)
+if ($action == "productinfo") {
+	$prod = new Product($db);
+    $prod->fetch($idproduct);
+	print "<b>".$prod->label."</b><br>";
+	print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$idproduct.'">';
+	print "<br>".$prod->description;
+	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
+	print '<br>';
+	print '<button type="button" class="publicphonebutton2" onclick="AddProductConfirm(place, '.$idproduct.');">'.$langs->trans('Add').'</button>';
+}
+elseif ($action == "editline") {
+	$placeid = GETPOST('placeid', 'int');
+	$selectedline = GETPOST('selectedline', 'int');
+	$invoice = new Facture($db);
+	$invoice->fetch($placeid);
+	foreach ($invoice->lines as $line)
     {
-        if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
-        {
-            $levelofrootcategory = $categorycursor['level'];
-            break;
+        if ($line->id == $selectedline)
+		{
+			$prod = new Product($db);
+			$prod->fetch($line->fk_product);
+			print "<b>".$prod->label."</b><br>";
+			print '<img class="imgwrapper" width="60%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$line->fk_product.'">';
+			print "<br>".$prod->description;
+			print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
+			print '<br>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty - 1).');">-</button>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetQty(place, '.$selectedline.', '.($line->qty + 1).');">+</button>';
+			print '<button type="button" class="publicphonebutton2" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
         }
     }
 }
-$levelofmaincategories = $levelofrootcategory + 1;
+else {
+	?>
+<script language="javascript">
+	<?php
+	$categorie = new Categorie($db);
+	$categories = $categorie->get_full_arbo('product', (($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) ? $conf->global->TAKEPOS_ROOT_CATEGORY_ID : 0), 1);
 
-$maincategories = array();
-$subcategories = array();
-foreach ($categories as $key => $categorycursor)
-{
-    if ($categorycursor['level'] == $levelofmaincategories)
-    {
-        $maincategories[$key] = $categorycursor;
-    }
-    else
-    {
-        $subcategories[$key] = $categorycursor;
-    }
-}
+	// Search root category to know its level
+	//$conf->global->TAKEPOS_ROOT_CATEGORY_ID=0;
+	$levelofrootcategory = 0;
+	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0)
+	{
+    	foreach ($categories as $key => $categorycursor)
+    	{
+        	if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID)
+        	{
+            	$levelofrootcategory = $categorycursor['level'];
+            	break;
+        	}
+    	}
+	}
+	$levelofmaincategories = $levelofrootcategory + 1;
 
-sort($maincategories);
-sort($subcategories);
+	$maincategories = array();
+	$subcategories = array();
+	foreach ($categories as $key => $categorycursor)
+	{
+    	if ($categorycursor['level'] == $levelofmaincategories)
+    	{
+        	$maincategories[$key] = $categorycursor;
+    	}
+    	else
+    	{
+        	$subcategories[$key] = $categorycursor;
+    	}
+	}
+
+	sort($maincategories);
+	sort($subcategories);
 
 
-?>
+	?>
 
 var categories = <?php echo json_encode($maincategories); ?>;
 var subcategories = <?php echo json_encode($subcategories); ?>;
@@ -118,33 +162,96 @@ var editnumber="";
 
 $( document ).ready(function() {
     console.log("Refresh");
-    $("#phonediv1").load("invoice.php?mobilepage=places", function() {
-    });
-    $("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
-    });
+	LoadPlace(place);
 });
 
 function LoadPlace(placeid){
     place=placeid;
-    $("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
-    });
+	<?php
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
+		});';
+	}
+	else {
+		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
+		});';
+	}
+	?>
     LoadCats();
 }
 
 function AddProduct(placeid, productid){
-    place=placeid;
-    $("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
+	<?php
+	// If is a public terminal first show product information
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		print 'place=placeid;
+		$("#phonediv1").load("auto_order.php?action=productinfo&place="+place+"&idproduct="+productid, function() {
+		});';
+	}
+	else {
+		print 'AddProductConfirm(placeid, productid);';
+	}
+	?>
+}
+
+function AddProductConfirm(placeid, productid){
+	place=placeid;
+	<?php
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
+		});';
+	}
+	else {
+		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
+		});';
+	}
+	?>
+}
+
+function SetQty(place, selectedline, qty){
+	if (qty==0){
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		});
+	}
+	else{
+		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		});
+	}
+	LoadCats();
+}
+
+function SetNote(place, selectedline){
+	var note = prompt("<?php $langs->trans('Note'); ?>", "Harry Potter");
+	$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
     });
+	LoadCats();
 }
 
 function LoadCats(){
-    $("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
-    });
+	<?php
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
+		});';
+	}
+	else {
+		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
+		});';
+	}
+	?>
 }
 
 function LoadProducts(idcat){
-    $("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
-    });
+    
+	<?php
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+		});';
+	}
+	else {
+		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
+		});';
+	}
+	?>
 }
 
 function LoadPlacesList(){
@@ -154,26 +261,51 @@ function LoadPlacesList(){
 
 function TakeposPrintingOrder(){
     console.log("TakeposPrintingOrder");
-    $("#phonediv2").load("invoice.php?action=order&place="+place, function() {
-    });
+	<?php
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		echo '$("#phonediv2").load("auto_order.php?action=order&place="+place, function() {
+		});';
+	}
+	else {
+		echo '$("#phonediv2").load("invoice.php?action=order&place="+place, function() {
+		});';
+	}
+	?>
 }
 
 function Exit(){
     window.location.href='../user/logout.php';
 }
 
+function CheckPlease(){
+	console.log("Request the check to the waiter");
+	$.ajax({
+		type: "GET",
+		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=thecheck&=place='.$place; ?>",
+	});
+}
+
 </script>
 
 <body style="overflow: hidden; background-color:#D1D1D1;">
-<?php
-if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
-?>
+	<?php
+	if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] == "") print '<div class="dialog-info-takepos-terminal" id="dialog-info" title="TakePOS">'.$langs->trans('TerminalSelect').'</div>';
+	?>
 <div class="container">
 	<div class="phonebuttonsrow">
-		<button type="button" class="phonebutton" onclick="LoadPlacesList();"><?php echo strtoupper(substr($langs->trans('Floors'), 0, 3)); ?></button>
-		<button type="button" class="phonebutton" onclick="LoadCats();"><?php echo strtoupper(substr($langs->trans('Categories'), 0, 3)); ?></button>
-		<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();"><?php echo strtoupper(substr($langs->trans('Order'), 0, 3)); ?></button>
-		<button type="button" class="phonebutton" onclick="Exit();"><?php echo strtoupper(substr($langs->trans('Logout'), 0, 3)); ?></button>
+		<?php
+		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			print '<button type="button" class="phonebutton" onclick="LoadPlacesList();">'.strtoupper(substr($langs->trans('Floors'), 0, 3)).'</button>';
+			print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
+			print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';
+			print '<button type="button" class="phonebutton" onclick="Exit();">'.strtoupper(substr($langs->trans('Logout'), 0, 3)).'</button>';
+		}
+		else {
+			print '<button type="button" class="publicphonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
+			print '<button type="button" class="publicphonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
+			print '<button type="button" class="publicphonebutton" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';
+		}
+		?>
 	</div>
 	<div class="row1">
 		<div id="phonediv1" class="phonediv1"></div>
@@ -183,7 +315,8 @@ if ($conf->global->TAKEPOS_NUM_TERMINALS != "1" && $_SESSION["takeposterminal"] 
 	</div>
 </div>
 </body>
-<?php
+	<?php
+}
 
 llxFooter();
 

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017 ATM Consulting      <contact@atm-consulting.fr>
- * Copyright (C) 2017 Laurent Destailleur <eldy@destailleur.fr>
+/* Copyright (C) 2017      ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2020 Laurent Destailleur <eldy@destailleur.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,6 +115,8 @@ class BlockedLog
 	public $ref_object = '';
 
 	public $object_data = null;
+	public $object_version = '';
+
 	public $user_fullname = '';
 
 	/**
@@ -579,13 +581,13 @@ class BlockedLog
 					}
 
 					$paymentpart->thirdparty = new stdClass();
-					foreach($tmpobject->thirdparty as $key=>$value)
+					foreach ($tmpobject->thirdparty as $key=>$value)
 					{
-						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
-                        if (! in_array($key, array(
-						'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
+						if (in_array($key, $arrayoffieldstoexclude)) continue; // Discard some properties
+                        if (!in_array($key, array(
+						'name', 'name_alias', 'ref_ext', 'address', 'zip', 'town', 'state_code', 'country_code', 'idprof1', 'idprof2', 'idprof3', 'idprof4', 'idprof5', 'idprof6', 'phone', 'fax', 'email', 'barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
-						))) continue;									// Discard if not into a dedicated list
+						))) continue; // Discard if not into a dedicated list
 						if (!is_object($value)) $paymentpart->thirdparty->{$key} = $value;
 					}
 				}
@@ -596,12 +598,12 @@ class BlockedLog
 
 				if ($this->element != 'payment_various')
 				{
-					foreach($tmpobject as $key=>$value)
+					foreach ($tmpobject as $key=>$value)
 					{
-						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
-                        if (! in_array($key, array(
-						'ref','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
-						))) continue;									// Discard if not into a dedicated list
+						if (in_array($key, $arrayoffieldstoexclude)) continue; // Discard some properties
+                        if (!in_array($key, array(
+						'ref', 'ref_client', 'ref_supplier', 'date', 'datef', 'type', 'total_ht', 'total_tva', 'total_ttc', 'localtax1', 'localtax2', 'revenuestamp', 'datepointoftax', 'note_public'
+						))) continue; // Discard if not into a dedicated list
 						if (!is_object($value))
 						{
 							if ($this->element == 'payment_donation') $paymentpart->donation->{$key} = $value;
@@ -674,7 +676,7 @@ class BlockedLog
 		$langs->load("blockedlog");
 
 		$sql = "SELECT b.rowid, b.date_creation, b.signature, b.signature_line, b.amounts, b.action, b.element, b.fk_object, b.entity,";
-		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.object_data";
+		$sql .= " b.certified, b.tms, b.fk_user, b.user_fullname, b.date_object, b.ref_object, b.object_data, b.object_version";
 		$sql .= " FROM ".MAIN_DB_PREFIX."blockedlog as b";
 		if ($id) $sql .= " WHERE b.rowid = ".$id;
 
@@ -704,6 +706,7 @@ class BlockedLog
 				$this->user_fullname = $obj->user_fullname;
 
 				$this->object_data = $this->dolDecodeBlockedData($obj->object_data);
+				$this->object_version = $obj->object_version;
 
 				$this->signature		= $obj->signature;
 				$this->signature_line = $obj->signature_line;
@@ -826,6 +829,7 @@ class BlockedLog
 		$sql .= " date_object,";
 		$sql .= " ref_object,";
 		$sql .= " object_data,";
+		$sql .= " object_version,";
 		$sql .= " certified,";
 		$sql .= " fk_user,";
 		$sql .= " user_fullname,";
@@ -841,6 +845,7 @@ class BlockedLog
 		$sql .= "'".$this->db->idate($this->date_object)."',";
 		$sql .= "'".$this->db->escape($this->ref_object)."',";
 		$sql .= "'".$this->db->escape(serialize($this->object_data))."',";
+		$sql .= "'".$this->db->escape($this->object_version)."',";
 		$sql .= "0,";
 		$sql .= $this->fk_user.",";
 		$sql .= "'".$this->db->escape($this->user_fullname)."',";
@@ -914,7 +919,11 @@ class BlockedLog
 	private function buildKeyForSignature()
 	{
 		//print_r($this->object_data);
-		return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
+		if (((int) $this->object_version) > 12) {
+			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
+		} else {
+			return $this->date_creation.'|'.$this->action.'|'.$this->amounts.'|'.$this->ref_object.'|'.$this->date_object.'|'.$this->user_fullname.'|'.print_r($this->object_data, true);
+		}
 	}
 
 

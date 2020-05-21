@@ -2256,4 +2256,94 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     {
         return $this->_remove(array(), $options);
     }
+
+
+    /**
+     * Return Kanban view of a module
+     *
+     * @param	string	$codeenabledisable		HTML code for button to enable/disable module
+     * @param	string	$codetoconfig			HTML code to go to config page
+     * @return 	string							HTML code of Kanban view
+     */
+    public function getKanbanView($codeenabledisable = '', $codetoconfig = '')
+    {
+    	global $conf, $langs;
+
+    	// Define imginfo
+    	$imginfo = "info";
+    	if ($this->isCoreOrExternalModule() == 'external')
+    	{
+    		$imginfo = "info_black";
+    	}
+
+    	$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($this)));
+
+		print '
+    	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : '').($this->isCoreOrExternalModule() == 'external' ? ' info-box-module-external' : '').'">
+	    <div class="info-box info-box-sm info-box-module">
+	    <div class="info-box-icon">';
+
+		$alttext = '';
+		//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
+		//if (is_array($objMod->phpmin)) $alttext.=($alttext?' - ':'').'PHP >= '.join('.',$objMod->phpmin);
+		if (!empty($this->picto))
+		{
+			if (preg_match('/^\//i', $this->picto)) print img_picto($alttext, $this->picto, 'class="inline-block valignmiddle"', 1);
+			else print img_object($alttext, $this->picto, 'class="inline-block valignmiddle"');
+		}
+		else
+		{
+			print img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
+		}
+
+		$version = $this->getVersion(0);
+		$versiontrans = '';
+		if (preg_match('/development/i', $version))  $versiontrans .= 'warning';
+		if (preg_match('/experimental/i', $version)) $versiontrans .= 'warning';
+		if (preg_match('/deprecated/i', $version))   $versiontrans .= 'warning';
+		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
+			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').'" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
+			print $this->getVersion(1);
+			print '</span>';
+		}
+
+		/*print '<span class="info-box-icon-action">';
+		print '<div class="valignmiddle inline-block">';
+		print '<div class="valignmiddle inline-block">';
+		print $codeenabledisable;
+		print '</div>';
+		print '<div class="valignmiddle inline-block marginleftonly">';
+		print $codetoconfig;
+		print '</div>';
+		print '</div>';
+		print '</span>';
+		*/
+
+		print '</div>
+	    <div class="info-box-content info-box-text-module">
+	    <span class="info-box-title marginbottomonly">'.$this->getName().'</span>
+	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
+
+		/*print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
+		print $this->getVersion(1);
+		print '</span>'; */
+
+		print '<div class="valignmiddle inline-block">';
+		print '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($this->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+		print '</div><br>';
+
+		print '<div class="valignmiddle inline-block info-box-actions">';
+		print '<div class="valignmiddle inline-block">';
+		print $codeenabledisable;
+		print '</div>';
+		print '<div class="valignmiddle inline-block marginleftonly">';
+		print $codetoconfig;
+		print '</div>';
+		print '</div>';
+
+		print '
+	    </div><!-- /.info-box-content -->
+	    </div><!-- /.info-box -->
+	    </div>';
+    }
 }

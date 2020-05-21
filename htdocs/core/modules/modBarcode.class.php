@@ -26,7 +26,7 @@
  *	\brief      Fichier de description et activation du module Barcode
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *	Class to describe Barcode
@@ -51,13 +51,13 @@ class modBarcode extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='barcode';
+		$this->picto = 'barcode';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/barcode/temp");
 
 		// Dependencies
-		$this->depends = array();        // May be used for product or service or third party module
+		$this->depends = array(); // May be used for product or service or third party module
 		$this->requiredby = array();
 
 		// Config pages
@@ -92,31 +92,31 @@ class modBarcode extends DolibarrModules
 		$this->rights[2][4] = 'creer_advance';
 
         // Main menu entries
-        $r=0;
-        $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=tools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        $r = 0;
+        $this->menu[$r] = array('fk_menu'=>'fk_mainmenu=tools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'mainmenu'=>'tools',
         						'leftmenu'=>'barcodeprint',
-        						'type'=>'left',			                // This is a Left menu entry
+        						'type'=>'left', // This is a Left menu entry
 						        'titre'=>'BarCodePrintsheet',
 						        'url'=>'/barcode/printsheet.php?mainmenu=tools&leftmenu=barcodeprint',
-						        'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						        'langs'=>'products', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
-						        'enabled'=>'$conf->barcode->enabled',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-        				        'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->lire_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						        'enabled'=>'$conf->barcode->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+        				        'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->lire_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
-						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+						        'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'left',			                // This is a Left menu entry
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+								'type'=>'left', // This is a Left menu entry
 								'titre'=>'MassBarcodeInit',
 								'url'=>'/barcode/codeinit.php?mainmenu=home&leftmenu=admintools',
-								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'langs'=>'products', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>300,
-								'enabled'=>'$conf->barcode->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-								'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->creer_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+								'enabled'=>'$conf->barcode->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'perms'=>'($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->barcode->creer_advance) || (! $conf->global->MAIN_USE_ADVANCED_PERMS)', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
-								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
+								'user'=>0); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 	}
 
@@ -135,14 +135,14 @@ class modBarcode extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN8', 'EAN8', 0, '1234567', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN13', 'EAN13', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('UPC', 'UPC', 0, '123456789012', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('ISBN', 'ISBN', 0, '123456789', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('C39', 'Code 39', 0, '1234567890', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('C128', 'Code 128', 0, 'ABCD1234567890', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('DATAMATRIX', 'Datamatrix', 0, '1234567xyz', __ENTITY__)",'ignoreerror'=>1),
-				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('QRCODE', 'Qr Code', 0, 'www.dolibarr.org', __ENTITY__)",'ignoreerror'=>1)
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN8', 'EAN8', 0, '1234567', __ENTITY__)", 'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('EAN13', 'EAN13', 0, '123456789012', __ENTITY__)", 'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('UPC', 'UPC', 0, '123456789012', __ENTITY__)", 'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('ISBN', 'ISBN', 0, '123456789', __ENTITY__)", 'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('C39', 'Code 39', 0, '1234567890', __ENTITY__)", 'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('C128', 'Code 128', 0, 'ABCD1234567890', __ENTITY__)", 'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('DATAMATRIX', 'Datamatrix', 0, '1234567xyz', __ENTITY__)", 'ignoreerror'=>1),
+				array('sql'=>"INSERT INTO ".MAIN_DB_PREFIX."c_barcode_type (code, libelle, coder, example, entity) VALUES ('QRCODE', 'Qr Code', 0, 'www.dolibarr.org', __ENTITY__)", 'ignoreerror'=>1)
 		);
 
 		return $this->_init($sql, $options);

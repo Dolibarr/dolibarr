@@ -23,7 +23,7 @@
  *  \ingroup    socialnetworks
  *  \brief      Description and activation file for module SocialNetworks
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *	Class to describe a SocialNetworks module
@@ -38,7 +38,7 @@ class modSocialNetworks extends DolibarrModules
      */
     public function __construct($db)
     {
-    	global $langs,$conf;
+    	global $langs, $conf;
 
         $this->db = $db;
         $this->numero = 3400;
@@ -56,7 +56,7 @@ class modSocialNetworks extends DolibarrModules
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
-        $this->picto='generic';
+        $this->picto = 'email';
 
         // Data directories to create when module is enabled
         $this->dirs = array();
@@ -65,11 +65,11 @@ class modSocialNetworks extends DolibarrModules
 		$this->config_page_url = array(DOL_URL_ROOT.'/admin/dict.php?id=38');
 
         // Dependencies
-        $this->hidden = ! empty($conf->global->MODULE_SOCIALNETWORKS_DISABLED);	// A condition to hide module
-		$this->depends = array('modSociete');	// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = !empty($conf->global->MODULE_SOCIALNETWORKS_DISABLED); // A condition to hide module
+		$this->depends = array('modSociete'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
         $this->langfiles = array();
 
         // Constants

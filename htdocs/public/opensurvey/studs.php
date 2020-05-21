@@ -250,17 +250,18 @@ $form = new Form($db);
 
 $arrayofjs = array();
 $arrayofcss = array('/opensurvey/css/style.css');
-llxHeaderSurvey($object->titre, "", 0, 0, $arrayofjs, $arrayofcss);
+
+llxHeaderSurvey($object->titre, "", 0, 0, $arrayofjs, $arrayofcss, $numsondage);
 
 if (empty($object->ref))     // For survey, id is a hex string
 {
-    $langs->load("errors");
-    print $langs->trans("ErrorRecordNotFound");
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
 
-    llxFooterSurvey();
+	llxFooterSurvey();
 
-    $db->close();
-    exit();
+	$db->close();
+	exit();
 }
 
 // Define format of choices
@@ -272,6 +273,7 @@ foreach ($toutsujet as $value)
 	$listofanswers[] = array('label'=>$tmp[0], 'format'=>($tmp[1] ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("°", "'", $toutsujet);
+
 
 
 print '<div class="survey_invitation">'.$langs->trans("YouAreInivitedToVote").'</div>';
@@ -300,9 +302,6 @@ if (!$canbemodified) {
 	$db->close();
 	exit;
 }
-
-print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
-print '<input type="hidden" name="sondage" value="'.$numsondage.'"/>';
 
 print '<div class="cadre"> '."\n";
 print '<br><br>'."\n";
@@ -691,7 +690,7 @@ if ($object->allow_spy) {
 
 				if (strpos($toutsujet[$i], '@') !== false) {
 					$toutsujetdate = explode("@", $toutsujet[$i]);
-					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').' ('.dol_print_date($toutsujetdate[0], '%A').')'.' - '.$toutsujetdate[1];
+					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').' ('.dol_print_date($toutsujetdate[0], '%A').') - '.$toutsujetdate[1];
 				} else {
 					$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').' ('.dol_print_date($toutsujet[$i], '%A').')';
 				}

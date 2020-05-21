@@ -720,10 +720,11 @@ function dol_copy($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1)
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
  * @param 	int		$overwriteifexists	Overwrite file if exists (1 by default)
  * @param	array	$arrayreplacement	Array to use to replace filenames with another one during the copy (works only on file names, not on directory names).
+ * @param	int		$excludesubdir		0=Do not exclude subdirectories, 1=Exclude subdirectories, 2=Exclude subdirectories if name is not a 2 chars (used for country codes subdirectories).
  * @return	int							<0 if error, 0 if nothing done (all files already exists and overwriteifexists=0), >0 if OK
  * @see		dol_copy()
  */
-function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null)
+function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayreplacement = null, $excludesubdir = 0)
 {
 	global $conf;
 
@@ -759,8 +760,19 @@ function dolCopyDir($srcfile, $destfile, $newmask, $overwriteifexists, $arrayrep
 			{
 				if (is_dir($ossrcfile."/".$file))
 				{
-					//var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
-					$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$file, $newmask, $overwriteifexists, $arrayreplacement);
+					if (empty($excludesubdir) || ($excludesubdir == 2 && strlen($file) == 2)) {
+						$newfile = $file;
+						// Replace destination filename with a new one
+						if (is_array($arrayreplacement))
+						{
+							foreach ($arrayreplacement as $key => $val)
+							{
+								$newfile = str_replace($key, $val, $newfile);
+							}
+						}
+						//var_dump("xxx dolCopyDir $srcfile/$file, $destfile/$file, $newmask, $overwriteifexists");
+						$tmpresult = dolCopyDir($srcfile."/".$file, $destfile."/".$newfile, $newmask, $overwriteifexists, $arrayreplacement, $excludesubdir);
+					}
 				}
 				else
 				{
@@ -960,18 +972,18 @@ function dol_unescapefile($filename)
  */
 function dolCheckVirus($src_file)
 {
-	global $conf, $db;
+	global $conf;
 
 	if (!empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
 		if (!class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
-		$antivir = new AntiVir($db);
+		$antivir=new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here
 		{
-			$reterrors = $antivir->errors;
+			$reterrors=$antivir->errors;
 			return $reterrors;
 		}
 	}
@@ -1545,8 +1557,9 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				// Define $destfull (path to file including filename) and $destfile (only filename)
 				$destfull = $upload_dir."/".$TFile['name'][$i];
 				$destfile = $TFile['name'][$i];
+				$destfilewithoutext = preg_replace('/\.[^\.]+$/', '', $destfile);
 
-				if ($savingdocmask)
+				if ($savingdocmask && strpos($savingdocmask, $destfilewithoutext) !== 0)
 				{
 					$destfull = $upload_dir."/".preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
 					$destfile = preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
@@ -1597,13 +1610,18 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 						$formmail->add_attached_files($destfull, $destfile, $TFile['type'][$i]);
 					}
 
-					// Update table of files
+					// Update index table of files (llx_ecm_files)
 					if ($donotupdatesession == 1)
 					{
 						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile), $TFile['name'][$i], 'uploaded', 0);
 						if ($result < 0)
 						{
-							setEventMessages('FailedToAddFileIntoDatabaseIndex', '', 'warnings');
+							if ($allowoverwrite) {
+								// Do not show error message. We can have an error due to DB_ERROR_RECORD_ALREADY_EXISTS
+							}
+							else {
+								setEventMessages('FailedToAddFileIntoDatabaseIndex', '', 'warnings');
+							}
 						}
 					}
 
@@ -1759,7 +1777,6 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 	return $result;
 }
 
-
 /**
  *  Delete files into database index using search criterias.
  *
@@ -1848,6 +1865,7 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 				if (empty($fileoutput)) $fileoutput = $fileinput.".".$ext;
 
 				$count = $image->getNumberImages();
+
 				if (!dol_is_file($fileoutput) || is_writeable($fileoutput))
 				{
 					try {
@@ -2401,10 +2419,11 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = (!empty($conf->product->multidir_temp[$entity]) ? $conf->product->multidir_temp[$entity] : $conf->service->multidir_temp[$entity]).'/'.$original_file;
 	}
 	// Wrapping for taxes
-	elseif ($modulepart == 'tax' && !empty($conf->tax->dir_output))
+	elseif (in_array($modulepart, array('tax', 'tax-vat')) && !empty($conf->tax->dir_output))
 	{
 		if ($fuser->rights->tax->charges->{$lire}) $accessallowed = 1;
-		$original_file = $conf->tax->dir_output.'/'.$original_file;
+		$modulepartsuffix = str_replace('tax-', '', $modulepart);
+		$original_file = $conf->tax->dir_output.'/'.($modulepartsuffix != 'tax' ? $modulepartsuffix.'/' : '').$original_file;
 	}
 	// Wrapping for events
 	elseif ($modulepart == 'actions' && !empty($conf->agenda->dir_output))
@@ -2413,7 +2432,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$original_file = $conf->agenda->dir_output.'/'.$original_file;
 	}
 	// Wrapping for categories
-	elseif ($modulepart == 'category' && !empty($conf->categorie->dir_output))
+	elseif ($modulepart == 'category' && !empty($conf->categorie->multidir_output[$entity]))
 	{
 		if (empty($entity) || empty($conf->categorie->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->categorie->{$lire}) $accessallowed = 1;
@@ -2483,7 +2502,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for third parties
-	elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->dir_output))
+	elseif (($modulepart == 'company' || $modulepart == 'societe' || $modulepart == 'thirdparty') && !empty($conf->societe->multidir_output[$entity]))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire} || preg_match('/^specimen/i', $original_file))
@@ -2495,7 +2514,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping for contact
-	elseif ($modulepart == 'contact' && !empty($conf->societe->dir_output))
+	elseif ($modulepart == 'contact' && !empty($conf->societe->multidir_output[$entity]))
 	{
 		if (empty($entity) || empty($conf->societe->multidir_output[$entity])) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if ($fuser->rights->societe->{$lire})
@@ -2513,7 +2532,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->facture->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('invoice').")";
 	}
 	// Wrapping for mass actions
 	elseif ($modulepart == 'massfilesarea_proposals' && !empty($conf->propal->multidir_output[$entity]))
@@ -2626,7 +2645,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->propal->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('propal').")";
 	}
 
 	// Wrapping pour les commandes
@@ -2637,7 +2656,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 		}
 		$original_file = $conf->commande->multidir_output[$entity].'/'.$original_file;
-		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity=".$conf->entity;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='".$db->escape($refname)."' AND entity IN (".getEntity('order').")";
 	}
 
 	// Wrapping pour les projets

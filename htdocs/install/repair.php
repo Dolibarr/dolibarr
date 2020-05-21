@@ -30,30 +30,30 @@ include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
-$grant_query='';
+$grant_query = '';
 $step = 2;
 $ok = 0;
 
 
 // Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
-$err=error_reporting();
+$err = error_reporting();
 error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang", 'aZ09', 3)?GETPOST("selectlang", 'aZ09', 3):'auto';
+$setuplang = GETPOST("selectlang", 'aZ09', 3) ?GETPOST("selectlang", 'aZ09', 3) : 'auto';
 $langs->setDefaultLang($setuplang);
 
-$langs->loadLangs(array("admin","install","other"));
+$langs->loadLangs(array("admin", "install", "other"));
 
-if ($dolibarr_main_db_type == "mysqli") $choix=1;
-if ($dolibarr_main_db_type == "pgsql") $choix=2;
-if ($dolibarr_main_db_type == "mssql") $choix=3;
+if ($dolibarr_main_db_type == "mysqli") $choix = 1;
+if ($dolibarr_main_db_type == "pgsql") $choix = 2;
+if ($dolibarr_main_db_type == "mssql") $choix = 3;
 
 
 dolibarr_install_syslog("--- repair: entering upgrade.php page");
-if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initialized", LOG_ERR);
+if (!is_object($conf)) dolibarr_install_syslog("repair: conf file not initialized", LOG_ERR);
 
 
 /*
@@ -63,42 +63,42 @@ if (! is_object($conf)) dolibarr_install_syslog("repair: conf file not initializ
 pHeader('', "upgrade2", GETPOST('action', 'aZ09'));
 
 // Action to launch the repair script
-$actiondone=1;
+$actiondone = 1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
-print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha')?GETPOST('standard', 'alpha'):'undefined').'<br>'."\n";
+print 'Option standard (\'test\' or \'confirmed\') is '.(GETPOST('standard', 'alpha') ?GETPOST('standard', 'alpha') : 'undefined').'<br>'."\n";
 // Disable modules
-print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha')?GETPOST('force_disable_of_modules_not_found', 'alpha'):'undefined').'<br>'."\n";
+print 'Option force_disable_of_modules_not_found (\'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found', 'alpha') ?GETPOST('force_disable_of_modules_not_found', 'alpha') : 'undefined').'<br>'."\n";
 // Files
-print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha')?GETPOST('restore_thirdparties_logos', 'alpha'):'undefined').'<br>'."\n";
-print 'Option restore_user_pictures (\'test\' or \'confirmed\') is '.(GETPOST('restore_user_pictures', 'alpha')?GETPOST('restore_user_pictures', 'alpha'):'undefined').'<br>'."\n";
-print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha')?GETPOST('rebuild_product_thumbs', 'alpha'):'undefined').'<br>'."\n";
+print 'Option restore_thirdparties_logos (\'test\' or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos', 'alpha') ?GETPOST('restore_thirdparties_logos', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option restore_user_pictures (\'test\' or \'confirmed\') is '.(GETPOST('restore_user_pictures', 'alpha') ?GETPOST('restore_user_pictures', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option rebuild_product_thumbs (\'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs', 'alpha') ?GETPOST('rebuild_product_thumbs', 'alpha') : 'undefined').'<br>'."\n";
 // Clean tables and data
-print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha')?GETPOST('clean_linked_elements', 'alpha'):'undefined').'<br>'."\n";
-print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha')?GETPOST('clean_menus', 'alpha'):'undefined').'<br>'."\n";
-print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha')?GETPOST('clean_orphelin_dir', 'alpha'):'undefined').'<br>'."\n";
-print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha')?GETPOST('clean_product_stock_batch', 'alpha'):'undefined').'<br>'."\n";
-print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha')?GETPOST('clean_perm_table', 'alpha'):'undefined').'<br>'."\n";
-print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'confirmed\') is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha')?GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha'):'undefined').'<br>'."\n";
+print 'Option clean_linked_elements (\'test\' or \'confirmed\') is '.(GETPOST('clean_linked_elements', 'alpha') ?GETPOST('clean_linked_elements', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_menus (\'test\' or \'confirmed\') is '.(GETPOST('clean_menus', 'alpha') ?GETPOST('clean_menus', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_orphelin_dir (\'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir', 'alpha') ?GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_product_stock_batch (\'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch', 'alpha') ?GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_perm_table (\'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table', 'alpha') ?GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option repair_link_dispatch_lines_supplier_order_lines, (\'test\' or \'confirmed\') is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ?GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
 // Init data
-print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha')?GETPOST('set_empty_time_spent_amount', 'alpha'):'undefined').'<br>'."\n";
+print 'Option set_empty_time_spent_amount (\'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ?GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
 // Structure
-print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha')?GETPOST('force_utf8_on_tables', 'alpha'):'undefined').'<br>'."\n";
+print 'Option force_utf8_on_tables, for mysql/mariadb only (\'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables', 'alpha') ?GETPOST('force_utf8_on_tables', 'alpha') : 'undefined').'<br>'."\n";
 print '<br>';
 
 print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
-$error=0;
+$error = 0;
 
 // If password is encoded, we decode it
-if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || ! empty($dolibarr_main_db_encrypted_pass))
+if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_db_encrypted_pass))
 {
     require_once $dolibarr_main_document_root.'/core/lib/security.lib.php';
     if (preg_match('/crypted:/i', $dolibarr_main_db_pass))
     {
         $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
         $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-        $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass;	// We need to set this as it is used to know the password was initially crypted
+        $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
     }
     else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
@@ -112,62 +112,62 @@ $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
 
 // For encryption
-$conf->db->dolibarr_main_db_encryption	= isset($dolibarr_main_db_encryption)?$dolibarr_main_db_encryption:'';
-$conf->db->dolibarr_main_db_cryptkey	= isset($dolibarr_main_db_cryptkey)?$dolibarr_main_db_cryptkey:'';
+$conf->db->dolibarr_main_db_encryption = isset($dolibarr_main_db_encryption) ? $dolibarr_main_db_encryption : '';
+$conf->db->dolibarr_main_db_cryptkey = isset($dolibarr_main_db_cryptkey) ? $dolibarr_main_db_cryptkey : '';
 
-$db=getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
+$db = getDoliDBInstance($conf->db->type, $conf->db->host, $conf->db->user, $conf->db->pass, $conf->db->name, $conf->db->port);
 
 if ($db->connected)
 {
     print '<tr><td class="nowrap">';
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
-    dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerConnection") . ": " . $dolibarr_main_db_host . $langs->transnoentities("OK"));
+    dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
     $ok = 1;
 }
 else
 {
     print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
-    dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
+    dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
 }
 
 if ($ok)
 {
-    if($db->database_selected)
+    if ($db->database_selected)
     {
         print '<tr><td class="nowrap">';
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
-        dolibarr_install_syslog("repair: database connection successful: " . $dolibarr_main_db_name);
-        $ok=1;
+        dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
+        $ok = 1;
     }
     else
     {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
-        dolibarr_install_syslog("repair: " . $langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
-        $ok=0;
+        dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
+        $ok = 0;
     }
 }
 
 // Show database version
 if ($ok)
 {
-    $version=$db->getVersion();
-    $versionarray=$db->getVersionArray();
+    $version = $db->getVersion();
+    $versionarray = $db->getVersionArray();
     print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
     print '<td class="right">'.$version.'</td></tr>';
-    dolibarr_install_syslog("repair: " . $langs->transnoentities("ServerVersion") . ": " . $version);
+    dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerVersion").": ".$version);
     //print '<td class="right">'.join('.',$versionarray).'</td></tr>';
 }
 
 $conf->setValues($db);
 // Reset forced setup after the setValues
-if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE = constant('SYSLOG_FILE');
 $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 
 /* Start action here */
-$oneoptionset=0;
-$oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
+$oneoptionset = 0;
+$oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
 	|| GETPOST('clean_perm_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha') || GETPOST('force_utf8_on_tables', 'alpha'));
@@ -185,32 +185,32 @@ if ($ok && GETPOST('standard', 'alpha'))
 {
 	$dir = "mysql/migration/";
 
-    $filelist=array();
+    $filelist = array();
     $i = 0;
     $ok = 0;
 
     // Recupere list fichier
-    $filesindir=array();
-    $handle=opendir($dir);
+    $filesindir = array();
+    $handle = opendir($dir);
     if (is_resource($handle))
     {
-        while (($file = readdir($handle))!==false)
+        while (($file = readdir($handle)) !== false)
         {
-            if (preg_match('/\.sql$/i', $file)) $filesindir[]=$file;
+            if (preg_match('/\.sql$/i', $file)) $filesindir[] = $file;
         }
     }
     sort($filesindir);
 
-    foreach($filesindir as $file)
+    foreach ($filesindir as $file)
     {
         if (preg_match('/repair/i', $file))
         {
-            $filelist[]=$file;
+            $filelist[] = $file;
         }
     }
 
     // Loop on each file
-    foreach($filelist as $file)
+    foreach ($filelist as $file)
     {
         print '<tr><td class="nowrap">*** ';
         print $langs->trans("Script").'</td><td class="right">'.$file.'</td></tr>';
@@ -218,7 +218,7 @@ if ($ok && GETPOST('standard', 'alpha'))
         $name = substr($file, 0, dol_strlen($file) - 4);
 
         // Run sql script
-        $ok=run_sql($dir.$file, 0, '', 1);
+        $ok = run_sql($dir.$file, 0, '', 1);
     }
 }
 
@@ -227,79 +227,79 @@ if ($ok && GETPOST('standard', 'alpha'))
 
 if ($ok && GETPOST('standard', 'alpha'))
 {
-	$extrafields=new ExtraFields($db);
-	$listofmodulesextra=array('societe'=>'societe','adherent'=>'adherent','product'=>'product',
+	$extrafields = new ExtraFields($db);
+	$listofmodulesextra = array('societe'=>'societe', 'adherent'=>'adherent', 'product'=>'product',
 				'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
 				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur', 'facture_fourn'=>'facture_fourn',
 				'actioncomm'=>'actioncomm',
-				'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
+				'adherent_type'=>'adherent_type', 'user'=>'user', 'projet'=>'projet', 'projet_task'=>'projet_task');
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
-	foreach($listofmodulesextra as $tablename => $elementtype)
+	foreach ($listofmodulesextra as $tablename => $elementtype)
 	{
 	    // Get list of fields
-	    $tableextra=MAIN_DB_PREFIX.$tablename.'_extrafields';
+	    $tableextra = MAIN_DB_PREFIX.$tablename.'_extrafields';
 
 	    // Define $arrayoffieldsdesc
-	    $arrayoffieldsdesc=$extrafields->fetch_name_optionals_label($elementtype);
+	    $arrayoffieldsdesc = $extrafields->fetch_name_optionals_label($elementtype);
 
 	    // Define $arrayoffieldsfound
-	    $arrayoffieldsfound=array();
-	    $resql=$db->DDLDescTable($tableextra);
+	    $arrayoffieldsfound = array();
+	    $resql = $db->DDLDescTable($tableextra);
 	    if ($resql)
 	    {
 	        print '<tr><td>Check availability of extra field for '.$tableextra."<br>\n";
-	        $i=0;
-	        while($obj=$db->fetch_object($resql))
+	        $i = 0;
+	        while ($obj = $db->fetch_object($resql))
 	        {
-	            $fieldname=$fieldtype='';
+	            $fieldname = $fieldtype = '';
 	            if (preg_match('/mysql/', $db->type))
 	            {
-	                $fieldname=$obj->Field;
-	                $fieldtype=$obj->Type;
+	                $fieldname = $obj->Field;
+	                $fieldtype = $obj->Type;
 	            }
 	            else
 	            {
-	                $fieldname = isset($obj->Key)?$obj->Key:$obj->attname;
-	                $fieldtype = isset($obj->Type)?$obj->Type:'varchar';
+	                $fieldname = isset($obj->Key) ? $obj->Key : $obj->attname;
+	                $fieldtype = isset($obj->Type) ? $obj->Type : 'varchar';
 	            }
 
 	            if (empty($fieldname)) continue;
-	            if (in_array($fieldname, array('rowid','tms','fk_object','import_key'))) continue;
-	            $arrayoffieldsfound[$fieldname]=array('type'=>$fieldtype);
+	            if (in_array($fieldname, array('rowid', 'tms', 'fk_object', 'import_key'))) continue;
+	            $arrayoffieldsfound[$fieldname] = array('type'=>$fieldtype);
 	        }
 
 	        // If it does not match, we create fields
-	        foreach($arrayoffieldsdesc as $code => $label)
+	        foreach ($arrayoffieldsdesc as $code => $label)
 	        {
-	            if (! in_array($code, array_keys($arrayoffieldsfound)))
+	            if (!in_array($code, array_keys($arrayoffieldsfound)))
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
-	                $type=$extrafields->attributes[$elementtype]['type'][$code]; $length=$extrafields->attributes[$elementtype]['size'][$code]; $attribute=''; $default=''; $extra=''; $null='null';
+	                $type = $extrafields->attributes[$elementtype]['type'][$code]; $length = $extrafields->attributes[$elementtype]['size'][$code]; $attribute = ''; $default = ''; $extra = ''; $null = 'null';
 
-           			if ($type=='boolean') {
-        				$typedb='int';
-        				$lengthdb='1';
-        			} elseif($type=='price') {
-        				$typedb='double';
-        				$lengthdb='24,8';
-        			} elseif($type=='phone') {
-        				$typedb='varchar';
-        				$lengthdb='20';
-        			}elseif($type=='mail') {
-        				$typedb='varchar';
-        				$lengthdb='128';
-        			} elseif (($type=='select') || ($type=='sellist') || ($type=='radio') ||($type=='checkbox') ||($type=='chkbxlst')){
-        				$typedb='text';
-        				$lengthdb='';
-        			} elseif ($type=='link') {
-        				$typedb='int';
-        				$lengthdb='11';
+           			if ($type == 'boolean') {
+        				$typedb = 'int';
+        				$lengthdb = '1';
+        			} elseif ($type == 'price') {
+        				$typedb = 'double';
+        				$lengthdb = '24,8';
+        			} elseif ($type == 'phone') {
+        				$typedb = 'varchar';
+        				$lengthdb = '20';
+        			}elseif ($type == 'mail') {
+        				$typedb = 'varchar';
+        				$lengthdb = '128';
+        			} elseif (($type == 'select') || ($type == 'sellist') || ($type == 'radio') || ($type == 'checkbox') || ($type == 'chkbxlst')) {
+        				$typedb = 'text';
+        				$lengthdb = '';
+        			} elseif ($type == 'link') {
+        				$typedb = 'int';
+        				$lengthdb = '11';
         			} else {
-        				$typedb=$type;
-        				$lengthdb=$length;
+        				$typedb = $type;
+        				$lengthdb = $length;
         			}
 
-	                $field_desc=array(
+	                $field_desc = array(
 	                	'type'=>$typedb,
 	                	'value'=>$lengthdb,
 	                	'attribute'=>$attribute,
@@ -312,7 +312,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	                $result = 0;
 	                if (GETPOST('standard', 'alpha') == 'confirmed')
 	                {
-	                	$result=$db->DDLAddField($tableextra, $code, $field_desc, "");
+	                	$result = $db->DDLAddField($tableextra, $code, $field_desc, "");
 
 		                if ($result < 0)
 		                {
@@ -352,13 +352,13 @@ if ($ok && GETPOST('standard', 'alpha'))
 {
 	print '<tr><td colspan="2"><br>*** Clean constant record of modules not enabled</td></tr>';
 
-	$sql ="SELECT name, entity, value";
-	$sql.=" FROM ".MAIN_DB_PREFIX."const as c";
-	$sql.=" WHERE name LIKE 'MAIN_MODULE_%_TPL' OR name LIKE 'MAIN_MODULE_%_CSS' OR name LIKE 'MAIN_MODULE_%_JS' OR name LIKE 'MAIN_MODULE_%_HOOKS'";
-	$sql.=" OR name LIKE 'MAIN_MODULE_%_TRIGGERS' OR name LIKE 'MAIN_MODULE_%_THEME' OR name LIKE 'MAIN_MODULE_%_SUBSTITUTIONS' OR name LIKE 'MAIN_MODULE_%_MODELS'";
-	$sql.=" OR name LIKE 'MAIN_MODULE_%_MENUS' OR name LIKE 'MAIN_MODULE_%_LOGIN' OR name LIKE 'MAIN_MODULE_%_BARCODE' OR name LIKE 'MAIN_MODULE_%_TABS_%'";
-	$sql.=" OR name LIKE 'MAIN_MODULE_%_MODULEFOREXTERNAL'";
-	$sql.=" ORDER BY name, entity";
+	$sql = "SELECT name, entity, value";
+	$sql .= " FROM ".MAIN_DB_PREFIX."const as c";
+	$sql .= " WHERE name LIKE 'MAIN_MODULE_%_TPL' OR name LIKE 'MAIN_MODULE_%_CSS' OR name LIKE 'MAIN_MODULE_%_JS' OR name LIKE 'MAIN_MODULE_%_HOOKS'";
+	$sql .= " OR name LIKE 'MAIN_MODULE_%_TRIGGERS' OR name LIKE 'MAIN_MODULE_%_THEME' OR name LIKE 'MAIN_MODULE_%_SUBSTITUTIONS' OR name LIKE 'MAIN_MODULE_%_MODELS'";
+	$sql .= " OR name LIKE 'MAIN_MODULE_%_MENUS' OR name LIKE 'MAIN_MODULE_%_LOGIN' OR name LIKE 'MAIN_MODULE_%_BARCODE' OR name LIKE 'MAIN_MODULE_%_TABS_%'";
+	$sql .= " OR name LIKE 'MAIN_MODULE_%_MODULEFOREXTERNAL'";
+	$sql .= " ORDER BY name, entity";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -372,18 +372,18 @@ if ($ok && GETPOST('standard', 'alpha'))
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj=$db->fetch_object($resql);
+				$obj = $db->fetch_object($resql);
 
 				$reg = array();
 				if (preg_match('/MAIN_MODULE_([^_]+)_(.+)/i', $obj->name, $reg))
 				{
-					$name=$reg[1];
-					$type=$reg[2];
+					$name = $reg[1];
+					$type = $reg[2];
 
-					$sql2 ="SELECT COUNT(*) as nb";
-					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
-					$sql2.=" WHERE name = 'MAIN_MODULE_".$name."'";
-					$sql2.=" AND entity = ".$obj->entity;
+					$sql2 = "SELECT COUNT(*) as nb";
+					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2 .= " WHERE name = 'MAIN_MODULE_".$name."'";
+					$sql2 .= " AND entity = ".$obj->entity;
 					$resql2 = $db->query($sql2);
 					if ($resql2)
 					{
@@ -427,8 +427,8 @@ if ($ok && GETPOST('standard', 'alpha'))
 {
 	print '<tr><td colspan="2"><br>*** Clean definition of boxes of modules not enabled</td></tr>';
 
-	$sql ="SELECT file, entity FROM ".MAIN_DB_PREFIX."boxes_def";
-	$sql.=" WHERE file like '%@%'";
+	$sql = "SELECT file, entity FROM ".MAIN_DB_PREFIX."boxes_def";
+	$sql .= " WHERE file like '%@%'";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -442,19 +442,19 @@ if ($ok && GETPOST('standard', 'alpha'))
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj=$db->fetch_object($resql);
+				$obj = $db->fetch_object($resql);
 
 				$reg = array();
 				if (preg_match('/^(.+)@(.+)$/i', $obj->file, $reg))
 				{
-					$name=$reg[1];
-					$module=$reg[2];
+					$name = $reg[1];
+					$module = $reg[2];
 
-					$sql2 ="SELECT COUNT(*) as nb";
-					$sql2.=" FROM ".MAIN_DB_PREFIX."const as c";
-					$sql2.=" WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
-					$sql2.=" AND entity = ".$obj->entity;
-					$sql2.=" AND value <> 0";
+					$sql2 = "SELECT COUNT(*) as nb";
+					$sql2 .= " FROM ".MAIN_DB_PREFIX."const as c";
+					$sql2 .= " WHERE name = 'MAIN_MODULE_".strtoupper($module)."'";
+					$sql2 .= " AND entity = ".$obj->entity;
+					$sql2 .= " AND value <> 0";
 					$resql2 = $db->query($sql2);
 					if ($resql2)
 					{
@@ -498,20 +498,20 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 {
 	//$exts=array('gif','png','jpg');
 
-	$ext='';
+	$ext = '';
 
 	print '<tr><td colspan="2"><br>*** Restore thirdparties logo<br>';
 
-	$sql="SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
-	$resql=$db->query($sql);
+	$sql = "SELECT s.rowid, s.nom as name, s.logo FROM ".MAIN_DB_PREFIX."societe as s ORDER BY s.nom";
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$num=$db->num_rows($resql);
-		$i=0;
+		$num = $db->num_rows($resql);
+		$i = 0;
 
-		while($i < $num)
+		while ($i < $num)
 		{
-			$obj=$db->fetch_object($resql);
+			$obj = $db->fetch_object($resql);
 
 			/*
 			$name=preg_replace('/é/','',$obj->name);
@@ -519,22 +519,22 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 			$name=preg_replace('/\'/','',$name);
 			*/
 
-			$tmp=explode('.', $obj->logo);
-			$name=$tmp[0];
-			if (isset($tmp[1])) $ext='.'.$tmp[1];
+			$tmp = explode('.', $obj->logo);
+			$name = $tmp[0];
+			if (isset($tmp[1])) $ext = '.'.$tmp[1];
 
-			if (! empty($name))
+			if (!empty($name))
 			{
-				$filetotest=$dolibarr_main_data_root.'/societe/logos/'.$name.$ext;
-				$filetotestsmall=$dolibarr_main_data_root.'/societe/logos/thumbs/'.$name.'_small'.$ext;
-				$exists=dol_is_file($filetotest);
+				$filetotest = $dolibarr_main_data_root.'/societe/logos/'.$name.$ext;
+				$filetotestsmall = $dolibarr_main_data_root.'/societe/logos/thumbs/'.$name.'_small'.$ext;
+				$exists = dol_is_file($filetotest);
 				print 'Check thirdparty '.$obj->rowid.' name='.$obj->name.' logo='.$obj->logo.' file '.$filetotest." exists=".$exists."<br>\n";
 				if ($exists)
 				{
-					$filetarget=$dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/'.$name.$ext;
-					$filetargetsmall=$dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/thumbs/'.$name.'_small'.$ext;
-					$existt=dol_is_file($filetarget);
-					if (! $existt)
+					$filetarget = $dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/'.$name.$ext;
+					$filetargetsmall = $dolibarr_main_data_root.'/societe/'.$obj->rowid.'/logos/thumbs/'.$name.'_small'.$ext;
+					$existt = dol_is_file($filetarget);
+					if (!$existt)
 					{
 						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed')
 						{
@@ -548,8 +548,8 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 						}
 					}
 
-					$existtt=dol_is_file($filetargetsmall);
-					if (! $existtt)
+					$existtt = dol_is_file($filetargetsmall);
+					if (!$existtt)
 					{
 						if (GETPOST('restore_thirdparties_logos', 'alpha') == 'confirmed')
 						{
@@ -569,7 +569,7 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 	}
 	else
 	{
-		$ok=0;
+		$ok = 0;
 		dol_print_error($db);
 	}
 
@@ -583,20 +583,20 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 {
 	//$exts=array('gif','png','jpg');
 
-	$ext='';
+	$ext = '';
 
 	print '<tr><td colspan="2"><br>*** Restore user pictures<br>';
 
-	$sql="SELECT s.rowid, s.firstname, s.lastname, s.login, s.photo FROM ".MAIN_DB_PREFIX."user as s ORDER BY s.rowid";
-	$resql=$db->query($sql);
+	$sql = "SELECT s.rowid, s.firstname, s.lastname, s.login, s.photo FROM ".MAIN_DB_PREFIX."user as s ORDER BY s.rowid";
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$num=$db->num_rows($resql);
-		$i=0;
+		$num = $db->num_rows($resql);
+		$i = 0;
 
-		while($i < $num)
+		while ($i < $num)
 		{
-			$obj=$db->fetch_object($resql);
+			$obj = $db->fetch_object($resql);
 
 			/*
 			 $name=preg_replace('/é/','',$obj->name);
@@ -604,25 +604,25 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 			 $name=preg_replace('/\'/','',$name);
 			 */
 
-			$tmp=explode('.', $obj->photo);
-			$name=$tmp[0];
-			if (isset($tmp[1])) $ext='.'.$tmp[1];
+			$tmp = explode('.', $obj->photo);
+			$name = $tmp[0];
+			if (isset($tmp[1])) $ext = '.'.$tmp[1];
 
-			if (! empty($name))
+			if (!empty($name))
 			{
-				$filetotest=$dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/'.$name.$ext;
-				$filetotestsmall=$dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
-				$filetotestmini=$dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
-				$exists=dol_is_file($filetotest);
+				$filetotest = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/'.$name.$ext;
+				$filetotestsmall = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_small'.$ext;
+				$filetotestmini = $dolibarr_main_data_root.'/users/'.substr(sprintf('%08d', $obj->rowid), -1, 1).'/'.substr(sprintf('%08d', $obj->rowid), -2, 1).'/thumbs/'.$name.'_mini'.$ext;
+				$exists = dol_is_file($filetotest);
 				print 'Check user '.$obj->rowid.' lastname='.$obj->lastname.' fistname='.$obj->firstname.' photo='.$obj->photo.' file '.$filetotest." exists=".$exists."<br>\n";
 				if ($exists)
 				{
-					$filetarget=$dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
-					$filetargetsmall=$dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_small'.$ext;
-					$filetargetmini=$dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_mini'.$ext;
+					$filetarget = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/'.$name.$ext;
+					$filetargetsmall = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_small'.$ext;
+					$filetargetmini = $dolibarr_main_data_root.'/users/'.$obj->rowid.'/thumbs/'.$name.'_mini'.$ext;
 
-					$existt=dol_is_file($filetarget);
-					if (! $existt)
+					$existt = dol_is_file($filetarget);
+					if (!$existt)
 					{
 						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
 						{
@@ -636,8 +636,8 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 						}
 					}
 
-					$existtt=dol_is_file($filetargetsmall);
-					if (! $existtt)
+					$existtt = dol_is_file($filetargetsmall);
+					if (!$existtt)
 					{
 						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
 						{
@@ -651,8 +651,8 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 						}
 					}
 
-					$existtt=dol_is_file($filetargetmini);
-					if (! $existtt)
+					$existtt = dol_is_file($filetargetmini);
+					if (!$existtt)
 					{
 						if (GETPOST('restore_user_pictures', 'alpha') == 'confirmed')
 						{
@@ -673,7 +673,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 	}
 	else
 	{
-		$ok=0;
+		$ok = 0;
 		dol_print_error($db);
 	}
 
@@ -684,38 +684,38 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 // rebuild_product_thumbs: Rebuild thumbs for product files
 if ($ok && GETPOST('rebuild_product_thumbs', 'alpha'))
 {
-    $ext='';
+    $ext = '';
     global $maxwidthsmall, $maxheightsmall, $maxwidthmini, $maxheightmini;
 
     print '<tr><td colspan="2"><br>*** Rebuild product thumbs<br>';
 
-    $sql="SELECT s.rowid, s.ref FROM ".MAIN_DB_PREFIX."product as s ORDER BY s.ref";
-    $resql=$db->query($sql);
+    $sql = "SELECT s.rowid, s.ref FROM ".MAIN_DB_PREFIX."product as s ORDER BY s.ref";
+    $resql = $db->query($sql);
     if ($resql)
     {
-        $num=$db->num_rows($resql);
-        $i=0;
+        $num = $db->num_rows($resql);
+        $i = 0;
 
-        while($i < $num)
+        while ($i < $num)
         {
-            $obj=$db->fetch_object($resql);
+            $obj = $db->fetch_object($resql);
 
-            if (! empty($obj->ref))
+            if (!empty($obj->ref))
             {
-                $files=dol_dir_list($dolibarr_main_data_root.'/produit/'.$obj->ref, 'files', 0);
-                foreach($files as $file)
+                $files = dol_dir_list($dolibarr_main_data_root.'/produit/'.$obj->ref, 'files', 0);
+                foreach ($files as $file)
                 {
 					// Generate thumbs.
 					if (image_format_supported($file['fullname']) == 1)
 					{
-					    $imgThumbSmall='notbuild';
+					    $imgThumbSmall = 'notbuild';
                         if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed')
                         {
                             // Used on logon for example
                             $imgThumbSmall = vignette($file['fullname'], $maxwidthsmall, $maxheightsmall, '_small', 50, "thumbs");
                         }
 					    print 'Check product '.$obj->rowid.", file ".$file['fullname']." -> ".$imgThumbSmall." maxwidthsmall=".$maxwidthsmall." maxheightsmall=".$maxheightsmall."<br>\n";
-					    $imgThumbMini='notbuild';
+					    $imgThumbMini = 'notbuild';
                         if (GETPOST('rebuild_product_thumbs', 'alpha') == 'confirmed')
                         {
                             // Create mini thumbs for image (Ratio is near 16/9)
@@ -732,7 +732,7 @@ if ($ok && GETPOST('rebuild_product_thumbs', 'alpha'))
     }
     else
     {
-        $ok=0;
+        $ok = 0;
         dol_print_error($db);
     }
 
@@ -768,10 +768,10 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 {
 	print '<tr><td colspan="2"><br>*** Clean menu entries coming from disabled modules</td></tr>';
 
-	$sql ="SELECT rowid, module";
-	$sql.=" FROM ".MAIN_DB_PREFIX."menu as c";
-	$sql.=" WHERE module IS NOT NULL AND module <> ''";
-	$sql.=" ORDER BY module";
+	$sql = "SELECT rowid, module";
+	$sql .= " FROM ".MAIN_DB_PREFIX."menu as c";
+	$sql .= " WHERE module IS NOT NULL AND module <> ''";
+	$sql .= " ORDER BY module";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -782,10 +782,10 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj=$db->fetch_object($resql);
+				$obj = $db->fetch_object($resql);
 
-				$modulecond=$obj->module;
-				$modulecondarray = explode('|', $obj->module);				// Name of module
+				$modulecond = $obj->module;
+				$modulecondarray = explode('|', $obj->module); // Name of module
 
 				print '<tr><td>';
 				print $modulecond;
@@ -794,24 +794,24 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 
 				if ($modulecond)		// And menu entry for module $modulecond was found in database.
 				{
-					$moduleok=0;
-					foreach($modulecondarray as $tmpname)
+					$moduleok = 0;
+					foreach ($modulecondarray as $tmpname)
 					{
-						if ($tmpname == 'margins') $tmpname='margin';		// TODO Remove this when normalized
+						if ($tmpname == 'margins') $tmpname = 'margin'; // TODO Remove this when normalized
 
 						$result = 0;
-						if (! empty($conf->$tmpname)) $result = $conf->$tmpname->enabled;
+						if (!empty($conf->$tmpname)) $result = $conf->$tmpname->enabled;
 						if ($result) $moduleok++;
 					}
 
-					if (! $moduleok && $modulecond)
+					if (!$moduleok && $modulecond)
 					{
 						print ' - Module condition '.$modulecond.' seems ko, we delete menu entry.';
 						if (GETPOST('clean_menus') == 'confirmed')
 						{
-							$sql2 ="DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$modulecond."'";
-							$resql2=$db->query($sql2);
-							if (! $resql2)
+							$sql2 = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$modulecond."'";
+							$resql2 = $db->query($sql2);
+							if (!$resql2)
 							{
 								$error++;
 								dol_print_error($db);
@@ -856,11 +856,11 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 // clean_orphelin_dir: Run purge of directory
 if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
 {
-    $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
+    $listmodulepart = array('company', 'invoice', 'invoice_supplier', 'propal', 'order', 'order_supplier', 'contract', 'tax');
     foreach ($listmodulepart as $modulepart)
     {
-        $filearray=array();
-        $upload_dir = isset($conf->$modulepart->dir_output)?$conf->$modulepart->dir_output:'';
+        $filearray = array();
+        $upload_dir = isset($conf->$modulepart->dir_output) ? $conf->$modulepart->dir_output : '';
         if ($modulepart == 'company') $upload_dir = $conf->societe->dir_output; // TODO change for multicompany sharing
         if ($modulepart == 'invoice') $upload_dir = $conf->facture->dir_output;
         if ($modulepart == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
@@ -872,51 +872,51 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
 
         print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-        $filearray=dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$','^\.','(\.meta|_preview.*\.png)$','^temp$','^payments$','^CVS$','^thumbs$'), '', SORT_DESC, 1, true);
+        $filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, true);
 
         // To show ref or specific information according to view to show (defined by $module)
         if ($modulepart == 'company')
         {
             include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-            $object_instance=new Societe($db);
+            $object_instance = new Societe($db);
         }
         if ($modulepart == 'invoice')
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-            $object_instance=new Facture($db);
+            $object_instance = new Facture($db);
         }
         elseif ($modulepart == 'invoice_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-            $object_instance=new FactureFournisseur($db);
+            $object_instance = new FactureFournisseur($db);
         }
         elseif ($modulepart == 'propal')
         {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-            $object_instance=new Propal($db);
+            $object_instance = new Propal($db);
         }
         elseif ($modulepart == 'order')
         {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-            $object_instance=new Commande($db);
+            $object_instance = new Commande($db);
         }
         elseif ($modulepart == 'order_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-            $object_instance=new CommandeFournisseur($db);
+            $object_instance = new CommandeFournisseur($db);
         }
         elseif ($modulepart == 'contract')
         {
             include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-            $object_instance=new Contrat($db);
+            $object_instance = new Contrat($db);
         }
         elseif ($modulepart == 'tax')
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-            $object_instance=new ChargeSociales($db);
+            $object_instance = new ChargeSociales($db);
         }
 
-        foreach($filearray as $key => $file)
+        foreach ($filearray as $key => $file)
         {
             if (!is_dir($file['name'])
             && $file['name'] != '.'
@@ -925,38 +925,38 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
             )
             {
                 // Define relative path used to store the file
-                $relativefile=preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
+                $relativefile = preg_replace('/'.preg_quote($upload_dir.'/', '/').'/', '', $file['fullname']);
 
                 //var_dump($file);
-                $id=0; $ref=''; $object_instance->id=0; $object_instance->ref=''; $label='';
+                $id = 0; $ref = ''; $object_instance->id = 0; $object_instance->ref = ''; $label = '';
 
                 // To show ref or specific information according to view to show (defined by $module)
-                if ($modulepart == 'invoice')          {
-                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                if ($modulepart == 'invoice') {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
                 }
                 if ($modulepart == 'invoice_supplier') {
-                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=empty($reg[1])?'':$reg[1];
+                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = empty($reg[1]) ? '' : $reg[1];
                 }
-                if ($modulepart == 'propal')           {
-                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                if ($modulepart == 'propal') {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
                 }
-                if ($modulepart == 'order')            {
-                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                if ($modulepart == 'order') {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
                 }
-                if ($modulepart == 'order_supplier')   {
-                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                if ($modulepart == 'order_supplier') {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
                 }
-                if ($modulepart == 'contract')         {
-                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg);  $ref=$reg[1];
+                if ($modulepart == 'contract') {
+                    preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = $reg[1];
                 }
-                if ($modulepart == 'tax')              {
-                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id=$reg[1];
+                if ($modulepart == 'tax') {
+                    preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = $reg[1];
                 }
 
                 if ($id || $ref)
                 {
                     //print 'Fetch '.$id.' or '.$ref.'<br>';
-                    $result=$object_instance->fetch($id, $ref);
+                    $result = $object_instance->fetch($id, $ref);
                     //print $result.'<br>';
                     if ($result == 0)    // Not found but no error
                     {
@@ -980,16 +980,16 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
 {
-    $methodtofix=GETPOST('methodtofix', 'alpha')?GETPOST('methodtofix', 'alpha'):'updatestock';
+    $methodtofix = GETPOST('methodtofix', 'alpha') ?GETPOST('methodtofix', 'alpha') : 'updatestock';
 
     print '<tr><td colspan="2"><br>*** Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
-    $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
-    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
-    $sql.=" WHERE p.rowid = ps.fk_product";
-    $sql.=" AND p.tobatch = 1";
-    $sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-    $sql.=" HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
+    $sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
+    $sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps LEFT JOIN ".MAIN_DB_PREFIX."product_batch as pb ON ps.rowid = pb.fk_product_stock";
+    $sql .= " WHERE p.rowid = ps.fk_product";
+    $sql .= " AND p.tobatch = 1";
+    $sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
+    $sql .= " HAVING reel != SUM(pb.qty) or SUM(pb.qty) IS NULL";
     print $sql;
     $resql = $db->query($sql);
     if ($resql)
@@ -1001,8 +1001,8 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
             $i = 0;
             while ($i < $num)
             {
-                $obj=$db->fetch_object($resql);
-                print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch?$obj->reelbatch:'0').' (sum product_batch)';
+                $obj = $db->fetch_object($resql);
+                print '<tr><td>Product '.$obj->rowid.'-'.$obj->ref.' in warehose '.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' (product_stock.reel) != '.($obj->reelbatch ? $obj->reelbatch : '0').' (sum product_batch)';
 
                 // Fix
                 if ($obj->reel != $obj->reelbatch)
@@ -1013,10 +1013,10 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                         print ' -> Insert qty '.($obj->reel - $obj->reelbatch).' with lot 000000 linked to fk_product_stock='.$obj->psrowid;
                         if (GETPOST('clean_product_stock_batch') == 'confirmed')
                         {
-                            $sql2 ="INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
-                            $sql2.="VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
-                            $resql2=$db->query($sql2);
-                            if (! $resql2)
+                            $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_batch(fk_product_stock, batch, qty)";
+                            $sql2 .= "VALUES(".$obj->psrowid.", '000000', ".($obj->reel - $obj->reelbatch).")";
+                            $resql2 = $db->query($sql2);
+                            if (!$resql2)
                             {
                                 // TODO If it fails, we must make update
                                 //$sql2 ="UPDATE ".MAIN_DB_PREFIX."product_batch";
@@ -1028,22 +1028,22 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                     if ($methodtofix == 'updatestock')
                     {
                         // Method 2
-                        print ' -> Update qty of product_stock with qty = '.($obj->reelbatch?$obj->reelbatch:'0').' for ps.rowid = '.$obj->psrowid;
+                        print ' -> Update qty of product_stock with qty = '.($obj->reelbatch ? $obj->reelbatch : '0').' for ps.rowid = '.$obj->psrowid;
                         if (GETPOST('clean_product_stock_batch') == 'confirmed')
                         {
-                            $error=0;
+                            $error = 0;
 
                             $db->begin();
 
-                            $sql2 ="UPDATE ".MAIN_DB_PREFIX."product_stock";
-                            $sql2.=" SET reel = ".($obj->reelbatch?$obj->reelbatch:'0')." WHERE rowid = ".$obj->psrowid;
-                            $resql2=$db->query($sql2);
+                            $sql2 = "UPDATE ".MAIN_DB_PREFIX."product_stock";
+                            $sql2 .= " SET reel = ".($obj->reelbatch ? $obj->reelbatch : '0')." WHERE rowid = ".$obj->psrowid;
+                            $resql2 = $db->query($sql2);
                             if ($resql2)
                             {
                                 // We update product_stock, so we must field stock into product too.
-                                $sql3='UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
-                                $resql3=$db->query($sql3);
-                                if (! $resql3)
+                                $sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
+                                $resql3 = $db->query($sql3);
+                                if (!$resql3)
                                 {
                                     $error++;
                                     dol_print_error($db);
@@ -1083,12 +1083,12 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch', 'alpha'))
 {
     print '<tr><td colspan="2"><br>Clean table product_batch, methodtofix='.$methodtofix.' (possible values: updatestock or updatebatch)</td></tr>';
 
-    $sql ="SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
-    $sql.=" FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
-    $sql.=" WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
-    $sql.=" AND p.tobatch = 1";
-    $sql.=" GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
-    $sql.=" HAVING reel != SUM(pb.qty)";
+    $sql = "SELECT p.rowid, p.ref, p.tobatch, ps.rowid as psrowid, ps.fk_entrepot, ps.reel, SUM(pb.qty) as reelbatch";
+    $sql .= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product_batch as pb";
+    $sql .= " WHERE p.rowid = ps.fk_product AND ps.rowid = pb.fk_product_stock";
+    $sql .= " AND p.tobatch = 1";
+    $sql .= " GROUP BY p.rowid, p.ref, p.tobatch, ps.rowid, ps.fk_entrepot, ps.reel";
+    $sql .= " HAVING reel != SUM(pb.qty)";
     $resql = $db->query($sql);
     if ($resql)
     {
@@ -1099,7 +1099,7 @@ if ($ok && GETPOST('clean_product_stock_negative_if_batch', 'alpha'))
             $i = 0;
             while ($i < $num)
             {
-                $obj=$db->fetch_object($resql);
+                $obj = $db->fetch_object($resql);
                 print '<tr><td>'.$obj->rowid.'-'.$obj->ref.'-'.$obj->fk_entrepot.' -> '.$obj->psrowid.': '.$obj->reel.' != '.$obj->reelbatch;
 
                 // TODO
@@ -1113,11 +1113,11 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha'))
 {
     print '<tr><td colspan="2"><br>*** Set value of time spent without amount</td></tr>';
 
-    $sql ="SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
-    $sql.=" FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
-    $sql.=" WHERE ptt.fk_user = u.rowid";
-    $sql.=" AND ptt.thm IS NULL and u.thm > 0";
-    $sql.=" GROUP BY u.rowid, u.login, u.thm";
+    $sql = "SELECT COUNT(ptt.rowid) as nb, u.rowid as user_id, u.login, u.thm as user_thm";
+    $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as ptt, ".MAIN_DB_PREFIX."user as u";
+    $sql .= " WHERE ptt.fk_user = u.rowid";
+    $sql .= " AND ptt.thm IS NULL and u.thm > 0";
+    $sql .= " GROUP BY u.rowid, u.login, u.thm";
 
     $resql = $db->query($sql);
     if ($resql)
@@ -1129,17 +1129,17 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha'))
             $i = 0;
             while ($i < $num)
             {
-                $obj=$db->fetch_object($resql);
+                $obj = $db->fetch_object($resql);
                 print '<tr><td>'.$obj->login.'-'.$obj->user_id.' ('.$obj->nb.' lines to fix) -> '.$obj->user_thm;
 
                 $db->begin();
 
                 if (GETPOST('set_empty_time_spent_amount') == 'confirmed')
                 {
-                    $sql2 ="UPDATE ".MAIN_DB_PREFIX."projet_task_time";
-                    $sql2.=" SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
-                    $resql2=$db->query($sql2);
-                    if (! $resql2)
+                    $sql2 = "UPDATE ".MAIN_DB_PREFIX."projet_task_time";
+                    $sql2 .= " SET thm = ".$obj->user_thm." WHERE thm IS NULL AND fk_user = ".$obj->user_id;
+                    $resql2 = $db->query($sql2);
+                    if (!$resql2)
                     {
                         $error++;
                         dol_print_error($db);
@@ -1173,14 +1173,14 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 {
     print '<tr><td colspan="2"><br>*** Force modules not found physicaly to be disabled (only modules adding js, css or hooks can be detected as removed physicaly)</td></tr>';
 
-    $arraylistofkey=array('hooks','js','css');
+    $arraylistofkey = array('hooks', 'js', 'css');
 
-    foreach($arraylistofkey as $key)
+    foreach ($arraylistofkey as $key)
     {
-	    $sql ="SELECT DISTINCT name, value";
-	    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
-	    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
-	    $sql.=" ORDER BY name";
+	    $sql = "SELECT DISTINCT name, value";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."const as c";
+	    $sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+	    $sql .= " ORDER BY name";
 
 	    $resql = $db->query($sql);
 	    if ($resql)
@@ -1191,8 +1191,8 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	            $i = 0;
 	            while ($i < $num)
 	            {
-	                $obj=$db->fetch_object($resql);
-	                $constantname = $obj->name;				// Name of constant for hook or js or css declaration
+	                $obj = $db->fetch_object($resql);
+	                $constantname = $obj->name; // Name of constant for hook or js or css declaration
 
 	                print '<tr><td>';
 	                print $constantname;
@@ -1202,27 +1202,27 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                $reg = array();
 	                if (preg_match('/MAIN_MODULE_(.*)_'.strtoupper($key).'/i', $constantname, $reg))
 	                {
-	                    $name=strtolower($reg[1]);
+	                    $name = strtolower($reg[1]);
 
 	                    if ($name)		// An entry for key $key and module $name was found in database.
 	                    {
 	                    	$reloffile = '';
 							$result = 'found';
 
-	                    	if ($key == 'hooks') $reloffile=$name.'/class/actions_'.$name.'.class.php';
+	                    	if ($key == 'hooks') $reloffile = $name.'/class/actions_'.$name.'.class.php';
 	                    	if ($key == 'js')
 	                    	{
-		                    	$value=$obj->value;
-		                    	$valuearray=json_decode($value);
-	                    		$reloffile=$valuearray[0];
-	                    		$reloffile=preg_replace('/^\//', '', $valuearray[0]);
+		                    	$value = $obj->value;
+		                    	$valuearray = json_decode($value);
+	                    		$reloffile = $valuearray[0];
+	                    		$reloffile = preg_replace('/^\//', '', $valuearray[0]);
 	                    	}
 	                    	if ($key == 'css')
 	                    	{
-		                    	$value=$obj->value;
-		                    	$valuearray=json_decode($value);
-		                    	if ($value && count($valuearray)==0) $valuearray[0]=$value;	// If value was not a json array but a string
-	                    		$reloffile=preg_replace('/^\//', '', $valuearray[0]);
+		                    	$value = $obj->value;
+		                    	$valuearray = json_decode($value);
+		                    	if ($value && count($valuearray) == 0) $valuearray[0] = $value; // If value was not a json array but a string
+	                    		$reloffile = preg_replace('/^\//', '', $valuearray[0]);
 	                    	}
 
 	                    	if ($reloffile)
@@ -1231,28 +1231,28 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 		                    	try {
 		                        	$result = dol_buildpath($reloffile, 0, 2);
 		                    	}
-		                    	catch(Exception $e)
+		                    	catch (Exception $e)
 		                    	{
 									// No catch yet
-									$result = 'found';	// If error, we force lke if we found to avoid any deletion
+									$result = 'found'; // If error, we force lke if we found to avoid any deletion
 		                    	}
 	                    	}
 
-	                        if (! $result)
+	                        if (!$result)
 	                        {
 	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
 	                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
 	                            {
-	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
-	                                $resql2=$db->query($sql2);
-	                                if (! $resql2)
+	                                $sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+	                                $resql2 = $db->query($sql2);
+	                                if (!$resql2)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
 	                                }
-	                                $sql3 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-	                                $resql3=$db->query($sql3);
-	                                if (! $resql3)
+	                                $sql3 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql3 = $db->query($sql3);
+	                                if (!$resql3)
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
@@ -1300,10 +1300,10 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 {
 	print '<tr><td colspan="2"><br>*** Clean table user_rights from lines of external modules no more enabled</td></tr>';
 
-	$listofmods='';
-	foreach($conf->modules as $key => $val)
+	$listofmods = '';
+	foreach ($conf->modules as $key => $val)
 	{
-		$listofmods.=($listofmods?',':'')."'".$val."'";
+		$listofmods .= ($listofmods ? ',' : '')."'".$val."'";
 	}
 	$sql = 'SELECT id, libelle as label, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
 	$resql = $db->query($sql);
@@ -1315,7 +1315,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 			$i = 0;
 			while ($i < $num)
 			{
-				$obj=$db->fetch_object($resql);
+				$obj = $db->fetch_object($resql);
 				if ($obj->id > 0)
 				{
 					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->label.'" of module "'.$obj->module.'" to delete';
@@ -1323,7 +1323,7 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 					{
 						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
 						$resqldelete = $db->query($sqldelete);
-						if (! $resqldelete)
+						if (!$resqldelete)
 						{
 							dol_print_error($db);
 						}
@@ -1361,24 +1361,24 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha'))
         // Disable foreign key checking for avoid errors
     	if ($force_utf8_on_tables == 'confirmed')
     	{
-    		$sql='SET FOREIGN_KEY_CHECKS=0';
+    		$sql = 'SET FOREIGN_KEY_CHECKS=0';
     		print '<!-- '.$sql.' -->';
     		$resql = $db->query($sql);
     	}
 
-        foreach($listoftables as $table)
+        foreach ($listoftables as $table)
         {
         	// do not convert llx_const if mysql encrypt/decrypt is used
         	if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) continue;
 
             print '<tr><td colspan="2">';
             print $table;
-            $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+            $sql = 'ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
             print '<!-- '.$sql.' -->';
             if ($force_utf8_on_tables == 'confirmed')
             {
             	$resql = $db->query($sql);
-            	print ' - Done ('.($resql?'OK':'KO').')';
+            	print ' - Done ('.($resql ? 'OK' : 'KO').')';
             }
             else print ' - Disabled';
             print '</td></tr>';
@@ -1387,7 +1387,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha'))
         // Enable foreign key checking
         if ($force_utf8_on_tables == 'confirmed')
         {
-        	$sql='SET FOREIGN_KEY_CHECKS=1';
+        	$sql = 'SET FOREIGN_KEY_CHECKS=1';
         	print '<!-- '.$sql.' -->';
         	$resql = $db->query($sql);
         }
@@ -1429,7 +1429,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
     echo '<tr><th>Repair llx_commande_fournisseur_dispatch.fk_commandefourndet</th></tr>';
     echo '<tr><td>Repair in progress. This may take a while.</td></tr>';
 
-    $sql_dispatch = 'SELECT * FROM ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch WHERE COALESCE(fk_commandefourndet, 0) = 0';
+    $sql_dispatch = 'SELECT * FROM '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch WHERE COALESCE(fk_commandefourndet, 0) = 0';
     $db->begin();
     $resql_dispatch = $db->query($sql_dispatch);
     $n_processed_rows = 0;
@@ -1440,9 +1440,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
             exit;
         }
         while ($obj_dispatch = $db->fetch_object($resql_dispatch)) {
-            $sql_line = 'SELECT line.rowid, line.qty FROM ' . MAIN_DB_PREFIX . 'commande_fournisseurdet AS line'
-                .       ' WHERE line.fk_commande = ' . $obj_dispatch->fk_commande
-                .       ' AND   line.fk_product  = ' . $obj_dispatch->fk_product;
+            $sql_line = 'SELECT line.rowid, line.qty FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet AS line';
+            $sql_line .= ' WHERE line.fk_commande = '.$obj_dispatch->fk_commande;
+            $sql_line .= ' AND   line.fk_product  = '.$obj_dispatch->fk_product;
             $resql_line = $db->query($sql_line);
 
             // s’il y a plusieurs lignes avec le même produit sur cette commande fournisseur,
@@ -1452,7 +1452,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
             $remaining_qty = $obj_dispatch->qty;
             $first_iteration = true;
             if (!$resql_line) {
-                echo '<tr><td>Unable to find a matching supplier order line for dispatch #' . $obj_dispatch->rowid . '</td></tr>';
+                echo '<tr><td>Unable to find a matching supplier order line for dispatch #'.$obj_dispatch->rowid.'</td></tr>';
                 $errors[] = $sql_line;
                 $n_processed_rows++;
                 continue;
@@ -1465,9 +1465,9 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
                 }
                 $qty_for_line = min($remaining_qty, $obj_line->qty);
                 if ($first_iteration) {
-                    $sql_attach = 'UPDATE ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch'
-                        .        ' SET fk_commandefourndet = ' . $obj_line->rowid . ', qty = ' . $qty_for_line
-                        .        ' WHERE rowid = ' . $obj_dispatch->rowid;
+                    $sql_attach = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+                    $sql_attach .= ' SET fk_commandefourndet = '.$obj_line->rowid.', qty = '.$qty_for_line;
+                    $sql_attach .= ' WHERE rowid = '.$obj_dispatch->rowid;
                     $first_iteration = false;
                 } else {
                     $sql_attach_values = array(
@@ -1477,19 +1477,19 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
                         $qty_for_line,
                         $obj_dispatch->fk_entrepot,
                         $obj_dispatch->fk_user,
-                        $obj_dispatch->datec ? '"' . $db->escape($obj_dispatch->datec) . '"' : 'NULL',
-                        $obj_dispatch->comment ? '"' . $db->escape($obj_dispatch->comment) . '"' : 'NULL',
+                        $obj_dispatch->datec ? '"'.$db->escape($obj_dispatch->datec).'"' : 'NULL',
+                        $obj_dispatch->comment ? '"'.$db->escape($obj_dispatch->comment).'"' : 'NULL',
                         $obj_dispatch->status ?: 'NULL',
-                        $obj_dispatch->tms ? '"' . $db->escape($obj_dispatch->tms) . '"': 'NULL',
+                        $obj_dispatch->tms ? '"'.$db->escape($obj_dispatch->tms).'"' : 'NULL',
                         $obj_dispatch->batch ?: 'NULL',
-                        $obj_dispatch->eatby ? '"' . $db->escape($obj_dispatch->eatby) . '"': 'NULL',
-                        $obj_dispatch->sellby ? '"' . $db->escape($obj_dispatch->sellby) . '"': 'NULL'
+                        $obj_dispatch->eatby ? '"'.$db->escape($obj_dispatch->eatby).'"' : 'NULL',
+                        $obj_dispatch->sellby ? '"'.$db->escape($obj_dispatch->sellby).'"' : 'NULL'
                     );
                     $sql_attach_values = join(', ', $sql_attach_values);
 
-                    $sql_attach = 'INSERT INTO ' . MAIN_DB_PREFIX . 'commande_fournisseur_dispatch'
-                        .         ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)'
-                        .         ' VALUES (' . $sql_attach_values . ')';
+                    $sql_attach = 'INSERT INTO '.MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+                    $sql_attach .= ' (fk_commande, fk_product, fk_commandefourndet, qty, fk_entrepot, fk_user, datec, comment, status, tms, batch, eatby, sellby)';
+                    $sql_attach .= ' VALUES ('.$sql_attach_values.')';
                 }
 
                 if ($repair_link_dispatch_lines_supplier_order_lines == 'confirmed')
@@ -1498,7 +1498,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
                 }
                 else
                 {
-                	$resql_attach = true;	// Force success in test mode
+                	$resql_attach = true; // Force success in test mode
                 }
 
                 if ($resql_attach) {
@@ -1513,17 +1513,17 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
             // report progress every 256th row
             if (!($n_processed_rows & 0xff)) {
-                echo '<tr><td>Processed ' . $n_processed_rows . ' rows with ' . count($errors) . ' errors…' . "</td></tr>\n";
+                echo '<tr><td>Processed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
                 flush();
                 ob_flush();
             }
         }
     } else {
-        echo '<tr><td>Unable to find any dispatch without an fk_commandefourndet.' . "</td></tr>\n";
-        echo $sql_dispatch . "\n";
+        echo '<tr><td>Unable to find any dispatch without an fk_commandefourndet.'."</td></tr>\n";
+        echo $sql_dispatch."\n";
     }
-    echo '<tr><td>Fixed ' . $n_processed_rows . ' rows with ' . count($errors) . ' errors…' . "</td></tr>\n";
-    echo '<tr><td>DONE.' . "</td></tr>\n";
+    echo '<tr><td>Fixed '.$n_processed_rows.' rows with '.count($errors).' errors…'."</td></tr>\n";
+    echo '<tr><td>DONE.'."</td></tr>\n";
 
     if (count($errors)) {
         $db->rollback();
@@ -1534,7 +1534,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
     $db->close();
 
     echo '<tr><td><h3>SQL queries with errors:</h3></tr></td>';
-    echo '<tr><td>' . join('</td></tr><tr><td>', $errors) . '</td></tr>';
+    echo '<tr><td>'.join('</td></tr><tr><td>', $errors).'</td></tr>';
 }
 
 print '</table>';
@@ -1548,7 +1548,7 @@ if (empty($actiondone))
 
 if ($oneoptionset)
 {
-	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
 	print $langs->trans("GoToDolibarr");
 	print '</a></div>';
 }
@@ -1565,4 +1565,4 @@ pFooter(1, $setuplang);
 if ($db->connected) $db->close();
 
 // Return code if ran from command line
-if (! $ok && isset($argv[1])) exit(1);
+if (!$ok && isset($argv[1])) exit(1);

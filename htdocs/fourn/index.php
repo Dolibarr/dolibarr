@@ -32,7 +32,7 @@ $langs->loadLangs(array("suppliers", "orders", "companies"));
 
 // Security check
 $socid = GETPOST("socid", 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'societe', $socid, '');
 
 
@@ -97,7 +97,7 @@ else
 
 
 // Draft orders
-if (!empty($conf->fournisseur->enabled))
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))
 {
 	$langs->load("orders");
 
@@ -154,7 +154,7 @@ if (!empty($conf->fournisseur->enabled))
 }
 
 // Draft invoices
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT ff.ref_supplier, ff.rowid, ff.total_ttc, ff.type";
 	$sql .= ", s.nom as name, s.rowid as socid";

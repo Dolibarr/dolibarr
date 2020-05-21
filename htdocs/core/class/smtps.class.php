@@ -490,9 +490,9 @@ class SMTPs
                 }
                 // Most server servers expect a 2nd pass of EHLO after TLS is established to get another time
                 // the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
-                if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
+                if (!$_retVal = $this->socket_send_str('EHLO '.$hosth, '250'))
                 {
-                    $this->_setErr(126, '"'.$host.'" does not support authenticated connections.');
+                    $this->_setErr(126, '"'.$hosth.'" does not support authenticated connections.');
                     return $_retVal;
                 }
             }
@@ -533,12 +533,9 @@ class SMTPs
     /**
      * Now send the message
      *
-     * @param  boolean $_bolTestMsg  whether to run this method in 'Test' mode.
-     * @param  boolean $_bolDebug    whether to log all communication between this Class and the Mail Server.
-     * @return boolean|null   void
-     *                 $_strMsg      If this is run in 'Test' mode, the actual message structure will be returned
+     * @return boolean|null   Result
      */
-    public function sendMsg($_bolTestMsg = false, $_bolDebug = false)
+    public function sendMsg()
     {
         global $conf;
 
@@ -1379,9 +1376,10 @@ class SMTPs
         $strContentAltText = '';
         if ($strType == 'html')
         {
-            // Similar code to forge a text from html is also in CMailFile.class.php
-            $strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
-            $strContentAltText = html_entity_decode(strip_tags($strContentAltText));
+        	// Similar code to forge a text from html is also in CMailFile.class.php
+        	$strContentAltText = preg_replace('/<head><title>.*<\/style><\/head>/', '', $strContent);
+        	$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContentAltText);
+        	$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
             $strContentAltText = trim(wordwrap($strContentAltText, 75, "\r\n"));
         }
 
@@ -1509,8 +1507,8 @@ class SMTPs
                     }
 
                     // always end related and end alternative after inline images
-                    $content .= "--".$this->_getBoundary('related')."--"."\r\n";
-                    $content .= "\r\n"."--".$this->_getBoundary('alternative')."--"."\r\n";
+                    $content .= "--".$this->_getBoundary('related')."--\r\n";
+                    $content .= "\r\n--".$this->_getBoundary('alternative')."--\r\n";
                     $content .= "\r\n";
                 }
                 else
@@ -1536,34 +1534,25 @@ class SMTPs
                            $content .= "--".$this->_getBoundary('alternative')."\r\n";
                     }
 
-                    $content .= 'Content-Type: '.$_content['mimeType'].'; '
-                    //                             . 'charset="' . $this->getCharSet() . '"';
-                    . 'charset='.$this->getCharSet().'';
+                    $content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
-                    //                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
                     $content .= "\r\n";
-                    //                    $content .= 'Content-Transfer-Encoding: ';
-                    //                    $content .= ($type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
-                    //                    $content .=  "\r\n"
-                    //                             . 'Content-Disposition: inline'  . "\r\n"
-                    //                             . 'Content-Description: ' . $type . ' message' . "\r\n";
 
-                    if ($this->getMD5flag())
-                    $content .= 'Content-MD5: '.$_content['md5']."\r\n";
+                    if ($this->getMD5flag()) {
+                    	$content .= 'Content-MD5: '.$_content['md5']."\r\n";
+                    }
 
                     $content .= "\r\n".$_content['data']."\r\n";
 
                     if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part after html part
                     {
-                        $content .= "--".$this->_getBoundary('alternative')."--"."\r\n";
+                        $content .= "--".$this->_getBoundary('alternative')."--\r\n";
                     }
 
                     $content .= "\r\n";
                 }
             }
 
-            // Close message boundries
-            //            $content .= "\r\n--" . $this->_getBoundary() . '--' . "\r\n" ;
             $content .= "--".$this->_getBoundary('mixed').'--'."\r\n";
         }
 

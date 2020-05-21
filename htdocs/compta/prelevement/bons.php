@@ -31,15 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -52,7 +54,8 @@ $statut = GETPOST('statut', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$bon = new BonPrelevement($db, "");
+$bon = new BonPrelevement($db);
+$hookmanager->initHooks(array('withdrawalsreceiptslist'));
 
 
 /*
@@ -101,7 +104,10 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    $urladd = "&amp;statut=".$statut;
+    $param = '';
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+    $param .= "&statut=".urlencode($statut);
 
     $selectedfields = '';
 
@@ -119,10 +125,9 @@ if ($result)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
     $moreforfilter = '';
 
@@ -141,11 +146,11 @@ if ($result)
     print '</tr>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', 'class="liste_titre"', $sortfield, $sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'class="liste_titre" align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'class="right"', $sortfield, $sortorder);
-    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'class="right"', $sortfield, $sortorder);
-    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
     print "</tr>\n";
 
     $directdebitorder = new BonPrelevement($db);

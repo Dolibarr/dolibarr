@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -97,7 +98,7 @@ class Mo extends CommonObject
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>4, 'position'=>10, 'notnull'=>1, 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'showoncombobox'=>'1', 'noteditable'=>1),
 		'fk_bom' => array('type'=>'integer:Bom:bom/class/bom.class.php:0:t.status=1', 'filter'=>'active=1', 'label'=>'BOM', 'enabled'=>1, 'visible'=>1, 'position'=>33, 'notnull'=>-1, 'index'=>1, 'comment'=>"Original BOM", 'css'=>'maxwidth300'),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:0', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'comment'=>"Product to produce", 'css'=>'maxwidth300'),
-		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75'),
+		'qty' => array('type'=>'real', 'label'=>'QtyToProduce', 'enabled'=>1, 'visible'=>1, 'position'=>40, 'notnull'=>1, 'comment'=>"Qty to produce", 'css'=>'width75', 'isameasure'=>1),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'visible'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'css'=>'maxwidth300'),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Project', 'enabled'=>1, 'visible'=>-1, 'position'=>51, 'notnull'=>-1, 'index'=>1,),
@@ -590,7 +591,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Erase and update the line to produce.
+	 * Erase and update the line to consume and to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -648,7 +649,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = round($line->qty * $this->qty / $bom->efficiency, 2);
+								$moline->qty = price2num(($line->qty / $bom->qty) * $this->qty / $line->efficiency, 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -928,7 +929,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MO_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MRP_MO_UNVALIDATE');
 	}
 
 	/**
@@ -953,7 +954,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MO_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MRP_MO_CANCEL');
 	}
 
 	/**
@@ -966,7 +967,7 @@ class Mo extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
+		if ($this->status != self::STATUS_PRODUCED && $this->status != self::STATUS_CANCELED)
 		{
 			return 0;
 		}
@@ -978,7 +979,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MO_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MRP_MO_REOPEN');
 	}
 
     /**
@@ -1007,7 +1008,7 @@ class Mo extends CommonObject
         }
 
         $url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
-        if ($option = 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
+        if ($option == 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
@@ -1091,9 +1092,9 @@ class Mo extends CommonObject
 
 		$statusType = 'status'.$status;
 		if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
-		if ($status == self::STATUS_INPROGRESS) $statusType = 'status3';
+		if ($status == self::STATUS_INPROGRESS) $statusType = 'status4';
 		if ($status == self::STATUS_PRODUCED) $statusType = 'status6';
-		if ($status == self::STATUS_CANCELED) $statusType = 'status5';
+		if ($status == self::STATUS_CANCELED) $statusType = 'status9';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
@@ -1225,10 +1226,10 @@ class Mo extends CommonObject
 	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
+	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
@@ -1268,7 +1269,7 @@ class Mo extends CommonObject
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td class="right">'.$langs->trans('Qty').'</td>';
+		print '<td class="right">'.$langs->trans('Qty').' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span></td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
 		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
@@ -1334,10 +1335,15 @@ class Mo extends CommonObject
 			// TODO
 		}
 
+		$this->tpl['qty_bom'] = 1;
+		if (is_object($this->bom) && $this->bom->qty > 1) {
+			$this->tpl['qty_bom'] = $this->bom->qty;
+		}
+
 		$this->tpl['qty'] = $line->qty;
 		$this->tpl['qty_frozen'] = $line->qty_frozen;
 		$this->tpl['disable_stock_change'] = $line->disable_stock_change;
-		//$this->tpl['efficiency'] = $line->efficiency;
+		$this->tpl['efficiency'] = $line->efficiency;
 
 		$tpl = DOL_DOCUMENT_ROOT.'/mrp/tpl/originproductline.tpl.php';
 		$res = include $tpl;

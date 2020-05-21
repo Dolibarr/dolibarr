@@ -230,7 +230,7 @@ class Setup extends DolibarrApi
                 if ($country->fetch($obj->rowid) > 0) {
                     // Translate the name of the country if needed
                     // and then apply the filter if there is one.
-                    $this->translateLabel($country, $lang);
+                    $this->translateLabel($country, $lang, 'Country');
 
                     if (empty($filter) || stripos($country->label, $filter) !== false) {
                         $list[] = $this->_cleanObjectDatas($country);
@@ -318,7 +318,7 @@ class Setup extends DolibarrApi
             throw new RestException(404, 'country not found');
         }
 
-        $this->translateLabel($country, $lang);
+        $this->translateLabel($country, $lang, 'Country');
 
         return $this->_cleanObjectDatas($country);
     }
@@ -403,14 +403,15 @@ class Setup extends DolibarrApi
     }
 
     /**
-     * Translate the name of the country to the given language.
+     * Translate the name of the object to the given language.
      *
-     * @param Ccountry $country   Country
-     * @param string   $lang      Code of the language the name of the
-     *                            country must be translated to
+     * @param object   $object    Object with label to translate
+     * @param string   $lang      Code of the language the name of the object must be translated to
+     * @param string   $prefix 	  Prefix for translation key
+     *
      * @return void
      */
-    private function translateLabel($country, $lang)
+    private function translateLabel($object, $lang, $prefix = 'Country')
     {
         if (!empty($lang)) {
             // Load the translations if this is a new language.
@@ -420,11 +421,12 @@ class Setup extends DolibarrApi
                 $this->translations->setDefaultLang($lang);
                 $this->translations->load('dict');
             }
-            if ($country->code) {
-                $key = 'Country'.$country->code;
+            if ($object->code) {
+                $key = $prefix.$object->code;
+
                 $translation = $this->translations->trans($key);
                 if ($translation != $key) {
-                    $country->label = html_entity_decode($translation);
+                    $object->label = html_entity_decode($translation);
                 }
             }
         }
@@ -553,6 +555,70 @@ class Setup extends DolibarrApi
 
         return $list;
     }
+
+
+    /**
+     * Get the list of Expense Report types.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $module     To filter on module
+     * @param int       $active     Event's type is active or not {@min 0} {@max 1}
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return array				List of expense report types
+     *
+     * @url     GET dictionary/expensereport_types
+     *
+     * @throws RestException
+     */
+    public function getListOfExpenseReportsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $module = '', $active = 1, $sqlfilters = '')
+    {
+    	$list = array();
+
+    	$sql = "SELECT id, code, label, accountancy_code, active, module, position";
+    	$sql .= " FROM ".MAIN_DB_PREFIX."c_type_fees as t";
+    	$sql .= " WHERE t.active = ".$active;
+    	if ($module)    $sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
+    	// Add sql filters
+    	if ($sqlfilters)
+    	{
+    		if (!DolibarrApi::_checkFilters($sqlfilters))
+    		{
+    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+    		}
+    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    	}
+
+
+    	$sql .= $this->db->order($sortfield, $sortorder);
+
+    	if ($limit) {
+    		if ($page < 0) {
+    			$page = 0;
+    		}
+    		$offset = $limit * $page;
+
+    		$sql .= $this->db->plimit($limit, $offset);
+    	}
+
+    	$result = $this->db->query($sql);
+
+    	if ($result) {
+    		$num = $this->db->num_rows($result);
+    		$min = min($num, ($limit <= 0 ? $num : $limit));
+    		for ($i = 0; $i < $min; $i++) {
+    			$list[] = $this->db->fetch_object($result);
+    		}
+    	} else {
+    		throw new RestException(503, 'Error when retrieving list of expense report types : '.$this->db->lasterror());
+    	}
+
+    	return $list;
+    }
+
 
     /**
      * Get the list of contacts types.
@@ -1337,6 +1403,39 @@ class Setup extends DolibarrApi
         return $this->_cleanObjectDatas($mysoc);
     }
 
+
+    /**
+     * Get value of a setup variables
+     *
+     * Note that conf variables that stores security key or password hashes can't be loaded with API.
+     *
+     * @param	string			$constantname	Name of conf variable to get
+     * @return  array|mixed 				Data without useless information
+     *
+     * @url     GET conf/{constantname}
+     *
+     * @throws RestException 403 Forbidden
+     * @throws RestException 500 Error Bad or unknown value for constantname
+     */
+    public function getConf($constantname)
+    {
+    	global $conf;
+
+    	if (!DolibarrApiAccess::$user->admin
+    		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_ADMIN_CHECK)) {
+    		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
+    	}
+
+    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || !isset($conf->global->$constantname)) {
+    		throw new RestException(500, 'Error Bad or unknown value for constantname');
+    	}
+    	if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $constantname)) {
+    		throw new RestException(403, 'Forbidden');
+    	}
+
+    	return $conf->global->$constantname;
+    }
+
     /**
      * Do a test of integrity for files and setup.
      *
@@ -1345,7 +1444,9 @@ class Setup extends DolibarrApi
      *
      * @url     GET checkintegrity
      *
-     * @throws RestException
+     * @throws RestException 404 Signature file not found
+     * @throws RestException 500 Technical error
+     * @throws RestException 503 Forbidden
      */
     public function getCheckIntegrity($target)
     {
@@ -1354,7 +1455,7 @@ class Setup extends DolibarrApi
     	if (!DolibarrApiAccess::$user->admin
     		&& (empty($conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK) || DolibarrApiAccess::$user->login != $conf->global->API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK))
     	{
-    		throw new RestException(503, 'Error API open to admin users only or to login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
+    		throw new RestException(503, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_INTEGRITY_CHECK');
     	}
 
     	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';

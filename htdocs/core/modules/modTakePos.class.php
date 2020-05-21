@@ -71,7 +71,7 @@ class modTakePos extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto = 'list';
+		$this->picto = 'cash-register';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /takepos/core/xxxxx) (0=disable, 1=enable)
@@ -217,7 +217,7 @@ class modTakePos extends DolibarrModules
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
-								'url'=>'/takepos/takepos.php',
+								'url'=>'/takepos/index.php',
 								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>1000 + $r,
 								'enabled'=>'$conf->takepos->enabled', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
@@ -265,7 +265,7 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf,$db;
+		global $conf, $db;
 
 		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
 

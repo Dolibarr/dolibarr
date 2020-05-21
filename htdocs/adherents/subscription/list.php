@@ -33,6 +33,7 @@ $langs->loadLangs(array("members", "companies"));
 
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
+$contextpage = GETPOST('contextpage', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
@@ -54,7 +55,7 @@ $date_select = GETPOST("date_select", 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -117,7 +118,6 @@ if (empty($reshook))
     // Purge search criteria
     if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
     {
-	    $search = "";
 	    $search_type = "";
 	    $search_ref = "";
 	    $search_lastname = "";
@@ -259,10 +259,9 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "subscription";
@@ -338,7 +337,7 @@ if (!empty($arrayfields['t.libelle']['checked']))
 if (!empty($arrayfields['d.bank']['checked']))
 {
 	print '<td class="liste_titre">';
-	$form->select_comptes($search_account, 'search_account', 0, '', 1);
+	$form->select_comptes($search_account, 'search_account', 0, '', 1, '', 0, 'maxwidth150');
 	print '</td>';
 }
 
@@ -444,7 +443,7 @@ while ($i < min($num, $limit))
     // Type
     if (!empty($arrayfields['d.fk_type']['checked']))
 	{
-        print '<td>';
+        print '<td class="nowraponall">';
         if ($typeid > 0)
         {
         	print $adht->getNomUrl(1);
@@ -464,14 +463,14 @@ while ($i < min($num, $limit))
 	// Firstname
 	if (!empty($arrayfields['d.firstname']['checked']))
 	{
-		print '<td>'.$adherent->firstname.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->firstname).'">'.$adherent->firstname.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
 	// Login
 	if (!empty($arrayfields['d.login']['checked']))
 	{
-		print '<td>'.$adherent->login.'</td>';
+		print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($adherent->login).'">'.$adherent->login.'</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 
@@ -487,7 +486,7 @@ while ($i < min($num, $limit))
 	// Banque
 	if (!empty($arrayfields['d.bank']['checked']))
 	{
-		print "<td>";
+		print '<td class="tdmaxoverflow150">';
 		if ($obj->fk_account > 0)
 		{
 			$accountstatic->id = $obj->fk_account;
@@ -522,7 +521,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation

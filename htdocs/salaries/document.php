@@ -36,7 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","users","salaries","hrm"));
+$langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -45,34 +45,35 @@ $confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 
 $object = new PaymentSalary($db);
 $object->fetch($id, $ref);
 
 $upload_dir = $conf->salaries->dir_output.'/'.dol_sanitizeFileName($object->id);
-$modulepart='salaries';
+$modulepart = 'salaries';
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -87,27 +88,27 @@ if ($object->id)
 {
 	$object->fetch_thirdparty();
 
-	$head=salaries_prepare_head($object);
+	$head = salaries_prepare_head($object);
 
 	dol_fiche_head($head, 'documents', $langs->trans("SalaryPayment"), -1, 'payment');
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
 	{
-		$totalsize+=$file['size'];
+		$totalsize += $file['size'];
 	}
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 
-	$userstatic=new User($db);
+	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user);
 
-	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
-	$morehtmlref.='</div>';
+	$morehtmlref .= $langs->trans('Employee').' : '.$userstatic->getNomUrl(1);
+	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 
@@ -125,8 +126,8 @@ if ($object->id)
 
 	$modulepart = 'salaries';
 	$permission = $user->rights->salaries->write;
-	$param = '&id=' . $object->id;
-	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+	$param = '&id='.$object->id;
+	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 }
 else
 {

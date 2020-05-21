@@ -60,7 +60,7 @@ class Don extends CommonObject
     /**
 	 * @var string String with name of icon for object don. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'generic';
+	public $picto = 'donation';
 
 	/**
 	 * @var string Date of the donation
@@ -178,7 +178,7 @@ class Don extends CommonObject
     	}
 
     	$statusType = 'status'.$status;
-    	if ($status == self::STATUS_CANCELED) $statusType = 'status5';
+    	if ($status == self::STATUS_CANCELED) $statusType = 'status9';
     	if ($status == self::STATUS_PAID) $statusType = 'status6';
 
     	return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
@@ -432,7 +432,7 @@ class Don extends CommonObject
 
 		// Update extrafield
         if (!$error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$result = $this->insertExtraFields();
         		if ($result < 0)
@@ -519,7 +519,7 @@ class Don extends CommonObject
             // Update extrafield
             if (!$error)
 			{
-              	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+              	if (!$error)
                	{
                		$result = $this->insertExtraFields();
                		if ($result < 0)
@@ -916,22 +916,36 @@ class Don extends CommonObject
     /**
      *	Return clicable name (with picto eventually)
      *
-     *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-     *	@param	int  	$notooltip		1=Disable tooltip
-     *	@return	string					Chaine avec URL
+     *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *	@param	int  	$notooltip					1=Disable tooltip
+     *	@param	string	$moretitle					Add more text to title tooltip
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								Chaine avec URL
      */
-    public function getNomUrl($withpicto = 0, $notooltip = 0)
+    public function getNomUrl($withpicto = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
     {
-        global $langs;
+        global $conf, $langs;
+
+        if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
-        $label = $langs->trans("ShowDonation").': '.$this->id;
+        $label = '<u>'.$langs->trans("Donation").'</u>';
+        if (!empty($this->id)) {
+        	$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
+        }
+        if ($moretitle) $label .= ' - '.$moretitle;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/don/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $url = DOL_URL_ROOT.'/don/card.php?id='.$this->id;
+
+       	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+       	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+       	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
         $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
 

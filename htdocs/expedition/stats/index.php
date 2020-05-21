@@ -28,11 +28,11 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
-$userid=GETPOST('userid', 'int');
-$socid=GETPOST('socid', 'int');
+$userid = GETPOST('userid', 'int');
+$socid = GETPOST('socid', 'int');
 // Security check
 if ($user->socid > 0)
 {
@@ -40,11 +40,11 @@ if ($user->socid > 0)
     $socid = $user->socid;
 }
 
-$nowyear=strftime("%Y", dol_now());
-$year = GETPOST('year')>0?GETPOST('year'):$nowyear;
+$nowyear = strftime("%Y", dol_now());
+$year = GETPOST('year') > 0 ?GETPOST('year') : $nowyear;
 //$startyear=$year-2;
-$startyear=$year-1;
-$endyear=$year;
+$startyear = $year - 1;
+$endyear = $year;
 
 // Load translation files required by the page
 $langs->loadLangs(array('sendings', 'other', 'companies'));
@@ -54,16 +54,16 @@ $langs->loadLangs(array('sendings', 'other', 'companies'));
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
 
 
 dol_mkdir($dir);
 
-$stats = new ExpeditionStats($db, $socid, '', ($userid>0?$userid:0));
+$stats = new ExpeditionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
@@ -82,13 +82,13 @@ else
 
 $px1 = new DolGraph();
 $mesg = $px1->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px1->SetData($data);
-    $i=$startyear;$legend=array();
+    $i = $startyear; $legend = array();
     while ($i <= $endyear)
     {
-        $legend[]=$i;
+        $legend[] = $i;
         $i++;
     }
     $px1->SetLegend($legend);
@@ -99,7 +99,7 @@ if (! $mesg)
     $px1->SetYLabel($langs->trans("NbOfSendings"));
     $px1->SetShading(3);
     $px1->SetHorizTickIncrement(1);
-    $px1->mode='depth';
+    $px1->mode = 'depth';
     $px1->SetTitle($langs->trans("NumberOfShipmentsByMonth"));
 
     $px1->draw($filenamenb, $fileurlnb);
@@ -187,22 +187,22 @@ if (! $mesg)
 
 // Show array
 $data = $stats->getAllByYear();
-$arrayyears=array();
-foreach($data as $val) {
-	if (! empty($val['year'])) {
-		$arrayyears[$val['year']]=$val['year'];
+$arrayyears = array();
+foreach ($data as $val) {
+	if (!empty($val['year'])) {
+		$arrayyears[$val['year']] = $val['year'];
 	}
 }
-if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
+if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
-$h=0;
+$h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/expedition/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/expedition/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
 
-$type='shipment_stats';
+$type = 'shipment_stats';
 
 complete_head_from_modules($conf, $langs, null, $head, $h, $type);
 
@@ -230,8 +230,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Year
 	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
-	if (! in_array($year, $arrayyears)) $arrayyears[$year]=$year;
-	if (! in_array($nowyear, $arrayyears)) $arrayyears[$nowyear]=$nowyear;
+	if (!in_array($year, $arrayyears)) $arrayyears[$year] = $year;
+	if (!in_array($nowyear, $arrayyears)) $arrayyears[$nowyear] = $nowyear;
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
@@ -251,11 +251,11 @@ print '<td class="right">'.$langs->trans("NbOfSendings").'</td>';
 print '<td class="center">'.$langs->trans("AmountAverage").'</td>';*/
 print '</tr>';
 
-$oldyear=0;
+$oldyear = 0;
 foreach ($data as $val)
 {
 	$year = $val['year'];
-	while (! empty($year) && $oldyear > $year+1)
+	while (!empty($year) && $oldyear > $year + 1)
 	{ // If we have empty year
 		$oldyear--;
 
@@ -278,7 +278,7 @@ foreach ($data as $val)
 	/*print '<td class="right">'.price(price2num($val['total'],'MT'),1).'</td>';
 	print '<td class="right">'.price(price2num($val['avg'],'MT'),1).'</td>';*/
 	print '</tr>';
-	$oldyear=$year;
+	$oldyear = $year;
 }
 
 print '</table>';
@@ -341,7 +341,7 @@ print '</table>';
 */
 
 print '<br>';
-print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
+print '<i class="opacitymedium">'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
 // End of page
 llxFooter();

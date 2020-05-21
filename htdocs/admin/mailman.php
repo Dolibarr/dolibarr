@@ -35,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "mailmanspip"));
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 
-$type=array('yesno','texte','chaine');
+$type = array('yesno', 'texte', 'chaine');
 
 $action = GETPOST('action', 'aZ09');
 $testsubscribeemail = GETPOST("testsubscribeemail");
@@ -51,18 +51,18 @@ $testunsubscribeemail = GETPOST("testunsubscribeemail");
 // Action updated or added a constant
 if ($action == 'update' || $action == 'add')
 {
-	foreach($_POST['constname'] as $key => $val)
+	foreach ($_POST['constname'] as $key => $val)
 	{
-		$constname=$_POST["constname"][$key];
-		$constvalue=$_POST["constvalue"][$key];
-		$consttype=$_POST["consttype"][$key];
-		$constnote=$_POST["constnote"][$key];
-		$res=dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
+		$constname = $_POST["constname"][$key];
+		$constvalue = $_POST["constvalue"][$key];
+		$consttype = $_POST["consttype"][$key];
+		$constnote = $_POST["constnote"][$key];
+		$res = dolibarr_set_const($db, $constname, $constvalue, $type[$consttype], 0, $constnote, $conf->entity);
 
-		if (! $res > 0) $error++;
+		if (!$res > 0) $error++;
 	}
 
- 	if (! $error)
+ 	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
@@ -75,7 +75,7 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
-    $result=dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
+    $result = dolibarr_set_const($db, $_GET["name"], $_GET["value"], '', 0, '', $conf->entity);
     if ($result < 0)
     {
         dol_print_error($db);
@@ -85,17 +85,17 @@ if ($action == 'set')
 // Action desactivation d'un sous module du module adherent
 if ($action == 'unset')
 {
-    $result=dolibarr_del_const($db, $_GET["name"], $conf->entity);
+    $result = dolibarr_del_const($db, $_GET["name"], $conf->entity);
     if ($result < 0)
     {
         dol_print_error($db);
     }
 }
 
-if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($conf->global->ADHERENT_USE_MAILMAN))
+if (($action == 'testsubscribe' || $action == 'testunsubscribe') && !empty($conf->global->ADHERENT_USE_MAILMAN))
 {
-    $email=GETPOST($action.'email');
-    if (! isValidEmail($email))
+    $email = GETPOST($action.'email');
+    if (!isValidEmail($email))
     {
         $langs->load("errors");
         setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
@@ -103,17 +103,17 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
     else
     {
         include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
-        $mailmanspip=new MailmanSpip($db);
+        $mailmanspip = new MailmanSpip($db);
 
-        $object=new stdClass();
-        $object->email=$email;
-        $object->pass=$email;
+        $object = new stdClass();
+        $object->email = $email;
+        $object->pass = $email;
         /*$object->element='member';
         $object->type='Preferred Partners'; */
 
         if ($action == 'testsubscribe')
         {
-            $result=$mailmanspip->add_to_mailman($object);
+            $result = $mailmanspip->add_to_mailman($object);
 			if ($result < 0)
 			{
 				$error++;
@@ -126,7 +126,7 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
         }
         if ($action == 'testunsubscribe')
         {
-            $result=$mailmanspip->del_to_mailman($object);
+            $result = $mailmanspip->del_to_mailman($object);
             if ($result < 0)
 			{
 				$error++;
@@ -145,17 +145,17 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && ! empty($con
  * View
  */
 
-$help_url='';
+$help_url = '';
 
 llxHeader('', $langs->trans("MailmanSpipSetup"), $help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MailmanSpipSetup"), $linkback, 'title_setup');
 
 $head = mailmanspip_admin_prepare_head();
 
-if (! empty($conf->global->ADHERENT_USE_MAILMAN))
+if (!empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -164,12 +164,12 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), -1, 'user');
 
     //$link=img_picto($langs->trans("Active"),'tick').' ';
-    $link='<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
+    $link = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">';
     //$link.=$langs->trans("Disable");
-    $link.=img_picto($langs->trans("Activated"), 'switch_on');
-    $link.='</a>';
+    $link .= img_picto($langs->trans("Activated"), 'switch_on');
+    $link .= '</a>';
     // Edition des varibales globales
-    $constantes=array(
+    $constantes = array(
         'ADHERENT_MAILMAN_ADMINPW',
         'ADHERENT_MAILMAN_URL',
         'ADHERENT_MAILMAN_UNSUB_URL',
@@ -216,17 +216,17 @@ else
 {
     dol_fiche_head($head, 'mailman', $langs->trans("Setup"), 0, 'user');
 
-    $link='<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
+    $link = '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value=1&name=ADHERENT_USE_MAILMAN">';
     //$link.=img_$langs->trans("Activate")
-    $link.=img_picto($langs->trans("Disabled"), 'switch_off');
-    $link.='</a>';
+    $link .= img_picto($langs->trans("Disabled"), 'switch_off');
+    $link .= '</a>';
     print load_fiche_titre($langs->trans('MailmanTitle'), $link, '');
 
     dol_fiche_end();
 }
 
 
-if (! empty($conf->global->ADHERENT_USE_MAILMAN))
+if (!empty($conf->global->ADHERENT_USE_MAILMAN))
 {
     print '<form action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';

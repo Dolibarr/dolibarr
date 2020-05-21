@@ -35,7 +35,7 @@ class FormEcm
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
 
 	/**
@@ -62,9 +62,9 @@ class FormEcm
 		global $conf, $langs;
 		$langs->load("ecm");
 
-		if ($select_name=='') $select_name="catParent";
+		if ($select_name == '') $select_name = "catParent";
 
-		$cate_arbo=null;
+		$cate_arbo = null;
 		if ($module == 'ecm')
 		{
 			$cat = new EcmDirectory($this->db);
@@ -74,17 +74,17 @@ class FormEcm
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			$path = $conf->medias->multidir_output[$conf->entity];
-			$cate_arbo = dol_dir_list($path, 'directories', 1, '', array('(\.meta|_preview.*\.png)$','^\.'), 'relativename', SORT_ASC);
+			$cate_arbo = dol_dir_list($path, 'directories', 1, '', array('(\.meta|_preview.*\.png)$', '^\.'), 'relativename', SORT_ASC);
 		}
 
 		$output = '<select class="flat minwidth100 maxwidth500" id="'.$select_name.'" name="'.$select_name.'">';
 		if (is_array($cate_arbo))
 		{
-			if (! count($cate_arbo)) $output.= '<option value="-1" disabled>'.$langs->trans("NoDirectoriesFound").'</option>';
+			if (!count($cate_arbo)) $output .= '<option value="-1" disabled>'.$langs->trans("NoDirectoriesFound").'</option>';
 			else
 			{
-				$output.= '<option value="-1">&nbsp;</option>';
-				foreach($cate_arbo as $key => $value)
+				$output .= '<option value="-1">&nbsp;</option>';
+				foreach ($cate_arbo as $key => $value)
 				{
 					$valueforoption = empty($cate_arbo[$key]['id']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['id'];
 					if ($selected && $valueforoption == $selected)
@@ -95,13 +95,13 @@ class FormEcm
 					{
 						$add = '';
 					}
-					$output.= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';
+					$output .= '<option '.$add.'value="'.dol_escape_htmltag($valueforoption).'">'.(empty($cate_arbo[$key]['fulllabel']) ? $cate_arbo[$key]['relativename'] : $cate_arbo[$key]['fulllabel']).'</option>';
 				}
 			}
 		}
-		$output.= '</select>';
-		$output.=ajax_combobox($select_name);
-		$output.= "\n";
+		$output .= '</select>';
+		$output .= ajax_combobox($select_name);
+		$output .= "\n";
 		return $output;
 	}
 }

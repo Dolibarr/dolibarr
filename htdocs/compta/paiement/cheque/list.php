@@ -35,17 +35,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array('banks', 'categories', 'bills'));
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'banque', '', '');
 
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_account = GETPOST('search_account', 'int');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -85,20 +85,20 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 llxHeader('', $langs->trans("ChequesReceipts"));
 
 $sql = "SELECT bc.rowid, bc.ref as ref, bc.date_bordereau as dp,";
-$sql.= " bc.nbcheque, bc.amount, bc.statut,";
-$sql.= " ba.rowid as bid, ba.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
-$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
-$sql.= " WHERE bc.fk_bank_account = ba.rowid";
-$sql.= " AND bc.entity = ".$conf->entity;
+$sql .= " bc.nbcheque, bc.amount, bc.statut,";
+$sql .= " ba.rowid as bid, ba.label";
+$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
+$sql .= " ".MAIN_DB_PREFIX."bank_account as ba";
+$sql .= " WHERE bc.fk_bank_account = ba.rowid";
+$sql .= " AND bc.entity = ".$conf->entity;
 
 // Search criteria
-if ($search_ref)			$sql.=natural_search("bc.ref", $search_ref);
-if ($search_account > 0)	$sql.=" AND bc.fk_bank_account=".$search_account;
-if ($search_amount)			$sql.=natural_search("bc.amount", price2num($search_amount));
-$sql.= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
+if ($search_ref)			$sql .= natural_search("bc.ref", $search_ref);
+if ($search_account > 0)	$sql .= " AND bc.fk_bank_account=".$search_account;
+if ($search_amount)			$sql .= natural_search("bc.amount", price2num($search_amount));
+$sql .= dolSqlDateFilter('bc.date_bordereau', 0, $month, $year);
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -120,14 +120,14 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	$param = '';
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
-	$newcardbutton='';
+	$newcardbutton = '';
 	if ($user->rights->banque->cheque)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewCheckDeposit'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/paiement/cheque/card.php?action=new');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -139,7 +139,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_bank.png', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans("MenuChequeDeposits"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
 	$moreforfilter = '';
 
@@ -165,7 +165,7 @@ if ($resql)
 	print '</td>';
 	print '<td class="liste_titre"></td>';
     print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
     print "</tr>\n";

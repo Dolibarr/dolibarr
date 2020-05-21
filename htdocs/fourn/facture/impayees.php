@@ -31,11 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
-if (! $user->rights->fournisseur->facture->lire) accessforbidden();
+if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
 $langs->loadLangs(array("companies", "bills"));
 
-$socid=GETPOST('socid', 'int');
+$socid = GETPOST('socid', 'int');
 $option = GETPOST('option');
 
 // Security check
@@ -54,53 +54,54 @@ $search_company = GETPOST('search_company', 'alpha');
 $search_amount_no_tax = GETPOST('search_amount_no_tax', 'alpha');
 $search_amount_all_tax = GETPOST('search_amount_all_tax', 'alpha');
 
-$page = GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="f.date_lim_reglement";
-if (! $sortorder) $sortorder="ASC";
+if (!$sortfield) $sortfield = "f.date_lim_reglement";
+if (!$sortorder) $sortorder = "ASC";
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
 {
-	$search_ref="";
-	$search_ref_supplier="";
-	$search_company="";
-	$search_amount_no_tax="";
-	$search_amount_all_tax="";
+	$search_ref = "";
+	$search_ref_supplier = "";
+	$search_company = "";
+	$search_amount_no_tax = "";
+	$search_amount_all_tax = "";
 }
 
 /*
  * View
  */
 
-$now=dol_now();
+$now = dol_now();
 
 llxHeader('', $langs->trans("BillsSuppliersUnpaid"));
 
-$title=$langs->trans("BillsSuppliersUnpaid");
+$title = $langs->trans("BillsSuppliersUnpaid");
 
-$facturestatic=new FactureFournisseur($db);
-$companystatic=new Societe($db);
+$facturestatic = new FactureFournisseur($db);
+$companystatic = new Societe($db);
 
 if ($user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT s.rowid as socid, s.nom as name,";
-	$sql.= " f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc,";
-	$sql.= " f.datef as df, f.date_lim_reglement as datelimite, ";
-	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
-	$sql.= " ,sum(pf.amount) as am";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
-	$sql.= " WHERE f.entity = ".$conf->entity;
-	$sql.= " AND f.fk_soc = s.rowid";
-	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
-	if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc,";
+	$sql .= " f.datef as df, f.date_lim_reglement as datelimite, ";
+	$sql .= " f.paye as paye, f.rowid as facid, f.fk_statut";
+	$sql .= " ,sum(pf.amount) as am";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= ",".MAIN_DB_PREFIX."facture_fourn as f";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
+	$sql .= " WHERE f.entity = ".$conf->entity;
+	$sql .= " AND f.fk_soc = s.rowid";
+	$sql .= " AND f.paye = 0 AND f.fk_statut = 1";
+	if ($option == 'late') $sql .= " AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->fournisseur->warning_delay)."'";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 	if (GETPOST('filtre'))
@@ -109,7 +110,7 @@ if ($user->rights->fournisseur->facture->lire)
 		foreach ($filtrearr as $fil)
 		{
 			$filt = explode(":", $fil);
-			$sql .= " AND " . $filt[0] . " = " . $filt[1];
+			$sql .= " AND ".$filt[0]." = ".$filt[1];
 		}
 	}
 
@@ -142,10 +143,10 @@ if ($user->rights->fournisseur->facture->lire)
 		$sql .= " AND f.ref_supplier LIKE '%".$db->escape(GETPOST('sf_re'))."%'";
 	}
 
-	$sql.= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
-	if (! $user->rights->societe->client->voir && ! $socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql.=$db->order($sortfield, $sortorder);
-	if (! in_array("f.ref_supplier", explode(',', $sortfield))) $sql.= ", f.ref_supplier DESC";
+	$sql .= " GROUP BY s.rowid, s.nom, f.rowid, f.ref, f.ref_supplier, f.total_ht, f.total_ttc, f.datef, f.date_lim_reglement, f.paye, f.fk_statut";
+	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	$sql .= $db->order($sortfield, $sortorder);
+	if (!in_array("f.ref_supplier", explode(',', $sortfield))) $sql .= ", f.ref_supplier DESC";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -158,30 +159,30 @@ if ($user->rights->fournisseur->facture->lire)
 			$soc->fetch($socid);
 		}
 
-		$param ='';
-		if ($socid) $param.="&socid=".$socid;
+		$param = '';
+		if ($socid) $param .= "&socid=".$socid;
 
-		if ($search_ref)         	$param.='&amp;search_ref='.urlencode($search_ref);
-		if ($search_ref_supplier)	$param.='&amp;search_ref_supplier='.urlencode($search_ref_supplier);
-		if ($search_company)     	$param.='&amp;search_company='.urlencode($search_company);
-		if ($search_amount_no_tax)	$param.='&amp;search_amount_no_tax='.urlencode($search_amount_no_tax);
-		if ($search_amount_all_tax) $param.='&amp;search_amount_all_tax='.urlencode($search_amount_all_tax);
+		if ($search_ref)         	$param .= '&amp;search_ref='.urlencode($search_ref);
+		if ($search_ref_supplier)	$param .= '&amp;search_ref_supplier='.urlencode($search_ref_supplier);
+		if ($search_company)     	$param .= '&amp;search_company='.urlencode($search_company);
+		if ($search_amount_no_tax)	$param .= '&amp;search_amount_no_tax='.urlencode($search_amount_no_tax);
+		if ($search_amount_all_tax) $param .= '&amp;search_amount_all_tax='.urlencode($search_amount_all_tax);
 
-		$param.=($option?"&option=".$option:"");
-		if (! empty($late)) $param.='&late='.urlencode($late);
-		$urlsource=str_replace('&amp;', '&', $param);
+		$param .= ($option ? "&option=".$option : "");
+		if (!empty($late)) $param .= '&late='.urlencode($late);
+		$urlsource = str_replace('&amp;', '&', $param);
 
-		$titre=($socid?$langs->trans("BillsSuppliersUnpaidForCompany", $soc->name):$langs->trans("BillsSuppliersUnpaid"));
+		$titre = ($socid ? $langs->trans("BillsSuppliersUnpaidForCompany", $soc->name) : $langs->trans("BillsSuppliersUnpaid"));
 
-		if ($option == 'late') $titre.=' ('.$langs->trans("Late").')';
-	    else $titre.=' ('.$langs->trans("All").')';
+		if ($option == 'late') $titre .= ' ('.$langs->trans("Late").')';
+	    else $titre .= ' ('.$langs->trans("All").')';
 
-		$link='';
-		if (empty($option)) $link='<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
-		elseif ($option == 'late') $link='<a href="'.$_SERVER["PHP_SELF"].'?'.($socid?'&socid='.$socid:'').'">'.$langs->trans("ShowUnpaidAll").'</a>';
+		$link = '';
+		if (empty($option)) $link = '<a href="'.$_SERVER["PHP_SELF"].'?option=late'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidLateOnly").'</a>';
+		elseif ($option == 'late') $link = '<a href="'.$_SERVER["PHP_SELF"].'?'.($socid ? '&socid='.$socid : '').'">'.$langs->trans("ShowUnpaidAll").'</a>';
 		print load_fiche_titre($titre, $link);
 
-		print_barre_liste('', '', $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0);	// We don't want pagination on this page
+		print_barre_liste('', '', $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0); // We don't want pagination on this page
 		$i = 0;
 		print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -214,16 +215,16 @@ if ($user->rights->fournisseur->facture->lire)
 		print '<input class="flat" type="text" size="8" name="search_amount_all_tax" value="'.$search_amount_all_tax.'">';
 		print '</td>';
         print '<td class="liste_titre maxwidthsearch">';
-        $searchpicto=$form->showFilterAndCheckAddButtons(0);
+        $searchpicto = $form->showFilterAndCheckAddButtons(0);
         print $searchpicto;
         print '</td>';
 		print "</tr>\n";
 
 		if ($num > 0)
 		{
-			$total_ht=0;
-			$total_ttc=0;
-			$total_paid=0;
+			$total_ht = 0;
+			$total_ttc = 0;
+			$total_paid = 0;
 
 			while ($i < $num)
 			{
@@ -238,8 +239,8 @@ if ($user->rights->fournisseur->facture->lire)
 				$classname = "impayee";
 
 				print '<td class="nowrap">';
-				$facturestatic->id=$objp->facid;
-				$facturestatic->ref=$objp->ref;
+				$facturestatic->id = $objp->facid;
+				$facturestatic->ref = $objp->ref;
 				print $facturestatic->getNomUrl(1);
 				print "</td>\n";
 
@@ -253,8 +254,8 @@ if ($user->rights->fournisseur->facture->lire)
 				print "</td>\n";
 
 				print '<td>';
-				$companystatic->id=$objp->socid;
-				$companystatic->name=$objp->name;
+				$companystatic->id = $objp->socid;
+				$companystatic->name = $objp->name;
 				print $companystatic->getNomUrl(1, 'supplier', 32);
 				print '</td>';
 
@@ -268,9 +269,9 @@ if ($user->rights->fournisseur->facture->lire)
 				print '</td>';
 
 				print "</tr>\n";
-				$total_ht+=$objp->total_ht;
-				$total_ttc+=$objp->total_ttc;
-				$total_paid+=$objp->am;
+				$total_ht += $objp->total_ht;
+				$total_ttc += $objp->total_ttc;
+				$total_paid += $objp->am;
 
 				$i++;
 			}

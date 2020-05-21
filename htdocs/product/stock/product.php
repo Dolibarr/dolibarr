@@ -661,10 +661,10 @@ if ($id > 0 || $ref)
 
 			// Number of product from customer order already sent (partial shipping)
 			if (!empty($conf->expedition->enabled)) {
-                require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+                require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
                 $filterShipmentStatus = '';
                 if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
-                    $filterShipmentStatus = Expedition::STATUS_VALIDATED  . ',' . Expedition::STATUS_CLOSED;
+                    $filterShipmentStatus = Expedition::STATUS_VALIDATED.','.Expedition::STATUS_CLOSED;
                 } elseif (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
                     $filterShipmentStatus = Expedition::STATUS_CLOSED;
                 }
@@ -674,7 +674,8 @@ if ($id > 0 || $ref)
 			}
 
 			// Number of supplier order running
-			if (!empty($conf->fournisseur->enabled)) {
+			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+			{
 				if ($found) $helpondiff .= '<br>'; else $found = 1;
 				$result = $object->load_stats_commande_fournisseur(0, '3,4', 1);
 				$helpondiff .= $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$object->stats_commande_fournisseur['qty'];
@@ -684,7 +685,7 @@ if ($id > 0 || $ref)
 			}
 
 			// Number of product from supplier order already received (partial receipt)
-			if (!empty($conf->fournisseur->enabled)) {
+			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 				if ($found) $helpondiff .= '<br>'; else $found = 1;
 				$helpondiff .= $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
 			}
@@ -917,7 +918,7 @@ if (!$variants) {
 						print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
 						print '</td>';
 						print '<td class="right" width="10%">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
-						print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
+						print '<td colspan="4"><input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
 						print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 						print '</table>';
 						print '</form>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
@@ -53,6 +53,7 @@ $projectid	= GETPOST('projectid', 'int');
 $ref		= GETPOST('ref', 'alpha');
 $withproject = GETPOST('withproject', 'int');
 $project_ref = GETPOST('project_ref', 'alpha');
+$tab        = GETPOST('tab', 'aZ09');
 
 $search_day = GETPOST('search_day', 'int');
 $search_month = GETPOST('search_month', 'int');
@@ -75,7 +76,7 @@ if (!$user->rights->projet->lire) accessforbidden();
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }		// If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -269,7 +270,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$_POST["cancel
 			$object->timespent_note = $_POST["timespent_note_line"];
 			$object->timespent_old_duration = $_POST["old_duration"];
 			$object->timespent_duration = $_POST["new_durationhour"] * 60 * 60; // We store duration in seconds
-			$object->timespent_duration += $_POST["new_durationmin"] * 60; // We store duration in seconds
+			$object->timespent_duration += ($_POST["new_durationmin"] ? $_POST["new_durationmin"] : 0) * 60; // We store duration in seconds
 			if (GETPOST("timelinehour") != '' && GETPOST("timelinehour") >= 0)	// If hour was entered
 			{
 				$object->timespent_date = dol_mktime(GETPOST("timelinehour"), GETPOST("timelinemin"), 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
@@ -620,8 +621,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		if ($withproject)
 		{
 			// Tabs for project
-			if (empty($id)) $tab = 'timespent';
+			if (empty($id) || $tab == 'timespent') $tab = 'timespent';
 			else $tab = 'tasks';
+
 			$head = project_prepare_head($projectstatic);
 			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public ? 'projectpub' : 'project'));
 
@@ -958,6 +960,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
 		print '<input type="hidden" name="withproject" value="'.$withproject.'">';
+		print '<input type="hidden" name="tab" value="'.$tab.'">';
 
 		if ($massaction == 'generateinvoice')
 		{
@@ -1139,7 +1142,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			print '<td></td>';
 			print "</tr>\n";
 
-			print '<tr class="oddeven">';
+			print '<tr class="oddeven nohover">';
 
 			// Date
 			print '<td class="maxwidthonsmartphone">';
@@ -1149,28 +1152,31 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			print '</td>';
 
 			// Task
+			$nboftasks = 0;
 			if (empty($id))
 			{
 				print '<td class="maxwidthonsmartphone">';
-				$formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
+				$nboftasks = $formproject->selectTasks(-1, GETPOST('taskid', 'int'), 'taskid', 0, 0, 1, 1, 0, 0, 'maxwidth300', $projectstatic->id, '');
 				print '</td>';
 			}
 
 			// Contributor
-			print '<td class="maxwidthonsmartphone">';
-			print img_object('', 'user', 'class="hideonsmartphone"');
+			print '<td class="maxwidthonsmartphone nowraponall">';
 			$contactsofproject = $projectstatic->getListContactId('internal');
 			if (count($contactsofproject) > 0)
 			{
+				print img_object('', 'user', 'class="hideonsmartphone"');
 				if (in_array($user->id, $contactsofproject)) $userid = $user->id;
 				else $userid = $contactsofproject[0];
 
 				if ($projectstatic->public) $contactsofproject = array();
-				print $form->select_dolusers((GETPOST('userid', 'int') ?GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
+				print $form->select_dolusers((GETPOST('userid', 'int') ? GETPOST('userid', 'int') : $userid), 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToProject"), 'maxwidth200');
 			}
 			else
 			{
-				print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
+				if ($nboftasks) {
+					print img_error($langs->trans('FirstAddRessourceToAllocateTime')).' '.$langs->trans('FirstAddRessourceToAllocateTime');
+				}
 			}
 			print '</td>';
 
@@ -1202,9 +1208,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			}
 
 			print '<td class="center">';
-			print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'">';
-			print ' &nbsp; ';
-			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+			print '<input type="submit" name="save" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Add").'">';
+			print '<input type="submit" name="cancel" class="button buttongen marginleftonly margintoponlyshort marginbottomonlyshort" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -1372,10 +1377,10 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				}
 			}
 
-			// User
+			// By User
 			if (!empty($arrayfields['author']['checked']))
 			{
-				print '<td>';
+				print '<td class="nowrap">';
 				if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
 				{
 					if (empty($object->id)) $object->fetch($id);
@@ -1385,7 +1390,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					}
 					if (count($contactsoftask) > 0) {
 						print img_object('', 'user', 'class="hideonsmartphone"');
-						print $form->select_dolusers($task_time->fk_user, 'userid_line', 0, '', 0, '', $contactsoftask);
+						print $form->select_dolusers($task_time->fk_user, 'userid_line', 0, '', 0, '', $contactsoftask, '0', 0, 0, '', 0, '', 'maxwidth200');
 					} else {
 						print img_error($langs->trans('FirstAddRessourceToAllocateTime')).$langs->trans('FirstAddRessourceToAllocateTime');
 					}
@@ -1447,7 +1452,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			// Value spent
 			if (!empty($arrayfields['value']['checked']))
 			{
-				print '<td class="right">';
+				print '<td class="nowraponall right">';
 				$value = price2num($task_time->thm * $task_time->task_duration / 3600);
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
@@ -1496,7 +1501,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			*/
 
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time);
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$task_time, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -1505,9 +1510,9 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (($action == 'editline' || $action == 'splitline') && $_GET['lineid'] == $task_time->rowid)
 			{
 				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';
-				print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="save" value="'.$langs->trans("Save").'">';
 				print '<br>';
-				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+				print '<input type="submit" class="button buttongen margintoponlyshort marginbottomonlyshort" name="cancel" value="'.$langs->trans('Cancel').'">';
 			}
 			elseif ($user->rights->projet->lire || $user->rights->projet->all->creer)	 // Read project and enter time consumed on assigned tasks
 			{
@@ -1516,19 +1521,19 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 					if ($conf->MAIN_FEATURES_LEVEL >= 2)
 					{
 						print '&nbsp;';
-						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=splitline&amp;lineid='.$task_time->rowid.$param.'">';
+						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=splitline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 						print img_split();
 						print '</a>';
 					}
 
 					print '&nbsp;';
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.'">';
+					print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
 					print img_edit();
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.'">';
-					print img_delete();
+					print '<a class="reposition paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.((empty($id) || $tab == 'timespent') ? '&tab=timespent' : '').'">';
+					print img_delete('default', 'class="pictodelete paddingleft"');
 					print '</a>';
 
 					if ($massactionbutton || $massaction)	// If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -1544,6 +1549,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (!$i) $totalarray['nbfield']++;
 
 			print "</tr>\n";
+
 
 			// Add line to split
 

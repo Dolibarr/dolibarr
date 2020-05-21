@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2017-2018	Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,6 +355,23 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
+				// Set certificate
+				$cert = empty($user->conf->CERTIFICATE_CRT) ? '' : $user->conf->CERTIFICATE_CRT;
+				// If use has no certificate, we try to take the company one
+				if (!$cert) {
+					$cert = empty($conf->global->CERTIFICATE_CRT) ? '' : $conf->global->CERTIFICATE_CRT;
+				}
+				// If a certificate is found
+				if ($cert) {
+					$info = array(
+						'Name' => $this->emetteur->name,
+						'Location' => getCountry($this->emetteur->country_code, 0),
+						'Reason' => 'INVOICE',
+						'ContactInfo' => $this->emetteur->email
+					);
+					$pdf->setSignature($cert, $cert, $this->emetteur->name, '', 2, $info);
+				}
+
 				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
 
 				// Set $this->atleastonediscount if you have at least one discount
@@ -439,6 +456,11 @@ class pdf_crabe extends ModelePDFFactures
 						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote)) {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
 				if ($notetoshow)
 				{
 					$tab_top -= 2;
@@ -1376,47 +1398,32 @@ class pdf_crabe extends ModelePDFFactures
 				$pdf->MultiCell($largcol2, $tab2_hl, price($sign * $total_ttc, 0, $outputlangs), $useborder, 'R', 1);
 
 				// Retained warranty
-				if (!empty($object->situation_final) && ($object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty))))
+				if ($object->displayRetainedWarranty())
 				{
-					$displayWarranty = false;
+					$pdf->SetTextColor(40, 40, 40);
+					$pdf->SetFillColor(255, 255, 255);
 
-				    // Check if this situation invoice is 100% for real
-				    if (!empty($object->lines)) {
-				        $displayWarranty = true;
-				        foreach ($object->lines as $i => $line) {
-				            if ($line->product_type < 2 && $line->situation_percent < 100) {
-				                $displayWarranty = false;
-				                break;
-				            }
-						}
-				    }
+					$retainedWarranty = $object->getRetainedWarrantyAmount();
+					$billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
 
-				    if ($displayWarranty) {
-    				    $pdf->SetTextColor(40, 40, 40);
-    				    $pdf->SetFillColor(255, 255, 255);
+					// Billed - retained warranty
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
 
-    				    $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
-    				    $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty;
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
 
-    				    // Billed - retained warranty
-    				    $index++;
-    				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-    				    $pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("ToPayOn", dol_print_date($object->date_lim_reglement, 'day')), $useborder, 'L', 1);
+					// retained warranty
+					$index++;
+					$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
 
-    				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-    				    $pdf->MultiCell($largcol2, $tab2_hl, price($billedWithRetainedWarranty), $useborder, 'R', 1);
+					$retainedWarrantyToPayOn = $outputlangs->transnoentities("RetainedWarranty").' ('.$object->retained_warranty.'%)';
+					$retainedWarrantyToPayOn .= !empty($object->retained_warranty_date_limit) ? ' '.$outputlangs->transnoentities("toPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')) : '';
 
-    				    // retained warranty
-    				    $index++;
-    				    $pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-
-    				    $retainedWarrantyToPayOn = $outputlangs->transnoentities("RetainedWarranty").' ('.$object->retained_warranty.'%)';
-    				    $retainedWarrantyToPayOn .= !empty($object->retained_warranty_date_limit) ? ' '.$outputlangs->transnoentities("toPayOn", dol_print_date($object->retained_warranty_date_limit, 'day')) : '';
-
-    				    $pdf->MultiCell($col2x - $col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
-    				    $pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
-    				    $pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
-				    }
+					$pdf->MultiCell($col2x - $col1x, $tab2_hl, $retainedWarrantyToPayOn, $useborder, 'L', 1);
+					$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
+					$pdf->MultiCell($largcol2, $tab2_hl, price($retainedWarranty), $useborder, 'R', 1);
 				}
 			}
 		}

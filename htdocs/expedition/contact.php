@@ -37,16 +37,16 @@ if (!empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies'));
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'expedition', $id, '');
 
 $object = new Expedition($db);
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
@@ -260,6 +260,7 @@ if ($id > 0 || !empty($ref))
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
+	$preselectedtypeofcontact = dol_getIdFromCode($db, 'SHIPPING', 'c_type_contact', 'code', 'rowid');
 	foreach ($dirtpls as $reldir)
 	{
 	    $res = @include dol_buildpath($reldir.'/contacts.tpl.php');

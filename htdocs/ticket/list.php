@@ -64,7 +64,7 @@ $mode = GETPOST('mode', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -96,7 +96,12 @@ foreach ($object->fields as $key => $val)
 }
 
 // List of fields to search into when doing a "search in all"
-$fieldstosearchall = array();
+$fieldstosearchall = array(
+	's.nom'=>"ThirdParty",
+	's.name_alias'=>"AliasNameShort",
+	's.zip'=>"Zip",
+	's.town'=>"Town",
+);
 foreach ($object->fields as $key => $val)
 {
 	if ($val['searchall']) $fieldstosearchall['t.'.$key] = $val['label'];
@@ -458,7 +463,6 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'" >';
 if ($socid)     print '<input type="hidden" name="socid" value="'.$socid.'" >';
@@ -470,7 +474,7 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('NewTicket'), '', 'fa fa-plus-
 $picto = 'ticket';
 if ($socid > 0) $picto = '';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($mode == 'mine') {
     print '<div class="opacitymedium">'.$langs->trans('TicketAssignedToMeInfos').'</div><br>';
@@ -639,7 +643,7 @@ while ($i < min($num, $limit))
 		$cssforfield = '';
 		if (in_array($val['type'], array('date', 'datetime', 'timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		if (in_array($val['type'], array('timestamp'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowrap';
-		if ($key == 'ref') $cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
+		if (in_array($key, array('ref', 'fk_project'))) $cssforfield .= ($cssforfield ? ' ' : '').'nowraponall';
 		if ($key == 'fk_statut') $cssforfield .= ($cssforfield ? ' ' : '').'center';
 		if (!empty($arrayfields['t.'.$key]['checked']))
 		{
@@ -655,6 +659,12 @@ while ($i < min($num, $limit))
 			elseif ($key == 'severity_code') print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
 			elseif ($key == 'type_code') print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
 			elseif ($key == 'tms') print dol_print_date($db->jdate($obj->$key), 'dayhour', 'tzuser');
+			elseif ($key == 'fk_user_create') {
+				if ($object->fk_user_create > 0) {
+					$user_create->fetch($object->fk_user_create);
+					print $user_create->getNomUrl(-1);
+				}
+			}
 			elseif (in_array($val['type'], array('date', 'datetime', 'timestamp'))) print $object->showOutputField($val, $key, $db->jdate($obj->$key), '');
 			else print $object->showOutputField($val, $key, $obj->$key, '');
 			print '</td>';
@@ -669,7 +679,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column

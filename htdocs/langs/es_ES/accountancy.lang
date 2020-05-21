@@ -228,10 +228,11 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tercero desconoci
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Cuenta del tercero desconocida o tercero desconocido. Error de bloqueo
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del tercero desconocida y cuenta de espera no definida. Error de bloqueo
 PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
 
 Pcgtype=Grupo de cuenta
-Pcgsubtype=Subgrupo de cuenta
-PcgtypeDesc=Grupo y subgrupo de cuenta se utilizan como criterios predefinidos de "filtro" y "agrupación" para algunos informes de contabilidad. Por ejemplo, "INGRESOS" o "GASTOS" se usan como grupos para cuentas contables de productos para construir el informe de gastos/ingresos.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total facturación antes de impuestos
 TotalMarge=Total margen ventas
@@ -270,6 +271,7 @@ ChangeBinding=Cambiar la unión
 Accounted=Contabilizada en el Libro Mayor
 NotYetAccounted=Aún no contabilizada en el Libro Mayor
 ShowTutorial=Ver Tutorial
+NotReconciled=No reconciliado
 
 ## Admin
 ApplyMassCategories=Aplicar categorías en masa

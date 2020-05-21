@@ -30,7 +30,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-$action=GETPOST('action', 'aZ09');
+$action = GETPOST('action', 'aZ09');
 
 // Secrutiy check
 if ($user->socid > 0)
@@ -39,22 +39,22 @@ if ($user->socid > 0)
 	$socid = $user->socid;
 }
 
-if (! $user->rights->facture->creer)
+if (!$user->rights->facture->creer)
 accessforbidden();
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "orders"));
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="nom";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "nom";
 
 
 /*
@@ -63,38 +63,38 @@ if (! $sortfield) $sortfield="nom";
 
 llxHeader();
 
-$thirdpartystatic=new Societe($db);
+$thirdpartystatic = new Societe($db);
 
 /*
  * Mode List
  */
 
 $sql = "SELECT s.rowid, s.nom as name, s.client, s.town, s.datec, s.datea";
-$sql.= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", sc.fk_soc, sc.fk_user ";
-$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
-$sql.= " AND s.entity IN (".getEntity('societe').")";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."commande as c";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE s.fk_stcomm = st.id AND c.fk_soc = s.rowid";
+$sql .= " AND s.entity IN (".getEntity('societe').")";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if (dol_strlen($stcomm))
 {
-	$sql.= " AND s.fk_stcomm=".$stcomm;
+	$sql .= " AND s.fk_stcomm=".$stcomm;
 }
-if (GETPOST("search_nom"))  $sql.= natural_search("s.nom", GETPOST("search_nom"));
-if (GETPOST("search_compta")) $sql.= natural_search("s.code_compta", GETPOST("search_compta"));
-if (GETPOST("search_code_client")) $sql.= natural_search("s.code_client", GETPOST("search_code_client"));
+if (GETPOST("search_nom"))  $sql .= natural_search("s.nom", GETPOST("search_nom"));
+if (GETPOST("search_compta")) $sql .= natural_search("s.code_compta", GETPOST("search_compta"));
+if (GETPOST("search_code_client")) $sql .= natural_search("s.code_client", GETPOST("search_code_client"));
 if (dol_strlen($begin))
 {
-	$sql.= " AND s.nom like '".$db->escape($begin)."'";
+	$sql .= " AND s.nom like '".$db->escape($begin)."'";
 }
 if ($socid > 0)
 {
-	$sql.= " AND s.rowid = ".$socid;
+	$sql .= " AND s.rowid = ".$socid;
 }
-$sql.= " AND c.fk_statut in (1, 2) AND c.facture = 0";
-$sql.= " GROUP BY s.nom";
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= " AND c.fk_statut in (1, 2) AND c.facture = 0";
+$sql .= " GROUP BY s.nom";
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -110,7 +110,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit + 1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 //print $sql;
 
 $resql = $db->query($sql);
@@ -162,13 +162,13 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td>';
 
-        $result='';
-        $link=$linkend='';
-        $link = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php', 1).'?socid='.$obj->rowid.'">';
-        $linkend='</a>';
-        $name=$obj->name;
-        $result.=($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
-        $result.=$link.(dol_trunc($name, $maxlen)).$linkend;
+		$result = '';
+		$link = $linkend = '';
+		$link = '<a href="'.dol_buildpath('/commande/orderstoinvoice.php', 1).'?socid='.$obj->rowid.'">';
+		$linkend = '</a>';
+		$name = $obj->name;
+		$result .= ($link.img_object($langs->trans("ShowCompany").': '.$name, 'company').$linkend);
+		$result .= $link.(dol_trunc($name, $maxlen)).$linkend;
 
 		print $result;
 		print '</td>';

@@ -33,7 +33,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
     public $boxcode = "supplierordersawaitingreception";
     public $boximg = "object_order";
-    public $boxlabel="BoxLatestSupplierOrdersAwaitingReception";
+    public $boxlabel = "BoxLatestSupplierOrdersAwaitingReception";
     public $depends = array("fournisseur");
 
     /**
@@ -58,7 +58,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->fournisseur->commande->lire);
+        $this->hidden = !($user->rights->fournisseur->commande->lire);
     }
 
     /**
@@ -75,7 +75,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-        $supplierorderstatic=new CommandeFournisseur($this->db);
+        $supplierorderstatic = new CommandeFournisseur($this->db);
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
         $thirdpartytmp = new Fournisseur($this->db);
 
@@ -84,25 +84,25 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
         if ($user->rights->fournisseur->commande->lire)
         {
             $sql = "SELECT s.nom as name, s.rowid as socid,";
-            $sql.= " s.code_client, s.code_fournisseur, s.email,";
-            $sql.= " s.logo,";
-            $sql.= " c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison, ";
-            $sql.= " c.total_ht,";
-            $sql.= " c.tva as total_tva,";
-            $sql.= " c.total_ttc,";
-            $sql.= " c.fk_statut";
-            $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-            $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql.= " WHERE c.fk_soc = s.rowid";
-            $sql.= " AND c.entity = ".$conf->entity;
+            $sql .= " s.code_client, s.code_fournisseur, s.email,";
+            $sql .= " s.logo,";
+            $sql .= " c.rowid, c.ref, c.tms, c.date_commande, c.date_livraison, ";
+            $sql .= " c.total_ht,";
+            $sql .= " c.tva as total_tva,";
+            $sql .= " c.total_ttc,";
+            $sql .= " c.fk_statut";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+            $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as c";
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql .= " WHERE c.fk_soc = s.rowid";
+            $sql .= " AND c.entity = ".$conf->entity;
 
-            $sql.= " AND c.fk_statut = ".CommandeFournisseur::STATUS_ORDERSENT;
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_commande DESC, c.ref DESC ";
-            else $sql.= " ORDER BY c.date_livraison ASC, c.fk_statut ASC ";
-            $sql.= $this->db->plimit($max, 0);
+            $sql .= " AND c.fk_statut = ".CommandeFournisseur::STATUS_ORDERSENT;
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+            if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_commande DESC, c.ref DESC ";
+            else $sql .= " ORDER BY c.date_livraison ASC, c.fk_statut ASC ";
+            $sql .= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
             if ($result)
@@ -112,9 +112,9 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
                 $line = 0;
                 while ($line < $num) {
                     $objp = $this->db->fetch_object($result);
-                    $date=$this->db->jdate($objp->date_commande);
-                    $date_livraison=$this->db->jdate($objp->date_livraison);
-					$datem=$this->db->jdate($objp->tms);
+                    $date = $this->db->jdate($objp->date_commande);
+                    $date_livraison = $this->db->jdate($objp->date_livraison);
+					$datem = $this->db->jdate($objp->tms);
 
                     $supplierorderstatic->date_livraison = $date_livraison;
                     $supplierorderstatic->statut = $objp->fk_statut;
@@ -153,7 +153,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'class="right"',
-                        'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-dolly" ></i> '. dol_print_date($date_livraison, 'day').'</span>',
+                        'text' => $delayIcon.'<span class="classfortooltip" title="'.$langs->trans('DateDeliveryPlanned').'"><i class="fa fa-dolly" ></i> '.dol_print_date($date_livraison, 'day').'</span>',
                         'asis' => 1
                     );
 

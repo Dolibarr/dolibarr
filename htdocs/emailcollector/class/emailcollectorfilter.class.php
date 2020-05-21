@@ -137,13 +137,13 @@ class EmailCollectorFilter extends CommonObject
 		}
 
 		// Translate some data of arrayofkeyval
-		foreach($this->fields as $key => $val)
+		foreach ($this->fields as $key => $val)
 		{
 			if (is_array($val['arrayofkeyval']))
 			{
-				foreach($val['arrayofkeyval'] as $key2 => $val2)
+				foreach ($val['arrayofkeyval'] as $key2 => $val2)
 				{
-					$this->fields[$key]['arrayofkeyval'][$key2]=$langs->trans($val2);
+					$this->fields[$key]['arrayofkeyval'][$key2] = $langs->trans($val2);
 				}
 			}
 		}
@@ -162,13 +162,13 @@ class EmailCollectorFilter extends CommonObject
 		if (empty($this->type))
 		{
 			$langs->load("errors");
-			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			return -1;
 		}
-		if (! in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingid', 'withouttrackingid')) && empty($this->rulevalue))
+		if (!in_array($this->type, array('seen', 'unseen', 'unanswered', 'answered', 'withtrackingid', 'withouttrackingid')) && empty($this->rulevalue))
 		{
 			$langs->load("errors");
-			$this->errors[]=$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
+			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
 			return -1;
 		}
 
@@ -208,10 +208,10 @@ class EmailCollectorFilter extends CommonObject
 	    if (is_array($object->array_options) && count($object->array_options) > 0)
 	    {
 	    	$extrafields->fetch_name_optionals_label($this->table_element);
-	    	foreach($object->array_options as $key => $option)
+	    	foreach ($object->array_options as $key => $option)
 	    	{
 	    		$shortkey = preg_replace('/options_/', '', $key);
-	    		if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+	    		if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
 	    		{
 	    			//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 	    			unset($object->array_options[$key]);

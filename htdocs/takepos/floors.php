@@ -42,10 +42,19 @@ $action = GETPOST('action', 'alpha');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
+
+if (empty($user->rights->takepos->run)) {
+	accessforbidden();
+}
+
+
+/*
+ * Actions
+ */
 
 if ($action == "getTables")
 {
@@ -80,6 +89,11 @@ if ($action == "add")
     $asdf = $db->query($sql);
     $db->query("update ".MAIN_DB_PREFIX."takepos_floor_tables set label=rowid where label=''"); // No empty table names
 }
+
+
+/*
+ * View
+ */
 
 // Title
 $title = 'TakePOS - Dolibarr '.DOL_VERSION;
@@ -132,7 +146,7 @@ function updatename(rowid) {
 	}
 
 function LoadPlace(place){
-	parent.location.href='takepos.php?place='+place;
+	parent.location.href='index.php?place='+place;
 }
 
 

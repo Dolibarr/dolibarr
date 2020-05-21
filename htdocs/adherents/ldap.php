@@ -30,21 +30,21 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members","ldap","admin"));
+$langs->loadLangs(array("companies", "members", "ldap", "admin"));
 
 $rowid = GETPOST('id', 'int');
 $action = GETPOST('action', 'aZ09');
 
 // Protection
-$socid=0;
+$socid = 0;
 if ($user->socid > 0)
 {
     $socid = $user->socid;
 }
 
 $object = new Adherent($db);
-$result=$object->fetch($rowid);
-if (! $result)
+$result = $object->fetch($rowid);
+if (!$result)
 {
 	dol_print_error($db, "Failed to get adherent: ".$object->error);
 	exit;
@@ -57,16 +57,16 @@ if (! $result)
 
 if ($action == 'dolibarr2ldap')
 {
-	$ldap=new Ldap();
-	$result=$ldap->connect_bind();
+	$ldap = new Ldap();
+	$result = $ldap->connect_bind();
 
 	if ($result > 0)
 	{
-		$info=$object->_load_ldap_info();
-		$dn=$object->_load_ldap_dn($info);
-		$olddn=$dn;	// We can say that old dn = dn as we force synchro
+		$info = $object->_load_ldap_info();
+		$dn = $object->_load_ldap_dn($info);
+		$olddn = $dn; // We can say that old dn = dn as we force synchro
 
-		$result=$ldap->update($dn, $info, $user, $olddn);
+		$result = $ldap->update($dn, $info, $user, $olddn);
 	}
 
 	if ($result >= 0) {
@@ -104,7 +104,7 @@ print '<table class="border centpercent tableforfield">';
 print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
 // If there is a link to password not crypted, we show value in database here so we can compare because it is shown nowhere else
-if (! empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
+if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD))
 {
 	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
 	print '<td class="valeur">'.$object->pass.'</td>';
@@ -142,14 +142,14 @@ dol_fiche_end();
 
 print '<div class="tabsAction">';
 
-if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr')
+if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr')
 {
 	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a></div>';
 }
 
 print "</div>\n";
 
-if (! empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr') print "<br>\n";
+if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && $conf->global->LDAP_MEMBER_ACTIVE != 'ldap2dolibarr') print "<br>\n";
 
 
 
@@ -164,12 +164,12 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // Lecture LDAP
-$ldap=new Ldap();
-$result=$ldap->connect_bind();
+$ldap = new Ldap();
+$result = $ldap->connect_bind();
 if ($result > 0)
 {
-	$info=$object->_load_ldap_info();
-	$dn=$object->_load_ldap_dn($info, 1);
+	$info = $object->_load_ldap_info();
+	$dn = $object->_load_ldap_dn($info, 1);
 	$search = "(".$object->_load_ldap_dn($info, 2).")";
 
 	if (empty($dn))
@@ -184,15 +184,15 @@ if ($result > 0)
     	//print_r($records);
 
     	// Show tree
-    	if (((! is_numeric($records)) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
+    	if (((!is_numeric($records)) || $records != 0) && (!isset($records['count']) || $records['count'] > 0))
     	{
-    		if (! is_array($records))
+    		if (!is_array($records))
     		{
     			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
     		}
     		else
     		{
-    			$result=show_ldap_content($records, 0, $records['count'], true);
+    			$result = show_ldap_content($records, 0, $records['count'], true);
     		}
     	}
     	else

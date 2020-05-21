@@ -82,15 +82,15 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
         if ($user->rights->accounting->mouvements->lire)
         {
             $sql = "SELECT DISTINCT b.piece_num";
-            $sql.= ", b.doc_date as date_movement";
-            $sql.= ", b.label_operation";
-            $sql.= ", b.montant";
-            $sql.= ", b.code_journal";
-            $sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-            $sql.= " WHERE b.fk_doc = 0";
-            $sql.= " AND b.entity = ".$conf->entity;
-            $sql.= " ORDER BY b.piece_num DESC ";
-            $sql.= $this->db->plimit($max, 0);
+            $sql .= ", b.doc_date as date_movement";
+            $sql .= ", b.label_operation";
+            $sql .= ", b.montant";
+            $sql .= ", b.code_journal";
+            $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+            $sql .= " WHERE b.fk_doc = 0";
+            $sql .= " AND b.entity = ".$conf->entity;
+            $sql .= " ORDER BY b.piece_num DESC ";
+            $sql .= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
             if ($result) {
@@ -140,7 +140,10 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedManualEntries"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                	'td' => 'class="center opacitymedium"',
+                	'text'=>$langs->trans("NoRecordedManualEntries")
+                );
 
                 $this->db->free($result);
             } else {

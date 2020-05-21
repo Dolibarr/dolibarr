@@ -36,7 +36,7 @@ class FormMargin
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     /**
@@ -82,7 +82,7 @@ class FormMargin
 				'total_mark_rate' => ''
 		);
 
-		foreach($object->lines as $line)
+		foreach ($object->lines as $line)
 		{
 			if (empty($line->pa_ht) && isset($line->fk_fournprice) && !$force_price)
 			{
@@ -97,7 +97,7 @@ class FormMargin
 			}
 
 			$pv = $line->total_ht;
-			$pa_ht = ($pv < 0 ? - $line->pa_ht : $line->pa_ht);      // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
+			$pa_ht = ($pv < 0 ? -$line->pa_ht : $line->pa_ht); // We choosed to have line->pa_ht always positive in database, so we guess the correct sign
 			if ($object->element == 'facture' && $object->type == $object::TYPE_SITUATION) {
 				$pa = $line->qty * $pa_ht * ($line->situation_percent / 100);
 			} else {
@@ -109,8 +109,8 @@ class FormMargin
 				if ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1') { // remise globale considérée comme produit
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
+					$marginInfos['pa_total'] += $pa;
+					$marginInfos['pv_total'] += $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
 					//if ($pv < 0)
 					//{
@@ -122,8 +122,8 @@ class FormMargin
 				elseif ($conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2') { // remise globale considérée comme service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
+					$marginInfos['pa_total'] += $pa;
+					$marginInfos['pv_total'] += $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
 					//if ($pv < 0)
 					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
@@ -136,12 +136,12 @@ class FormMargin
 				}
 			}
 			else {
-				$type=$line->product_type?$line->product_type:$line->fk_product_type;
+				$type = $line->product_type ? $line->product_type : $line->fk_product_type;
 				if ($type == 0) {  // product
 					$marginInfos['pa_products'] += $pa;
 					$marginInfos['pv_products'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
+					$marginInfos['pa_total'] += $pa;
+					$marginInfos['pv_total'] += $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
 					//if ($pv < 0)
 					//{
@@ -155,8 +155,8 @@ class FormMargin
 				elseif ($type == 1) {  // service
 					$marginInfos['pa_services'] += $pa;
 					$marginInfos['pv_services'] += $pv;
-					$marginInfos['pa_total'] +=  $pa;
-					$marginInfos['pv_total'] +=  $pv;
+					$marginInfos['pa_total'] += $pa;
+					$marginInfos['pv_total'] += $pv;
 					// if credit note, margin = -1 * (abs(selling_price) - buying_price)
 					//if ($pv < 0)
 					//	$marginInfos['margin_on_services'] += -1 * (abs($pv) - $pa);
@@ -199,18 +199,18 @@ class FormMargin
 	{
 		global $langs, $conf, $user;
 
-    	if (! empty($user->socid)) return;
+    	if (!empty($user->socid)) return;
 
-    	if (! $user->rights->margins->liretous) return;
+    	if (!$user->rights->margins->liretous) return;
 
 		$marginInfo = $this->getMarginInfosArray($object, $force_price);
 
-		if (! empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
+		if (!empty($conf->global->MARGIN_ADD_SHOWHIDE_BUTTON))	// TODO Warning this feature rely on an external js file that may be removed. Using native js function document.cookie should be better
 		{
 			print $langs->trans('ShowMarginInfos').' : ';
 	        $hidemargininfos = $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'];
-	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'':'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
-	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos)?'hideobject':'').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
+	    	print '<span id="showMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? '' : 'hideobject').'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</span>';
+	    	print '<span id="hideMarginInfos" class="linkobject '.(!empty($hidemargininfos) ? 'hideobject' : '').'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</span>';
 
     	    print '<script>$(document).ready(function() {
         	    $("span#showMarginInfos").click(function() { $.getScript( "'.dol_buildpath('/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js', 1).'", function( data, textStatus, jqxhr ) { $.cookie("DOLUSER_MARGININFO_HIDE_SHOW", 0); $(".margininfos").show(); $("span#showMarginInfos").addClass("hideobject"); $("span#hideMarginInfos").removeClass("hideobject");})});
@@ -231,13 +231,13 @@ class FormMargin
 		else
 			print '<td class="liste_titre right">'.$langs->trans('CostPrice').'</td>';
 		print '<td class="liste_titre right">'.$langs->trans('Margin').'</td>';
-		if (! empty($conf->global->DISPLAY_MARGIN_RATES))
+		if (!empty($conf->global->DISPLAY_MARGIN_RATES))
 			print '<td class="liste_titre right">'.$langs->trans('MarginRate').'</td>';
-		if (! empty($conf->global->DISPLAY_MARK_RATES))
+		if (!empty($conf->global->DISPLAY_MARK_RATES))
 			print '<td class="liste_titre right">'.$langs->trans('MarkRate').'</td>';
 		print '</tr>';
 
-		if (! empty($conf->product->enabled))
+		if (!empty($conf->product->enabled))
 		{
 			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
 			print '<tr class="oddeven">';
@@ -245,38 +245,38 @@ class FormMargin
 			print '<td class="right">'.price($marginInfo['pv_products']).'</td>';
 			print '<td class="right">'.price($marginInfo['pa_products']).'</td>';
 			print '<td class="right">'.price($marginInfo['margin_on_products']).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td class="right">'.(($marginInfo['margin_rate_products'] == '')?'':price($marginInfo['margin_rate_products'], null, null, null, null, 2).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td class="right">'.(($marginInfo['mark_rate_products'] == '')?'':price($marginInfo['mark_rate_products'], null, null, null, null, 2).'%').'</td>';
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td class="right">'.(($marginInfo['margin_rate_products'] == '') ? '' : price($marginInfo['margin_rate_products'], null, null, null, null, 2).'%').'</td>';
+			if (!empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td class="right">'.(($marginInfo['mark_rate_products'] == '') ? '' : price($marginInfo['mark_rate_products'], null, null, null, null, 2).'%').'</td>';
 			print '</tr>';
 		}
 
-		if (! empty($conf->service->enabled))
+		if (!empty($conf->service->enabled))
 		{
 			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnServices').'</td>';
 			print '<td class="right">'.price($marginInfo['pv_services']).'</td>';
 			print '<td class="right">'.price($marginInfo['pa_services']).'</td>';
 			print '<td class="right">'.price($marginInfo['margin_on_services']).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td class="right">'.(($marginInfo['margin_rate_services'] == '')?'':price($marginInfo['margin_rate_services'], null, null, null, null, 2).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td class="right">'.(($marginInfo['mark_rate_services'] == '')?'':price($marginInfo['mark_rate_services'], null, null, null, null, 2).'%').'</td>';
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td class="right">'.(($marginInfo['margin_rate_services'] == '') ? '' : price($marginInfo['margin_rate_services'], null, null, null, null, 2).'%').'</td>';
+			if (!empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td class="right">'.(($marginInfo['mark_rate_services'] == '') ? '' : price($marginInfo['mark_rate_services'], null, null, null, null, 2).'%').'</td>';
 			print '</tr>';
 		}
 
-		if (! empty($conf->product->enabled) && ! empty($conf->service->enabled))
+		if (!empty($conf->product->enabled) && !empty($conf->service->enabled))
 		{
 			print '<tr class="liste_total">';
 			print '<td>'.$langs->trans('TotalMargin').'</td>';
 			print '<td class="right">'.price($marginInfo['pv_total']).'</td>';
 			print '<td class="right">'.price($marginInfo['pa_total']).'</td>';
 			print '<td class="right">'.price($marginInfo['total_margin']).'</td>';
-			if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-				print '<td class="right">'.(($marginInfo['total_margin_rate'] == '')?'':price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
-			if (! empty($conf->global->DISPLAY_MARK_RATES))
-				print '<td class="right">'.(($marginInfo['total_mark_rate'] == '')?'':price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!empty($conf->global->DISPLAY_MARGIN_RATES))
+				print '<td class="right">'.(($marginInfo['total_margin_rate'] == '') ? '' : price($marginInfo['total_margin_rate'], null, null, null, null, 2).'%').'</td>';
+			if (!empty($conf->global->DISPLAY_MARK_RATES))
+				print '<td class="right">'.(($marginInfo['total_mark_rate'] == '') ? '' : price($marginInfo['total_mark_rate'], null, null, null, null, 2).'%').'</td>';
 			print '</tr>';
 		}
 		print '</table>';

@@ -992,7 +992,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
 				$nb_holiday += $nb_type;
 
-				$out .= ' - ' . ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']) .': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 			}
 	        print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
@@ -1291,7 +1291,9 @@ else
                 if ($includesunday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
                 print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
                 print '</td>';
-                print '<td>'.num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday).'</td>';
+                print '<td>';
+                print num_open_day($object->date_debut_gmt, $object->date_fin_gmt, 0, 1, $object->halfday);
+                print '</td>';
                 print '</tr>';
 
                 if ($object->statut == Holiday::STATUS_REFUSED)

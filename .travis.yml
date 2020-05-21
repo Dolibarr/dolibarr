@@ -3,6 +3,7 @@
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 # We use dist: xenial to have php 5.6+ available
+os: linux
 dist: xenial
 sudo: required
 
@@ -43,7 +44,7 @@ env:
   global:
   # Set to true for very verbose output
   - DEBUG=false
-  matrix:
+  jobs:
   # MariaDB overrides MySQL installation so it's not possible to test both yet
   #- DB=mariadb
   - DB=mysql
@@ -53,7 +54,7 @@ env:
   # See https://github.com/DracoBlue/travis-ci-nginx-php-fpm-test
   #- WS=nginx
 
-matrix:
+jobs:
   fast_finish: true
   allow_failures:
   - php: nightly
@@ -281,7 +282,7 @@ script:
   # Ensure we catch errors
   set -e
   #parallel-lint --exclude htdocs/includes --blame .
-  parallel-lint --exclude dev/namespacemig --exclude dev/initdata/dbf/includes --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
+  parallel-lint --exclude dev/namespacemig --exclude htdocs/includes/myclabs --exclude htdocs/includes/webmozart --exclude htdocs/includes/phpspec --exclude dev/initdata/dbf/includes --exclude htdocs/includes/sabre --exclude htdocs/includes/phpoffice/phpexcel/Classes/PHPExcel/Shared --exclude htdocs/includes/phpoffice/PhpSpreadsheet --exclude htdocs/includes/sebastian --exclude htdocs/includes/squizlabs/php_codesniffer --exclude htdocs/includes/jakub-onderka --exclude htdocs/includes/mike42/escpos-php/example --exclude htdocs/includes/phpunit/ --exclude htdocs/includes/composer/autoload_static.php --blame .
   set +e
   echo
 
@@ -403,6 +404,10 @@ script:
   php upgrade.php 11.0.0 12.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade11001200.log
   php upgrade2.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-2.log
   php step5.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-3.log
+  php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
+  php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
+  php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
+
   # Enable modules not enabled into original dump
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKETSUP,MAIN_MODULE_ACCOUNTING > $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?

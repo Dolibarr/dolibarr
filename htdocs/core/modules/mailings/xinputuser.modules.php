@@ -30,17 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  */
 class mailing_xinputuser extends MailingTargets
 {
-	public $name='EmailsFromUser';              // Identifiant du module mailing
+	public $name = 'EmailsFromUser'; // Identifiant du module mailing
 	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
-	public $desc='EMails input by user';        // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
-	public $require_module=array();            // Module mailing actif si modules require_module actifs
-	public $require_admin=0;                    // Module mailing actif pour user admin ou non
+	public $desc = 'EMails input by user'; // Libelle utilise si aucune traduction pour MailingModuleDescXXX ou XXX=name trouv�e
+	public $require_module = array(); // Module mailing actif si modules require_module actifs
+	public $require_admin = 0; // Module mailing actif pour user admin ou non
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto='generic';
-	public $tooltip='UseFormatInputEmailToTarget';
+	public $picto = 'generic';
+	public $tooltip = 'UseFormatInputEmailToTarget';
 
 
 	/**
@@ -50,7 +50,7 @@ class mailing_xinputuser extends MailingTargets
 	 */
     public function __construct($db)
 	{
-		$this->db=$db;
+		$this->db = $db;
 	}
 
 
@@ -67,7 +67,7 @@ class mailing_xinputuser extends MailingTargets
 		global $langs;
 		$langs->load("users");
 
-		$statssql=array();
+		$statssql = array();
 		return $statssql;
 	}
 
@@ -107,8 +107,8 @@ class mailing_xinputuser extends MailingTargets
 	{
 		global $langs;
 
-		$s='';
-		$s.='<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
+		$s = '';
+		$s .= '<input type="text" name="xinputuser" class="flat minwidth300" value="'.GETPOST("xinputuser").'">';
 		return $s;
 	}
 
@@ -122,18 +122,18 @@ class mailing_xinputuser extends MailingTargets
     public function add_to_target($mailing_id)
 	{
         // phpcs:enable
-		global $conf,$langs,$_FILES;
+		global $conf, $langs, $_FILES;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		$tmparray=explode(';', GETPOST('xinputuser'));
-		$email=$tmparray[0];
-		$lastname=$tmparray[1];
-		$firstname=$tmparray[2];
-		$other=$tmparray[3];
+		$tmparray = explode(';', GETPOST('xinputuser'));
+		$email = $tmparray[0];
+		$lastname = $tmparray[1];
+		$firstname = $tmparray[2];
+		$other = $tmparray[3];
 
-		$cibles=array();
-        if (! empty($email))
+		$cibles = array();
+        if (!empty($email))
         {
 			if (isValidEMail($email))
 			{

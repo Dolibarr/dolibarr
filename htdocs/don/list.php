@@ -27,27 +27,29 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-if (! empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","donations"));
+$langs->loadLangs(array("companies", "donations"));
 
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sclist';
+
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="d.datedon";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "d.datedon";
 
-$search_status=(GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-1";
-$search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref=GETPOST('search_ref', 'alpha');
-$search_company=GETPOST('search_company', 'alpha');
-$search_name=GETPOST('search_name', 'alpha');
+$search_status = (GETPOST("search_status", 'intcomma') != '') ? GETPOST("search_status", 'intcomma') : "-4";
+$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_company = GETPOST('search_company', 'alpha');
+$search_name = GETPOST('search_name', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 
@@ -60,6 +62,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_company = "";
 	$search_name = "";
 	$search_amount = "";
+	$search_status = '';
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -74,30 +77,30 @@ $fieldstosearchall = array(
     'd.firstname'=>'Firstname',
 );
 
+
 /*
  * View
  */
 
-$form=new Form($db);
-if (! empty($conf->projet->enabled)) $projectstatic=new Project($db);
+$donationstatic = new Don($db);
+$form = new Form($db);
+if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
 
 llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
 
-$donationstatic=new Don($db);
-
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
-$sql.= " d.amount, d.fk_statut as status,";
-$sql.= " p.rowid as pid, p.ref, p.title, p.public";
-$sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
-if ($search_status != '' && $search_status != '-1')
+$sql .= " d.amount, d.fk_statut as status,";
+$sql .= " p.rowid as pid, p.ref, p.title, p.public";
+$sql .= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
+$sql .= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
+if ($search_status != '' && $search_status != '-4')
 {
 	$sql .= " AND d.fk_statut IN (".$db->escape($search_status).")";
 }
 if (trim($search_ref) != '')
 {
-    $sql.= natural_search('d.ref', $search_ref);
+    $sql .= natural_search('d.ref', $search_ref);
 }
 if (trim($search_all) != '')
 {
@@ -136,17 +139,19 @@ if ($resql)
 	$i = 0;
 
 	$param = '';
-	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 	if ($search_status && $search_status != -1) $param .= '&search_status='.urlencode($search_status);
 	if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
 	if ($search_company) $param .= '&search_company='.urlencode($search_company);
 	if ($search_name) $param .= '&search_name='.urlencode($search_name);
 	if ($search_amount) $param .= '&search_amount='.urlencode($search_amount);
 
-	$newcardbutton='';
+	$newcardbutton = '';
 	if ($user->rights->don->creer)
 	{
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewDonation'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/don/card.php?action=create');
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -158,23 +163,23 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton);
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_donation', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	if ($search_all)
     {
-        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ', $fieldstosearchall).'</div>';
+        foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).join(', ', $fieldstosearchall).'</div>';
     }
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
     // Filters lines
     print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
-    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+    if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
         print '<td class="liste_titre">';
         print '<input class="flat" size="10" type="text" name="search_thirdparty" value="'.$search_thirdparty.'">';
         print '</td>';
@@ -196,23 +201,31 @@ if ($resql)
         print '</td>';
     }
     print '<td class="liste_titre right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre right"></td>';
+    print '<td class="liste_titre right">';
+    $liststatus = array(
+    	Don::STATUS_DRAFT=>$langs->trans("DonationStatusPromiseNotValidated"),
+    	Don::STATUS_VALIDATED=>$langs->trans("DonationStatusPromiseValidated"),
+    	Don::STATUS_PAID=>$langs->trans("DonationStatusPaid"),
+    	Don::STATUS_CANCELED=>$langs->trans("Canceled")
+    );
+    print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+    print '</td>';
     print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "d.rowid", "", $param, "", $sortfield, $sortorder);
-    if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+    if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
         print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "d.fk_soc", "", $param, "", $sortfield, $sortorder);
     } else {
         print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "d.societe", "", $param, "", $sortfield, $sortorder);
     }
 	print_liste_field_titre("Name", $_SERVER["PHP_SELF"], "d.lastname", "", $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "d.datedon", "", $param, '', $sortfield, $sortorder, 'center ');
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
 	    print_liste_field_titre("Project", $_SERVER["PHP_SELF"], "d.fk_projet", "", $param, "", $sortfield, $sortorder);
@@ -227,15 +240,15 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		$donationstatic->id=$objp->rowid;
-		$donationstatic->ref=$objp->rowid;
-		$donationstatic->lastname=$objp->lastname;
-		$donationstatic->firstname=$objp->firstname;
+		$donationstatic->id = $objp->rowid;
+		$donationstatic->ref = $objp->rowid;
+		$donationstatic->lastname = $objp->lastname;
+		$donationstatic->firstname = $objp->firstname;
 		print "<td>".$donationstatic->getNomUrl(1)."</td>";
-        if (! empty($conf->global->DONATION_USE_THIRDPARTIES)) {
-            $company=new Societe($db);
-            $result=$company->fetch($objp->socid);
-            if  (!empty($objp->socid) && $company->id > 0)  {
+        if (!empty($conf->global->DONATION_USE_THIRDPARTIES)) {
+            $company = new Societe($db);
+            $result = $company->fetch($objp->socid);
+            if (!empty($objp->socid) && $company->id > 0) {
                 print "<td>".$company->getNomUrl(1)."</td>";
             } else {
                 print "<td>".$objp->societe."</td>";

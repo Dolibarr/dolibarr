@@ -77,6 +77,7 @@ class box_shipments extends ModeleBoxes
         $this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
         $shipmentstatic = new Expedition($this->db);
@@ -157,7 +158,10 @@ class box_shipments extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedShipments"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                	'td' => 'class="center opacitymedium"',
+                	'text'=>$langs->trans("NoRecordedShipments")
+                );
 
                 $this->db->free($result);
             } else {

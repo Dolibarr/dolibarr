@@ -81,8 +81,10 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 }
 if ($action == 'set')
 {
+	$getDefaultFilter = GETPOST('AGENDA_DEFAULT_FILTER_TYPE');
+	$defaultfilter = (is_array($getDefaultFilter)) ? implode(',', $getDefaultFilter) : $getDefaultFilter;
 	dolibarr_set_const($db, 'AGENDA_USE_EVENT_TYPE_DEFAULT', GETPOST('AGENDA_USE_EVENT_TYPE_DEFAULT'), 'chaine', 0, '', $conf->entity);
-    dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', $defaultfilter, 'chaine', 0, '', $conf->entity);
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 }
@@ -324,7 +326,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 }
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
-print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";
@@ -377,7 +379,12 @@ print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
-$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1);
+$multiselect = 0;
+if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {
+    // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+    $multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+}
+$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1, $multiselect);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS

@@ -53,11 +53,6 @@ class AccountancySystem
      */
 	public $pcg_type;
 
-    /**
-     * @var string pcg subtype
-     */
-	public $pcg_subtype;
-
 	/**
 	 * @var string Accountancy System numero
 	 */
@@ -103,15 +98,15 @@ class AccountancySystem
 	    if ($rowid > 0 || $ref)
 	    {
 	        $sql  = "SELECT a.rowid, a.pcg_version, a.label, a.active";
-	        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
+	        $sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	        $sql .= " WHERE";
 	        if ($rowid) {
-	            $sql .= " a.rowid = '" . $rowid . "'";
+	            $sql .= " a.rowid = '".$rowid."'";
 	        } elseif ($ref) {
-	            $sql .= " a.pcg_version = '" . $this->db->escape($ref) . "'";
+	            $sql .= " a.pcg_version = '".$this->db->escape($ref)."'";
 	        }
 
-	        dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
+	        dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
 	        $result = $this->db->query($sql);
 	        if ($result) {
 	            $obj = $this->db->fetch_object($result);
@@ -129,11 +124,11 @@ class AccountancySystem
 	                return 0;
 	            }
 	        } else {
-	            $this->error = "Error " . $this->db->lasterror();
-	            $this->errors[] = "Error " . $this->db->lasterror();
+	            $this->error = "Error ".$this->db->lasterror();
+	            $this->errors[] = "Error ".$this->db->lasterror();
 	        }
 	    }
-	    return - 1;
+	    return -1;
 	}
 
 
@@ -147,14 +142,14 @@ class AccountancySystem
     {
 		$now = dol_now();
 
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_system";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
 		$sql .= " (date_creation, fk_user_author, numero, label)";
-		$sql .= " VALUES ('" . $this->db->idate($now) . "'," . $user->id . ",'" . $this->db->escape($this->numero) . "','" . $this->db->escape($this->label) . "')";
+		$sql .= " VALUES ('".$this->db->idate($now)."',".$user->id.",'".$this->db->escape($this->numero)."','".$this->db->escape($this->label)."')";
 
-		dol_syslog(get_class($this) . "::create sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_system");
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");
 
 			if ($id > 0) {
 				$this->rowid = $id;

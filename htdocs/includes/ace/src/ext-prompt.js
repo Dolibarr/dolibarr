@@ -387,7 +387,7 @@ exports.parForEach = function(array, fn, callback) {
     }
 };
 
-var ID_REGEX = /[a-zA-Z_0-9\$\-\u00A2-\uFFFF]/;
+var ID_REGEX = /[a-zA-Z_0-9\$\-\u00A2-\u2000\u2070-\uFFFF]/;
 
 exports.retrievePrecedingIdentifier = function(text, pos, regex) {
     regex = regex || ID_REGEX;
@@ -1179,15 +1179,16 @@ var TabstopManager = function(editor) {
 
     this.onChange = function(delta) {
         var isRemove = delta.action[0] == "r";
-        var parents = this.selectedTabstop && this.selectedTabstop.parents || {};
+        var selectedTabstop = this.selectedTabstop || {};
+        var parents = selectedTabstop.parents || {};
         var tabstops = (this.tabstops || []).slice();
         for (var i = 0; i < tabstops.length; i++) {
             var ts = tabstops[i];
-            var active = ts == this.selectedTabstop || parents[ts.index];
+            var active = ts == selectedTabstop || parents[ts.index];
             ts.rangeList.$bias = active ? 0 : 1;
             
-            if (delta.action == "remove" && ts !== this.selectedTabstop) {
-                var parentActive = ts.parents && ts.parents[this.selectedTabstop.index];
+            if (delta.action == "remove" && ts !== selectedTabstop) {
+                var parentActive = ts.parents && ts.parents[selectedTabstop.index];
                 var startIndex = ts.rangeList.pointIndex(delta.start, parentActive);
                 startIndex = startIndex < 0 ? -startIndex - 1 : startIndex + 1;
                 var endIndex = ts.rangeList.pointIndex(delta.end, parentActive);
@@ -1300,8 +1301,6 @@ var TabstopManager = function(editor) {
         var ranges = this.ranges;
         tabstops.forEach(function(ts, index) {
             var dest = this.$openTabstops[index] || ts;
-            ts.rangeList = new RangeList();
-            ts.rangeList.$bias = 0;
             
             for (var i = 0; i < ts.length; i++) {
                 var p = ts[i];
@@ -1311,7 +1310,6 @@ var TabstopManager = function(editor) {
                 range.original = p;
                 range.tabstop = dest;
                 ranges.push(range);
-                ts.rangeList.ranges.push(range);
                 if (dest != ts)
                     dest.unshift(range);
                 else
@@ -1329,6 +1327,9 @@ var TabstopManager = function(editor) {
                 this.$openTabstops[index] = dest;
             }
             this.addTabstopMarkers(dest);
+            dest.rangeList = dest.rangeList || new RangeList();
+            dest.rangeList.$bias = 0;
+            dest.rangeList.addList(dest);
         }, this);
         
         if (arg.length > 2) {
@@ -1371,21 +1372,18 @@ var TabstopManager = function(editor) {
 
     this.keyboardHandler = new HashHandler();
     this.keyboardHandler.bindKeys({
-        "Tab": function(ed) {
-            if (exports.snippetManager && exports.snippetManager.expandWithTab(ed)) {
+        "Tab": function(editor) {
+            if (exports.snippetManager && exports.snippetManager.expandWithTab(editor))
                 return;
-            }
-
-            ed.tabstopManager.tabNext(1);
+            editor.tabstopManager.tabNext(1);
+            editor.renderer.scrollCursorIntoView();
         },
-        "Shift-Tab": function(ed) {
-            ed.tabstopManager.tabNext(-1);
+        "Shift-Tab": function(editor) {
+            editor.tabstopManager.tabNext(-1);
+            editor.renderer.scrollCursorIntoView();
         },
-        "Esc": function(ed) {
-            ed.tabstopManager.detach();
-        },
-        "Return": function(ed) {
-            return false;
+        "Esc": function(editor) {
+            editor.tabstopManager.detach();
         }
     });
 }).call(TabstopManager.prototype);
@@ -2004,6 +2002,7 @@ dom.importCssString(cssText);
 
 module.exports.overlayPage = function overlayPage(editor, contentElement, callback) {
     var closer = document.createElement('div');
+    var ignoreFocusOut = false;
 
     function documentEscListener(e) {
         if (e.keyCode === 27) {
@@ -2015,17 +2014,28 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, callba
         if (!closer) return;
         document.removeEventListener('keydown', documentEscListener);
         closer.parentNode.removeChild(closer);
-        editor.focus();
+        if (editor) {
+            editor.focus();
+        }
         closer = null;
         callback && callback();
+    }
+    function setIgnoreFocusOut(ignore) {
+        ignoreFocusOut = ignore;
+        if (ignore) {
+            closer.style.pointerEvents = "none";
+            contentElement.style.pointerEvents = "auto";
+        }
     }
 
     closer.style.cssText = 'margin: 0; padding: 0; ' +
         'position: fixed; top:0; bottom:0; left:0; right:0;' +
         'z-index: 9990; ' +
-        'background-color: rgba(0, 0, 0, 0.3);';
-    closer.addEventListener('click', function() {
-        close();
+        (editor ? 'background-color: rgba(0, 0, 0, 0.3);' : '');
+    closer.addEventListener('click', function(e) {
+        if (!ignoreFocusOut) {
+            close();
+        }
     });
     document.addEventListener('keydown', documentEscListener);
 
@@ -2035,9 +2045,12 @@ module.exports.overlayPage = function overlayPage(editor, contentElement, callba
 
     closer.appendChild(contentElement);
     document.body.appendChild(closer);
-    editor.blur();
+    if (editor) {
+        editor.blur();
+    }
     return {
-        close: close
+        close: close,
+        setIgnoreFocusOut: setIgnoreFocusOut
     };
 };
 
@@ -2146,6 +2159,7 @@ var supportedModes = {
     Jade:        ["jade|pug"],
     Java:        ["java"],
     JavaScript:  ["js|jsm|jsx"],
+    JSON5:       ["json5"],
     JSON:        ["json"],
     JSONiq:      ["jq"],
     JSP:         ["jsp"],
@@ -2176,6 +2190,7 @@ var supportedModes = {
     Nix:         ["nix"],
     Nim:         ["nim"],
     NSIS:        ["nsi|nsh"],
+    Nunjucks:    ["nunjucks|nunjs|nj|njk"],
     ObjectiveC:  ["m|mm"],
     OCaml:       ["ml|mli"],
     Pascal:      ["pas|p"],
@@ -2305,14 +2320,18 @@ function prompt(editor, message, options, callback) {
 
     var cmdLine = $singleLineEditor();
     cmdLine.session.setUndoManager(new UndoManager());
-    cmdLine.setOption("fontSize", editor.getOption("fontSize"));
 
-    var el = dom.buildDom(["div", {class: "ace_prompt_container"}]);
+    var el = dom.buildDom(["div", {class: "ace_prompt_container" + (options.hasDescription ? " input-box-with-description" : "")}]);
     var overlay = overlayPage(editor, el, done);
     el.appendChild(cmdLine.container);
 
-    editor.cmdLine = cmdLine;
-    cmdLine.setValue(message, 1);
+    if (editor) {
+        editor.cmdLine = cmdLine;
+        cmdLine.setOption("fontSize", editor.getOption("fontSize"));
+    }
+    if (message) {
+        cmdLine.setValue(message, 1);
+    }
     if (options.selection) {
         cmdLine.selection.setRange({
             start: cmdLine.session.doc.indexToPosition(options.selection[0]),
@@ -2348,14 +2367,26 @@ function prompt(editor, message, options, callback) {
         cmdLine.session.bgTokenizer.setTokenizer(tokenizer);
     }
 
+    if (options.placeholder) {
+        cmdLine.setOption("placeholder", options.placeholder);
+    }
+
+    if (options.hasDescription) {
+        var promptTextContainer = dom.buildDom(["div", {class: "ace_prompt_text_container"}]);
+        dom.buildDom(options.prompt || "Press 'Enter' to confirm or 'Escape' to cancel", promptTextContainer);
+        el.appendChild(promptTextContainer);
+    }
+
+    overlay.setIgnoreFocusOut(options.ignoreFocusOut);
+
     function accept() {
         var val;
-        if (popup.getCursorPosition().row > 0) {
+        if (popup && popup.getCursorPosition().row > 0) {
             val = valueFromRecentList();
         } else {
             val = cmdLine.getValue();
         }
-        var curData = popup.getData(popup.getRow());
+        var curData = popup ? popup.getData(popup.getRow()) : val;
         if (curData && !curData.error) {
             done();
             options.onAccept && options.onAccept({
@@ -2365,22 +2396,29 @@ function prompt(editor, message, options, callback) {
         }
     }
 
-    cmdLine.commands.bindKeys({
+    var keys = {
         "Enter": accept,
         "Esc|Shift-Esc": function() {
             options.onCancel && options.onCancel(cmdLine.getValue(), cmdLine);
             done();
-        },
-        "Up": function(editor) { popup.goTo("up"); valueFromRecentList();},
-        "Down": function(editor) { popup.goTo("down"); valueFromRecentList();},
-        "Ctrl-Up|Ctrl-Home": function(editor) { popup.goTo("start"); valueFromRecentList();},
-        "Ctrl-Down|Ctrl-End": function(editor) { popup.goTo("end"); valueFromRecentList();},
-        "Tab": function(editor) {
-            popup.goTo("down"); valueFromRecentList();
-        },
-        "PageUp": function(editor) { popup.gotoPageUp(); valueFromRecentList();},
-        "PageDown": function(editor) { popup.gotoPageDown(); valueFromRecentList();}
-    });
+        }
+    };
+
+    if (popup) {
+        Object.assign(keys, {
+            "Up": function(editor) { popup.goTo("up"); valueFromRecentList();},
+            "Down": function(editor) { popup.goTo("down"); valueFromRecentList();},
+            "Ctrl-Up|Ctrl-Home": function(editor) { popup.goTo("start"); valueFromRecentList();},
+            "Ctrl-Down|Ctrl-End": function(editor) { popup.goTo("end"); valueFromRecentList();},
+            "Tab": function(editor) {
+                popup.goTo("down"); valueFromRecentList();
+            },
+            "PageUp": function(editor) { popup.gotoPageUp(); valueFromRecentList();},
+            "PageDown": function(editor) { popup.gotoPageDown(); valueFromRecentList();}
+        });
+    }
+
+    cmdLine.commands.bindKeys(keys);
 
     function done() {
         overlay.close();
@@ -2413,7 +2451,9 @@ function prompt(editor, message, options, callback) {
     }
 
     cmdLine.resize(true);
-    popup.resize(true);
+    if (popup) {
+        popup.resize(true);
+    }
     cmdLine.focus();
 
     openPrompt = {

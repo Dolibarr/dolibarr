@@ -88,7 +88,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 	$langs->load("orders");
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
-    $sql.= ", s.code_client";
+	$sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -117,21 +117,21 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td class="nowrap">';
-                $orderstatic->id=$obj->rowid;
-                $orderstatic->ref=$obj->ref;
-                $orderstatic->ref_client=$obj->ref_client;
-                $orderstatic->total_ht = $obj->total_ht;
-                $orderstatic->total_tva = $obj->total_tva;
-                $orderstatic->total_ttc = $obj->total_ttc;
-                print $orderstatic->getNomUrl(1);
-                print '</td>';
+				$orderstatic->id=$obj->rowid;
+				$orderstatic->ref=$obj->ref;
+				$orderstatic->ref_client=$obj->ref_client;
+				$orderstatic->total_ht = $obj->total_ht;
+				$orderstatic->total_tva = $obj->total_tva;
+				$orderstatic->total_ttc = $obj->total_ttc;
+				print $orderstatic->getNomUrl(1);
+				print '</td>';
 				print '<td class="nowrap">';
 				$companystatic->id=$obj->socid;
 				$companystatic->name=$obj->name;
 				$companystatic->client=$obj->client;
-                $companystatic->code_client = $obj->code_client;
-                $companystatic->code_fournisseur = $obj->code_fournisseur;
-                $companystatic->canvas=$obj->canvas;
+				$companystatic->code_client = $obj->code_client;
+				$companystatic->code_fournisseur = $obj->code_fournisseur;
+				$companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td class="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
@@ -172,7 +172,7 @@ $max = 3;
 if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 {
 	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas";
-    $sql.= ", s.code_client";
+	$sql.= ", s.code_client";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE s.client IN (1, 2, 3)";
@@ -192,7 +192,7 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
 		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastCustomersOrProspects",$max);
-        else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
+		else if (! empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) print $langs->trans("BoxTitleLastModifiedProspects",$max);
 		else print $langs->trans("BoxTitleLastModifiedCustomers",$max);
 		print '</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
@@ -205,9 +205,9 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 				$companystatic->id=$objp->rowid;
 				$companystatic->name=$objp->name;
 				$companystatic->client=$objp->client;
-                $companystatic->code_client = $objp->code_client;
-                $companystatic->code_fournisseur = $objp->code_fournisseur;
-                $companystatic->canvas=$objp->canvas;
+				$companystatic->code_client = $objp->code_client;
+				$companystatic->code_fournisseur = $objp->code_fournisseur;
+				$companystatic->canvas=$objp->canvas;
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1,'customer',48).'</td>';
 				print '<td class="right nowrap">';

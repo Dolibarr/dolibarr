@@ -50,16 +50,17 @@ $confirm = GETPOST('confirm', 'alpha');
 $projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'don', $id, '');
 
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
@@ -101,27 +102,27 @@ if ($object->id)
 {
 	$object->fetch_thirdparty();
 
-	$head=donation_prepare_head($object);
+	$head = donation_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'generic');
+	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'donation');
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
 	{
-		$totalsize+=$file['size'];
+		$totalsize += $file['size'];
 	}
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 	    $langs->load("projects");
-	    $morehtmlref.=$langs->trans('Project') . ' ';
+	    $morehtmlref .= $langs->trans('Project').' ';
 	    if ($user->rights->don->creer)
 	    {
             if ($action != 'classify') {
@@ -129,28 +130,28 @@ if ($object->id)
             }
             if ($action == 'classify') {
                 //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-                $morehtmlref.='</form>';
+                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref .= '</form>';
             } else {
-                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
             }
 	    } else {
-	        if (! empty($object->fk_project)) {
+	        if (!empty($object->fk_project)) {
 	            $proj = new Project($db);
 	            $proj->fetch($object->fk_project);
-	            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-	            $morehtmlref.=$proj->ref;
-	            $morehtmlref.='</a>';
+	            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+	            $morehtmlref .= $proj->ref;
+	            $morehtmlref .= '</a>';
 	        } else {
-	            $morehtmlref.='';
+	            $morehtmlref .= '';
 	        }
 	    }
 	}
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);

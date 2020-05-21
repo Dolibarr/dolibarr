@@ -415,19 +415,23 @@ else
         $available_choices = array();
         $notavailable_choices = array();
 
-		// Show line of first install choice
-        $choice  = '<tr class="trlineforchoice">'."\n";
+        if (empty($dolibarr_main_db_host))	// This means install process was not run
+        {
+        	$foundrecommandedchoice = 1; // To show only once
+        }
+
+        // Show line of first install choice
+        $choice  = '<tr class="trlineforchoice'.($foundrecommandedchoice ? ' choiceselected' : '').'">'."\n";
         $choice .= '<td class="nowrap center"><b>'.$langs->trans("FreshInstall").'</b>';
 		$choice .= '</td>';
         $choice .= '<td class="listofchoicesdesc">';
 		$choice .= $langs->trans("FreshInstallDesc");
 		if (empty($dolibarr_main_db_host))	// This means install process was not run
 		{
-            $choice .= '<br>';
+			$choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
 			$choice .= '<div class="center"><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></div>';
 			// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
-			$foundrecommandedchoice = 1; // To show only once
 		}
 
         $choice .= '</td>';
@@ -475,7 +479,8 @@ else
 								array('from'=>'8.0.0', 'to'=>'9.0.0'),
 								array('from'=>'9.0.0', 'to'=>'10.0.0'),
 								array('from'=>'10.0.0', 'to'=>'11.0.0'),
-								array('from'=>'11.0.0', 'to'=>'12.0.0')
+								array('from'=>'11.0.0', 'to'=>'12.0.0'),
+								array('from'=>'12.0.0', 'to'=>'13.0.0')
 		);
 
 		$count = 0;
@@ -553,7 +558,7 @@ else
 				}
 				if ($disabled)
                 {
-                    $choice .= '<span class="button">'.$langs->trans("NotYetAvailable").'</span>';
+                    $choice .= '<span class="opacitymedium">'.$langs->trans("NotYetAvailable").'</span>';
                 }
 				else
                 {

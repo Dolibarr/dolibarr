@@ -43,7 +43,7 @@ $action   = GETPOST('action', 'aZ09');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (!$sortfield) $sortfield = "a.datep,a.id";
@@ -76,9 +76,9 @@ if (!$action) {
 
 // Security check
 $id = GETPOST("id", 'int');
-$socid=0;
+$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-$result=restrictedArea($user, 'ticket', $id, '');
+$result = restrictedArea($user, 'ticket', $id, '');
 
 if (!$user->rights->ticket->read) {
 	accessforbidden();
@@ -163,61 +163,61 @@ if ($object->fk_user_create > 0) {
 	$morehtmlref .= $fuser->getNomUrl(0);
 }
 if (!empty($object->origin_email)) {
-	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' : ';
-	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
+	$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+	$morehtmlref .= $object->origin_email.' <small>('.$langs->trans("TicketEmailOriginIssuer").')</small>';
 }
 
 // Thirdparty
-if (! empty($conf->societe->enabled))
+if (!empty($conf->societe->enabled))
 {
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty');
+	$morehtmlref .= '<br>'.$langs->trans('ThirdParty');
 	/*if ($action != 'editcustomer' && $object->fk_statut < 8 && !$user->socid && $user->rights->ticket->write) {
 		$morehtmlref.='<a class="editfielda" href="' . $url_page_current . '?action=editcustomer&amp;track_id=' . $object->track_id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 	}*/
-	$morehtmlref.=' : ';
+	$morehtmlref .= ' : ';
 	if ($action == 'editcustomer') {
-		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
+		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'editcustomer', '', 1, 0, 0, array(), 1);
 	} else {
-		$morehtmlref.=$form->form_thirdparty($url_page_current . '?track_id=' . $object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
+		$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, 'none', '', 1, 0, 0, array(), 1);
 	}
 }
 
 // Project
-if (! empty($conf->projet->enabled))
+if (!empty($conf->projet->enabled))
 {
 	$langs->load("projects");
-	$morehtmlref.='<br>'.$langs->trans('Project');
+	$morehtmlref .= '<br>'.$langs->trans('Project');
 	if ($user->rights->ticket->write)
 	{
 		if ($action != 'classify') {
 			//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a>';
-			$morehtmlref.=' : ';
+			$morehtmlref .= ' : ';
 		}
 		if ($action == 'classify') {
 			//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-			$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-			$morehtmlref.='<input type="hidden" name="action" value="classin">';
-			$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-			$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
-			$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-			$morehtmlref.='</form>';
+			$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+			$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+			$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+			$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+			$morehtmlref .= '</form>';
 		} else {
-			$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 		}
 	} else {
-		if (! empty($object->fk_project)) {
+		if (!empty($object->fk_project)) {
 			$proj = new Project($db);
 			$proj->fetch($object->fk_project);
-			$morehtmlref.=$proj->getNomUrl(1);
+			$morehtmlref .= $proj->getNomUrl(1);
 		} else {
-			$morehtmlref.='';
+			$morehtmlref .= '';
 		}
 	}
 }
 
-$morehtmlref.='</div>';
+$morehtmlref .= '</div>';
 
-$linkback = '<a href="' . dol_buildpath('/ticket/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
+$linkback = '<a href="'.dol_buildpath('/ticket/list.php', 1).'"><strong>'.$langs->trans("BackToList").'</strong></a> ';
 
 dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 

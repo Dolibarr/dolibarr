@@ -84,6 +84,8 @@ ListOfPermissionsDefined=Llista de permisos definits
 SeeExamples=Mira exemples aquí
 EnabledDesc=Condició per tenir activat aquest camp (Exemples: 1 ó $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=És visible el camp? (Exemples: 0=Mai visible, 1=Visible en llistat i en formularis de crear/modificar/visualitzar, 2=Visible només en llistat, 3=Visible només en formularis de crear/modificar/visualitzar (no en llistat), 4=Visible en llistat i només en formularis de modificar/visualitzar (no al crear), 5=Visible en llistat i només en formularis de visualitzar (no al crear ni al modificar). Utilitzar el valor negatiu significa que el camp no es mostra per defecte al llistat, però es pot seleccionar per a la seva visualització). Pot ser una expressió, per exemple: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br> ($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Mostra aquest camp en documents PDF compatibles. Podeu gestionar la posició amb el camp "Posició". <br/> Actualment, els models PDF compatibles coneguts són: eratostè 
+DisplayOnPdf=Visualització en PDF
 IsAMeasureDesc=Es pot acumular el valor del camp per obtenir un total en la llista? (Exemples: 1 o 0)
 SearchAllDesc=El camp utilitzat per realitzar una cerca des de l'eina de cerca ràpida? (Exemples: 1 o 0)
 SpecDefDesc=Introduïu aquí tota la documentació que voleu proporcionar amb el vostre mòdul que encara no està definit per altres pestanyes. Podeu utilitzar .md o millor, la sintaxi enriquida .asciidoc.

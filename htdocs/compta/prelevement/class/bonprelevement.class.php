@@ -83,18 +83,16 @@ class BonPrelevement extends CommonObject
 	 *	Constructor
 	 *
 	 *  @param		DoliDB		$db      	Database handler
-	 *  @param		string		$filename	Filename of withdraw receipt
 	 */
-	public function __construct($db, $filename = '')
+	public function __construct($db)
 	{
 		global $conf, $langs;
 
-		$error = 0;
 		$this->db = $db;
 
-		$this->filename = $filename;
+		$this->filename = '';
 
-		$this->date_echeance = time();
+		$this->date_echeance = dol_now();
 		$this->raison_sociale = "";
 		$this->reference_remise = "";
 
@@ -483,8 +481,8 @@ class BonPrelevement extends CommonObject
 							$paiement->datepaye     = $date;
 							$paiement->amounts      = $cursoramounts; // Array with detail of dispatching of payments for each invoice
 							$paiement->paiementid   = 3; //
-							$paiement->num_payment = $this->ref;  // Set ref of direct debit note
-							$paiement->num_paiement = $this->ref; // For bacward compatibility
+							$paiement->num_payment = $this->ref; // Set ref of direct debit note
+							$paiement->num_paiement = $this->ref; // For backward compatibility
 							$paiement->id_prelevement = $this->id;
 
 							$paiement_id = $paiement->create($user);
@@ -892,7 +890,7 @@ class BonPrelevement extends CommonObject
 							if ($bac->verif() >= 1)
 							{
 								$factures_prev[$i] = $fac;
-								/* second tableau necessaire pour BonPrelevement */
+								/* second array necessary for BonPrelevement */
 								$factures_prev_id[$i] = $fac[0];
 								$i++;
 								//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
@@ -1229,6 +1227,9 @@ class BonPrelevement extends CommonObject
 		$label = '<u>'.$langs->trans("ShowWithdraw").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->statut)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
 

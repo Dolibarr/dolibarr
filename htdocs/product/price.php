@@ -1151,7 +1151,7 @@ if ($action == 'edit_vat' && ($user->rights->produit->creer || $user->rights->se
 	print load_fiche_titre($langs->trans("UpdateVAT"), '');
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-	print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update_vat">';
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1185,7 +1185,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 	{
 	    print '<!-- Edit price -->'."\n";
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update_price">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1633,11 +1633,12 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 {
 	$prodcustprice = new Productcustomerprice($db);
 
+	$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
 	$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-	$offset = $conf->liste_limit * $page;
+	$offset = $limit * $page;
 	$pageprev = $page - 1;
 	$pagenext = $page + 1;
 	if (!$sortorder)
@@ -1660,7 +1661,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="add_customer_price_confirm">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
@@ -1747,7 +1748,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		}
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION ['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update_customer_price_confirm">';
 		print '<input type="hidden" name="lineid" value="'.$prodcustprice->id.'">';
 
@@ -2047,7 +2048,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 
 		print '<tr class="oddeven">';
 		print "<td>".$langs->trans("Default")."</td>";
-		print "<td>"."</td>";
+		print "<td></td>";
 
 		print '<td class="center">'.$langs->trans($object->price_base_type)."</td>";
 		print '<td class="right">';

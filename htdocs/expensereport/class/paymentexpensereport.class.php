@@ -33,12 +33,12 @@ class PaymentExpenseReport extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='payment_expensereport';
+	public $element = 'payment_expensereport';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_expensereport';
+	public $table_element = 'payment_expensereport';
 
     /**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -55,11 +55,11 @@ class PaymentExpenseReport extends CommonObject
      */
 	public $fk_expensereport;
 
-	public $datec='';
-	public $tms='';
-	public $datep='';
-    public $amount;            // Total amount of payment
-    public $amounts=array();   // Array of amounts
+	public $datec = '';
+	public $tms = '';
+	public $datep = '';
+    public $amount; // Total amount of payment
+    public $amounts = array(); // Array of amounts
 
     /**
      * @var int ID
@@ -108,26 +108,26 @@ class PaymentExpenseReport extends CommonObject
 	{
 		global $conf, $langs;
 
-		$error=0;
+		$error = 0;
 
-        $now=dol_now();
+        $now = dol_now();
 
         // Validate parameters
-		if (! $this->datepaid) {
-			$this->error='ErrorBadValueForParameterCreatePaymentExpenseReport';
+		if (!$this->datepaid) {
+			$this->error = 'ErrorBadValueForParameterCreatePaymentExpenseReport';
 			return -1;
 		}
 
 		// Clean parameters
-		if (isset($this->fk_expensereport)) $this->fk_expensereport=trim($this->fk_expensereport);
-		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
-		if (isset($this->note))				$this->note=trim($this->note);
-		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_expensereport)) $this->fk_expensereport = trim($this->fk_expensereport);
+		if (isset($this->amount))			$this->amount = trim($this->amount);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
+		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
+		if (isset($this->note))				$this->note = trim($this->note);
+		if (isset($this->note_public))		$this->note_public = trim($this->note_public);
+		if (isset($this->fk_bank))			$this->fk_bank = trim($this->fk_bank);
+		if (isset($this->fk_user_creat))	$this->fk_user_creat = trim($this->fk_user_creat);
+		if (isset($this->fk_user_modif))	$this->fk_user_modif = trim($this->fk_user_modif);
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -147,15 +147,15 @@ class PaymentExpenseReport extends CommonObject
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
-			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
-			$sql.= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datepaid)."',";
-			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
-			$sql.= " 0)";
+			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
+			$sql .= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datepaid)."',";
+			$sql .= " ".$totalamount.",";
+			$sql .= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_expensereport");
@@ -166,15 +166,15 @@ class PaymentExpenseReport extends CommonObject
 			}
 		}
 
-		if ($totalamount != 0 && ! $error)
+		if ($totalamount != 0 && !$error)
 		{
-		    $this->amount=$totalamount;
+		    $this->amount = $totalamount;
 		    $this->db->commit();
 			return $this->id;
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
 		}
@@ -189,27 +189,27 @@ class PaymentExpenseReport extends CommonObject
 	public function fetch($id)
 	{
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_expensereport,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount,";
-		$sql.= " t.fk_typepayment,";
-		$sql.= " t.num_payment,";
-		$sql.= " t.note as note_public,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_label,";
-		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id;
+		$sql .= " t.rowid,";
+		$sql .= " t.fk_expensereport,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.datep,";
+		$sql .= " t.amount,";
+		$sql .= " t.fk_typepayment,";
+		$sql .= " t.num_payment,";
+		$sql .= " t.note as note_public,";
+		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " pt.code as type_code, pt.libelle as type_label,";
+		$sql .= ' b.fk_account';
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+		$sql .= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
@@ -219,23 +219,23 @@ class PaymentExpenseReport extends CommonObject
 				$this->id    = $obj->rowid;
 				$this->ref   = $obj->rowid;
 
-				$this->fk_expensereport	= $obj->fk_expensereport;
+				$this->fk_expensereport = $obj->fk_expensereport;
 				$this->datec			= $this->db->jdate($obj->datec);
-				$this->tms				= $this->db->jdate($obj->tms);
+				$this->tms = $this->db->jdate($obj->tms);
 				$this->datep			= $this->db->jdate($obj->datep);
-				$this->amount			= $obj->amount;
-				$this->fk_typepayment  	= $obj->fk_typepayment;
+				$this->amount = $obj->amount;
+				$this->fk_typepayment = $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
 				$this->note_public		= $obj->note_public;
-				$this->fk_bank			= $obj->fk_bank;
+				$this->fk_bank = $obj->fk_bank;
 				$this->fk_user_creat	= $obj->fk_user_creat;
 				$this->fk_user_modif	= $obj->fk_user_modif;
 
-				$this->type_code		= $obj->type_code;
-				$this->type_label		= $obj->type_label;
+				$this->type_code = $obj->type_code;
+				$this->type_label = $obj->type_label;
 
-				$this->bank_account		= $obj->fk_account;
-				$this->bank_line		= $obj->fk_bank;
+				$this->bank_account = $obj->fk_account;
+				$this->bank_line = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -243,7 +243,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 		else
 		{
-			$this->error="Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -260,18 +260,18 @@ class PaymentExpenseReport extends CommonObject
 	{
 		// phpcs:enable
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->fk_expensereport)) $this->fk_expensereport=trim($this->fk_expensereport);
-		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
-		if (isset($this->note))				$this->note=trim($this->note);
-		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
-		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
-		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
+		if (isset($this->fk_expensereport)) $this->fk_expensereport = trim($this->fk_expensereport);
+		if (isset($this->amount))			$this->amount = trim($this->amount);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
+		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
+		if (isset($this->note))				$this->note = trim($this->note);
+		if (isset($this->fk_bank))			$this->fk_bank = trim($this->fk_bank);
+		if (isset($this->fk_user_creat))	$this->fk_user_creat = trim($this->fk_user_creat);
+		if (isset($this->fk_user_modif))	$this->fk_user_modif = trim($this->fk_user_modif);
 
 
 		// Check parameters
@@ -280,53 +280,37 @@ class PaymentExpenseReport extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_expensereport SET";
 
-		$sql.= " fk_expensereport=".(isset($this->fk_expensereport)?$this->fk_expensereport:"null").",";
-		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
-		$sql.= " fk_typepayment=".(isset($this->fk_typepayment)?$this->fk_typepayment:"null").",";
-		$sql.= " num_payment=".(isset($this->num_payment)?"'".$this->db->escape($this->num_payment)."'":"null").",";
-		$sql.= " note=".(isset($this->note)?"'".$this->db->escape($this->note)."'":"null").",";
-		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
-		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
-		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
+		$sql .= " fk_expensereport=".(isset($this->fk_expensereport) ? $this->fk_expensereport : "null").",";
+		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
+		$sql .= " note=".(isset($this->note) ? "'".$this->db->escape($this->note)."'" : "null").",";
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
 
 
-		$sql.= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
-		}
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -347,59 +331,43 @@ class PaymentExpenseReport extends CommonObject
 	{
 		// phpcs:enable
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
-	    if (! $error)
+	    if (!$error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_expensereport' AND url_id=".$this->id;
+            $sql .= " WHERE type='payment_expensereport' AND url_id=".$this->id;
 
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
         }
 
-		if (! $error)
+		if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_expensereport";
-			$sql.= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) {
+			if (!$resql) {
                 $error++;
-                $this->errors[]="Error ".$this->db->lasterror();
+                $this->errors[] = "Error ".$this->db->lasterror();
             }
 		}
-
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action call a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
 
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -419,35 +387,35 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		$error=0;
+		$error = 0;
 
-		$object=new PaymentExpenseReport($this->db);
+		$object = new PaymentExpenseReport($this->db);
 
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+		$object->id = 0;
+		$object->statut = 0;
 
 		// Clear fields
 		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result=$object->create($user);
+		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
-			$this->error=$object->error;
+			$this->error = $object->error;
 			$error++;
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return $object->id;
@@ -497,19 +465,19 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->id=0;
+		$this->id = 0;
 
-		$this->fk_expensereport='';
-		$this->datec='';
-		$this->tms='';
-		$this->datep='';
-		$this->amount='';
-		$this->fk_typepayment='';
-		$this->num_payment='';
-		$this->note='';
-		$this->fk_bank='';
-		$this->fk_user_creat='';
-		$this->fk_user_modif='';
+		$this->fk_expensereport = '';
+		$this->datec = '';
+		$this->tms = '';
+		$this->datep = '';
+		$this->amount = '';
+		$this->fk_typepayment = '';
+		$this->num_payment = '';
+		$this->note = '';
+		$this->fk_bank = '';
+		$this->fk_user_creat = '';
+		$this->fk_user_modif = '';
 	}
 
 
@@ -527,11 +495,11 @@ class PaymentExpenseReport extends CommonObject
      */
     public function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
-        global $langs,$conf;
+        global $langs, $conf;
 
-        $error=0;
+        $error = 0;
 
-        if (! empty($conf->banque->enabled))
+        if (!empty($conf->banque->enabled))
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -541,12 +509,12 @@ class PaymentExpenseReport extends CommonObject
             //Fix me field
             $total = $this->amount;
 
-            if ($mode == 'payment_expensereport') $amount=$total;
+            if ($mode == 'payment_expensereport') $amount = $total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
-                $this->fk_typepayment,  // Payment mode id or code ("CHQ or VIR for example")
+                $this->fk_typepayment, // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 -$amount,
                 $this->num_payment,
@@ -560,7 +528,7 @@ class PaymentExpenseReport extends CommonObject
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
             if ($bank_line_id > 0)
             {
-                $result=$this->update_fk_bank($bank_line_id);
+                $result = $this->update_fk_bank($bank_line_id);
                 if ($result <= 0)
                 {
                     $error++;
@@ -568,11 +536,11 @@ class PaymentExpenseReport extends CommonObject
                 }
 
                 // Add link 'payment', 'payment_supplier', 'payment_expensereport' in bank_url between payment and bank transaction
-                $url='';
-                if ($mode == 'payment_expensereport') $url=DOL_URL_ROOT.'/expensereport/payment/card.php?rowid=';
+                $url = '';
+                if ($mode == 'payment_expensereport') $url = DOL_URL_ROOT.'/expensereport/payment/card.php?rowid=';
                 if ($url)
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                    $result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
                     if ($result <= 0)
                     {
                         $error++;
@@ -581,7 +549,7 @@ class PaymentExpenseReport extends CommonObject
                 }
 
                 // Add link 'user' in bank_url between user and bank transaction
-                if (! $error)
+                if (!$error)
                 {
                     foreach ($this->amounts as $key => $value)  // We should have always same user but we loop in case of.
                     {
@@ -590,7 +558,7 @@ class PaymentExpenseReport extends CommonObject
                         	$fuser = new User($this->db);
                             $fuser->fetch($key);
 
-                            $result=$acc->add_url_line(
+                            $result = $acc->add_url_line(
                                 $bank_line_id,
                                 $fuser->id,
                                 DOL_URL_ROOT.'/user/card.php?id=',
@@ -599,7 +567,7 @@ class PaymentExpenseReport extends CommonObject
                             );
                             if ($result <= 0)
                             {
-                            	$this->error=$this->db->lasterror();
+                            	$this->error = $this->db->lasterror();
                             	dol_syslog(get_class($this).'::addPaymentToBank '.$this->error);
                             	$error++;
                             }
@@ -609,12 +577,12 @@ class PaymentExpenseReport extends CommonObject
             }
             else
             {
-                $this->error=$acc->error;
+                $this->error = $acc->error;
                 $error++;
             }
         }
 
-        if (! $error)
+        if (!$error)
         {
             return 1;
         }
@@ -645,7 +613,7 @@ class PaymentExpenseReport extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			return 0;
 		}
 	}
@@ -661,19 +629,19 @@ class PaymentExpenseReport extends CommonObject
 	{
 		global $langs;
 
-		$result='';
+		$result = '';
 
-		if (empty($this->ref)) $this->ref=$this->label;
+		if (empty($this->ref)) $this->ref = $this->label;
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id))
 		{
 			$link = '<a href="'.DOL_URL_ROOT.'/expensereport/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-			$linkend='</a>';
+			$linkend = '</a>';
 
-            if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
+            if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+			if ($withpicto && $withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 		}
 
 		return $result;
@@ -688,8 +656,8 @@ class PaymentExpenseReport extends CommonObject
     public function info($id)
     {
 		$sql = 'SELECT e.rowid, e.datec, e.fk_user_creat, e.fk_user_modif, e.tms';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as e';
-		$sql.= ' WHERE e.rowid = '.$id;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_expensereport as e';
+		$sql .= ' WHERE e.rowid = '.$id;
 
 		dol_syslog(get_class($this).'::info', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -704,7 +672,7 @@ class PaymentExpenseReport extends CommonObject
 				{
 					$cuser = new User($this->db);
 					$cuser->fetch($obj->fk_user_creat);
-					$this->user_creation     = $cuser;
+					$this->user_creation = $cuser;
 				}
 				if ($obj->fk_user_modif)
 				{

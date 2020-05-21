@@ -32,12 +32,12 @@ class PaymentDonation extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='payment_donation';
+	public $element = 'payment_donation';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_donation';
+	public $table_element = 'payment_donation';
 
     /**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -54,12 +54,18 @@ class PaymentDonation extends CommonObject
      */
 	public $fk_donation;
 
-	public $datec='';
-	public $tms='';
-	public $datep='';
-    public $amount;            // Total amount of payment
-    public $amounts=array();   // Array of amounts
+	public $datec = '';
+
+	public $tms = '';
+
+	public $datep = '';
+
+	public $amount; // Total amount of payment
+
+	public $amounts = array(); // Array of amounts
+
 	public $typepayment;
+
 	public $num_payment;
 
 	/**
@@ -109,26 +115,26 @@ class PaymentDonation extends CommonObject
 	{
 		global $conf, $langs;
 
-		$error=0;
+		$error = 0;
 
-        $now=dol_now();
+        $now = dol_now();
 
         // Validate parameters
-		if (! $this->datepaid)
+		if (!$this->datepaid)
 		{
-			$this->error='ErrorBadValueForParameterCreatePaymentDonation';
+			$this->error = 'ErrorBadValueForParameterCreatePaymentDonation';
 			return -1;
 		}
 
 		// Clean parameters
-		if (isset($this->fk_donation)) 		$this->fk_donation = (int) $this->fk_donation;
-		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment))   $this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment))      $this->num_payment=trim($this->num_payment);
-		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_creat))	$this->fk_user_creat = (int) $this->fk_user_creat;
-		if (isset($this->fk_user_modif))	$this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->fk_donation)) 		$this->fk_donation    = (int) $this->fk_donation;
+		if (isset($this->amount))			$this->amount         = trim($this->amount);
+		if (isset($this->fk_typepayment))   $this->fk_typepayment = trim($this->fk_typepayment);
+		if (isset($this->num_payment))      $this->num_payment    = trim($this->num_payment);
+		if (isset($this->note_public))		$this->note_public    = trim($this->note_public);
+		if (isset($this->fk_bank))			$this->fk_bank        = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat))	$this->fk_user_creat  = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif))	$this->fk_user_modif  = (int) $this->fk_user_modif;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -148,15 +154,15 @@ class PaymentDonation extends CommonObject
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_donation (fk_donation, datec, datep, amount,";
-			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
-			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datepaid)."',";
-			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
-			$sql.= " 0)";
+			$sql .= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
+			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datepaid)."',";
+			$sql .= " ".$totalamount.",";
+			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
@@ -168,24 +174,24 @@ class PaymentDonation extends CommonObject
 			}
 		}
 
-		if (! $error && ! $notrigger)
+		if (!$error && !$notrigger)
 		{
 			// Call triggers
-			$result=$this->call_trigger('DONATION_PAYMENT_CREATE', $user);
+			$result = $this->call_trigger('DONATION_PAYMENT_CREATE', $user);
 			if ($result < 0) { $error++; }
 			// End call triggers
 		}
 
-		if ($totalamount != 0 && ! $error)
+		if ($totalamount != 0 && !$error)
 		{
-		    $this->amount=$totalamount;
-            $this->total=$totalamount;    // deprecated
+		    $this->amount = $totalamount;
+            $this->total = $totalamount; // deprecated
 		    $this->db->commit();
 			return $this->id;
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
 		}
@@ -201,53 +207,53 @@ class PaymentDonation extends CommonObject
 	{
 		global $langs;
 		$sql = "SELECT";
-		$sql.= " t.rowid,";
-		$sql.= " t.fk_donation,";
-		$sql.= " t.datec,";
-		$sql.= " t.tms,";
-		$sql.= " t.datep,";
-		$sql.= " t.amount,";
-		$sql.= " t.fk_typepayment,";
-		$sql.= " t.num_payment,";
-		$sql.= " t.note as note_public,";
-		$sql.= " t.fk_bank,";
-		$sql.= " t.fk_user_creat,";
-		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_label,";
-		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as t";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id;
+		$sql .= " t.rowid,";
+		$sql .= " t.fk_donation,";
+		$sql .= " t.datec,";
+		$sql .= " t.tms,";
+		$sql .= " t.datep,";
+		$sql .= " t.amount,";
+		$sql .= " t.fk_typepayment,";
+		$sql .= " t.num_payment,";
+		$sql .= " t.note as note_public,";
+		$sql .= " t.fk_bank,";
+		$sql .= " t.fk_user_creat,";
+		$sql .= " t.fk_user_modif,";
+		$sql .= " pt.code as type_code, pt.libelle as type_label,";
+		$sql .= ' b.fk_account';
+		$sql .= " FROM ".MAIN_DB_PREFIX."payment_donation as t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
+		$sql .= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
-				$this->ref   = $obj->rowid;
+				$this->id  = $obj->rowid;
+				$this->ref = $obj->rowid;
 
-				$this->fk_donation		= $obj->fk_donation;
-				$this->datec			= $this->db->jdate($obj->datec);
-				$this->tms				= $this->db->jdate($obj->tms);
-				$this->datep			= $this->db->jdate($obj->datep);
-				$this->amount			= $obj->amount;
-				$this->fk_typepayment	= $obj->fk_typepayment;
-				$this->num_payment		= $obj->num_payment;
-				$this->note_public      = $obj->note_public;
-				$this->fk_bank			= $obj->fk_bank;
-				$this->fk_user_creat	= $obj->fk_user_creat;
-				$this->fk_user_modif	= $obj->fk_user_modif;
+				$this->fk_donation    = $obj->fk_donation;
+				$this->datec		  = $this->db->jdate($obj->datec);
+				$this->tms            = $this->db->jdate($obj->tms);
+				$this->datep		  = $this->db->jdate($obj->datep);
+				$this->amount         = $obj->amount;
+				$this->fk_typepayment = $obj->fk_typepayment;
+				$this->num_payment    = $obj->num_payment;
+				$this->note_public    = $obj->note_public;
+				$this->fk_bank        = $obj->fk_bank;
+				$this->fk_user_creat  = $obj->fk_user_creat;
+				$this->fk_user_modif  = $obj->fk_user_modif;
 
-				$this->type_code		= $obj->type_code;
-				$this->type_label		= $obj->type_label;
+				$this->type_code  = $obj->type_code;
+				$this->type_label = $obj->type_label;
 
-				$this->bank_account		= $obj->fk_account;
-				$this->bank_line		= $obj->fk_bank;
+				$this->bank_account = $obj->fk_account;
+				$this->bank_line    = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -255,7 +261,7 @@ class PaymentDonation extends CommonObject
 		}
 		else
 		{
-			$this->error="Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -271,15 +277,15 @@ class PaymentDonation extends CommonObject
 	public function update($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
 		if (isset($this->fk_donation))		$this->fk_donation = (int) $this->fk_donation;
-		if (isset($this->amount))			$this->amount=trim($this->amount);
-		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
-		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
-		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
+		if (isset($this->amount))			$this->amount = trim($this->amount);
+		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
+		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
+		if (isset($this->note_public))		$this->note_public = trim($this->note_public);
 		if (isset($this->fk_bank))			$this->fk_bank = (int) $this->fk_bank;
 		if (isset($this->fk_user_creat))	$this->fk_user_creat = (int) $this->fk_user_creat;
 		if (isset($this->fk_user_modif))	$this->fk_user_modif = (int) $this->fk_user_modif;
@@ -289,36 +295,36 @@ class PaymentDonation extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_donation SET";
-		$sql.= " fk_donation=".(isset($this->fk_donation)?$this->fk_donation:"null").",";
-		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql.= " amount=".(isset($this->amount)?$this->amount:"null").",";
-		$sql.= " fk_typepayment=".(isset($this->fk_typepayment)?$this->fk_typepayment:"null").",";
-		$sql.= " num_payment=".(isset($this->num_payment)?"'".$this->db->escape($this->num_payment)."'":"null").",";
-		$sql.= " note=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
-		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
-		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
-		$sql.= " WHERE rowid=".(int) $this->id;
+		$sql .= " fk_donation=".(isset($this->fk_donation) ? $this->fk_donation : "null").",";
+		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql .= " amount=".(isset($this->amount) ? $this->amount : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
+		$sql .= " note=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
+		$sql .= " WHERE rowid=".(int) $this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) {
+		if (!$resql) {
             $error++;
-            $this->errors[]="Error ".$this->db->lasterror();
+            $this->errors[] = "Error ".$this->db->lasterror();
         }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
-				if (! $error && ! $notrigger)
+				if (!$error && !$notrigger)
 				{
 					// Call triggers
-					$result=$this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
+					$result = $this->call_trigger('DONATION_PAYMENT_MODIFY', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 				}
@@ -328,13 +334,13 @@ class PaymentDonation extends CommonObject
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -354,41 +360,41 @@ class PaymentDonation extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
-	    if (! $error)
+	    if (!$error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-            $sql.= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
+            $sql .= " WHERE type='payment_donation' AND url_id=".(int) $this->id;
 
             dol_syslog(get_class($this)."::delete", LOG_DEBUG);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
         }
 
-		if (! $error)
+		if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_donation";
-			$sql.= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) {
+			if (!$resql) {
 				$error++;
-				$this->errors[]="Error ".$this->db->lasterror();
+				$this->errors[] = "Error ".$this->db->lasterror();
 			}
 		}
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
-				if (! $error && ! $notrigger)
+				if (!$error && !$notrigger)
 				{
 					// Call triggers
-					$result=$this->call_trigger('DONATION_PAYMENT_DELETE', $user);
+					$result = $this->call_trigger('DONATION_PAYMENT_DELETE', $user);
 					if ($result < 0) { $error++; }
 					// End call triggers
 				}
@@ -398,13 +404,13 @@ class PaymentDonation extends CommonObject
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -424,39 +430,39 @@ class PaymentDonation extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		$error=0;
+		$error = 0;
 
-		$object=new PaymentDonation($this->db);
+		$object = new PaymentDonation($this->db);
 
 		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+		$object->id = 0;
+		$object->statut = 0;
 
 		// Clear fields
 		// ...
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
-		$result=$object->create($user);
+		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
-			$this->error=$object->error;
+			$this->error = $object->error;
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 		}
 
 		unset($object->context['createfromclone']);
 
 		// End
-		if (! $error)
+		if (!$error)
 		{
 			$this->db->commit();
 			return $object->id;
@@ -506,19 +512,19 @@ class PaymentDonation extends CommonObject
 	 */
 	public function initAsSpecimen()
 	{
-		$this->id=0;
+		$this->id = 0;
 
-		$this->fk_donation='';
-		$this->datec='';
-		$this->tms='';
-		$this->datep='';
-		$this->amount='';
-		$this->fk_typepayment='';
-		$this->num_payment='';
-		$this->note_public='';
-		$this->fk_bank='';
-		$this->fk_user_creat='';
-		$this->fk_user_modif='';
+		$this->fk_donation = '';
+		$this->datec = '';
+		$this->tms = '';
+		$this->datep = '';
+		$this->amount = '';
+		$this->fk_typepayment = '';
+		$this->num_payment = '';
+		$this->note_public = '';
+		$this->fk_bank = '';
+		$this->fk_user_creat = '';
+		$this->fk_user_modif = '';
 	}
 
 
@@ -538,22 +544,22 @@ class PaymentDonation extends CommonObject
     {
         global $conf;
 
-        $error=0;
+        $error = 0;
 
-        if (! empty($conf->banque->enabled))
+        if (!empty($conf->banque->enabled))
         {
             require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);
 
-            $total=$this->total;
-            if ($mode == 'payment_donation') $amount=$total;
+            $total = $this->total;
+            if ($mode == 'payment_donation') $amount = $total;
 
             // Insert payment into llx_bank
             $bank_line_id = $acc->addline(
                 $this->datepaid,
-                $this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
+                $this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $amount,
                 $this->num_payment,
@@ -567,7 +573,7 @@ class PaymentDonation extends CommonObject
             // On connait ainsi le paiement qui a genere l'ecriture bancaire
             if ($bank_line_id > 0)
             {
-                $result=$this->update_fk_bank($bank_line_id);
+                $result = $this->update_fk_bank($bank_line_id);
                 if ($result <= 0)
                 {
                     $error++;
@@ -575,11 +581,11 @@ class PaymentDonation extends CommonObject
                 }
 
                 // Add link 'payment', 'payment_supplier', 'payment_donation' in bank_url between payment and bank transaction
-                $url='';
-                if ($mode == 'payment_donation') $url=DOL_URL_ROOT.'/don/payment/card.php?rowid=';
+                $url = '';
+                if ($mode == 'payment_donation') $url = DOL_URL_ROOT.'/don/payment/card.php?rowid=';
                 if ($url)
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
+                    $result = $acc->add_url_line($bank_line_id, $this->id, $url, '(paiement)', $mode);
                     if ($result <= 0)
                     {
                         $error++;
@@ -589,12 +595,12 @@ class PaymentDonation extends CommonObject
             }
             else
             {
-                $this->error=$acc->error;
+                $this->error = $acc->error;
                 $error++;
             }
         }
 
-        if (! $error)
+        if (!$error)
         {
             return 1;
         }
@@ -625,7 +631,7 @@ class PaymentDonation extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			return 0;
 		}
 	}
@@ -641,18 +647,18 @@ class PaymentDonation extends CommonObject
 	{
 		global $langs;
 
-		$result='';
+		$result = '';
 
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id))
 		{
 			$link = '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-			$linkend='</a>';
+			$linkend = '</a>';
 
-            if ($withpicto) $result.=($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result.=' ';
-			if ($withpicto != 2) $result.=$link.($maxlen?dol_trunc($this->ref, $maxlen):$this->ref).$linkend;
+            if ($withpicto) $result .= ($link.img_object($label, 'payment', 'class="classfortooltip"').$linkend.' ');
+			if ($withpicto && $withpicto != 2) $result .= ' ';
+			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
 		}
 
 		return $result;

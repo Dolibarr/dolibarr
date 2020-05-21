@@ -34,33 +34,34 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (! empty($conf->projet->enabled)) {
-	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('propal', 'compta', 'other', 'bills', 'companies'));
 
 
-$id=(GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('facid', 'int'));  // For backward compatibility
-$ref=GETPOST('ref', 'alpha');
-$socid=GETPOST('socid', 'int');
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
+$id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$ref = GETPOST('ref', 'alpha');
+$socid = GETPOST('socid', 'int');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->socid)
 {
 	$socid = $user->socid;
 }
-$result=restrictedArea($user, 'facture', $id, '');
+$result = restrictedArea($user, 'facture', $id, '');
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";

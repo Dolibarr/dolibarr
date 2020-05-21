@@ -352,6 +352,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 // Show array
 $i = 0;
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 // Extra parameters management
 foreach ($headerparams as $key => $value)
 {
@@ -624,7 +625,7 @@ if (count($amount)) {
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	if ($modecompta != 'CREANCES-DETTES') {
-	    print '<td colspan="1"></td>';
+	    print '<td></td>';
 	} else {
 	    print '<td class="right">'.price($catotal_ht).'</td>';
 	}

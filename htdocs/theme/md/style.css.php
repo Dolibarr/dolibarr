@@ -47,7 +47,7 @@ if (defined('THEME_ONLY_CONSTANT')) return;
 session_cache_limiter('public');
 
 
-require_once '../../main.inc.php';
+require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load user to have $user->conf loaded (not done into main because of NOLOGIN constant defined)
@@ -130,6 +130,7 @@ $colorbacklinebreak  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (emp
 $colorbackbody       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_BACKBODY) ? $colorbackbody : $conf->global->THEME_ELDY_BACKBODY) : (empty($user->conf->THEME_ELDY_BACKBODY) ? $colorbackbody : $user->conf->THEME_ELDY_BACKBODY);
 $colortexttitlenotab = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTTITLENOTAB) ? $colortexttitlenotab : $conf->global->THEME_ELDY_TEXTTITLENOTAB) : (empty($user->conf->THEME_ELDY_TEXTTITLENOTAB) ? $colortexttitlenotab : $user->conf->THEME_ELDY_TEXTTITLENOTAB);
 $colortexttitle      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTTITLE) ? $colortext : $conf->global->THEME_ELDY_TEXTTITLE) : (empty($user->conf->THEME_ELDY_TEXTTITLE) ? $colortexttitle : $user->conf->THEME_ELDY_TEXTTITLE);
+$colortexttitlelink  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $conf->global->THEME_ELDY_TEXTTITLELINK) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
 $colortext           = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXT) ? $colortext : $conf->global->THEME_ELDY_TEXT) : (empty($user->conf->THEME_ELDY_TEXT) ? $colortext : $user->conf->THEME_ELDY_TEXT);
 $colortextlink       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_TEXTLINK) ? $colortext : $conf->global->THEME_ELDY_TEXTLINK) : (empty($user->conf->THEME_ELDY_TEXTLINK) ? $colortextlink : $user->conf->THEME_ELDY_TEXTLINK);
 $fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (empty($conf->global->THEME_ELDY_FONT_SIZE1) ? $fontsize : $conf->global->THEME_ELDY_FONT_SIZE1) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
@@ -229,6 +230,43 @@ print '*/'."\n";
 /* Default styles                                                                 */
 /* ============================================================================== */
 
+:root {
+	--colorbackhmenu1: rgb(<?php print $colorbackhmenu1; ?>);
+	--colorbackvmenu1: rgb(<?php print $colorbackvmenu1; ?>);
+	--colorbacktitle1: rgb(<?php print $colorbacktitle1; ?>);
+	--colorbacktabcard1: rgb(<?php print $colorbacktabcard1; ?>);
+	--colorbacktabactive: rgb(<?php print $colorbacktabactive; ?>);
+	--colorbacklineimpair1: rgb(<?php print $colorbacklineimpair1; ?>);
+	--colorbacklineimpair2: rgb(<?php print $colorbacklineimpair2; ?>);
+	--colorbacklinepair1: rgb(<?php print $colorbacklinepair1; ?>);
+	--colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
+	--colorbacklinepairhover: rgb(<?php print $colorbacklinepairhover; ?>);
+	--colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
+	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
+	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
+	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
+	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
+	--colortext: rgb(<?php print $colortext; ?>);
+	--colortextlink: rgb(<?php print $colortextlink; ?>);
+	--colortextbackhmenu: #<?php echo $colortextbackhmenu; ?>;
+	--colortextbackvmenu: #<?php print $colortextbackvmenu; ?>;
+	--listetotal: #551188;
+	--inputbackgroundcolor: #FFF;
+	--inputbordercolor: rgba(0,0,0,.2);
+	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
+	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
+	--oddevencolor: #202020;
+	--colorboxstatsborder: #ddd;
+	--dolgraphbg: rgba(255,255,255,0);
+	--fieldrequiredcolor: #000055;
+	--colortextbacktab: #<?php print $colortextbacktab; ?>;
+	--colorboxiconbg: #eee;
+	--refidnocolor:#444;
+	--tableforfieldcolor:#666;
+	--amountremaintopaycolor:#880000;
+	--amountpaymentcomplete:#008800;
+	--amountremaintopaybackcolor:none;
+}
 
 body {
 <?php if (GETPOST('optioncss', 'aZ09') == 'print') {  ?>
@@ -279,6 +317,12 @@ textarea.cke_source:focus
 	box-shadow: none;
 }
 
+th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), td.wrapcolumntitle.liste_titre:not(.maxwidthsearch) {
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 120px;
+    text-overflow: ellipsis;
+}
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
@@ -351,7 +395,7 @@ input.buttongen {
 input.buttonpayment, button.buttonpayment, div.buttonpayment {
 	min-width: 290px;
 	margin-bottom: 15px;
-	margin-top: 0;
+	margin-top: 15px;
     margin-left: 5px;
     margin-right: 5px;
 	background-image: none;
@@ -442,11 +486,16 @@ td.rightborder {
 td.actionbuttons a {
     padding-left: 6px;
 }
-select.flat, form.flat select {
+select.flat, form.flat select, .pageplusone {
 	font-weight: normal;
 	font-size: unset;
 	height: 2em;
 }
+input.pageplusone {
+    padding-bottom: 4px;
+    padding-top: 4px;
+}
+
 .optionblue {
 	color: rgb(<?php echo $colortextlink; ?>);
 }
@@ -465,6 +514,13 @@ select.flat, form.flat select {
 .opacitytransp {
 	opacity: 0;
 }
+.colorwhite {
+	color: #fff;
+}
+.colorblack {
+	color: #000;
+}
+
 select:invalid {
 	color: gray;
 }
@@ -512,7 +568,7 @@ div#moretabsList, div#moretabsListaction {
 
 hr { border: 0; border-top: 1px solid #ccc; }
 
-.button, .buttonDelete, input[name="sbmtConnexion"] {
+.button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
@@ -928,7 +984,7 @@ select.flat.selectlimit {
     max-width: 0;
     overflow: auto;
 }
-.divintdwithtwolinesmax {
+.divintodwithtwolinesmax {
     width: 75px;
     display: -webkit-box;
     -webkit-box-orient: vertical;
@@ -1064,9 +1120,11 @@ table[summary="list_of_modules"] .fa-cog {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
+.minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+	.width20  { width: 20px; }
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
     .width75  { width: 75px; }
@@ -1088,6 +1146,7 @@ table[summary="list_of_modules"] .fa-cog {
 	.minwidth500imp { min-width: 500px !important; }
 }
 .widthauto { width: auto; }
+.width20  { width: 20px; }
 .width25  { width: 25px; }
 .width50  { width: 50px; }
 .width75  { width: 75px; }
@@ -1192,6 +1251,19 @@ table[summary="list_of_modules"] .fa-cog {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+    .tdoverflowmax100onsmartphone {			/* For tdoverflow, the max-midth become a minimum ! */
+	    max-width: 100px;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	}
+    .tdoverflowmax150onsmartphone {			/* For tdoverflow, the max-midth become a minimum ! */
+	    max-width: 100px;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	}
+
 	div.fiche {
 		    margin-top: <?php print ($dol_hide_topmenu ? '12' : '6'); ?>px !important;
 	}
@@ -1227,6 +1299,7 @@ table[summary="list_of_modules"] .fa-cog {
     .maxwidth150onsmartphone { max-width: 120px; }
     .maxwidth150onsmartphoneimp { max-width: 120px !important; }
     .maxwidth200onsmartphone { max-width: 200px; }
+    .maxwidth250onsmartphone { max-width: 250px; }
     .maxwidth300onsmartphone { max-width: 300px; }
     .maxwidth400onsmartphone { max-width: 400px; }
 	.minwidth50imp  { min-width: 50px !important; }
@@ -1411,18 +1484,17 @@ body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 .side-nav-vert {
 	margin-left: 228px;
 }
-body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block {
-<?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) { ?>
-	left: -240px;
-<?php } else { ?>
-	left: -229px;
-<?php } ?>
+
+/* body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other, body.sidebar-collapse #topmenu-login-dropdown */
+body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block
+{
+	display: none;
 }
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
 	position: sticky;
 	top: 0px;
-	z-index: 210;
+	z-index: 1001;
 }
 <?php } ?>
 
@@ -1619,6 +1691,15 @@ div.nopadding {
 .pictoobjectwidth {
 	width: 14px;
 }
+.table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
+    opacity: 0.7 !important;
+    font-size: 1em;
+    width: 20px;
+}
+.table-list-of-attached-files .col-picto .widthpictotitle, .table-list-of-links .col-picto .widthpictotitle {
+	width: unset;
+    color: #999;
+}
 .pictosubstatus {
     padding-left: 2px;
     padding-right: 2px;
@@ -1732,7 +1813,7 @@ img.photorefnoborder {
 	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 
-.trextrafieldseparator td {
+.trextrafieldseparator td, .trextrafields_collapse_last td {
     border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
 .tdhrthin {
@@ -1990,8 +2071,8 @@ div.mainmenu.members {
 
 div.mainmenu.menu {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png', 1) ?>);
-	top: 7px;
-	left: 5px;
+	top: 10px;
+	left: 1px;
 }
 
 div.mainmenu.products {
@@ -2051,13 +2132,7 @@ div.mainmenu.website {
 		$found = 0; $url = '';
 		foreach ($conf->file->dol_document_root as $dirroot)
 		{
-		    if (file_exists($dirroot."/".$val."/img/".$val."_over.png"))
-		    {
-		        $url = dol_buildpath('/'.$val.'/img/'.$val.'_over.png', 1);
-		        $found = 1;
-		        break;
-		    }
-		    elseif (file_exists($dirroot."/".$val."/img/".$val.".png"))    // Retro compatibilité
+		    if (file_exists($dirroot."/".$val."/img/".$val.".png"))
 			{
 			    $url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
 			    $found = 1;
@@ -2075,7 +2150,8 @@ div.mainmenu.website {
 		    }
 		    else
 		    {
-		        print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+		    	print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one. */\n";
+		    	print "/* Overwrite this definition in your own css with a different content to use your own font awesome icon. */\n";
 		        $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
 		        print "div.mainmenu.".$val." {\n";
 		        print "	background-image: url(".$url.");\n";
@@ -2276,6 +2352,23 @@ div.login a:hover {
 }
 div.login_block_user, div.login_block_other { clear: both; }
 div.login_block_other { padding-top: 3px; }
+
+.topnav div.login_block_user {
+	display: inline-block;
+    vertical-align: middle;
+	line-height: <?php echo $disableimages ? '25' : '50'; ?>px;
+	height: <?php echo $disableimages ? '25' : '50'; ?>px;
+}
+.topnav div.login_block_other {
+	display: inline-block;
+    vertical-align: middle;
+	clear: <?php echo $disableimages ? 'none' : 'both'; ?>;
+	padding-top: 0;
+	text-align: right;
+	margin-right: 8px;
+	max-width: 200px;
+}
+
 .login_block_elem {
 	float: right;
 	vertical-align: top;
@@ -2676,8 +2769,14 @@ a.tabTitle {
     text-decoration: none;
     white-space: nowrap;
 }
+.tabTitleText {
+	display: hidden;
+}
 .imgTabTitle {
 	max-height: 14px;
+}
+div.tabs div.tabsElem:first-of-type a.tab {
+    margin-left: 0px !important;
 }
 
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
@@ -2919,7 +3018,6 @@ table.paddingtopbottomonly tr td {
 	background: rgb(<?php echo $colorbacktitle1; ?>) !important;
 }
 tr.liste_titre_filter td.liste_titre {
-    border-bottom: 1px solid #FDFFFF;
 	padding-top: 4px;
 	padding-bottom: 3px;
 }
@@ -3120,6 +3218,13 @@ div.pagination li.paginationafterarrows {
 .paginationatbottom {
 	margin-top: 9px;
 }
+table.hidepaginationprevious .paginationprevious {
+	display: none;
+}
+table.hidepaginationnext .paginationnext {
+	display: none;
+}
+
 
 /* Prepare to remove class pair - impair
 .noborder > tbody > tr:nth-child(even) td {
@@ -3182,7 +3287,7 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 <?php } ?>
 
 .nohover:hover {
-	background: unset;
+	background: unset !important;
 }
 .nohoverborder:hover {
 	border: unset;
@@ -3199,10 +3304,10 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 }
 .impair, .nohover .impair:hover, tr.impair td.nohover
 {
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background: var(--colorbacklineimpair1);
 }
 #GanttChartDIV {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?>;
+	background-color: var(--colorbacklineimpair1);
 }
 
 .oddeven, .evenodd, .pair, .nohover .pair:hover, tr.pair td.nohover, .tagtr.oddeven {
@@ -3211,25 +3316,26 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 	color: #202020;
 }
 .pair, .nohover .pair:hover, tr.pair td.nohover {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?>;
+	background-color: var(--colorbacklinepair1);
 }
+
 table.dataTable tr.oddeven {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
+	background-color: var(--colorbacklinepair1) !important;
 }
 
 /* For no hover style */
 td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklineimpair1)); ?> !important;
+	background-color: var(--colorbacklineimpair1) !important; !important;
+	background: var(--colorbacklineimpair1) !important; !important;
 }
 td.evenodd, tr.nohoverpair td, #trlinefordates td {
-	background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
-	background: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinepair1)); ?> !important;
+	background-color: var(--colorbacklinepair1) !important; !important;
+	background: var(--colorbacklinepair1) !important; !important;
 }
 .trforbreak td {
 	font-weight: bold;
     border-bottom: 1pt solid black !important;
-	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
+	background-color: var(--colorbacklinebreak) !important;
 }
 
 table.dataTable td {
@@ -3317,6 +3423,7 @@ tr.liste_titre th, th.liste_titre, tr.liste_titre td, td.liste_titre, form.liste
 }
 tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, form.liste_titre div a, div.liste_titre a {
 	text-shadow: none !important;
+	color: rgb(<?php echo $colortexttitlelink ?>);
 }
 tr.liste_titre_topborder td {
 	border-top-width: <?php echo $borderwidth; ?>px;
@@ -3500,6 +3607,12 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 }
 @media only screen and (max-width: 767px)
 {
+	div.tabs {
+		padding-left: 0 !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
+
 	.boxstats, .boxstats130 {
 		margin: 3px;
 	    border: 1px solid #ddd;
@@ -3747,6 +3860,7 @@ div.boximport {
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
+.dolgraphchart canvas { width: calc(100% - 20px) !important; }
 .legendColorBox, .legendLabel { border: none !important; }
 div.dolgraph div.legend, div.dolgraph div.legend div { background-color: rgba(255,255,255,0) !important; }
 div.dolgraph div.legend table tbody tr { height: auto; }
@@ -3809,7 +3923,7 @@ div.titre {
 }
 div.titre, .secondary {
 	font-family: <?php print $fontlist ?>;
-	color: rgb(<?php print $colortexttitlenotab; ?>);
+	color: var(--colortexttitlenotab);
 }
 
 table.centpercent.notopnoleftnoright.table-fiche-title {
@@ -4090,7 +4204,14 @@ tr.visible {
 /*  Module website                                                                */
 /* ============================================================================== */
 
-.phptag {
+.exampleapachesetup {
+    overflow-y: auto;
+    max-height: 100px;
+    font-size: 0.8em;
+    border: 1px solid #aaa;
+}
+
+span[phptag] {
 	background: #ddd; border: 1px solid #ccc; border-radius: 4px;
 }
 
@@ -4948,6 +5069,10 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+span#select2-taskid-container[title^='--'] {
+    opacity: 0.3;
+}
+
 input.select2-input {
 	border-bottom: none ! important;
 }
@@ -5715,7 +5840,8 @@ border-top-right-radius: 6px;
 /* ============================================================================== */
 
 .ticketpublicarea {
-	width: 70%;
+	margin-left: 15%;
+    margin-right: 15%;
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
@@ -5731,7 +5857,8 @@ border-top-right-radius: 6px;
 		padding-left: 5px; padding-right: 5px;
 	}
 	.ticketpublicarea {
-		width: 100%;
+		margin-left: 10px;
+		margin-right: 10px;
 	}
 }
 
@@ -6000,6 +6127,17 @@ border-top-right-radius: 6px;
 }
 
 
+/* ============================================================================== */
+/* CSS style used for jFlot                                                       */
+/* ============================================================================== */
+
+.dol-xaxis-vertical .flot-x-axis .flot-tick-label.tickLabel {
+    text-orientation: sideways;
+    font-weight: 400;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
@@ -6061,7 +6199,8 @@ border-top-right-radius: 6px;
   		color: #<?php echo $colortextbackhmenu; ?>;
 	}
 	.mainmenuaspan {
-  		font-size: 12px;
+  		font-size: 0.9em;
+  		/* font-weight: 300; */
     }
     .topmenuimage {
     	background-size: 24px auto;
@@ -6162,7 +6301,6 @@ border-top-right-radius: 6px;
 		width: 95%;
 	}
 }
-
 
 
 <?php

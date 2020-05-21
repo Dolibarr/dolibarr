@@ -49,8 +49,7 @@
  * <dol_print_object_tax>                           Print object total tax
  * <dol_print_object_local_tax>                     Print object local tax
  * <dol_print_object_total>                         Print object total
- * <dol_print_order_lines_printer1>                 Print order lines for Printer1
- * <dol_print_order_lines_printer2>                 Print order lines for Printer2
+ * <dol_print_order_lines>                          Print order lines for Printer
  * <dol_print_payment>                              Print payment method
  *
  * Code which can be placed everywhere
@@ -104,6 +103,7 @@ require_once DOL_DOCUMENT_ROOT.'/includes/mike42/escpos-php/autoload.php';
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
 use Mike42\Escpos\PrintConnectors\DummyPrintConnector;
 use Mike42\Escpos\CapabilityProfile;
 use Mike42\Escpos\Printer;
@@ -119,7 +119,7 @@ class dolReceiptPrinter extends Printer
     const CONNECTOR_FILE_PRINT = 2;
     const CONNECTOR_NETWORK_PRINT = 3;
     const CONNECTOR_WINDOWS_PRINT = 4;
-    //const CONNECTOR_JAVA = 5;
+    const CONNECTOR_CUPS_PRINT = 5;
 
     /**
      * @var DoliDB Database handler.
@@ -132,6 +132,12 @@ class dolReceiptPrinter extends Printer
     public $tags;
     public $printer;
     public $template;
+
+    /**
+     * Number of order printer
+     * @var int
+     */
+    public $orderprinter;
 
     /**
      * @var string Error code (or message)
@@ -180,7 +186,7 @@ class dolReceiptPrinter extends Printer
             'dol_value_month',
             'dol_value_day',
             'dol_value_day_letters',
-            'dol_print_payment',
+            //'dol_print_payment',
             'dol_print_logo',
             'dol_print_logo_old',
             'dol_value_object_id',
@@ -190,8 +196,7 @@ class dolReceiptPrinter extends Printer
             'dol_print_object_local_tax',
             'dol_print_object_total',
             'dol_print_object_number',
-			'dol_print_order_lines_printer1',
-			'dol_print_order_lines_printer2',
+			'dol_print_order_lines',
             'dol_value_customer_firstname',
             'dol_value_customer_lastname',
             'dol_value_customer_mail',
@@ -218,14 +223,14 @@ class dolReceiptPrinter extends Printer
             'dol_value_vendor_mail',
             'dol_value_customer_points',
             'dol_value_object_points',
-            'dol_print_if_customer',
-            'dol_print_if_vendor',
-            'dol_print_if_happy_hour',
-            'dol_print_if_num_object_unique',
-            'dol_print_if_customer_points',
-            'dol_print_if_object_points',
-            'dol_print_if_customer_tax_number',
-            'dol_print_if_customer_account_balance_positive',
+            //'dol_print_if_customer',
+            //'dol_print_if_vendor',
+            //'dol_print_if_happy_hour',
+            //'dol_print_if_num_object_unique',
+            //'dol_print_if_customer_points',
+            //'dol_print_if_object_points',
+            //'dol_print_if_customer_tax_number',
+            //'dol_print_if_customer_account_balance_positive',
         );
     }
 
@@ -262,7 +267,7 @@ class dolReceiptPrinter extends Printer
                         $row['fk_type_name'] = 'CONNECTOR_WINDOWS_PRINT';
                         break;
                     case 5:
-                        $row['fk_type_name'] = 'CONNECTOR_JAVA';
+                        $row['fk_type_name'] = 'CONNECTOR_CUPS_PRINT';
                         break;
                     default:
                         $row['fk_type_name'] = 'CONNECTOR_UNKNOWN';
@@ -343,6 +348,7 @@ class dolReceiptPrinter extends Printer
             2 => $langs->trans('CONNECTOR_FILE_PRINT'),
             3 => $langs->trans('CONNECTOR_NETWORK_PRINT'),
             4 => $langs->trans('CONNECTOR_WINDOWS_PRINT'),
+			5 => $langs->trans('CONNECTOR_CUPS_PRINT'),
         );
 
         $this->resprint = Form::selectarray($htmlname, $options, $selected);
@@ -595,7 +601,7 @@ class dolReceiptPrinter extends Printer
         //print '<pre>'.print_r($vals, true).'</pre>';
         // print ticket
         $level = 0;
-        $nbcharactbyline = 48;
+        $nbcharactbyline = (!empty($conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE) ? $conf->global->RECEIPT_PRINTER_NB_CHARACT_BY_LINE : 48);
         $ret = $this->initPrinter($printerid);
         if ($ret > 0) {
             setEventMessages($this->error, $this->errors, 'errors');
@@ -613,7 +619,7 @@ class dolReceiptPrinter extends Printer
                             $spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
                             $spaces = str_repeat(' ', $spacestoadd);
                             $this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-                            $this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
+                            $this->printer->text(strip_tags(htmlspecialchars_decode($line->product_label))."\n");
                         }
                         break;
                     case 'DOL_PRINT_OBJECT_TAX':
@@ -724,20 +730,9 @@ class dolReceiptPrinter extends Printer
 					case 'DOL_BEEP':
                         $this->printer->getPrintConnector() -> write("\x1e");
                         break;
-					case 'DOL_PRINT_ORDER_LINES_PRINTER1':
+					case 'DOL_PRINT_ORDER_LINES':
 						foreach ($object->lines as $line) {
-							if ($line->special_code==1)
-							{
-								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
-								$spaces = str_repeat(' ', $spacestoadd);
-								$this->printer->text($line->ref.$spaces.$line->qty.' '.str_pad(price($line->total_ttc), 10, ' ', STR_PAD_LEFT)."\n");
-								$this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
-							}
-                        }
-						break;
-					case 'DOL_PRINT_ORDER_LINES_PRINTER2':
-						foreach ($object->lines as $line) {
-							if ($line->special_code==2)
+							if ($line->special_code == $this->orderprinter)
 							{
 								$spacestoadd = $nbcharactbyline - strlen($line->ref) - strlen($line->qty) - 10 - 1;
 								$spaces = str_repeat(' ', $spacestoadd);
@@ -839,6 +834,9 @@ class dolReceiptPrinter extends Printer
                         break;
                     case 4:
                         $this->connector = new WindowsPrintConnector($parameter);
+                        break;
+					case 5:
+                        $this->connector = new CupsPrintConnector($parameter);
                         break;
                     default:
                         $this->connector = 'CONNECTOR_UNKNOWN';

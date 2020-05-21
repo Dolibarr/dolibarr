@@ -87,7 +87,10 @@ if ($action == 'edit')
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);
-		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		if ($key == 'DAV_RESTICT_ON_IP') {
+			$label = $langs->trans("RESTRICT_ON_IP");
+			$label .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
@@ -124,7 +127,10 @@ else
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		$label = $langs->trans($key);
-		if ($key == 'DAV_RESTICT_ON_IP') $label = $langs->trans("RESTRICT_ON_IP");
+		if ($key == 'DAV_RESTICT_ON_IP') {
+			$label = $langs->trans("RESTRICT_ON_IP");
+			$label .= ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+		}
 		print $form->textwithpicto($label, $tooltiphelp);
 		print '</td><td>';
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')

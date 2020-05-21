@@ -55,7 +55,7 @@ class DataPolicyCron
         $nbupdated = $nbdeleted = 0;
 
         // FIXME Removed hardcoded values of id
-        $arrayofparameters=array(
+        $arrayofparameters = array(
             'DATAPOLICIES_TIERS_CLIENT' => array(
                 'sql' => "
                     SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s
@@ -72,7 +72,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -107,7 +107,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -142,7 +142,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -177,7 +177,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -211,7 +211,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Societe",
-                "file" => DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php',
                 'fields_anonym' => array(
                     'name' => $langs->trans('ANONYME'),
                     'name_bis' => '',
@@ -246,7 +246,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -285,7 +285,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -324,7 +324,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -363,7 +363,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -401,7 +401,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Contact",
-                "file" => DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => '',
@@ -438,7 +438,7 @@ class DataPolicyCron
                     )
                 ",
                 "class" => "Adherent",
-                "file" => DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php',
+                "file" => DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php',
                 'fields_anonym' => array(
                     'lastname' => $langs->trans('ANONYME'),
                     'firstname' => $langs->trans('ANONYME'),
@@ -470,17 +470,17 @@ class DataPolicyCron
             {
                 $sql = sprintf($params['sql'], (int) $conf->entity, (int) $conf->global->$key, (int) $conf->global->$key);
 
-                $resql = $db->query($sql);
+                $resql = $this->db->query($sql);
 
-                if ($resql && $db->num_rows($resql) > 0)
+                if ($resql && $this->db->num_rows($resql) > 0)
                 {
-                    $num = $db->num_rows($resql);
+                    $num = $this->db->num_rows($resql);
                     $i = 0;
 
                     require_once $params['file'];
-                    $object = new $params['class']($db);
+                    $object = new $params['class']($this->db);
 
-                    while ($i < $num && ! $error)
+                    while ($i < $num && !$error)
                     {
                         $obj = $db->fetch_object($resql);
 
@@ -497,7 +497,7 @@ class DataPolicyCron
                             {
 	                            if ($params['class'] == 'Societe') {
 	                                // We delete contacts of thirdparty
-	                                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = " . $obj->rowid;
+	                                $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$obj->rowid;
 	                                $result = $this->db->query($sql);
 	                                if ($result < 0)
 	                                {
@@ -535,7 +535,7 @@ class DataPolicyCron
 
         $this->db->commit();
 
-        if (! $error)
+        if (!$error)
         {
         	$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
         }

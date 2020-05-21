@@ -41,9 +41,9 @@ $object = new Contact($db);
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $object->getCanvas($id);
-$objcanvas=null;
-$canvas = (! empty($object->canvas)?$object->canvas:GETPOST("canvas"));
-if (! empty($canvas))
+$objcanvas = null;
+$canvas = (!empty($object->canvas) ? $object->canvas : GETPOST("canvas"));
+if (!empty($canvas))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
     $objcanvas = new Canvas($db, $action);
@@ -51,35 +51,36 @@ if (! empty($canvas))
 }
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'contact', $id, 'socpeople&societe', '', '', 'rowid', $objcanvas); // If we create a contact with no company (shared contacts), no check on write permission
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield=$conf->global->MAIN_DOC_SORT_FIELD; }
-if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder=$conf->global->MAIN_DOC_SORT_ORDER; }
+if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield = $conf->global->MAIN_DOC_SORT_FIELD; }
+if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder = $conf->global->MAIN_DOC_SORT_ORDER; }
 
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 if ($id > 0) $object->fetch($id);
 
 $upload_dir = $conf->societe->multidir_output[$object->entity].'/contact/'.dol_sanitizeFileName($object->ref);
-$modulepart='contact';
+$modulepart = 'contact';
 
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -88,40 +89,40 @@ include DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title=$object->lastname;
-$help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
+$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) $title = $object->lastname;
+$help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('', $title, $helpurl);
 
 if ($object->id)
 {
     $head = contact_prepare_head($object);
-	$title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+	$title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 
     dol_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
     // Build file list
-    $filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-    $totalsize=0;
-    foreach($filearray as $key => $file)
+    $filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+    $totalsize = 0;
+    foreach ($filearray as $key => $file)
     {
-        $totalsize+=$file['size'];
+        $totalsize += $file['size'];
     }
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    $morehtmlref='<div class="refidno">';
+    $morehtmlref = '<div class="refidno">';
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
     {
-        $objsoc=new Societe($db);
+        $objsoc = new Societe($db);
         $objsoc->fetch($object->socid);
         // Thirdparty
-        $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
-        if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
-        else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
+        $morehtmlref .= $langs->trans('ThirdParty').' : ';
+        if ($objsoc->id > 0) $morehtmlref .= $objsoc->getNomUrl(1);
+        else $morehtmlref .= $langs->trans("ContactNotLinkedToCompany");
     }
-    $morehtmlref.='</div>';
+    $morehtmlref .= '</div>';
 
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 
@@ -166,8 +167,8 @@ if ($object->id)
     $modulepart = 'contact';
     $permission = $user->rights->societe->contact->creer;
     $permtoedit = $user->rights->societe->contact->creer;
-    $param = '&id=' . $object->id;
-    include DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    $param = '&id='.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
     print $langs->trans("ErrorUnknown");
 }

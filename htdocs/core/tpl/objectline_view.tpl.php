@@ -35,7 +35,7 @@
  * $object_rights->creer initialized from = $object->getRights()
  * $disableedit, $disablemove, $disableremove
  *
- * $type, $text, $description, $line
+ * $text, $description, $line
  */
 
 // Protection to avoid direct call of template
@@ -45,7 +45,7 @@ if (empty($object) || !is_object($object))
 	exit;
 }
 
-
+global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
@@ -127,6 +127,7 @@ else
 	}
 	else
 	{
+		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
 		else $text = img_object($langs->trans('Product'), 'product');
 
@@ -281,13 +282,21 @@ if ($line->special_code == 3) { ?>
 	$coldisplay++;
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
-    	print '<span class="classfortooltip" title="';
-    	print $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
-    	print '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
-    	if (price2num($line->total_localtax1)) print '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
-    	if (price2num($line->total_localtax2)) print '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
-    	print '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
-    	print '">';
+		$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+		$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
+		if (!$senderissupplier && is_object($object->thirdparty)) {
+			if ($object->thirdparty->useLocalTax(1)) {
+				if (price2num($line->total_localtax1)) $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
+				else $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+			}
+			if ($object->thirdparty->useLocalTax(1)) {
+				if (price2num($line->total_localtax2)) $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
+				else $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+			}
+		}
+		$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+
+		print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
 	}
 	print price($line->total_ht);
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -310,7 +319,7 @@ if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
 	$coldisplay++;
 	if (($line->info_bits & 2) == 2 || !empty($disableedit)) {
 	} else { ?>
-		<a href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
+		<a class="editfielda reposition" href="<?php print $_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=editline&amp;lineid='.$line->id.'#line_'.$line->id; ?>">
 		<?php print img_edit().'</a>';
 	}
 	print '</td>';
@@ -318,7 +327,7 @@ if ($this->statut == 0 && ($object_rights->creer) && $action != 'selectlines') {
 	print '<td class="linecoldelete center">';
 	$coldisplay++;
 	if (($line->fk_prev_id == null) && empty($disableremove)) { //La suppression n'est autorisée que si il n'y a pas de ligne dans une précédente situation
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
+		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=ask_deleteline&amp;lineid='.$line->id.'">';
 		print img_delete();
 		print '</a>';
 	}

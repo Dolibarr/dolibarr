@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 llxHeader();
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
@@ -51,7 +51,7 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=reception
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px->SetData($data);
     $px->SetMaxValue($px->GetCeilMaxValue());

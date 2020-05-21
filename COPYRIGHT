@@ -16,8 +16,8 @@ AdoDb-Date             0.36          Modified BSD License        Yes            
 CKEditor               4.12.1        LGPL-2.1+                   Yes             Editor WYSIWYG
 EvalMath               1.0           BSD                         Yes             Safe math expressions evaluation
 Escpos-php             2.2           MIT License                 Yes             Thermal receipt printer library, for use with ESC/POS compatible printers
-GeoIP                  1.4           LGPL-2.1+                   Yes             Sample code to make geoip convert (not into deb package)
-Mobiledetect           2.8.33        MIT License                 Yes             Detect mobile devices browsers
+GeoIP2                 0.2.0         LGPL-2.1+                   Yes             Lib to make geoip convert
+Mobiledetect           2.8.34        MIT License                 Yes             Detect mobile devices browsers
 NuSoap                 0.9.5         LGPL 2.1+                   Yes             Library to develop SOAP Web services (not into rpm and deb package)
 PEAR Mail_MIME         1.8.9         BSD                         Yes             NuSoap dependency
 ParseDown              1.6           MIT License                 Yes             Markdown parser
@@ -32,18 +32,18 @@ PSR/simple-cache	   ?										                 Library for cache (used by PHPSp
 Restler                3.0.0RC6      LGPL-3+                     Yes             Library to develop REST Web services (+ swagger-ui js lib into dir explorer)
 Sabre                  3.2.2         BSD                         Yes             DAV support
 Swift Mailer           5.4.2-DEV     MIT license                 Yes             Comprehensive mailing tools for PHP
-Stripe                 6.41          MIT licence                 Yes             Library for Stripe module
+Stripe                 6.43.1        MIT licence                 Yes             Library for Stripe module
 TCPDF                  6.3.2         LGPL-3+                     Yes             PDF generation
 TCPDI                  1.0.0         LGPL-3+ / Apache 2.0        Yes             FPDI replacement
 
 JS libraries:
-Ace                    1.4.6         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
+Ace                    1.4.8         BSD                         Yes             JS library to get code syntaxique coloration in a textarea.
+ChartJS				   2.9.3         MIT License                 Yes             JS library for graph
 jQuery                 3.4.1         MIT License                 Yes             JS library
 jQuery UI              1.12.1        GPL and MIT License         Yes             JS library plugin UI
-jQuery select2         4.0.5         GPL and Apache License      Yes             JS library plugin for sexier multiselect
+jQuery select2         4.0.13         GPL and Apache License      Yes             JS library plugin for sexier multiselect. Warning: 4.0.6+ create troubles without patching css
 jQuery blockUI         2.70.0        GPL and MIT License         Yes             JS library plugin blockUI (to use ajax popups)
 jQuery Colorpicker     1.1           MIT License                 Yes             JS library for color picker for a defined list of colors
-jQuery Flot            0.8.3         MIT License                 Yes             JS library to build graph
 jQuery JCrop           0.9.8         GPL and MIT License         Yes             JS library plugin Crop (to crop images)
 jQuery Jeditable       1.7.1         GPL and MIT License         Yes             JS library plugin jeditable (to edit in place)
 jQuery jNotify         1.1.00        Apache Software License 2.0 Yes             JS library plugin jNotify (to use ajax popups)
@@ -60,7 +60,7 @@ Image libraries:
 Octicons               8.1           MIT                         Yes
 
 Font libraries:
-Fontawesome            5.7.2         Font Awesome Free licence   Yes
+Fontawesome            5.13          Font Awesome Free licence   Yes
 
 
 For licenses compatibility informations:

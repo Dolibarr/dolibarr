@@ -316,8 +316,8 @@ if (empty($reshook))
 								// Extrafields
 								$array_options = array();
 								// For avoid conflicts if trigger used
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+								if (method_exists($lines[$i], 'fetch_optionals')) {
+									$lines[$i]->fetch_optionals();
 									$array_options = $lines[$i]->array_options;
 								}
 
@@ -521,7 +521,9 @@ if (empty($reshook))
 				}
 
 			   	$desc = $prod->description;
-			   	$desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+			   	if (!empty($product_desc) && !empty($conf->global->MAIN_NO_CONCAT_DESCRIPTION)) $desc = $product_desc;
+				else $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
+
 				$fk_unit = $prod->fk_unit;
 			}
 			else
@@ -1098,7 +1100,7 @@ if ($result > 0)
 // Create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans('AddContract'), '', 'commercial');
+	print load_fiche_titre($langs->trans('AddContract'), '', 'contract');
 
 	$soc = new Societe($db);
 	if ($socid > 0) $soc->fetch($socid);
@@ -1128,12 +1130,12 @@ if ($action == 'create')
 
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
-			$objectsrc->fetch(GETPOST('originid'));
+			$objectsrc->fetch($originid);
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))  $objectsrc->fetch_lines();
 			$objectsrc->fetch_thirdparty();
 
 			// Replicate extrafields
-			$objectsrc->fetch_optionals($originid);
+			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
 			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
@@ -1450,7 +1452,7 @@ else
 
 		print '<table class="border tableforfield" width="100%">';
 
-		// Ligne info remises tiers
+		// Line info of thirdparty discounts
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
 		if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -1499,8 +1501,6 @@ else
 			include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 		}
 
-
-		$colorb = '666666';
 
 		$arrayothercontracts = $object->getListOfContracts('others');
 
@@ -1642,13 +1642,13 @@ else
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a class="reposition" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 						print img_delete();
 						print '</a>';
 					}
@@ -1703,7 +1703,8 @@ else
 					// Display lines extrafields
 					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
-						$line->fetch_optionals($objp->rowid);
+						$line->id = $objp->rowid;
+						$line->fetch_optionals();
 						print $line->showOptionals($extrafields, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
 					}
 				}
@@ -1772,8 +1773,8 @@ else
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
 					}
 					print '<td class="center">';
-					print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
-					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';
+					print '<br><input type="submit" class="button margintoponly marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					print '</tr>';
 
@@ -1793,7 +1794,8 @@ else
 
 					if (is_array($extralabelslines) && count($extralabelslines) > 0) {
 						$line = new ContratLigne($db);
-						$line->fetch_optionals($objp->rowid);
+						$line->id = $objp->rowid;
+						$line->fetch_optionals();
 						print $line->showOptionals($extrafields, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', 1);
 					}
 				}
@@ -2106,11 +2108,13 @@ else
 			if (empty($reshook))
 			{
 				// Send
-				if ($object->statut == 1) {
-					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send)) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
-					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
+				if (empty($user->socid)) {
+					if ($object->statut == 1) {
+						if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send)) {
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
+						} else
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a></div>';
+					}
 				}
 
 				if ($object->statut == 0 && $nbofservices)
@@ -2221,13 +2225,12 @@ else
 
 			$MAXEVENT = 10;
 
-			$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
+			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/contrat/agenda.php?id='.$object->id);
 
 			// List of actions on element
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
-			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlright);
-
+			$somethingshown = $formactions->showactions($object, 'contract', $socid, 1, 'listactions', $MAXEVENT, '', $morehtmlcenter);
 
 			print '</div></div></div>';
 		}

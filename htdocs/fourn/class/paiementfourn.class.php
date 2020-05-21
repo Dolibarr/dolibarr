@@ -39,19 +39,19 @@ class PaiementFourn extends Paiement
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='payment_supplier';
+	public $element = 'payment_supplier';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='paiementfourn';
+	public $table_element = 'paiementfourn';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'payment';
 
-	public $statut;        //Status of payment. 0 = unvalidated; 1 = validated
+	public $statut; //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
 
@@ -66,6 +66,8 @@ class PaiementFourn extends Paiement
 	 * @var string
 	 */
 	public $type_code;
+
+
 
 	/**
 	 *	Constructor
@@ -87,21 +89,21 @@ class PaiementFourn extends Paiement
 	 */
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
-		$error=0;
+		$error = 0;
 
 		$sql = 'SELECT p.rowid, p.ref, p.entity, p.datep as dp, p.amount, p.statut, p.fk_bank,';
-		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
-		$sql.= ' p.num_paiement as num_payment, p.note, b.fk_account';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
-		$sql.= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
+		$sql .= ' c.code as paiement_code, c.libelle as paiement_type,';
+		$sql .= ' p.num_paiement as num_payment, p.note, b.fk_account';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
+		$sql .= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0)
-			$sql.= ' AND p.rowid = '.$id;
+			$sql .= ' AND p.rowid = '.$id;
 		elseif ($ref)
-			$sql.= ' AND p.rowid = '.$ref;
+			$sql .= ' AND p.rowid = '.$ref;
 		elseif ($fk_bank)
-			$sql.= ' AND p.fk_bank = '.$fk_bank;
+			$sql .= ' AND p.fk_bank = '.$fk_bank;
 		//print $sql;
 
 		$resql = $this->db->query($sql);
@@ -126,13 +128,13 @@ class PaiementFourn extends Paiement
 				$this->note           = $obj->note;
 				$this->note_private   = $obj->note;
 				$this->type_code      = $obj->paiement_code;
-				$this->type_label   = $obj->paiement_type;
+				$this->type_label = $obj->paiement_type;
 				$this->statut         = $obj->statut;
 				$error = 1;
 			}
 			else
 			{
-				$error = -2;    // TODO Use 0 instead
+				$error = -2; // TODO Use 0 instead
 			}
 			$this->db->free($resql);
 		}
@@ -154,7 +156,7 @@ class PaiementFourn extends Paiement
 	 */
 	public function create($user, $closepaidinvoices = 0, $thirdparty = null)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$error = 0;
 		$way = $this->getWay();
@@ -193,8 +195,8 @@ class PaiementFourn extends Paiement
 
 		if ($totalamount <> 0) // On accepte les montants negatifs
 		{
-		    $ref = $this->getNextNumRef(is_object($thirdparty)?$thirdparty:'');
-			$now=dol_now();
+		    $ref = $this->getNextNumRef(is_object($thirdparty) ? $thirdparty : '');
+			$now = dol_now();
 
 			if ($way == 'dolibarr')
 			{
@@ -208,9 +210,9 @@ class PaiementFourn extends Paiement
 			}
 
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (';
-			$sql.= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
-			$sql.= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
+			$sql .= 'ref, entity, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_author, fk_bank)';
+			$sql .= " VALUES ('".$this->db->escape($ref)."', ".$conf->entity.", '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->db->escape($this->num_paiement)."', '".$this->db->escape($this->note)."', ".$user->id.", 0)";
 
 			$resql = $this->db->query($sql);
 			if ($resql)
@@ -225,11 +227,11 @@ class PaiementFourn extends Paiement
 					{
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn (fk_facturefourn, fk_paiementfourn, amount, multicurrency_amount)';
-						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
-						$resql=$this->db->query($sql);
+						$sql .= ' VALUES ('.$facid.','.$this->id.',\''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
+						$resql = $this->db->query($sql);
 						if ($resql)
 						{
-							$invoice=new FactureFournisseur($this->db);
+							$invoice = new FactureFournisseur($this->db);
 							$invoice->fetch($facid);
 
 							// If we want to closed payed invoices
@@ -237,14 +239,14 @@ class PaiementFourn extends Paiement
 							{
 								$paiement = $invoice->getSommePaiement();
 								//$creditnotes=$invoice->getSumCreditNotesUsed();
-								$creditnotes=0;
+								$creditnotes = 0;
 								//$deposits=$invoice->getSumDepositsUsed();
-								$deposits=0;
-								$alreadypayed=price2num($paiement + $creditnotes + $deposits, 'MT');
-								$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
+								$deposits = 0;
+								$alreadypayed = price2num($paiement + $creditnotes + $deposits, 'MT');
+								$remaintopay = price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits, 'MT');
 								if ($remaintopay == 0)
 								{
-									$result=$invoice->set_paid($user, '', '');
+									$result = $invoice->set_paid($user, '', '');
 								}
 								else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 							}
@@ -252,10 +254,10 @@ class PaiementFourn extends Paiement
 							// Regenerate documents of invoices
 							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 							{
-							    $newlang='';
+							    $newlang = '';
 							    $outputlangs = $langs;
 								if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
-								if (! empty($newlang)) {
+								if (!empty($newlang)) {
 									$outputlangs = new Translate("", $conf);
 									$outputlangs->setDefaultLang($newlang);
 								}
@@ -269,7 +271,7 @@ class PaiementFourn extends Paiement
 						}
 						else
 						{
-							$this->error=$this->db->lasterror();
+							$this->error = $this->db->lasterror();
 							$error++;
 						}
 					}
@@ -279,32 +281,32 @@ class PaiementFourn extends Paiement
 					}
 				}
 
-				if (! $error)
+				if (!$error)
 				{
 					// Call trigger
-					$result=$this->call_trigger('PAYMENT_SUPPLIER_CREATE', $user);
+					$result = $this->call_trigger('PAYMENT_SUPPLIER_CREATE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
 				}
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
+				$this->error = $this->db->lasterror();
 				$error++;
 			}
 		}
 		else
 		{
-			$this->error="ErrorTotalIsNull";
+			$this->error = "ErrorTotalIsNull";
 			dol_syslog('PaiementFourn::Create Error '.$this->error, LOG_ERR);
 			$error++;
 		}
 
 		if ($totalamount <> 0 && $error == 0) // On accepte les montants negatifs
 		{
-			$this->amount=$total;
-			$this->total=$total;
-			$this->multicurrency_amount=$mtotal;
+			$this->amount = $total;
+			$this->total = $total;
+			$this->multicurrency_amount = $mtotal;
 			$this->db->commit();
 			dol_syslog('PaiementFourn::Create Ok Total = '.$this->total);
 			return $this->id;
@@ -335,12 +337,12 @@ class PaiementFourn extends Paiement
 
 		// Verifier si paiement porte pas sur une facture a l'etat payee
 		// Si c'est le cas, on refuse la suppression
-		$billsarray=$this->getBillsArray('paye=1');
+		$billsarray = $this->getBillsArray('paye=1');
 		if (is_array($billsarray))
 		{
 			if (count($billsarray))
 			{
-				$this->error="ErrorCantDeletePaymentSharedWithPayedInvoice";
+				$this->error = "ErrorCantDeletePaymentSharedWithPayedInvoice";
 				$this->db->rollback();
 				return -1;
 			}
@@ -359,7 +361,7 @@ class PaiementFourn extends Paiement
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{
-				$this->error="ErrorCantDeletePaymentReconciliated";
+				$this->error = "ErrorCantDeletePaymentReconciliated";
 				$this->db->rollback();
 				return -3;
 			}
@@ -367,16 +369,16 @@ class PaiementFourn extends Paiement
 
 		// Efface la ligne de paiement (dans paiement_facture et paiement)
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
-		$sql.= ' WHERE fk_paiementfourn = '.$this->id;
+		$sql .= ' WHERE fk_paiementfourn = '.$this->id;
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'paiementfourn';
-			$sql.= ' WHERE rowid = '.$this->id;
+			$sql .= ' WHERE rowid = '.$this->id;
 			$result = $this->db->query($sql);
-			if (! $result)
+			if (!$result)
 			{
-				$this->error=$this->db->error();
+				$this->error = $this->db->error();
 				$this->db->rollback();
 				return -3;
 			}
@@ -385,23 +387,23 @@ class PaiementFourn extends Paiement
 			if ($bank_line_id)
 			{
 				$accline = new AccountLine($this->db);
-				$result=$accline->fetch($bank_line_id);
+				$result = $accline->fetch($bank_line_id);
 				if ($result > 0) // If result = 0, record not found, we don't try to delete
 				{
-					$result=$accline->delete($user);
+					$result = $accline->delete($user);
 				}
 				if ($result < 0)
 				{
-					$this->error=$accline->error;
+					$this->error = $accline->error;
 					$this->db->rollback();
 					return -4;
 				}
 			}
 
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Appel des triggers
-				$result=$this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
+				$result = $this->call_trigger('PAYMENT_SUPPLIER_DELETE', $user);
 				if ($result < 0)
 				{
 					$this->db->rollback();
@@ -415,7 +417,7 @@ class PaiementFourn extends Paiement
 		}
 		else
 		{
-			$this->error=$this->db->error;
+			$this->error = $this->db->error;
 			$this->db->rollback();
 			return -5;
 		}
@@ -430,8 +432,8 @@ class PaiementFourn extends Paiement
 	public function info($id)
 	{
 		$sql = 'SELECT c.rowid, datec, fk_user_author as fk_user_creat, tms';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
-		$sql.= ' WHERE c.rowid = '.$id;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
+		$sql .= ' WHERE c.rowid = '.$id;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -474,22 +476,22 @@ class PaiementFourn extends Paiement
 	public function getBillsArray($filter = '')
 	{
 		$sql = 'SELECT fk_facturefourn';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
-		$sql.= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
-		if ($filter) $sql.= ' AND '.$filter;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf, '.MAIN_DB_PREFIX.'facture_fourn as f';
+		$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND fk_paiementfourn = '.$this->id;
+		if ($filter) $sql .= ' AND '.$filter;
 
 		dol_syslog(get_class($this).'::getBillsArray', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$i=0;
-			$num=$this->db->num_rows($resql);
-			$billsarray=array();
+			$i = 0;
+			$num = $this->db->num_rows($resql);
+			$billsarray = array();
 
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$billsarray[$i]=$obj->fk_facturefourn;
+				$billsarray[$i] = $obj->fk_facturefourn;
 				$i++;
 			}
 
@@ -497,7 +499,7 @@ class PaiementFourn extends Paiement
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			dol_syslog(get_class($this).'::getBillsArray Error '.$this->error);
 			return -1;
 		}
@@ -580,25 +582,26 @@ class PaiementFourn extends Paiement
 	{
 		global $langs;
 
-		$result='';
+		$result = '';
 
-		$text=$this->ref;   // Sometimes ref contains label
+		$text = $this->ref; // Sometimes ref contains label
+		$reg = array();
 		if (preg_match('/^\((.*)\)$/i', $text, $reg)) {
 			// Label generique car entre parentheses. On l'affiche en le traduisant
-			if ($reg[1]=='paiement') $reg[1]='Payment';
-			$text=$langs->trans($reg[1]);
+			if ($reg[1] == 'paiement') $reg[1] = 'Payment';
+			$text = $langs->trans($reg[1]);
 		}
 
-		$label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
-		$label.= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
-		if ($this->datepaye ? $this->datepaye : $this->date) $label.= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
+		$label = '<u>'.$langs->trans("Payment").'</u><br>';
+		$label .= '<strong>'.$langs->trans("Ref").':</strong> '.$text;
+		if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend = '</a>';
 
 		$result .= $linkstart;
-		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-		if ($withpicto != 2) $result.= $this->ref;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
 		$result .= $linkend;
 
 		return $result;
@@ -614,16 +617,16 @@ class PaiementFourn extends Paiement
 	 */
 	public function initAsSpecimen($option = '')
 	{
-		global $user,$langs,$conf;
+		global $user, $langs, $conf;
 
-		$now=dol_now();
-		$arraynow=dol_getdate($now);
-		$nownotime=dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
+		$now = dol_now();
+		$arraynow = dol_getdate($now);
+		$nownotime = dol_mktime(0, 0, 0, $arraynow['mon'], $arraynow['mday'], $arraynow['year']);
 
 		// Initialize parameters
-		$this->id=0;
+		$this->id = 0;
 		$this->ref = 'SPECIMEN';
-		$this->specimen=1;
+		$this->specimen = 1;
 		$this->facid = 1;
 		$this->socid = 1;
 		$this->datepaye = $nownotime;
@@ -643,13 +646,13 @@ class PaiementFourn extends Paiement
 		$langs->load("bills");
 
 		// Clean parameters (if not defined or using deprecated value)
-		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_bronan';
-		elseif ($conf->global->SUPPLIER_PAYMENT_ADDON=='brodator') $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_brodator';
-		elseif ($conf->global->SUPPLIER_PAYMENT_ADDON=='bronan') $conf->global->SUPPLIER_PAYMENT_ADDON='mod_supplier_payment_bronan';
+		if (empty($conf->global->SUPPLIER_PAYMENT_ADDON)) $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
+		elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'brodator') $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_brodator';
+		elseif ($conf->global->SUPPLIER_PAYMENT_ADDON == 'bronan') $conf->global->SUPPLIER_PAYMENT_ADDON = 'mod_supplier_payment_bronan';
 
-		if (! empty($conf->global->SUPPLIER_PAYMENT_ADDON))
+		if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON))
 		{
-			$mybool=false;
+			$mybool = false;
 
 			$file = $conf->global->SUPPLIER_PAYMENT_ADDON.".php";
 			$classname = $conf->global->SUPPLIER_PAYMENT_ADDON;
@@ -663,7 +666,7 @@ class PaiementFourn extends Paiement
 				// Load file with numbering class (if found)
 				if (is_file($dir.$file) && is_readable($dir.$file))
 				{
-					$mybool |= include_once $dir . $file;
+					$mybool |= include_once $dir.$file;
 				}
 			}
 
@@ -678,7 +681,7 @@ class PaiementFourn extends Paiement
 
 					// Load file with numbering class (if found)
 					if (is_file($dir.$file) && is_readable($dir.$file)) {
-						$mybool |= include_once $dir . $file;
+						$mybool |= include_once $dir.$file;
 					}
 				}
 			}
@@ -731,13 +734,13 @@ class PaiementFourn extends Paiement
 		// Set the model on the model name to use
 		if (empty($modele))
 		{
-			if (! empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF))
+			if (!empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF))
 			{
 				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
 			}
 			else
 			{
-				$modele = '';       // No default value. For supplier invoice, we allow to disable all PDF generation
+				$modele = ''; // No default value. For supplier invoice, we allow to disable all PDF generation
 			}
 		}
 
@@ -791,7 +794,7 @@ class PaiementFourn extends Paiement
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
         // phpcs:enable
-		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
 		if (empty($force_thirdparty_id))
 		{

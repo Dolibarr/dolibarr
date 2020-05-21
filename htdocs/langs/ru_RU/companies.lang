@@ -325,7 +325,6 @@ CompanyDeleted=Компания " %s" удалена из базы данных.
 ListOfContacts=Список контактов/адресов
 ListOfContactsAddresses=Список контактов/адресов
 ListOfThirdParties=Список контрагентов
-ShowCompany=Показать контрагента
 ShowContact=Показать контакт
 ContactsAllShort=Все (без фильтра)
 ContactType=Вид контакт
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Имя торгового представителя
 SaleRepresentativeLastname=Фамилия торгового представителя
 ErrorThirdpartiesMerge=При удалении третьих сторон произошла ошибка. Проверьте журнал. Изменения были отменены.
 NewCustomerSupplierCodeProposed=Код Клиента или Поставщика уже используется, предлагается новый код
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Тип оплаты - Клиент
 PaymentTermsCustomer=Условия оплаты - Клиент

@@ -34,45 +34,46 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members","other"));
+$langs->loadLangs(array("companies", "members", "other"));
 
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
-$result=restrictedArea($user, 'adherent', $id);
+$result = restrictedArea($user, 'adherent', $id);
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page ;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "name";
 
 
 $form = new Form($db);
-$object=new Adherent($db);
-$membert=new AdherentType($db);
-$result=$object->fetch($id);
+$object = new Adherent($db);
+$membert = new AdherentType($db);
+$result = $object->fetch($id);
 if ($result < 0)
 {
 	dol_print_error($db);
 	exit;
 }
-$upload_dir = $conf->adherent->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'member');
+$upload_dir = $conf->adherent->dir_output."/".get_exdir(0, 0, 0, 1, $object, 'member');
 
 
 /*
  * Actions
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 
 /*
@@ -81,24 +82,24 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $form = new Form($db);
 
-$title=$langs->trans("Member") . " - " . $langs->trans("Documents");
-$helpurl="EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
+$title = $langs->trans("Member")." - ".$langs->trans("Documents");
+$helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
 llxHeader("", $title, $helpurl);
 
 if ($id > 0)
 {
-    $result=$membert->fetch($object->typeid);
+    $result = $membert->fetch($object->typeid);
 	if ($result > 0)
 	{
 		// Build file list
-		$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-		$totalsize=0;
-		foreach($filearray as $key => $file)
+		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+		$totalsize = 0;
+		foreach ($filearray as $key => $file)
 		{
-			$totalsize+=$file['size'];
+			$totalsize += $file['size'];
 		}
 
-	    if (! empty($conf->notification->enabled))
+	    if (!empty($conf->notification->enabled))
 			$langs->load("mails");
 
 		$head = member_prepare_head($object);
@@ -154,8 +155,8 @@ if ($id > 0)
 		$modulepart = 'member';
 		$permission = $user->rights->adherent->creer;
 		$permtoedit = $user->rights->adherent->creer;
-		$param = '&id=' . $object->id;
-		include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+		$param = '&id='.$object->id;
+		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";
 	}
 	else

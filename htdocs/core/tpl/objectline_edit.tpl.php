@@ -32,36 +32,36 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object))
+if (empty($object) || !is_object($object))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$usemargins=0;
-if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element, array('facture','facturerec','propal','commande'))) $usemargins=1;
+$usemargins = 0;
+if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande'))) $usemargins = 1;
 
 global $forceall, $senderissupplier, $inputalsopricewithtax;
-if (empty($dateSelector)) $dateSelector=0;
-if (empty($forceall)) $forceall=0;
-if (empty($senderissupplier)) $senderissupplier=0;
-if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
+if (empty($dateSelector)) $dateSelector = 0;
+if (empty($forceall)) $forceall = 0;
+if (empty($senderissupplier)) $senderissupplier = 0;
+if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
 
 
 // Define colspan for the button 'Add'
-$colspan = 3;	// Col total ht + col edit + col delete
-if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
-if (in_array($object->element, array('propal','supplier_proposal','facture','facturerec','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
-if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
+$colspan = 3; // Col total ht + col edit + col delete
+if (!empty($inputalsopricewithtax)) $colspan++; // We add 1 if col total ttc
+if (in_array($object->element, array('propal', 'supplier_proposal', 'facture', 'facturerec', 'invoice', 'commande', 'order', 'order_supplier', 'invoice_supplier'))) $colspan++; // With this, there is a column move button
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan += 2;
 
 print "<!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->\n";
 
-$coldisplay=0;
+$coldisplay = 0;
 ?>
 <tr class="oddeven tredited">
-<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
-		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
+<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+		<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
 <?php }
 
 $coldisplay++;
@@ -194,8 +194,8 @@ $coldisplay++;
 	<td class="nowrap right">
 	<?php $coldisplay++;
 	if (($line->info_bits & 2) != 2) {
-		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="' . $line->remise_percent . '"';
-		if ($line->fk_prev_id != null ) print ' readonly';
+		print '<input size="1" type="text" class="flat right" name="remise_percent" id="remise_percent" value="'.$line->remise_percent.'"';
+		if ($line->fk_prev_id != null) print ' readonly';
 		print '>%';
 	} else { ?>
 		&nbsp;
@@ -216,7 +216,7 @@ $coldisplay++;
         	?>
         <td class="margininfos right">
 			<!-- For predef product -->
-			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
+			<?php if (!empty($conf->product->enabled) || !empty($conf->service->enabled)) { ?>
 			<select id="fournprice_predef" name="fournprice_predef" class="flat minwidth75imp right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
@@ -251,8 +251,8 @@ $coldisplay++;
 
 	<!-- colspan for this td because it replace total_ht+3 td for buttons+... -->
 	<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
-		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
-		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+		<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
 </tr>
 
@@ -264,17 +264,17 @@ if (!empty($extrafields))
 }
 ?>
 
-<?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
+<?php if (!empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector) { ?>
 <tr id="service_duration_area" class="treditedlinefordate">
-	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+	<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum center"></td>
 	<?php } ?>
-	<td colspan="<?php echo $coldisplay-(empty($conf->global->MAIN_VIEW_LINE_NUMBER)?0:1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
+	<td colspan="<?php echo $coldisplay - (empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? 0 : 1) ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
-	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
-	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start?0:1, "updateline", 1, 0);
+	$hourmin = (isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : '');
+	print $form->selectDate($line->date_start, 'date_start', $hourmin, $hourmin, $line->date_start ? 0 : 1, "updateline", 1, 0);
 	print ' '.$langs->trans('to').' ';
-	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end?0:1, "updateline", 1, 0);
+	print $form->selectDate($line->date_end, 'date_end', $hourmin, $hourmin, $line->date_end ? 0 : 1, "updateline", 1, 0);
 	print '<script type="text/javascript">';
 	if (!$line->date_start) {
 		if (isset($conf->global->MAIN_DEFAULT_DATE_START_HOUR)) {

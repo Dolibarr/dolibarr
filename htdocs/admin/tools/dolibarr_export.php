@@ -33,7 +33,7 @@ $action = GETPOST('action', 'alpha');
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "date";
 if (empty($page) || $page == -1) { $page = 0; }
@@ -200,7 +200,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<div class="formelementrow">';
     print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
     print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-
     print '</div>';
 
     if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
@@ -303,7 +302,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
 
     print '<br>';
     print '<fieldset><legend>'.$langs->trans('ExportStructure').'</legend>';
-    print '<input type="checkbox" name="nobin_drop"'.((!isset($_GET["nobin_drop"]) && !isset($_POST["nobin_drop"])) || GETPOST('nobin_drop')) ? ' checked' : ''.' id="checkbox_dump_drop" />';
+    print '<input type="checkbox" name="nobin_drop"'.((! GETPOSTISSET("nobin_drop") || GETPOST('nobin_drop')) ? ' checked' : '').' id="checkbox_dump_drop" />';
     print '<label for="checkbox_dump_drop">'.$langs->trans("AddDropTable").'</label>';
     print '<br>';
     print '</fieldset>';
@@ -456,9 +455,9 @@ print "\n";
 print $langs->trans("Compression").': &nbsp; ';
 
 $i = 0;
-foreach($compression as $key => $val)
+foreach ($compression as $key => $val)
 {
-	if (! $val['function'] || function_exists($val['function'])) {
+	if (!$val['function'] || function_exists($val['function'])) {
 		// Enabled export format
 		$checked = '';
 		if ($key == 'gz') $checked = ' checked';
@@ -555,12 +554,12 @@ print $langs->trans("BackupDescX").'<br><br>';
 
 print '<div id="backupfilesleft" class="fichehalfleft">';
 
-print load_fiche_titre($title?$title:$langs->trans("BackupZipWizard"));
+print load_fiche_titre($title ? $title : $langs->trans("BackupZipWizard"));
 
 print '<label for="zipfilename_template">'.$langs->trans("FileNameToGenerate").'</label><br>';
-$prefix='documents';
-$ext='zip';
-$file=$prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
+$prefix = 'documents';
+$ext = 'zip';
+$file = $prefix.'_'.$dolibarr_main_db_name.'_'.dol_sanitizeFileName(DOL_VERSION).'_'.strftime("%Y%m%d%H%M");
 print '<input type="text" name="zipfilename_template" style="width: 90%" id="zipfilename_template" value="'.$file.'" /> <br>';
 print '<br>';
 
@@ -573,12 +572,12 @@ print "\n";
 print $langs->trans("Compression").': &nbsp; ';
 $filecompression = $compression;
 unset($filecompression['none']);
-$filecompression['zip']= array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip',  'label' => $langs->trans("FormatZip"));
+$filecompression['zip'] = array('function' => 'dol_compress_dir', 'id' => 'radio_compression_zip', 'label' => $langs->trans("FormatZip"));
 
 $i = 0;
-foreach($filecompression as $key => $val)
+foreach ($filecompression as $key => $val)
 {
-    if (! $val['function'] || function_exists($val['function']))	// Enabled export format
+    if (!$val['function'] || function_exists($val['function']))	// Enabled export format
     {
     	$checked = '';
     	if ($key == 'gz') $checked = ' checked';
@@ -609,8 +608,8 @@ print '</div>';
 print '<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">';
 print '<div class="ficheaddleft">';
 
-$filearray=dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder)=='asc'?SORT_ASC:SORT_DESC), 1);
-$result=$formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));
+$filearray = dol_dir_list($conf->admin->dir_output.'/documents', 'files', 0, '', '', $sortfield, (strtolower($sortorder) == 'asc' ?SORT_ASC:SORT_DESC), 1);
+$result = $formfile->list_of_documents($filearray, null, 'systemtools', '', 1, 'documents/', 1, 0, $langs->trans("NoBackupFileAvailable"), 0, $langs->trans("PreviousArchiveFiles"));
 print '<br>';
 
 print '</div>';

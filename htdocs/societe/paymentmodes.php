@@ -1095,6 +1095,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print img_credit_card($companypaymentmodetemp->type);
 							print '</td>';
 							print '<td>';
+							if ($companypaymentmodetemp->proprio) print '<span class="opacitymedium">'.$companypaymentmodetemp->proprio.'</span><br>';
 							if ($companypaymentmodetemp->last_four) print '....'.$companypaymentmodetemp->last_four;
 							if ($companypaymentmodetemp->exp_date_month || $companypaymentmodetemp->exp_date_year) print ' - '.sprintf("%02d", $companypaymentmodetemp->exp_date_month).'/'.$companypaymentmodetemp->exp_date_year.'';
 							print '</td><td>';
@@ -1137,11 +1138,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="button">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
 
-								print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
+								print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
 								print img_picto($langs->trans("Modify"), 'edit');
 								print '</a>';
 								print '&nbsp;';
-								print '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">'; // source='.$companypaymentmodetemp->stripe_card_ref.'&
+								print '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">'; // source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}
@@ -1210,6 +1211,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 					print '<span class="fa fa-university fa-2x fa-fw"></span>';
 				}
 				print'</td>';
+				// Information
 				print '<td valign="middle">';
 				if ($src->object == 'card')
 				{
@@ -1225,7 +1227,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 				elseif ($src->object == 'source' && $src->type == 'card')
 				{
-					print $src->owner->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->owner->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
 
 				 	if ($src->card->country)
@@ -1238,7 +1240,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 				elseif ($src->object == 'source' && $src->type == 'sepa_debit')
 				{
-					print 'info sepa';
+					print 'SEPA debit';
 					print '</td><td>';
 					if ($src->sepa_debit->country)
 					{
@@ -1250,7 +1252,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 				elseif ($src->object == 'payment_method' && $src->type == 'card')
 				{
-					print $src->billing_details->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '<span class="opacitymedium">'.$src->billing_details->name.'</span><br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
 					print '</td><td>';
 
 					if ($src->card->country)
@@ -1263,7 +1265,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				}
 				elseif ($src->object == 'payment_method' && $src->type == 'sepa_debit')
 				{
-					print 'info sepa';
+					print 'SEPA debit';
 					print '</td><td>';
 					if ($src->sepa_debit->country)
 					{
@@ -1383,7 +1385,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
     $morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create');
 
-	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
+	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
 
 	$rib_list = $object->get_all_rib();
 	if (is_array($rib_list))
@@ -1545,13 +1547,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td class="right nowraponall">';
 			if ($user->rights->societe->creer)
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=edit">';
 				print img_picto($langs->trans("Modify"), 'edit');
 				print '</a>';
 
-		   		print '&nbsp;';
-
-		   		print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
+		   		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&id='.$rib->id.'&action=delete">';
 		   		print img_picto($langs->trans("Delete"), 'delete');
 		   		print '</a>';
 			}

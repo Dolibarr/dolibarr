@@ -32,14 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("propal","facture","orders","sendings","companies"));
+$langs->loadLangs(array("propal", "facture", "orders", "sendings", "companies"));
 
 $id		= GETPOST('id', 'int');
 $ref	= GETPOST('ref', 'alpha');
-$action	= GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'supplier_proposal', $id, 'supplier_proposal', '');
 
 $object = new SupplierProposal($db);
@@ -143,49 +143,49 @@ if ($id > 0 || !empty($ref))
 
 		// Supplier order card
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-		$morehtmlref='<div class="refidno">';
+		$morehtmlref = '<div class="refidno">';
 		// Ref supplier
-		$morehtmlref.=$form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-		$morehtmlref.=$form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 		// Thirdparty
-		$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 		// Project
-		if (! empty($conf->projet->enabled))
+		if (!empty($conf->projet->enabled))
 		{
 		    $langs->load("projects");
-		    $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		    $morehtmlref .= '<br>'.$langs->trans('Project').' ';
 		    if ($permissiontoedit)
 		    {
 		        if ($action != 'classify') {
 		        	//$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					$morehtmlref.=' : ';
+					$morehtmlref .= ' : ';
 				}
 	        	if ($action == 'classify') {
 	                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-	                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-	                $morehtmlref.='<input type="hidden" name="action" value="classin">';
-	                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-	                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-	                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-	                $morehtmlref.='</form>';
+	                $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+	                $morehtmlref .= '<input type="hidden" name="action" value="classin">';
+	                $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+	                $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+	                $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+	                $morehtmlref .= '</form>';
 	            } else {
-	                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+	                $morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 	            }
 		    } else {
-		        if (! empty($object->fk_project)) {
+		        if (!empty($object->fk_project)) {
 		            $proj = new Project($db);
 		            $proj->fetch($object->fk_project);
-		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-		            $morehtmlref.=$proj->ref;
-		            $morehtmlref.='</a>';
+		            $morehtmlref .= '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$object->fk_project.'" title="'.$langs->trans('ShowProject').'">';
+		            $morehtmlref .= $proj->ref;
+		            $morehtmlref .= '</a>';
 		        } else {
-		            $morehtmlref.='';
+		            $morehtmlref .= '';
 		        }
 		    }
 		}
-		$morehtmlref.='</div>';
+		$morehtmlref .= '</div>';
 
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);

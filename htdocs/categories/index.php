@@ -40,6 +40,7 @@ $id = GETPOST('id', 'int');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 $catname = GETPOST('catname', 'alpha');
 
+$categstatic = new Categorie($db);
 if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 
@@ -47,38 +48,26 @@ if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backwar
  * View
  */
 
-$categstatic = new Categorie($db);
 $form = new Form($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
-elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
-elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
-elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
-elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
-elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
-elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
-elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
-elseif ($type == Categorie::TYPE_WAREHOUSE) { $title=$langs->trans("StocksCategoriesArea");    $typetext='warehouse'; }
-elseif ($type == Categorie::TYPE_ACTIONCOMM) {
-    $title = $langs->trans("ActionCommCategoriesArea");
-    $typetext = 'actioncomm';
-} else {
-    $title = $langs->trans("CategoriesArea");
-    $typetext = 'unknown';
-}
+$typetext = $type;
+if ($type == Categorie::TYPE_ACCOUNT) 			$title = $langs->trans('AccountsCategoriesArea');
+elseif ($type == Categorie::TYPE_WAREHOUSE) 	$title = $langs->trans('StocksCategoriesArea');
+elseif ($type == Categorie::TYPE_ACTIONCOMM)	$title = $langs->trans('ActionCommCategoriesArea');
+else 											$title = $langs->trans(ucfirst($type).'sCategoriesArea');
 
-$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 
 llxHeader('', $title, '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 
-$newcardbutton='';
-if (! empty($user->rights->categorie->creer)) {
-	$newcardbutton.= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
+$newcardbutton = '';
+if (!empty($user->rights->categorie->creer)) {
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type));
 }
 
-print load_fiche_titre($title, $newcardbutton);
+print load_fiche_titre($title, $newcardbutton, 'object_category');
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -97,7 +86,7 @@ print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
-print '<tr class="oddeven"><td>';
+print '<tr class="oddeven nohover"><td>';
 print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.$catname.'"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
@@ -162,7 +151,7 @@ $cate_arbo = $categstatic->get_full_arbo($typetext);
 $fulltree = $cate_arbo;
 
 // Load possible missing includes
-if($conf->global->CATEGORY_SHOW_COUNTS)
+if ($conf->global->CATEGORY_SHOW_COUNTS)
 {
 	if ($type == Categorie::TYPE_MEMBER)	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	if ($type == Categorie::TYPE_ACCOUNT)	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -182,32 +171,20 @@ foreach ($fulltree as $key => $val)
 	$li = $categstatic->getNomUrl(1, '', 60);
 	$desc = dol_htmlcleanlastbr($val['description']);
 
-	if($conf->global->CATEGORY_SHOW_COUNTS)
+	$counter = '';
+
+	if ($conf->global->CATEGORY_SHOW_COUNTS)
 	{
 		// we need only a count of the elements, so it is enough to consume only the id's from the database
-		if ($type == Categorie::TYPE_PRODUCT)	$elements = $categstatic->getObjectsInCateg("product", 1);
-		if ($type == Categorie::TYPE_SUPPLIER)	$elements = $categstatic->getObjectsInCateg("supplier", 1);
-		if ($type == Categorie::TYPE_CUSTOMER)	$elements = $categstatic->getObjectsInCateg("customer", 1);
-		if ($type == Categorie::TYPE_MEMBER)	$elements = $categstatic->getObjectsInCateg("member", 1);
-		if ($type == Categorie::TYPE_CONTACT)	$elements = $categstatic->getObjectsInCateg("contact", 1);
-		if ($type == Categorie::TYPE_ACCOUNT)	$elements = $categstatic->getObjectsInCateg("account", 1);
-		if ($type == Categorie::TYPE_PROJECT)	$elements = $categstatic->getObjectsInCateg("project", 1);
-		if ($type == Categorie::TYPE_USER)		$elements = $categstatic->getObjectsInCateg("user", 1);
-
-		$counter = "<td class='left' width='40px;'>".count($elements)."</td>";
-	}
-	else
-	{
-		$counter = "";
+		$elements = $categstatic->getObjectsInCateg($type, 1);
+		$counter = "<td class='left' width='40px;'>".(is_countable($elements) ? count($elements) : '0')."</td>";
 	}
 
 	$data[] = array(
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.$counter.
-	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
-	'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
-	'</tr></table>'
+		'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td></tr></table>'
 	);
 }
 
@@ -218,7 +195,7 @@ print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if (!empty($conf->use_javascript_ajax))
 {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>';
+	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 

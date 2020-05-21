@@ -61,14 +61,15 @@ $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '250,250,250'; // line pair
-$colorbacklinepair2 = '250,250,250'; // line pair
+$colorbacklinepair1 = '251,251,251'; // line pair
+$colorbacklinepair2 = '251,251,251'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
-$colorbacklinebreak = '233,228,230'; // line break
+$colorbacklinebreak = '253,251,250'; // line break
 $colorbackbody = '255,255,255';
-$colortexttitlenotab = '90,50,120'; // 150,90,121 140,80,10 or 10,140,80  #875a7b
+$colortexttitlenotab = '0,113,120'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
 $colortexttitle = '0,0,0';
+$colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
 $fontsize = '0.86em';
@@ -99,16 +100,19 @@ $badgeLight     = '#f8f9fa';
 $colorblind_deuteranopes_badgeSuccess   = '#37de5d'; //! text color black
 $colorblind_deuteranopes_badgeSuccess_textColor7 = '#000';
 $colorblind_deuteranopes_badgeWarning   = '#e4e411';
+$colorblind_deuteranopes_badgeDanger    = $badgeDanger; // currently not tested with a color blind people so use default color
 
 /* default color for status : After a quick check, somme status can have oposite function according to objects
 *  So this badges status uses default value according to theme eldy status img
 *  TODO: use color definition vars above for define badges color status X -> exemple $badgeStatusValidate, $badgeStatusClosed, $badgeStatusActive ....
 */
-$badgeStatus0 = '#cbd3d3';
-$badgeStatus1 = '#bc9526';
-$badgeStatus2 = '#e6f0f0';
+$badgeStatus0 = '#cbd3d3'; // draft
+$badgeStatus1 = '#bc9526'; // validated
+$badgeStatus1b = '#bc9526'; // validated
+$badgeStatus2 = '#9c9c26'; // approved
 $badgeStatus3 = '#bca52b';
 $badgeStatus4 = '#55a580'; // Color ok
+$badgeStatus4b = '#55a580'; // Color ok
 $badgeStatus5 = '#cad2d2';
 $badgeStatus6 = '#cad2d2';
 $badgeStatus7 = '#baa32b';

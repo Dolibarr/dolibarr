@@ -56,7 +56,7 @@ $active = 1;
 
 $sortfield = GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
@@ -408,7 +408,7 @@ llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
-$titlepicto = 'title_setup';
+$titlepicto = 'title_accountancy';
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
@@ -678,9 +678,6 @@ if ($id)
             if ($fieldlist[$field] == 'pcg_type') {
                 $valuetoshow = $langs->trans("Pcg_type");
             }
-            if ($fieldlist[$field] == 'pcg_subtype') {
-                $valuetoshow = $langs->trans("Pcg_subtype");
-            }
         	if ($fieldlist[$field] == 'type_template') {
                 $valuetoshow = $langs->trans("TypeOfTemplate");
             }
@@ -809,7 +806,7 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link

@@ -32,6 +32,7 @@ class Translate
 	public $dir; // Directories that contains /langs subdirectory
 
 	public $defaultlang; // Current language for current user
+	public $shortlang; // Short language for current user
 	public $charset_output = 'UTF-8'; // Codage used by "trans" method outputs
 
 	public $tab_translate = array(); // Array of all translations key=>value
@@ -122,6 +123,7 @@ class Translate
 		}
 
 		$this->defaultlang = $srclang;
+		$this->shortlang = substr($srclang, 0, 2);
 		//print 'this->defaultlang='.$this->defaultlang;
 	}
 
@@ -282,7 +284,7 @@ class Translate
 						 * and split the rest until a line feed.
 						 * This is more efficient than fgets + explode + trim by a factor of ~2.
 						 */
-						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]"))
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n\r]"))
 						{
 							if (isset($line[1]))
 							{
@@ -306,7 +308,7 @@ class Translate
 									    continue;
 									}
 									else {
-										// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+										// Convert some strings: Parse and render carriage returns. Also, change '\\s' into '\s' because transifex sync pull the string '\s' into string '\\s'
 										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
 											$tabtranslatedomain[$key] = $value;
@@ -784,8 +786,33 @@ class Translate
 			{
 				// We must keep only main languages
 				if ($mainlangonly) {
-					$arrayofspecialmainlanguages = array('en_US', 'sq_AL', 'ar_SA', 'eu_ES', 'bn_DB', 'bs_BA', 'ca_ES', 'zh_TW', 'cs_CZ', 'da_DK', 'et_EE', 'ka_GE', 'el_GR', 'he_IL', 'kn_IN', 'km_KH', 'ko_KR', 'lo_LA', 'nb_NO', 'fa_IR', 'sr_RS', 'sl_SI', 'uk_UA', 'vi_VN');
-					if (strtolower($regs[1]) != strtolower($regs[2]) && ! in_array($dir, $arrayofspecialmainlanguages)) continue;
+					$arrayofspecialmainlanguages = array(
+						'en'=>'en_US',
+						'sq'=>'sq_AL',
+						'ar'=>'ar_SA',
+						'eu'=>'eu_ES',
+						'bn'=>'bn_DB',
+						'bs'=>'bs_BA',
+						'ca'=>'ca_ES',
+						'zh'=>'zh_TW',
+						'cs'=>'cs_CZ',
+						'da'=>'da_DK',
+						'et'=>'et_EE',
+						'ka'=>'ka_GE',
+						'el'=>'el_GR',
+						'he'=>'he_IL',
+						'kn'=>'kn_IN',
+						'km'=>'km_KH',
+						'ko'=>'ko_KR',
+						'lo'=>'lo_LA',
+						'nb'=>'nb_NO',
+						'fa'=>'fa_IR',
+						'sr'=>'sr_RS',
+						'sl'=>'sl_SI',
+						'uk'=>'uk_UA',
+						'vi'=>'vi_VN'
+					);
+					if (strtolower($regs[1]) != strtolower($regs[2]) && !in_array($dir, $arrayofspecialmainlanguages)) continue;
 				}
 				// We must keep only languages into MAIN_LANGUAGES_ALLOWED
 				if (!empty($conf->global->MAIN_LANGUAGES_ALLOWED) && !in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED))) continue;

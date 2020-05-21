@@ -496,9 +496,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				    $height_note = 0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				$nexY = $tab_top + 5;
 
 				// Use new auto collum system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
@@ -535,7 +533,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$curY = $tab_top_newpage;
 
 						// Allows data in the first page if description is long enough to break in multiples pages
-						if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+						if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 							$showpricebeforepagebreak = 1;
 						else
 							$showpricebeforepagebreak = 0;
@@ -555,15 +553,15 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if ($this->getColumnStatus('desc'))
 					{
 					    $pdf->startTransaction();
-					    pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+                        $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
+
 					    $pageposafter = $pdf->getPage();
 					    if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					    {
 					        $pdf->rollbackTransaction(true);
-					        $pageposafter = $pageposbefore;
-					        //print $pageposafter.'-'.$pageposbefore;exit;
-					        $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-					        pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                            $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
+
 					        $pageposafter = $pdf->getPage();
 					        $posyafter = $pdf->GetY();
 					        if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
@@ -657,8 +655,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					}
 
                     // Extrafields
-                    if(!empty($object->lines[$i]->array_options)){
-                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue){
+                    if (!empty($object->lines[$i]->array_options)) {
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
                             if ($this->getColumnStatus($extrafieldColKey))
                             {
                                 $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
@@ -724,11 +722,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
+						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
-
-					$nexY += 2; // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -1483,7 +1479,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+            'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
@@ -1520,10 +1516,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
-	            'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+                'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
 	            'align' => 'L',
+                'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	    );
 
@@ -1626,7 +1623,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	    );
 
         // Add extrafields cols
-        if(!empty($object->lines)) {
+        if (!empty($object->lines)) {
             $line = reset($object->lines);
             $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
         }

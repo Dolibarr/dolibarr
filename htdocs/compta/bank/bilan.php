@@ -44,10 +44,10 @@ function valeur($sql)
 
 	$valeur = 0;
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$obj=$db->fetch_object($resql);
+		$obj = $db->fetch_object($resql);
 		$valeur = $obj->amount;
 		$db->free($resql);
 	}

@@ -2,14 +2,95 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 11.0.4 compared to 11.0.3 *****
+FIX: #13749
+FIX: #7594 Expense report multi pagebreak
+FIX: Access to undeclared static property: Contact::$table_element
+FIX: actions on supplier proposal not saved (bad trigger name)
+FIX: Add function "completeTabsHead" to "addreplace" type hook.
+FIX: All forms must use newToken()
+FIX: Another "Access to undeclared static property: Contact::$table_element" && "Societe::$table_element"
+FIX: author search supplier proposal list
+FIX: A variable was erased by a temporary variable
+FIX: Avoid infinite loop when a fetch is inside a compute field.
+FIX: Backto link
+FIX: Bad position of total in column
+FIX: bad value in currency into discount created from down payment
+FIX: buyprice extrafield langfile and tooltip
+FIX: Buyprice was updated only if min price for this qty had same qty
+FIX: Can switch from double to price type for extrafields
+FIX: Can use decimal value in virtual products
+FIX: child categories only with good entity rights
+FIX: cloning of emailing when no content selected
+FIX: closing tags
+FIX: Combo list of available users to filter on the list of leaves.
+FIX: Compatibility with multicompany, bad numerotation of task.
+FIX: consistency of price w/wo vat wrong when price entered with tax
+FIX: default value of selectMasssAction broken
+FIX: draftordered replenish virtual stock
+FIX: Error update SQL into stock reception
+FIX: expensereport status in generated pdf
+FIX: extra date field incorrect check
+FIX: Extrafields of type price must be '' and not '0' if not defined
+FIX: Foreign currency lost when splitting a discount
+FIX: get remain to pay with rounding decimals
+FIX: gzip and bzip2 must use option -f
+FIX: IHM, unexpected quote
+FIX: keep viewstatut for doli 3.5
+FIX: Link missing into email of some notification
+FIX: Look and feel v11
+FIX: md stylesheet to be included by external modules like eldy
+FIX: missing array option
+FIX: missing default accountancy product buy code
+FIX: missing fk_bank during export of suppliers invoices
+FIX: missing member entity
+FIX: missing selectedlines on supplier order but checkbox are displayed
+FIX: Missing token and take into account max date when it can.
+FIX: model export list must be sorted by label
+FIX: multicurrency manage on hidden conf SUPPLIER_PROPOSAL_UPDATE_PRICE_ON_SUPPlIER_PROPOSAL
+FIX: Must escape shell
+FIX: Must exclude logs and some dirs for compressed backup
+FIX: ordered stock already in $stock
+FIX: picture migration script from doli 9.0
+FIX: print pictures on shipment docs
+FIX: product get purchase prices
+FIX: product purchase prices
+FIX: Protection when database has a corrupted product id
+FIX: remove unused var, $usercancreate can be change by Multicompany
+FIX: replenish stock to buy
+FIX: Sanitizing menu parameter
+FIX: Send email from bulk action of list of thirdparties
+FIX: setup of suggested payment mode on proposals and orders
+FIX: Several pb in export of documents
+FIX: Situation invoice take into account the credit notes.
+FIX: some others modules (like subtotal) use other product_type than 0 or 1 AND must not be considered in this report
+FIX: sort by default role makes no sense
+FIX: sort on company on member list
+FIX: TakePOS buying price
+FIX: text version of html emailing (removed the body style)
+FIX: The "test smtp connectivity" failed on page to setup mass emailing
+FIX: Error logs an Orderline::delete error, but this is an Orderline::insert error
+FIX: Translation of tooltips of extrafields
+FIX: Use getNomURL instead of hard coded link. Fix limit.
+FIX: Use of image into free text for PDF if DOL_DATA_DIR is outside of
+FIX: viewstatut to search status
+FIX: we must export company mail address on contact vcard only if contact email address is empty
+FIX: when we filter a list on a view status, we want this filter to be on bookmark that we create
+FIX: Wrong Sql on getListOfTowns api method
+FIX: wrong user right's name to top menu "commercial"
+FIX: XSS Vulnerability reported by Mehmet Kelepçe / Gais Cyber Security
 
 ***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For Users:
 NEW: Module MO (Manufacturing Order) is available as stable module.
+NEW: Add option MAIN_VIEW_LINE_NUMBER_IN_LIST for some lists.
 
 For Developers or integrators:
-
-
+* A new way to navigate between pages in list is available. To use it, you must
+  - replace $page = GETPOST('page', 'int') with $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int'); 
+  - remove input field in form '<input type="hidden" name="page" value="'.$page.'">';'
+  - add parameter $pagenavastextinput to value 1 when calling print_barre_liste   
+* UserGroup class has been refactored with new architecture. Triggers of class UserGroup are now USERGROUP_CREATE, USERGROUP_MODIFY, USERGROUP_DELETE
 
 WARNING:
 
@@ -19,8 +100,106 @@ Following changes may create regressions for some external modules, but were nec
   with HTML content that you make a GETPOST('myparam', 'restricthtml') or GETPOST('myparam', 'none') if you really need posted content without sanitizing
   the HTML into content (in such a case, sanitize data later)
 * Removed hidden constant MAIN_EXTRAFIELDS_IN_ONE_TD that was useless. 
-  
-  
+* Reference of object including a "/" are no more allowed. It is never used by default but to support setup that introduced it, the "/" will be replaced 
+  by a "_" automatically when a reference (with a custom numbering mask that use it) is generated.  
+* Library jflot (replace with chartjs) and geoip (replaced with geoip2) were removed.  
+* Hidden constant COMMANDE_VALID_AFTER_CLOSE_PROPAL were renamed into ORDER_VALID_AFTER_CLOSE_PROPAL.
+
+
+***** ChangeLog for 11.0.3 compared to 11.0.2 *****
+FIX: unit price for selected supplier products not set. NaN was used.
+FIX: use bad var to check if total is positive for each VAT rate when validating an invoice
+FIX: status missing from last customer invoices box when using MAIN_STATUS_USES_CSS
+FIX: translations for "orders" not loaded in the homepage box
+FIX: #13194
+FIX: #13274 cannot add or update 0 value for an int or double extrafield
+FIX: #13285 SQL error during migration with pgsql
+FIX: #13294
+FIX: #13313
+FIX: Clone Fourn Command, add line's extrafields
+FIX: cols parameter not propagated to tpl
+FIX: CSRF error when creating an intervention
+FIX: date order was -1D and desc with label repetition
+FIX: empty of series in graph of product distribution
+FIX: fk_type subscription list via api REST
+FIX: link when using anchor on "/" in website module
+FIX: menu export document was not visible when using "simple accounting"
+FIX: missing class declaration
+FIX: missing global $conf
+FIX: Missing token in some forms (avoid unset POST errors)
+FIX: params of setEventMessage($langs->trans('ErrorProductClone')...
+FIX: Remove unexisting link
+FIX: mass action on stock movements
+FIX: substitute lines dates values on doc generator (ODT, ...)
+FIX: Ticket - Load Cache Messages Ticket, wrong message's status
+FIX: Ticket Public  - Private messages are displayed
+FIX: wrong include - replace extrafields_create.tpl.php to extrafields_add.tpl.php
+
+***** ChangeLog for 11.0.2 compared to 11.0.1 *****
+FIX: #10309
+FIX: #13110
+FIX: #13118
+FIX: #13124
+FIX: #13131
+FIX: #13135
+FIX: #13146 
+FIX: #13198
+FIX: #13175
+FIX: #13182
+FIX: #13183
+FIX: #13184
+FIX: #13263
+FIX: #13267
+FIX: an external user can not approve
+FIX: API Get list of documents for supplier_invoice
+FIX: API to push an expense report
+FIX: API upload/download doc for expensereport
+FIX: Avoid to download the export if we just press enter to refresh form
+FIX: Bad link to template invoices
+FIX: Bad sort link in accounting report
+FIX: Bad translation for productlot EatBy and SellBy
+FIX: better method to check user rights AND usergroup rights !
+FIX: CA by product list filter
+FIX: CSS
+FIX: Disable js if no javascript
+FIX: duplicate class name into some log lines
+FIX: etrafield with visibilty=5 were not in read only.
+FIX: excess paid from situation invoices not counted when calculating remain to pay.
+FIX: Force FEC export to txt format.
+FIX: Free input for email no more visible.
+FIX: Keep assigned users in session when loading projects and tasks
+FIX: List of viewed projects too large in task widget.
+FIX: Menu truncated. Add tooltip to have all content.
+FIX: Missing field "billed" in export.
+FIX: missing "statut" for getNomUrl() function
+FIX: modFournisseur is required by modSupplierProposal
+FIX: Multicompany compatibility
+FIX: must be == and not =
+FIX: option for topbar search and bookmarks
+FIX: option MAIN_OPTIMIZEFORTEXTBROWSER
+FIX: some responsive troubles
+FIX: round MT in accountancy books
+FIX: search with '0'
+FIX: sort link
+FIX: SQL Overload in default contact trigger.
+FIX: SQl syntax error.
+FIX: Submit of documents for supplier invoices.
+FIX: timezone must be tzserver and not tzuser as on contract card
+FIX: token in barcode tools page missing
+FIX: Bad name of trigger PROPAL_SUPPLIER_TRIGGER, should be PROPOSAL_SUPPLIER_TRIGGER
+FIX: Type of contact for event does not exists and not supported
+FIX: Type of contact not saved when creating a contact
+FIX: typo on ckeck method
+FIX: undefined function measuringUnitString in product list
+FIX: Usage of project not available in export.
+FIX: wrong test
+FIX: z-index for moretabsList with constant MAIN_MAXTABS_IN_CARD
+FIX: Use GETPOST instead of POST
+FIX: HTML Injection
+FIX: Visualization rights correction on last modified contacts box.
+FIX: Vulnerability in module from modulebuilder.
+FIX: Vulnerability reported by code16
+
 ***** ChangeLog for 11.0.1 compared to 11.0.0 *****
 FIX: advanced target emailing sql and ergonomy.
 FIX: After import of a website template, home page was not set.
@@ -304,6 +483,77 @@ Following changes may create regressions for some external modules, but were nec
 * Renamed property of thirdparty "statut_commercial" into "status_prospect_label"
 * The jquery plugin/dependency multiselect has been removed. It was not used by Dolibarr core.
 
+
+***** ChangeLog for 10.0.7 compared to 10.0.6 *****
+FIX: 10.0 - missing translations for "orders" homepage "orders" box
+FIX: 10.0 - status missing from last customer invoices box when using MAIN_STATUS_USES_CSS
+FIX: 10.0 - translations for "orders" not loaded in the homepage box
+FIX: #10309
+FIX: #12875
+FIX: #12932
+FIX: #12966
+FIX: #12973
+FIX: #13304
+FIX: advanced target emailing sql and ergonomy
+FIX: an external user can not approved
+FIX: Bad translation for productlot EatBy and SellBy
+FIX: better check
+FIX: better method to check user rights AND usergroup rights !
+FIX: CA by prod list filter
+FIX: can be a string or integer
+FIX: Check on unicity on prof id was not triggered sometimes
+FIX: clone of purchase order
+FIX: compatibility with multicompany (avoid duplicate data)
+FIX: complex export model loading
+FIX: date filter not used if no operator
+FIX: date order was -1D and desc with label repetition
+FIX: default lang selection when filter
+FIX: dom and missing param
+FIX: drafts are now implemented for stats
+FIX: Error in log for email sending with smtps was not complete
+FIX: Extrafield position in export field list must respect "pos" field
+FIX: FEC export format
+FIX: FEC export have specific name
+FIX: fetching account on current entity
+FIX: Filenames must not contains non ascii char or we will get non ascii
+FIX: fk_type subscription list via api REST
+FIX: Force FEC export to txt format
+FIX: get remain to pay with rounding decimals
+FIX: Invert isSellerInEEC and isBuyerInEEC
+FIX: keep assigned users in session when loading projects and tasks
+FIX: length, width and height units coherence in product table
+FIX: links in products/services index
+FIX: Mail smtps truncated if content has a line with single .
+FIX: missing array option
+FIX: missing global $conf
+FIX: missing hook parameter
+FIX: Missing Linked objects Fichinter Ref. in PDF formats
+FIX: missing "statut" for getNomUrl() function
+FIX: multicompany for discount
+FIX: must be == and not =
+FIX: Problem with column label in subscription list
+FIX: regex for include or exclude categories in full arbo
+FIX: Remove unexisting link
+FIX: remove unused var, $usercancreate can be change by Multicompany
+FIX: require category class in extrafield
+FIX: round MT in accountancy books
+FIX: search with '0'
+FIX: send expense report mail in HTML format
+FIX: SQL request and phpunit
+FIX: substitute lines dates values on doc generator (ODT, ...)
+FIX: test on 0 better than isset
+FIX: The "automatic bind" was linked EEC to export accountancy code
+FIX: thirdparty alias name desappeared if we change country with THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION conf
+FIX: timezone must be tzserver and not tzuser as well as on contract card
+FIX: typo on ckeck method
+FIX: use "usergroup" instead "user"
+FIX: Visualization rights correction on last modified contacts box
+FIX: Warning on admin/export_files
+FIX: We want to be able to import data for extrafields of entity 0 too
+FIX: when we filter a list on a view status, we want this filter to be on bookmark that we create
+FIX: wrong test
+FIX: XSS vulnerability in description of list of audit events.
+FIX: z-index for moretabsList with constant MAIN_MAXTABS_IN_CARD
 
 ***** ChangeLog for 10.0.6 compared to 10.0.5 *****
 FIX Regression of 10.0.5 to create/edit proposals and orders.
