@@ -462,39 +462,39 @@ class ImportCsv extends ModeleImports
                                                  $errorforthistable++;
                                                  $error++;
                                                  }*/
-                                                $param_array = array('', $newval, 0, $arrayrecord[0]['val']);       // Param to fetch parent from account, in chart.
+                                                $param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
                                             }
 
                                             call_user_func_array(array($classinstance, $method), $param_array);
                                             // If not found, try the fetch from label
-                                            if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
+                                            if (!($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel')
                                             {
                                                 $param_array = array('', '', $newval);
                                                 call_user_func_array(array($classinstance, $method), $param_array);
                                             }
-                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]=$classinstance->id;
+                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] = $classinstance->id;
                                             //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
                                             if ($classinstance->id != '')	// id may be 0, it is a found value
                                             {
-                                                $newval=$classinstance->id;
+                                                $newval = $classinstance->id;
                                             }
                                             else
                                             {
-                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                                elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
-                                                else $this->errors[$error]['lib']='ErrorBadDefinitionOfImportProfile';
-                                                $this->errors[$error]['type']='FOREIGNKEY';
+                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                                elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+                                                else $this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
+                                                $this->errors[$error]['type'] = 'FOREIGNKEY';
                                                 $errorforthistable++;
                                                 $error++;
                                             }
                                         }
                                     }
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeandlabel')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeandlabel')
                                 {
-                                    $isidorref='id';
-                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i', $newval)) $isidorref='ref';
-                                    $newval=preg_replace('/^(id|ref):/i', '', $newval);
+                                    $isidorref = 'id';
+                                    if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
+                                    $newval = preg_replace('/^(id|ref):/i', '', $newval);
 
                                     if ($isidorref == 'ref') {
                                         $file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);

@@ -1,4 +1,6 @@
 <?php
+use Splash\Tests\WsObjects\O00ObjectBaseTest;
+
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -37,7 +39,7 @@ class Conf
     public $file;
 
     /**
-     * @var DoliDB Database handler.
+     * @var Object 	Associative array with some properties ->type, ->db, ...
      */
     public $db;
 
@@ -48,6 +50,8 @@ class Conf
 
     //! To store if javascript/ajax is enabked
     public $use_javascript_ajax;
+    //! To store if javascript/ajax is enabked
+    public $disable_compute;
 	//! Used to store current currency (ISO code like 'USD', 'EUR', ...)
 	public $currency;
 	//! Used to store current css (from theme)
@@ -687,8 +691,6 @@ class Conf
 		{
 			$this->global->AGENDA_DEFAULT_FILTER_TYPE = '0'; // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
 		}
-
-		if (!isset($this->global->MAIN_USE_OLD_TITLE_BUTTON)) $this->global->MAIN_USE_OLD_TITLE_BUTTON = 0;
 
 		if (!isset($this->global->MAIN_JS_GRAPH)) $this->global->MAIN_JS_GRAPH = 'chart'; // Use chart.js library
 

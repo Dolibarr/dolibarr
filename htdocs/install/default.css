@@ -53,7 +53,7 @@ div.titre {
 }
 
 span.titre {
-	font-weight: bold;
+	/* font-weight: bold; */
 	background: #FFFFFF;
 	color: rgb(0,113,121);
 	border: 1px solid #bbb;

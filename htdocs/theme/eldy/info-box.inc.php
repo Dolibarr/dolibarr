@@ -6,14 +6,20 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
  * Component: Info Box
  * -------------------
  */
+
+.info-box-module-external span.info-box-icon-version {
+    background: #bbb;
+}
+
 .info-box {
 	display: block;
     position: relative;
 	min-height: 90px;
-	background: #fff;
+	/* background: #fff; */
 	width: 100%;
-	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
-	border-radius: 2px;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    border: 1px solid #eee;
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm{
@@ -62,16 +68,19 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.08) !important
 }
 .info-box-sm .info-box-icon {
     height: 80px;
     width: 80px;
     font-size: 25px;
+    line-height: 100px;
+}
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
 }
 .info-box-module .info-box-icon {
-	height: 106px;
+	height: 107px;
 }
 .info-box-icon > img {
 	max-width: 100%;
@@ -166,6 +175,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+	padding-bottom: 4px;
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -194,12 +204,11 @@ if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'backgro
 if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO = -50;
 if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 //var_dump($conf->global->THEME_AGRESSIVENESS_RATIO);
+
 ?>
 .info-box-icon {
 	<?php if ($prefix) { ?>
 	color: #fff !important;
-	<?php } else { ?>
-	background-color: #eee !important;
 	<?php } ?>
     opacity: 0.95;
 }
@@ -305,8 +314,8 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	display: flex; /* or inline-flex */
 	flex-direction: row;
 	flex-wrap: wrap;
-	width: 100%;
-	margin: 0 0 0 -8px;
+	width: calc(100% + 14px);
+	margin: 0 -8px 0 -8px;
 	/*justify-content: space-between;*/
 }
 
@@ -339,7 +348,8 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
-	    margin: 0 0 0 0 !important;
+	    margin: 0 0 0 0px !important;
+	    width: 100% !important;
 	}
 
 	.info-box-module {

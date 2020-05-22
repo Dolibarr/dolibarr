@@ -45,12 +45,14 @@ $id = GETPOST('id', 'int');
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'alpha');
 $search_project = GETPOST('search_project');
-if (!isset($_GET['search_projectstatus']) && !isset($_POST['search_projectstatus']))
+
+$search_projectstatus = GETPOST('search_projectstatus');
+if (!isset($search_projectstatus) || $search_projectstatus === '')
 {
 	if ($search_all != '') $search_projectstatus = -1;
 	else $search_projectstatus = 1;
 }
-else $search_projectstatus = GETPOST('search_projectstatus');
+
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
 $search_task_ref = GETPOST('search_task_ref');
@@ -441,7 +443,7 @@ else
     else $texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "task";
@@ -886,7 +888,7 @@ while ($i < min($num, $limit))
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation

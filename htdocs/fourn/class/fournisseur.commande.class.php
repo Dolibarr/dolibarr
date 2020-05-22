@@ -65,7 +65,7 @@ class CommandeFournisseur extends CommonOrder
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'order';
+	public $picto = 'supplier_order';
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -2035,6 +2035,17 @@ class CommandeFournisseur extends CommonOrder
             // End call triggers
         }
 
+        $main = MAIN_DB_PREFIX.'commande_fournisseurdet';
+        $ef = $main."_extrafields";
+        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".$this->id.")";
+        dol_syslog(get_class($this)."::delete extrafields lines", LOG_DEBUG);
+        if (!$this->db->query($sql))
+        {
+            $this->error = $this->db->lasterror();
+            $this->errors[] = $this->db->lasterror();
+            $error++;
+        }
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE fk_commande =".$this->id;
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if (!$this->db->query($sql))
@@ -3189,7 +3200,7 @@ class CommandeFournisseur extends CommonOrder
     {
     	global $conf, $langs;
 
-    	if (!empty($conf->fournisseur->enabled))
+    	if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
 
@@ -3770,6 +3781,14 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $error = 0;
 
         $this->db->begin();
+
+		// extrafields
+        $result = $this->deleteExtraFields();
+        if ($result < 0)
+        {
+            $this->db->rollback();
+            return -1;
+        }
 
         $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid=".$this->id;
 

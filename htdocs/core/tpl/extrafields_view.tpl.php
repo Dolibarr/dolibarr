@@ -52,8 +52,12 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 {
 	$lastseparatorkeyfound = '';
     $extrafields_collapse_num = '';
+    $extrafields_collapse_num_old = '';
+    $i = 0;
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
+		$i++;
+
 		// Discard if extrafield is a hidden field on form
 
 		$enabled = 1;
@@ -65,6 +69,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		{
 			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
 		}
+
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
 		{
@@ -87,6 +92,8 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			$value = $object->array_options["options_".$key];
 			//var_dump($key.' - '.$value);
 		}
+
+		// Print line tr of extra field
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
             $extrafields_collapse_num = '';
@@ -109,13 +116,20 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		}
 		else
 		{
-            print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.'">';
+			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num;
+			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
+				print ' trextrafields_collapse_new';
+			}*/
+			if ($extrafields_collapse_num && $i == count($extrafields->attributes[$object->table_element]['label'])) {
+				print ' trextrafields_collapse_last';
+			}
+			print '">';
+			$extrafields_collapse_num_old = $extrafields_collapse_num;
 			print '<td class="titlefield">';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
-			print '<td class="';
-			//var_dump($action);exit;
 
+			print '<td class="';
 			if ((!empty($action) && ($action == 'create' || $action == 'edit')) && !empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
 			print '">';
 			if (!empty($extrafields->attributes[$object->table_element]['help'][$key])) print $form->textwithpicto($langs->trans($label), $langs->trans($extrafields->attributes[$object->table_element]['help'][$key]));
@@ -161,6 +175,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				//print 'x'.$object->array_options['options_' . $key].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
 				$value = isset($_POST["options_".$key]) ? dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]) : $datenotinstring;
 			}
+
 			//TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'none') == $key)
 			{

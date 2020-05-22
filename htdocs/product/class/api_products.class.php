@@ -716,26 +716,24 @@ class Products extends DolibarrApi
         if (!DolibarrApiAccess::$user->rights->produit->supprimer) {
             throw new RestException(401);
         }
-        $result = $this->product->fetch($id);
+        $result = $this->productsupplier->fetch($id);
         if (!$result) {
             throw new RestException(404, 'Product not found');
         }
 
-        if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
+        if (!DolibarrApi::_checkAccessToResource('product', $this->productsupplier->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
+
         $resultsupplier = 0;
-        if ($result) {
-            $this->productsupplier->fetch($id);
-            $resultsupplier = $this->product->remove_product_fournisseur_price($priceid);
+        if ($result > 0) {
+            $resultsupplier = $this->productsupplier->remove_product_fournisseur_price($priceid);
         }
 
         return $resultsupplier;
     }
 
     /**
-     * List purchase prices
-     *
      * Get a list of all purchase prices of products
      *
      * @param  string $sortfield  Sort field
@@ -767,11 +765,11 @@ class Products extends DolibarrApi
     	if ($supplier > 0) {
     		$sql .= " AND s.fk_soc = ".$db->escape($supplier);
     	}
-    	$sql .= " AND s.fk_product = t.rowid ";
+    	$sql .= " AND s.fk_product = t.rowid";
     	// Select products of given category
     	if ($category > 0) {
     		$sql .= " AND c.fk_categorie = ".$db->escape($category);
-    		$sql .= " AND c.fk_product = t.rowid ";
+    		$sql .= " AND c.fk_product = t.rowid";
     	}
     	if ($mode == 1) {
     		// Show only products
@@ -804,10 +802,15 @@ class Products extends DolibarrApi
     		while ($i < $min)
     		{
     			$obj = $db->fetch_object($result);
-    			$product_static = new Product($db);
-    			if ($product_static->fetch($obj->rowid)) {
-    				$obj_ret[] = $this->_cleanObjectDatas($product_static);
+
+    			$product_fourn = new ProductFournisseur($this->db);
+    			$product_fourn_list = $product_fourn->list_product_fournisseur_price($obj->rowid, '', '', 0, 0);
+    			foreach($product_fourn_list as $tmpobj) {
+    				$this->_cleanObjectDatas($tmpobj);
     			}
+    				//var_dump($product_fourn_list->db);exit;
+    			$obj_ret[$obj->rowid] = $product_fourn_list;
+
     			$i++;
     		}
     	}
@@ -1587,6 +1590,7 @@ class Products extends DolibarrApi
         unset($object->prices_by_qty_id);
         unset($object->libelle);
         unset($object->product_id_already_linked);
+        unset($object->reputations);
 
         unset($object->name);
         unset($object->firstname);

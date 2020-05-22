@@ -112,7 +112,7 @@ class Entrepot extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
@@ -184,7 +184,7 @@ class Entrepot extends CommonObject
 
 		$error = 0;
 
-		if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
+		if (empty($this->label)) $this->label = $this->libelle; // For backward compatibility
 
 		$this->label = trim($this->label);
 		if ($this->label == '')
@@ -272,7 +272,7 @@ class Entrepot extends CommonObject
         $error = 0;
 
 	    if (empty($id)) $id = $this->id;
-	    if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
+	    if (empty($this->label)) $this->label = $this->libelle; // For backward compatibility
 
 		// Check if new parent is already a child of current warehouse
 		if (!empty($this->fk_parent))

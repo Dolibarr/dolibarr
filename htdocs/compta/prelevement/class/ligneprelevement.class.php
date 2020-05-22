@@ -48,14 +48,12 @@ class LignePrelevement
 	 *  Constructor
 	 *
 	 *  @param	DoliDb	$db			Database handler
-	 *  @param 	User	$user       Objet user
 	 */
-	public function __construct($db, $user)
+	public function __construct($db)
 	{
 		global $conf, $langs;
 
 		$this->db = $db;
-		$this->user = $user;
 
 		// List of language codes for status
 

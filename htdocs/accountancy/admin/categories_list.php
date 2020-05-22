@@ -408,7 +408,7 @@ llxHeader('', $langs->trans('DictionaryAccountancyCategory'));
 
 $titre = $langs->trans($tablib[$id]);
 $linkback = '';
-$titlepicto = 'title_setup';
+$titlepicto = 'title_accountancy';
 
 print load_fiche_titre($titre, $linkback, $titlepicto);
 
@@ -806,7 +806,7 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td class="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td class="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link

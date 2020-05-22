@@ -137,7 +137,12 @@ $server->register(
 
 
 
-// Full methods code
+/**
+ * Full methods code
+ *
+ * @param	string		$authentication		Authentication string
+ * @return	array							Array of data
+ */
 function getVersions($authentication)
 {
 	global $db, $conf, $langs;

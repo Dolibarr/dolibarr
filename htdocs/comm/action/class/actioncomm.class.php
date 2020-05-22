@@ -178,12 +178,6 @@ class ActionComm extends CommonObject
     public $fulldayevent = 0;
 
     /**
-     * @var int Milestone
-     * @deprecated Milestone is already event with end date = start date
-     */
-    public $punctual = 1;
-
-    /**
      * @var integer Percentage
      */
     public $percentage;
@@ -384,7 +378,6 @@ class ActionComm extends CommonObject
         if (empty($this->percentage))   $this->percentage = 0;
         if (empty($this->priority) || !is_numeric($this->priority)) $this->priority = 0;
         if (empty($this->fulldayevent)) $this->fulldayevent = 0;
-        if (empty($this->punctual))     $this->punctual = 0;
         if (empty($this->transparency)) $this->transparency = 0;
         if ($this->percentage > 100) $this->percentage = 100;
         //if ($this->percentage == 100 && ! $this->dateend) $this->dateend = $this->date;
@@ -404,7 +397,6 @@ class ActionComm extends CommonObject
         	$this->userassigned = array();
         	$this->userassigned[$tmpid] = array('id'=>$tmpid, 'transparency'=>$this->transparency);
         }
-
 
         $userownerid = $this->userownerid;
         $userdoneid = $this->userdoneid;
@@ -463,7 +455,7 @@ class ActionComm extends CommonObject
         $sql .= "fk_user_author,";
         $sql .= "fk_user_action,";
         $sql .= "fk_user_done,";
-        $sql .= "label,percent,priority,fulldayevent,location,punctual,";
+        $sql .= "label,percent,priority,fulldayevent,location,";
         $sql .= "transparency,";
         $sql .= "fk_element,";
         $sql .= "elementtype,";
@@ -484,7 +476,7 @@ class ActionComm extends CommonObject
         $sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
         $sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
         $sql .= (isset($this->type_id) ? $this->type_id : "null").",";
-        $sql .= ($code ? ("'".$code."'") : "null").", ";
+        $sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
         $sql .= ($this->ref_ext ? ("'".$this->db->idate($this->ref_ext)."'") : "null").", ";
         $sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
         $sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
@@ -493,7 +485,7 @@ class ActionComm extends CommonObject
         $sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
         $sql .= ($userownerid > 0 ? $userownerid : "null").", ";
         $sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
-        $sql .= "'".$this->db->escape($this->label)."','".$this->db->escape($this->percentage)."','".$this->db->escape($this->priority)."','".$this->db->escape($this->fulldayevent)."','".$this->db->escape($this->location)."','".$this->db->escape($this->punctual)."', ";
+        $sql .= "'".$this->db->escape($this->label)."','".$this->db->escape($this->percentage)."','".$this->db->escape($this->priority)."','".$this->db->escape($this->fulldayevent)."','".$this->db->escape($this->location)."', ";
         $sql .= "'".$this->db->escape($this->transparency)."', ";
         $sql .= (!empty($this->fk_element) ? $this->fk_element : "null").", ";
         $sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
@@ -680,6 +672,7 @@ class ActionComm extends CommonObject
 
         $sql = "SELECT a.id,";
         $sql .= " a.id as ref,";
+        $sql .= " a.entity,";
         $sql .= " a.ref_ext,";
         $sql .= " a.datep,";
         $sql .= " a.datep2,";
@@ -693,7 +686,7 @@ class ActionComm extends CommonObject
         $sql .= " a.fk_user_action, a.fk_user_done,";
         $sql .= " a.fk_contact, a.percent as percentage,";
         $sql .= " a.fk_element as elementid, a.elementtype,";
-        $sql .= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
+        $sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
         $sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
         $sql .= " s.nom as socname,";
         $sql .= " u.firstname, u.lastname as lastname";
@@ -716,6 +709,7 @@ class ActionComm extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id         = $obj->id;
+				$this->entity     = $obj->entity;
                 $this->ref        = $obj->ref;
                 $this->ref_ext    = $obj->ref_ext;
 
@@ -757,7 +751,6 @@ class ActionComm extends CommonObject
                 $this->fulldayevent			= $obj->fulldayevent;
                 $this->location				= $obj->location;
                 $this->transparency			= $obj->transparency;
-                $this->punctual				= $obj->punctual; // deprecated
 
                 $this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
                 $this->contactid			= $obj->fk_contact; // To have fetch_contact method working
@@ -1611,7 +1604,7 @@ class ActionComm extends CommonObject
             $sql .= " a.fk_user_action,";
             $sql .= " a.fk_contact, a.percent as percentage,";
             $sql .= " a.fk_element, a.elementtype,";
-            $sql .= " a.priority, a.fulldayevent, a.location, a.punctual, a.transparency,";
+            $sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
             $sql .= " u.firstname, u.lastname, u.email,";
             $sql .= " s.nom as socname,";
             $sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label";
@@ -1718,7 +1711,6 @@ class ActionComm extends CommonObject
                     $event['fulldayevent'] = $obj->fulldayevent;
                     $event['location'] = $obj->location;
                     $event['transparency'] = (($obj->transparency > 0) ? 'OPAQUE' : 'TRANSPARENT'); // OPAQUE (busy) or TRANSPARENT (not busy)
-                    $event['punctual'] = $obj->punctual;
                     $event['category'] = $obj->type_label;
                     $event['email'] = $obj->email;
 					// Define $urlwithroot
@@ -1928,11 +1920,7 @@ class ActionComm extends CommonObject
         $this->datem = $now;
         $this->datep = $now;
         $this->datef = $now;
-        $this->author = $user;
-        $this->usermod = $user;
-        $this->usertodo = $user;
         $this->fulldayevent = 0;
-        $this->punctual = 0;
         $this->percentage = 0;
         $this->location = 'Location';
         $this->transparency = 1; // 1 means opaque

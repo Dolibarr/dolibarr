@@ -252,7 +252,7 @@ if ($resql)
 		print '<input type="hidden" name="limit" value="'.$limit.'"/>';
 	}
 
-    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';

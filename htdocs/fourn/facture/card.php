@@ -1695,7 +1695,7 @@ if ($action == 'create')
 {
 	$facturestatic = new FactureFournisseur($db);
 
-	print load_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'), '', 'supplier_invoice');
 
 	dol_htmloutput_events();
 

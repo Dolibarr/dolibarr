@@ -325,7 +325,7 @@ abstract class CommonDocGenerator
 
     	foreach ($conf->global as $key => $val)
     	{
-    		if (preg_match('/(_pass|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
+    		if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $key)) $newval = '*****forbidden*****';
     		else $newval = $val;
     		$array_other['__['.$key.']__'] = $newval;
     	}
@@ -1295,7 +1295,7 @@ abstract class CommonDocGenerator
         if (!empty($fields))
         {
             // Sort extrafields by rank
-            uasort($fields, function($a, $b) {
+            uasort($fields, function ($a, $b) {
                 return  ($a->rank > $b->rank) ? -1 : 1;
 			});
 

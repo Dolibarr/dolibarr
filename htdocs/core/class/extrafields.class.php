@@ -43,7 +43,7 @@ class ExtraFields
     public $db;
 
 	/**
-     * @var string type of element (for what object is the extrafield)
+     * @var array Array with type of element (for what object is the extrafield)
 	 * @deprecated
      */
     public $attribute_elementtype;
@@ -1671,7 +1671,8 @@ class ExtraFields
 		}
 		elseif ($type == 'price')
 		{
-			$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			if ($value || $value == '0') $value = price($value, 0, $langs, 0, 0, -1);
 		}
 		elseif ($type == 'select')
 		{
