@@ -2907,6 +2907,18 @@ if ($action == 'create')
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
+	// when payment condition is empty (means not override by payment condition form a other object, like third-party), try to use default value
+	if(empty($cond_reglement_id))
+	{
+		$cond_reglement_id = GETPOST("cond_reglement_id");
+	}
+
+	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if(empty($mode_reglement_id))
+	{
+		$mode_reglement_id = GETPOST("mode_reglement_id");
+	}
+	
 	if (!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();
 	$note_public = $object->getDefaultCreateValueFor('note_public', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_public : null));
 	$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_private : null));
