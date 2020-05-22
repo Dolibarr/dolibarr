@@ -326,11 +326,16 @@ class ProductCombination
 
 		$child = new Product($this->db);
 		$child->fetch($this->fk_product_child);
-		$child->price_autogen = $parent->price_autogen;
-		$child->weight = $parent->weight + $this->variation_weight;
-		$child->weight_units = $parent->weight_units;
-		$varlabel = $this->getCombinationLabel($this->fk_product_child);
-		$child->label = $parent->label.$varlabel;
+        $child->price_autogen   = $parent->price_autogen;
+        $child->weight          = $parent->weight + $this->variation_weight;
+        $child->weight_units    = $parent->weight_units;
+
+        // Don't update the child label if the user modified it.
+        if ($child->label == $parent->label) {
+            // This will trigger only at variant creation time
+            $varlabel               = $this->getCombinationLabel($this->fk_product_child);
+            $child->label           = $parent->label.$varlabel;;
+        }
 
 		if ($child->update($child->id, $user) > 0) {
 			$new_vat = $parent->tva_tx;
