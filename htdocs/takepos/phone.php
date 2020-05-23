@@ -107,11 +107,7 @@ if ($action == "productinfo") {
 			print '<button type="button" class="publicphonebutton2 phoneblue width24" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
         }
     }
-<<<<<<< HEAD
 } else {
-=======
-}
-else {
 	// Title
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
@@ -121,7 +117,6 @@ else {
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
 	$arrayofcss = array('/takepos/css/phone.css');
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
->>>>>>> upstream/develop
 	?>
 <script language="javascript">
 	<?php
@@ -185,7 +180,8 @@ function LoadPlace(placeid){
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&place="+place, function() {
 		});';
-	} else {
+	}
+	else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&place="+place, function() {
 		});';
 	}
@@ -200,7 +196,8 @@ function AddProduct(placeid, productid){
 		print 'place=placeid;
 		$("#phonediv1").load("auto_order.php?action=productinfo&place="+place+"&idproduct="+productid, function() {
 		});';
-	} else {
+	}
+	else {
 		print 'AddProductConfirm(placeid, productid);';
 	}
 	?>
@@ -217,7 +214,8 @@ function AddProductConfirm(placeid, productid){
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
 		});';
-	} else {
+	}
+	else {
 		echo '$("#phonediv2").load("invoice.php?mobilepage=invoice&action=addline&place="+place+"&idproduct="+productid, function() {
 		});';
 	}
@@ -248,7 +246,8 @@ function LoadCats(){
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv1").load("auto_order.php?mobilepage=cats&place="+place, function() {
 		});';
-	} else {
+	}
+	else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=cats&place="+place, function() {
 		});';
 	}
@@ -261,7 +260,8 @@ function LoadProducts(idcat){
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
-	} else {
+	}
+	else {
 		echo '$("#phonediv1").load("invoice.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
 		});';
 	}
@@ -281,7 +281,8 @@ function TakeposPrintingOrder(){
 		});';
 		echo '$("#phonediv1").load("auto_order.php?action=publicpayment&place="+place, function() {
 		});';
-	} else {
+	}
+	else {
 		echo '$("#phonediv2").load("invoice.php?action=order&place="+place, function() {
 		});';
 	}
@@ -316,18 +317,11 @@ function CheckPlease(){
 			print '<button type="button" class="phonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 3)).'</button>';
 			print '<button type="button" class="phonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 3)).'</button>';
 			print '<button type="button" class="phonebutton" onclick="Exit();">'.strtoupper(substr($langs->trans('Logout'), 0, 3)).'</button>';
-<<<<<<< HEAD
-		} else {
-			print '<button type="button" class="publicphonebutton" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
-			print '<button type="button" class="publicphonebutton" onclick="TakeposPrintingOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
-			print '<button type="button" class="publicphonebutton" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';
-=======
 		}
 		else {
 			print '<button type="button" class="publicphonebutton phoneblue" onclick="LoadCats();">'.strtoupper(substr($langs->trans('Categories'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton phoneorange" onclick="PublicPreOrder();">'.strtoupper(substr($langs->trans('Order'), 0, 5)).'</button>';
 			print '<button type="button" class="publicphonebutton phonegreen" onclick="CheckPlease();">'.strtoupper(substr($langs->trans('Payment'), 0, 5)).'</button>';
->>>>>>> upstream/develop
 		}
 		?>
 	</div>
