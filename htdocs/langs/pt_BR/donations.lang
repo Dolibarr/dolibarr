@@ -15,7 +15,6 @@ DonationStatusPromiseValidatedShort=Validada
 DonationTitle=Recibo de doação
 DonationReceipt=Recibo de doação
 DonationsModels=Modelo de documento de recepção de Doação
-LastModifiedDonations=Últimas %s doações modificadas
 DonationRecipient=Recipiente doaçaõ
 IConfirmDonationReception=O beneficiário declara ter recebido, como doação, o seguinte montante
 MinimumAmount=O montante mínimo é de %s

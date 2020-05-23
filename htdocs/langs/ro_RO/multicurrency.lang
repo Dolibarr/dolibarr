@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Mai multe valute
+ErrorAddRateFail=Eroare în rata adăugată
+ErrorAddCurrencyFail=Eroare în valuta adăugată
+ErrorDeleteCurrencyFail=Eroare la ștergere
+multicurrency_syncronize_error=Eroare de sincronizare: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Utilizați data documentului pentru a găsi rata valutei, în loc să utilizați cea mai recentă rată cunoscută
+multicurrency_useOriginTx=Când un obiect este creat din altul, păstrați rata inițială din obiectul sursă (altfel utilizați ultima rată cunoscută)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=You must create an account on website %s to use this functionality.<br>Get your <b>API key</b>.<br>If you use a free account, you can't change the <b>source currency</b> (USD by default).<br>If your main currency is not USD, the application will automatically recalculate it.<br><br>You are limited to 1000 synchronizations per month.
+multicurrency_appId=Cheia API
+multicurrency_appCurrencySource=Source currency
+multicurrency_alternateCurrencySource=Alternate source currency
+CurrenciesUsed=Valute utilizate
+CurrenciesUsed_help_to_add=Adăugați diferitele valute și ratele pe care trebuie să le utilizați pentru <b> propunerile dvs.  </b>, <b> ordine </b> etc.
+rate=rată
+MulticurrencyReceived=Primite, valuta inițială
+MulticurrencyRemainderToTake=Valoarea rămasă, moneda inițială
+MulticurrencyPaymentAmount=Suma plății, moneda inițială
+AmountToOthercurrency=Suma pentru (în moneda contului de primire)
+CurrencyRateSyncSucceed=Currency rate synchronization done successfuly
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Use the currency of the document for online payments

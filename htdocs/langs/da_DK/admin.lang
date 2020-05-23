@@ -40,6 +40,7 @@ WebUserGroup=Webserver bruger / gruppe
 NoSessionFound=Din PHP-konfiguration tillade ikke optagelse af aktive sessioner. Den mappe, der bruges til at gemme sessioner (<b> %s </b>), kan være beskyttet (for eksempel via operativsystemet eller ved PHP-direktivet open_basedir).
 DBStoringCharset=Database charset til at gemme data
 DBSortingCharset=Database charset for at sortere data
+HostCharset=Host charset
 ClientCharset=Klient karaktersæt
 ClientSortingCharset=Kunden sortering
 WarningModuleNotActive=<b>Modul %s</b> skal være aktiveret
@@ -427,7 +428,7 @@ ExtrafieldCheckBox=Afkrydsningsfelterne
 ExtrafieldCheckBoxFromList=Afkrydsningsfelter fra bordet
 ExtrafieldLink=Link til et objekt
 ComputedFormula=Beregnet felt
-ComputedFormulaDesc=Du kan indtaste en formel her ved hjælp af andre egenskaber af objekt eller nogen PHP-kodning for at få en dynamisk beregningsværdi. Du kan bruge alle PHP-kompatible formler, herunder "?" betingelsesoperatør og følgende globale objekt: <strong> $ db, $ conf, $ langs, $ mysoc, $ bruger, $ objekt </strong>. <br> <strong> ADVARSEL </strong>: Kun nogle egenskaber af $ objekt kan være tilgængelige. Hvis du har brug for egenskaber, der ikke er indlæst, skal du bare hente objektet i din formel som i andet eksempel. <br> Brug af et beregnet felt betyder, at du ikke kan indtaste nogen værdier fra interface. Hvis der også er en syntaksfejl, kan formlen ikke returnere noget. <br> <br> Eksempel på formel: <br> $ objekt-> id < 10 ? round($object-> id / 2, 2): ($ objekt-> id + 2 * $ bruger-> id) * (int) substr ($ mysoc-> zip, 1, 2 ) <br> <br> Eksempel på genindlæsning af objekt <br> (($ reloadedobj = ny Societe ($ db)) && ($ reloadedobj-> hent ($ obj-> id? $ Obj-> id: ($ obj-> rowid? $ Obj- > rowid: $ object-> id))> 0))? $ reloadedobj-> array_options ['options_extrafieldkey'] * $ reloadedobj-> kapital / 5: '-1' <br> <br> Øvrige eksempel på formel for at tvinge belastning af objekt og dets overordnede objekt: <br> (($ reloadedobj = ny opgave ($ db )) && ($ reloadedobj-> hent ($ objekt-> id)> 0) && ($ secondloadedobj = nyt projekt ($ db)) && ($ secondloadedobj-> hent ($ reloadedobj-> fk_project)> 0))? $ secondloadedobj-> ref: 'Forældreprojekt ikke fundet'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Gem computeren felt
 ComputedpersistentDesc=Beregnede ekstra felter gemmes i databasen, men værdien genberegnes dog først, når objektet i dette felt ændres. Hvis det beregnede felt afhænger af andre objekter eller globale data, kan denne værdi være forkert !!
 ExtrafieldParamHelpPassword=Blankt felt her betyder, at denne værdi vil blive gemt uden kryptering (feltet skal kun være skjult med stjerne på skærmen). <br> Vælg 'auto' for at bruge standardkrypteringsreglen til at gemme adgangskoden til databasen (så vil værdien gemmes som en en-vejs hash uden mulighed at hente den oprindelige værdi)
@@ -1015,7 +1016,7 @@ LocalTax2IsUsedDescES=IRPF-kursen som standard ved oprettelse af emner. fakturae
 LocalTax2IsNotUsedDescES=Som standard den foreslåede IRPF er 0. Slut på reglen.
 LocalTax2IsUsedExampleES=I Spanien, freelancere og selvstændige, der leverer tjenesteydelser og virksomheder, der har valgt at skattesystemet i de moduler.
 LocalTax2IsNotUsedExampleES=I Spanien er de virksomheder, der ikke er underlagt skattesystemer for moduler.
-RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps des not provide any reporting. Only few countries uses this type of tax.
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps does not provide any reporting. Only few countries uses this type of tax.
 UseRevenueStamp=Use a tax stamp
 UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=Rapporter om lokale skatter
@@ -1272,6 +1273,7 @@ RuleForGeneratedPasswords=Regler for at generere og validere adgangskoder
 DisableForgetPasswordLinkOnLogonPage=Vis ikke linket "Glemt adgangskode" på siden Login
 UsersSetup=Opsætning af brugermodul
 UserMailRequired=Email nødvendig for at oprette en ny bruger
+UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
 UsersDocModules=Document templates for documents generated from user record
 GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
@@ -1731,7 +1733,7 @@ MultiCompanySetup=Opsætning af multi-selskabsmodul
 ##### Suppliers #####
 SuppliersSetup=Opsætning af sælgermodul
 SuppliersCommandModel=Complete template of Purchase Order
-SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersCommandModelMuscadet=Complete template of Purchase Order (old implementation of cornas template)
 SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=Leverandør fakturaer nummerering modeller
 IfSetToYesDontForgetPermission=Hvis det er indstillet til en ikke-nullværdi, skal du ikke glemme at give tilladelser til grupper eller brugere, der har tilladelse til den anden godkendelse
@@ -1803,6 +1805,7 @@ TopMenuDisableImages=Skjul billeder i topmenuen
 LeftMenuBackgroundColor=Baggrundsfarve til venstre menu
 BackgroundTableTitleColor=Baggrundsfarve til tabel titel linje
 BackgroundTableTitleTextColor=Tekstfarve til tabel titellinje
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=Baggrundsfarve til ulige bord linjer
 BackgroundTableLineEvenColor=Baggrundsfarve til lige bordlinier
 MinimumNoticePeriod=Mindste opsigelsesperiode (din anmodning om orlov skal ske inden denne forsinkelse)
@@ -1936,7 +1939,7 @@ WithoutDolTrackingID=Dolibarr Reference not found in Message ID
 FormatZip=Postnummer
 MainMenuCode=Menu indtastningskode (hovedmenu)
 ECMAutoTree=Vis automatisk ECM-træ
-OperationParamDesc=Definer værdier, der skal bruges til handling, eller hvordan man uddrager værdier. For eksempel: <br> objproperty1 = SET: abc <br> objproperty1 = SET: en værdi med erstatning af __objproperty1__ <br> objproperty3 = SETIFEMPTY: abc <br> objproperty4 = EKSTRAKT: HEADER:. X-Myheaderkey * [^ \\ s] + (*). <br> options_myextrafield = EKSTRAKT: EMNE: ([^ \\ s] *) <br> object.objproperty5 = UDTAGELSE: BODY: Mit firmanavn er \\ s ([^ \\ s] *) <br><br> Brug en ; char som separator for at udtrække eller indstille flere egenskaber.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Åbningstider
 OpeningHoursDesc=Indtast her firmaets almindelige åbningstider.
 ResourceSetup=Konfiguration af ressource modul
@@ -1995,3 +1998,5 @@ PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
+MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
+MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.

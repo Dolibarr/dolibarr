@@ -35,6 +35,14 @@ then
 	then
 	    echo "tx pull -a"
 	    tx pull -a
+	    
+	    echo "Remove some language directories (not enough translated)"
+	    rm -fr htdocs/langs/ach
+	    rm -fr htdocs/langs/br_FR
+	    rm -fr htdocs/langs/en
+	    rm -fr htdocs/langs/frp
+	    rm -fr htdocs/langs/fy_NL
+	    
 	else
 		for dir in `find htdocs/langs/* -type d`
 		do

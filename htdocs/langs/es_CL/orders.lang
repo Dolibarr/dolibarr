@@ -6,7 +6,6 @@ OrderId=Solicitar ID
 Order=Orden
 PdfOrderTitle=Orden
 OrderLine=Fila para ordenar
-OrderDate=Fecha de orden
 OrderDateShort=Fecha de orden
 OrderToProcess=Orden para procesar
 NewOrder=Nueva orden
