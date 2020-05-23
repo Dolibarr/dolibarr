@@ -2987,7 +2987,7 @@ if ($action == 'editcss')
 	//print $langs->trans("RSS").': '.$form->selectyesno('WEBSITE_ENBALE_RSS', $website->use_rss, 1).'<br>';
 	//$doleditor = new DolEditor('WEBSITE_ENBALE_RSS', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	//print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
-	print '/wrapper.php?rss=1[&lang=XX]';
+	print '/wrapper.php?rss=1[&l=XX]';
 	print '</td></tr>';
 
 	print '</table>';
