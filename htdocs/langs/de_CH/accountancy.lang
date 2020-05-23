@@ -183,7 +183,6 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Der Partner ist nicht def
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Mir fehlt der Partner und das Wartestellungskonto. Zugriffsfehler.
 PaymentsNotLinkedToProduct=Die Zahlung ist mit keinem Produkt oder Service verknüpft.
 Pcgtype=Kontengruppe
-PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 TotalMarge=Gesamtmarge Verkauf
 DescVentilCustomer=Du siehst hier die Liste der Kundenrechnungen und ob diese mit einem Buchhaltungskonto verknüpft sind, oder nicht.
 DescVentilMore=Wenn du in den Produkten und Leistungen die Buchhaltungskonten deines Kontenplanes  hinterlegt hast, kann ich die Rechnungspositionen automatisch jenen Konten zuordnen. Dafür ist die Schaltfläche "<strong>%s</strong>" da.\nDort, wo das nicht klappt, kannst du die Rechnungspositionen via "<strong>%s</strong>" von Hand zuweisen.
