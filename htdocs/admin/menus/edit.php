@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
+$cancel = GETPOST('cancel', 'alpha'); // We click on a Cancel button
+
 if (!$user->admin) accessforbidden();
 
 $dirstandard = array();
@@ -64,12 +66,12 @@ if (GETPOST("menu_handler"))    $menu_handler = GETPOST("menu_handler");
 
 if ($action == 'update')
 {
-    if (!$_POST['cancel'])
+    if (!$cancel)
     {
         $leftmenu = ''; $mainmenu = '';
-        if (!empty($_POST['menuIdParent']) && !is_numeric($_POST['menuIdParent']))
+        if (GETPOST('menuIdParent', 'alpha') && !is_numeric(GETPOST('menuIdParent', 'alpha')))
         {
-            $tmp = explode('&', $_POST['menuIdParent']);
+        	$tmp = explode('&', GETPOST('menuIdParent', 'alpha'));
             foreach ($tmp as $s)
             {
                 if (preg_match('/fk_mainmenu=/', $s))
@@ -138,7 +140,7 @@ if ($action == 'update')
 
 if ($action == 'add')
 {
-    if ($_POST['cancel'])
+    if ($cancel)
     {
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;

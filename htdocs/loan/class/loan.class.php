@@ -44,7 +44,7 @@ class Loan extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'bill';
+	public $picto = 'money-bill-alt';
 
 	/**
 	 * @var int ID
@@ -433,19 +433,19 @@ class Loan extends CommonObject
 		global $langs;
 
 		// Load translation files required by the page
-		$langs->loadLangs(array("customers","bills"));
+		$langs->loadLangs(array("customers", "bills"));
 
-		unset($this->labelStatus);	// Force to reset the array of status label, because label can change depending on parameters
+		unset($this->labelStatus); // Force to reset the array of status label, because label can change depending on parameters
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
 			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
-			if ($status ==  0 && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == 0 && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
-			if ($status ==  0 && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
+			if ($status == 0 && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 		}
 
 		$statusType = 'status1';

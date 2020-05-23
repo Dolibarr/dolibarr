@@ -28,11 +28,11 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Security check
 if ($user->socid > 0)
@@ -42,19 +42,19 @@ if ($user->socid > 0)
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","admin","users","other"));
+$langs->loadLangs(array("companies", "admin", "users", "other"));
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="dateevent";
-if (! $sortorder) $sortorder="DESC";
+if (!$sortfield) $sortfield = "dateevent";
+if (!$sortorder) $sortorder = "DESC";
 
 $search_code = GETPOST("search_code", "alpha");
 $search_ip   = GETPOST("search_ip", "alpha");
@@ -63,24 +63,24 @@ $search_desc = GETPOST("search_desc", "alpha");
 $search_ua   = GETPOST("search_ua", "none");
 $search_prefix_session = GETPOST("search_prefix_session", "none");
 
-if (GETPOST("date_startmonth") == '' || GETPOST("date_startmonth") > 0) $date_start=dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
-else $date_start=-1;
-if (GETPOST("date_endmonth") == '' || GETPOST("date_endmonth") > 0) $date_end=dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
-else $date_end=-1;
+if (GETPOST("date_startmonth") == '' || GETPOST("date_startmonth") > 0) $date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"));
+else $date_start = -1;
+if (GETPOST("date_endmonth") == '' || GETPOST("date_endmonth") > 0) $date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"));
+else $date_end = -1;
 
 // checks:if date_start>date_end  then date_end=date_start + 24 hours
-if ($date_start > 0 && $date_end > 0 && $date_start > $date_end) $date_end=$date_start+86400;
+if ($date_start > 0 && $date_end > 0 && $date_start > $date_end) $date_end = $date_start + 86400;
 
 $now = dol_now();
 $nowarray = dol_getdate($now);
 
 if (empty($date_start)) // We define date_start and date_end
 {
-    $date_start=dol_get_first_day($nowarray['year'], $nowarray['mon'], false);
+    $date_start = dol_get_first_day($nowarray['year'], $nowarray['mon'], false);
 }
 if (empty($date_end))
 {
-    $date_end=dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
+    $date_end = dol_mktime(23, 59, 59, $nowarray['mon'], $nowarray['mday'], $nowarray['year']);
 }
 // Set $date_startmonth...
 $tmp = dol_getdate($date_start);
@@ -92,56 +92,56 @@ $date_endday = $tmp['mday'];
 $date_endmonth = $tmp['mon'];
 $date_endyear = $tmp['year'];
 
-$arrayfields=array();
+$arrayfields = array();
 
 
 /*
  * Actions
  */
 
-$now=dol_now();
+$now = dol_now();
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-    $date_start=-1;
-    $date_end=-1;
-    $search_code='';
-    $search_ip='';
-    $search_user='';
-    $search_desc='';
-    $search_ua='';
-    $search_prefix_session='';
+    $date_start = -1;
+    $date_end = -1;
+    $search_code = '';
+    $search_ip = '';
+    $search_user = '';
+    $search_desc = '';
+    $search_ua = '';
+    $search_prefix_session = '';
 }
 
 // Purge audit events
 if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 {
-	$error=0;
+	$error = 0;
 
 	$db->begin();
-	$securityevents=new Events($db);
+	$securityevents = new Events($db);
 
 	// Delete events
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."events";
-	$sql.= " WHERE entity = ".$conf->entity;
+	$sql .= " WHERE entity = ".$conf->entity;
 
 	dol_syslog("listevents purge", LOG_DEBUG);
 	$resql = $db->query($sql);
-	if (! $resql)
+	if (!$resql)
 	{
 		$error++;
 		setEventMessages($db->lasterror(), null, 'errors');
 	}
 
 	// Add event purge
-	$text=$langs->trans("SecurityEventsPurged");
-	$securityevent=new Events($db);
-	$securityevent->type='SECURITY_EVENTS_PURGE';
-	$securityevent->dateevent=$now;
-	$securityevent->description=$text;
+	$text = $langs->trans("SecurityEventsPurged");
+	$securityevent = new Events($db);
+	$securityevent->type = 'SECURITY_EVENTS_PURGE';
+	$securityevent->dateevent = $now;
+	$securityevent->description = $text;
 
-	$result=$securityevent->create($user);
+	$result = $securityevent->create($user);
 	if ($result > 0)
 	{
 	    $db->commit();
@@ -162,26 +162,26 @@ if ($action == 'confirm_purge' && $confirm == 'yes' && $user->admin)
 
 llxHeader('', $langs->trans("Audit"));
 
-$form=new Form($db);
+$form = new Form($db);
 
-$userstatic=new User($db);
-$usefilter=0;
+$userstatic = new User($db);
+$usefilter = 0;
 
 $sql = "SELECT e.rowid, e.type, e.ip, e.user_agent, e.dateevent,";
-$sql.= " e.fk_user, e.description, e.prefix_session,";
-$sql.= " u.login";
-$sql.= " FROM ".MAIN_DB_PREFIX."events as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
-$sql.= " WHERE e.entity IN (".getEntity('event').")";
-if ($date_start > 0) $sql.= " AND e.dateevent >= '".$db->idate($date_start)."'";
-if ($date_end > 0)   $sql.= " AND e.dateevent <= '".$db->idate($date_end)."'";
-if ($search_code) { $usefilter++; $sql.=natural_search("e.type", $search_code, 0); }
-if ($search_ip)   { $usefilter++; $sql.=natural_search("e.ip", $search_ip, 0); }
-if ($search_user) { $usefilter++; $sql.=natural_search("u.login", $search_user, 0); }
-if ($search_desc) { $usefilter++; $sql.=natural_search("e.description", $search_desc, 0); }
-if ($search_ua)   { $usefilter++; $sql.=natural_search("e.user_agent", $search_ua, 0); }
-if ($search_prefix_session)   { $usefilter++; $sql.=natural_search("e.prefix_session", $search_prefix_session, 0); }
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= " e.fk_user, e.description, e.prefix_session,";
+$sql .= " u.login";
+$sql .= " FROM ".MAIN_DB_PREFIX."events as e";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = e.fk_user";
+$sql .= " WHERE e.entity IN (".getEntity('event').")";
+if ($date_start > 0) $sql .= " AND e.dateevent >= '".$db->idate($date_start)."'";
+if ($date_end > 0)   $sql .= " AND e.dateevent <= '".$db->idate($date_end)."'";
+if ($search_code) { $usefilter++; $sql .= natural_search("e.type", $search_code, 0); }
+if ($search_ip) { $usefilter++; $sql .= natural_search("e.ip", $search_ip, 0); }
+if ($search_user) { $usefilter++; $sql .= natural_search("u.login", $search_user, 0); }
+if ($search_desc) { $usefilter++; $sql .= natural_search("e.description", $search_desc, 0); }
+if ($search_ua) { $usefilter++; $sql .= natural_search("e.user_agent", $search_ua, 0); }
+if ($search_prefix_session) { $usefilter++; $sql .= natural_search("e.prefix_session", $search_prefix_session, 0); }
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -196,7 +196,7 @@ $nbtotalofrecords = '';
     }
 }*/
 
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //print $sql;
 $result = $db->query($sql);
 if ($result)
@@ -204,27 +204,27 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
-	if ($search_code) $param.='&search_code='.urlencode($search_code);
-	if ($search_ip)   $param.='&search_ip='.urlencode($search_ip);
-	if ($search_user) $param.='&search_user='.urlencode($search_user);
-	if ($search_desc) $param.='&search_desc='.urlencode($search_desc);
-	if ($search_ua)   $param.='&search_ua='.urlencode($search_ua);
-	if ($search_prefix_sessiona)   $param.='&search_prefix_session='.urlencode($search_prefix_session);
-	if ($date_startmonth) $param.= "&date_startmonth=".urlencode($date_startmonth);
-	if ($date_startday)   $param.= "&date_startday=".urlencode($date_startday);
-	if ($date_startyear)  $param.= "&date_startyear=".urlencode($date_startyear);
-	if ($date_endmonth)   $param.= "&date_endmonth=".urlencode($date_endmonth);
-	if ($date_endday)     $param.= "&date_endday=".urlencode($date_endday);
-	if ($date_endyear)    $param.= "&date_endyear=".urlencode($date_endyear);
+	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
+	if ($search_code) $param .= '&search_code='.urlencode($search_code);
+	if ($search_ip)   $param .= '&search_ip='.urlencode($search_ip);
+	if ($search_user) $param .= '&search_user='.urlencode($search_user);
+	if ($search_desc) $param .= '&search_desc='.urlencode($search_desc);
+	if ($search_ua)   $param .= '&search_ua='.urlencode($search_ua);
+	if ($search_prefix_sessiona)   $param .= '&search_prefix_session='.urlencode($search_prefix_session);
+	if ($date_startmonth) $param .= "&date_startmonth=".urlencode($date_startmonth);
+	if ($date_startday)   $param .= "&date_startday=".urlencode($date_startday);
+	if ($date_startyear)  $param .= "&date_startyear=".urlencode($date_startyear);
+	if ($date_endmonth)   $param .= "&date_endmonth=".urlencode($date_endmonth);
+	if ($date_endday)     $param .= "&date_endday=".urlencode($date_endday);
+	if ($date_endyear)    $param .= "&date_endyear=".urlencode($date_endyear);
 
     $langs->load('withdrawals');
     if ($num)
     {
-        $center='<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
+        $center = '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=purge">'.$langs->trans("Purge").'</a>';
     }
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -233,7 +233,7 @@ if ($result)
 
 	if ($action == 'purge')
 	{
-		$formquestion=array();
+		$formquestion = array();
 		print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeAuditEvents'), $langs->trans('ConfirmPurgeAuditEvents'), 'confirm_purge', $formquestion, 'no', 1);
 	}
 
@@ -262,14 +262,14 @@ if ($result)
 	//print '<input class="flat maxwidth100" type="text" size="10" name="search_desc" value="'.$search_desc.'">';
 	print '</td>';
 
-	if (! empty($arrayfields['e.user_agent']['checked']))
+	if (!empty($arrayfields['e.user_agent']['checked']))
 	{
 		print '<td class="liste_titre left">';
 		print '<input class="flat maxwidth100" type="text" name="search_ua" value="'.$search_ua.'">';
 		print '</td>';
 	}
 
-	if (! empty($arrayfields['e.prefix_session']['checked']))
+	if (!empty($arrayfields['e.prefix_session']['checked']))
 	{
 		print '<td class="liste_titre left">';
 		print '<input class="flat maxwidth100" type="text" name="search_prefix_session" value="'.$search_prefix_session.'">';
@@ -277,7 +277,7 @@ if ($result)
 	}
 
 	print '<td class="liste_titre maxwidthsearch">';
-	$searchpicto=$form->showFilterAndCheckAddButtons(0);
+	$searchpicto = $form->showFilterAndCheckAddButtons(0);
 	print $searchpicto;
 	print '</td>';
 
@@ -290,11 +290,11 @@ if ($result)
 	print_liste_field_titre("IP", $_SERVER["PHP_SELF"], "e.ip", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("User", $_SERVER["PHP_SELF"], "u.login", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "e.description", "", $param, '', $sortfield, $sortorder);
-	if (! empty($arrayfields['e.user_agent']['checked']))
+	if (!empty($arrayfields['e.user_agent']['checked']))
 	{
 		print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "e.user_agent", "", $param, '', $sortfield, $sortorder);
 	}
-	if (! empty($arrayfields['e.prefix_session']['checked']))
+	if (!empty($arrayfields['e.prefix_session']['checked']))
 	{
 		print_liste_field_titre("PrefixSession", $_SERVER["PHP_SELF"], "e.prefix_session", "", $param, '', $sortfield, $sortorder);
 	}
@@ -322,8 +322,8 @@ if ($result)
 		print '<td class="nowrap">';
 		if ($obj->fk_user)
 		{
-			$userstatic->id=$obj->fk_user;
-			$userstatic->login=$obj->login;
+			$userstatic->id = $obj->fk_user;
+			$userstatic->login = $obj->login;
 			print $userstatic->getLoginUrl(1);
 		}
 		else print '&nbsp;';
@@ -331,18 +331,18 @@ if ($result)
 
 		// Description
 		print '<td>';
-		$text=$langs->trans($obj->description);
+		$text = $langs->trans($obj->description);
 		$reg = array();
 		if (preg_match('/\((.*)\)(.*)/i', $obj->description, $reg))
 		{
-			$val=explode(',', $reg[1]);
-			$text=$langs->trans($val[0], isset($val[1])?$val[1]:'', isset($val[2])?$val[2]:'', isset($val[3])?$val[3]:'', isset($val[4])?$val[4]:'');
-			if (! empty($reg[2])) $text.=$reg[2];
+			$val = explode(',', $reg[1]);
+			$text = $langs->trans($val[0], isset($val[1]) ? $val[1] : '', isset($val[2]) ? $val[2] : '', isset($val[3]) ? $val[3] : '', isset($val[4]) ? $val[4] : '');
+			if (!empty($reg[2])) $text .= $reg[2];
 		}
 		print dol_escape_htmltag($text);
 		print '</td>';
 
-		if (! empty($arrayfields['e.user_agent']['checked']))
+		if (!empty($arrayfields['e.user_agent']['checked']))
 		{
 			// User agent
 			print '<td>';
@@ -350,7 +350,7 @@ if ($result)
 			print '</td>';
 		}
 
-		if (! empty($arrayfields['e.prefix_session']['checked']))
+		if (!empty($arrayfields['e.prefix_session']['checked']))
 		{
 			// User agent
 			print '<td>';
@@ -360,8 +360,8 @@ if ($result)
 
 		// More informations
 		print '<td class="right">';
-		$htmltext='<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
-		$htmltext.='<br><b>'.$langs->trans("PrefixSession").'</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
+		$htmltext = '<b>'.$langs->trans("UserAgent").'</b>: '.($obj->user_agent ? dol_string_nohtmltag($obj->user_agent) : $langs->trans("Unknown"));
+		$htmltext .= '<br><b>'.$langs->trans("PrefixSession").'</b>: '.($obj->prefix_session ? dol_string_nohtmltag($obj->prefix_session) : $langs->trans("Unknown"));
 		print $form->textwithpicto('', $htmltext);
 		print '</td>';
 

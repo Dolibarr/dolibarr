@@ -1,19 +1,25 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 /*
  * Component: Info Box
  * -------------------
  */
+
+.info-box-module-external span.info-box-icon-version {
+    background: #bbb;
+}
+
 .info-box {
 	display: block;
     position: relative;
 	min-height: 90px;
-	background: #fff;
+	/* background: #fff; */
 	width: 100%;
-	box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2), 0px 0px 2px rgba(0, 0, 0, 0.1);
-	border-radius: 2px;
+	box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    border: 1px solid #eee;
 	margin-bottom: 15px;
 }
 .info-box.info-box-sm{
@@ -62,17 +68,27 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.2);
+	background: rgba(0, 0, 0, 0.08) !important
 }
-.info-box-sm .info-box-icon{
+.info-box-sm .info-box-icon {
     height: 80px;
     width: 80px;
     font-size: 25px;
+    line-height: 100px;
+}
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
+}
+.info-box-module .info-box-icon {
+	height: 107px;
 }
 .info-box-icon > img {
 	max-width: 100%;
 }
+.info-box-module .info-box-icon > img {
+    max-width: 60%;
+}
+
 .info-box-icon-text{
     box-sizing: border-box;
     display: block;
@@ -92,13 +108,41 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     transition: opacity 0.5s, visibility 0s 0.5s;
 }
 
-<?php if(empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)){ ?>
+.info-box-icon-version {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 90px;
+    bottom: 0px;
+    color: #ffffff;
+    background-color: rgba(0,0,0,0.1);
+    cursor: default;
+
+    font-size: 10px;
+    line-height: 22px;
+    padding: 0px 3px;
+    text-align: center;
+    opacity: 1;
+    -webkit-transition: opacity 0.5s, visibility 0s 0.5s;
+    transition: opacity 0.5s, visibility 0s 0.5s;
+}
+.box-flex-item.info-box-module.info-box-module-disabled {
+    /* opacity: 0.6; */
+}
+
+.info-box-actions {
+	position: absolute;
+    right: 0;
+    bottom: 0;
+}
+
+<?php if (empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS) && !empty($conf->global->MAIN_INCLUDE_GLOBAL_STATS_IN_OPENED_DASHBOARD)) { ?>
 .info-box-icon-text{
     opacity: 1;
 }
 <?php } ?>
 
-.info-box-sm .info-box-icon-text{
+.info-box-sm .info-box-icon-text, .info-box-sm .info-box-icon-version{
     overflow: hidden;
     width: 80px;
 }
@@ -131,6 +175,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
+	padding-bottom: 4px;
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -152,52 +197,51 @@ a.info-box-text{ text-decoration: none;}
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$prefix='';
+$prefix = '';
 //$prefix = 'background-';
-if (! empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
+if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
 
-if (! isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO=-50;
-if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO=GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
+if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO = -50;
+if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
 //var_dump($conf->global->THEME_AGRESSIVENESS_RATIO);
+
 ?>
 .info-box-icon {
 	<?php if ($prefix) { ?>
 	color: #fff !important;
-	<?php } else { ?>
-	background-color: #eee !important;
 	<?php } ?>
     opacity: 0.95;
 }
 
-.bg-infoxbox-project{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6a98', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+.bg-infobox-project{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6aa8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
 }
-.bg-infoxbox-action{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b46080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-action{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-propal,
-.bg-infoxbox-facture,
-.bg-infoxbox-commande{
+.bg-infobox-propal,
+.bg-infobox-facture,
+.bg-infobox-commande{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-supplier_proposal,
-.bg-infoxbox-invoice_supplier,
-.bg-infoxbox-order_supplier{
+.bg-infobox-supplier_proposal,
+.bg-infobox-invoice_supplier,
+.bg-infobox-order_supplier{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-contrat{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#469686', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-contrat, .bg-infobox-ticket{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-bank_account{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#c5903e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+.bg-infobox-bank_account{
+	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-adherent{
+.bg-infobox-adherent{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-expensereport{
+.bg-infobox-expensereport{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infoxbox-holiday{
+.bg-infobox-holiday{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 
@@ -207,7 +251,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-propal:before,
 .fa-dol-supplier_proposal:before {
-	content: "\f2b5";
+	content: "\f573";
 }
 .fa-dol-facture:before,
 .fa-dol-invoice_supplier:before {
@@ -222,6 +266,9 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 }
 .fa-dol-contrat:before {
 	content: "\f1e6";
+}
+.fa-dol-ticket:before {
+	content: "\f3ff";
 }
 .fa-dol-bank_account:before {
 	content: "\f19c";
@@ -262,44 +309,13 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	color : #b91f1f;
 }
 
-/* USING IMAGES FOR WEATHER INTEAD OF FONT AWESOME */
-/* For other themes just uncomment this part */
-/*.info-box-weather-level0,
-.info-box-weather-level1,
-.info-box-weather-level2,
-.info-box-weather-level3,
-.info-box-weather-level4 {
-	background-position: 15px 50%;
-	background-repeat: no-repeat;
-}
-
-.info-box-weather .info-box-icon{
-	display: none !important;
-}
-.info-box-weather-level0 {
-	background-image: url("img/weather/weather-clear.png");
-}
-.info-box-weather-level1 {
-	background-image: url("img/weather/weather-few-clouds.png");
-}
-.info-box-weather-level2 {
-	background-image: url("img/weather/weather-clouds.png");
-}
-.info-box-weather-level3 {
-	background-image: url("img/weather/weather-many-clouds.png");
-}
-.info-box-weather-level4 {
-	background-image: url("img/weather/weather-storm.png");
-}*/
-
-
 
 .box-flex-container{
 	display: flex; /* or inline-flex */
 	flex-direction: row;
 	flex-wrap: wrap;
-	width: 100%;
-	margin: 0 0 0 -15px;
+	width: calc(100% + 14px);
+	margin: 0 -8px 0 -8px;
 	/*justify-content: space-between;*/
 }
 
@@ -309,15 +325,35 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	flex-basis: auto;
 
 	width: 280px;
-	margin: 5px 0px 0px 15px;
+	margin: 5px 8px 0px 8px;
 }
 .box-flex-item.filler{
 	margin: 0px 0px 0px 15px !important;
 	height: 0;
 }
 
+.info-box-module {
+	min-width: 350px;
+    max-width: 350px;
+}
+.info-box-module .info-box-content {
+	height: 7em;
+}
 /* Disabled. This break the responsive on smartphone
 .box{
 	overflow: visible;
 }
 */
+
+@media only screen and (max-width: 767px)
+{
+	.box-flex-container {
+	    margin: 0 0 0 0px !important;
+	    width: 100% !important;
+	}
+
+	.info-box-module {
+		width: 100%;
+		max-width: unset;
+	}
+}

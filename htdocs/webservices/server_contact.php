@@ -364,74 +364,74 @@ function getContact($authentication, $id, $ref_ext)
  */
 function createContact($authentication, $contact)
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
-	$now=dol_now();
+	$now = dol_now();
 
 	dol_syslog("Function: createContact login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($contact['lastname']))
 	{
-		$error++; $errorcode='KO'; $errorlabel="Name is mandatory.";
+		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$newobject=new Contact($db);
+		$newobject = new Contact($db);
 
-		$newobject->id=$contact['id'];
-		$newobject->ref_ext=$contact['ref_ext'];
-		$newobject->civility_id=$contact['civility_id'];
-		$newobject->lastname=$contact['lastname'];
-		$newobject->firstname=$contact['firstname'];
-		$newobject->address=$contact['address'];
-		$newobject->zip=$contact['zip'];
-		$newobject->town=$contact['town'];
-		$newobject->state_id=$contact['state_id'];
-		$newobject->state_code=$contact['state_code'];
-		$newobject->state=$contact['state'];
-		$newobject->country_id=$contact['country_id'];
-		$newobject->country_code=$contact['country_code'];
-		$newobject->country=$contact['country'];
-		$newobject->socid=$contact['socid'];
-		$newobject->statut=$contact['status'];
-		$newobject->phone_pro=$contact['phone_pro'];
-		$newobject->fax=$contact['fax'];
-		$newobject->phone_perso=$contact['phone_perso'];
-		$newobject->phone_mobile=$contact['phone_mobile'];
-		$newobject->code=$contact['code'];
-		$newobject->email=$contact['email'];
-		$newobject->birthday=$contact['birthday'];
-		$newobject->default_lang=$contact['default_lang'];
-		$newobject->note=$contact['note'];
-		$newobject->ref_facturation=$contact['ref_facturation'];
-		$newobject->ref_contrat=$contact['ref_contrat'];
-		$newobject->ref_commande=$contact['ref_commande'];
-		$newobject->ref_propal=$contact['ref_propal'];
-		$newobject->user_id=$contact['user_id'];
-		$newobject->user_login=$contact['user_login'];
-		$newobject->poste=$contact['poste'];
+		$newobject->id = $contact['id'];
+		$newobject->ref_ext = $contact['ref_ext'];
+		$newobject->civility_id = $contact['civility_id'];
+		$newobject->lastname = $contact['lastname'];
+		$newobject->firstname = $contact['firstname'];
+		$newobject->address = $contact['address'];
+		$newobject->zip = $contact['zip'];
+		$newobject->town = $contact['town'];
+		$newobject->state_id = $contact['state_id'];
+		$newobject->state_code = $contact['state_code'];
+		$newobject->state = $contact['state'];
+		$newobject->country_id = $contact['country_id'];
+		$newobject->country_code = $contact['country_code'];
+		$newobject->country = $contact['country'];
+		$newobject->socid = $contact['socid'];
+		$newobject->statut = $contact['status'];
+		$newobject->phone_pro = $contact['phone_pro'];
+		$newobject->fax = $contact['fax'];
+		$newobject->phone_perso = $contact['phone_perso'];
+		$newobject->phone_mobile = $contact['phone_mobile'];
+		$newobject->code = $contact['code'];
+		$newobject->email = $contact['email'];
+		$newobject->birthday = $contact['birthday'];
+		$newobject->default_lang = $contact['default_lang'];
+		$newobject->note = $contact['note'];
+		$newobject->ref_facturation = $contact['ref_facturation'];
+		$newobject->ref_contrat = $contact['ref_contrat'];
+		$newobject->ref_commande = $contact['ref_commande'];
+		$newobject->ref_propal = $contact['ref_propal'];
+		$newobject->user_id = $contact['user_id'];
+		$newobject->user_login = $contact['user_login'];
+		$newobject->poste = $contact['poste'];
 
 		$elementtype = 'socpeople';
 
 		//Retreive all extrafield for thirdsparty
 		// fetch optionals attributes and labels
-		$extrafields=new ExtraFields($db);
+		$extrafields = new ExtraFields($db);
 		$extrafields->fetch_name_optionals_label($elementtype, true);
 		if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 		{
-			foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+			foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 			{
-				$key='options_'.$key;
-				$newobject->array_options[$key]=$contact[$key];
+				$key = 'options_'.$key;
+				$newobject->array_options[$key] = $contact[$key];
 			}
 		}
 
@@ -609,93 +609,93 @@ function getContactsForThirdParty($authentication, $idthirdparty)
  */
 function updateContact($authentication, $contact)
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
-	$now=dol_now();
+	$now = dol_now();
 
 	dol_syslog("Function: updateContact login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (empty($contact['id']) && empty($contact['ref_ext']))	{
-		$error++; $errorcode='KO'; $errorlabel="Contact id or ref_ext is mandatory.";
+	if (empty($contact['id']) && empty($contact['ref_ext'])) {
+		$error++; $errorcode = 'KO'; $errorlabel = "Contact id or ref_ext is mandatory.";
 	}
 	// Check parameters
-    if (! $error && ($id && $ref_ext))
+    if (!$error && ($id && $ref_ext))
     {
         $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id and ref_ext can't be all provided. You must choose one of them.";
+        $errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref_ext can't be all provided. You must choose one of them.";
     }
 
-	if (! $error)
+	if (!$error)
 	{
-		$objectfound=false;
+		$objectfound = false;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-		$object=new Contact($db);
-		$result=$object->fetch($contact['id'], 0, $contact['ref_ext']);
+		$object = new Contact($db);
+		$result = $object->fetch($contact['id'], 0, $contact['ref_ext']);
 
 		if (!empty($object->id)) {
-			$objectfound=true;
+			$objectfound = true;
 
 
-			$object->firstname=$contact['firstname'];
-			$object->lastname=$contact['lastname'];
+			$object->firstname = $contact['firstname'];
+			$object->lastname = $contact['lastname'];
 
-			$object->address=$contact['address'];
-			$object->zip=$contact['zip'];
-			$object->town=$contact['town'];
+			$object->address = $contact['address'];
+			$object->zip = $contact['zip'];
+			$object->town = $contact['town'];
 
-			$object->country_id=$contact['country_id'];
-			if ($contact['country_code']) $object->country_id=getCountry($contact['country_code'], 3);
-			$object->province_id=$contact['province_id'];
+			$object->country_id = $contact['country_id'];
+			if ($contact['country_code']) $object->country_id = getCountry($contact['country_code'], 3);
+			$object->province_id = $contact['province_id'];
 
 
-			$object->phone_pro=$contact['phone_pro'];
-			$object->phone_perso=$contact['phone_perso'];
-			$object->phone_mobile=$contact['phone_mobile'];
-			$object->fax=$contact['fax'];
-			$object->email=$contact['email'];
+			$object->phone_pro = $contact['phone_pro'];
+			$object->phone_perso = $contact['phone_perso'];
+			$object->phone_mobile = $contact['phone_mobile'];
+			$object->fax = $contact['fax'];
+			$object->email = $contact['email'];
 
-			$object->civility_id=$contact['civility_id'];
-			$object->poste=$contact['poste'];
+			$object->civility_id = $contact['civility_id'];
+			$object->poste = $contact['poste'];
 
-			$object->statut=$contact['status'];
+			$object->statut = $contact['status'];
 
 			$elementtype = 'socpeople';
 
 			//Retreive all extrafield for contact
 			// fetch optionals attributes and labels
-			$extrafields=new ExtraFields($db);
+			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{
-					$key='options_'.$key;
-					$object->array_options[$key]=$contact[$key];
+					$key = 'options_'.$key;
+					$object->array_options[$key] = $contact[$key];
 				}
 			}
 
 			$db->begin();
 
-			$result=$object->update($contact['id'], $fuser);
+			$result = $object->update($contact['id'], $fuser);
 			if ($result <= 0) {
 				$error++;
 			}
 		}
 
-		if ((! $error) && ($objectfound))
+		if ((!$error) && ($objectfound))
 		{
 			$db->commit();
-			$objectresp=array(
+			$objectresp = array(
 			'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			'id'=>$object->id
 			);

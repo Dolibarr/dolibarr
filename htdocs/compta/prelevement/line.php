@@ -43,13 +43,26 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
-$page = GETPOST('page', 'int');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if ($page == -1 || $page == null) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if ($sortorder == "") $sortorder = "DESC";
+if ($sortfield == "") $sortfield = "pl.fk_soc";
+
+
+/*
+ * Actions
+ */
 
 if ($action == 'confirm_rejet')
 {
-	if ( GETPOST("confirm") == 'yes')
+	if (GETPOST("confirm") == 'yes')
 	{
 		if (GETPOST('remonth', 'int'))
 		{
@@ -75,9 +88,9 @@ if ($action == 'confirm_rejet')
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefusedReason")), null, 'errors');
 		}
 
-		if ( ! $error )
+		if (!$error)
 		{
-			$lipre = new LignePrelevement($db, $user);
+			$lipre = new LignePrelevement($db);
 
 			if ($lipre->fetch($id) == 0)
 
@@ -92,7 +105,7 @@ if ($action == 'confirm_rejet')
 		}
 		else
 		{
-			$action="rejet";
+			$action = "rejet";
 		}
 	}
 	else
@@ -107,19 +120,19 @@ if ($action == 'confirm_rejet')
  * View
  */
 
-$invoicestatic=new Facture($db);
+$invoicestatic = new Facture($db);
 
 llxHeader('', $langs->trans("StandingOrder"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("StandingOrder");
 $hselected = $h;
 $h++;
 
 if ($id)
 {
-	$lipre = new LignePrelevement($db, $user);
+	$lipre = new LignePrelevement($db);
 
 	if ($lipre->fetch($id) == 0)
 	{
@@ -246,37 +259,26 @@ if ($id)
 
 	print "</div>";
 
-
-
-	if ($page == -1 || $page == null) { $page = 0 ; }
-
-	$offset = $conf->liste_limit * $page ;
-	$pageprev = $page - 1;
-	$pagenext = $page + 1;
-
-	if ($sortorder == "") $sortorder="DESC";
-	if ($sortfield == "") $sortfield="pl.fk_soc";
-
 	/*
 	 * List of invoices
 	 */
 	$sql = "SELECT pf.rowid";
-	$sql.= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
-	$sql.= " , s.rowid as socid, s.nom as name";
-	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-	$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-	$sql.= " , ".MAIN_DB_PREFIX."facture as f";
-	$sql.= " , ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE pf.fk_prelevement_lignes = pl.rowid";
-	$sql.= " AND pl.fk_prelevement_bons = p.rowid";
-	$sql.= " AND f.fk_soc = s.rowid";
-	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND f.entity IN (".getEntity('invoice').")";
-	$sql.= " AND pl.rowid=".$id;
-	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY $sortfield $sortorder ";
-	$sql.= $db->plimit($conf->liste_limit+1, $offset);
+	$sql .= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
+	$sql .= " , s.rowid as socid, s.nom as name";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+	$sql .= " AND f.fk_soc = s.rowid";
+	$sql .= " AND pf.fk_facture = f.rowid";
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	$sql .= " AND pl.rowid=".$id;
+	if ($socid)	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " ORDER BY $sortfield $sortorder ";
+	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 
 	$result = $db->query($sql);
 
@@ -310,7 +312,7 @@ if ($id)
 			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
-			print img_object($langs->trans("ShowCompany"), "company"). ' '.$obj->name."</a></td>\n";
+			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
 			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 

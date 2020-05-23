@@ -62,6 +62,7 @@ class DiscountAbsolute
     public $multicurrency_amount_ttc;
     // Vat rate
     public $tva_tx;
+    public $vat_src_code;
 
     /**
 	 * @var int User ID Id utilisateur qui accorde la remise
@@ -94,11 +95,11 @@ class DiscountAbsolute
      * @var int ID credit note or deposit used to create the discount
      */
     public $fk_facture_source;
-    public $ref_facture_source;	    		// Ref credit note or deposit used to create the discount
+    public $ref_facture_source; // Ref credit note or deposit used to create the discount
 	public $type_facture_source;
 
     public $fk_invoice_supplier_source;
-    public $ref_invoice_supplier_source;	// Ref credit note or deposit used to create the discount
+    public $ref_invoice_supplier_source; // Ref credit note or deposit used to create the discount
     public $type_invoice_supplier_source;
 
     /**
@@ -125,27 +126,27 @@ class DiscountAbsolute
     	global $conf;
 
         // Check parameters
-        if (! $rowid && ! $fk_facture_source && ! $fk_invoice_supplier_source)
+        if (!$rowid && !$fk_facture_source && !$fk_invoice_supplier_source)
         {
-            $this->error='ErrorBadParameters';
+            $this->error = 'ErrorBadParameters';
             return -1;
         }
 
         $sql = "SELECT sr.rowid, sr.fk_soc, sr.discount_type,";
-        $sql.= " sr.fk_user,";
-        $sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
-        $sql.= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
-        $sql.= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.fk_invoice_supplier_line, sr.fk_invoice_supplier, sr.fk_invoice_supplier_source, sr.description,";
-        $sql.= " sr.datec,";
-        $sql.= " f.ref as ref_facture_source, f.type as type_facture_source,";
-        $sql.= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
-        $sql.= " WHERE sr.entity IN (".getEntity('invoice').")";
-        if ($rowid) $sql.= " AND sr.rowid=".$rowid;
-        if ($fk_facture_source) $sql.= " AND sr.fk_facture_source=".$fk_facture_source;
-        if ($fk_invoice_supplier_source) $sql.= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
+        $sql .= " sr.fk_user,";
+        $sql .= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx, sr.vat_src_code,";
+        $sql .= " sr.multicurrency_amount_ht, sr.multicurrency_amount_tva, sr.multicurrency_amount_ttc,";
+        $sql .= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.fk_invoice_supplier_line, sr.fk_invoice_supplier, sr.fk_invoice_supplier_source, sr.description,";
+        $sql .= " sr.datec,";
+        $sql .= " f.ref as ref_facture_source, f.type as type_facture_source,";
+        $sql .= " fsup.ref as ref_invoice_supplier_source, fsup.type as type_invoice_supplier_source";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fsup ON sr.fk_invoice_supplier_source = fsup.rowid";
+        $sql .= " WHERE sr.entity IN (".getEntity('invoice').")";
+        if ($rowid) $sql .= " AND sr.rowid=".$rowid;
+        if ($fk_facture_source) $sql .= " AND sr.fk_facture_source=".$fk_facture_source;
+        if ($fk_invoice_supplier_source) $sql .= " AND sr.fk_invoice_supplier_source=".$fk_invoice_supplier_source;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -168,17 +169,19 @@ class DiscountAbsolute
                 $this->multicurrency_amount_ttc = $obj->multicurrency_amount_ttc;
 
                 $this->tva_tx = $obj->tva_tx;
+                $this->vat_src_code = $obj->vat_src_code;
+
                 $this->fk_user = $obj->fk_user;
                 $this->fk_facture_line = $obj->fk_facture_line;
                 $this->fk_facture = $obj->fk_facture;
-                $this->fk_facture_source = $obj->fk_facture_source;		// Id credit note or deposit source
-                $this->ref_facture_source = $obj->ref_facture_source;	// Ref credit note or deposit  source
-                $this->type_facture_source = $obj->type_facture_source;	// Type credit note or deposit  source
+                $this->fk_facture_source = $obj->fk_facture_source; // Id credit note or deposit source
+                $this->ref_facture_source = $obj->ref_facture_source; // Ref credit note or deposit  source
+                $this->type_facture_source = $obj->type_facture_source; // Type credit note or deposit  source
                 $this->fk_invoice_supplier_line = $obj->fk_invoice_supplier_line;
                 $this->fk_invoice_supplier = $obj->fk_invoice_supplier;
-                $this->fk_invoice_supplier_source = $obj->fk_invoice_supplier_source;		// Id credit note or deposit source
-                $this->ref_invoice_supplier_source = $obj->ref_invoice_supplier_source;		// Ref credit note or deposit  source
-                $this->type_invoice_supplier_source = $obj->type_invoice_supplier_source;	// Type credit note or deposit  source
+                $this->fk_invoice_supplier_source = $obj->fk_invoice_supplier_source; // Id credit note or deposit source
+                $this->ref_invoice_supplier_source = $obj->ref_invoice_supplier_source; // Ref credit note or deposit  source
+                $this->type_invoice_supplier_source = $obj->type_invoice_supplier_source; // Type credit note or deposit  source
                 $this->description = $obj->description;
                 $this->datec = $this->db->jdate($obj->datec);
 
@@ -244,12 +247,12 @@ class DiscountAbsolute
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
         $sql .= " (entity, datec, fk_soc, discount_type, fk_user, description,";
-        $sql .= " amount_ht, amount_tva, amount_ttc, tva_tx,";
+        $sql .= " amount_ht, amount_tva, amount_ttc, tva_tx, vat_src_code,";
         $sql .= " multicurrency_amount_ht, multicurrency_amount_tva, multicurrency_amount_ttc,";
         $sql .= " fk_facture_source, fk_invoice_supplier_source";
         $sql .= ")";
         $sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec != '' ? $this->datec : dol_now())."', ".$this->fk_soc.", ".(empty($this->discount_type) ? 0 : intval($this->discount_type)).", ".$userid.", '".$this->db->escape($this->description)."',";
-        $sql .= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
+        $sql .= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.", '".$this->db->escape($this->vat_src_code)."',";
         $sql .= " ".$this->multicurrency_amount_ht.", ".$this->multicurrency_amount_tva.", ".$this->multicurrency_amount_ttc.", ";
         $sql .= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'" : "null").",";
         $sql .= " ".($this->fk_invoice_supplier_source ? "'".$this->db->escape($this->fk_invoice_supplier_source)."'" : "null");
@@ -368,18 +371,18 @@ class DiscountAbsolute
                 }
                 else
                 {
-                    $this->error=$this->db->lasterror();
+                    $this->error = $this->db->lasterror();
                     $this->db->rollback();
                     return -1;
                 }
             }
-            elseif($this->fk_invoice_supplier_source) {
+            elseif ($this->fk_invoice_supplier_source) {
             	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
-            	$sql.=" set paye=0, fk_statut=1";
-            	$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;
+            	$sql .= " set paye=0, fk_statut=1";
+            	$sql .= " WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;
 
             	dol_syslog(get_class($this)."::delete Update credit note or deposit invoice statut", LOG_DEBUG);
-            	$result=$this->db->query($sql);
+            	$result = $this->db->query($sql);
             	if ($result)
             	{
             		$this->db->commit();
@@ -504,15 +507,16 @@ class DiscountAbsolute
      * 	@param		string		$filter			Filtre autre
      * 	@param		int			$maxvalue		Filter on max value for discount
      *  @param      int			$discount_type  0 => customer discount, 1 => supplier discount
+	 *  @param      int			$multicurrency  Return multicurrency_amount instead of amount
      * 	@return		int						<0 if KO, amount otherwise
      */
-    public function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0)
+    public function getAvailableDiscounts($company = '', $user = '', $filter = '', $maxvalue = 0, $discount_type = 0, $multicurrency = 0)
     {
         global $conf;
 
         dol_syslog(get_class($this)."::getAvailableDiscounts discount_type=".$discount_type, LOG_DEBUG);
 
-        $sql = "SELECT SUM(rc.amount_ttc) as amount";
+        $sql = "SELECT SUM(rc.amount_ttc) as amount, SUM(rc.multicurrency_amount_ttc) as multicurrency_amount";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql .= " WHERE rc.entity = ".$conf->entity;
         $sql .= " AND rc.discount_type=".intval($discount_type);
@@ -535,6 +539,11 @@ class DiscountAbsolute
             //print 'zz'.$obj->amount;
             //$obj = $this->db->fetch_object($resql);
             //}
+			if ($multicurrency)
+			{
+				return $obj->amount_multicurrency;
+			}
+
             return $obj->amount;
         }
         return -1;
@@ -546,7 +555,7 @@ class DiscountAbsolute
      *  Should always be empty, except if option FACTURE_DEPOSITS_ARE_JUST_PAYMENTS is on (not recommended).
      *
      *	@param		CommonInvoice	$invoice		Object invoice (customer of supplier)
-     *  @param 		int 		    $multicurrency 	Return multicurrency_amount instead of amount
+     *  @param 		int 		    $multicurrency 	1=Return multicurrency_amount instead of amount
      *	@return		int				     			<0 if KO, Sum of credit notes and deposits amount otherwise
      */
     public function getSumDepositsUsed($invoice, $multicurrency = 0)
@@ -578,7 +587,7 @@ class DiscountAbsolute
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-            if ($multicurrency) return $obj->multicurrency_amount;
+            if ($multicurrency == 1) return $obj->multicurrency_amount;
 			else return $obj->amount;
         }
         else
@@ -592,7 +601,7 @@ class DiscountAbsolute
      *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
      *
      *	@param      CommonInvoice	  $invoice	    	Object invoice
-     *	@param      int			      $multicurrency	Return multicurrency_amount instead of amount
+     *	@param      int			      $multicurrency	1=Return multicurrency_amount instead of amount
      *	@return     int					        		<0 if KO, Sum of credit notes and excess received amount otherwise
      */
     public function getSumCreditNotesUsed($invoice, $multicurrency = 0)
@@ -604,14 +613,14 @@ class DiscountAbsolute
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
             $sql .= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
-            $sql .= ' AND f.type IN (' . $invoice::TYPE_STANDARD . ', ' . $invoice::TYPE_CREDIT_NOTE . ', ' . $invoice::TYPE_SITUATION . ')'; // Find discount coming from credit note or excess received
+            $sql .= ' AND f.type IN ('.$invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.', '.$invoice::TYPE_SITUATION.')'; // Find discount coming from credit note or excess received
         }
         elseif ($invoice->element == 'invoice_supplier')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
             $sql .= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture_fourn as f';
             $sql .= ' WHERE rc.fk_invoice_supplier_source=f.rowid AND rc.fk_invoice_supplier = '.$invoice->id;
-            $sql .= ' AND f.type IN (' . $invoice::TYPE_STANDARD . ', ' . $invoice::TYPE_CREDIT_NOTE . ')'; // Find discount coming from credit note or excess paid
+            $sql .= ' AND f.type IN ('.$invoice::TYPE_STANDARD.', '.$invoice::TYPE_CREDIT_NOTE.')'; // Find discount coming from credit note or excess paid
         }
         else
         {
@@ -624,7 +633,7 @@ class DiscountAbsolute
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
-            if ($multicurrency) return $obj->multicurrency_amount;
+            if ($multicurrency == 1) return $obj->multicurrency_amount;
 			else return $obj->amount;
         }
         else
@@ -688,7 +697,7 @@ class DiscountAbsolute
     {
         global $langs;
 
-        $result='';
+        $result = '';
         $link = '';
         $linkend = '';
         $label = '';
@@ -696,26 +705,26 @@ class DiscountAbsolute
         $ref = '';
 
         if ($option == 'invoice') {
-            $facid=! empty($this->discount_type)?$this->fk_invoice_supplier_source:$this->fk_facture_source;
-            $link=! empty($this->discount_type)?'/fourn/facture/card.php':'/compta/facture/card.php';
-            $label=$langs->trans("ShowSourceInvoice").': '.$this->ref_facture_source;
+            $facid = !empty($this->discount_type) ? $this->fk_invoice_supplier_source : $this->fk_facture_source;
+            $link = !empty($this->discount_type) ? '/fourn/facture/card.php' : '/compta/facture/card.php';
+            $label = $langs->trans("ShowSourceInvoice").': '.$this->ref_facture_source;
             $link = '<a href="'.DOL_URL_ROOT.$link.'?facid='.$facid.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $linkend='</a>';
-            $ref=! empty($this->discount_type)?$this->ref_invoice_supplier_source:$this->ref_facture_source;
-            $picto='bill';
+            $linkend = '</a>';
+            $ref = !empty($this->discount_type) ? $this->ref_invoice_supplier_source : $this->ref_facture_source;
+            $picto = 'bill';
         }
         if ($option == 'discount') {
-            $label=$langs->trans("Discount");
+            $label = $langs->trans("Discount");
             $link = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-            $linkend='</a>';
-            $ref=$langs->trans("Discount");
-            $picto='generic';
+            $linkend = '</a>';
+            $ref = $langs->trans("Discount");
+            $picto = 'generic';
         }
 
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-        if ($withpicto && $withpicto != 2) $result.=' ';
-        $result.=$link.$ref.$linkend;
+        if ($withpicto) $result .= ($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+        if ($withpicto && $withpicto != 2) $result .= ' ';
+        $result .= $link.$ref.$linkend;
         return $result;
     }
 

@@ -95,7 +95,7 @@ class BOM extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>60, 'notnull'=>-1,),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php:1:(finished IS NULL or finished <> 0)', 'label'=>'Product', 'enabled'=>1, 'visible'=>1, 'position'=>35, 'notnull'=>1, 'index'=>1, 'help'=>'ProductBOMHelp'),
 	    'qty' => array('type'=>'real', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'default'=>1, 'position'=>55, 'notnull'=>1, 'isameasure'=>'1', 'css'=>'maxwidth75imp'),
-		'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLoss'),
+		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
 		'duration' => array('type'=>'duration', 'label'=>'EstimatedDuration', 'enabled'=>1, 'visible'=>-1, 'position'=>101, 'notnull'=>-1, 'css'=>'maxwidth50imp', 'help'=>'EstimatedDurationDesc'),
 		'fk_warehouse' => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label'=>'WarehouseForProduction', 'enabled'=>1, 'visible'=>-1, 'position'=>102),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>-2, 'position'=>161, 'notnull'=>-1,),
@@ -165,6 +165,16 @@ class BOM extends CommonObject
 	 * @var BOMLine[]     Array of subtable lines
 	 */
 	public $lines = array();
+
+	/**
+	 * @var int		Calculated cost for the BOM
+	 */
+	public $total_cost = 0;
+
+	/**
+	 * @var int		Calculated cost for 1 unit of the product in BOM
+	 */
+	public $unit_cost = 0;
 
 
 
@@ -324,6 +334,7 @@ class BOM extends CommonObject
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
+		$this->calculateCosts();
 		return $result;
 	}
 
@@ -561,7 +572,7 @@ class BOM extends CommonObject
 	    {
 	        $num = $this->ref;
 	    }
-	    $this->newref = $num;
+	    $this->newref = dol_sanitizeFileName($num);
 
 	    // Validate
 	    $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -747,7 +758,7 @@ class BOM extends CommonObject
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (isset($this->status)) {
-        	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
+        	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
         }
 
         $url = dol_buildpath('/bom/bom_card.php', 1).'?id='.$this->id;
@@ -968,7 +979,6 @@ class BOM extends CommonObject
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
@@ -990,6 +1000,41 @@ class BOM extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+	/**
+	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 *
+	 * @return void
+	 */
+	public function calculateCosts()
+	{
+		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$this->unit_cost = 0;
+		$this->total_cost = 0;
+
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$productFournisseur = new ProductFournisseur($this->db);
+
+		foreach ($this->lines as &$line) {
+			$tmpproduct = new Product($this->db);
+			$tmpproduct->fetch($line->fk_product);
+			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+			if (empty($line->unit_cost)) {
+				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)
+				{
+					$line->unit_cost = $productFournisseur->fourn_unitprice;
+				}
+			}
+
+			$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
+			$this->total_cost += $line->total_cost;
+		}
+
+		$this->total_cost = price2num($this->total_cost, 'MT');
+		if ($this->qty) {
+			$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+		}
 	}
 }
 
@@ -1056,7 +1101,7 @@ class BOMLine extends CommonObjectLine
 		'qty' => array('type'=>'double(24,8)', 'label'=>'Quantity', 'enabled'=>1, 'visible'=>1, 'position'=>100, 'notnull'=>1, 'isameasure'=>'1',),
 		'qty_frozen' => array('type'=>'smallint', 'label'=>'QuantityFrozen', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>105, 'css'=>'maxwidth50imp', 'help'=>'QuantityConsumedInvariable'),
 	    'disable_stock_change' => array('type'=>'smallint', 'label'=>'DisableStockChange', 'enabled'=>1, 'visible'=>1, 'default'=>0, 'position'=>108, 'css'=>'maxwidth50imp', 'help'=>'DisableStockChangeHelp'),
-	    //'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
+	    'efficiency' => array('type'=>'double(24,8)', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'position'=>110, 'notnull'=>1, 'css'=>'maxwidth50imp', 'help'=>'ValueOfEfficiencyConsumedMeans'),
 		'position' => array('type'=>'integer', 'label'=>'Rank', 'enabled'=>1, 'visible'=>0, 'default'=>0, 'position'=>200, 'notnull'=>1,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>1000, 'notnull'=>-1,),
 	);
@@ -1071,6 +1116,16 @@ class BOMLine extends CommonObjectLine
 	public $position;
 	public $import_key;
 	// END MODULEBUILDER PROPERTIES
+
+	/**
+	 * @var int		Calculated cost for the BOM line
+	 */
+	public $total_cost = 0;
+
+	/**
+	 * @var int		Line unit cost based on product cost price or pmp
+	 */
+	public $unit_cost = 0;
 
 
 	/**

@@ -202,7 +202,7 @@ if (empty($reshook))
 		{
 			// Creation user
 			$nuser = new User($db);
-			$result = $nuser->create_from_member($object, GETPOST('login'));
+			$result = $nuser->create_from_member($object, GETPOST('login', 'alphanohtml'));
 
 			if ($result < 0)
 			{
@@ -1747,7 +1747,7 @@ else
 		{
 			print '<tr><td>'.$langs->trans("Categories").'</td>';
 			print '<td colspan="2">';
-			print $form->showCategories($object->id, 'member', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 			print '</td></tr>';
 		}
 

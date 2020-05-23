@@ -48,31 +48,32 @@ if ($user->socid > 0)
 $result = restrictedArea($user, 'societe', $id, '&societe');
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield=$conf->global->MAIN_DOC_SORT_FIELD; }
-if (! empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder=$conf->global->MAIN_DOC_SORT_ORDER; }
+if (!empty($conf->global->MAIN_DOC_SORT_FIELD)) { $sortfield = $conf->global->MAIN_DOC_SORT_FIELD; }
+if (!empty($conf->global->MAIN_DOC_SORT_ORDER)) { $sortorder = $conf->global->MAIN_DOC_SORT_ORDER; }
 
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="position_name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "position_name";
 
 $object = new Societe($db);
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$result = $object->fetch($id, $ref);
 
-	$upload_dir = $conf->societe->multidir_output[$object->entity] . "/" . $object->id ;
-	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
+	$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
+	$courrier_dir = $conf->societe->multidir_output[$object->entity]."/courrier/".get_exdir($object->id, 0, 0, 0, $object, 'thirdparty');
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartydocument','globalcard'));
+$hookmanager->initHooks(array('thirdpartydocument', 'globalcard'));
 
 
 
@@ -99,25 +100,25 @@ if ($object->id)
 	/*
 	 * Show tabs
 	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
+	if (!empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	$form=new Form($db);
+	$form = new Form($db);
 
 	dol_fiche_head($head, 'document', $langs->trans("ThirdParty"), -1, 'company');
 
 
 	// Build file list
-	$filearray=dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC), 1);
-	$totalsize=0;
-	foreach($filearray as $key => $file)
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$totalsize = 0;
+	foreach ($filearray as $key => $file)
 	{
-		$totalsize+=$file['size'];
+		$totalsize += $file['size'];
 	}
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 

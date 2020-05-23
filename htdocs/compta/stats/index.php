@@ -193,7 +193,7 @@ elseif ($modecompta == "BOOKKEEPING")
 {
 	$sql = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
-	$sql .= " WHERE b.entity = ".$conf->entity;	// In module double party accounting, we never share entities
+	$sql .= " WHERE b.entity = ".$conf->entity; // In module double party accounting, we never share entities
 	$sql .= " AND aj.entity = ".$conf->entity;
 	$sql .= " AND b.code_journal = aj.code AND aj.nature = 2"; // @todo currently count amount in sale journal, but we need to define a category group for turnover
 }
@@ -418,7 +418,7 @@ for ($mois = 1 + $nb_mois_decalage; $mois <= 12 + $nb_mois_decalage; $mois++)
  print "<td>".dol_print_date(dol_mktime(12,0,0,$mois,1,2000),"%B")."</td>";
  for ($annee = $year_start ; $annee <= $year_end ; $annee++)
  {
- $casenow = dol_print_date(mktime(),"%Y-%m");
+ $casenow = dol_print_date(dol_now(),"%Y-%m");
  $case = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee),"%Y-%m");
  $caseprev = dol_print_date(dol_mktime(1,1,1,$mois,1,$annee-1),"%Y-%m");
 

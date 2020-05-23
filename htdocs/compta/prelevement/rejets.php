@@ -35,49 +35,50 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
 // Get supervariables
-$page = GETPOST('page', 'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
-
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 /*
  * View
  */
 
 llxHeader('', $langs->trans("WithdrawsRefused"));
 
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-if ($sortorder == "") $sortorder="DESC";
-if ($sortfield == "") $sortfield="p.datec";
+if ($sortorder == "") $sortorder = "DESC";
+if ($sortfield == "") $sortfield = "p.datec";
 
 $rej = new RejetPrelevement($db, $user);
+$line = new LignePrelevement($db);
+
 $hookmanager->initHooks(array('withdrawalsreceiptsrejectedlist'));
-$ligne = new LignePrelevement($db, $user);
+
 
 /*
  * Liste des factures
  *
  */
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
-$sql.= " , s.rowid as socid, s.nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= " , ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE pr.fk_prelevement_lignes = pl.rowid";
-$sql.= " AND pl.fk_prelevement_bons = p.rowid";
-$sql.= " AND pl.fk_soc = s.rowid";
-$sql.= " AND p.entity = ".$conf->entity;
-if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= " ".$db->order($sortfield, $sortorder);
-$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
+$sql .= " , s.rowid as socid, s.nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE pr.fk_prelevement_lignes = pl.rowid";
+$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+$sql .= " AND pl.fk_soc = s.rowid";
+$sql .= " AND p.entity = ".$conf->entity;
+if ($socid) $sql .= " AND s.rowid = ".$socid;
+$sql .= " ".$db->order($sortfield, $sortorder);
+$sql .= " ".$db->plimit($conf->liste_limit + 1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -101,7 +102,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven"><td>';
-		print $ligne->LibStatut($obj->statut, 2).'&nbsp;';
+		print $line->LibStatut($obj->statut, 2).'&nbsp;';
 		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
 
 		print substr('000000'.$obj->rowid, -6)."</a></td>";

@@ -27,6 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
@@ -105,7 +106,7 @@ if (empty($reshook))
 			else
 			{
 				dol_syslog($object->error, LOG_DEBUG);
-				setEventMessages($langs->trans("CantRemoveProject"), null, 'errors');
+				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
 		}
 		if ($backtopage)
@@ -262,8 +263,8 @@ if (empty($reshook))
 			$object->socid        = GETPOST('socid', 'int');
 			$object->description  = GETPOST('description', 'none'); // Do not use 'alpha' here, we want field as it is
 			$object->public       = GETPOST('public', 'alpha');
-			$object->date_start   = (! GETPOST('projectstart')) ? '' : $date_start;
-			$object->date_end     = (! GETPOST('projectend')) ? '' : $date_end;
+			$object->date_start   = (!GETPOST('projectstart')) ? '' : $date_start;
+			$object->date_end     = (!GETPOST('projectend')) ? '' : $date_end;
 			if (GETPOSTISSET('opp_amount'))    $object->opp_amount   = price2num(GETPOST('opp_amount', 'alpha'));
 			if (GETPOSTISSET('budget_amount')) $object->budget_amount = price2num(GETPOST('budget_amount', 'alpha'));
 			if (GETPOSTISSET('opp_status'))    $object->opp_status   = $opp_status;
@@ -557,6 +558,19 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 		$htmltext = $langs->trans("ProjectFollowOpportunity");
 		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<script>';
+		print '$( document ).ready(function() {
+				jQuery("#usage_opportunity").change(function() {
+					if (jQuery("#usage_opportunity").prop("checked")) {
+						console.log("Show opportunities fields");
+						jQuery(".classuseopportunity").show();
+					} else {
+						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+						jQuery(".classuseopportunity").hide();
+					}
+				});
+			});';
+		print '</script>';
 		print '<br>';
 	}
 	if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -566,7 +580,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 		print '<br>';
 	}
-	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{
 		print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
 		$htmltext = $langs->trans("ProjectBillTimeDescription");
@@ -590,7 +604,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '</td><td class="maxwidthonsmartphone">';
 		$filteronlist = '';
 		if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-	   	$text = $form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
+	   	$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusx');
 		if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		{
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
@@ -631,33 +645,34 @@ if ($action == 'create' && $user->rights->projet->creer)
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
 		// Opportunity status
-		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status') ?GETPOST('opp_status') : $object->opp_status);
 		print '</tr>';
 
 		// Opportunity probability
-		print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOST('opp_percent') != '' ?GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
-		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOST('opp_percent') != '' ? '0' : '1').'">';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityProbability").'</td>';
+		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
+		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? '0' : '1').'">';
 		print '</td>';
 		print '</tr>';
 
 		// Opportunity amount
-		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOST('opp_amount') != '' ?GETPOST('opp_amount') : '').'"></td>';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityAmount").'</td>';
+		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : '').'"></td>';
 		print '</tr>';
 	}
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOST('budget_amount') != '' ?GETPOST('budget_amount') : '').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
 	print '</tr>';
 
 	// Description
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 	print '<td>';
-	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description", 'none'), 0, 1).'</textarea>';
+	$doleditor = new DolEditor('description', GETPOST("description", 'none'), '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor->Create();
 	print '</td></tr>';
 
 	if ($conf->categorie->enabled) {
@@ -665,7 +680,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 		$arrayselected = GETPOST('categories', 'array');
-		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -831,9 +846,22 @@ elseif ($object->id > 0)
 		print '<td>';
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
-			print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<script>';
+			print '$( document ).ready(function() {
+				jQuery("#usage_opportunity").change(function() {
+					if (jQuery("#usage_opportunity").prop("checked")) {
+						console.log("Show opportunities fields");
+						jQuery(".classuseopportunity").show();
+					} else {
+						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+						jQuery(".classuseopportunity").hide();
+					}
+				});
+			});';
+			print '</script>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -843,7 +871,7 @@ elseif ($object->id > 0)
 			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<input type="checkbox" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
@@ -882,8 +910,9 @@ elseif ($object->id > 0)
 
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
+			$classfortr = ($object->usage_opportunity ? '' : ' hideobject');
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
 			print '<td>';
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle');
 			print '<div id="divtocloseproject" class="inline-block valign" style="display: none;"> &nbsp; &nbsp; ';
@@ -894,15 +923,15 @@ elseif ($object->id > 0)
 			print '</tr>';
 
 		    // Opportunity probability
-		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent']) ?GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
             print '<span id="oldopppercent"></span>';
 		    print '</td>';
 		    print '</tr>';
 
 		    // Opportunity amount
-		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount']) ?GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ?price2num($object->opp_amount) : '')).'"></td>';
+		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
 		    print '</tr>';
 	    }
 
@@ -921,26 +950,27 @@ elseif ($object->id > 0)
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount']) ?GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ?price($object->budget_amount, 0, $langs, 1, 0) : '')).'"></td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'"></td>';
 		print '</tr>';
 
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
 		print '<td>';
-		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
+		$doleditor = new DolEditor('description', $object->description, '', 90, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+		$doleditor->Create();
 		print '</td></tr>';
 
 		// Tags-Categories
 		if ($conf->categorie->enabled)
 		{
-			print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
+			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_PROJECT);
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
 			print "</td></tr>";
 		}
 
@@ -1045,6 +1075,11 @@ elseif ($object->id > 0)
 	        }*/
 			if (strcmp($object->opp_amount, '')) print price($object->opp_amount, 0, $langs, 1, 0, -1, $conf->currency);
 			print '</td></tr>';
+
+            // Opportunity Weighted Amount
+            print '<tr><td>'.$langs->trans('OpportunityWeightedAmount').'</td><td>';
+            if (strcmp($object->opp_amount, '') && strcmp($object->opp_percent, '')) print price($object->opp_amount * $object->opp_percent / 100, 0, $langs, 1, 0, -1, $conf->currency);
+            print '</td></tr>';
 		}
 
 		// Date start - end
@@ -1083,7 +1118,7 @@ elseif ($object->id > 0)
 		// Categories
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-			print $form->showCategories($object->id, 'project', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 			print "</td></tr>";
 		}
 

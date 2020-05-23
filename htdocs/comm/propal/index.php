@@ -58,7 +58,7 @@ $help_url = "EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|
 
 llxHeader("", $langs->trans("ProspectionArea"), $help_url);
 
-print load_fiche_titre($langs->trans("ProspectionArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -82,7 +82,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
  * Statistics
  */
 
-$sql = "SELECT count(p.rowid), p.fk_statut";
+$sql = "SELECT count(p.rowid) as nb, p.fk_statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."propal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -101,23 +101,25 @@ if ($resql)
     $total = 0;
     $totalinprocess = 0;
     $dataseries = array();
+    $colorseries = array();
     $vals = array();
+
     // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
     while ($i < $num)
     {
-        $row = $db->fetch_row($resql);
-        if ($row)
+        $obj = $db->fetch_object($resql);
+        if ($obj)
         {
-            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-            {
-                $vals[$row[1]] = $row[0];
-                $totalinprocess += $row[0];
-            }
-            $total += $row[0];
+            $vals[$obj->status] = $obj->nb;
+            $totalinprocess += $obj->nb;
+
+            $total += $obj->nb;
         }
         $i++;
     }
     $db->free($resql);
+
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover centpercent">';
@@ -126,7 +128,13 @@ if ($resql)
     foreach ($listofstatus as $status)
     {
     	$dataseries[] = array($propalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-        if (!$conf->use_javascript_ajax)
+    	if ($status == Propal::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+    	if ($status == Propal::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+    	if ($status == Propal::STATUS_SIGNED) $colorseries[$status] = $badgeStatus4;
+    	if ($status == Propal::STATUS_NOTSIGNED) $colorseries[$status] = $badgeStatus9;
+    	if ($status == Propal::STATUS_BILLED) $colorseries[$status] = $badgeStatus6;
+
+        if (empty($conf->use_javascript_ajax))
         {
             print '<tr class="oddeven">';
             print '<td>'.$propalstatic->LibStatut($status, 0).'</td>';
@@ -141,10 +149,11 @@ if ($resql)
         include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
         $dolgraph = new DolGraph();
         $dolgraph->SetData($dataseries);
-        $dolgraph->setShowLegend(1);
+        $dolgraph->SetDataColor(array_values($colorseries));
+        $dolgraph->setShowLegend(2);
         $dolgraph->setShowPercent(1);
         $dolgraph->SetType(array('pie'));
-        $dolgraph->setWidth('100%');
+        $dolgraph->setHeight('200');
         $dolgraph->draw('idgraphthirdparties');
         print $dolgraph->show($total ? 0 : 1);
 
@@ -293,7 +302,8 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+
+			print '<td class="right">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -305,7 +315,7 @@ else dol_print_error($db);
 
 
 /*
- * Opened proposals
+ * Open proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 {
@@ -372,9 +382,10 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 				$companystatic->canvas = $obj->canvas;
 				print '<td class="left">'.$companystatic->getNomUrl(1, 'customer', 44).'</td>'."\n";
 
-				print '<td class="right">';
-				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+				print '<td class="right">'.dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
+
 				print '<td class="right">'.price($obj->total_ttc).'</td>';
+
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;

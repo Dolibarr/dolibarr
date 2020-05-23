@@ -33,9 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  */
 class box_factures_imp extends ModeleBoxes
 {
-    public $boxcode="oldestunpaidcustomerbills";
-    public $boximg="object_bill";
-    public $boxlabel="BoxOldestUnpaidCustomerBills";
+    public $boxcode = "oldestunpaidcustomerbills";
+    public $boximg = "object_bill";
+    public $boxlabel = "BoxOldestUnpaidCustomerBills";
     public $depends = array("facture");
 
 	/**
@@ -61,7 +61,7 @@ class box_factures_imp extends ModeleBoxes
 
 	    $this->db = $db;
 
-	    $this->hidden = ! ($user->rights->facture->lire);
+	    $this->hidden = !($user->rights->facture->lire);
 	}
 
 	/**
@@ -74,7 +74,7 @@ class box_factures_imp extends ModeleBoxes
 	{
 		global $conf, $user, $langs;
 
-		$this->max=$max;
+		$this->max = $max;
 
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -89,37 +89,37 @@ class box_factures_imp extends ModeleBoxes
 		if ($user->rights->facture->lire)
 		{
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email,";
-            $sql.= " s.code_client,";
-            $sql.= " s.logo,";
-			$sql.= " f.ref, f.date_lim_reglement as datelimite,";
-            $sql.= " f.type,";
-			$sql.= " f.amount, f.datef as df,";
-            $sql.= " f.total as total_ht,";
-            $sql.= " f.tva as total_tva,";
-            $sql.= " f.total_ttc,";
-			$sql.= " f.paye, f.fk_statut, f.rowid as facid";
-			$sql.= ", sum(pf.amount) as am";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= ", ".MAIN_DB_PREFIX."facture as f";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity IN (".getEntity('invoice').")";
-			$sql.= " AND f.paye = 0";
-			$sql.= " AND fk_statut = 1";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-			$sql.= " GROUP BY s.nom, s.rowid, s.email, s.code_client, s.logo, f.ref, f.date_lim_reglement,";
-			$sql.= " f.type, f.amount, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
+            $sql .= " s.code_client,";
+            $sql .= " s.logo,";
+			$sql .= " f.ref, f.date_lim_reglement as datelimite,";
+            $sql .= " f.type,";
+			$sql .= " f.datef as df,";
+            $sql .= " f.total as total_ht,";
+            $sql .= " f.tva as total_tva,";
+            $sql .= " f.total_ttc,";
+			$sql .= " f.paye, f.fk_statut, f.rowid as facid";
+			$sql .= ", sum(pf.amount) as am";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= ", ".MAIN_DB_PREFIX."facture as f";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
+			$sql .= " WHERE f.fk_soc = s.rowid";
+			$sql .= " AND f.entity IN (".getEntity('invoice').")";
+			$sql .= " AND f.paye = 0";
+			$sql .= " AND fk_statut = 1";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+			$sql .= " GROUP BY s.nom, s.rowid, s.email, s.code_client, s.logo, f.ref, f.date_lim_reglement,";
+			$sql .= " f.type, f.datef, f.total, f.tva, f.total_ttc, f.paye, f.fk_statut, f.rowid";
 			//$sql.= " ORDER BY f.datef DESC, f.ref DESC ";
-			$sql.= " ORDER BY datelimite ASC, f.ref ASC ";
-			$sql.= $this->db->plimit($max, 0);
+			$sql .= " ORDER BY datelimite ASC, f.ref ASC ";
+			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			if ($result)
 			{
 				$num = $this->db->num_rows($result);
-				$now=dol_now();
+				$now = dol_now();
 
 				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.strtolower($langs->trans('DateDue')).': %s)';
@@ -127,7 +127,7 @@ class box_factures_imp extends ModeleBoxes
 				while ($line < $num)
 				{
 					$objp = $this->db->fetch_object($result);
-					$datelimite=$this->db->jdate($objp->datelimite);
+					$datelimite = $this->db->jdate($objp->datelimite);
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->ref;
                     $facturestatic->type = $objp->type;
@@ -144,7 +144,7 @@ class box_factures_imp extends ModeleBoxes
                     $societestatic->code_client = $objp->code_client;
                     $societestatic->logo = $objp->logo;
 
-					$late='';
+					$late = '';
 					if ($facturestatic->hasDelay()) {
 						$late = img_warning(sprintf($l_due_date, dol_print_date($datelimite, 'day')));
 					}
@@ -180,7 +180,10 @@ class box_factures_imp extends ModeleBoxes
 					$line++;
 				}
 
-				if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoUnpaidCustomerBills"));
+				if ($num == 0) $this->info_box_contents[$line][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoUnpaidCustomerBills")
+				);
 
 				$this->db->free($result);
 			}

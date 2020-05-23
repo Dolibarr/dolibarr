@@ -40,37 +40,37 @@ if (!empty($conf->projet->enabled))
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy", "categories"));
 
 // Get parameters
-$id			= GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
 $cancel		= GETPOST('cancel', 'aZ09');
-$backtopage	= GETPOST('backtopage', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$accountid =            GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
-$label =                GETPOST("label", "alpha");
-$sens =                 GETPOST("sens", "int");
-$amount =               price2num(GETPOST("amount", "alpha"));
-$paymenttype =          GETPOST("paymenttype", "int");
-$accountancy_code =     GETPOST("accountancy_code", "alpha");
-$subledger_account =    GETPOST("subledger_account", "alpha");
-$projectid =            (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
+$accountid = GETPOST("accountid") > 0 ? GETPOST("accountid", "int") : 0;
+$label = GETPOST("label", "alpha");
+$sens = GETPOST("sens", "int");
+$amount = price2num(GETPOST("amount", "alpha"));
+$paymenttype = GETPOST("paymenttype", "int");
+$accountancy_code = GETPOST("accountancy_code", "alpha");
+$subledger_account = GETPOST("subledger_account", "alpha");
+$projectid = (GETPOST('projectid', 'int') ? GETPOST('projectid', 'int') : GETPOST('fk_project', 'int'));
 
 // Security check
 $socid = GETPOST("socid", "int");
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'banque', '', '', '');
 
 $object = new PaymentVarious($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('variouscard','globalcard'));
+$hookmanager->initHooks(array('variouscard', 'globalcard'));
 
 
 /**
  * Actions
  */
 
-$parameters=array();
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -277,7 +277,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'invoicing');
+	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'object_payment');
 
 	dol_fiche_head('', '');
 
@@ -429,44 +429,44 @@ if ($id)
 {
 	$alreadyaccounted = $object->getVentilExportCompta();
 
-	$head=various_payment_prepare_head($object);
+	$head = various_payment_prepare_head($object);
 
 	dol_fiche_head($head, 'card', $langs->trans("VariousPayment"), -1, $object->picto);
 
-	$morehtmlref='<div class="refidno">';
+	$morehtmlref = '<div class="refidno">';
 	// Project
-	if (! empty($conf->projet->enabled))
+	if (!empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
-		$morehtmlref.=$langs->trans('Project') . ' ';
+		$morehtmlref .= $langs->trans('Project').' ';
 		if ($user->rights->banque->modifier)
 		{
 			if ($action != 'classify') {
-				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&amp;id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 			}
 			if ($action == 'classify') {
 				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-				$morehtmlref.='<input type="hidden" name="action" value="classin">';
-				$morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref.=$formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-				$morehtmlref.='</form>';
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects(0, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
 			}
 		} else {
-			if (! empty($object->fk_project)) {
+			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref.=$proj->getNomUrl(1);
+				$morehtmlref .= $proj->getNomUrl(1);
 			} else {
-				$morehtmlref.='';
+				$morehtmlref .= '';
 			}
 		}
 	}
-	$morehtmlref.='</div>';
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$morehtmlref .= '</div>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', $morehtmlright);
 

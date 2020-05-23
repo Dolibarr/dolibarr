@@ -49,7 +49,7 @@ $typeid = GETPOST('typeid', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -81,33 +81,33 @@ if ($rowid)
     $result = $object->fetch($rowid);
 
     // Define variables to know what current user can do on users
-    $canadduser=($user->admin || $user->rights->user->user->creer);
+    $canadduser = ($user->admin || $user->rights->user->user->creer);
     // Define variables to know what current user can do on properties of user linked to edited member
     if ($object->user_id)
     {
         // $user is the user editing, $object->user_id is the user's id linked to the edited member
-        $caneditfielduser=( (($user->id == $object->user_id) && $user->rights->user->self->creer)
-        || (($user->id != $object->user_id) && $user->rights->user->user->creer) );
-        $caneditpassworduser=( (($user->id == $object->user_id) && $user->rights->user->self->password)
-        || (($user->id != $object->user_id) && $user->rights->user->user->password) );
+        $caneditfielduser = ((($user->id == $object->user_id) && $user->rights->user->self->creer)
+        || (($user->id != $object->user_id) && $user->rights->user->user->creer));
+        $caneditpassworduser = ((($user->id == $object->user_id) && $user->rights->user->self->password)
+        || (($user->id != $object->user_id) && $user->rights->user->user->password));
     }
 }
 
 // Define variables to know what current user can do on members
-$canaddmember=$user->rights->adherent->creer;
+$canaddmember = $user->rights->adherent->creer;
 // Define variables to know what current user can do on properties of a member
 if ($rowid)
 {
-    $caneditfieldmember=$user->rights->adherent->creer;
+    $caneditfieldmember = $user->rights->adherent->creer;
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('subscription'));
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 
 /*
@@ -531,7 +531,7 @@ if ($rowid > 0)
 	{
 		print '<tr><td>'.$langs->trans("Categories").'</td>';
 		print '<td colspan="2">';
-		print $form->showCategories($object->id, 'member', 1);
+		print $form->showCategories($object->id, Categorie::TYPE_MEMBER, 1);
 		print '</td></tr>';
 	}
 

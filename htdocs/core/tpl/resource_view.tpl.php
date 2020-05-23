@@ -1,14 +1,14 @@
 <!-- BEGIN TEMPLATE resource_view.tpl.php -->
 <?php
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$form= new Form($db);
+$form = new Form($db);
 
 
 print '<div class="tagtable centpercent noborder allwidth">';
@@ -28,7 +28,7 @@ print '<input type="hidden" name="id" value="'.$element_id.'" />';
 print '<input type="hidden" name="action" value="update_linked_resource" />';
 print '<input type="hidden" name="resource_type" value="'.$resource_type.'" />';
 
-if( (array) $linked_resources && count($linked_resources) > 0)
+if ((array) $linked_resources && count($linked_resources) > 0)
 {
 	foreach ($linked_resources as $linked_resource)
 	{
@@ -45,18 +45,18 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 			print '<div class="tagtd">'.$object_resource->getNomUrl(1).'</div>';
 			print '<div class="tagtd">'.$object_resource->type_label.'</div>';
-			print '<div class="tagtd center">'.$form->selectyesno('busy', $linked_resource['busy']?1:0, 1).'</div>';
-			print '<div class="tagtd center">'.$form->selectyesno('mandatory', $linked_resource['mandatory']?1:0, 1).'</div>';
+			print '<div class="tagtd center">'.$form->selectyesno('busy', $linked_resource['busy'] ? 1 : 0, 1).'</div>';
+			print '<div class="tagtd center">'.$form->selectyesno('mandatory', $linked_resource['mandatory'] ? 1 : 0, 1).'</div>';
 			print '<div class="tagtd right"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
 			print '</div>';
 		}
 		else
 		{
-			$class='';
+			$class = '';
 			if ($linked_resource['rowid'] == GETPOST('lineid'))
-				$class='highlight';
+				$class = 'highlight';
 
-			print '<div class="tagtr oddeven'.($class?' '.$class:'').'">';
+			print '<div class="tagtr oddeven'.($class ? ' '.$class : '').'">';
 
 			print '<div class="tagtd">';
 			print $object_resource->getNomUrl(1);

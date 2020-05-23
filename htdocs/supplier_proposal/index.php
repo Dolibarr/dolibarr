@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/comm/propal/index.php
- *	\ingroup    propal
- *	\brief      Home page of proposal area
+ *	\file       htdocs/supplier_proposal/index.php
+ *	\ingroup    supplier_proposal
+ *	\brief      Home page of vendor proposal area
  */
 
 require '../main.inc.php';
@@ -58,14 +58,12 @@ $help_url = "EN:Module_Ask_Price_Supplier|FR:Module_Demande_de_prix_fournisseur"
 
 llxHeader("", $langs->trans("SupplierProposalArea"), $help_url);
 
-print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("SupplierProposalArea"), '', 'supplier_proposal');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-/*
- * Search form
- */
+// Search form
 
 if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
@@ -81,9 +79,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 }
 
 
-/*
- * Statistics
- */
+// Statistics
 
 $sql = "SELECT count(p.rowid), p.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -104,6 +100,7 @@ if ($resql)
     $total = 0;
     $totalinprocess = 0;
     $dataseries = array();
+    $colorseries = array();
     $vals = array();
     // -1=Canceled, 0=Draft, 1=Validated, (2=Accepted/On process not managed for customer orders), 3=Closed (Sent/Received, billed or not)
     while ($i < $num)
@@ -122,20 +119,28 @@ if ($resql)
     }
     $db->free($resql);
 
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
     $listofstatus = array(0, 1, 2, 3, 4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[] = array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
-        if (!$conf->use_javascript_ajax)
-        {
-            print '<tr class="oddeven">';
-            print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
-            print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
-            print "</tr>\n";
-        }
+    	$dataseries[] = array($supplier_proposalstatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
+    	if ($status == SupplierProposal::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+    	if ($status == SupplierProposal::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+    	if ($status == SupplierProposal::STATUS_SIGNED) $colorseries[$status] = $badgeStatus4;
+    	if ($status == SupplierProposal::STATUS_NOTSIGNED) $colorseries[$status] = $badgeStatus9;
+    	if ($status == SupplierProposal::STATUS_CLOSE) $colorseries[$status] = $badgeStatus6;
+
+    	if (empty($conf->use_javascript_ajax))
+    	{
+    		print '<tr class="oddeven">';
+    		print '<td>'.$supplier_proposalstatic->LibStatut($status, 0).'</td>';
+    		print '<td class="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status]) ? $vals[$status] : 0).'</a></td>';
+    		print "</tr>\n";
+    	}
     }
     if ($conf->use_javascript_ajax)
     {
@@ -144,10 +149,11 @@ if ($resql)
         include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
         $dolgraph = new DolGraph();
         $dolgraph->SetData($dataseries);
-        $dolgraph->setShowLegend(1);
+        $dolgraph->SetDataColor(array_values($colorseries));
+        $dolgraph->setShowLegend(2);
         $dolgraph->setShowPercent(1);
         $dolgraph->SetType(array('pie'));
-        $dolgraph->setWidth('100%');
+        $dolgraph->setHeight('200');
         $dolgraph->draw('idgraphstatus');
         print $dolgraph->show($total ? 0 : 1);
 
@@ -282,7 +288,7 @@ if ($resql)
 			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 
 			print '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
-			print '<td class="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 5).'</td>';
+			print '<td class="right">'.$supplier_proposalstatic->LibStatut($obj->fk_statut, 3).'</td>';
 			print '</tr>';
 			$i++;
 		}

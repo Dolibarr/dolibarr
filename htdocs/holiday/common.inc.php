@@ -24,8 +24,8 @@
  */
 
 require_once realpath(__DIR__).'/../main.inc.php';
-if (! class_exists('Holiday')) {
-	require_once DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
+if (!class_exists('Holiday')) {
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
 
 // Load translation files required by the page

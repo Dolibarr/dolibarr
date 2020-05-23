@@ -21,7 +21,7 @@
  * \brief       This file is a CRUD class file for Hook (Create/Read/Update/Delete)
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  * Class for Hook
@@ -288,24 +288,24 @@ class Hook extends CommonObject
         $this->db = $db;
 
         if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
-            $this->fields['rowid']['visible']=0;
+            $this->fields['rowid']['visible'] = 0;
         }
         if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) {
-            $this->fields['entity']['enabled']=0;
+            $this->fields['entity']['enabled'] = 0;
         }
 
         // Unset fields that are disabled
-        foreach($this->fields as $key => $val) {
+        foreach ($this->fields as $key => $val) {
             if (isset($val['enabled']) && empty($val['enabled'])) {
                 unset($this->fields[$key]);
             }
         }
 
         // Translate some data of arrayofkeyval
-        foreach($this->fields as $key => $val) {
+        foreach ($this->fields as $key => $val) {
             if (is_array($this->fields['status']['arrayofkeyval'])) {
-                foreach($this->fields['status']['arrayofkeyval'] as $key2 => $val2) {
-                    $this->fields['status']['arrayofkeyval'][$key2]=$langs->trans($val2);
+                foreach ($this->fields['status']['arrayofkeyval'] as $key2 => $val2) {
+                    $this->fields['status']['arrayofkeyval'][$key2] = $langs->trans($val2);
                 }
             }
         }
@@ -355,9 +355,9 @@ class Hook extends CommonObject
         // Clear extrafields that are unique
         if (is_array($object->array_options) && count($object->array_options) > 0) {
             $extrafields->fetch_name_optionals_label($this->element);
-            foreach($object->array_options as $key => $option) {
+            foreach ($object->array_options as $key => $option) {
                 $shortkey = preg_replace('/options_/', '', $key);
-                if (! empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
+                if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey])) {
                     // var_dump($key);
                     // var_dump($clonedObj->array_options[$key]);
                     // exit;
@@ -397,7 +397,7 @@ class Hook extends CommonObject
     public function fetch($id, $ref = null)
     {
         $result = $this->fetchCommon($id, $ref);
-        if ($result > 0 && ! empty($this->table_element_line)) {
+        if ($result > 0 && !empty($this->table_element_line)) {
             $this->fetchLines();
         }
         return $result;
@@ -434,37 +434,37 @@ class Hook extends CommonObject
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 
-        $records=array();
+        $records = array();
 
         $sql = 'SELECT';
         $sql .= ' t.rowid';
         // TODO Get all fields
-        $sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
         $sql .= ' WHERE t.entity = '.$conf->entity;
         // Manage filter
         $sqlwhere = array();
         if (count($filter) > 0) {
             foreach ($filter as $key => $value) {
-                if ($key=='t.rowid') {
-                    $sqlwhere[] = $key . '='. $value;
+                if ($key == 't.rowid') {
+                    $sqlwhere[] = $key.'='.$value;
                 } elseif (strpos($key, 'date') !== false) {
                     $sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-                } elseif ($key=='customsql') {
+                } elseif ($key == 'customsql') {
                     $sqlwhere[] = $value;
                 } else {
-                    $sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+                    $sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
                 }
             }
         }
         if (count($sqlwhere) > 0) {
-            $sql .= ' AND (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+            $sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
         }
 
         if (!empty($sortfield)) {
             $sql .= $this->db->order($sortfield, $sortorder);
         }
         if (!empty($limit)) {
-            $sql .=  ' ' . $this->db->plimit($limit, $offset);
+            $sql .= ' '.$this->db->plimit($limit, $offset);
         }
 
         $resql = $this->db->query($sql);
@@ -484,8 +484,8 @@ class Hook extends CommonObject
 
             return $records;
         } else {
-            $this->errors[] = 'Error ' . $this->db->lasterror();
-            dol_syslog(__METHOD__ . ' ' . join(',', $this->errors), LOG_ERR);
+            $this->errors[] = 'Error '.$this->db->lasterror();
+            dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 
             return -1;
         }
@@ -532,38 +532,38 @@ class Hook extends CommonObject
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
-        if (! empty($conf->dol_no_mouse_hover)) {
+        if (!empty($conf->dol_no_mouse_hover)) {
             // Force disable tooltips
-            $notooltip=1;
+            $notooltip = 1;
         }
 
         $result = '';
 
-        $label = '<u>' . $langs->trans("Hook") . '</u>';
-        $label.= '<br>';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        $label = '<u>'.$langs->trans("Hook").'</u>';
+        $label .= '<br>';
+        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
         $url = dol_buildpath('/zapier/hook_card.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink') {
             // Add param to save lastsearch_values or not
-            $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+            $add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
             if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
-                $add_save_lastsearch_values=1;
+                $add_save_lastsearch_values = 1;
             }
             if ($add_save_lastsearch_values) {
-                $url.='&save_lastsearch_values=1';
+                $url .= '&save_lastsearch_values=1';
             }
         }
 
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip)) {
-            if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
-                $label=$langs->trans("ShowMyObject");
-                $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+            if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+                $label = $langs->trans("ShowMyObject");
+                $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
-            $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
-            $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+            $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+            $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 
             /*
              $hookmanager->initHooks(array('hookdao'));
@@ -572,19 +572,19 @@ class Hook extends CommonObject
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
         } else {
-            $linkclose = ($morecss?' class="'.$morecss.'"':'');
+            $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
         }
 
         $linkstart = '<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
-        $linkend='</a>';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
 
         $result .= $linkstart;
         if ($withpicto) {
-            $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+            $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         }
         if ($withpicto != 2) {
-            $result.= $this->ref;
+            $result .= $this->ref;
         }
         $result .= $linkend;
         //if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
@@ -660,10 +660,10 @@ class Hook extends CommonObject
     public function info($id)
     {
         $sql = 'SELECT rowid, date_creation as datec, tms as datem,';
-        $sql.= ' fk_user_creat, fk_user_modif';
-        $sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
-        $sql.= ' WHERE t.rowid = '.$id;
-        $result=$this->db->query($sql);
+        $sql .= ' fk_user_creat, fk_user_modif';
+        $sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+        $sql .= ' WHERE t.rowid = '.$id;
+        $result = $this->db->query($sql);
         if ($result) {
             if ($this->db->num_rows($result)) {
                 $obj = $this->db->fetch_object($result);
@@ -671,7 +671,7 @@ class Hook extends CommonObject
                 if ($obj->fk_user_author) {
                     $cuser = new User($this->db);
                     $cuser->fetch($obj->fk_user_author);
-                    $this->user_creation   = $cuser;
+                    $this->user_creation = $cuser;
                 }
 
                 if ($obj->fk_user_valid) {
@@ -683,7 +683,7 @@ class Hook extends CommonObject
                 if ($obj->fk_user_cloture) {
                     $cluser = new User($this->db);
                     $cluser->fetch($obj->fk_user_cloture);
-                    $this->user_cloture   = $cluser;
+                    $this->user_cloture = $cluser;
                 }
 
                 $this->date_creation = $this->db->jdate($obj->datec);
@@ -715,7 +715,6 @@ class Hook extends CommonObject
      *
      * @return  int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
      */
-    //public function doScheduledJob($param1, $param2, ...)
     public function doScheduledJob()
     {
         global $conf, $langs;
@@ -724,7 +723,7 @@ class Hook extends CommonObject
 
         $error = 0;
         $this->output = '';
-        $this->error='';
+        $this->error = '';
 
         dol_syslog(__METHOD__, LOG_DEBUG);
 

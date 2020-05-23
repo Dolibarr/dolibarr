@@ -77,7 +77,7 @@ if ((isset($_GET["type"]) && $_GET["type"] == 1) || empty($conf->product->enable
 llxHeader("", $langs->trans("ProductsAndServices"), $helpurl);
 
 $linkback = "";
-print load_fiche_titre($transAreaType, $linkback, 'products');
+print load_fiche_titre($transAreaType, $linkback, 'product');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -101,7 +101,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     	foreach ($listofsearchfields as $key => $value)
     	{
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
+    		print '<tr class="oddeven">';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
     		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
     		print '</tr>';
@@ -148,8 +148,8 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 	{
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-		print '<tr><td class="center" colspan="2">';
+		print '<tr class="liste_titre"><th>'.$langs->trans("Statistics").'</th></tr>';
+		print '<tr><td class="center nopaddingleftimp nopaddingrightimp">';
 
 		$SommeA = $prodser[0]['sell'];
 		$SommeB = $prodser[0]['buy'];
@@ -174,16 +174,16 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 		{
 			$dataseries[] = array($langs->trans("ServicesOnSale"), round($SommeD));
 			$dataseries[] = array($langs->trans("ServicesOnPurchase"), round($SommeE));
-			$dataseries[] = array($langs->trans("ServicesNotOnSell"), round($SommeF));
+			$dataseries[] = array(dol_trunc($langs->trans("ServicesNotOnSell"), 24), round($SommeF));
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
-		$dolgraph->setShowLegend(1);
+		$dolgraph->setShowLegend(2);
 		$dolgraph->setShowPercent(0);
 		$dolgraph->SetType(array('pie'));
-		$dolgraph->setWidth('100%');
+		$dolgraph->setHeight('200');
 		$dolgraph->draw('idgraphstatus');
 		print $dolgraph->show($total ? 0 : 1);
 
@@ -201,7 +201,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr '.$bc[0].'><td class="center" colspan="2">';
+	print '<tr class="oddeven"><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
@@ -241,10 +241,10 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
+			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
 		}
@@ -413,7 +413,7 @@ llxFooter();
 $db->close();
 
 
-/*
+/**
  *  Print html activity for product type
  *
  *  @param      int $product_type   Type of product
@@ -422,7 +422,6 @@ $db->close();
 function activitytrim($product_type)
 {
 	global $conf, $langs, $db;
-	global $bc;
 
 	// We display the last 3 years
 	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));

@@ -34,7 +34,7 @@ function payment_prepare_head(Paiement $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Payment");
 	$head[$h][2] = 'payment';
 	$h++;
 
@@ -69,7 +69,7 @@ function payment_supplier_prepare_head(Paiement $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Payment");
 	$head[$h][2] = 'payment';
 	$h++;
 
@@ -99,22 +99,22 @@ function getValidOnlinePaymentMethods($paymentmethod = '')
 {
 	global $conf, $langs;
 
-	$validpaymentmethod=array();
+	$validpaymentmethod = array();
 
-	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
+	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && !empty($conf->paypal->enabled))
 	{
 		$langs->load("paypal");
-		$validpaymentmethod['paypal']='valid';
+		$validpaymentmethod['paypal'] = 'valid';
 	}
-	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
+	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && !empty($conf->paybox->enabled))
 	{
 		$langs->load("paybox");
-		$validpaymentmethod['paybox']='valid';
+		$validpaymentmethod['paybox'] = 'valid';
 	}
-	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
+	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && !empty($conf->stripe->enabled))
 	{
 		$langs->load("stripe");
-		$validpaymentmethod['stripe']='valid';
+		$validpaymentmethod['stripe'] = 'valid';
 	}
 	// TODO Add trigger
 
@@ -173,107 +173,107 @@ function getOnlinePaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
 
 	if ($type == 'free')
 	{
-	    $out=$urltouse.'/public/payment/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
-		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+	    $out = $urltouse.'/public/payment/newpayment.php?amount='.($mode ? '<font color="#666666">' : '').$amount.($mode ? '</font>' : '').'&tag='.($mode ? '<font color="#666666">' : '').$freetag.($mode ? '</font>' : '');
+		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
-			else $out.='&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			else $out .= '&securekey='.dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 		}
 		//if ($mode) $out.='&noidempotency=1';
 	}
 	elseif ($type == 'order')
 	{
-	    $out=$urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode?'<font color="#666666">':'');
-		if ($mode == 1) $out.='order_ref';
-		if ($mode == 0) $out.=urlencode($ref);
-		$out.=($mode?'</font>':'');
-		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+	    $out = $urltouse.'/public/payment/newpayment.php?source=order&ref='.($mode ? '<font color="#666666">' : '');
+		if ($mode == 1) $out .= 'order_ref';
+		if ($mode == 0) $out .= urlencode($ref);
+		$out .= ($mode ? '</font>' : '');
+		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 			else
 			{
-				$out.='&securekey='.($mode?'<font color="#666666">':'');
-				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + order_ref)";
-				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
-				$out.=($mode?'</font>':'');
+				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				if ($mode == 1) $out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + order_ref)";
+				if ($mode == 0) $out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+				$out .= ($mode ? '</font>' : '');
 			}
 		}
 	}
 	elseif ($type == 'invoice')
 	{
-	    $out=$urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode?'<font color="#666666">':'');
-		if ($mode == 1) $out.='invoice_ref';
-		if ($mode == 0) $out.=urlencode($ref);
-		$out.=($mode?'</font>':'');
-		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+	    $out = $urltouse.'/public/payment/newpayment.php?source=invoice&ref='.($mode ? '<font color="#666666">' : '');
+		if ($mode == 1) $out .= 'invoice_ref';
+		if ($mode == 0) $out .= urlencode($ref);
+		$out .= ($mode ? '</font>' : '');
+		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 			else
 			{
-				$out.='&securekey='.($mode?'<font color="#666666">':'');
-				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
-				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
-				$out.=($mode?'</font>':'');
+				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				if ($mode == 1) $out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
+				if ($mode == 0) $out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+				$out .= ($mode ? '</font>' : '');
 			}
 		}
 	}
 	elseif ($type == 'contractline')
 	{
-	    $out=$urltouse.'/public/payment/newpayment.php?source=contractline&ref='.($mode?'<font color="#666666">':'');
-		if ($mode == 1) $out.='contractline_ref';
-		if ($mode == 0) $out.=urlencode($ref);
-		$out.=($mode?'</font>':'');
-		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+	    $out = $urltouse.'/public/payment/newpayment.php?source=contractline&ref='.($mode ? '<font color="#666666">' : '');
+		if ($mode == 1) $out .= 'contractline_ref';
+		if ($mode == 0) $out .= urlencode($ref);
+		$out .= ($mode ? '</font>' : '');
+		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 			else
 			{
-				$out.='&securekey='.($mode?'<font color="#666666">':'');
-				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
-				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
-				$out.=($mode?'</font>':'');
+				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				if ($mode == 1) $out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
+				if ($mode == 0) $out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+				$out .= ($mode ? '</font>' : '');
 			}
 		}
 	}
 	elseif ($type == 'member' || $type == 'membersubscription')
 	{
-	    $out=$urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
-		if ($mode == 1) $out.='member_ref';
-		if ($mode == 0) $out.=urlencode($ref);
-		$out.=($mode?'</font>':'');
-		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+	    $out = $urltouse.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode ? '<font color="#666666">' : '');
+		if ($mode == 1) $out .= 'member_ref';
+		if ($mode == 0) $out .= urlencode($ref);
+		$out .= ($mode ? '</font>' : '');
+		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 			else
 			{
-				$out.='&securekey='.($mode?'<font color="#666666">':'');
-				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + member_ref)";
-				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
-				$out.=($mode?'</font>':'');
+				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				if ($mode == 1) $out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + member_ref)";
+				if ($mode == 0) $out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+				$out .= ($mode ? '</font>' : '');
 			}
 		}
 	}
 	if ($type == 'donation')
 	{
-	    $out=$urltouse.'/public/payment/newpayment.php?source=donation&ref='.($mode?'<font color="#666666">':'');
-		if ($mode == 1) $out.='donation_ref';
-		if ($mode == 0) $out.=urlencode($ref);
-		$out.=($mode?'</font>':'');
-		if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
+	    $out = $urltouse.'/public/payment/newpayment.php?source=donation&ref='.($mode ? '<font color="#666666">' : '');
+		if ($mode == 1) $out .= 'donation_ref';
+		if ($mode == 0) $out .= urlencode($ref);
+		$out .= ($mode ? '</font>' : '');
+		if (!empty($conf->global->PAYMENT_SECURITY_TOKEN))
 		{
-			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out.='&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
+			if (empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYMENT_SECURITY_TOKEN;
 			else
 			{
-				$out.='&securekey='.($mode?'<font color="#666666">':'');
-				if ($mode == 1) $out.="hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + donation_ref)";
-				if ($mode == 0) $out.= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . $type . $ref, 2);
-				$out.=($mode?'</font>':'');
+				$out .= '&securekey='.($mode ? '<font color="#666666">' : '');
+				if ($mode == 1) $out .= "hash('".$conf->global->PAYMENT_SECURITY_TOKEN."' + '".$type."' + donation_ref)";
+				if ($mode == 0) $out .= dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.$type.$ref, 2);
+				$out .= ($mode ? '</font>' : '');
 			}
 		}
 	}
 
 	// For multicompany
-	if (! empty($out) && ! empty($conf->multicompany->enabled)) $out.="&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+	if (!empty($out) && !empty($conf->multicompany->enabled)) $out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 
 	return $out;
 }

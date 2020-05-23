@@ -122,8 +122,8 @@ if ($action == 'validatehistory') {
 	// Customer Invoice lines (must be same request than into page list.php for manual binding)
 	$sql = "SELECT f.rowid as facid, f.ref as ref, f.datef, f.type as ftype,";
 	$sql .= " l.rowid, l.fk_product, l.description, l.total_ht, l.fk_code_ventilation, l.product_type as type_l, l.tva_tx as tva_tx_line, l.vat_src_code,";
-	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.accountancy_code_sell as code_sell, p.tva_tx as tva_tx_prod,";
-	$sql .= " p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
+	$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, p.tva_tx as tva_tx_prod,";
+	$sql .= " p.accountancy_code_sell as code_sell, p.accountancy_code_sell_intra as code_sell_intra, p.accountancy_code_sell_export as code_sell_export,";
 	$sql .= " aa.rowid as aarowid, aa2.rowid as aarowid_intra, aa3.rowid as aarowid_export,";
 	$sql .= " co.code as country_code, co.label as country_label,";
 	$sql .= " s.tva_intra";
@@ -154,14 +154,22 @@ if ($action == 'validatehistory') {
 
 			$isBuyerInEEC = isInEEC($objp);
 
-			// Search suggested account for product/service
+			// Search suggested account for product/service (similar code exists in page list.php to make manual binding)
 			$suggestedaccountingaccountfor = '';
 			if (($objp->country_code == $mysoc->country_code) || empty($objp->country_code)) {  // If buyer in same country than seller (if not defined, we assume it is same country)
 				$objp->code_sell_p = $objp->code_sell;
 				$objp->aarowid_suggest = $objp->aarowid;
 				$suggestedaccountingaccountfor = '';
 			} else {
-				if ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
+				if ($isSellerInEEC && $isBuyerInEEC && $objp->tva_tx_line != 0) {	// European intravat sale, but with VAT
+					$objp->code_sell_p = $objp->code_sell;
+					$objp->aarowid_suggest = $objp->aarowid;
+					$suggestedaccountingaccountfor = 'eecwithvat';
+				} elseif ($isSellerInEEC && $isBuyerInEEC && empty($objp->tva_intra)) {	// European intravat sale, without VAT intra community number
+					$objp->code_sell_p = $objp->code_sell;
+					$objp->aarowid_suggest = 0; // There is a doubt, no automatic binding
+					$suggestedaccountingaccountfor = 'eecwithoutvatnumber';
+				} elseif ($isSellerInEEC && $isBuyerInEEC) {          // European intravat sale
 					$objp->code_sell_p = $objp->code_sell_intra;
 					$objp->aarowid_suggest = $objp->aarowid_intra;
 					$suggestedaccountingaccountfor = 'eec';

@@ -22,7 +22,7 @@
  *      \ingroup    pos
  *      \brief      File to enable/disable module Point Of Sales
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -55,7 +55,7 @@ class modCashDesk extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = 'list';
+		$this->picto = 'cash-register';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array();
@@ -64,13 +64,13 @@ class modCashDesk extends DolibarrModules
 		$this->config_page_url = array("cashdesk.php@cashdesk");
 
 		// Dependencies
-		$this->hidden = false;			            // A condition to hide module
-		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog');	// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();			    // List of modules id to disable if this one is disabled
-		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog'); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(2, 4); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
-		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw');                     // Warning to show when we activate module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
 		//$this->warnings_activation_ext = array('FR'=>'WarningInstallationMayBecomeNotCompliantWithLaw');  // Warning to show when we activate an external module. array('always'='text') or array('FR'='text')
 
 		// Constants
@@ -81,7 +81,7 @@ class modCashDesk extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 50101;
@@ -91,21 +91,21 @@ class modCashDesk extends DolibarrModules
 		$this->rights[$r][4] = 'run';
 
 		// Main menu entries
-		$this->menus = array();			// List of menus to add
-		$r=0;
+		$this->menus = array(); // List of menus to add
+		$r = 0;
 
 		// This is to declare the Top Menu entry:
-		$this->menu[$r]=array(	    'fk_menu'=>0,			// Put 0 if this is a top menu
-									'type'=>'top',			// This is a Top menu entry
+		$this->menu[$r] = array('fk_menu'=>0, // Put 0 if this is a top menu
+									'type'=>'top', // This is a Top menu entry
 									'titre'=>'PointOfSaleShort',
 									'mainmenu'=>'cashdesk',
 									'url'=>'/cashdesk/index.php?user=__USER_LOGIN__',
-									'langs'=>'cashdesk',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+									'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 									'position'=>900,
                                     'enabled'=>'$conf->cashdesk->enabled',
-		                            'perms'=>'$user->rights->cashdesk->run',		// Use 'perms'=>'1' if you want your menu with no permission rules
+		                            'perms'=>'$user->rights->cashdesk->run', // Use 'perms'=>'1' if you want your menu with no permission rules
 									'target'=>'pointofsale',
-									'user'=>0);				// 0=Menu for internal users, 1=external users, 2=both
+									'user'=>0); // 0=Menu for internal users, 1=external users, 2=both
 
 		$r++;
 

@@ -88,7 +88,7 @@ elseif ($action == 'specimen')  // For orders
     $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
     foreach ($dirmodels as $reldir)
     {
-    	$file = dol_buildpath($reldir."core/modules/supplier_order/pdf/pdf_".$modele.".modules.php", 0);
+    	$file = dol_buildpath($reldir."core/modules/supplier_order/doc/pdf_".$modele.".modules.php", 0);
     	if (file_exists($file))
     	{
     		$filefound = 1;
@@ -165,7 +165,7 @@ elseif ($action == 'setmod')
 elseif ($action == 'addcat')
 {
     $fourn = new Fournisseur($db);
-    $fourn->CreateCategory($user, $_POST["cat"]);
+    $fourn->CreateCategory($user, GETPOST('cat', 'alphanohtml'));
 }
 
 elseif ($action == 'set_SUPPLIER_ORDER_OTHER')
@@ -390,7 +390,8 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/supplier_order/pdf/");
+	$realpath = $reldir."core/modules/supplier_order/doc";
+	$dir = dol_buildpath($realpath);
 
     if (is_dir($dir))
     {
@@ -413,7 +414,7 @@ foreach ($dirmodels as $reldir)
 	                print (empty($module->name) ? $name : $module->name);
 	                print "</td>\n";
                     print "<td>\n";
-                    require_once $dir.$file;
+                    require_once $dir.'/'.$file;
                     $module = new $classname($db, $specimenthirdparty);
                     if (method_exists($module, 'info')) print $module->info($langs);
                     else print $module->description;
@@ -458,6 +459,8 @@ foreach ($dirmodels as $reldir)
                     $htmltooltip = ''.$langs->trans("Name").': '.$module->name;
                     $htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
                     $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+                    $htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
+
                     $htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
                     $htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
                     $htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);

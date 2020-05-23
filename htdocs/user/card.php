@@ -46,6 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (!empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 if (!empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (!empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -237,7 +238,7 @@ if (empty($reshook)) {
 			$object->thm = GETPOST("thm", 'alphanohtml') != '' ? GETPOST("thm", 'alphanohtml') : '';
 			$object->thm = price2num($object->thm);
 			$object->tjm = GETPOST("tjm", 'alphanohtml') != '' ? GETPOST("tjm", 'alphanohtml') : '';
-			$object->tjm =  price2num($object->tjm);
+			$object->tjm = price2num($object->tjm);
 			$object->salary = GETPOST("salary", 'alphanohtml') != '' ? GETPOST("salary", 'alphanohtml') : '';
 			$object->salary = price2num($object->salary);
 			$object->salaryextra = GETPOST("salaryextra", 'alphanohtml') != '' ? GETPOST("salaryextra", 'alphanohtml') : '';
@@ -480,16 +481,21 @@ if (empty($reshook)) {
 
 				if (!$error && GETPOSTISSET('contactid')) {
 					$contactid = GETPOST('contactid', 'int');
+					$socid = GETPOST('socid', 'int');
 
-					if ($contactid > 0) {
+					if ($contactid > 0) {	// The 'contactid' is used inpriority over the 'socid'
 						$contact = new Contact($db);
 						$contact->fetch($contactid);
 
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
-						$sql .= " SET fk_socpeople=".$db->escape($contactid);
+						$sql .= " SET fk_socpeople=".((int) $contactid);
 						if (!empty($contact->socid)) {
-							$sql .= ", fk_soc=".$db->escape($contact->socid);
+							$sql .= ", fk_soc=".((int) $contact->socid);
 						}
+						$sql .= " WHERE rowid=".$object->id;
+					} elseif ($socid > 0) {
+						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+						$sql .= " SET fk_socpeople=NULL, fk_soc=".((int) $socid);
 						$sql .= " WHERE rowid=".$object->id;
 					} else {
 						$sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -858,10 +864,9 @@ if ($action == 'create' || $action == 'adduserldap')
 	$generated_password = '';
 	if (empty($ldap_sid))    // ldap_sid is for activedirectory
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		$generated_password = getRandomPassword(false);
 	}
-	$password=(GETPOSTISSET('password')?GETPOST('password'):$generated_password);
+	$password = (GETPOSTISSET('password') ?GETPOST('password') : $generated_password);
 
 	// Password
 	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
@@ -901,19 +906,16 @@ if ($action == 'create' || $action == 'adduserldap')
 	if (!empty($conf->api->enabled))
 	{
 		// API key
-		$generated_api_key = '';
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-			$generated_password = getRandomPassword(false);
+		//$generated_password = getRandomPassword(false);
 		print '<tr><td>'.$langs->trans("ApiKey").'</td>';
 		print '<td>';
-		print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.$api_key.'" autocomplete="off">';
+		print '<input size="30" maxsize="32" type="text" id="api_key" name="api_key" value="'.GETPOST('api_key', 'alphanohtml').'" autocomplete="off">';
 		if (!empty($conf->use_javascript_ajax))
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_api_key" class="linkobject"');
 		print '</td></tr>';
 	}
 	else
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		// PARTIAL WORKAROUND
 		$generated_fake_api_key = getRandomPassword(false);
 		print '<input type="hidden" name="api_key" value="'.$generated_fake_api_key.'">';
@@ -1210,7 +1212,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		print '<tr><td>'.$langs->trans("ColorUser").'</td>';
 		print '<td>';
-		print $formother->selectColor(GETPOSTISSET('color')?GETPOST('color', 'alphanohtml'):$object->color, 'color', null, 1, '', 'hideifnotset');
+		print $formother->selectColor(GETPOSTISSET('color') ?GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, '', 'hideifnotset');
 		print '</td></tr>';
 	}
 
@@ -1251,7 +1253,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $langs->trans("Note");
 	print '</td><td>';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor = new DolEditor('note', GETPOSTISSET('note')?GETPOST('note', 'none'):'', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
+	$doleditor = new DolEditor('note', GETPOSTISSET('note') ?GETPOST('note', 'none') : '', '', 120, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_3, '90%');
 	$doleditor->Create();
 	print "</td></tr>\n";
 
@@ -1621,7 +1623,9 @@ else
 			// Hierarchy
 			print '<tr><td>'.$langs->trans("HierarchicalResponsible").'</td>';
 			print '<td>';
-			if (empty($object->fk_user)) print $langs->trans("None");
+			if (empty($object->fk_user)) {
+				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
+			}
 			else {
 				$huser = new User($db);
 				$huser->fetch($object->fk_user);
@@ -1769,7 +1773,7 @@ else
 			{
 				print '<tr><td>'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
-				print $form->showCategories($object->id, 'user', 1);
+				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				print '</td></tr>';
 			}
 
@@ -1832,7 +1836,7 @@ else
 					$contact->fetch($object->contactid);
 					if ($object->socid > 0) print ' / ';
 					else print '<br>';
-					print '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contactid.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
+					print $contact->getNomUrl(1, '');
 				}
 				print '</td>';
 				print '</tr>'."\n";
@@ -1996,6 +2000,8 @@ else
 
 				if ($canreadgroup)
 				{
+					print '<!-- Group section -->'."\n";
+
 					print load_fiche_titre($langs->trans("ListOfGroupsForUser"), '', '');
 
 					// On selectionne les groupes auquel fait parti le user
@@ -2034,13 +2040,11 @@ else
 							print $form->select_dolgroups('', 'group', 1, $exclude, 0, '', '', $object->entity);
 							print ' &nbsp; ';
 							print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-							print '<input type="submit" class="button" value="'.$langs->trans("Add").'" />';
+							print '<input type="submit" class="button buttongen" value="'.$langs->trans("Add").'" />';
 						}
 						print '</th></tr>'."\n";
 
-						/*
-						 * Groups assigned to user
-						 */
+						// List of groups of user
 						if (!empty($groupslist))
 						{
 							foreach ($groupslist as $group)
@@ -2049,7 +2053,7 @@ else
 								print '<td>';
 								if ($caneditgroup)
 								{
-									print '<a href="'.DOL_URL_ROOT.'/user/group/card.php?id='.$group->id.'">'.img_object($langs->trans("ShowGroup"), "group").' '.$group->name.'</a>';
+									print $group->getNomUrl(1);
 								}
 								else
 								{
@@ -2088,7 +2092,7 @@ else
 		}
 
 		/*
-         * Fiche en mode edition
+         * Card in edit mode
          */
 		if ($action == 'edit' && ($canedituser || $caneditfield || $caneditpassword || ($user->id == $object->id)))
 		{
@@ -2288,6 +2292,7 @@ else
 		   	print '<td>';
 		   	if ($user->id == $object->id || !$user->admin)
 		   	{
+		   		// Read mode
 			   	$type = $langs->trans("Internal");
 			   	if ($object->socid) $type = $langs->trans("External");
 			   	print $form->textwithpicto($type, $langs->trans("InternalExternalDesc"));
@@ -2295,10 +2300,22 @@ else
 		   	}
 		   	else
 			{
+				// Select mode
 				$type = 0;
 				if ($object->contactid) $type = $object->contactid;
-				print $form->selectcontacts(0, $type, 'contactid', 2, '', '', 1, '', false, 1);
-			   	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+
+				if ($object->socid > 0 && ! ($object->contactid > 0)) {	// external user but no link to a contact
+					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+				} elseif ($object->socid > 0 && $object->contactid > 0) {	// external user with a link to a contact
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact').$form->selectcontacts(0, $object->contactid, 'contactid', 1, '', '', 1, '', false, 1);
+			   		if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
+				} else {	// $object->socid is not > 0 here
+					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
+					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
+				}
 			}
 		   	print '</td></tr>';
 
@@ -2557,7 +2574,7 @@ else
 				print '<td>';
 				if ($caneditfield)
 				{
-					print $formother->selectColor(GETPOSTISSET('color')?GETPOST('color', 'alphanohtml'):$object->color, 'color', null, 1, '', 'hideifnotset');
+					print $formother->selectColor(GETPOSTISSET('color') ?GETPOST('color', 'alphanohtml') : $object->color, 'color', null, 1, '', 'hideifnotset');
 				} else {
 					print $formother->showColor($object->color, '');
 				}
@@ -2587,7 +2604,7 @@ else
 				{
 					print $form->multiselectarray('usercats', $cate_arbo, $arrayselected, '', 0, '', 0, '90%');
 				} else {
-					print $form->showCategories($object->id, 'user', 1);
+					print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				}
 				print "</td></tr>";
 			}

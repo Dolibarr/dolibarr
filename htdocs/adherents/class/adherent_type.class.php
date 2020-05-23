@@ -183,20 +183,14 @@ class AdherentType extends CommonObject
                     $sql2 .= " SET ";
                     $sql2 .= " label='".$this->db->escape($this->label)."',";
                     $sql2 .= " description='".$this->db->escape($this->description)."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email='".$this->db->escape($this->other)."'";
-                    }
                     $sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
                 }
                 else
                 {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email";
-                    }
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
                     $sql2 .= " '".$this->db->escape($this->description)."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", '".$this->db->escape($this->other)."'";
-                    }
                     $sql2 .= ")";
                 }
                 dol_syslog(get_class($this).'::setMultiLangs key = current_lang = '.$key);
@@ -219,20 +213,14 @@ class AdherentType extends CommonObject
                     $sql2 .= " SET ";
                     $sql2 .= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
                     $sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email='".$this->db->escape($this->multilangs["$key"]["other"])."'";
-                    }
                     $sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
                 }
                 else
                 {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email";
-                    }
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
                     $sql2 .= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["other"])."'";
-                    }
                     $sql2 .= ")";
                 }
 
@@ -409,7 +397,7 @@ class AdherentType extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)

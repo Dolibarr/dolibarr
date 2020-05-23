@@ -75,6 +75,7 @@ class box_graph_product_distribution extends ModeleBoxes
 		global $conf, $user, $langs;
 
 		$this->max = $max;
+		$dir = $conf->user->dir_temp;
 
 		$refreshaction = 'refresh_'.$this->boxcode;
 
@@ -145,7 +146,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1; $nocolor = 0;
 				$mode = 'customer';
 				$stats_invoice = new FactureStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)));
+				$data1 = $stats_invoice->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
 
 				if (empty($data1))
 				{
@@ -160,11 +161,12 @@ class box_graph_product_distribution extends ModeleBoxes
 				$mesg = $px1->isGraphKo();
 				if (!$mesg)
 				{
-					$i = 0; $tot = count($data1); $legend = array();
-					while ($i < $tot)
+					$i = 0; $legend = array();
+
+					foreach ($data1 as $key => $val)
 					{
-						$data1[$i][0] = dol_trunc($data1[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
-						$legend[] = $data1[$i][0];
+						$data1[$key][0] = dol_trunc($data1[$key][0], 32);
+						$legend[] = $data1[$key][0];
 						$i++;
 					}
 
@@ -173,11 +175,11 @@ class box_graph_product_distribution extends ModeleBoxes
 
 					if ($nocolor) $px1->SetDataColor(array(array(220, 220, 220)));
 					$px1->SetLegend($legend);
-					$px1->setShowLegend(0);
+					$px1->setShowLegend(2);
 					$px1->setShowPointValue($showpointvalue);
 					$px1->setShowPercent(0);
 					$px1->SetMaxValue($px1->GetCeilMaxValue());
-					$px1->SetWidth($WIDTH);
+					//$px1->SetWidth($WIDTH);
 					$px1->SetHeight($HEIGHT);
 					//$px1->SetYLabel($langs->trans("NumberOfBills"));
 					$px1->SetShading(3);
@@ -203,7 +205,7 @@ class box_graph_product_distribution extends ModeleBoxes
 
 				$showpointvalue = 1; $nocolor = 0;
 				$stats_proposal = new PropaleStats($this->db, $socid, ($userid > 0 ? $userid : 0));
-				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)));
+				$data2 = $stats_proposal->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
 				if (empty($data2))
 				{
 					$showpointvalue = 0;
@@ -218,11 +220,12 @@ class box_graph_product_distribution extends ModeleBoxes
 				$mesg = $px2->isGraphKo();
 				if (!$mesg)
 				{
-					$i = 0; $tot = count($data2); $legend = array();
-					while ($i < $tot)
+					$i = 0; $legend = array();
+
+					foreach ($data2 as $key => $val)
 					{
-						$data2[$i][0] = dol_trunc($data2[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
-						$legend[] = $data2[$i][0];
+						$data2[$key][0] = dol_trunc($data2[$key][0], 32);
+						$legend[] = $data2[$key][0];
 						$i++;
 					}
 
@@ -231,11 +234,11 @@ class box_graph_product_distribution extends ModeleBoxes
 
 					if ($nocolor) $px2->SetDataColor(array(array(220, 220, 220)));
 					$px2->SetLegend($legend);
-					$px2->setShowLegend(0);
+					$px2->setShowLegend(2);
 					$px2->setShowPointValue($showpointvalue);
 					$px2->setShowPercent(0);
 					$px2->SetMaxValue($px2->GetCeilMaxValue());
-					$px2->SetWidth($WIDTH);
+					//$px2->SetWidth($WIDTH);
 					$px2->SetHeight($HEIGHT);
 					//$px2->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px2->SetShading(3);
@@ -262,7 +265,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				$showpointvalue = 1; $nocolor = 0;
 				$mode = 'customer';
 				$stats_order = new CommandeStats($this->db, $socid, $mode, ($userid > 0 ? $userid : 0));
-				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)));
+				$data3 = $stats_order->getAllByProductEntry($year, (GETPOST('action', 'aZ09') == $refreshaction ?-1 : (3600 * 24)), 5);
 				if (empty($data3))
 				{
 					$showpointvalue = 0;
@@ -277,11 +280,12 @@ class box_graph_product_distribution extends ModeleBoxes
 				$mesg = $px3->isGraphKo();
 				if (!$mesg)
 				{
-					$i = 0; $tot = count($data3); $legend = array();
-					while ($i < $tot)
+					$i = 0; $legend = array();
+
+					foreach ($data3 as $key => $val)
 					{
-						$data3[$i][0] = dol_trunc($data3[$i][0], 5); // Required to avoid error "Could not draw pie with labels contained inside canvas"
-						$legend[] = $data3[$i][0];
+						$data3[$key][0] = dol_trunc($data3[$key][0], 32);
+						$legend[] = $data3[$key][0];
 						$i++;
 					}
 
@@ -290,11 +294,11 @@ class box_graph_product_distribution extends ModeleBoxes
 
 					if ($nocolor) $px3->SetDataColor(array(array(220, 220, 220)));
 					$px3->SetLegend($legend);
-					$px3->setShowLegend(0);
+					$px3->setShowLegend(2);
 					$px3->setShowPointValue($showpointvalue);
 					$px3->setShowPercent(0);
 					$px3->SetMaxValue($px3->GetCeilMaxValue());
-					$px3->SetWidth($WIDTH);
+					//$px3->SetWidth($WIDTH);
 					$px3->SetHeight($HEIGHT);
 					//$px3->SetYLabel($langs->trans("AmountOfBillsHT"));
 					$px3->SetShading(3);

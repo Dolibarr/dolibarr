@@ -122,7 +122,7 @@ function dol_hash($chain, $type = '0')
 	}
 
 	// Salt value
-	if (! empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') $chain = $conf->global->MAIN_SECURITY_SALT.$chain;
+	if (!empty($conf->global->MAIN_SECURITY_SALT) && $type != '4' && $type !== 'md5openldap') $chain = $conf->global->MAIN_SECURITY_SALT.$chain;
 
 	if ($type == '1' || $type == 'sha1') return sha1($chain);
 	elseif ($type == '2' || $type == 'sha1md5') return sha1(md5($chain));
@@ -168,10 +168,10 @@ function dol_verifyHash($chain, $hash, $type = '0')
  * 	If GETPOST('action','aZ09') defined, we also check write and delete permission.
  *
  *	@param	User	$user      	  	User to check
- *	@param  string	$features	    Features to check (it must be module name. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
+ *	@param  string	$features	    Features to check (it must be module $object->element. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *	@param  int		$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'level1|level2'.
+ *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	int		$isdraft		1=The object with id=$objectid is a draft
@@ -188,11 +188,21 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
 	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
+	if ($features == 'facturerec') $features = 'facture';
+	if ($features == 'mo') $features = 'mrp';
+	if ($features == 'member') $features = 'adherent';
+	if ($features == 'subscription') { $features = 'adherent'; $feature2 = 'cotisation'; };
+
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
 	$reshook = $hookmanager->executeHooks('restrictedArea', $parameters);
-	if (!empty($hookmanager->resArray['result'])) return true;
-	if ($reshook > 0) return false;
+
+	if (isset($hookmanager->resArray['result'])) {
+		if ($hookmanager->resArray['result'] == 0) accessforbidden(); // Module returns 0, so access forbidden
+	}
+	if ($reshook > 0) {		// No other test done.
+		return 1;
+	}
 
 	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 

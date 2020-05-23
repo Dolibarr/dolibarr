@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.org>
- * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2013      Juanjo Menent		    <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <contact@dolibarrpar.org>
+ * Copyright (C) 2020      Thibault FOUCART     <suport@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,26 +34,95 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Noti
 $langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
 
 // Security check
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) {
+	accessforbidden();
+}
 
 $action = GETPOST('action', 'aZ09');
+$error = 0;
 
 
 /*
  * Actions
  */
 
+// Action to update or add a constant
+if ($action == 'settemplates')
+{
+	$db->begin();
+
+	if (!$error && is_array($_POST))
+	{
+		$reg = array();
+		foreach ($_POST as $key => $val)
+		{
+			if (!preg_match('/^constvalue_(.*)_TEMPLATE/', $key, $reg)) continue;
+
+			$triggername = $reg[1];
+			$constvalue = GETPOST($key, 'alpha');
+			$consttype = 'emailtemplate:xxx';
+			$tmparray=explode(':', $constvalue);
+			if (! empty($tmparray[0]) && ! empty($tmparray[1])) {
+				$constvalue = $tmparray[0];
+				$consttype = 'emailtemplate:'.$tmparray[1];
+				//var_dump($constvalue);
+				//var_dump($consttype);
+				$res = dolibarr_set_const($db, $triggername.'_TEMPLATE', $constvalue, $consttype, 0, '', $conf->entity);
+				if ($res < 0) {
+					$error++;
+					break;
+				}
+			} else {
+				$res = dolibarr_del_const($db, $triggername.'_TEMPLATE', $conf->entity);
+			}
+		}
+	}
+
+
+	if (!$error)
+	{
+		$db->commit();
+
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		$db->rollback();
+
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", $_POST["email_from"], 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, "NOTIFICATION_EMAIL_FROM", GETPOST("email_from", "none"), 'chaine', 0, '', $conf->entity);
     if ($result < 0) $error++;
+
+
+    if (!$error)
+    {
+    	$db->commit();
+
+    	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    }
+    else
+    {
+    	$db->rollback();
+
+    	setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+
+if ($action == 'setfixednotif' && $user->admin)
+{
+	$db->begin();
 
     if (!$error && is_array($_POST))
     {
-    	//var_dump($_POST);
+    	$reg = array();
 	    foreach ($_POST as $key => $val)
 	    {
 	    	if (!preg_match('/^NOTIF_(.*)_key$/', $key, $reg)) continue;
@@ -73,7 +143,7 @@ if ($action == 'setvalue' && $user->admin)
 	    	}
 	    	elseif (preg_match('/^NOTIF_(.*)_new_key/', $key, $reg))
 	    	{
-		    	// Add a new entry
+	    		// Add a new entry
 	    		$newkey = 'NOTIFICATION_FIXEDEMAIL_'.$reg[1].'_THRESHOLD_HIGHER_'.((int) GETPOST($shortkey.'_amount'));
 	    		$newval = GETPOST($shortkey.'_key');
 	    	}
@@ -140,57 +210,106 @@ print '</td>';
 print '</tr>';
 print '</table>';
 
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+
+print '</form>';
+
+
 print '<br><br>';
 
+
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="settemplates">';
 
 // Notification per contacts
 $title = $langs->trans("ListOfNotificationsPerUser");
 if (!empty($conf->societe->enabled)) $title = $langs->trans("ListOfNotificationsPerUserOrContact");
 print load_fiche_titre($title, '', '');
 
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Label").'</td>';
-/*print '<td>'.$langs->trans("Code").'</td>';
- print '<td>'.$langs->trans("Label").'</td>';*/
-//print '<td class="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
-print "</tr>\n";
-
 // Load array of available notifications
 $notificationtrigger = new InterfaceNotification($db);
 $listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
-print '<tr class="oddeven">';
-print '<td>';
 
-$i = 0;
-foreach ($listofnotifiedevents as $notifiedevent)
-{
-    $label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
-    $elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2) {
+	// Editing global variables not related to a specific theme
+	$constantes = array();
+	foreach ($listofnotifiedevents as $notifiedevent)
+	{
+		$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+		$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
 
-    if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
-    elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
-    elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
-    elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
-    elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
-    elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
-    elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
+		if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
+		elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
+		elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
+		elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
+		elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
+		elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
+		elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
 
-    if ($i) print ', ';
-    print $label;
+		if ($notifiedevent['elementtype'] == 'propal')              $model = 'propal_send';
+		elseif ($notifiedevent['elementtype'] == 'commande')        $model = 'order_send';
+		elseif ($notifiedevent['elementtype'] == 'facture')         $model = 'facture_send';
+		elseif ($notifiedevent['elementtype'] == 'shipping')        $model = 'shipping_send';
+		elseif ($notifiedevent['elementtype'] == 'ficheinter')      $model = 'fichinter_send';
+		elseif ($notifiedevent['elementtype'] == 'expensereport')   $model = 'expensereport_send';
+		elseif ($notifiedevent['elementtype'] == 'order_supplier')	$model = 'order_supplier_send';
+		//elseif ($notifiedevent['elementtype'] == 'invoice_supplier') $model = 'invoice_supplier_send';
+		elseif ($notifiedevent['elementtype'] == 'member')          $model = 'member';
 
-    $i++;
+		$constantes[$notifiedevent['code'].'_TEMPLATE'] = array('type'=>'emailtemplate:'.$model, 'label'=>$label);
+	}
+
+	$helptext = '';
+	form_constantes($constantes, 2, $helptext);
+} else {
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Label").'</td>';
+	/*print '<td>'.$langs->trans("Code").'</td>';
+	print '<td>'.$langs->trans("Label").'</td>';*/
+	//print '<td class="right">'.$langs->trans("NbOfTargetedContacts").'</td>';
+	print "</tr>\n";
+
+	print '<tr class="oddeven">';
+	print '<td>';
+
+	$i = 0;
+	foreach ($listofnotifiedevents as $notifiedevent)
+	{
+		$label = $langs->trans("Notify_".$notifiedevent['code']); //!=$langs->trans("Notify_".$notifiedevent['code'])?$langs->trans("Notify_".$notifiedevent['code']):$notifiedevent['label'];
+		$elementLabel = $langs->trans(ucfirst($notifiedevent['elementtype']));
+
+		if ($notifiedevent['elementtype'] == 'order_supplier') $elementLabel = $langs->trans('SupplierOrder');
+		elseif ($notifiedevent['elementtype'] == 'propal') $elementLabel = $langs->trans('Proposal');
+		elseif ($notifiedevent['elementtype'] == 'facture') $elementLabel = $langs->trans('Bill');
+		elseif ($notifiedevent['elementtype'] == 'commande') $elementLabel = $langs->trans('Order');
+		elseif ($notifiedevent['elementtype'] == 'ficheinter') $elementLabel = $langs->trans('Intervention');
+		elseif ($notifiedevent['elementtype'] == 'shipping') $elementLabel = $langs->trans('Shipping');
+		elseif ($notifiedevent['elementtype'] == 'expensereport') $elementLabel = $langs->trans('ExpenseReport');
+
+		if ($i) print ', ';
+		print $label;
+
+		$i++;
+	}
+
+	print '</td></tr>';
+	print '</table>';
 }
-print '</td></tr>';
 
-print '</table>';
-print '<div class="opacitymedium">';
-print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
-if (!empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
-print '</div>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></div>';
+
+print '</form>';
+
+
 print '<br><br>';
 
+
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="setfixednotif">';
 
 print load_fiche_titre($langs->trans("ListOfFixedNotifications"), '', '');
 
@@ -201,12 +320,8 @@ print '<td>'.$langs->trans("Code").'</td>';
 print '<td>'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("FixedEmailTarget").'</td>';
 print '<td>'.$langs->trans("Threshold").'</td>';
-print '<td>'.'</td>';
+print '<td></td>';
 print "</tr>\n";
-
-// Load array of available notifications
-$notificationtrigger = new InterfaceNotification($db);
-$listofnotifiedevents = $notificationtrigger->getListOfManagedEvents();
 
 foreach ($listofnotifiedevents as $notifiedevent)
 {
@@ -272,6 +387,12 @@ foreach ($listofnotifiedevents as $notifiedevent)
     print '</tr>';
 }
 print '</table>';
+
+print '<div class="opacitymedium">';
+print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
+if (!empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+
+print '</div>';
 
 print '<br>';
 

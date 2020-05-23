@@ -136,7 +136,7 @@ class Dolresource extends CommonObject
     		$action = 'create';
 
     		// Actions on extra fields
-   			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+   			if (!$error)
    			{
    				$result = $this->insertExtraFields();
    				if ($result < 0)
@@ -146,17 +146,12 @@ class Dolresource extends CommonObject
     		}
     	}
 
-    	if (!$error)
+    	if (!$error && !$notrigger)
     	{
-    		if (!$notrigger)
-    		{
-    			//// Call triggers
-    			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-    			$interface = new Interfaces($this->db);
-    			$result = $interface->run_triggers('RESOURCE_CREATE', $this, $user, $langs, $conf);
-    			if ($result < 0) { $error++; $this->errors = $interface->errors; }
-    			//// End call triggers
-    		}
+    		// Call trigger
+    		$result = $this->call_trigger('RESOURCE_CREATE', $user);
+    		if ($result < 0) $error++;
+    		// End call triggers
     	}
 
     	// Commit or rollback
@@ -314,7 +309,7 @@ class Dolresource extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -876,10 +871,12 @@ class Dolresource extends CommonObject
 	    return $resources;
     }
 
-    /*
+    /**
      *  Return an int number of resources linked to the element
      *
-     *  @return     int
+     *  @param		string	$element		Element type
+     *  @param		int		$element_id		Element id
+     *  @return     int						Nb of resources loaded
      */
     public function fetchElementResources($element, $element_id)
     {
@@ -958,7 +955,7 @@ class Dolresource extends CommonObject
         	$label.= '<br><b>' . $langs->trans("Status").":</b> ".$this->getLibStatut(5);
         }*/
         if (isset($this->type_label)) {
-        	$label.= '<br><b>' . $langs->trans("ResourceType").":</b> ".$this->type_label;
+        	$label .= '<br><b>'.$langs->trans("ResourceType").":</b> ".$this->type_label;
         }
 
         $url = DOL_URL_ROOT.'/resource/card.php?id='.$this->id;

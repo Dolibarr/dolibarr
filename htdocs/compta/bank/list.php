@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2020      Tobias Sekan			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,36 +31,43 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+if (!empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+if (!empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
-$action=GETPOST('action', 'alpha');
-$massaction=GETPOST('massaction', 'alpha');
-$show_files=GETPOST('show_files', 'int');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOST('show_files', 'int');
+$confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-$contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'bankaccountlist';   // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'bankaccountlist'; // To manage different context of search
 
-$search_ref=GETPOST('search_ref', 'alpha');
-$search_label=GETPOST('search_label', 'alpha');
-$search_number=GETPOST('search_number', 'alpha');
-$search_status=GETPOST('search_status')?GETPOST('search_status', 'alpha'):'opened';                      // 'all' or ''='opened'
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_label = GETPOST('search_label', 'alpha');
+$search_number = GETPOST('search_number', 'alpha');
+$search_status = GETPOST('search_status') ?GETPOST('search_status', 'alpha') : 'opened'; // 'all' or ''='opened'
 $optioncss = GETPOST('optioncss', 'alpha');
 
+if (!empty($conf->categorie->enabled))
+{
+	$search_category_list = GETPOST("search_category_".Categorie::TYPE_ACCOUNT."_list", "array");
+}
+
 // Security check
-if ($user->socid) $socid=$user->socid;
-if (! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with list of banks accounting account allowed to manager of chart account
-if (! $allowed) $result=restrictedArea($user, 'banque');
+if ($user->socid) $socid = $user->socid;
+if (!empty($user->rights->accounting->chartofaccount)) $allowed = 1; // Dictionary with list of banks accounting account allowed to manager of chart account
+if (!$allowed) $result = restrictedArea($user, 'banque');
 
-$diroutputmassaction=$conf->bank->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->bank->dir_output.'/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -74,7 +82,7 @@ $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
-$search_array_options=$extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
+$search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -100,10 +108,10 @@ $arrayfields = array(
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
-	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
-			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+		if (!empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key] = array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -133,43 +141,54 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 }
 
 
-
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new FormCategory($db);
 
-$title=$langs->trans('BankAccounts');
+$title = $langs->trans('BankAccounts');
 
 // Load array of financial accounts (opened by default)
 $accounts = array();
 
 $sql = "SELECT b.rowid, b.label, b.courant, b.rappro, b.account_number, b.fk_accountancy_journal, b.currency_code, b.datec as date_creation, b.tms as date_update";
 // Add fields from extrafields
-if (! empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (!empty($extrafields->attributes[$object->table_element]['label'])) {
+	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 }
 // Add fields from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
-$sql.= " WHERE b.entity IN (".getEntity('bank_account').")";
-if ($search_status == 'opened')  $sql.= " AND clos = 0";
-if ($search_status == 'closed')  $sql.= " AND clos = 1";
-if ($search_ref != '')    $sql.=natural_search('b.ref', $search_ref);
-if ($search_label != '')  $sql.=natural_search('b.label', $search_label);
-if ($search_number != '') $sql.=natural_search('b.number', $search_number);
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
+
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_ACCOUNT, "b.rowid");
+}
+
+$sql .= " WHERE b.entity IN (".getEntity('bank_account').")";
+if ($search_status == 'opened')  $sql .= " AND clos = 0";
+if ($search_status == 'closed')  $sql .= " AND clos = 1";
+
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_ACCOUNT, "b.rowid", $search_category_list);
+}
+
+if ($search_ref != '')    $sql .= natural_search('b.ref', $search_ref);
+if ($search_label != '')  $sql .= natural_search('b.label', $search_label);
+if ($search_number != '') $sql .= natural_search('b.number', $search_number);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -247,7 +266,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit, 1);
 
 $topicmail = "Information";
 //$modelmail="subscription";
@@ -263,6 +282,10 @@ if ($sall)
 
 $moreforfilter = '';
 
+if (!empty($conf->categorie->enabled))
+{
+	$moreforfilter .= $form->getFilterBox(Categorie::TYPE_ACCOUNT, $search_category_list);
+}
 
 // Bank accounts
 $parameters = array();
@@ -289,14 +312,14 @@ print '<tr class="liste_titre_filter">';
 if (!empty($arrayfields['b.ref']['checked']))
 {
     print '<td class="liste_titre">';
-    print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+    print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
 }
 // Label
 if (!empty($arrayfields['b.label']['checked']))
 {
     print '<td class="liste_titre">';
-    print '<input class="flat" size="6" type="text" name="search_label" value="'.$search_label.'">';
+    print '<input class="flat" size="6" type="text" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
     print '</td>';
 }
 // Account type
@@ -309,7 +332,7 @@ if (!empty($arrayfields['accountype']['checked']))
 if (!empty($arrayfields['b.number']['checked']))
 {
     print '<td class="liste_titre">';
-    print '<input class="flat" size="6" type="text" name="search_number" value="'.$search_number.'">';
+    print '<input class="flat" size="6" type="text" name="search_number" value="'.dol_escape_htmltag($search_number).'">';
     print '</td>';
 }
 // Account number
@@ -414,52 +437,52 @@ foreach ($accounts as $key=>$type)
 
 	$solde = $objecttmp->solde(1);
 
-	if (! empty($lastcurrencycode) && $lastcurrencycode != $objecttmp->currency_code)
+	if (!empty($lastcurrencycode) && $lastcurrencycode != $objecttmp->currency_code)
 	{
-		$lastcurrencycode='various';	// We found several different currencies
+		$lastcurrencycode = 'various'; // We found several different currencies
 	}
 	if ($lastcurrencycode != 'various')
 	{
-		$lastcurrencycode=$objecttmp->currency_code;
+		$lastcurrencycode = $objecttmp->currency_code;
 	}
 
 	print '<tr class="oddeven">';
 
     // Ref
-    if (! empty($arrayfields['b.ref']['checked']))
+    if (!empty($arrayfields['b.ref']['checked']))
     {
         print '<td class="nowrap">'.$objecttmp->getNomUrl(1).'</td>';
-	    if (! $i) $totalarray['nbfield']++;
+	    if (!$i) $totalarray['nbfield']++;
     }
 
     // Label
-    if (! empty($arrayfields['b.label']['checked']))
+    if (!empty($arrayfields['b.label']['checked']))
     {
 		print '<td>'.$objecttmp->label.'</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!$i) $totalarray['nbfield']++;
     }
 
     // Account type
-    if (! empty($arrayfields['accountype']['checked']))
+    if (!empty($arrayfields['accountype']['checked']))
     {
         print '<td>';
 		print $objecttmp->type_lib[$objecttmp->type];
 		print '</td>';
-        if (! $i) $totalarray['nbfield']++;
+        if (!$i) $totalarray['nbfield']++;
     }
 
     // Number
-    if (! empty($arrayfields['b.number']['checked']))
+    if (!empty($arrayfields['b.number']['checked']))
     {
         print '<td>'.$objecttmp->number.'</td>';
-	    if (! $i) $totalarray['nbfield']++;
+	    if (!$i) $totalarray['nbfield']++;
     }
 
     // Account number
-    if (! empty($arrayfields['b.account_number']['checked']))
+    if (!empty($arrayfields['b.account_number']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->account_number))
+    	if (!empty($conf->accounting->enabled) && !empty($objecttmp->account_number))
     	{
     		$accountingaccount = new AccountingAccount($db);
     		$accountingaccount->fetch('', $objecttmp->account_number, 1);
@@ -470,14 +493,14 @@ foreach ($accounts as $key=>$type)
     		print $objecttmp->account_number;
     	}
     	print '</td>';
-	    if (! $i) $totalarray['nbfield']++;
+	    if (!$i) $totalarray['nbfield']++;
     }
 
     // Accountancy journal
-    if (! empty($arrayfields['b.fk_accountancy_journal']['checked']))
+    if (!empty($arrayfields['b.fk_accountancy_journal']['checked']))
     {
     	print '<td>';
-    	if (! empty($conf->accounting->enabled) && ! empty($objecttmp->fk_accountancy_journal))
+    	if (!empty($conf->accounting->enabled) && !empty($objecttmp->fk_accountancy_journal))
     	{
     		$accountingjournal = new AccountingJournal($db);
     		$accountingjournal->fetch($objecttmp->fk_accountancy_journal);
@@ -503,67 +526,79 @@ foreach ($accounts as $key=>$type)
     // Transactions to reconcile
     if (!empty($arrayfields['toreconcile']['checked']))
     {
-        print '<td class="center">';
-		if ($objecttmp->rappro)
-		{
-			$result = $objecttmp->load_board($user, $objecttmp->id);
-            if ($result < 0) {
-                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-            } else {
-                print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">'.$result->nbtodo.'</span>';
-                if ($result->nbtodolate) {
-                    print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
-                    print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
-                    print '</span>';
-                }
-            }
-		}
-		else
-		{
-			print '<span class="opacitymedium">'.$langs->trans("FeatureDisabled").'</span>';
-		}
-	    print '</td>';
-	    if (! $i) $totalarray['nbfield']++;
+    	print '<td class="center">';
+
+    	$conciliate = $objecttmp->canBeConciliated();
+    	if ($conciliate == -2) print '<span class="opacitymedium">'.$langs->trans("CashAccount").'</span>';
+    	elseif ($conciliate == -3) print '<span class="opacitymedium">'.$langs->trans("Closed").'</span>';
+    	elseif (empty($objecttmp->rappro)) {
+    		print '<span class="opacitymedium">'.$langs->trans("ConciliationDisabled").'</span>';
+    	} else {
+    		$result = $objecttmp->load_board($user, $objecttmp->id);
+    		if ($result < 0) {
+    			setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+    		} else {
+    			print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'&search_conciliated=0">';
+    			print '<span class="badge badge-info classfortooltip" title="'.dol_htmlentities($langs->trans("TransactionsToConciliate")).'">';
+    			print $result->nbtodo;
+    			print '</span>';
+				print '</a>';
+    			if ($result->nbtodolate) {
+    				print '<span title="'.dol_htmlentities($langs->trans("Late")).'" class="classfortooltip badge badge-danger marginleftonlyshort">';
+    				print '<i class="fa fa-exclamation-triangle"></i> '.$result->nbtodolate;
+    				print '</span>';
+    			}
+    		}
+    	}
+
+    	print '</td>';
+	    if (!$i) $totalarray['nbfield']++;
     }
 
     // Extra fields
+	if (is_array($objecttmp->array_options)) {
+		$obj = new stdClass();
+		foreach ($objecttmp->array_options as $k => $v) {
+			$obj->$k = $v;
+		}
+	}
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
-    $parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
-    $reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp);    // Note that $action and $objecttmpect may have been modified by hook
+    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+    $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp); // Note that $action and $objecttmpect may have been modified by hook
     print $hookmanager->resPrint;
 	// Date creation
-    if (! empty($arrayfields['b.datec']['checked']))
+    if (!empty($arrayfields['b.datec']['checked']))
     {
         print '<td class="center">';
         print dol_print_date($objecttmp->date_creation, 'dayhour');
         print '</td>';
-	    if (! $i) $totalarray['nbfield']++;
+	    if (!$i) $totalarray['nbfield']++;
     }
     // Date modification
-    if (! empty($arrayfields['b.tms']['checked']))
+    if (!empty($arrayfields['b.tms']['checked']))
     {
         print '<td class="center">';
         print dol_print_date($objecttmp->date_update, 'dayhour');
         print '</td>';
-	    if (! $i) $totalarray['nbfield']++;
+	    if (!$i) $totalarray['nbfield']++;
     }
 
     // Status
-    if (! empty($arrayfields['b.clos']['checked']))
+    if (!empty($arrayfields['b.clos']['checked']))
     {
 		print '<td class="center">'.$objecttmp->getLibStatut(5).'</td>';
-	    if (! $i) $totalarray['nbfield']++;
+	    if (!$i) $totalarray['nbfield']++;
     }
 
     // Balance
-    if (! empty($arrayfields['balance']['checked']))
+    if (!empty($arrayfields['balance']['checked']))
     {
 		print '<td class="nowraponall right">';
 		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$objecttmp->id.'">'.price($solde, 0, $langs, 0, -1, -1, $objecttmp->currency_code).'</a>';
 		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
-		if (! $i) $totalarray['pos'][$totalarray['nbfield']]='balance';
+		if (!$i) $totalarray['nbfield']++;
+		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'balance';
 		$totalarray['val']['balance'] += $solde;
     }
 

@@ -24,28 +24,28 @@
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/paymentsocialcontribution.class.php';
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 
 // Global variables
 $version = DOL_VERSION;
@@ -56,12 +56,12 @@ $error = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
-if (! isset($argv[3]) || ! $argv[3]) {
-	print "Usage: " . $script_file . " bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
-	exit(- 1);
+if (!isset($argv[3]) || !$argv[3]) {
+	print "Usage: ".$script_file." bank_ref [bank_receipt_number|all] (csv|tsv|excel|excel2007) [lang=xx_XX]\n";
+	exit(-1);
 }
 $bankref = $argv[1];
 $num = $argv[2];
@@ -89,11 +89,11 @@ foreach ($argv as $key => $value) {
 		$found = true;
 		$valarray = explode('=', $value);
 		$newlangid = $valarray[1];
-		print 'Use language ' . $newlangid . ".\n";
+		print 'Use language '.$newlangid.".\n";
 	}
 }
 $outputlangs = $langs;
-if (! empty($newlangid)) {
+if (!empty($newlangid)) {
 	if ($outputlangs->defaultlang != $newlangid) {
 		$outputlangs = new Translate("", $conf);
 		$outputlangs->setDefaultLang($newlangid);
@@ -101,31 +101,31 @@ if (! empty($newlangid)) {
 }
 
 // Load translation files required by the page
-$outputlangs->loadLangs(array("main","companies","bills","banks","members","compta"));
+$outputlangs->loadLangs(array("main", "companies", "bills", "banks", "members", "compta"));
 
 $acct = new Account($db);
 $result = $acct->fetch('', $bankref);
 if ($result <= 0) {
-	print "Failed to find bank account with ref " . $bankref . ".\n";
-	exit(- 1);
+	print "Failed to find bank account with ref ".$bankref.".\n";
+	exit(-1);
 } else {
-	print "Export for bank account " . $acct->ref . " (" . $acct->label . ").\n";
+	print "Export for bank account ".$acct->ref." (".$acct->label.").\n";
 }
 
 // Creation de la classe d'export du model ExportXXX
-$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
-$file = "export_" . $model . ".modules.php";
-$classname = "Export" . $model;
-if (! dol_is_file($dir . $file)) {
-	print "No driver to export with format " . $model . "\n";
-	exit(- 1);
+$dir = DOL_DOCUMENT_ROOT."/core/modules/export/";
+$file = "export_".$model.".modules.php";
+$classname = "Export".$model;
+if (!dol_is_file($dir.$file)) {
+	print "No driver to export with format ".$model."\n";
+	exit(-1);
 }
-require_once $dir . $file;
+require_once $dir.$file;
 $objmodel = new $classname($db);
 
 // Define target path
 $dirname = $conf->bank->dir_temp;
-$filename = 'export-bank-receipts-' . $bankref . '-' . $num . '.' . $objmodel->extension;
+$filename = 'export-bank-receipts-'.$bankref.'-'.$num.'.'.$objmodel->extension;
 
 $array_fields = array(
 	'bankreceipt' => $outputlangs->transnoentitiesnoconv("AccountStatementShort"),
@@ -142,12 +142,12 @@ $array_fields = array(
 	'soldafter' => $outputlangs->transnoentitiesnoconv("BankBalanceAfter"),
 	'comment' => $outputlangs->transnoentitiesnoconv("Comment")
 );
-$array_selected = array('bankreceipt' => 'bankreceipt','bankaccount' => 'bankaccount','dateop' => 'dateop','dateval' => 'dateval','type' => 'type','description' => 'description','thirdparty' => 'thirdparty','accountelem' => 'accountelem','debit' => 'debit','credit' => 'credit','soldbefore' => 'soldbefore','soldafter' => 'soldafter','comment' => 'comment');
-$array_export_TypeFields = array('bankreceipt' => 'Text','bankaccount' => 'Text','dateop' => 'Date','dateval' => 'Date','type' => 'Text','description' => 'Text','thirdparty' => 'Text','accountelem' => 'Text','debit' => 'Number','credit' => 'Number','soldbefore' => 'Number','soldafter' => 'Number','comment' => 'Text');
+$array_selected = array('bankreceipt' => 'bankreceipt', 'bankaccount' => 'bankaccount', 'dateop' => 'dateop', 'dateval' => 'dateval', 'type' => 'type', 'description' => 'description', 'thirdparty' => 'thirdparty', 'accountelem' => 'accountelem', 'debit' => 'debit', 'credit' => 'credit', 'soldbefore' => 'soldbefore', 'soldafter' => 'soldafter', 'comment' => 'comment');
+$array_export_TypeFields = array('bankreceipt' => 'Text', 'bankaccount' => 'Text', 'dateop' => 'Date', 'dateval' => 'Date', 'type' => 'Text', 'description' => 'Text', 'thirdparty' => 'Text', 'accountelem' => 'Text', 'debit' => 'Number', 'credit' => 'Number', 'soldbefore' => 'Number', 'soldafter' => 'Number', 'comment' => 'Text');
 
 // Build request to find records for a bank account/receipt
 $listofnum = "";
-if (! empty($num) && $num != "all") {
+if (!empty($num) && $num != "all") {
 	$listofnum .= "'";
 	$arraynum = explode(',', $num);
 	foreach ($arraynum as $val) {
@@ -160,12 +160,12 @@ if (! empty($num) && $num != "all") {
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv,";
 $sql .= " b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref, ba.label as banklabel";
-$sql .= " FROM " . MAIN_DB_PREFIX . "bank_account as ba";
-$sql .= ", " . MAIN_DB_PREFIX . "bank as b";
-$sql .= " WHERE b.fk_account = " . $acct->id;
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_account as ba";
+$sql .= ", ".MAIN_DB_PREFIX."bank as b";
+$sql .= " WHERE b.fk_account = ".$acct->id;
 if ($listofnum)
-	$sql .= " AND b.num_releve IN (" . $listofnum . ")";
-if (! isset($num))
+	$sql .= " AND b.num_releve IN (".$listofnum.")";
+if (!isset($num))
 	$sql .= " OR b.num_releve is null";
 $sql .= " AND b.fk_account = ba.rowid";
 $sql .= $db->order("b.num_releve, b.datev, b.datec", "ASC"); // We add date of creation to have correct order when everything is done the same day
@@ -179,13 +179,13 @@ if ($resql) {
 
 	if ($numrows > 0) {
 		// Open file
-		print 'Open file ' . $filename . ' into directory ' . $dirname . "\n";
+		print 'Open file '.$filename.' into directory '.$dirname."\n";
 		dol_mkdir($dirname);
-		$result = $objmodel->open_file($dirname . "/" . $filename, $outputlangs);
+		$result = $objmodel->open_file($dirname."/".$filename, $outputlangs);
 
 		if ($result < 0) {
-			print 'Failed to create file ' . $filename . ' into dir ' . $dirname . '.' . "\n";
-			return - 1;
+			print 'Failed to create file '.$filename.' into dir '.$dirname.'.'."\n";
+			return -1;
 		}
 
 		// Genere en-tete
@@ -204,13 +204,13 @@ if ($resql) {
 		$objp = $db->fetch_object($resql);
 
 		// Calculate start balance
-		if (! isset($balancebefore[$objp->num_releve])) {
-			print 'Calculate start balance for receipt ' . $objp->num_releve . "\n";
+		if (!isset($balancebefore[$objp->num_releve])) {
+			print 'Calculate start balance for receipt '.$objp->num_releve."\n";
 
 			$sql2 = "SELECT sum(b.amount) as amount";
-			$sql2 .= " FROM " . MAIN_DB_PREFIX . "bank as b";
-			$sql2 .= " WHERE b.num_releve < '" . $db->escape($objp->num_releve) . "'";
-			$sql2 .= " AND b.fk_account = " . $objp->bankid;
+			$sql2 .= " FROM ".MAIN_DB_PREFIX."bank as b";
+			$sql2 .= " WHERE b.num_releve < '".$db->escape($objp->num_releve)."'";
+			$sql2 .= " AND b.fk_account = ".$objp->bankid;
 			$resql2 = $db->query($sql2);
 			if ($resql2) {
 				$obj2 = $db->fetch_object($resql2);
@@ -218,7 +218,7 @@ if ($resql) {
 				$db->free($resql2);
 			} else {
 				dol_print_error($db);
-				exit(- 1);
+				exit(-1);
 			}
 
 			$total = $balancebefore[$objp->num_releve];
@@ -278,13 +278,13 @@ if ($resql) {
 				if ($accountelem) {
 					$accountelem .= ', ';
                 }
-				$accountelem .= $langs->transnoentitiesnoconv("SocialContribution") . ' ' . $paymentsocialcontributionstatic->ref;
+				$accountelem .= $langs->transnoentitiesnoconv("SocialContribution").' '.$paymentsocialcontributionstatic->ref;
 			} elseif ($links[$key]['type'] == 'payment_vat') {
 				$paymentvatstatic->fetch($links[$key]['url_id']);
 				if ($accountelem) {
 					$accountelem .= ', ';
                 }
-				$accountelem .= $langs->transnoentitiesnoconv("VATPayments") . ' ' . $paymentvatstatic->ref;
+				$accountelem .= $langs->transnoentitiesnoconv("VATPayments").' '.$paymentvatstatic->ref;
 			} elseif ($links[$key]['type'] == 'banktransfert') {
 				$comment = $outputlangs->transnoentitiesnoconv("Transfer");
 				if ($objp->amount > 0) {
@@ -294,9 +294,9 @@ if ($resql) {
 					$banklinestatic->fetch($links[$key]['url_id']);
 					$bankstatic->id = $banklinestatic->fk_account;
 					$bankstatic->label = $banklinestatic->bank_account_label;
-					$comment .= ' (' . $langs->transnoentitiesnoconv("from") . ' ';
+					$comment .= ' ('.$langs->transnoentitiesnoconv("from").' ';
 					$comment .= $bankstatic->getNomUrl(1, 'transactions');
-					$comment .= ' ' . $langs->transnoentitiesnoconv("toward") . ' ';
+					$comment .= ' '.$langs->transnoentitiesnoconv("toward").' ';
 					$bankstatic->id = $objp->bankid;
 					$bankstatic->label = $objp->bankref;
 					$comment .= $bankstatic->getNomUrl(1, '');
@@ -307,9 +307,9 @@ if ($resql) {
                     }
 					$bankstatic->id = $objp->bankid;
 					$bankstatic->label = $objp->bankref;
-					$comment .= ' (' . $langs->transnoentitiesnoconv("from") . ' ';
+					$comment .= ' ('.$langs->transnoentitiesnoconv("from").' ';
 					$comment .= $bankstatic->getNomUrl(1, '');
-					$comment .= ' ' . $langs->transnoentitiesnoconv("toward") . ' ';
+					$comment .= ' '.$langs->transnoentitiesnoconv("toward").' ';
 					$banklinestatic->fetch($links[$key]['url_id']);
 					$bankstatic->id = $banklinestatic->fk_account;
 					$bankstatic->label = $banklinestatic->bank_account_label;
@@ -359,14 +359,14 @@ if ($resql) {
 			$credit = price2num($objp->amount);
 		}
 
-		$i ++;
+		$i++;
 
 		$rec = new stdClass();
 		$rec->bankreceipt = $objp->num_releve;
 		$rec->bankaccount = $objp->banklabel;
 		$rec->dateop = dol_print_date($dateop, 'dayrfc');
 		$rec->dateval = dol_print_date($datevalue, 'dayrfc');
-		$rec->type = $objp->fk_type . ' ' . ($objp->num_chq ? $objp->num_chq : '');
+		$rec->type = $objp->fk_type.' '.($objp->num_chq ? $objp->num_chq : '');
 		$rec->description = $description;
 		$rec->thirdparty = $thirdparty;
 		$rec->accountelem = $accountelem;
@@ -381,7 +381,7 @@ if ($resql) {
 	}
 
 	if ($numrows > 0) {
-		print "Found " . $numrows . " records for receipt " . $num . "\n";
+		print "Found ".$numrows." records for receipt ".$num."\n";
 
 		// Genere en-tete
 		$objmodel->write_footer($outputlangs);
@@ -389,11 +389,11 @@ if ($resql) {
 		// Close file
 		$objmodel->close_file();
 
-		print 'File ' . $filename . ' was generated into dir ' . $dirname . '.' . "\n";
+		print 'File '.$filename.' was generated into dir '.$dirname.'.'."\n";
 
 		$ret = 0;
 	} else {
-		print "No records found for receipt " . $num . "\n";
+		print "No records found for receipt ".$num."\n";
 
 		$ret = 0;
 	}

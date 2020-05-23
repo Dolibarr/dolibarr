@@ -80,7 +80,7 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && !empty($dvid))
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) $page = $pageplusone - 1;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -205,9 +205,9 @@ $paymentvatstatic = new TVA($db);
 $bankstatic = new Account($db);
 $banklinestatic = new AccountLine($db);
 $remisestatic = new RemiseCheque($db);
-$paymentdonationstatic=new PaymentDonation($db);
-$paymentloanstatic=new PaymentLoan($db);
-$paymentvariousstatic=new PaymentVarious($db);
+$paymentdonationstatic = new PaymentDonation($db);
+$paymentloanstatic = new PaymentLoan($db);
+$paymentvariousstatic = new PaymentVarious($db);
 
 // Must be before button action
 $param = '';
@@ -383,7 +383,7 @@ else
 
     $title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 	print load_fiche_titre($title, $mesprevnext, '');
-	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
+	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'bank_account', 0, '', '', 0, 1);
 
 	print "<form method=\"post\" action=\"releve.php\">";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -518,28 +518,28 @@ else
 					print '</a>';
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='payment_donation')
+				elseif ($links[$key]['type'] == 'payment_donation')
 				{
-					$paymentdonationstatic->id=$links[$key]['url_id'];
-					$paymentdonationstatic->ref=$langs->trans("Payment");
+					$paymentdonationstatic->id = $links[$key]['url_id'];
+					$paymentdonationstatic->ref = $langs->trans("Payment");
 					print ' '.$paymentdonationstatic->getNomUrl(1);
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='payment_loan')
+				elseif ($links[$key]['type'] == 'payment_loan')
 				{
-					$paymentloanstatic->id=$links[$key]['url_id'];
-					$paymentloanstatic->ref=$langs->trans("Payment");
+					$paymentloanstatic->id = $links[$key]['url_id'];
+					$paymentloanstatic->ref = $langs->trans("Payment");
 					print ' '.$paymentloanstatic->getNomUrl(1);
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='payment_various')
+				elseif ($links[$key]['type'] == 'payment_various')
 				{
-					$paymentvariousstatic->id=$links[$key]['url_id'];
-					$paymentvariousstatic->ref=$langs->trans("Payment");
+					$paymentvariousstatic->id = $links[$key]['url_id'];
+					$paymentvariousstatic->ref = $langs->trans("Payment");
 					print ' '.$paymentvariousstatic->getNomUrl(1);
 					$newline = 0;
 				}
-				elseif ($links[$key]['type']=='banktransfert') {
+				elseif ($links[$key]['type'] == 'banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
 					if ($objp->amount > 0)
 					{

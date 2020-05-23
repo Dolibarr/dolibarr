@@ -236,6 +236,7 @@ if (!empty($user->admin))
     }
     print '</tr>';
 
+    /* Set this option as a hidden option but keep it for some needs.
 	print '<tr>';
 	print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
@@ -248,6 +249,7 @@ if (!empty($user->admin))
 		print '</a></td>';
 	}
 	print '</tr>';
+	*/
 
 	print '<tr>';
 	print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';

@@ -37,26 +37,26 @@ class mod_contract_olive extends ModelNumRefContracts
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Olive';
+	public $nom = 'Olive';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Olive';
+	public $name = 'Olive';
 
-	public $code_modifiable = 1;				// Code modifiable
+	public $code_modifiable = 1; // Code modifiable
 
-	public $code_modifiable_invalide = 1;		// Code modifiable si il est invalide
+	public $code_modifiable_invalide = 1; // Code modifiable si il est invalide
 
-	public $code_modifiable_null = 1;			// Code modifiables si il est null
+	public $code_modifiable_null = 1; // Code modifiables si il est null
 
-	public $code_null = 1;						// Code facultatif
+	public $code_null = 1; // Code facultatif
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var int Automatic numbering

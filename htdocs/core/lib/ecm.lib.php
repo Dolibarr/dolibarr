@@ -36,15 +36,15 @@ function ecm_prepare_dasboard_head($object)
 
 	$h = 0;
 	$head = array();
-    $helptext =$langs->trans("ECMAreaDesc").'<br>';
-    $helptext.=$langs->trans("ECMAreaDesc2");
+	$helptext = $langs->trans("ECMAreaDesc").'<br>';
+	$helptext .= $langs->trans("ECMAreaDesc2");
 
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/index.php';
 	$head[$h][1] = $langs->trans("ECMSectionsManual").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 	$head[$h][2] = 'index';
 	$h++;
 
-	if (! empty($conf->global->ECM_AUTO_TREE_ENABLED))
+	if (!empty($conf->global->ECM_AUTO_TREE_ENABLED))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_auto.php';
 		$head[$h][1] = $langs->trans("ECMSectionsAuto").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
@@ -52,13 +52,13 @@ function ecm_prepare_dasboard_head($object)
 		$h++;
 	}
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm');
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm', 'remove');
 
 	return $head;
 }
@@ -81,14 +81,14 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 	if ($module == 'ecm')
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$object->id;
-		$head[$h][1] = $langs->trans("Card");
+		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
 		$h++;
 	}
 	else
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$section.'&module='.$module;
-		$head[$h][1] = $langs->trans("Card");
+		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
 		$h++;
 	}
@@ -104,16 +104,16 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
  */
 function ecm_file_prepare_head($object)
 {
-    global $langs, $conf, $user;
-    $h = 0;
-    $head = array();
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/ecm/file_card.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
-    $head[$h][1] = $langs->trans("Card");
-    $head[$h][2] = 'card';
-    $h++;
+	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_card.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
+	$head[$h][1] = $langs->trans("File");
+	$head[$h][2] = 'card';
+	$h++;
 
-    return $head;
+	return $head;
 }
 
 /**

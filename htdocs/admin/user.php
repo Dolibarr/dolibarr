@@ -147,13 +147,13 @@ dol_fiche_head($head, 'card', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
 
-// Mail required for members
+// Mail required for users
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
@@ -173,6 +173,30 @@ else
 	else
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
+}
+print '</td></tr>';
+
+// user hide inactive
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UserHideInactive").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+
+print '<td align="center" width="100">';
+if ($conf->use_javascript_ajax)
+{
+	print ajax_constantonoff('USER_HIDE_INACTIVE_IN_COMBOBOX');
+}
+else
+{
+	if (empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	}
+	else
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';
@@ -205,6 +229,8 @@ else
 {
 	dol_print_error($db);
 }
+
+print load_fiche_titre($langs->trans("UsersDocModules"), '', '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';

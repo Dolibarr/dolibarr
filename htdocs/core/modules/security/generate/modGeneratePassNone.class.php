@@ -22,7 +22,7 @@
  *      \brief      File to manage no password generation.
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpassword.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
 
 
 /**
@@ -61,10 +61,10 @@ class modGeneratePassNone extends ModeleGenPassword
 		$this->id = "none";
 		$this->length = 0;
 
-		$this->db=$db;
-		$this->conf=$conf;
-		$this->langs=$langs;
-		$this->user=$user;
+		$this->db = $db;
+		$this->conf = $conf;
+		$this->langs = $langs;
+		$this->user = $user;
 	}
 
 	/**

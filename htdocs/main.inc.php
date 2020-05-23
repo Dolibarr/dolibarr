@@ -11,6 +11,7 @@
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2020       Demarest Maxime         <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -209,8 +210,8 @@ $prefix = dol_getprefix('');
 $sessionname = 'DOLSESSID_'.$prefix;
 $sessiontimeout = 'DOLSESSTIMEOUT_'.$prefix;
 if (!empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime', $_COOKIE[$sessiontimeout]);
+session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 session_name($sessionname);
-session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie (same as setting session.cookie_httponly into php.ini). Must be called before the session_start.
 // This create lock, released when session_write_close() or end of page.
 // We need this lock as long as we read/write $_SESSION ['vars']. We can remove lock when finished.
 if (!defined('NOSESSION'))
@@ -232,7 +233,7 @@ require_once 'master.inc.php';
 register_shutdown_function('dol_shutdown');
 
 // Load debugbar
-if (!empty($conf->debugbar->enabled) && ! GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile']))
+if (!empty($conf->debugbar->enabled) && !GETPOST('dol_use_jmobile') && empty($_SESSION['dol_use_jmobile']))
 {
     global $debugbar;
     include_once DOL_DOCUMENT_ROOT.'/debugbar/class/DebugBar.php';
@@ -256,8 +257,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover = 1;
 }
 
-
-// Force HTTPS if required ($conf->file->main_force_https is 0/1 or https dolibarr root url)
+// Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
 if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on'))
 {
@@ -284,6 +284,7 @@ if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERV
 	// Start redirect
 	if ($newurl)
 	{
+		header_remove(); // Clean header already set to be sure to remove any header like "Set-Cookie: DOLSESSID_..." from non HTTPS answers
 		dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 		header("Location: ".$newurl);
 		exit;
@@ -316,7 +317,7 @@ if (!defined('NOLOGIN') && !defined('NOIPCHECK') && !empty($dolibarr_main_restri
 
 // Loading of additional presentation includes
 if (!defined('NOREQUIREHTML')) require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // Need 660ko memory (800ko in 2.2)
-if (!defined('NOREQUIREAJAX') && $conf->use_javascript_ajax) require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php'; // Need 22ko memory
 
 // If install or upgrade process not done or not completely finished, we call the install page.
 if (!empty($conf->global->MAIN_NOT_INSTALLED) || !empty($conf->global->MAIN_NOT_UPGRADED))
@@ -342,7 +343,6 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 	}
 }
 
-//var_dump(GETPOST('token').' '.$_SESSION['token'].' - '.newToken().' '.$_SERVER['SCRIPT_FILENAME']);
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL'))
@@ -509,14 +509,11 @@ if (!defined('NOLOGIN'))
 
 				// Call trigger for the "security events" log
 				$user->trigger_mesg = 'ErrorBadValueForCode - login='.GETPOST("username", "alpha", 2);
-				// Call of triggers
-				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-				$interface = new Interfaces($db);
-				$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf);
-				if ($result < 0) {
-					$error++;
-				}
-				// End Call of triggers
+
+				// Call trigger
+				$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+				if ($result < 0) $error++;
+				// End call triggers
 
 				// Hooks on failed login
 				$action = '';
@@ -565,6 +562,7 @@ if (!defined('NOLOGIN'))
 				$dol_tz_string = preg_replace('/,/', '/', $dol_tz_string);
 				$dol_tz_string = preg_replace('/\s/', '_', $dol_tz_string);
 				$dol_dst = 0;
+				// Keep $_POST here. Do not use GETPOSTISSET
 				if (isset($_POST["dst_first"]) && isset($_POST["dst_second"]))
 				{
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -588,14 +586,11 @@ if (!defined('NOLOGIN'))
 
 				// Call trigger for the "security events" log
 				$user->trigger_mesg = $langs->trans("ErrorBadLoginPassword").' - login='.GETPOST("username", "alpha", 2);
-				// Call of triggers
-				include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-				$interface = new Interfaces($db);
-				$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf, GETPOST("username", "alpha", 2));
-				if ($result < 0) {
-					$error++;
-				}
-				// End Call of triggers
+
+				// Call trigger
+				$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+				if ($result < 0) $error++;
+				// End call triggers
 
 				// Hooks on failed login
 				$action = '';
@@ -623,8 +618,8 @@ if (!defined('NOLOGIN'))
 		{
 			dol_syslog('User not found, connexion refused');
 			session_destroy();
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
-			session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie
 			session_start();
 
 			if ($resultFetchUser == 0)
@@ -643,14 +638,11 @@ if (!defined('NOLOGIN'))
 				$user->trigger_mesg = $user->error;
 			}
 
-			// Call triggers for the "security events" log
-			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-			$interface = new Interfaces($db);
-			$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf);
-			if ($result < 0) {
-				$error++;
-			}
+			// Call trigger
+			$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+			if ($result < 0) $error++;
 			// End call triggers
+
 
 			// Hooks on failed login
 			$action = '';
@@ -680,8 +672,8 @@ if (!defined('NOLOGIN'))
 			// Account has been removed after login
 			dol_syslog("Can't load user even if session logged. _SESSION['dol_login']=".$login, LOG_WARNING);
 			session_destroy();
+			session_set_cookie_params(0, '/', null, (empty($dolibarr_main_force_https) ? false : true), true); // Add tag secure and httponly on session cookie
 			session_name($sessionname);
-			session_set_cookie_params(0, '/', null, false, true); // Add tag httponly on session cookie
 			session_start();
 
 			if ($resultFetchUser == 0)
@@ -700,13 +692,9 @@ if (!defined('NOLOGIN'))
 				$user->trigger_mesg = $user->error;
 			}
 
-			// Call triggers for the "security events" log
-			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-			$interface = new Interfaces($db);
-			$result = $interface->run_triggers('USER_LOGIN_FAILED', $user, $user, $langs, $conf);
-			if ($result < 0) {
-				$error++;
-			}
+			// Call trigger
+			$result = $user->call_trigger('USER_LOGIN_FAILED', $user);
+			if ($result < 0) $error++;
 			// End call triggers
 
 			// Hooks on failed login
@@ -807,13 +795,10 @@ if (!defined('NOLOGIN'))
 
 		// Call triggers for the "security events" log
 		$user->trigger_mesg = $loginfo;
-		// Call triggers
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-		$interface = new Interfaces($db);
-		$result = $interface->run_triggers('USER_LOGIN', $user, $user, $langs, $conf);
-		if ($result < 0) {
-			$error++;
-		}
+
+		// Call trigger
+		$result = $user->call_trigger('USER_LOGIN', $user);
+		if ($result < 0) $error++;
 		// End call triggers
 
 		// Hooks on successfull login
@@ -1345,7 +1330,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		{
 			foreach ($arrayofcss as $cssfile)
 			{
-			    if (preg_match('/^http/i', $cssfile))
+			    if (preg_match('/^(http|\/\/)/i', $cssfile))
 			    {
 			        $urltofile = $cssfile;
 			    }
@@ -1381,22 +1366,42 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 			// Flot
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
+			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'jflot')
 			{
-				if (constant('JS_JQUERY_FLOT'))
+				if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
 				{
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-				}
-				else
-				{
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					if (constant('JS_JQUERY_FLOT'))
+					{
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+					}
+					else
+					{
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+						/* Test for jflot 4.2 -> not better than current
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
+						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
+						*/
+					}
 				}
 			}
-			// jQuery jeditable
+			// Chart
+			if ($conf->global->MAIN_JS_GRAPH == 'chart')
+			{
+				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
+			}
+
+			// jQuery jeditable for Edit In Place features
 			if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !defined('DISABLE_JQUERY_JEDITABLE'))
 			{
 				print '<!-- JS to manage editInPlace feature -->'."\n";
@@ -1497,7 +1502,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 print '<!-- Includes JS added by page -->'."\n";
                 foreach ($arrayofjs as $jsfile)
                 {
-                    if (preg_match('/^http/i', $jsfile))
+                    if (preg_match('/^(http|\/\/)/i', $jsfile))
                     {
                         print '<script src="'.$jsfile.'"></script>'."\n";
                     }
@@ -1611,31 +1616,6 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 
 		print '<div class="login_block usedropdown">'."\n";
 
-
-		// Add login user link
-		$toprightmenu .= '<div class="login_block_user">';
-
-		// Login name with photo and tooltip
-		$mode = -1;
-		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
-            // Add search dropdown
-            $toprightmenu .= top_menu_search();
-        }
-
-        if (!empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN)) {
-            // Add bookmark dropdown
-            $toprightmenu .= top_menu_bookmark();
-        }
-
-        // Add user dropdown
-	    $toprightmenu .= top_menu_user();
-
-		$toprightmenu .= '</div></div>';
-
-		$toprightmenu .= '</div>'."\n";
-
 		$toprightmenu .= '<div class="login_block_other">';
 
 		// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
@@ -1703,13 +1683,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if ($helpbaseurl && $helppage)
 			{
 				$text = '';
-	            if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
-                    $langs->load('admin');
-                    $appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
-                }
-				$title = $appli.'<br>';
-				$title .= $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage');
-				if ($mode == 'wiki') $title .= ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage, '_', ' ')).'&quot;';
+				$title = $langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage' : 'GoToHelpPage');
+				if ($mode == 'wiki') $title .= ' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage, '_', ' ')).'&quot;'."";
 				$text .= '<a class="help" target="_blank" rel="noopener" href="';
 				if ($mode == 'wiki') $text .= sprintf($helpbaseurl, urlencode(html_entity_decode($helppage)));
 				else $text .= sprintf($helpbaseurl, $helppage);
@@ -1718,13 +1693,45 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$text .= '</a>';
 				$toprightmenu .= @Form::textwithtooltip('', $title, 2, 1, $text, 'login_block_elem', 2);
 			}
+
+			// Version
+			if (!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
+				$langs->load('admin');
+				$appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
+			}
+			$text = '<span href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
+			$toprightmenu .= @Form::textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
 
 
 		// Logout link
 		$toprightmenu .= @Form::textwithtooltip('', $logouthtmltext, 2, 1, $logouttext, 'login_block_elem logout-btn', 2);
 
-		$toprightmenu .= '</div>';
+		$toprightmenu .= '</div>'; // end div class="login_block_other"
+
+
+		// Add login user link
+		$toprightmenu .= '<div class="login_block_user">';
+
+		// Login name with photo and tooltip
+		$mode = -1;
+		$toprightmenu .= '<div class="inline-block nowrap"><div class="inline-block login_block_elem login_block_elem_name" style="padding: 0px;">';
+
+		if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_search();
+		}
+
+		// Add bookmark dropdown
+		$toprightmenu .= top_menu_bookmark();
+
+		// Add user dropdown
+		$toprightmenu .= top_menu_user();
+
+		$toprightmenu .= '</div></div>';
+
+		$toprightmenu .= '</div>'."\n";
+
 
 		print $toprightmenu;
 
@@ -1743,9 +1750,11 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 /**
  * Build the tooltip on user login
  *
- * @return  string                  HTML content
+ * @param	int			$hideloginname		Hide login name. Show only the image.
+ * @param	string		$urllogout			URL for logout
+ * @return  string                  		HTML content
  */
-function top_menu_user()
+function top_menu_user($hideloginname = 0, $urllogout = '')
 {
     global $langs, $conf, $db, $hookmanager, $user;
     global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -1816,9 +1825,10 @@ function top_menu_user()
         }
     }
 
-
-
-    $logoutLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
+    if (empty($urllogout)) {
+    	$urllogout = DOL_URL_ROOT.'/user/logout.php';
+    }
+    $logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" ><i class="fa fa-sign-out-alt"></i> '.$langs->trans("Logout").'</a>';
     $profilLink = '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" ><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
 
 
@@ -1843,20 +1853,21 @@ function top_menu_user()
 
     if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	    $btnUser = '<!-- div for user link -->
-	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu  inline-block">
+	    <div id="topmenu-login-dropdown" class="userimg atoplogin dropdown user user-menu inline-block">
 	        <a href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="dropdown-toggle login-dropdown-a" data-toggle="dropdown">
 	            '.$userImage.'
-	            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
+	            <span class="hidden-xs maxwidth200 atoploginusername hideonsmartphone paddingleft">'.dol_trunc($user->firstname ? $user->firstname : $user->login, 10).'</span>
 	        </a>
 	        <div class="dropdown-menu">
 	            <!-- User image -->
 	            <div class="user-header">
 	                '.$userDropDownImage.'
-
 	                <p>
-	                    '.$profilName.'<br>
-						<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>
-						<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
+	                    '.$profilName.'<br>';
+		if ($user->datepreviouslogin) {
+			$btnUser .= '<small class="classfortooltip" title="'.$langs->trans("PreviousConnexion").'" ><i class="fa fa-user-clock"></i> '.dol_print_date($user->datepreviouslogin, "dayhour", 'tzuser').'</small><br>';
+		}
+		$btnUser .= '<small class="classfortooltip"><i class="fa fa-cog"></i> '.$langs->trans("Version").' '.$appli.'</small>
 	                </p>
 	            </div>
 
@@ -1894,20 +1905,27 @@ function top_menu_user()
         $( document ).ready(function() {
             $(document).on("click", function(event) {
                 if (!$(event.target).closest("#topmenu-login-dropdown").length) {
-                    // Hide the menus.
+					//console.log("close login dropdown");
+					// Hide the menus.
                     $("#topmenu-login-dropdown").removeClass("open");
                 }
             });
+			';
 
-            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
-                event.preventDefault();
-                $("#topmenu-login-dropdown").toggleClass("open");
-            });
+        if ($conf->theme != 'md') {
+	        $btnUser .= '
+	            $("#topmenu-login-dropdown .dropdown-toggle").on("click", function(event) {
+					console.log("toggle login dropdown");
+					event.preventDefault();
+	                $("#topmenu-login-dropdown").toggleClass("open");
+	            });
 
-            $("#topmenuloginmoreinfo-btn").on("click", function() {
-                $("#topmenuloginmoreinfo").slideToggle();
-            });
+	            $("#topmenuloginmoreinfo-btn").on("click", function() {
+	                $("#topmenuloginmoreinfo").slideToggle();
+	            });';
+        }
 
+        $btnUser .= '
         });
         </script>
         ';
@@ -1936,51 +1954,57 @@ function top_menu_bookmark()
         include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
         $langs->load("bookmarks");
 
-        $html .= '<!-- div for bookmark link -->
-        <div id="topmenu-bookmark-dropdown" class="atoplogin dropdown inline-block">
-            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
-                <i class="fa fa-star" ></i>
-            </a>
-            <div class="dropdown-menu">
-                '.printDropdownBookmarksList().'
-            </div>
-        </div>';
+        if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+        	$html .= '<div id="topmenu-bookmark-dropdown" class="dropdown inline-block">';
+        	$html .= printDropdownBookmarksList();
+        	$html .= '</div>';
+        } else {
+	        $html .= '<!-- div for bookmark link -->
+	        <div id="topmenu-bookmark-dropdown" class="dropdown inline-block">
+	            <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('Bookmarks').' ('.$langs->trans('BookmarksMenuShortCut').')">
+	                <i class="fa fa-star" ></i>
+	            </a>
+	            <div class="dropdown-menu">
+	                '.printDropdownBookmarksList().'
+	            </div>
+	        </div>';
+
+	        $html .= '
+	        <!-- Code to show/hide the bookmark drop-down -->
+	        <script>
+	        $( document ).ready(function() {
+	            $(document).on("click", function(event) {
+	                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
+						//console.log("close bookmark dropdown - we click outside");
+	                    // Hide the menus.
+	                    $("#topmenu-bookmark-dropdown").removeClass("open");
+	                }
+	            });
+
+	            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
+					console.log("toggle bookmark dropdown");
+					openBookMarkDropDown();
+	            });
+
+	            // Key map shortcut
+	            $(document).keydown(function(e){
+	                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
+	                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
+	                     openBookMarkDropDown();
+	                  }
+	            });
 
 
+	            var openBookMarkDropDown = function() {
+	                event.preventDefault();
+	                $("#topmenu-bookmark-dropdown").toggleClass("open");
+	                $("#top-bookmark-search-input").focus();
+	            }
 
-        $html .= '
-        <!-- Code to show/hide the user drop-down -->
-        <script>
-        $( document ).ready(function() {
-            $(document).on("click", function(event) {
-                if (!$(event.target).closest("#topmenu-bookmark-dropdown").length) {
-                    // Hide the menus.
-                    $("#topmenu-bookmark-dropdown").removeClass("open");
-                }
-            });
-
-            $("#topmenu-bookmark-dropdown .dropdown-toggle").on("click", function(event) {
-                openBookMarkDropDown();
-            });
-
-            // Key map shortcut
-            $(document).keydown(function(e){
-                  if( e.which === 77 && e.ctrlKey && e.shiftKey ){
-                     console.log(\'control + shift + m : trigger open bookmark dropdown\');
-                     openBookMarkDropDown();
-                  }
-            });
-
-
-            var openBookMarkDropDown = function() {
-                event.preventDefault();
-                $("#topmenu-bookmark-dropdown").toggleClass("open");
-                $("#top-bookmark-search-input").focus();
-            }
-
-        });
-        </script>
-        ';
+	        });
+	        </script>
+	        ';
+        }
     }
     return $html;
 }
@@ -2073,7 +2097,7 @@ function top_menu_search()
         // close drop down
         $(document).on("click", function(event) {
 			if (!$(event.target).closest("#topmenu-global-search-dropdown").length) {
-				console.log("click close");
+				console.log("click close search - we click outside");
                 // Hide the menus.
                 $("#topmenu-global-search-dropdown").removeClass("open");
             }
@@ -2081,7 +2105,7 @@ function top_menu_search()
 
         // Open drop down
         $("#topmenu-global-search-dropdown .dropdown-toggle").on("click", function(event) {
-			console.log("click open");
+			console.log("toggle search dropdown");
             openGlobalSearchDropDown();
         });
 
@@ -2154,7 +2178,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
             } else {
                 if (is_array($arrayresult)) {
                     foreach ($arrayresult as $key => $val) {
-                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, img_picto('', $val['img'], '', false, 1, 1));
+                        $searchform .= printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth125', 'sall', $val['shortcut'], 'searchleft'.$key, $val['img']);
                     }
                 }
             }
@@ -2182,15 +2206,6 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
                 $searchform .= '</div>';
             }
         }
-
-		// Define $bookmarks
-		if (!empty($conf->bookmark->enabled) && $user->rights->bookmark->lire && empty($conf->global->MAIN_USE_TOP_MENU_BOOKMARK_DROPDOWN))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
-			$langs->load("bookmarks");
-
-			$bookmarks = printBookmarksList();
-		}
 
 		// Left column
 		print '<!-- Begin left menu -->'."\n";
@@ -2332,6 +2347,35 @@ function main_area($title = '')
 	print '<!-- Begin div class="fiche" -->'."\n".'<div class="fiche">'."\n";
 
 	if (!empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)) print info_admin($langs->trans("WarningYouAreInMaintenanceMode", $conf->global->MAIN_ONLY_LOGIN_ALLOWED));
+
+    // Permit to add user company information on each printed document by set SHOW_SOCINFO_ON_PRINT
+    if (!empty($conf->global->SHOW_SOCINFO_ON_PRINT) && GETPOST('optioncss', 'aZ09') == 'print' && empty(GETPOST('disable_show_socinfo_on_print', 'az09')))
+    {
+        global $hookmanager;
+        $hookmanager->initHooks(array('showsocinfoonprint'));
+        $parameters = array();
+        $reshook = $hookmanager->executeHooks('showSocinfoOnPrint', $parameters);
+        if (empty($reshook))
+        {
+            print '<!-- Begin show mysoc info header -->'."\n";
+            print '<div id="mysoc-info-header">'."\n";
+            print '<table class="centpercent div-table-responsive">'."\n";
+            print '<tbody>';
+            print '<tr><td rowspan="0" class="width20p">';
+            if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO))
+                print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LOGO)).'">';
+            print '</td><td  rowspan="0" class="width50p"></td></tr>'."\n";
+            print '<tr><td class="titre bold">'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'</td></tr>'."\n";
+            print '<tr><td>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ADDRESS).'<br>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP).' '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN).'</td></tr>'."\n";
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_TEL)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Phone").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TEL).'</td></tr>';
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_MAIL)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Email").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_MAIL).'</td></tr>';
+            if (!empty($conf->global->MAIN_INFO_SOCIETE_WEB)) print '<tr><td style="padding-left: 1em" class="small">'.$langs->trans("Web").' : '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_WEB).'</td></tr>';
+            print '</tbody>';
+            print '</table>'."\n";
+            print '</div>'."\n";
+            print '<!-- End show mysoc info header -->'."\n";
+        }
+    }
 }
 
 
@@ -2407,14 +2451,14 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret .= '<input type="hidden" name="savelogin" value="'.dol_escape_htmltag($user->login).'">';
 	if ($showtitlebefore) $ret .= '<div class="tagtd left">'.$title.'</div> ';
 	$ret .= '<div class="tagtd">';
+	$ret .= img_picto('', $img, '', false, 0, 0, '', 'paddingright width20');
 	$ret .= '<input type="text" class="flat '.$htmlmorecss.'"';
-	$ret .= ' style="text-indent: 22px; background-image: url(\''.$img.'\'); background-repeat: no-repeat; background-position: 3px;"';
+	$ret .= ' style="background-repeat: no-repeat; background-position: 3px;"';
 	$ret .= ($accesskey ? ' accesskey="'.$accesskey.'"' : '');
 	$ret .= ' placeholder="'.strip_tags($title).'"';
 	$ret .= ($autofocus ? ' autofocus' : '');
 	$ret .= ' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
-	//$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
-	$ret .= '<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret .= '<button type="submit" class="button bordertransp" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
 	$ret .= '<span class="fa fa-search"></span>';
 	$ret .= '</button>';
 	$ret .= '</div>';
@@ -2575,14 +2619,14 @@ if (!function_exists("llxFooter"))
 			|| $forceping)
 			{
 				// No ping done if we are into an alpha version
-				if (strpos('alpha', DOL_VERSION) > 0 && ! $forceping) {
+				if (strpos('alpha', DOL_VERSION) > 0 && !$forceping) {
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
 				}
 				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping)	// Cookie is set when we uncheck the checkbox in the installation wizard.
 				{
 					// MAIN_LAST_PING_KO_DATE
 					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent
-					if (! empty($conf->global->MAIN_LAST_PING_KO_DATE) && substr($conf->global->MAIN_LAST_PING_KO_DATE, 0, 6) == dol_print_date(dol_now(), '%Y%m') && ! $forceping) {
+					if (!empty($conf->global->MAIN_LAST_PING_KO_DATE) && substr($conf->global->MAIN_LAST_PING_KO_DATE, 0, 6) == dol_print_date(dol_now(), '%Y%m') && !$forceping) {
 						print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. An error already occured this month, we will try later. -->\n";
 					} else {
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -2593,7 +2637,7 @@ if (!function_exists("llxFooter"))
 						// Try to guess the distrib used
 						$distrib = 'standard';
 						if ($_SERVER["SERVER_ADMIN"] == 'doliwamp@localhost') $distrib = 'doliwamp';
-						if (! empty($dolibarr_distrib)) $distrib = $dolibarr_distrib;
+						if (!empty($dolibarr_distrib)) $distrib = $dolibarr_distrib;
 						?>
 			    			<script>
 			    			jQuery(document).ready(function (tmp) {

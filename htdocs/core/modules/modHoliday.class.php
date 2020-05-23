@@ -28,7 +28,7 @@
  *    \ingroup    holiday
  *    \brief      Description and activation file for module holiday
  */
-include_once DOL_DOCUMENT_ROOT ."/core/modules/DolibarrModules.class.php";
+include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
 
 /**
@@ -43,7 +43,7 @@ class modHoliday extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $conf, $user;   // Required by some include code
+		global $conf, $user; // Required by some include code
 
 		$this->db = $db;
 
@@ -68,12 +68,12 @@ class modHoliday extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='holiday';
+		$this->picto = 'holiday';
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array("/holiday/temp");
-		$r=0;
+		$r = 0;
 
 		// Config pages
 		$this->config_page_url = array("holiday.php");
@@ -83,20 +83,20 @@ class modHoliday extends DolibarrModules
 		// $this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3, 0); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("holiday");
 
 		// Constants
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',0),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
-		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-		$r=0;
+		$this->const = array(); // List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
+		$r = 0;
 
 		$this->const[$r][0] = "HOLIDAY_ADDON";
 		$this->const[$r][1] = "chaine";
@@ -121,11 +121,11 @@ class modHoliday extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		//$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');	// We avoid to get one tab for each module. RH data are already in RH tab.
-		$this->tabs[] = array();  					// To add a new tab identified by code tabname1
+		$this->tabs[] = array(); // To add a new tab identified by code tabname1
 
 		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+		$this->boxes = array(); // List of boxes
+		$r = 0;
 
 		// Add here list of php file(s) stored in includes/boxes that contains class to show a box.
 		// Example:
@@ -136,28 +136,28 @@ class modHoliday extends DolibarrModules
 
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
-		$r=0;
+		$this->rights = array(); // Permission array used by this module
+		$r = 0;
 
-		$this->rights[$r][0] = 20001; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read your own leave requests';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][0] = 20001; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read your own leave requests'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
-		$this->rights[$r][0] = 20002; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify your own leave requests';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][0] = 20002; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/modify your own leave requests'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
-		$this->rights[$r][0] = 20003; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete leave requests';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][0] = 20003; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Delete leave requests'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 		$this->rights[$r][0] = 20007;
@@ -167,71 +167,71 @@ class modHoliday extends DolibarrModules
 		$this->rights[$r][4] = 'approve';
 		$r++;
 
-		$this->rights[$r][0] = 20004; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read leave requests for everybody';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read_all';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][0] = 20004; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Read leave requests for everybody'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'read_all'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
-		$this->rights[$r][0] = 20005; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/modify leave requests for everybody';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write_all';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][0] = 20005; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Create/modify leave requests for everybody'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'write_all'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
-		$this->rights[$r][0] = 20006; 				// Permission id (must not be already used)
-		$this->rights[$r][1] = 'Setup leave requests of users (setup and update balance)';	// Permission label
-		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'define_holiday';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = '';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][0] = 20006; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Setup leave requests of users (setup and update balance)'; // Permission label
+		$this->rights[$r][3] = 0; // Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'define_holiday'; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports
-		$r=0;
+		$r = 0;
 
 		$r++;
-		$this->export_code[$r]='leaverequest_'.$r;
-		$this->export_label[$r]='ListeCP';
-		$this->export_icon[$r]='holiday';
-		$this->export_permission[$r]=array(array("holiday","read_all"));
-		$this->export_fields_array[$r]=array(
-			'd.rowid'=>"LeaveId",'d.fk_type'=>'TypeOfLeaveId','t.code'=>'TypeOfLeaveCode','t.label'=>'TypeOfLeaveLabel','d.fk_user'=>'UserID',
-			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.halfday'=>'HalfDay','none.num_open_days'=>'NbUseDaysCP',
-			'd.date_valid'=>'DateApprove','d.fk_validator'=>"UserForApprovalID",'ua.lastname'=>"UserForApprovalLastname",'ua.firstname'=>"UserForApprovalFirstname",
-			'ua.login'=>"UserForApprovalLogin",'d.description'=>'Description','d.statut'=>'Status'
+		$this->export_code[$r] = 'leaverequest_'.$r;
+		$this->export_label[$r] = 'ListeCP';
+		$this->export_icon[$r] = 'holiday';
+		$this->export_permission[$r] = array(array("holiday", "read_all"));
+		$this->export_fields_array[$r] = array(
+			'd.rowid'=>"LeaveId", 'd.fk_type'=>'TypeOfLeaveId', 't.code'=>'TypeOfLeaveCode', 't.label'=>'TypeOfLeaveLabel', 'd.fk_user'=>'UserID',
+			'u.lastname'=>'Lastname', 'u.firstname'=>'Firstname', 'u.login'=>"Login", 'd.date_debut'=>'DateStart', 'd.date_fin'=>'DateEnd', 'd.halfday'=>'HalfDay', 'none.num_open_days'=>'NbUseDaysCP',
+			'd.date_valid'=>'DateApprove', 'd.fk_validator'=>"UserForApprovalID", 'ua.lastname'=>"UserForApprovalLastname", 'ua.firstname'=>"UserForApprovalFirstname",
+			'ua.login'=>"UserForApprovalLogin", 'd.description'=>'Description', 'd.statut'=>'Status'
 		);
-		$this->export_TypeFields_array[$r]=array(
-			'd.rowid'=>"Numeric",'t.code'=>'Text', 't.label'=>'Text','d.fk_user'=>'Numeric',
-			'u.lastname'=>'Text','u.firstname'=>'Text','u.login'=>"Text",'d.date_debut'=>'Date','d.date_fin'=>'Date','none.num_open_days'=>'NumericCompute',
-			'd.date_valid'=>'Date','d.fk_validator'=>"Numeric",'ua.lastname'=>"Text",'ua.firstname'=>"Text",
-			'ua.login'=>"Text",'d.description'=>'Text','d.statut'=>'Numeric'
+		$this->export_TypeFields_array[$r] = array(
+			'd.rowid'=>"Numeric", 't.code'=>'Text', 't.label'=>'Text', 'd.fk_user'=>'Numeric',
+			'u.lastname'=>'Text', 'u.firstname'=>'Text', 'u.login'=>"Text", 'd.date_debut'=>'Date', 'd.date_fin'=>'Date', 'none.num_open_days'=>'NumericCompute',
+			'd.date_valid'=>'Date', 'd.fk_validator'=>"Numeric", 'ua.lastname'=>"Text", 'ua.firstname'=>"Text",
+			'ua.login'=>"Text", 'd.description'=>'Text', 'd.statut'=>'Numeric'
 		);
-		$this->export_entities_array[$r]=array(
-			'u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ua.lastname'=>'user','ua.firstname'=>'user','ua.login'=>'user'
+		$this->export_entities_array[$r] = array(
+			'u.lastname'=>'user', 'u.firstname'=>'user', 'u.login'=>'user', 'ua.lastname'=>'user', 'ua.firstname'=>'user', 'ua.login'=>'user'
 		);
-		$this->export_alias_array[$r]=array('d.rowid'=>"idholiday");
+		$this->export_alias_array[$r] = array('d.rowid'=>"idholiday");
 		$this->export_special_array[$r] = array('none.num_open_days'=>'getNumOpenDays');
-		$this->export_dependencies_array[$r]=array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+		$this->export_dependencies_array[$r] = array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 
-		$keyforselect='holiday'; $keyforelement='holiday'; $keyforaliasextra='extra';
+		$keyforselect = 'holiday'; $keyforelement = 'holiday'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'holiday as d';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'holiday_extrafields as extra on d.rowid = extra.fk_object';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
-		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'user as u';
-		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('holiday').')';
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'holiday as d';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'holiday_extrafields as extra on d.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
+		$this->export_sql_end[$r] .= ' '.MAIN_DB_PREFIX.'user as u';
+		$this->export_sql_end[$r] .= ' WHERE d.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' AND d.entity IN ('.getEntity('holiday').')';
 
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;

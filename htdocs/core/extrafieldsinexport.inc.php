@@ -8,67 +8,67 @@ if (empty($keyforselect) || empty($keyforelement) || empty($keyforaliasextra))
 }
 
 // Add extra fields
-$sql="SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND type != 'separate' AND entity IN (0, ".$conf->entity.') ORDER BY pos ASC';
+$sql = "SELECT name, label, type, param, fieldcomputed, fielddefault FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = '".$keyforselect."' AND type != 'separate' AND entity IN (0, ".$conf->entity.') ORDER BY pos ASC';
 //print $sql;
-$resql=$this->db->query($sql);
+$resql = $this->db->query($sql);
 if ($resql)    // This can fail when class is used on old database (during migration for example)
 {
-	while ($obj=$this->db->fetch_object($resql))
+	while ($obj = $this->db->fetch_object($resql))
 	{
-		$fieldname=$keyforaliasextra.'.'.$obj->name;
-		$fieldlabel=ucfirst($obj->label);
-		$typeFilter="Text";
-		$typefield=preg_replace('/\(.*$/', '', $obj->type);	// double(24,8) -> double
+		$fieldname = $keyforaliasextra.'.'.$obj->name;
+		$fieldlabel = ucfirst($obj->label);
+		$typeFilter = "Text";
+		$typefield = preg_replace('/\(.*$/', '', $obj->type); // double(24,8) -> double
 		switch ($typefield) {
 			case 'int':
 			case 'integer':
 			case 'double':
 			case 'price':
-				$typeFilter="Numeric";
+				$typeFilter = "Numeric";
 				break;
 			case 'date':
 			case 'datetime':
 			case 'timestamp':
-				$typeFilter="Date";
+				$typeFilter = "Date";
 				break;
 			case 'boolean':
-				$typeFilter="Boolean";
+				$typeFilter = "Boolean";
 				break;
 			case 'select':
-			    if (! empty($conf->global->EXPORT_LABEL_FOR_SELECT))
+			    if (!empty($conf->global->EXPORT_LABEL_FOR_SELECT))
 			    {
-    			    $tmpparam=unserialize($obj->param);	// $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
+    			    $tmpparam = unserialize($obj->param); // $tmpparam may be array with 'options' = array(key1=>val1, key2=>val2 ...)
     			    if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-    			        $typeFilter="Select:".$obj->param;
+    			        $typeFilter = "Select:".$obj->param;
     			    }
 			    }
 			    break;
 			case 'sellist':
-				$tmp='';
-				$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
+				$tmp = '';
+				$tmpparam = unserialize($obj->param); // $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
 				if ($tmpparam['options'] && is_array($tmpparam['options'])) {
-					$tmpkeys=array_keys($tmpparam['options']);
-					$tmp=array_shift($tmpkeys);
+					$tmpkeys = array_keys($tmpparam['options']);
+					$tmp = array_shift($tmpkeys);
 				}
-				if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
+				if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter = "List:".$tmp;
 				break;
 		}
-		if ($obj->type!='separate')
+		if ($obj->type != 'separate')
 		{
 		    // If not a computed field
 		    if (empty($obj->fieldcomputed))
 		    {
-    			$this->export_fields_array[$r][$fieldname]=$fieldlabel;
-    			$this->export_TypeFields_array[$r][$fieldname]=$typeFilter;
-    			$this->export_entities_array[$r][$fieldname]=$keyforelement;
+    			$this->export_fields_array[$r][$fieldname] = $fieldlabel;
+    			$this->export_TypeFields_array[$r][$fieldname] = $typeFilter;
+    			$this->export_entities_array[$r][$fieldname] = $keyforelement;
 		    }
 			// If this is a computed field
 			else
 			{
-			    $this->export_fields_array[$r][$fieldname]=$fieldlabel;
-			    $this->export_TypeFields_array[$r][$fieldname]=$typeFilter.'Compute';
-			    $this->export_special_array[$r][$fieldname]=$obj->fieldcomputed;
-			    $this->export_entities_array[$r][$fieldname]=$keyforelement;
+			    $this->export_fields_array[$r][$fieldname] = $fieldlabel;
+			    $this->export_TypeFields_array[$r][$fieldname] = $typeFilter.'Compute';
+			    $this->export_special_array[$r][$fieldname] = $obj->fieldcomputed;
+			    $this->export_entities_array[$r][$fieldname] = $keyforelement;
 			}
 		}
 	}

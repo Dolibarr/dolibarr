@@ -64,6 +64,8 @@ class User extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $picto = 'user';
+
 	public $id = 0;
 	public $statut;
 	public $ldap_sid;
@@ -79,31 +81,6 @@ class User extends CommonObject
      * @var array array of socialnetworks
      */
     public $socialnetworks;
-
-    /**
-     * Skype username
-     * @var string
-     * @deprecated
-     */
-	public $skype;
-    /**
-     * Twitter username
-     * @var string
-     * @deprecated
-     */
-	public $twitter;
-    /**
-     * Facebook username
-     * @var string
-     * @deprecated
-     */
-	public $facebook;
-    /**
-     * Linkedin username
-     * @var string
-     * @deprecated
-     */
-	public $linkedin;
 
 	public $job; // job position
 	public $signature;
@@ -304,7 +281,7 @@ class User extends CommonObject
 		$sql .= " u.color,";
 		$sql .= " u.dateemployment, u.dateemploymentend,";
 		$sql .= " u.fk_warehouse,";
-		$sql .= " u.ref_int, u.ref_ext,";
+		$sql .= " u.ref_ext,";
 		$sql .= " u.default_range, u.default_c_exp_tax_cat,"; // Expense report default mode
 		$sql .= " c.code as country_code, c.label as country,";
 		$sql .= " d.code_departement as state_code, d.nom as state";
@@ -358,7 +335,6 @@ class User extends CommonObject
 				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 
-				$this->ref_int 		= $obj->ref_int;
 				$this->ref_ext 		= $obj->ref_ext;
 
 				$this->ldap_sid 	= $obj->ldap_sid;
@@ -1120,7 +1096,7 @@ class User extends CommonObject
 		}
 
 		// Remove extrafields
-		if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 		    $result = $this->deleteExtraFields();
 		    if ($result < 0)
@@ -1394,19 +1370,22 @@ class User extends CommonObject
         // phpcs:enable
 		global $conf, $user, $langs;
 
-		// Positionne parametres
+		// Set properties on new user
 		$this->admin = 0;
 		$this->lastname     = $member->lastname;
 		$this->firstname    = $member->firstname;
 		$this->gender = $member->gender;
 		$this->email        = $member->email;
 		$this->fk_member    = $member->id;
-		$this->pass         = $member->pass;
 		$this->address      = $member->address;
 		$this->zip          = $member->zip;
 		$this->town         = $member->town;
 		$this->state_id     = $member->state_id;
 		$this->country_id   = $member->country_id;
+		$this->socialnetworks = $member->socialnetworks;
+
+		$this->pass         = $member->pass;
+		$this->pass_crypted = $member->pass_indatabase_crypted;
 
 		if (empty($login)) $login = strtolower(substr($member->firstname, 0, 4)).strtolower(substr($member->lastname, 0, 4));
 		$this->login = $login;
@@ -1417,8 +1396,20 @@ class User extends CommonObject
 		$result = $this->create($user);
 		if ($result > 0)
 		{
-			$newpass = $this->setPassword($user, $this->pass);
-			if (is_numeric($newpass) && $newpass < 0) $result = -2;
+			if (!empty($this->pass)) {	// If a clear password was received (this situation should not happen anymore now), we use it to save it into database
+				$newpass = $this->setPassword($user, $this->pass);
+				if (is_numeric($newpass) && $newpass < 0) $result = -2;
+			} elseif (!empty($this->pass_crypted)) {	// If a crypted password is already known, we save it directly into database because the previous create did not save it.
+				$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+				$sql .= " SET pass_crypted = '".$this->db->escape($this->pass_crypted)."'";
+				$sql .= " WHERE rowid=".$this->id;
+
+				$resql = $this->db->query($sql);
+				if (!$resql)
+				{
+					$result = -1;
+				}
+			}
 
 			if ($result > 0 && $member->fk_soc)	// If member is linked to a thirdparty
 			{
@@ -1773,7 +1764,7 @@ class User extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -1847,7 +1838,7 @@ class User extends CommonObject
 	/**
 	 *  Change password of a user
 	 *
-	 *  @param	User	$user             		Object user of user making change
+	 *  @param	User	$user             		Object user of user requesting the change (not the user for who we change the password). May be unknown.
 	 *  @param  string	$password         		New password in clear text (to generate if not provided)
 	 *	@param	int		$changelater			1=Change password only after clicking on confirm email
 	 *	@param	int		$notrigger				1=Does not launch triggers
@@ -1981,7 +1972,7 @@ class User extends CommonObject
 	/**
 	 *  Send new password by email
 	 *
-	 *  @param	User	$user           Object user that send email
+	 *  @param	User	$user           Object user that send the email (not the user we send too)
 	 *  @param	string	$password       New password
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @todo Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
@@ -2006,8 +1997,9 @@ class User extends CommonObject
 		{	// If user has defined its own language (rare because in most cases, auto is used)
 			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
-		if ($user->conf->MAIN_LANG_DEFAULT) {
-            $outputlangs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+
+		if ($this->conf->MAIN_LANG_DEFAULT) {
+            $outputlangs->setDefaultLang($this->conf->MAIN_LANG_DEFAULT);
         }
 		else
 		{	// If user has not defined its own language, we used current language
@@ -2037,7 +2029,7 @@ class User extends CommonObject
 
 			$mesg .= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $appli).': '.$url."\n\n";
 			$mesg .= "--\n";
-			$mesg .= $user->getFullName($outputlangs); // Username that make then sending
+			$mesg .= $user->getFullName($outputlangs); // Username that send the email (not the user for who we want to reset password)
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		}
@@ -2057,6 +2049,8 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
+		$trackid = 'use'.$this->id;
+
         $mailfile = new CMailFile(
             $subject,
 			$this->email,
@@ -2068,7 +2062,10 @@ class User extends CommonObject
 			'',
 			'',
 			0,
-            $msgishtml
+            $msgishtml,
+        	'',
+        	'',
+        	$trackid
         );
 
 		if ($mailfile->sendfile())
@@ -2365,7 +2362,7 @@ class User extends CommonObject
 		}
 		$type = ($this->socid ? $langs->trans("External").$company : $langs->trans("Internal"));
 		$label .= '<br><b>'.$langs->trans("Type").':</b> '.$type;
-		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(0);
+		$label .= '<br><b>'.$langs->trans("Status").'</b>: '.$this->getLibStatut(4);
 		$label .= '</div>';
 		if ($infologin > 0)
 		{

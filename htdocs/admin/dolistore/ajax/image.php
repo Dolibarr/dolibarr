@@ -44,19 +44,19 @@ $id_image   = GETPOST('id_image', 'int');
 $quality    = GETPOST('quality', 'alpha');
 
 try {
-    $url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
-    $api = new PrestaShopWebservice(
-        $conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-        $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api
-    );
-    //echo $url;
-    $request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
-    header('Content-type:image');
-    print $request['response'];
+	$url = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/images/products/'.$id_product.'/'.$id_image.'/'.$quality;
+	$api = new PrestaShopWebservice(
+		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
+		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $dolistore->debug_api
+	);
+	//echo $url;
+	$request = $api->executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'GET'));
+	header('Content-type:image');
+	print $request['response'];
 } catch (PrestaShopWebserviceException $e) {
-    // Here we are dealing with errors
-    $trace = $e->getTrace();
-    if ($trace[0]['args'][0] == 404) die('Bad ID');
-    elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
-    else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+	// Here we are dealing with errors
+	$trace = $e->getTrace();
+	if ($trace[0]['args'][0] == 404) die('Bad ID');
+	elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
+	else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
 }

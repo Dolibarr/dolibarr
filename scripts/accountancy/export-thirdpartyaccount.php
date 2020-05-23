@@ -33,7 +33,7 @@ $langs->loadLangs(array("companies", "compta", "main", "accountancy"));
 
 // Security check
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 // Date range
 $year = GETPOST("year");

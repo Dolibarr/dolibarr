@@ -127,54 +127,53 @@ if (($action == 'create' || $action == 'add') && !$error)
 		$nn        = count($orders_id);
 		$ii        = 0;
 
-		$originid=$orders_id[0];
-		$_POST['originid']=$orders_id[0];
+		$originid = $orders_id[0];
+		$_POST['originid'] = $orders_id[0];
 	}
 
-	$projectid		= GETPOST('projectid', 'int')?GETPOST('projectid', 'int'):0;
+	$projectid = GETPOST('projectid', 'int') ?GETPOST('projectid', 'int') : 0;
 	$lineid			= GETPOST('lineid', 'int');
 	$userid			= GETPOST('userid', 'int');
-	$search_ref		= GETPOST('sf_ref')?GETPOST('sf_ref'):GETPOST('search_ref');
+	$search_ref		= GETPOST('sf_ref') ?GETPOST('sf_ref') : GETPOST('search_ref');
 	$closeOrders	= GETPOST('autocloseorders') ? true : false;
 
 	// Security check
-	$fieldid = GETPOST('ref', 'alpha')?'ref':'rowid';
-	if ($user->socid) $socid=$user->socid;
+	$fieldid = GETPOST('ref', 'alpha') ? 'ref' : 'rowid';
+	if ($user->socid) $socid = $user->socid;
 	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
-	$usehm=$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
+	$usehm = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE;
 
 	// Insert new invoice in database
 	if ($action == 'add' && $user->rights->facture->creer)
 	{
-		$object->socid=GETPOST('socid');
+		$object->socid = GETPOST('socid');
 		$db->begin();
-		$error=0;
+		$error = 0;
 
 		// Standard or deposit or proforma invoice
-		if ($_POST['type'] == 0 )
+		if ($_POST['type'] == 0)
 		{
 			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 			if (empty($datefacture))
 			{
 				$datefacture = dol_mktime(date("h"), date("M"), 0, date("m"), date("d"), date("Y"));
 			}
-			if (! $error)
+			if (!$error)
 			{
 				// Si facture standard
-				$object->socid				= $_POST['socid'];
+				$object->socid = $_POST['socid'];
 				$object->type				= $_POST['type'];
-				$object->number				= $_POST['ref'];
+				$object->number = $_POST['ref'];
 				$object->date				= $datefacture;
 				$object->note_public		= trim($_POST['note_public']);
 				$object->note				= trim($_POST['note']);
 				$object->ref_client			= $_POST['ref_client'];
-				$object->ref_int			= $_POST['ref_int'];
-				$object->modelpdf			= $_POST['model'];
+				$object->modelpdf = $_POST['model'];
 				$object->fk_project			= $_POST['projectid'];
-				$object->cond_reglement_id	= ($_POST['type'] == 3?1:$_POST['cond_reglement_id']);
+				$object->cond_reglement_id	= ($_POST['type'] == 3 ? 1 : $_POST['cond_reglement_id']);
 				$object->mode_reglement_id	= $_POST['mode_reglement_id'];
-				$object->amount				= $_POST['amount'];
+				$object->amount = $_POST['amount'];
 				$object->remise_absolue		= $_POST['remise_absolue'];
 				$object->remise_percent		= $_POST['remise_percent'];
 
@@ -286,8 +285,8 @@ if (($action == 'create' || $action == 'add') && !$error)
 										}
 
 										// Extrafields
-										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-											$lines[$i]->fetch_optionals($lines[$i]->rowid);
+										if (method_exists($lines[$i], 'fetch_optionals')) {
+											$lines[$i]->fetch_optionals();
 											$array_options = $lines[$i]->array_options;
 										}
 
@@ -407,8 +406,6 @@ if ($action == 'create' && !$error)
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
-	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
-	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="autocloseorders" value="'.GETPOST('autocloseorders').'">';

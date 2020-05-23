@@ -24,24 +24,24 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
-if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills","banks","companies","loan"));
+$langs->loadLangs(array("bills", "banks", "companies", "loan"));
 
 // Security check
-$id=GETPOST("id", 'int');
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
-if ($user->socid) $socid=$user->socid;
+$id = GETPOST("id", 'int');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
+if ($user->socid) $socid = $user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $payment = new PaymentLoan($db);
 if ($id > 0)
 {
-	$result=$payment->fetch($id);
-	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
+	$result = $payment->fetch($id);
+	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -76,20 +76,20 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->loan->wri
 {
 	$db->begin();
 
-	$result=$payment->valide();
+	$result = $payment->valide();
 
 	if ($result > 0)
 	{
 		$db->commit();
 
-		$factures=array();	// TODO Get all id of invoices linked to this payment
-		foreach($factures as $id)
+		$factures = array(); // TODO Get all id of invoices linked to this payment
+		foreach ($factures as $id)
 		{
 			$fac = new Facture($db);
 			$fac->fetch($id);
 
 			$outputlangs = $langs;
-			if (! empty($_REQUEST['lang_id']))
+			if (!empty($_REQUEST['lang_id']))
 			{
 				$outputlangs = new Translate("", $conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
@@ -119,10 +119,10 @@ llxHeader();
 $loan = new Loan($db);
 $form = new Form($db);
 
-$h=0;
+$h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/loan/payment/card.php?id='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("PaymentLoan");
 $hselected = $h;
 $h++;
 
@@ -172,11 +172,11 @@ print '<tr><td>'.$langs->trans('NotePrivate').'</td><td>'.nl2br($payment->note_p
 print '<tr><td>'.$langs->trans('NotePublic').'</td><td>'.nl2br($payment->note_public).'</td></tr>';
 
 // Bank account
-if (! empty($conf->banque->enabled))
+if (!empty($conf->banque->enabled))
 {
 	if ($payment->bank_account)
 	{
-		$bankline=new AccountLine($db);
+		$bankline = new AccountLine($db);
 		$bankline->fetch($payment->bank_line);
 
 		print '<tr>';
@@ -197,13 +197,13 @@ print '</table>';
 
 $disable_delete = 0;
 $sql = 'SELECT l.rowid as id, l.label, l.paid, l.capital as capital, pl.amount_capital, pl.amount_insurance, pl.amount_interest';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl,'.MAIN_DB_PREFIX.'loan as l';
-$sql.= ' WHERE pl.fk_loan = l.rowid';
-$sql.= ' AND l.entity = '.$conf->entity;
-$sql.= ' AND pl.rowid = '.$payment->id;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_loan as pl,'.MAIN_DB_PREFIX.'loan as l';
+$sql .= ' WHERE pl.fk_loan = l.rowid';
+$sql .= ' AND l.entity = '.$conf->entity;
+$sql .= ' AND pl.rowid = '.$payment->id;
 
 dol_syslog("loan/payment/card.php", LOG_DEBUG);
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -281,9 +281,9 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 }
 */
 
-if (empty($action) && ! empty($user->rights->loan->delete))
+if (empty($action) && !empty($user->rights->loan->delete))
 {
-	if (! $disable_delete)
+	if (!$disable_delete)
 	{
 		print '<a class="butActionDelete" href="card.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 	}

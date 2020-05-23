@@ -354,53 +354,53 @@ $server->register(
  */
 function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
 	dol_syslog("Function: getOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
 
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid=$fuser->societe_id;
+	if ($fuser->societe_id) $socid = $fuser->societe_id;
 
 	// Check parameters
-	if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+	if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
 	{
 		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		$fuser->getrights();
 
 		if ($fuser->rights->commande->lire)
 		{
-			$order=new Commande($db);
-			$result=$order->fetch($id, $ref, $ref_ext);
+			$order = new Commande($db);
+			$result = $order->fetch($id, $ref, $ref_ext);
 			if ($result > 0)
 			{
 				// Security for external user
-				if( $socid && ( $socid != $order->socid) )
+				if ($socid && ($socid != $order->socid))
 				{
 					$error++;
-					$errorcode='PERMISSION_DENIED'; $errorlabel=$order->socid.'User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED'; $errorlabel = $order->socid.'User does not have permission for this request';
 				}
 
-				if(!$error)
+				if (!$error)
 				{
-					$linesresp=array();
-					$i=0;
-					foreach($order->lines as $line)
+					$linesresp = array();
+					$i = 0;
+					foreach ($order->lines as $line)
 					{
 						//var_dump($line); exit;
-						$linesresp[]=array(
+						$linesresp[] = array(
 						'id'=>$line->rowid,
 						'fk_commande'=>$line->fk_commande,
 						'fk_parent_line'=>$line->fk_parent_line,
@@ -506,65 +506,65 @@ function getOrder($authentication, $id = '', $ref = '', $ref_ext = '')
  */
 function getOrdersForThirdParty($authentication, $idthirdparty)
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
 	dol_syslog("Function: getOrdersForThirdParty login=".$authentication['login']." idthirdparty=".$idthirdparty);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if ($fuser->societe_id) $socid=$fuser->societe_id;
+	if ($fuser->societe_id) $socid = $fuser->societe_id;
 
 	// Check parameters
-	if (! $error && empty($idthirdparty))
+	if (!$error && empty($idthirdparty))
 	{
 		$error++;
-		$errorcode='BAD_PARAMETERS'; $errorlabel='Parameter id is not provided';
+		$errorcode = 'BAD_PARAMETERS'; $errorlabel = 'Parameter id is not provided';
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$linesorders=array();
+		$linesorders = array();
 
 		$sql = 'SELECT c.rowid as orderid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c';
 		$sql .= " WHERE c.entity = ".$conf->entity;
-		if ($idthirdparty != 'all' ) $sql .= " AND c.fk_soc = ".$db->escape($idthirdparty);
+		if ($idthirdparty != 'all') $sql .= " AND c.fk_soc = ".$db->escape($idthirdparty);
 
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
-			$num=$db->num_rows($resql);
-			$i=0;
+			$num = $db->num_rows($resql);
+			$i = 0;
 			while ($i < $num)
 			{
 				// En attendant remplissage par boucle
-				$obj=$db->fetch_object($resql);
+				$obj = $db->fetch_object($resql);
 
-				$order=new Commande($db);
+				$order = new Commande($db);
 				$order->fetch($obj->orderid);
 
 				// Sécurité pour utilisateur externe
-				if( $socid && ( $socid != $order->socid) )
+				if ($socid && ($socid != $order->socid))
 				{
 					$error++;
-					$errorcode='PERMISSION_DENIED';
-                    $errorlabel=$order->socid.' User does not have permission for this request';
+					$errorcode = 'PERMISSION_DENIED';
+                    $errorlabel = $order->socid.' User does not have permission for this request';
 				}
 
-				if(!$error)
+				if (!$error)
 				{
 					// Define lines of invoice
-					$linesresp=array();
-					foreach($order->lines as $line)
+					$linesresp = array();
+					foreach ($order->lines as $line)
 					{
-						$linesresp[]=array(
+						$linesresp[] = array(
 						'id'=>$line->rowid,
 						'type'=>$line->product_type,
 						'fk_commande'=>$line->fk_commande,
@@ -815,34 +815,34 @@ function createOrder($authentication, $order)
  */
 function validOrder($authentication, $id = '', $id_warehouse = 0)
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
 	dol_syslog("Function: validOrder login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';
-    $errorlabel='';
-	$error=0;
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$objectresp = array();
+	$errorcode = '';
+    $errorlabel = '';
+	$error = 0;
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
-	if (! $error)
+	if (!$error)
 	{
 		$fuser->getrights();
 
 		if ($fuser->rights->commande->lire)
 		{
-			$order=new Commande($db);
-			$result=$order->fetch($id, $ref, $ref_ext);
+			$order = new Commande($db);
+			$result = $order->fetch($id, $ref, $ref_ext);
 
 			$order->fetch_thirdparty();
 			$db->begin();
 			if ($result > 0)
 			{
-				$result=$order->valid($fuser, $id_warehouse);
+				$result = $order->valid($fuser, $id_warehouse);
 
-				if ($result	>= 0)
+				if ($result >= 0)
 				{
 					// Define output language
 					$outputlangs = $langs;
@@ -895,75 +895,75 @@ function validOrder($authentication, $id = '', $id_warehouse = 0)
  */
 function updateOrder($authentication, $order)
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
-	$now=dol_now();
+	$now = dol_now();
 
 	dol_syslog("Function: updateOrder login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext']))	{
-		$error++; $errorcode='KO'; $errorlabel="Order id or ref or ref_ext is mandatory.";
+	if (empty($order['id']) && empty($order['ref']) && empty($order['ref_ext'])) {
+		$error++; $errorcode = 'KO'; $errorlabel = "Order id or ref or ref_ext is mandatory.";
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$objectfound=false;
+		$objectfound = false;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-		$object=new Commande($db);
-		$result=$object->fetch($order['id'], (empty($order['id'])?$order['ref']:''), (empty($order['id']) && empty($order['ref'])?$order['ref_ext']:''));
+		$object = new Commande($db);
+		$result = $object->fetch($order['id'], (empty($order['id']) ? $order['ref'] : ''), (empty($order['id']) && empty($order['ref']) ? $order['ref_ext'] : ''));
 
 		if (!empty($object->id)) {
-			$objectfound=true;
+			$objectfound = true;
 
 			$db->begin();
 
 			if (isset($order['status']))
 			{
-				if ($order['status'] == -1) $result=$object->cancel($fuser);
+				if ($order['status'] == -1) $result = $object->cancel($fuser);
 				if ($order['status'] == 1)
 				{
-					$result=$object->valid($fuser);
-					if ($result	>= 0)
+					$result = $object->valid($fuser);
+					if ($result >= 0)
 					{
 						// Define output language
 						$outputlangs = $langs;
 						$object->generateDocument($order->modelpdf, $outputlangs);
 					}
 				}
-				if ($order['status'] == 0)  $result=$object->set_reopen($fuser);
-				if ($order['status'] == 3)  $result=$object->cloture($fuser);
+				if ($order['status'] == 0)  $result = $object->set_reopen($fuser);
+				if ($order['status'] == 3)  $result = $object->cloture($fuser);
 			}
 
 			if (isset($order['billed']))
 			{
-				if ($order['billed'])   $result=$object->classifyBilled($fuser);
-				if (! $order['billed']) $result=$object->classifyUnBilled($fuser);
+				if ($order['billed'])   $result = $object->classifyBilled($fuser);
+				if (!$order['billed']) $result = $object->classifyUnBilled($fuser);
 			}
 
 			$elementtype = 'commande';
 
 			//Retreive all extrafield for object
 			// fetch optionals attributes and labels
-			$extrafields=new ExtraFields($db);
+			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{
-					$key='options_'.$key;
+					$key = 'options_'.$key;
 					if (isset($order[$key]))
 					{
-						$result=$object->setValueFrom($key, $order[$key], 'commande_extrafields');
+						$result = $object->setValueFrom($key, $order[$key], 'commande_extrafields');
 					}
 				}
 			}

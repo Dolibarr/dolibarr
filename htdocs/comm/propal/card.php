@@ -112,8 +112,9 @@ $hookmanager->initHooks(array('propalcard', 'globalcard'));
 
 $usercanread = $user->rights->propal->lire;
 $usercancreate = $user->rights->propal->creer;
-$usercanclose = $user->rights->propal->cloturer;
 $usercandelete = $user->rights->propal->supprimer;
+
+$usercanclose = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->close)));
 $usercanvalidate = ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && $usercancreate) || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->propal->propal_advance->validate)));
 $usercansend = (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send);
 
@@ -510,7 +511,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+								if (method_exists($lines[$i], 'fetch_optionals')) {
 									$lines[$i]->fetch_optionals();
 									$array_options = $lines[$i]->array_options;
 								}
@@ -726,7 +727,7 @@ if (empty($reshook))
 	            $originLine = new $lineClassName($db);
 	            if (intval($fromElementid) > 0 && $originLine->fetch($lineId) > 0)
 	            {
-	                $originLine->fetch_optionals($lineId);
+	                $originLine->fetch_optionals();
 	                $desc = $originLine->desc;
 	                $pu_ht = $originLine->subprice;
 	                $qty = $originLine->qty;
@@ -1438,7 +1439,7 @@ if (empty($reshook))
 
 	// Actions to build doc
 	$upload_dir = $conf->propal->multidir_output[$object->entity];
-	$permissiontoadd=$usercancreate;
+	$permissiontoadd = $usercancreate;
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
@@ -1446,8 +1447,6 @@ if (empty($reshook))
 /*
  * View
  */
-
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -1457,6 +1456,9 @@ $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+llxHeader('', $langs->trans('Proposal'), $help_url);
+
 $now = dol_now();
 
 // Add new proposal
@@ -1464,7 +1466,7 @@ if ($action == 'create')
 {
 	$currency_code = $conf->currency;
 
-	print load_fiche_titre($langs->trans("NewProp"));
+	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -1512,7 +1514,6 @@ if ($action == 'create')
 
 			$projectid = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : 0);
 			$ref_client = (!empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
-			$ref_int = (!empty($objectsrc->ref_int) ? $objectsrc->ref_int : '');
 
 			$soc = $objectsrc->thirdparty;
 
@@ -1523,7 +1524,7 @@ if ($action == 'create')
 			$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice);
 
 			// Replicate extrafields
-			$objectsrc->fetch_optionals($originid);
+			$objectsrc->fetch_optionals();
 			$object->array_options = $objectsrc->array_options;
 
 			if (!empty($conf->multicurrency->enabled))
@@ -1893,7 +1894,7 @@ if ($action == 'create')
 	{
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'select', 'name' => 'statut', 'label' => $langs->trans("CloseAs"), 'values' => array(2=>$object->LibStatut(Propal::STATUS_SIGNED), 3=>$object->LibStatut(Propal::STATUS_NOTSIGNED))),
+			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array(2=>$object->LibStatut(Propal::STATUS_SIGNED), 3=>$object->LibStatut(Propal::STATUS_NOTSIGNED))),
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 

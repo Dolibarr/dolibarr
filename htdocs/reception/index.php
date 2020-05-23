@@ -34,27 +34,26 @@ $hookmanager = new HookManager($db);
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('receptionindex'));
 
-$langs->load("orders");
-$langs->load("receptions");
+$langs->loadLangs(array("orders", "receptions"));
 
 /*
  *	View
  */
 
-$orderstatic=new CommandeFournisseur($db);
-$companystatic=new Societe($db);
-$reception=new Reception($db);
+$orderstatic = new CommandeFournisseur($db);
+$companystatic = new Societe($db);
+$reception = new Reception($db);
 
-$helpurl='EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
+$helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('', $langs->trans("Reception"), $helpurl);
 
-print load_fiche_titre($langs->trans("ReceptionsArea"));
+print load_fiche_titre($langs->trans("ReceptionsArea"), '', 'dollyrevert');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     print '<form method="post" action="list.php">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -66,46 +65,49 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print "</table></div></form><br>\n";
 }
 
+
 /*
- * Receptions to validate
+ * Draft receptions
  */
+
 $clause = " WHERE ";
 
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
-$sql.= " s.nom as name, s.rowid as socid,";
-$sql.= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
-$sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
+$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception'";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
 if (!$user->rights->societe->client->voir && !$socid)
 {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-	$sql.= $clause." sc.fk_user = " .$user->id;
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+	$sql .= $clause." sc.fk_user = ".$user->id;
 	$clause = " AND ";
 }
-$sql.= $clause." e.fk_statut = 0";
-$sql.= " AND e.entity IN (".getEntity('reception').")";
-if ($socid) $sql.= " AND c.fk_soc = ".$socid;
+$sql .= $clause." e.fk_statut = 0";
+$sql .= " AND e.entity IN (".getEntity('reception').")";
+if ($socid) $sql .= " AND c.fk_soc = ".$socid;
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<th colspan="3">'.$langs->trans("ReceptionsToValidate").'</th></tr>';
+
 	$num = $db->num_rows($resql);
 	if ($num)
 	{
-        print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("ReceptionsToValidate").'</th></tr>';
 		$i = 0;
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$reception->id=$obj->rowid;
-			$reception->ref=$obj->ref;
-			$reception->ref_supplier=$obj->ref_supplier;
+			$reception->id = $obj->rowid;
+			$reception->ref = $obj->ref;
+			$reception->ref_supplier = $obj->ref_supplier;
 
 			print '<tr class="oddeven"><td class="nowrap">';
 			print $reception->getNomUrl(1);
@@ -118,25 +120,96 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-		print "</table></div><br>";
 	}
+	else {
+		print '<tr><td><span class="opacitymedium">'.$langs->trans("None").'</span></td><td></td><td></td></tr>';
+	}
+
+	print "</table></div><br>";
 }
 
 
+//print '</td><td valign="top" width="70%">';
+print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
+
+$max = 5;
+
 /*
- * CommandeFournisseurs a traiter
+ * Latest receptions
  */
-$sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut, s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
-$sql.= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND c.entity = ".$conf->entity;
-$sql.= " AND c.fk_statut = 3";//Commandé
-if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-$sql.= " ORDER BY c.rowid ASC";
-$resql=$db->query($sql);
+
+$sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
+$sql .= " s.nom as name, s.rowid as socid,";
+$sql .= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
+$sql .= " FROM ".MAIN_DB_PREFIX."reception as e";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('order_supplier')";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid AND el.sourcetype IN ('order_supplier') AND el.targettype = 'reception'";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
+$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
+$sql .= " AND e.fk_statut = 1";
+if ($socid) $sql .= " AND c.fk_soc = ".$socid;
+$sql .= " ORDER BY e.date_delivery DESC";
+$sql .= $db->plimit($max, 0);
+
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	if ($num)
+	{
+		$i = 0;
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
+		print '<tr class="liste_titre">';
+		print '<th colspan="3">'.$langs->trans("LastReceptions", $num).'</th></tr>';
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+
+			$reception->id = $obj->rowid;
+			$reception->ref = $obj->ref;
+			$reception->ref_supplier = $obj->ref_supplier;
+
+			print '<tr class="oddeven"><td>';
+			print $reception->getNomUrl(1);
+			print '</td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+			print '<td>';
+			if ($obj->commande_fournisseur_id > 0)
+			{
+				$orderstatic->id = $obj->commande_fournisseur_id;
+				$orderstatic->ref = $obj->commande_fournisseur_ref;
+				print $orderstatic->getNomUrl(1);
+			}
+			else print '&nbsp;';
+			print '</td></tr>';
+			$i++;
+		}
+		print "</table></div><br>";
+	}
+	$db->free($resql);
+}
+else dol_print_error($db);
+
+
+
+/*
+ * Open pruchase orders to process
+ */
+
+$sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
+$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
+$sql .= " ".MAIN_DB_PREFIX."societe as s";
+if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql .= " WHERE c.fk_soc = s.rowid";
+$sql .= " AND c.entity IN (".getEntity('supplier_order').")";
+$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.")";
+if ($socid > 0) $sql .= " AND c.fk_soc = ".$socid;
+if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+$sql .= " ORDER BY c.rowid ASC";
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -148,19 +221,19 @@ if ($resql)
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("SuppliersOrdersToProcess").' <span class="badge">'.$num.'</span></th></tr>';
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
 
-			$orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			$orderstatic->ref_supplier=$obj->ref_supplier;
-			$orderstatic->statut=$obj->fk_statut;
-			$orderstatic->facturee=0;
+			$orderstatic->id = $obj->rowid;
+			$orderstatic->ref = $obj->ref;
+			$orderstatic->ref_supplier = $obj->ref_supplier;
+			$orderstatic->statut = $obj->status;
+			$orderstatic->facturee = $obj->billed;
 
-			$companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
+			$companystatic->name = $obj->name;
+			$companystatic->id = $obj->socid;
 
 			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
@@ -178,128 +251,6 @@ if ($resql)
 		print "</table></div><br>";
 	}
 }
-
-
-//print '</td><td valign="top" width="70%">';
-print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
-
-
-/*
- * CommandeFournisseurs en traitement
- */
-$sql = "SELECT c.rowid, c.ref, c.ref_supplier as ref_supplier, c.fk_statut as status, c.billed as billed, s.nom as name, s.rowid as socid";
-$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c,";
-$sql.= " ".MAIN_DB_PREFIX."societe as s";
-if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE c.fk_soc = s.rowid";
-$sql.= " AND c.entity = ".$conf->entity;
-$sql.= " AND c.fk_statut IN (4)";
-if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-
-$resql = $db->query($sql);
-if ( $resql )
-{
-	$langs->load("orders");
-
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-        print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersOrdersInProcess").'</th></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-
-		    $orderstatic->id=$obj->rowid;
-			$orderstatic->ref=$obj->ref;
-			$orderstatic->ref_supplier=$obj->ref_supplier;
-			$orderstatic->statut=$obj->status;
-            $orderstatic->facturee=$obj->billed;
-
-            $companystatic->name=$obj->name;
-			$companystatic->id=$obj->socid;
-
-			print '<tr class="oddeven"><td>';
-			print $orderstatic->getNomUrl(1);
-			print '</td>';
-			print '<td>';
-			print $companystatic->getNomUrl(1, 'customer');
-			print '</td>';
-            print '<td class="right">';
-            print $orderstatic->getLibStatut(3);
-            print '</td>';
-            print '</tr>';
-			$i++;
-		}
-		print "</table></div><br>";
-	}
-}
-else dol_print_error($db);
-
-
-/*
- * Last receptions
- */
-$sql = "SELECT e.rowid, e.ref, e.ref_supplier,";
-$sql.= " s.nom as name, s.rowid as socid,";
-$sql.= " c.ref as commande_fournisseur_ref, c.rowid as commande_fournisseur_id";
-$sql.= " FROM ".MAIN_DB_PREFIX."reception as e";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON e.rowid = el.fk_target AND el.targettype = 'reception' AND el.sourcetype IN ('order_supplier')";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur as c ON el.fk_source = c.rowid AND el.sourcetype IN ('order_supplier') AND el.targettype = 'reception'";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = e.fk_soc";
-if (! $user->rights->societe->client->voir && ! $socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON e.fk_soc = sc.fk_soc";
-$sql.= " WHERE e.entity IN (".getEntity('reception').")";
-if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND sc.fk_user = " .$user->id;
-$sql.= " AND e.fk_statut = 1";
-if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-$sql.= " ORDER BY e.date_delivery DESC";
-
-$sql.= $db->plimit(5, 0);
-
-$resql = $db->query($sql);
-if ($resql)
-{
-	$num = $db->num_rows($resql);
-	if ($num)
-	{
-		$i = 0;
-        print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("LastReceptions", $num).'</th></tr>';
-		while ($i < $num)
-		{
-			$obj = $db->fetch_object($resql);
-
-			$reception->id=$obj->rowid;
-			$reception->ref=$obj->ref;
-			$reception->ref_supplier=$obj->ref_supplier;
-
-			print '<tr class="oddeven"><td>';
-			print $reception->getNomUrl(1);
-			print '</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
-			print '<td>';
-			if ($obj->commande_fournisseur_id > 0)
-			{
-				$orderstatic->id=$obj->commande_fournisseur_id;
-				$orderstatic->ref=$obj->commande_fournisseur_ref;
-				print $orderstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
-			print '</td></tr>';
-			$i++;
-		}
-		print "</table></div><br>";
-	}
-	$db->free($resql);
-}
-else dol_print_error($db);
-
 
 print '</div></div></div>';
 

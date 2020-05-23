@@ -62,7 +62,7 @@ $diroutputmassaction = $conf->projet->dir_output.'/temp/massgeneration/'.$user->
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (!$sortfield) $sortfield = "p.ref";
@@ -131,7 +131,8 @@ $arrayfields = array(
 	'p.opp_amount'=>array('label'=>$langs->trans("OpportunityAmountShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>103),
 	'p.fk_opp_status'=>array('label'=>$langs->trans("OpportunityStatusShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>104),
 	'p.opp_percent'=>array('label'=>$langs->trans("OpportunityProbabilityShort"), 'checked'=>1, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>105),
-	'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
+    'opp_weighted_amount'=>array('label'=>$langs->trans('OpportunityWeightedAmountShort'), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>106),
+    'p.budget_amount'=>array('label'=>$langs->trans("Budget"), 'checked'=>0, 'position'=>110),
 	'p.usage_opportunity'=>array('label'=>$langs->trans("UsageOpportunity"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_USE_OPPORTUNITIES ? 1 : 0), 'position'=>115),
 	'p.usage_task'=>array('label'=>$langs->trans("UsageTasks"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_HIDE_TASKS ? 0 : 1), 'position'=>116),
 	'p.usage_bill_time'=>array('label'=>$langs->trans("UsageBillTimeShort"), 'checked'=>0, 'enabled'=>($conf->global->PROJECT_HIDE_TASKS ? 0 : 1), 'position'=>117),
@@ -288,8 +289,8 @@ else dol_print_error($db);
 if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
-$sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, p.tms as date_update, p.budget_amount, p.usage_opportunity, p.usage_task, p.usage_bill_time";
+$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat";
+$sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount, p.usage_opportunity, p.usage_task, p.usage_bill_time";
 $sql .= ", s.rowid as socid, s.nom as name, s.email";
 $sql .= ", cls.code as opp_status_code";
 // We'll need these fields in order to filter by categ
@@ -452,7 +453,6 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
@@ -465,7 +465,7 @@ else
     else $texthelp .= $langs->trans("ProjectsPublicDesc");
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 
 $topicmail = "Information";
@@ -604,6 +604,11 @@ if (!empty($arrayfields['p.opp_percent']['checked']))
 	print '<input type="text" class="flat" name="search_opp_percent" size="2" value="'.$search_opp_percent.'">';
 	print '</td>';
 }
+if (!empty($arrayfields['opp_weighted_amount']['checked']))
+{
+    print '<td class="liste_titre nowrap right">';
+    print '</td>';
+}
 if (!empty($arrayfields['p.budget_amount']['checked']))
 {
 	print '<td class="liste_titre nowrap right">';
@@ -676,7 +681,8 @@ if (!empty($arrayfields['p.datee']['checked']))         print_liste_field_titre(
 if (!empty($arrayfields['p.public']['checked']))        print_liste_field_titre($arrayfields['p.public']['label'], $_SERVER["PHP_SELF"], "p.public", "", $param, "", $sortfield, $sortorder);
 if (!empty($arrayfields['p.fk_opp_status']['checked'])) print_liste_field_titre($arrayfields['p.fk_opp_status']['label'], $_SERVER["PHP_SELF"], 'p.fk_opp_status', "", $param, '', $sortfield, $sortorder, 'center ');
 if (!empty($arrayfields['p.opp_amount']['checked']))    print_liste_field_titre($arrayfields['p.opp_amount']['label'], $_SERVER["PHP_SELF"], 'p.opp_amount', "", $param, '', $sortfield, $sortorder, 'right ');
-if (!empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER["PHP_SELF"], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
+if (!empty($arrayfields['p.opp_percent']['checked']))   print_liste_field_titre($arrayfields['p.opp_percent']['label'], $_SERVER['PHP_SELF'], 'p.opp_percent', "", $param, '', $sortfield, $sortorder, 'right ');
+if (!empty($arrayfields['opp_weighted_amount']['checked']))   print_liste_field_titre($arrayfields['opp_weighted_amount']['label'], $_SERVER['PHP_SELF'], 'opp_weighted_amount', '', $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre($arrayfields['p.budget_amount']['label'], $_SERVER["PHP_SELF"], 'p.budget_amount', "", $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['p.usage_opportunity']['checked'])) print_liste_field_titre($arrayfields['p.usage_opportunity']['label'], $_SERVER["PHP_SELF"], 'p.usage_opportunity', "", $param, '', $sortfield, $sortorder, 'right ');
 if (!empty($arrayfields['p.usage_task']['checked']))        print_liste_field_titre($arrayfields['p.usage_task']['label'], $_SERVER["PHP_SELF"], 'p.usage_task', "", $param, '', $sortfield, $sortorder, 'right ');
@@ -694,7 +700,10 @@ print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $
 print "</tr>\n";
 
 $i = 0;
-$totalarray = array();
+$totalarray = array(
+    'nbfield' => 0,
+    'val' => array(),
+);
 while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -704,7 +713,9 @@ while ($i < min($num, $limit))
 	$object->public = $obj->public;
 	$object->ref = $obj->ref;
 	$object->datee = $db->jdate($obj->date_end);
-	$object->statut = $obj->fk_statut;
+	$object->statut = $obj->status; // deprecated
+	$object->status = $obj->status;
+	$object->public = $obj->public;
 	$object->opp_status = $obj->fk_opp_status;
 	$object->title = $obj->title;
 
@@ -835,19 +846,32 @@ while ($i < min($num, $limit))
 				$totalarray['val']['p.opp_amount'] += $obj->opp_amount;
 			}
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.opp_amount';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.opp_amount';
 		}
 		// Opp percent
-		if (! empty($arrayfields['p.opp_percent']['checked']))
+		if (!empty($arrayfields['p.opp_percent']['checked']))
 		{
 			print '<td class="right">';
 			if ($obj->opp_percent) print price($obj->opp_percent, 1, $langs, 1, 0).'%';
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['nbfield']++;
 		}
+        // Opp weighted amount
+        if (!empty($arrayfields['opp_weighted_amount']['checked']))
+        {
+            if (!isset($totalarray['val']['opp_weighted_amount']))  $totalarray['val']['opp_weighted_amount'] = 0;
+            print '<td align="right">';
+            if ($obj->opp_weighted_amount) {
+                print price($obj->opp_weighted_amount, 1, $langs, 1, -1, -1, '');
+                $totalarray['val']['opp_weighted_amount'] += $obj->opp_weighted_amount;
+            }
+            print '</td>';
+            if (!$i) $totalarray['nbfield']++;
+            if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'opp_weighted_amount';
+        }
 		// Budget
-		if (! empty($arrayfields['p.budget_amount']['checked']))
+		if (!empty($arrayfields['p.budget_amount']['checked']))
 		{
 			print '<td class="right">';
 			if ($obj->budget_amount != '')
@@ -856,11 +880,11 @@ while ($i < min($num, $limit))
 				$totalarray['val']['p.budget_amount'] += $obj->budget_amount;
 			}
 			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='p.budget_amount';
+			if (!$i) $totalarray['nbfield']++;
+			if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'p.budget_amount';
 		}
 		// Usage opportunity
-		if (! empty($arrayfields['p.usage_opportunity']['checked']))
+		if (!empty($arrayfields['p.usage_opportunity']['checked']))
 		{
 			print '<td class="right">';
 			if ($obj->usage_opportunity)

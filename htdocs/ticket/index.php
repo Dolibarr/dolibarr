@@ -110,7 +110,7 @@ if (empty($endyear)) {
 
 $startyear = $endyear - 1;
 $WIDTH = (($shownb && $showtot) || !empty($conf->dol_optimize_smallscreen)) ? '100%' : '80%';
-$HEIGHT = '228';
+$HEIGHT = '200';
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -181,15 +181,27 @@ if ($result) {
         }
     }
 
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     $dataseries = array();
+    $colorseries = array();
+
     $dataseries[] = array('label' => $langs->trans("Unread"), 'data' => round($tick['unread']));
+    $colorseries[Ticket::STATUS_NOT_READ] = '-'.$badgeStatus0;
     $dataseries[] = array('label' => $langs->trans("Read"), 'data' => round($tick['read']));
-    $dataseries[] = array('label' => $langs->trans("NeedMoreInformation"), 'data' => round($tick['needmoreinfo']));
+    $colorseries[Ticket::STATUS_READ] = $badgeStatus1;
     $dataseries[] = array('label' => $langs->trans("Assigned"), 'data' => round($tick['assigned']));
+    $colorseries[Ticket::STATUS_ASSIGNED] = $badgeStatus3;
     $dataseries[] = array('label' => $langs->trans("InProgress"), 'data' => round($tick['inprogress']));
-    $dataseries[] = array('label' => $langs->trans("Waiting"), 'data' => round($tick['waiting']));
-    $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+    $colorseries[Ticket::STATUS_IN_PROGRESS] = $badgeStatus4;
+    $dataseries[] = array('label' => $langs->trans("Suspended"), 'data' => round($tick['waiting']));
+    $colorseries[Ticket::STATUS_WAITING] = '-'.$badgeStatus3;
+    $dataseries[] = array('label' => $langs->trans("NeedMoreInformation"), 'data' => round($tick['needmoreinfo']));
+    $colorseries[Ticket::STATUS_NEED_MORE_INFO] = $badgeStatus9;
     $dataseries[] = array('label' => $langs->trans("Canceled"), 'data' => round($tick['canceled']));
+    $colorseries[Ticket::STATUS_CANCELED] = $badgeStatus9;
+    $dataseries[] = array('label' => $langs->trans("Closed"), 'data' => round($tick['closed']));
+    $colorseries[Ticket::STATUS_CLOSED] = $badgeStatus6;
 } else {
     dol_print_error($db);
 }
@@ -233,6 +245,8 @@ if (!empty($dataseries) && count($dataseries) > 1) {
     $mesg = $px1->isGraphKo();
     if (!$mesg) {
         $px1->SetData($data);
+        $px1->SetDataColor(array_values($colorseries));
+
         unset($data1);
         $i = $startyear;
         $legend = array();
@@ -240,10 +254,11 @@ if (!empty($dataseries) && count($dataseries) > 1) {
             $legend[] = $i;
             $i++;
         }
+        $px1->setShowLegend(2);
         $px1->SetType(array('pie'));
         $px1->SetLegend($legend);
         $px1->SetMaxValue($px1->GetCeilMaxValue());
-        $px1->SetWidth($WIDTH);
+        //$px1->SetWidth($WIDTH);
         $px1->SetHeight($HEIGHT);
         $px1->SetYLabel($langs->trans("TicketStatByStatus"));
         $px1->SetShading(3);
@@ -328,7 +343,7 @@ if ($result) {
             print '<tr class="oddeven">';
 
             // Ref
-            print '<td class="nowrap">';
+            print '<td class="nowraponall">';
             print $tickesupstatic->getNomUrl(1);
             print "</td>\n";
 
@@ -357,7 +372,7 @@ if ($result) {
             print $objp->severity_label;
             print "</td>";
 
-            print '<td class="nowrap right">';
+            print '<td class="nowraponall right">';
             print $tickesupstatic->getLibStatut(5);
             print "</td>";
 

@@ -38,7 +38,7 @@ function opensurvey_prepare_head(Opensurveysondage $object)
 	$head = array();
 
 	$head[0][0] = 'card.php?id='.$object->id_sondage;
-	$head[0][1] = $langs->trans("Card");
+	$head[0][1] = $langs->trans("Survey");
 	$head[0][2] = 'general';
 	$h++;
 
@@ -47,11 +47,11 @@ function opensurvey_prepare_head(Opensurveysondage $object)
 	$head[1][2] = 'preview';
 	$h++;
 
-    // Show more tabs from modules
-    // Entries must be declared in modules descriptor with line
-    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
-    // $this->tabs = array('entity:-tabname);   												to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll');
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'opensurveypoll', 'remove');
 
@@ -84,20 +84,16 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<span id="dolpaymentspan"></span>'."\n";
 	print '<div class="center">'."\n";
-	print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
+	print '<form name="formulaire" action="studs.php?sondage='.urlencode($numsondage).'#bas" method="POST">'."\n";
 	print '<input type="hidden" name="sondage" value="'.$numsondage.'"/>';
 	print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
 	print "\n";
-
 
 	// Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
 	$width = 0;
 	// Define logo and logosmall
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
-	$paramlogo = 'ONLINE_PAYMENT_LOGO_'.$suffix;
-	if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
-	elseif (!empty($conf->global->ONLINE_PAYMENT_LOGO)) $logosmall = $conf->global->ONLINE_PAYMENT_LOGO;
 	//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
 	// Define urllogo
 	$urllogo = '';
@@ -125,7 +121,7 @@ function llxHeaderSurvey($title, $head = "", $disablejs = 0, $disablehead = 0, $
 		print '>';
 		print '</div>';
 		if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" width="80px"></a></div>';
+			print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 		}
 		print '</div>';
 	}
@@ -162,11 +158,11 @@ function get_server_name()
 {
 	global $dolibarr_main_url_root;
 
-	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-	$url=$urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
+	$url = $urlwithouturlroot.dol_buildpath('/opensurvey/', 1);
 
 	if (!preg_match("|/$|", $url)) {
 		$url = $url."/";
@@ -221,8 +217,8 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	mt_srand((double) microtime()*1000000);
-	for($i=0; $i<$car; $i++) {
+	mt_srand((double) microtime() * 1000000);
+	for ($i = 0; $i < $car; $i++) {
 		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}
 	return $string;
@@ -239,7 +235,7 @@ function ajouter_sondage()
 
 	require_once DOL_DOCUMENT_ROOT.'/opensurvey/class/opensurveysondage.class.php';
 
-	$sondage=dol_survey_random(16);
+	$sondage = dol_survey_random(16);
 
 	$allow_comments = empty($_SESSION['allow_comments']) ? 0 : 1;
 	$allow_spy = empty($_SESSION['allow_spy']) ? 0 : 1;
@@ -276,7 +272,7 @@ function ajouter_sondage()
 	unset($_SESSION['totalchoixjour']);
 	unset($_SESSION['champdatefin']);
 
-	$urlback=dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
+	$urlback = dol_buildpath('/opensurvey/card.php', 1).'?id='.$sondage;
 
 	header("Location: ".$urlback);
 	exit();

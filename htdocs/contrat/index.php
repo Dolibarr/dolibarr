@@ -39,7 +39,7 @@ $langs->loadLangs(array('products', 'companies', 'contracts'));
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
 $statut = GETPOST('statut') ?GETPOST('statut') : 1;
 
@@ -70,7 +70,7 @@ $now = dol_now();
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("ContractsArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -109,7 +109,7 @@ $dataseries = array();
 $vals = array();
 
 // Search by status (except expired)
-$sql = "SELECT count(cd.rowid), cd.statut";
+$sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -126,16 +126,16 @@ if ($resql)
 	$i = 0;
 	while ($i < $num)
 	{
-		$row = $db->fetch_row($resql);
-		if ($row)
+		$obj = $db->fetch_object($resql);
+		if ($obj)
 		{
-    		$nb[$row[1]] = $row[0];
-            if ($row[1] != 5)
+			$nb[$obj->status] = $obj->nb;
+			if ($obj->status != 5)
             {
-                $vals[$row[1]] = $row[0];
-                $totalinprocess += $row[0];
+            	$vals[$obj->status] = $obj->nb;
+            	$totalinprocess += $obj->nb;
             }
-            $total += $row[0];
+            $total += $obj->nb;
 		}
 		$i++;
 	}
@@ -146,7 +146,7 @@ else
 	dol_print_error($db);
 }
 // Search by status (only expired)
-$sql = "SELECT count(cd.rowid), cd.statut";
+$sql = "SELECT count(cd.rowid) as nb, cd.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -165,16 +165,16 @@ if ($resql)
     $i = 0;
     while ($i < $num)
     {
-        $row = $db->fetch_row($resql);
-        if ($row)
+        $obj = $db->fetch_object($resql);
+        if ($obj)
         {
-            $nb[$row[1].true] = $row[0];
-            if ($row[1] != 5)
+        	$nb[$obj->status.true] = $obj->nb;
+            if ($obj->status != 5)
             {
-                $vals[$row[1]] = $row[0];
-                $totalinprocess += $row[0];
+            	$vals[$obj->status.true] = $obj->nb;
+            	$totalinprocess += $obj->nb;
             }
-            $total += $row[0];
+            $total += $obj->nb;
         }
         $i++;
     }
@@ -185,6 +185,10 @@ else
 	dol_print_error($db);
 }
 
+$colorseries = array();
+
+include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Services").'</th></tr>'."\n";
@@ -192,6 +196,11 @@ $listofstatus = array(0, 4, 4, 5); $bool = false;
 foreach ($listofstatus as $status)
 {
     $dataseries[] = array($staticcontratligne->LibStatut($status, 1, ($bool ? 1 : 0)), (isset($nb[$status.$bool]) ? (int) $nb[$status.$bool] : 0));
+    if ($status == ContratLigne::STATUS_INITIAL) $colorseries[$status.$bool] = '-'.$badgeStatus0;
+    if ($status == ContratLigne::STATUS_OPEN && !$bool) $colorseries[$status.$bool] = $badgeStatus4;
+    if ($status == ContratLigne::STATUS_OPEN && $bool) $colorseries[$status.$bool] = $badgeStatus1;
+    if ($status == ContratLigne::STATUS_CLOSED) $colorseries[$status.$bool] = $badgeStatus6;
+
     if (empty($conf->use_javascript_ajax))
     {
         print '<tr class="oddeven">';
@@ -209,10 +218,11 @@ if (!empty($conf->use_javascript_ajax))
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
+    $dolgraph->SetDataColor(array_values($colorseries));
+    $dolgraph->setShowLegend(2);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
+    $dolgraph->setHeight('200');
     $dolgraph->draw('idgraphstatus');
     print $dolgraph->show($total ? 0 : 1);
 
@@ -350,7 +360,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->cid);
 		$staticcontrat->id = $obj->cid;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -363,10 +373,10 @@ if ($result)
 		print '</td>';
 		print '<td class="center">'.dol_print_date($db->jdate($obj->tms), 'dayhour').'</td>';
 		//print '<td class="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
-		print '<td class="right" width="32">'.($obj->nb_initial > 0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0, 3) : '').'</td>';
-		print '<td class="right" width="32">'.($obj->nb_running > 0 ? $obj->nb_running.$staticcontratligne->LibStatut(4, 3, 0) : '').'</td>';
-		print '<td class="right" width="32">'.($obj->nb_expired > 0 ? $obj->nb_expired.$staticcontratligne->LibStatut(4, 3, 1) : '').'</td>';
-		print '<td class="right" width="32">'.($obj->nb_closed > 0 ? $obj->nb_closed.$staticcontratligne->LibStatut(5, 3) : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_initial > 0 ? '<span class="paddingright">'.$obj->nb_initial.'</span>'.$staticcontratligne->LibStatut(0, 3, -1, 'class="paddingleft"') : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_running > 0 ? '<span class="paddingright">'.$obj->nb_running.'</span>'.$staticcontratligne->LibStatut(4, 3, 0, 'class="marginleft"') : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_expired > 0 ? '<span class="paddingright">'.$obj->nb_expired.'</span>'.$staticcontratligne->LibStatut(4, 3, 1, 'class="paddingleft"') : '').'</td>';
+		print '<td class="right nowraponall" width="32">'.($obj->nb_closed > 0 ? '<span class="paddingright">'.$obj->nb_closed.'</span>'.$staticcontratligne->LibStatut(5, 3, -1, 'class="paddingleft"') : '').'</td>';
 		print "</tr>\n";
 		$i++;
 	}
@@ -415,7 +425,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -496,7 +506,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -576,7 +586,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);

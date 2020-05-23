@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/projet/activity/index.php
  *	\ingroup    projet
- *	\brief      Page activite perso du module projet
+ *	\brief      Page on activity of projects
  */
 
 require "../../main.inc.php";
@@ -85,16 +85,14 @@ $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user 
 $morehtml .= '</SELECT>';
 $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
-//print load_fiche_titre($title, '', 'project');
-
-if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
+if ($mine) $tooltiphelp = $langs->trans("MyTasksDesc");
 else
 {
-	if ($user->rights->projet->all->lire && !$socid) print $langs->trans("TasksDesc").'<br><br>';
-	else print $langs->trans("TasksPublicDesc").'<br><br>';
+	if ($user->rights->projet->all->lire && !$socid) $tooltiphelp = $langs->trans("TasksDesc");
+	else $tooltiphelp = $langs->trans("TasksPublicDesc");
 }
 
+print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'projecttask', 0, $morehtml);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

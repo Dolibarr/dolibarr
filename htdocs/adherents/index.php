@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo	<jlb@j1b.org>
- * Copyright (C) 2004-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2019           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /**
  *       \file       htdocs/adherents/index.php
  *       \ingroup    member
- *       \brief      Page accueil module adherents
+ *       \brief      Home page of membership module
  */
 
 require '../main.inc.php';
@@ -48,28 +48,28 @@ $result = restrictedArea($user, 'adherent');
 
 llxHeader('', $langs->trans("Members"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-$staticmember=new Adherent($db);
-$statictype=new AdherentType($db);
-$subscriptionstatic=new Subscription($db);
+$staticmember = new Adherent($db);
+$statictype = new AdherentType($db);
+$subscriptionstatic = new Subscription($db);
 
 print load_fiche_titre($langs->trans("MembersArea"), '', 'members');
 
-$Adherents=array();
-$AdherentsAValider=array();
-$MemberUpToDate=array();
-$AdherentsResilies=array();
+$Adherents = array();
+$AdherentsAValider = array();
+$MemberUpToDate = array();
+$AdherentsResilies = array();
 
-$AdherentType=array();
+$AdherentType = array();
 
 // Type of membership
 $sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
-$sql.= " d.statut, count(d.rowid) as somme";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
-$sql.= " ON t.rowid = d.fk_adherent_type";
-$sql.= " AND d.entity IN (".getEntity('adherent').")";
-$sql.= " WHERE t.entity IN (".getEntity('member_type').")";
-$sql.= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
+$sql .= " d.statut, count(d.rowid) as somme";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
+$sql .= " ON t.rowid = d.fk_adherent_type";
+$sql .= " AND d.entity IN (".getEntity('adherent').")";
+$sql .= " WHERE t.entity IN (".getEntity('member_type').")";
+$sql .= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members per type", LOG_DEBUG);
 $result = $db->query($sql);
@@ -81,32 +81,32 @@ if ($result)
 	{
 		$objp = $db->fetch_object($result);
 
-		$adhtype=new AdherentType($db);
-		$adhtype->id=$objp->rowid;
-		$adhtype->subscription=$objp->subscription;
-		$adhtype->label=$objp->label;
-		$AdherentType[$objp->rowid]=$adhtype;
+		$adhtype = new AdherentType($db);
+		$adhtype->id = $objp->rowid;
+		$adhtype->subscription = $objp->subscription;
+		$adhtype->label = $objp->label;
+		$AdherentType[$objp->rowid] = $adhtype;
 
-		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 1)  { $MembersValidated[$objp->rowid]=$objp->somme; }
-		if ($objp->statut == 0)  { $MembersResiliated[$objp->rowid]=$objp->somme; }
+		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid] = $objp->somme; }
+		if ($objp->statut == 1) { $MembersValidated[$objp->rowid] = $objp->somme; }
+		if ($objp->statut == 0) { $MembersResiliated[$objp->rowid] = $objp->somme; }
 
 		$i++;
 	}
 	$db->free($result);
 }
 
-$now=dol_now();
+$now = dol_now();
 
 // Members up to date list
 // current rule: uptodate = the end date is in future whatever is type
 // old rule: uptodate = if type does not need payment, that end date is null, if type need payment that end date is in future)
 $sql = "SELECT count(*) as somme , d.fk_adherent_type";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql.= " AND d.statut = 1 AND (d.datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
-$sql.= " AND t.rowid = d.fk_adherent_type";
-$sql.= " GROUP BY d.fk_adherent_type";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
+$sql .= " AND d.statut = 1 AND (d.datefin >= '".$db->idate($now)."' OR t.subscription = 0)";
+$sql .= " AND t.rowid = d.fk_adherent_type";
+$sql .= " GROUP BY d.fk_adherent_type";
 
 dol_syslog("index.php::select nb of uptodate members by type", LOG_DEBUG);
 $result = $db->query($sql);
@@ -176,11 +176,9 @@ if ($conf->use_javascript_ajax)
     $SommeD = 0;
     $total = 0;
     $dataval = array();
-    $datalabels = array();
     $i = 0;
     foreach ($AdherentType as $key => $adhtype)
     {
-        $datalabels[] = array($i, $adhtype->getNomUrl(0, dol_size(16)));
         $dataval['draft'][] = array($i, isset($MemberToValidate[$key]) ? $MemberToValidate[$key] : 0);
         $dataval['notuptodate'][] = array($i, isset($MembersValidated[$key]) ? $MembersValidated[$key] - (isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0) : 0);
         $dataval['uptodate'][] = array($i, isset($MemberUpToDate[$key]) ? $MemberUpToDate[$key] : 0);
@@ -193,18 +191,21 @@ if ($conf->use_javascript_ajax)
     }
     $total = $SommeA + $SommeB + $SommeC + $SommeD;
     $dataseries = array();
-    $dataseries[] = array($langs->trans("MenuMembersNotUpToDate"), round($SommeB));
-    $dataseries[] = array($langs->trans("MenuMembersUpToDate"), round($SommeC));
-    $dataseries[] = array($langs->trans("MembersStatusResiliated"), round($SommeD));
-    $dataseries[] = array($langs->trans("MembersStatusToValid"), round($SommeA));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MenuMembersNotUpToDate"), round($SommeB));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MenuMembersUpToDate"), round($SommeC));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusResiliated"), round($SommeD));
+    $dataseries[] = array($langs->transnoentitiesnoconv("MembersStatusToValid"), round($SommeA));
+
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
+    $dolgraph->SetDataColor(array($badgeStatus1, $badgeStatus4, $badgeStatus6, '-'.$badgeStatus0));
+    $dolgraph->setShowLegend(2);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
+    $dolgraph->setHeight('200');
     $dolgraph->draw('idgraphstatus');
     print $dolgraph->show($total ? 0 : 1);
 
@@ -219,15 +220,15 @@ if ($conf->use_javascript_ajax)
 print '<br>';
 
 // List of subscription by year
-$Total=array();
-$Number=array();
-$tot=0;
-$numb=0;
+$Total = array();
+$Number = array();
+$tot = 0;
+$numb = 0;
 
 $sql = "SELECT c.subscription, c.dateadh as dateh";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
-$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql.= " AND d.rowid = c.fk_adherent";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
+$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
+$sql .= " AND d.rowid = c.fk_adherent";
 
 
 $result = $db->query($sql);
@@ -322,26 +323,26 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			print '<tr class="oddeven">';
-			$staticmember->id=$obj->rowid;
-			$staticmember->lastname=$obj->lastname;
-			$staticmember->firstname=$obj->firstname;
-			if (! empty($obj->fk_soc))
+			$staticmember->id = $obj->rowid;
+			$staticmember->lastname = $obj->lastname;
+			$staticmember->firstname = $obj->firstname;
+			if (!empty($obj->fk_soc))
 			{
 				$staticmember->fk_soc = $obj->fk_soc;
 				$staticmember->fetch_thirdparty();
-				$staticmember->name=$staticmember->thirdparty->name;
+				$staticmember->name = $staticmember->thirdparty->name;
 			}
 			else
 			{
-				$staticmember->name=$obj->company;
+				$staticmember->name = $obj->company;
 			}
-			$staticmember->ref=$staticmember->getFullName($langs);
-			$statictype->id=$obj->typeid;
-			$statictype->label=$obj->label;
-			print '<td>'.$staticmember->getNomUrl(1, 32).'</td>';
+			$staticmember->ref = $staticmember->getFullName($langs);
+			$statictype->id = $obj->typeid;
+			$statictype->label = $obj->label;
+			print '<td class="nowraponall">'.$staticmember->getNomUrl(1, 32).'</td>';
 			print '<td>'.$statictype->getNomUrl(1, 32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
-			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription=='yes'?1:0), $db->jdate($obj->date_end_subscription), 3).'</td>';
+			print '<td class="right">'.$staticmember->LibStatut($obj->statut, ($obj->subscription == 'yes' ? 1 : 0), $db->jdate($obj->date_end_subscription), 3).'</td>';
 			print '</tr>';
 			$i++;
 		}
@@ -398,12 +399,12 @@ if ($resql)
 				$staticmember->name = $obj->company;
 			}
 			$staticmember->ref = $staticmember->getFullName($langs);
-			print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
-			print '<td>'.$staticmember->getNomUrl(1, 32, 'subscription').'</td>';
-			print '<td>'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
+			print '<td class="nowraponall">'.$subscriptionstatic->getNomUrl(1).'</td>';
+			print '<td class="nowraponall">'.$staticmember->getNomUrl(1, 32, 'subscription').'</td>';
+			print '<td class="nowraponall">'.get_date_range($db->jdate($obj->date_start), $db->jdate($obj->date_end)).'</td>';
 			print '<td class="right">'.price($obj->subscription).'</td>';
 			//print '<td class="right">'.$staticmember->LibStatut($obj->statut,($obj->subscription=='yes'?1:0),$db->jdate($obj->date_end_subscription),5).'</td>';
-			print '<td class="right">'.dol_print_date($db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour').'</td>';
+			print '<td class="right nowraponall">'.dol_print_date($db->jdate($obj->datem ? $obj->datem : $obj->datec), 'dayhour').'</td>';
 			print '</tr>';
 			$i++;
 		}

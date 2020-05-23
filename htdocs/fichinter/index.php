@@ -57,11 +57,12 @@ if ($user->socid > 0)
 $fichinterstatic = new Fichinter($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
 llxHeader("", $langs->trans("Interventions"), $help_url);
 
-print load_fiche_titre($langs->trans("InterventionsArea"));
+print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -122,16 +123,24 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
+
+    include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-    $listofstatus = array(0, 1, 2);
+    $listofstatus = array(0, 1, 3);
     $bool = false;
     foreach ($listofstatus as $status)
     {
         $dataseries[] = array($fichinterstatic->LibStatut($status, $bool, 1), (isset($vals[$status.$bool]) ? (int) $vals[$status.$bool] : 0));
         if ($status == 3 && !$bool) $bool = true;
         else $bool = false;
+
+        if ($status == Fichinter::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+        if ($status == Fichinter::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+        if ($status == Fichinter::STATUS_BILLED) $colorseries[$status] = $badgeStatus4;
+        if ($status == Fichinter::STATUS_CLOSED) $colorseries[$status] = $badgeStatus6;
     }
     if ($conf->use_javascript_ajax)
     {
@@ -140,13 +149,13 @@ if ($resql)
         include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
         $dolgraph = new DolGraph();
         $dolgraph->SetData($dataseries);
-        $dolgraph->setShowLegend(1);
+        $dolgraph->SetDataColor(array_values($colorseries));
+        $dolgraph->setShowLegend(2);
         $dolgraph->setShowPercent(1);
         $dolgraph->SetType(array('pie'));
-        $dolgraph->setWidth('100%');
+        $dolgraph->setHeight('200');
         $dolgraph->draw('idgraphstatus');
         print $dolgraph->show($total ? 0 : 1);
-        $data = array('series'=>$dataseries);
 
         print '</td></tr>';
     }

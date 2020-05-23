@@ -26,7 +26,7 @@
  *  \ingroup    mrp
  *  \brief      Description and activation file for module Mrp
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module Mrp
@@ -40,7 +40,7 @@ class modMrp extends DolibarrModules
      */
     public function __construct($db)
     {
-        global $langs,$conf;
+        global $langs, $conf;
         $this->db = $db;
 
         // Id for module (must be unique).
@@ -62,7 +62,7 @@ class modMrp extends DolibarrModules
         // Used only if file README.md and README-LL.md not found.
         $this->descriptionlong = "Module to Manage Manufacturing Orders (MO)";
         // Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-        $this->version = 'experimental';
+        $this->version = 'dolibarr';
         // Url to the file with your last numberversion of this module
         //$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -71,7 +71,7 @@ class modMrp extends DolibarrModules
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-        $this->picto='mrp';
+        $this->picto = 'mrp';
         // Define some features supported by module (triggers, login, substitutions, menus, css, etc...)
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory (core/triggers)
@@ -119,13 +119,13 @@ class modMrp extends DolibarrModules
         $this->hidden = false;
         // List of module class names as string that must be enabled if this module is enabled. Example: array('always1'=>'modModuleToEnable1','always2'=>'modModuleToEnable2', 'FR1'=>'modModuleToEnableFR'...)
         $this->depends = array('modBom');
-        $this->requiredby = array();	// List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
-        $this->conflictwith = array();	// List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
+        $this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
+        $this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
         $this->langfiles = array("mrp");
-        $this->phpmin = array(5,5);					    // Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(8,0);		// Minimum version of Dolibarr required by module
-        $this->warnings_activation = array();			// Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-        $this->warnings_activation_ext = array();		// Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+        $this->phpmin = array(5, 5); // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(8, 0); // Minimum version of Dolibarr required by module
+        $this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+        $this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
         //$this->automatic_activation = array('FR'=>'MrpWasAutomaticallyActivatedBecauseOfYourCountryChoice');
         //$this->always_enabled = true;								// If true, can't be disabled
 
@@ -146,9 +146,9 @@ class modMrp extends DolibarrModules
             'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
         )*/
 
-        if (! isset($conf->mrp) || ! isset($conf->mrp->enabled)) {
-            $conf->mrp=new stdClass();
-            $conf->mrp->enabled=0;
+        if (!isset($conf->mrp) || !isset($conf->mrp->enabled)) {
+            $conf->mrp = new stdClass();
+            $conf->mrp->enabled = 0;
         }
 
         // Array to add new pages in new tabs
@@ -180,7 +180,7 @@ class modMrp extends DolibarrModules
         // 'user'             to add a tab in user view
 
         // Dictionaries
-        $this->dictionaries=array();
+        $this->dictionaries = array();
         /* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@mrp',
@@ -236,35 +236,35 @@ class modMrp extends DolibarrModules
 
         // Permissions provided by this module
         $this->rights = array();
-        $r=0;
+        $r = 0;
         // Add here entries to declare new permissions
         /* BEGIN MODULEBUILDER PERMISSIONS */
-        $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Read Manufacturing Order';	// Permission label
-        $this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
-        $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Read Manufacturing Order'; // Permission label
+        $this->rights[$r][4] = 'read'; // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
+        $this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $r++;
-        $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Create/Update Manufacturing Order';	// Permission label
-        $this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
-        $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/Update Manufacturing Order'; // Permission label
+        $this->rights[$r][4] = 'write'; // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
+        $this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $r++;
-        $this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
-        $this->rights[$r][1] = 'Delete Manufacturing Order';	// Permission label
-        $this->rights[$r][4] = 'delete';				// In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
-        $this->rights[$r][5] = '';				    // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Delete Manufacturing Order'; // Permission label
+        $this->rights[$r][4] = 'delete'; // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
+        $this->rights[$r][5] = ''; // In php code, permission will be checked by test if ($user->rights->mrp->level1->level2)
         $r++;
         /* END MODULEBUILDER PERMISSIONS */
 
         // Main menu entries to add
         $this->menu = array();
-        $r=0;
+        $r = 0;
         // Add here entries to declare new menus
         /* BEGIN MODULEBUILDER TOPMENU */
 		/* END MODULEBUILDER LEFTMENU MO */
 
         // Exports profiles provided by this module
-        $r=1;
+        $r = 1;
         /* BEGIN MODULEBUILDER EXPORT MO */
         /*
         $langs->load("mrp");
@@ -284,7 +284,7 @@ class modMrp extends DolibarrModules
         /* END MODULEBUILDER EXPORT MO */
 
         // Imports profiles provided by this module
-        $r=1;
+        $r = 1;
         /* BEGIN MODULEBUILDER IMPORT MO */
         /*
          $langs->load("mrp");
@@ -316,7 +316,7 @@ class modMrp extends DolibarrModules
     {
     	global $conf, $langs;
 
-        $result=$this->_load_tables('/mrp/sql/');
+        $result = $this->_load_tables('/mrp/sql/');
         if ($result < 0) return -1; // Do not activate module if error 'not allowed' returned when loading module SQL queries (the _load_table run sql with run_sql with the error allowed parameter set to 'default')
 
         // Create extrafields during init
@@ -334,19 +334,19 @@ class modMrp extends DolibarrModules
         $sql = array();
 
         // ODT template
-        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/mrps/template_mo.odt';
-        $dirodt=DOL_DATA_ROOT.'/doctemplates/mrps';
-        $dest=$dirodt.'/template_mo.odt';
+        $src = DOL_DOCUMENT_ROOT.'/install/doctemplates/mrps/template_mo.odt';
+        $dirodt = DOL_DATA_ROOT.'/doctemplates/mrps';
+        $dest = $dirodt.'/template_mo.odt';
 
-        if (file_exists($src) && ! file_exists($dest))
+        if (file_exists($src) && !file_exists($dest))
         {
         	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
         	dol_mkdir($dirodt);
-        	$result=dol_copy($src, $dest, 0, 0);
+        	$result = dol_copy($src, $dest, 0, 0);
         	if ($result < 0)
         	{
         		$langs->load("errors");
-        		$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+        		$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
         		return 0;
         	}
         }

@@ -26,7 +26,7 @@
  */
 
 /** Includes */
-include_once DOL_DOCUMENT_ROOT . "/core/boxes/modules_boxes.php";
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box
@@ -194,18 +194,18 @@ class mymodulewidget1 extends ModeleBoxes
 		);
 	}
 
-    /**
-     * Method to show box. Called by Dolibarr eatch time it wants to display the box.
-     *
-     * @param array $head       Array with properties of box title
-     * @param array $contents   Array with properties of box lines
-     * @param int   $nooutput   No print, only return string
-     * @return void
-     */
-    public function showBox($head = null, $contents = null, $nooutput = 0)
-    {
-        // You may make your own code here…
-        // … or use the parent's class function using the provided head and contents templates
-        parent::showBox($this->info_box_head, $this->info_box_contents);
-    }
+	/**
+	 * Method to show box. Called by Dolibarr eatch time it wants to display the box.
+	 *
+	 * @param array $head       Array with properties of box title
+	 * @param array $contents   Array with properties of box lines
+	 * @param int   $nooutput   No print, only return string
+	 * @return void
+	 */
+	public function showBox($head = null, $contents = null, $nooutput = 0)
+	{
+		// You may make your own code here…
+		// … or use the parent's class function using the provided head and contents templates
+		parent::showBox($this->info_box_head, $this->info_box_contents);
+	}
 }

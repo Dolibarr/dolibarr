@@ -34,7 +34,8 @@ $result = restrictedArea($user, 'mailing');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOST("page", 'int');
+$optioncss = GETPOST('optioncss', 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -129,8 +130,6 @@ if ($filteremail)
 	if ($search_all) $sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "m.rowid";
-	$sql .= $db->order($sortfield, $sortorder);
-	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 }
 else
 {
@@ -141,15 +140,30 @@ else
 	if ($search_all) $sql .= " AND (m.titre like '%".$db->escape($search_all)."%' OR m.sujet like '%".$db->escape($search_all)."%' OR m.body like '%".$db->escape($search_all)."%')";
 	if (!$sortorder) $sortorder = "ASC";
 	if (!$sortfield) $sortfield = "m.rowid";
-	$sql .= $db->order($sortfield, $sortorder);
-	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 }
 
-//print $sql;
-$result = $db->query($sql);
-if ($result)
+$sql .= $db->order($sortfield, $sortorder);
+
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$num = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
+}
+
+$sql .= $db->plimit($limit + 1, $offset);
+//print $sql;
+
+dol_syslog("comm/mailing/list.php", LOG_DEBUG);
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
 
 	$title = $langs->trans("ListOfEMailings");
 	if ($filteremail) $title .= ' ('.$langs->trans("SentTo", $filteremail).')';
@@ -163,17 +177,18 @@ if ($result)
 	$i = 0;
 
 	$param = "&search_all=".urlencode($search_all);
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($filteremail) $param .= '&filteremail='.urlencode($filteremail);
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', $num, '', 'generic', 0, $newcardbutton);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_email', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$moreforfilter = '';
 
@@ -214,12 +229,12 @@ if ($result)
 
 	while ($i < min($num, $limit))
 	{
-		$obj = $db->fetch_object($result);
+		$obj = $db->fetch_object($resql);
 
 		$email->id = $obj->rowid;
 		$email->ref = $obj->rowid;
 
-		print "<tr>";
+		print '<tr class="oddeven">';
 
 		print '<td>';
 		print $email->getNomUrl(1);
@@ -280,7 +295,8 @@ if ($result)
 	print '</table>';
 	print '</div>';
 	print '</form>';
-	$db->free($result);
+
+	$db->free($resql);
 }
 else
 {

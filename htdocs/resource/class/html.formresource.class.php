@@ -74,9 +74,10 @@ class FormResource
      *  @param	string	$filterkey		Filter on key value
      *  @param	int		$outputmode		0=HTML select string, 1=Array, 2=without form tag
      *  @param	int		$limit			Limit number of answers
+     *  @param	string	$morecss		More css
      * 	@return	string					HTML string with
      */
-    public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20)
+    public function select_resource_list($selected = '', $htmlname = 'fk_resource', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $event = array(), $filterkey = '', $outputmode = 0, $limit = 20, $morecss = '')
     {
         // phpcs:enable
     	global $conf, $user, $langs;
@@ -100,10 +101,12 @@ class FormResource
     		{
     			//$minLength = (is_numeric($conf->global->RESOURCE_USE_SEARCH_TO_SELECT)?$conf->global->RESOURCE_USE_SEARCH_TO_SELECT:2);
     			$out .= ajax_combobox($htmlname, $event, $conf->global->RESOURCE_USE_SEARCH_TO_SELECT);
+    		} else {
+    			$out .= ajax_combobox($htmlname);
     		}
 
     		// Construct $out and $outarray
-    		$out .= '<select id="'.$htmlname.'" class="flat minwidth200" name="'.$htmlname.'">'."\n";
+    		$out .= '<select id="'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">'."\n";
     		if ($showempty) $out .= '<option value="-1">&nbsp;</option>'."\n";
 
     		$num = 0;
@@ -136,7 +139,6 @@ class FormResource
     			}
     		}
     		$out .= '</select>'."\n";
-    		$out .= ajax_combobox($htmlname);
 
     		if ($outputmode != 2)
     		{

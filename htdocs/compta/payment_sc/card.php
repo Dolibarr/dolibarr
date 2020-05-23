@@ -30,24 +30,24 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
-if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (!empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
-$id=GETPOST("id", 'int');
-$action=GETPOST('action', 'aZ09');
-$confirm=GETPOST('confirm');
-if ($user->socid) $socid=$user->socid;
+$id = GETPOST("id", 'int');
+$action = GETPOST('action', 'aZ09');
+$confirm = GETPOST('confirm');
+if ($user->socid) $socid = $user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
 $object = new PaymentSocialContribution($db);
 if ($id > 0)
 {
-	$result=$object->fetch($id);
-	if (! $result) dol_print_error($db, 'Failed to get payment id '.$id);
+	$result = $object->fetch($id);
+	if (!$result) dol_print_error($db, 'Failed to get payment id '.$id);
 }
 
 
@@ -121,14 +121,14 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 
 llxHeader();
 
-$socialcontrib=new ChargeSociales($db);
+$socialcontrib = new ChargeSociales($db);
 
 $form = new Form($db);
 
-$h=0;
+$h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("PaymentSocialContribution");
 $hselected = $h;
 $h++;
 
@@ -161,7 +161,7 @@ if ($action == 'valide')
 */
 
 
-$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/payments.php">' . $langs->trans("BackToList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/payments.php">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
 
@@ -193,11 +193,11 @@ print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->
 print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
-if (! empty($conf->banque->enabled))
+if (!empty($conf->banque->enabled))
 {
     if ($object->bank_account)
     {
-    	$bankline=new AccountLine($db);
+    	$bankline = new AccountLine($db);
     	$bankline->fetch($object->bank_line);
 
     	print '<tr>';
@@ -222,13 +222,13 @@ dol_fiche_end();
 
 $disable_delete = 0;
 $sql = 'SELECT f.rowid as scid, f.libelle as label, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
-$sql.= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
-$sql.= ' AND f.entity = '.$conf->entity;
-$sql.= ' AND pf.rowid = '.$object->id;
+$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
+$sql .= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
+$sql .= ' AND f.entity = '.$conf->entity;
+$sql .= ' AND pf.rowid = '.$object->id;
 
 dol_syslog("compta/payment_sc/card.php", LOG_DEBUG);
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -313,7 +313,7 @@ if ($action == '')
 {
 	if ($user->rights->tax->charges->supprimer)
 	{
-		if (! $disable_delete)
+		if (!$disable_delete)
 		{
 			print '<a class="butActionDelete" href="card.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}

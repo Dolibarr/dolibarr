@@ -30,9 +30,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_factures extends ModeleBoxes
 {
-    public $boxcode="lastcustomerbills";
-    public $boximg="object_bill";
-    public $boxlabel="BoxLastCustomerBills";
+    public $boxcode = "lastcustomerbills";
+    public $boximg = "object_bill";
+    public $boxlabel = "BoxLastCustomerBills";
     public $depends = array("facture");
 
 	/**
@@ -58,7 +58,7 @@ class box_factures extends ModeleBoxes
 
 	    $this->db = $db;
 
-	    $this->hidden = ! ($user->rights->facture->lire);
+	    $this->hidden = !($user->rights->facture->lire);
 	}
 
 	/**
@@ -71,7 +71,7 @@ class box_factures extends ModeleBoxes
 	{
 		global $conf, $user, $langs;
 
-		$this->max=$max;
+		$this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -81,7 +81,7 @@ class box_factures extends ModeleBoxes
 
         $langs->load("bills");
 
-		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."CustomerBills", $max);
+		$text = $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE ? "" : "Modified")."CustomerBills", $max);
 		$this->info_box_head = array(
 			'text' => $text,
 			'limit'=> dol_strlen($text)
@@ -89,29 +89,29 @@ class box_factures extends ModeleBoxes
 
         if ($user->rights->facture->lire) {
             $sql = "SELECT f.rowid as facid";
-            $sql.= ", f.ref, f.type, f.total as total_ht";
-            $sql.= ", f.tva as total_tva";
-            $sql.= ", f.total_ttc";
-            $sql.= ", f.datef as df";
-			$sql.= ", f.paye, f.fk_statut, f.datec, f.tms";
-            $sql.= ", s.rowid as socid, s.nom as name, s.code_client, s.email, s.tva_intra, s.code_compta, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
-			$sql.= ", f.date_lim_reglement as datelimite";
-			$sql.= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= ")";
-			$sql.= " WHERE f.fk_soc = s.rowid";
-			$sql.= " AND f.entity IN (".getEntity('invoice').")";
-			if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->socid)	$sql.= " AND s.rowid = ".$user->socid;
-            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY f.datef DESC, f.ref DESC ";
-            else $sql.= " ORDER BY f.tms DESC, f.ref DESC ";
-			$sql.= $this->db->plimit($max, 0);
+            $sql .= ", f.ref, f.type, f.total as total_ht";
+            $sql .= ", f.tva as total_tva";
+            $sql .= ", f.total_ttc";
+            $sql .= ", f.datef as df";
+			$sql .= ", f.paye, f.fk_statut, f.datec, f.tms";
+            $sql .= ", s.rowid as socid, s.nom as name, s.code_client, s.email, s.tva_intra, s.code_compta, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4, s.idprof5, s.idprof6";
+			$sql .= ", f.date_lim_reglement as datelimite";
+			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= ")";
+			$sql .= " WHERE f.fk_soc = s.rowid";
+			$sql .= " AND f.entity IN (".getEntity('invoice').")";
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
+            if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY f.datef DESC, f.ref DESC ";
+            else $sql .= " ORDER BY f.tms DESC, f.ref DESC ";
+			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			if ($result)
 			{
 				$num = $this->db->num_rows($result);
-				$now=dol_now();
+				$now = dol_now();
 
 				$line = 0;
 				$l_due_date = $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
@@ -179,7 +179,7 @@ class box_factures extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num == 0)
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoRecordedInvoices"),

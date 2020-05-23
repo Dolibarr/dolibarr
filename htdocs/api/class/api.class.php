@@ -54,14 +54,14 @@ class DolibarrApi
         Defaults::$cacheDirectory = $cachedir;
 
         $this->db = $db;
-        $production_mode = ( empty($conf->global->API_PRODUCTION_MODE) ? false : true );
+        $production_mode = (empty($conf->global->API_PRODUCTION_MODE) ? false : true);
         $this->r = new Restler($production_mode, $refreshCache);
 
-        $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-        $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+        $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+        $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 
-        $urlwithouturlrootautodetect=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim(DOL_MAIN_URL_ROOT));
-        $urlwithrootautodetect=$urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
+        $urlwithouturlrootautodetect = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim(DOL_MAIN_URL_ROOT));
+        $urlwithrootautodetect = $urlwithouturlroot.DOL_URL_ROOT; // This is to use local domain autodetected by dolibarr from url
 
         $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
         $this->r->setAPIVersion(1);
@@ -117,9 +117,9 @@ class DolibarrApi
         unset($object->ref_next);
         unset($object->ref_int);
 
-        unset($object->projet);     // Should be fk_project
-        unset($object->project);    // Should be fk_project
-        unset($object->author);     // Should be fk_user_author
+        unset($object->projet); // Should be fk_project
+        unset($object->project); // Should be fk_project
+        unset($object->author); // Should be fk_user_author
         unset($object->timespent_old_duration);
         unset($object->timespent_id);
         unset($object->timespent_duration);
@@ -181,9 +181,9 @@ class DolibarrApi
         unset($object->oldcopy);
 
         // If object has lines, remove $db property
-        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0)  {
+        if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
             $nboflines = count($object->lines);
-        	for ($i=0; $i < $nboflines; $i++)
+        	for ($i = 0; $i < $nboflines; $i++)
             {
                 $this->_cleanObjectDatas($object->lines[$i]);
 
@@ -220,7 +220,7 @@ class DolibarrApi
             }
         }
 
-        if (! empty($object->thirdparty) && is_object($object->thirdparty))
+        if (!empty($object->thirdparty) && is_object($object->thirdparty))
         {
         	$this->_cleanObjectDatas($object->thirdparty);
         }
@@ -256,7 +256,7 @@ class DolibarrApi
 		}
 
 		// More subfeatures to check
-		if (! empty($feature2)) {
+		if (!empty($feature2)) {
 			$feature2 = explode("|", $feature2);
 		}
 
@@ -275,17 +275,17 @@ class DolibarrApi
         // phpcs:enable
 	    //$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
 	    //$tmp=preg_replace_all('/'.$regexstring.'/', '', $sqlfilters);
-	    $tmp=$sqlfilters;
-	    $ok=0;
-	    $i=0; $nb=strlen($tmp);
-	    $counter=0;
+	    $tmp = $sqlfilters;
+	    $ok = 0;
+	    $i = 0; $nb = strlen($tmp);
+	    $counter = 0;
 	    while ($i < $nb)
 	    {
-	        if ($tmp[$i]=='(') $counter++;
-	        if ($tmp[$i]==')') $counter--;
+	        if ($tmp[$i] == '(') $counter++;
+	        if ($tmp[$i] == ')') $counter--;
             if ($counter < 0)
             {
-	            $error="Bad sqlfilters=".$sqlfilters;
+	            $error = "Bad sqlfilters=".$sqlfilters;
 	            dol_syslog($error, LOG_WARNING);
 	            return false;
             }
@@ -309,10 +309,10 @@ class DolibarrApi
 
 	    //dol_syslog("Convert matches ".$matches[1]);
 	    if (empty($matches[1])) return '';
-	    $tmp=explode(':', $matches[1]);
+	    $tmp = explode(':', $matches[1]);
         if (count($tmp) < 3) return '';
 
-	    $tmpescaped=$tmp[2];
+	    $tmpescaped = $tmp[2];
 	    $regbis = array();
 	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
 	    {

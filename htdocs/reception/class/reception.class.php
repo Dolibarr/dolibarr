@@ -47,16 +47,22 @@ class Reception extends CommonObject
 	public $fk_element = "fk_reception";
 	public $table_element = "reception";
 	public $table_element_line = "commande_fournisseur_dispatch";
-	protected $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'reception';
+	public $picto = 'dollyrevert';
 
     public $socid;
     public $ref_supplier;
+
+    /**
+     * @var int		Ref int
+     * @deprecated
+     */
     public $ref_int;
+
     public $brouillon;
     public $entrepot_id;
     public $lines = array();
@@ -299,24 +305,12 @@ class Reception extends CommonObject
 					}
 				}
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$action = 'add';
-				$hookmanager->initHooks(array('receptiondao'));
-				$parameters = array('socid'=>$this->id);
-				$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Create extrafields
+				if (!$error)
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-					{
-						$result = $this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
-					}
+					$result = $this->insertExtraFields();
+					if ($result < 0) $error++;
 				}
-				elseif ($reshook < 0) $error++;
 
 				if (!$error && !$notrigger)
 				{
@@ -324,29 +318,22 @@ class Reception extends CommonObject
                     $result = $this->call_trigger('RECEPTION_CREATE', $user);
                     if ($result < 0) { $error++; }
                     // End call triggers
+				}
 
-					if (!$error)
-					{
-						$this->db->commit();
-						return $this->id;
-					}
-					else
-					{
-						foreach ($this->errors as $errmsg)
-						{
-							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-							$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-						}
-						$this->db->rollback();
-						return -1 * $error;
-					}
+				if (!$error)
+				{
+					$this->db->commit();
+					return $this->id;
 				}
 				else
 				{
-					$error++;
-					$this->error = $this->db->lasterror()." - sql=$sql";
+					foreach ($this->errors as $errmsg)
+					{
+						dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+						$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+					}
 					$this->db->rollback();
-					return -3;
+					return -1 * $error;
 				}
 			}
 			else
@@ -374,15 +361,15 @@ class Reception extends CommonObject
 	 *	@param	int		$id       	Id of object to load
 	 * 	@param	string	$ref		Ref of object
 	 * 	@param	string	$ref_ext	External reference of object
-     * 	@param	string	$ref_int	Internal reference of other object
+     * 	@param	string	$notused	Internal reference of other object
 	 *	@return int			        >0 if OK, 0 if not found, <0 if KO
 	 */
-    public function fetch($id, $ref = '', $ref_ext = '', $ref_int = '')
+    public function fetch($id, $ref = '', $ref_ext = '', $notused = '')
 	{
 		global $conf;
 
 		// Check parameters
-		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
+		if (empty($id) && empty($ref) && empty($ref_ext)) return -1;
 
 		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_supplier, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut";
 		$sql .= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
@@ -399,7 +386,7 @@ class Reception extends CommonObject
 		if ($id)   	  $sql .= " AND e.rowid=".$id;
         if ($ref)     $sql .= " AND e.ref='".$this->db->escape($ref)."'";
         if ($ref_ext) $sql .= " AND e.ref_ext='".$this->db->escape($ref_ext)."'";
-        if ($ref_int) $sql .= " AND e.ref_int='".$this->db->escape($ref_int)."'";
+        if ($notused) $sql .= " AND e.ref_int='".$this->db->escape($notused)."'";
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -473,7 +460,7 @@ class Reception extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields = new ExtraFields($this->db);
 				$extrafields->fetch_name_optionals_label($this->table_element, true);
-				$this->fetch_optionals($this->id);
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
@@ -548,7 +535,7 @@ class Reception extends CommonObject
 			$numref = $this->ref;
 		}
 
-        $this->newref = $numref;
+        $this->newref = dol_sanitizeFileName($numref);
 
 		$now = dol_now();
 
@@ -763,9 +750,9 @@ class Reception extends CommonObject
 		}
 
 		// extrafields
-                $line->array_options = $supplierorderline->array_options;
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
-                {
+		$line->array_options = $supplierorderline->array_options;
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0)
+		{
 			foreach ($array_options as $key => $value) {
 				$line->array_options[$key] = $value;
 			}
@@ -943,9 +930,9 @@ class Reception extends CommonObject
 
 		if (!$error)
 		{
-                    $main = MAIN_DB_PREFIX . 'commande_fournisseur_dispatch';
-                    $ef = $main . "_extrafields";
-                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = " . $this->id . ")";
+                    $main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+                    $ef = $main."_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = ".$this->id.")";
 
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " WHERE fk_reception = ".$this->id;
@@ -1119,7 +1106,7 @@ class Reception extends CommonObject
 	{
 		global $conf, $langs;
 		$result = '';
-        $label = '<u>'.$langs->trans("ShowReception").'</u>';
+        $label = '<u>'.$langs->trans("Reception").'</u>';
         $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.($this->ref_supplier ? $this->ref_supplier : $this->ref_client);
 
@@ -1132,19 +1119,18 @@ class Reception extends CommonObject
 		{
 		    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label = $langs->trans("ShowReception");
+		        $label = $langs->trans("Reception");
 		        $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 		    }
 		    $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 		    $linkclose .= ' class="classfortooltip"';
 		}
 
-        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 
-		$picto = 'sending';
-
-		if ($withpicto) $result .= ($linkstart.img_object(($notooltip ? '' : $label), $picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+		if ($withpicto) $result .= ($linkstart.img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
 		if ($withpicto && $withpicto != 2) $result .= ' ';
 		$result .= $linkstart.$this->ref.$linkend;
 		return $result;

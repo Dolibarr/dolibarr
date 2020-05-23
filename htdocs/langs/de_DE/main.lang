@@ -1026,5 +1026,5 @@ Measures=Maße
 XAxis=X-Achse
 YAxis=Y-Achse
 StatusOfRefMustBe=Status of %s must be %s
-DeleteFileHeader=Confirm file delete
-DeleteFileText=Do you really want delete this file?
+DeleteFileHeader=Dateilöschung bestätigen
+DeleteFileText=Möchten sie diese Datei wirklich löschen?

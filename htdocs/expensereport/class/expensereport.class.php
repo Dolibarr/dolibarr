@@ -399,7 +399,7 @@ class ExpenseReport extends CommonObject
 
         // get extrafields so they will be clone
         //foreach($this->lines as $line)
-            //$line->fetch_optionals($line->rowid);
+	        //$line->fetch_optionals();
 
         // Load source object
         $objFrom = clone $this;
@@ -588,7 +588,7 @@ class ExpenseReport extends CommonObject
                 elseif ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator); // For backward compatibility
                 $this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
-                $this->fk_statut                = $obj->status;		// deprecated
+                $this->fk_statut                = $obj->status; // deprecated
                 $this->status                   = $obj->status;
                 $this->fk_c_paiement            = $obj->fk_c_paiement;
                 $this->paid                     = $obj->paid;
@@ -1165,7 +1165,7 @@ class ExpenseReport extends CommonObject
         }
         if (empty($num) || $num < 0) return -1;
 
-        $this->newref = $num;
+        $this->newref = dol_sanitizeFileName($num);
 
 		$this->db->begin();
 
@@ -1507,7 +1507,7 @@ class ExpenseReport extends CommonObject
     {
         // phpcs:enable
 		$error = 0;
-        $this->date_cancel = $this->db->idate(gmmktime());
+        $this->date_cancel = $this->db->idate(dol_now());
         if ($this->fk_statut != self::STATUS_CANCELED)
         {
 			$this->db->begin();

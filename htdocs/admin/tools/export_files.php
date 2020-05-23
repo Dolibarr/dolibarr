@@ -30,10 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 $langs->load("admin");
 
-$action=GETPOST('action', 'alpha');
-$what=GETPOST('what', 'alpha');
-$export_type=GETPOST('export_type', 'alpha');
-$file=trim(GETPOST('zipfilename_template', 'alpha'));
+$action = GETPOST('action', 'alpha');
+$what = GETPOST('what', 'alpha');
+$export_type = GETPOST('export_type', 'alpha');
+$file = trim(GETPOST('zipfilename_template', 'alpha'));
 $compression = GETPOST('compression');
 
 $file = dol_sanitizeFileName($file);
@@ -41,17 +41,17 @@ $file = preg_replace('/(\.zip|\.tar|\.tgz|\.gz|\.tar\.gz|\.bz2)$/i', '', $file);
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST("page", 'int');
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="date";
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "date";
 if ($page < 0) { $page = 0; }
 elseif (empty($page)) $page = 0;
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
-$errormsg='';
+$errormsg = '';
 
 
 /*
@@ -61,11 +61,11 @@ $errormsg='';
 if ($action == 'delete')
 {
     $filerelative = dol_sanitizeFileName(GETPOST('urlfile', 'alpha'));
-    $filepath=$conf->admin->dir_output.'/'.$filerelative;
-	$ret=dol_delete_file($filepath, 1);
+    $filepath = $conf->admin->dir_output.'/'.$filerelative;
+	$ret = dol_delete_file($filepath, 1);
 	if ($ret) setEventMessages($langs->trans("FileWasRemoved", $filerelative), null, 'mesgs');
 	else setEventMessages($langs->trans("ErrorFailToDeleteFile", $filerelative), null, 'errors');
-	$action='';
+	$action = '';
 }
 
 
@@ -74,16 +74,16 @@ if ($action == 'delete')
  */
 
 // Increase limit of time. Works only if we are not in safe mode
-$ExecTimeLimit=1800;	// 30mn
+$ExecTimeLimit = 1800; // 30mn
 if (!empty($ExecTimeLimit))
 {
-    $err=error_reporting();
-    error_reporting(0);     // Disable all errors
+    $err = error_reporting();
+    error_reporting(0); // Disable all errors
     //error_reporting(E_ALL);
-    @set_time_limit($ExecTimeLimit);   // Need more than 240 on Windows 7/64
+    @set_time_limit($ExecTimeLimit); // Need more than 240 on Windows 7/64
     error_reporting($err);
 }
-$MemoryLimit=0;
+$MemoryLimit = 0;
 if (!empty($MemoryLimit))
 {
     @ini_set('memory_limit', $MemoryLimit);
@@ -107,7 +107,7 @@ $time_start = time();
 
 
 $outputdir  = $conf->admin->dir_output.'/documents';
-$result=dol_mkdir($outputdir);
+$result = dol_mkdir($outputdir);
 
 $utils = new Utils($db);
 
@@ -131,16 +131,16 @@ elseif (in_array($compression, array('gz', 'bz')))
 {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
-	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out';	// File used with popen method
+	$outputfile = $conf->admin->dir_temp.'/export_files.'.$userlogin.'.out'; // File used with popen method
 
     $file .= '.tar';
     // We also exclude '/temp/' dir and 'documents/admin/documents'
-    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude='documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
+    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
 
     $result = $utils->executeCLI($cmd, $outputfile);
 
     $retval = $result['error'];
-    if ($result['result'] || ! empty($retval))
+    if ($result['result'] || !empty($retval))
     {
         $langs->load("errors");
         dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
@@ -150,17 +150,17 @@ elseif (in_array($compression, array('gz', 'bz')))
     {
         if ($compression == 'gz')
         {
-            $cmd = "gzip -f " . $outputdir."/".$file;
+            $cmd = "gzip -f ".$outputdir."/".$file;
         }
         if ($compression == 'bz')
         {
-            $cmd = "bzip2 -f " . $outputdir."/".$file;
+            $cmd = "bzip2 -f ".$outputdir."/".$file;
         }
 
         $result = $utils->executeCLI($cmd, $outputfile);
 
         $retval = $result['error'];
-        if ($result['result'] || ! empty($retval))
+        if ($result['result'] || !empty($retval))
         {
             $errormsg = 'Error '.$compression.' generation return '.$retval;
             unlink($outputdir."/".$file);

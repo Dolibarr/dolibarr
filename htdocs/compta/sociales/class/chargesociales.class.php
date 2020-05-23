@@ -132,41 +132,41 @@ class ChargeSociales extends CommonObject
     public function fetch($id, $ref = '')
     {
         $sql = "SELECT cs.rowid, cs.date_ech";
-        $sql.= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
-        $sql.= ", cs.fk_account, cs.fk_mode_reglement";
-        $sql.= ", c.libelle";
-        $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
-        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
-        $sql.= ' WHERE cs.entity IN ('.getEntity('tax').')';
-        if ($ref) $sql.= " AND cs.rowid = ".$ref;
-        else $sql.= " AND cs.rowid = ".$id;
+        $sql .= ", cs.libelle as label, cs.fk_type, cs.amount, cs.fk_projet as fk_project, cs.paye, cs.periode, cs.import_key";
+        $sql .= ", cs.fk_account, cs.fk_mode_reglement";
+        $sql .= ", c.libelle";
+        $sql .= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+        $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as cs";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_chargesociales as c ON cs.fk_type = c.id";
+        $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON cs.fk_mode_reglement = p.id';
+        $sql .= ' WHERE cs.entity IN ('.getEntity('tax').')';
+        if ($ref) $sql .= " AND cs.rowid = ".$ref;
+        else $sql .= " AND cs.rowid = ".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id					= $obj->rowid;
+                $this->id = $obj->rowid;
                 $this->ref					= $obj->rowid;
-                $this->date_ech				= $this->db->jdate($obj->date_ech);
+                $this->date_ech = $this->db->jdate($obj->date_ech);
                 $this->lib					= $obj->label;
                 $this->label				= $obj->label;
                 $this->type					= $obj->fk_type;
                 $this->type_label			= $obj->libelle;
                 $this->fk_account			= $obj->fk_account;
-                $this->mode_reglement_id	= $obj->fk_mode_reglement;
-                $this->mode_reglement_code	= $obj->mode_reglement_code;
-                $this->mode_reglement		= $obj->mode_reglement_libelle;
-                $this->amount				= $obj->amount;
-				$this->fk_project			= $obj->fk_project;
-                $this->paye					= $obj->paye;
-                $this->periode				= $this->db->jdate($obj->periode);
-                $this->import_key			= $this->import_key;
+                $this->mode_reglement_id = $obj->fk_mode_reglement;
+                $this->mode_reglement_code = $obj->mode_reglement_code;
+                $this->mode_reglement = $obj->mode_reglement_libelle;
+                $this->amount = $obj->amount;
+				$this->fk_project = $obj->fk_project;
+                $this->paye = $obj->paye;
+                $this->periode = $this->db->jdate($obj->periode);
+                $this->import_key = $this->import_key;
 
                 $this->db->free($resql);
 
@@ -497,7 +497,7 @@ class ChargeSociales extends CommonObject
         global $langs;
 
         // Load translation files required by the page
-        $langs->loadLangs(array("customers","bills"));
+        $langs->loadLangs(array("customers", "bills"));
 
         // We reinit status array to force to redefine them because label may change according to properties values.
         $this->labelStatus = array();
@@ -548,41 +548,41 @@ class ChargeSociales extends CommonObject
         if ($option !== 'nolink')
         {
         	// Add param to save lastsearch_values or not
-        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        	$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+        	if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
         }
 
 
-        if (empty($this->ref)) $this->ref=$this->label;
+        if (empty($this->ref)) $this->ref = $this->label;
 
-        $label = '<u>'.$langs->trans("ShowSocialContribution").'</u>';
-        if (! empty($this->ref))
-        	$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
-        if (! empty($this->label))
-        	$label .= '<br><b>'.$langs->trans('Label') . ':</b> ' . $this->label;
-        if (! empty($this->type_label))
-        	$label .= '<br><b>'.$langs->trans('Type') . ':</b> ' . $this->type_label;
+        $label = '<u>'.$langs->trans("SocialContribution").'</u>';
+        if (!empty($this->ref))
+        	$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+        if (!empty($this->label))
+        	$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
+        if (!empty($this->type_label))
+        	$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
 
-        $linkclose='';
+        $linkclose = '';
         if (empty($notooltip) && $user->rights->facture->lire)
         {
-        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
-        		$label=$langs->trans("ShowSocialContribution");
-        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        		$label = $langs->trans("SocialContribution");
+        		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
         	}
-        	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-        	$linkclose.=' class="classfortooltip"';
+        	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose .= ' class="classfortooltip"';
         }
 
-        $linkstart='<a href="'.$url.'"';
-        $linkstart.=$linkclose.'>';
-        $linkend='</a>';
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart .= $linkclose.'>';
+        $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
-        if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref, $maxlen):$this->ref);
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref);
         $result .= $linkend;
 
         return $result;

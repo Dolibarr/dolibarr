@@ -67,8 +67,8 @@ $search_note = GETPOST('search_note', 'alpha');
 $dateselect = dol_mktime(0, 0, 0, GETPOST('dateselectmonth', 'int'), GETPOST('dateselectday', 'int'), GETPOST('dateselectyear', 'int'));
 $datestart = dol_mktime(0, 0, 0, GETPOST('datestartmonth', 'int'), GETPOST('datestartday', 'int'), GETPOST('datestartyear', 'int'));
 $dateend = dol_mktime(0, 0, 0, GETPOST('dateendmonth', 'int'), GETPOST('dateendday', 'int'), GETPOST('dateendyear', 'int'));
-if ($search_status == '' && ! GETPOSTISSET('search_status')) $search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
-if (empty($action) && ! GETPOSTISSET('action')) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
+if ($search_status == '' && !GETPOSTISSET('search_status')) $search_status = (empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_STATUS);
+if (empty($action) && !GETPOSTISSET('action')) $action = (empty($conf->global->AGENDA_DEFAULT_VIEW) ? 'show_month' : $conf->global->AGENDA_DEFAULT_VIEW);
 
 $filter = GETPOST("search_filter", 'alpha', 3) ?GETPOST("search_filter", 'alpha', 3) : GETPOST("filter", 'alpha', 3);
 $filtert = GETPOST("search_filtert", "int", 3) ?GETPOST("search_filtert", "int", 3) : GETPOST("filtert", "int", 3);
@@ -94,7 +94,7 @@ if (empty($filtert) && empty($conf->global->AGENDA_ALL_CALENDARS))
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if ($page == -1 || $page == null) { $page = 0; }
 $offset = $limit * $page;
 if (!$sortorder)
@@ -242,7 +242,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $sql = "SELECT";
 if ($usergroup > 0) $sql .= " DISTINCT";
 $sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql .= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
+$sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
@@ -382,18 +382,11 @@ if ($resql)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	$nav = '';
 
-	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
 	if ($filter)          $nav .= '<input type="hidden" name="search_filter" value="'.$filter.'">';
-	//if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
 	if ($showbirthday)    $nav .= '<input type="hidden" name="search_showbirthday" value="1">';
-	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-	//if ($usergroup)       $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 	print $nav;
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
@@ -443,7 +436,7 @@ if ($resql)
         $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1);
 
     $moreforfilter = '';
 
@@ -549,13 +542,13 @@ if ($resql)
 
 		$actionstatic->id = $obj->id;
 		$actionstatic->ref = $obj->id;
+		$actionstatic->code = $obj->code;
 		$actionstatic->type_code = $obj->type_code;
 		$actionstatic->type_label = $obj->type_label;
 		$actionstatic->type_picto = $obj->type_picto;
 		$actionstatic->label = $obj->label;
 		$actionstatic->location = $obj->location;
-		$actionstatic->note = dol_htmlentitiesbr($obj->note);			// deprecated
-		$actionstatic->note_public = dol_htmlentitiesbr($obj->note);
+		$actionstatic->note_private = dol_htmlentitiesbr($obj->note);
 
 		$actionstatic->fetchResources();
 
@@ -584,22 +577,32 @@ if ($resql)
 		// Type
 		if (!empty($arrayfields['c.libelle']['checked']))
 		{
-			print '<td>';
+			print '<td class="nowraponall">';
+			$actioncomm = $actionstatic;
+			// TODO Code common with code into showactions
+			$imgpicto = '';
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 			{
-	    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
-    			else {
-    			    if ($actionstatic->type_code == 'AC_RDV')       print img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif ($actionstatic->type_code == 'AC_INT')   print img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
-    			    elseif (!preg_match('/_AUTO/', $actionstatic->type_code)) print img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
-    			}
+				if ($actioncomm->type_picto) {
+					$imgpicto = img_picto('', $actioncomm->type_picto);
+				}
+				else {
+					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
+					elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
+				}
 			}
+			print $imgpicto;
+
 			$labeltype = $obj->type_code;
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
-			if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
+			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
+				$labeltype = $langs->trans("Message");
+			} elseif (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
 			print dol_trunc($labeltype, 28);
 			print '</td>';
 		}
@@ -614,14 +617,15 @@ if ($resql)
 		// Description
 		if (!empty($arrayfields['a.note']['checked'])) {
 			print '<td class="tdoverflowonsmartphone">';
-			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note, 0));
-			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note);
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($actionstatic->note_private, 0));
+			print $form->textwithtooltip(dol_trunc($text, 40), $actionstatic->note_private);
 			print '</td>';
 		}
+
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late = 0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
@@ -634,7 +638,7 @@ if ($resql)
 
 		// End date
 		if (!empty($arrayfields['a.datep2']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}
@@ -657,7 +661,7 @@ if ($resql)
 
 		// Contact
 		if (!empty($arrayfields['a.fk_contact']['checked'])) {
-			print '<td>';
+			print '<td class="tdoverflowmax100">';
 
             if (!empty($actionstatic->socpeopleassigned))
             {
@@ -704,7 +708,7 @@ if ($resql)
 
 		// Linked object
 		if (!empty($arrayfields['a.fk_element']['checked'])) {
-            print '<td>';
+            print '<td class="tdoverflowmax150">';
             //var_dump($obj->fkelement.' '.$obj->elementtype);
             if ($obj->fk_element > 0 && !empty($obj->elementtype)) {
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -734,7 +738,7 @@ if ($resql)
 		if (!empty($arrayfields['a.percent']['checked'])) {
 			// Status/Percent
 			$datep = $db->jdate($obj->datep);
-			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 3, 0, $datep).'</td>';
+			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 		}
 		print '<td></td>';
 

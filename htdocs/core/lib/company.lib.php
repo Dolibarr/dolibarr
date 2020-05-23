@@ -46,7 +46,7 @@ function societe_prepare_head(Societe $object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("ThirdParty");
     $head[$h][2] = 'card';
     $h++;
 
@@ -104,7 +104,9 @@ function societe_prepare_head(Societe $object)
             $h++;
         }
     }
-    if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire))
+    $supplier_module_enabled = 0;
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || !empty($conf->supplier_proposal->enabled) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) $supplier_module_enabled = 1;
+    if ($supplier_module_enabled == 1 && $object->fournisseur && !empty($user->rights->fournisseur->lire))
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
@@ -172,7 +174,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-    if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->fournisseur->enabled))
+    if ((!empty($conf->commande->enabled) || !empty($conf->propal->enabled) || !empty($conf->facture->enabled) || !empty($conf->ficheinter->enabled) || !empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
         && empty($conf->global->THIRPARTIES_DISABLE_RELATED_OBJECT_TAB))
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
@@ -365,7 +367,7 @@ function societe_prepare_head2($object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("ThirdParty");
     $head[$h][2] = 'company';
     $h++;
 
@@ -872,7 +874,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
     $optioncss = GETPOST('optioncss', 'alpha');
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
-    $page = GETPOST('page', 'int');
+    $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 
     $search_status = GETPOST("search_status", 'int');
     if ($search_status == '') $search_status = 1; // always display active customer first
@@ -1226,7 +1228,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             // Edit
             if ($user->rights->societe->contact->creer)
             {
-                print '<a href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
+                print '<a class="editfielda paddingleft" href="'.DOL_URL_ROOT.'/contact/card.php?action=edit&id='.$obj->rowid.'&backtopage='.urlencode($backtopage).'">';
                 print img_edit();
                 print '</a>';
             }
@@ -1736,7 +1738,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
             // Linked object
-            $out .= '<td>';
+            $out .= '<td class="nowraponall">';
             if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element']))
             {
             	$out .= dolGetElementUrl($histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);

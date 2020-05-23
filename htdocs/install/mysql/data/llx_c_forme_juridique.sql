@@ -127,7 +127,7 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'99','Perso
 
 -- Belgium
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '200', 'Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '201', 'SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '201', 'SRL - Société à responsabilité limitée');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '202', 'SA   - Société Anonyme');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '203', 'SCRL - Société coopérative à responsabilité limitée');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, '204', 'ASBL - Association sans but Lucratif');

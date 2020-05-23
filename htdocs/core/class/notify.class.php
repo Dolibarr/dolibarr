@@ -331,75 +331,75 @@ class Notify
 		$langs->load("other");
 
 		// Define $urlwithroot
-		$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-		$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;			// This is to use external domain name found into config file
+		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 		//$urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than current
 
 		// Define some vars
 		$application = 'Dolibarr';
-		if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $application = $conf->global->MAIN_APPLICATION_TITLE;
+		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $application = $conf->global->MAIN_APPLICATION_TITLE;
 		$replyto = $conf->notification->email_from;
 		$object_type = '';
 		$link = '';
 		$num = 0;
         $error = 0;
 
-		$oldref=(empty($object->oldref)?$object->ref:$object->oldref);
-		$newref=(empty($object->newref)?$object->ref:$object->newref);
+		$oldref = (empty($object->oldref) ? $object->ref : $object->oldref);
+		$newref = (empty($object->newref) ? $object->ref : $object->newref);
 
 		$sql = '';
 
 		// Check notification per third party
 		if ($object->socid > 0)
 		{
-			$sql.= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
-			$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-			$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
-			$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-			$sql.= " ".MAIN_DB_PREFIX."notify_def as n,";
-			$sql.= " ".MAIN_DB_PREFIX."societe as s";
-			$sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
-			$sql.= " AND n.fk_soc = s.rowid";
-			$sql.= " AND c.statut = 1";
-			if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-			else $sql.= " AND a.code = '".$notifcode."'";	// New usage
+			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
+			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c,";
+			$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+			$sql .= " ".MAIN_DB_PREFIX."notify_def as n,";
+			$sql .= " ".MAIN_DB_PREFIX."societe as s";
+			$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+			$sql .= " AND n.fk_soc = s.rowid";
+			$sql .= " AND c.statut = 1";
+			if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
+			else $sql .= " AND a.code = '".$notifcode."'"; // New usage
 			$sql .= " AND s.rowid = ".$object->socid;
 
-			$sql.= "\nUNION\n";
+			$sql .= "\nUNION\n";
 		}
 
 		// Check notification per user
-		$sql.= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
-		$sql.= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user as c,";
-		$sql.= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
-		$sql.= " ".MAIN_DB_PREFIX."notify_def as n";
-		$sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
-		$sql.= " AND c.statut = 1";
-		if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
-		else $sql.= " AND a.code = '".$this->db->escape($notifcode)."'";	// New usage
+		$sql .= "SELECT 'touserid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.lang as default_lang,";
+		$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.type";
+		$sql .= " FROM ".MAIN_DB_PREFIX."user as c,";
+		$sql .= " ".MAIN_DB_PREFIX."c_action_trigger as a,";
+		$sql .= " ".MAIN_DB_PREFIX."notify_def as n";
+		$sql .= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
+		$sql .= " AND c.statut = 1";
+		if (is_numeric($notifcode)) $sql .= " AND n.fk_action = ".$notifcode; // Old usage
+		else $sql .= " AND a.code = '".$this->db->escape($notifcode)."'"; // New usage
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
 			$num = $this->db->num_rows($result);
-			$projtitle='';
-			if (! empty($object->fk_project))
+			$projtitle = '';
+			if (!empty($object->fk_project))
 			{
 				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$proj = new Project($this->db);
 				$proj->fetch($object->fk_project);
-				$projtitle='('.$proj->title.')';
+				$projtitle = '('.$proj->title.')';
 			}
 
 			if ($num > 0)
 			{
 				$i = 0;
-				while ($i < $num && ! $error)	// For each notification couple defined (third party/actioncode)
+				while ($i < $num && !$error)	// For each notification couple defined (third party/actioncode)
 				{
 					$obj = $this->db->fetch_object($result);
 
-					$sendto = dolGetFirstLastname($obj->firstname, $obj->lastname) . " <".$obj->email.">";
+					$sendto = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
 					$notifcodedefid = $obj->adid;
 					$trackid = '';
 					if ($obj->type_target == 'tocontactid') $trackid = 'con'.$obj->id;

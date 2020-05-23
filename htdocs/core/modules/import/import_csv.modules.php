@@ -123,7 +123,7 @@ class ImportCsv extends ModeleImports
 	 * 	Output header of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							Empty string
 	 */
     public function write_header_example($outputlangs)
 	{
@@ -137,7 +137,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 *  @param	array		$headerlinefields	Array of fields name
-	 * 	@return	string$limittoachartaccount
+	 * 	@return	string							String output
 	 */
     public function write_title_example($outputlangs, $headerlinefields)
 	{
@@ -152,7 +152,7 @@ class ImportCsv extends ModeleImports
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
 	 * 	@param	array		$contentlinevalues	Array of lines
-	 * 	@return	string
+	 * 	@return	string							String output
 	 */
     public function write_record_example($outputlangs, $contentlinevalues)
 	{
@@ -166,14 +166,13 @@ class ImportCsv extends ModeleImports
 	 * 	Output footer of an example file for this format
 	 *
 	 * 	@param	Translate	$outputlangs		Output language
-	 *  @return	string
+	 *  @return	string							Empty string
 	 */
     public function write_footer_example($outputlangs)
 	{
         // phpcs:enable
 		return '';
 	}
-
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -383,8 +382,8 @@ class ImportCsv extends ModeleImports
 
 				// array of fields to column index
                 $arrayfield = array();
-                foreach($sort_array_match_file_to_database as $key => $val) {
-                    $arrayfield[$val] = ($key-1);
+                foreach ($sort_array_match_file_to_database as $key => $val) {
+                    $arrayfield[$val] = ($key - 1);
                 }
 
 				// Loop on each fields in the match array: $key = 1..n, $val=alias of field (s.nom)
@@ -426,6 +425,7 @@ class ImportCsv extends ModeleImports
                                     // New val can be an id or ref. If it start with id: it is forced to id, if it start with ref: it is forced to ref. It not, we try to guess.
                                     $isidorref = 'id';
                                     if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
+
                                     $newval = preg_replace('/^(id|ref):/i', '', $newval); // Remove id: or ref: that was used to force if field is id or ref
                                     //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
 
@@ -449,8 +449,7 @@ class ImportCsv extends ModeleImports
                                             $classinstance = new $class($this->db);
                                             // Try the fetch from code or ref
                                             $param_array = array('', $newval);
-                                            if ($class == 'AccountingAccount')
-                                            {
+                                            if ($class == 'AccountingAccount') {
                                                 //var_dump($arrayrecord[0]['val']);
                                                 /*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
                                                  $tmpchartofaccount = new AccountancySystem($this->db);
@@ -463,38 +462,39 @@ class ImportCsv extends ModeleImports
                                                  $errorforthistable++;
                                                  $error++;
                                                  }*/
-                                                $param_array = array('', $newval, 0, $arrayrecord[0]['val']);       // Param to fetch parent from account, in chart.
+                                                $param_array = array('', $newval, 0, $arrayrecord[0]['val']); // Param to fetch parent from account, in chart.
                                             }
+
                                             call_user_func_array(array($classinstance, $method), $param_array);
                                             // If not found, try the fetch from label
-                                            if (! ($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeorlabel')
+                                            if (!($classinstance->id != '') && $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeorlabel')
                                             {
                                                 $param_array = array('', '', $newval);
                                                 call_user_func_array(array($classinstance, $method), $param_array);
                                             }
-                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval]=$classinstance->id;
+                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'][$newval] = $classinstance->id;
                                             //print 'We have made a '.$class.'->'.$method.' to get id from code '.$newval.'. ';
                                             if ($classinstance->id != '')	// id may be 0, it is a found value
                                             {
-                                                $newval=$classinstance->id;
+                                                $newval = $classinstance->id;
                                             }
                                             else
                                             {
-                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
-                                                elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib']=$langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
-                                                else $this->errors[$error]['lib']='ErrorBadDefinitionOfImportProfile';
-                                                $this->errors[$error]['type']='FOREIGNKEY';
+                                                if (!empty($objimport->array_import_convertvalue[0][$val]['dict'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldValueNotIn', $key, $newval, 'code', $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['dict']));
+                                                elseif (!empty($objimport->array_import_convertvalue[0][$val]['element'])) $this->errors[$error]['lib'] = $langs->trans('ErrorFieldRefNotIn', $key, $newval, $langs->transnoentitiesnoconv($objimport->array_import_convertvalue[0][$val]['element']));
+                                                else $this->errors[$error]['lib'] = 'ErrorBadDefinitionOfImportProfile';
+                                                $this->errors[$error]['type'] = 'FOREIGNKEY';
                                                 $errorforthistable++;
                                                 $error++;
                                             }
                                         }
                                     }
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeandlabel')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeandlabel')
                                 {
-                                    $isidorref='id';
-                                    if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i', $newval)) $isidorref='ref';
-                                    $newval=preg_replace('/^(id|ref):/i', '', $newval);
+                                    $isidorref = 'id';
+                                    if (!is_numeric($newval) && $newval != '' && !preg_match('/^id:/i', $newval)) $isidorref = 'ref';
+                                    $newval = preg_replace('/^(id|ref):/i', '', $newval);
 
                                     if ($isidorref == 'ref') {
                                         $file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
@@ -502,19 +502,19 @@ class ImportCsv extends ModeleImports
                                         $method = $objimport->array_import_convertvalue[0][$val]['method'];
                                         $codefromfield = $objimport->array_import_convertvalue[0][$val]['codefromfield'];
                                         $code = $arrayrecord[$arrayfield[$codefromfield]]['val'];
-                                        if ($this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval] != '') {
-                                            $newval = $this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval];
+                                        if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] != '') {
+                                            $newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval];
                                         } else {
                                             $resultload = dol_include_once($file);
                                             if (empty($resultload)) {
-                                                dol_print_error('', 'Error trying to call file=' . $file . ', class=' . $class . ', method=' . $method . ', code=' . $code);
+                                                dol_print_error('', 'Error trying to call file='.$file.', class='.$class.', method='.$method.', code='.$code);
                                                 break;
                                             }
                                             $classinstance = new $class($this->db);
                                             // Try the fetch from code and ref
                                             $param_array = array('', $newval, $code);
                                             call_user_func_array(array($classinstance, $method), $param_array);
-                                            $this->cacheconvert[$file . '_' . $class . '_' . $method . '_' . $code][$newval] = $classinstance->id;
+                                            $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$code][$newval] = $classinstance->id;
                                             if ($classinstance->id > 0)    // we found record
                                             {
                                                 $newval = $classinstance->id;
@@ -528,19 +528,19 @@ class ImportCsv extends ModeleImports
                                         }
                                     }
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='zeroifnull')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'zeroifnull')
                                 {
-                                    if (empty($newval)) $newval='0';
+                                    if (empty($newval)) $newval = '0';
                                 }
-                                elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule']=='fetchscalefromcodeunits')
+                                elseif ($objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchidfromcodeunits' || $objimport->array_import_convertvalue[0][$val]['rule'] == 'fetchscalefromcodeunits')
                                 {
-                                	$file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
-                                	$class=$objimport->array_import_convertvalue[0][$val]['class'];
-                                	$method=$objimport->array_import_convertvalue[0][$val]['method'];
-                                	$units=$objimport->array_import_convertvalue[0][$val]['units'];
+                                	$file = (empty($objimport->array_import_convertvalue[0][$val]['classfile']) ? $objimport->array_import_convertvalue[0][$val]['file'] : $objimport->array_import_convertvalue[0][$val]['classfile']);
+                                	$class = $objimport->array_import_convertvalue[0][$val]['class'];
+                                	$method = $objimport->array_import_convertvalue[0][$val]['method'];
+                                	$units = $objimport->array_import_convertvalue[0][$val]['units'];
                                 	if ($this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval] != '')
                                 	{
-                                		$newval=$this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
+                                		$newval = $this->cacheconvert[$file.'_'.$class.'_'.$method.'_'.$units][$newval];
                                 	}
                                 	else
                                 	{

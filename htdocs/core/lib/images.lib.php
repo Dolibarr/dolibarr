@@ -23,8 +23,8 @@
  */
 
 // Define size of logo small and mini
-$maxwidthsmall = 270; $maxheightsmall = 150;
-$maxwidthmini = 128; $maxheightmini = 72;
+$maxwidthsmall = 350; $maxheightsmall = 200; // Near 16/9eme
+$maxwidthmini = 128; $maxheightmini = 72; // 16/9eme
 $quality = 80;
 
 
@@ -328,7 +328,7 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 			$infoImg = getimagesize($fileSource); // Get image infos
 
 			$orientation = $exif['Orientation'];
-			if($orientation != 1){
+			if ($orientation != 1) {
 				$img = imagecreatefromjpeg($fileSource);
 				$deg = 0;
 				switch ($orientation) {
@@ -413,42 +413,42 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-	global $conf,$langs;
+	global $conf, $langs;
 
 	dol_syslog("vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality." outdir=".$outdir." targetformat=".$targetformat);
 
 	// Clean parameters
-	$file=trim($file);
+	$file = trim($file);
 
 	// Check parameters
-	if (! $file)
+	if (!$file)
 	{
 		// Si le fichier n'a pas ete indique
 		return 'ErrorBadParameters';
 	}
-	elseif (! file_exists($file))
+	elseif (!file_exists($file))
 	{
 		// Si le fichier passe en parametre n'existe pas
         dol_syslog($langs->trans("ErrorFileNotFound", $file), LOG_ERR);
 	    return $langs->trans("ErrorFileNotFound", $file);
 	}
-	elseif(image_format_supported($file) < 0)
+	elseif (image_format_supported($file) < 0)
 	{
         dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
 	    return 'ErrorBadImageFormat';
 	}
-	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
+	elseif (!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxWidth';
 	}
-	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
+	elseif (!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxHeight';
 	}
 
-	$filetoread = realpath(dol_osencode($file)); 	// Chemin canonique absolu de l'image
+	$filetoread = realpath(dol_osencode($file)); // Chemin canonique absolu de l'image
 
 	$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
@@ -462,8 +462,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		}
 	}
 
-	if ($maxWidth  == -1) $maxWidth=$infoImg[0];	// If size is -1, we keep unchanged
-	if ($maxHeight == -1) $maxHeight=$infoImg[1];	// If size is -1, we keep unchanged
+	if ($maxWidth == -1) $maxWidth = $infoImg[0]; // If size is -1, we keep unchanged
+	if ($maxHeight == -1) $maxHeight = $infoImg[1]; // If size is -1, we keep unchanged
 
 	// Si l'image est plus petite que la largeur et la hauteur max, on ne cree pas de vignette
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
@@ -531,7 +531,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			break;
 	}
 
-    if (! is_resource($img))
+    if (!is_resource($img))
     {
         dol_syslog('Failed to detect type of image. We found infoImg[2]='.$infoImg[2], LOG_WARNING);
         return 0;
@@ -539,7 +539,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 
 	$exifAngle = false;
     if ($ort && !empty($conf->global->MAIN_USE_EXIF_ROTATION)) {
-		switch($ort)
+		switch ($ort)
 		{
 			case 3: // 180 rotate left
 				$exifAngle = 180;
@@ -563,7 +563,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
     {
 		$rotated = false;
 
-    	if($infoImg[2] === 'IMAGETYPE_PNG') // In fact there is no exif on PNG but just in case
+    	if ($infoImg[2] === 'IMAGETYPE_PNG') // In fact there is no exif on PNG but just in case
     	{
 			imagealphablending($img, false);
 			imagesavealpha($img, true);

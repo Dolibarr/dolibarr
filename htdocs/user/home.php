@@ -25,9 +25,9 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
-$contextpage=GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'userhome';   // To manage different context of search
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'userhome'; // To manage different context of search
 
-if (! $user->rights->user->user->lire && ! $user->admin)
+if (!$user->rights->user->user->lire && !$user->admin)
 {
 	// Redirection vers la page de l'utilisateur
 	header("Location: card.php?id=".$user->id);
@@ -37,14 +37,14 @@ if (! $user->rights->user->user->lire && ! $user->admin)
 // Load translation files required by page
 $langs->load("users");
 
-$canreadperms=true;
-if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+$canreadperms = true;
+if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
-	$canreadperms=($user->admin || $user->rights->user->group_advance->read);
+	$canreadperms = ($user->admin || $user->rights->user->group_advance->read);
 }
 
 // Security check (for external users)
-$socid=0;
+$socid = 0;
 if ($user->socid > 0) $socid = $user->socid;
 
 $companystatic = new Societe($db);
@@ -61,7 +61,7 @@ $hookmanager->initHooks(array('userhome'));
 llxHeader();
 
 
-print load_fiche_titre($langs->trans("MenuUsersAndGroups"));
+print load_fiche_titre($langs->trans("MenuUsersAndGroups"), '', 'user');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -92,35 +92,35 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Last created users
+ * Latest created users
  */
-$max=10;
+$max = 10;
 
 $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
-$sql.= ", u.entity";
-$sql.= ", u.ldap_sid";
-$sql.= ", u.photo";
-$sql.= ", u.admin";
-$sql.= ", u.email";
-$sql.= ", u.skype";
-$sql.= ", s.nom as name";
-$sql.= ", s.code_client";
-$sql.= ", s.canvas";
-$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
+$sql .= ", u.entity";
+$sql .= ", u.ldap_sid";
+$sql .= ", u.photo";
+$sql .= ", u.admin";
+$sql .= ", u.email";
+$sql .= ", u.skype";
+$sql .= ", s.nom as name";
+$sql .= ", s.code_client";
+$sql .= ", s.canvas";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 // Add fields from hooks
-$parameters=array();
-$reshook=$hookmanager->executeHooks('printUserListWhere', $parameters);    // Note that $action and $object may have been modified by hook
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printUserListWhere', $parameters); // Note that $action and $object may have been modified by hook
 if ($reshook > 0) {
-	$sql.=$hookmanager->resPrint;
+	$sql .= $hookmanager->resPrint;
 } else {
-	$sql.= " WHERE u.entity IN (".getEntity('user').")";
+	$sql .= " WHERE u.entity IN (".getEntity('user').")";
 }
-if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
-$sql.= $db->order("u.datec", "DESC");
-$sql.= $db->plimit($max);
+if (!empty($socid)) $sql .= " AND u.fk_soc = ".$socid;
+$sql .= $db->order("u.datec", "DESC");
+$sql .= $db->plimit($max);
 
-$resql=$db->query($sql);
+$resql = $db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
@@ -128,8 +128,7 @@ if ($resql)
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastUsersCreated", min($num, $max)).'</td>';
-	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
-	print '<td></td>';
+	print '<td class="right" colspan="2"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
 	print '</tr>';
 	$i = 0;
 
@@ -148,15 +147,15 @@ if ($resql)
 		$fuserstatic->skype = $obj->skype;
 		$fuserstatic->socid = $obj->fk_soc;
 
-		$companystatic->id=$obj->fk_soc;
-		$companystatic->name=$obj->name;
+		$companystatic->id = $obj->fk_soc;
+		$companystatic->name = $obj->name;
 		$companystatic->code_client = $obj->code_client;
-		$companystatic->canvas=$obj->canvas;
+		$companystatic->canvas = $obj->canvas;
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall">';
         print $fuserstatic->getNomUrl(-1);
-		if (! empty($conf->multicompany->enabled) && $obj->admin && ! $obj->entity)
+		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity)
 		{
 			print img_picto($langs->trans("SuperAdministrator"), 'redstar');
 		}
@@ -165,7 +164,7 @@ if ($resql)
 			print img_picto($langs->trans("Administrator"), 'star');
 		}
 		print "</td>";
-		print '<td class="left">'.$obj->login.'</td>';
+		print '<td>'.$obj->login.'</td>';
 		print "<td>";
 		if ($obj->fk_soc)
 		{
@@ -180,22 +179,22 @@ if ($resql)
 			print ' ('.$langs->trans("DomainUser").')';
 		}
 
-		$entity=$obj->entity;
-		$entitystring='';
+		$entity = $obj->entity;
+		$entitystring = '';
         // TODO Set of entitystring should be done with a hook
-		if (! empty($conf->multicompany->enabled) && is_object($mc))
+		if (!empty($conf->multicompany->enabled) && is_object($mc))
 		{
 			if (empty($entity))
 			{
-				$entitystring=$langs->trans("AllEntities");
+				$entitystring = $langs->trans("AllEntities");
 			}
 			else
 			{
 				$mc->getInfo($entity);
-				$entitystring=$mc->label;
+				$entitystring = $mc->label;
 			}
 		}
-        print ($entitystring?' ('.$entitystring.')':'');
+        print ($entitystring ? ' ('.$entitystring.')' : '');
 
 		print '</td>';
 		print '<td class="center nowrap">'.dol_print_date($db->jdate($obj->datec), 'dayhour').'</td>';
@@ -222,26 +221,26 @@ else
  */
 if ($canreadperms)
 {
-	$max=5;
+	$max = 5;
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
-	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+	$sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+	if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity)))
 	{
-		$sql.= " WHERE g.entity IS NOT NULL";
+		$sql .= " WHERE g.entity IS NOT NULL";
 	}
 	else
 	{
-		$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
+		$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 	}
-	$sql.= $db->order("g.datec", "DESC");
-	$sql.= $db->plimit($max);
+	$sql .= $db->order("g.datec", "DESC");
+	$sql .= $db->plimit($max);
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$colspan=1;
-		if (! empty($conf->multicompany->enabled)) $colspan++;
+		$colspan = 1;
+		if (!empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -253,7 +252,7 @@ if ($canreadperms)
 
 		$grouptemp = new UserGroup($db);
 
-		while ($i < $num && (! $max || $i < $max))
+		while ($i < $num && (!$max || $i < $max))
 		{
 			$obj = $db->fetch_object($resql);
 
@@ -264,12 +263,12 @@ if ($canreadperms)
 			print '<tr class="oddeven">';
 			print '<td>';
 			print $grouptemp->getNomUrl(1);
-			if (! $obj->entity)
+			if (!$obj->entity)
 			{
 				print img_picto($langs->trans("GlobalGroup"), 'redstar');
 			}
 			print "</td>";
-			if (! empty($conf->multicompany->enabled) && is_object($mc))
+			if (!empty($conf->multicompany->enabled) && is_object($mc))
 			{
 	        	$mc->getInfo($obj->entity);
 	        	print '<td>';

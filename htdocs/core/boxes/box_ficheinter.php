@@ -31,10 +31,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_ficheinter extends ModeleBoxes
 {
-    public $boxcode="ficheinter";
-    public $boximg="object_intervention";
-    public $boxlabel="BoxFicheInter";
-    public $depends = array("ficheinter");	// conf->contrat->enabled
+    public $boxcode = "ficheinter";
+    public $boximg = "object_intervention";
+    public $boxlabel = "BoxFicheInter";
+    public $depends = array("ficheinter"); // conf->contrat->enabled
 
 	/**
      * @var DoliDB Database handler.
@@ -59,7 +59,7 @@ class box_ficheinter extends ModeleBoxes
 
 	    $this->db = $db;
 
-	    $this->hidden = ! ($user->rights->ficheinter->lire);
+	    $this->hidden = !($user->rights->ficheinter->lire);
 	}
 
 	/**
@@ -72,37 +72,37 @@ class box_ficheinter extends ModeleBoxes
 	{
 		global $user, $langs, $conf;
 
-		$this->max=$max;
+		$this->max = $max;
 
 		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-		$ficheinterstatic=new Fichinter($this->db);
+		$ficheinterstatic = new Fichinter($this->db);
 		$companystatic = new Societe($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastFicheInter", $max));
 
-		if (! empty($user->rights->ficheinter->lire))
+		if (!empty($user->rights->ficheinter->lire))
 		{
 			$sql = "SELECT f.rowid, f.ref, f.fk_soc, f.fk_statut,";
-			$sql.= " f.datec,";
-			$sql.= " f.date_valid as datev,";
-			$sql.= " f.tms as datem,";
-			$sql.= " s.nom as name, s.rowid as socid, s.client, s.email as semail";
-			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (! $user->rights->societe->client->voir) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-			$sql.= ", ".MAIN_DB_PREFIX."fichinter as f";
-			$sql.= " WHERE f.fk_soc = s.rowid ";
-			$sql.= " AND f.entity = ".$conf->entity;
-			if (! $user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-			if($user->socid)	$sql.= " AND s.rowid = ".$user->socid;
-			$sql.= " ORDER BY f.tms DESC";
-			$sql.= $this->db->plimit($max, 0);
+			$sql .= " f.datec,";
+			$sql .= " f.date_valid as datev,";
+			$sql .= " f.tms as datem,";
+			$sql .= " s.nom as name, s.rowid as socid, s.client, s.email as semail";
+			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+			if (!$user->rights->societe->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
+			$sql .= " WHERE f.fk_soc = s.rowid ";
+			$sql .= " AND f.entity = ".$conf->entity;
+			if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+			if ($user->socid)	$sql .= " AND s.rowid = ".$user->socid;
+			$sql .= " ORDER BY f.tms DESC";
+			$sql .= $this->db->plimit($max, 0);
 
 			dol_syslog(get_class($this).'::loadBox', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$num = $this->db->num_rows($resql);
-				$now=dol_now();
+				$now = dol_now();
 
 				$i = 0;
 
@@ -111,9 +111,9 @@ class box_ficheinter extends ModeleBoxes
 					$objp = $this->db->fetch_object($resql);
 					$datec = $this->db->jdate($objp->datec);
 
-					$ficheinterstatic->statut=$objp->fk_statut;
-					$ficheinterstatic->id=$objp->rowid;
-					$ficheinterstatic->ref=$objp->ref;
+					$ficheinterstatic->statut = $objp->fk_statut;
+					$ficheinterstatic->id = $objp->rowid;
+					$ficheinterstatic->ref = $objp->ref;
 
 					$companystatic->id = $objp->socid;
 					$companystatic->name = $objp->name;
@@ -145,13 +145,16 @@ class box_ficheinter extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num==0) $this->info_box_contents[$i][] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedInterventions"));
+				if ($num == 0) $this->info_box_contents[$i][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoRecordedInterventions")
+				);
 
 				$this->db->free($resql);
 			}
 			else
 			{
-				$this->info_box_contents[0][] = array(
+				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($this->db->error().' sql='.$sql),
@@ -160,7 +163,7 @@ class box_ficheinter extends ModeleBoxes
 		}
 		else
 		{
-			$this->info_box_contents[0][] = array(
+			$this->info_box_contents[0][0] = array(
 			    'td' => 'class="nohover opacitymedium left"',
 			    'text' => $langs->trans("ReadPermissionNotAllowed")
 			);

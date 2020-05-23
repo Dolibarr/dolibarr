@@ -85,7 +85,7 @@ if ($result)
     dol_print_error($db);
 }
 
-print load_fiche_titre($langs->trans("DonationsArea"), '', 'invoicing');
+print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -118,6 +118,10 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     }
 }
 
+$dataseries = array();
+$colorseries = array();
+
+include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 print '<table class="noborder nohover centpercent">';
 print '<tr class="liste_titre">';
@@ -128,6 +132,10 @@ $listofstatus = array(0, 1, -1, 2);
 foreach ($listofstatus as $status)
 {
     $dataseries[] = array($donstatic->LibStatut($status, 1), (isset($nb[$status]) ? (int) $nb[$status] : 0));
+    if ($status == Don::STATUS_DRAFT) $colorseries[$status] = '-'.$badgeStatus0;
+    if ($status == Don::STATUS_VALIDATED) $colorseries[$status] = $badgeStatus1;
+    if ($status == Don::STATUS_CANCELED) $colorseries[$status] = $badgeStatus9;
+    if ($status == Don::STATUS_PAID) $colorseries[$status] = $badgeStatus6;
 }
 
 if ($conf->use_javascript_ajax)
@@ -137,10 +145,11 @@ if ($conf->use_javascript_ajax)
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
     $dolgraph->SetData($dataseries);
-    $dolgraph->setShowLegend(1);
+    $dolgraph->SetDataColor(array_values($colorseries));
+    $dolgraph->setShowLegend(2);
     $dolgraph->setShowPercent(1);
     $dolgraph->SetType(array('pie'));
-    $dolgraph->setWidth('100%');
+    $dolgraph->setHeight('200');
     $dolgraph->draw('idgraphstatus');
     print $dolgraph->show($total ? 0 : 1);
 
@@ -159,7 +168,7 @@ $totalnb = 0;
 foreach ($listofstatus as $status)
 {
     print '<tr class="oddeven">';
-    print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
+    print '<td><a href="list.php?search_status='.$status.'">'.$donstatic->LibStatut($status, 4).'</a></td>';
     print '<td class="right">'.(!empty($nb[$status]) ? $nb[$status] : '&nbsp;').'</td>';
     print '<td class="right">'.(!empty($nb[$status]) ?price($somme[$status], 'MT') : '&nbsp;').'</td>';
     print '<td class="right">'.(!empty($nb[$status]) ?price(price2num($somme[$status] / $nb[$status], 'MT')) : '&nbsp;').'</td>';

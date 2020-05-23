@@ -28,15 +28,14 @@ require_once NUSOAP_PATH.'/nusoap.php';
 $langs->load("companies");
 
 //http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl
-$WS_DOL_URL='https://ec.europa.eu/taxation_customs/vies/services/checkVatService';
+$WS_DOL_URL = 'https://ec.europa.eu/taxation_customs/vies/services/checkVatService';
 //$WS_DOL_URL_WSDL=$WS_DOL_URL.'?wsdl';
-$WS_DOL_URL_WSDL='https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
-$WS_METHOD ='checkVat';
+$WS_DOL_URL_WSDL = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
+$WS_METHOD = 'checkVat';
 
 
-
-$conf->dol_hide_topmenu=1;
-$conf->dol_hide_leftmenu=1;
+$conf->dol_hide_topmenu = 1;
+$conf->dol_hide_leftmenu = 1;
 
 llxHeader('', $langs->trans("VATIntraCheckableOnEUSite"));
 
@@ -46,7 +45,7 @@ print load_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"), '', 'title_se
 
 $vatNumber = GETPOST("vatNumber", 'alpha');
 
-if (! $vatNumber)
+if (!$vatNumber)
 {
 	print '<br>';
 	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired", $langs->trans("VATIntraShort")).'</font><br>';
@@ -55,8 +54,8 @@ else
 {
 	$vatNumber = preg_replace('/\^\w/', '', $vatNumber);
 	$vatNumber = str_replace(array(' ', '.'), '', $vatNumber);
-	$countryCode=substr($vatNumber, 0, 2);
-	$vatNumber=substr($vatNumber, 2);
+	$countryCode = substr($vatNumber, 0, 2);
+	$vatNumber = substr($vatNumber, 2);
 
 	print '<b>'.$langs->trans("Country").'</b>: '.$countryCode.'<br>';
 	print '<b>'.$langs->trans("VATIntraShort").'</b>: '.$vatNumber.'<br>';
@@ -69,7 +68,7 @@ else
 	// Set the WebService URL
 	dol_syslog("Create nusoap_client for URL=".$WS_DOL_URL." WSDL=".$WS_DOL_URL_WSDL);
     require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-    $params=getSoapParams();
+    $params = getSoapParams();
     //ini_set('default_socket_timeout', $params['response_timeout']);
     //$soapclient = new SoapClient($WS_DOL_URL_WSDL,$params);
 	$soapclient = new nusoap_client($WS_DOL_URL_WSDL, true, $params['proxy_host'], $params['proxy_port'], $params['proxy_login'], $params['proxy_password'], $params['connection_timeout'], $params['response_timeout']);
@@ -95,33 +94,33 @@ else
 	//print $soapclient->request.'<br>';
 	//print $soapclient->response.'<br>';
 
-	$messagetoshow='';
+	$messagetoshow = '';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
 	// Service indisponible
-	if (! is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring']))
+	if (!is_array($result) || preg_match('/SERVICE_UNAVAILABLE/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
-		$messagetoshow=$soapclient->response;
+		$messagetoshow = $soapclient->response;
 	}
 	elseif (preg_match('/TIMEOUT/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
-		$messagetoshow=$soapclient->response;
+		$messagetoshow = $soapclient->response;
 	}
 	elseif (preg_match('/SERVER_BUSY/i', $result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
-		$messagetoshow=$soapclient->response;
+		$messagetoshow = $soapclient->response;
 	}
 	elseif ($result['faultstring'])
 	{
 		print '<font class="error">'.$langs->trans("Error").'</font><br>';
-		$messagetoshow=$result['faultstring'];
+		$messagetoshow = $result['faultstring'];
 	}
 	// Syntaxe ko
 	elseif (preg_match('/INVALID_INPUT/i', $result['faultstring'])
-	|| ($result['requestDate'] && ! $result['valid']))
+	|| ($result['requestDate'] && !$result['valid']))
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
@@ -140,7 +139,7 @@ else
 		}
 		else
 		{
-			if (! empty($result['valid']) && ($result['valid']==1 || $result['valid']=='true'))
+			if (!empty($result['valid']) && ($result['valid'] == 1 || $result['valid'] == 'true'))
 			{
 				print '<font class="ok">'.$langs->trans("Yes").'</font>';
 				print '<br>';

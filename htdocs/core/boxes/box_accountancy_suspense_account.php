@@ -81,29 +81,29 @@ class box_accountancy_suspense_account extends ModeleBoxes
         if ($user->rights->accounting->mouvements->lire)
         {
 			$suspenseAccount = $conf->global->ACCOUNTING_ACCOUNT_SUSPENSE;
-        	if (! empty($suspenseAccount) && $suspenseAccount > 0)
+        	if (!empty($suspenseAccount) && $suspenseAccount > 0)
         	{
 				$sql = "SELECT COUNT(*) as nb_suspense_account";
-				$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping as b";
-				$sql .= " WHERE b.numero_compte = ". $suspenseAccount;
-				$sql .= " AND b.entity = " . $conf->entity;
+				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
+				$sql .= " WHERE b.numero_compte = ".$suspenseAccount;
+				$sql .= " AND b.entity = ".$conf->entity;
 
 				$result = $this->db->query($sql);
 				$nbSuspenseAccount = 0;
 				if ($result)
 				{
-					$obj=$this->db->fetch_object($result);
+					$obj = $this->db->fetch_object($result);
 					$nbSuspenseAccount = $obj->nb_suspense_account;
 				}
 
 				$this->info_box_contents[0][0] = array(
 					'td' => '',
-					'text' => $langs->trans("NumberOfLinesInSuspenseAccount") . ':'
+					'text' => $langs->trans("NumberOfLinesInSuspenseAccount").':'
 				);
 
 				$this->info_box_contents[0][1] = array(
 					'td' => 'class="right"',
-					'text' => '<a href="' . DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start='.urlencode($suspenseAccount).'&search_accountancy_code_end='.urlencode($suspenseAccount).'">' . $nbSuspenseAccount . '</a>',
+					'text' => '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_accountancy_code_start='.urlencode($suspenseAccount).'&search_accountancy_code_end='.urlencode($suspenseAccount).'">'.$nbSuspenseAccount.'</a>',
 					'asis' => 1
 				);
 			} else {

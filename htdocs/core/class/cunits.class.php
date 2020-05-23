@@ -123,19 +123,6 @@ class CUnits // extends CommonObject
 		if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_units");
-
-			//if (! $notrigger)
-			//{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			//}
         }
 
         // Commit or rollback
@@ -160,7 +147,7 @@ class CUnits // extends CommonObject
     /**
      *  Load object in memory from database
      *
-     *  @param      int		$id    			Id object
+     *  @param      int		$id    			Id of CUnit object to fetch (rowid)
      *  @param		string	$code			Code
      *  @param		string	$short_label	Short Label ('g', 'kg', ...)
      *  @param		string	$unit_type		Unit type ('size', 'surface', 'volume', 'weight', ...)
@@ -181,7 +168,7 @@ class CUnits // extends CommonObject
 		$sql .= " t.active";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_units as t";
         $sql_where = array();
-        if ($id)   $sql_where[] = " t.id = ".$id;
+        if ($id)   $sql_where[] = " t.rowid = ".$id;
         if ($unit_type)   $sql_where[] = " t.unit_type = '".$this->db->escape($unit_type)."'";
         if ($code) $sql_where[] = " t.code = '".$this->db->escape($code)."'";
         if ($short_label) $sql_where[] = " t.short_label = '".$this->db->escape($short_label)."'";
@@ -235,48 +222,48 @@ class CUnits // extends CommonObject
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
     	$sql = 'SELECT';
-    	$sql.= " t.rowid,";
-    	$sql.= " t.code,";
-    	$sql.= " t.label,";
-    	$sql.= " t.short_label,";
-    	$sql.= " t.unit_type,";
-    	$sql.= " t.scale,";
-    	$sql.= " t.active";
-    	$sql .= ' FROM ' . MAIN_DB_PREFIX . 'c_units as t';
+    	$sql .= " t.rowid,";
+    	$sql .= " t.code,";
+    	$sql .= " t.label,";
+    	$sql .= " t.short_label,";
+    	$sql .= " t.unit_type,";
+    	$sql .= " t.scale,";
+    	$sql .= " t.active";
+    	$sql .= ' FROM '.MAIN_DB_PREFIX.'c_units as t';
     	// Manage filter
     	$sqlwhere = array();
     	if (count($filter) > 0) {
     		foreach ($filter as $key => $value) {
-    			if ($key=='t.rowid' || $key=='t.active' || $key=='t.scale') {
-    				$sqlwhere[] = $key . '='. (int) $value;
+    			if ($key == 't.rowid' || $key == 't.active' || $key == 't.scale') {
+    				$sqlwhere[] = $key.'='.(int) $value;
     			}
     			elseif (strpos($key, 'date') !== false) {
     				$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
     			}
-    			elseif ($key=='t.unit_type' || $key=='t.code' || $key=='t.short_label') {
-    				$sqlwhere[] =  $key.' = \''.$this->db->escape($value).'\'';
+    			elseif ($key == 't.unit_type' || $key == 't.code' || $key == 't.short_label') {
+    				$sqlwhere[] = $key.' = \''.$this->db->escape($value).'\'';
     			}
     			else {
-    				$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+    				$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
     	}
     	if (count($sqlwhere) > 0) {
-    		$sql .= ' WHERE (' . implode(' '.$filtermode.' ', $sqlwhere).')';
+    		$sql .= ' WHERE ('.implode(' '.$filtermode.' ', $sqlwhere).')';
     	}
 
     	if (!empty($sortfield)) {
     		$sql .= $this->db->order($sortfield, $sortorder);
     	}
     	if (!empty($limit)) {
-    		$sql .=  ' ' . $this->db->plimit($limit, $offset);
+    		$sql .= ' '.$this->db->plimit($limit, $offset);
     	}
 
     	$resql = $this->db->query($sql);
     	if ($resql) {
-    		$this->records=array();
+    		$this->records = array();
     		$num = $this->db->num_rows($resql);
-    		if ($num>0) {
+    		if ($num > 0) {
 	    		while ($obj = $this->db->fetch_object($resql))
 	    		{
 	    			$record = new self($this->db);
@@ -342,22 +329,6 @@ class CUnits // extends CommonObject
         $resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action call a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    //	}
-		//}
-
         // Commit or rollback
 		if ($error)
 		{
@@ -398,22 +369,6 @@ class CUnits // extends CommonObject
 		$resql = $this->db->query($sql);
     	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action call a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-		//	}
-		//}
-
         // Commit or rollback
 		if ($error)
 		{
@@ -430,5 +385,78 @@ class CUnits // extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+
+	/**
+	 * Get unit from code
+	 * @param string $code code of unit
+	 * @param string $mode 0= id , short_label=Use short label as value, code=use code
+	 * @return int            <0 if KO, Id of code if OK
+	 */
+	public function getUnitFromCode($code, $mode = 'code')
+	{
+
+		if($mode == 'short_label'){
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'short_label', 'rowid');
+		}
+		elseif($mode == 'code'){
+			return dol_getIdFromCode($this->db, $code, 'c_units', 'code', 'rowid');
+		}
+
+		return $code;
+	}
+
+	/**
+	 * Unit converter
+	 * @param double $value value to convert
+	 * @param int $fk_unit current unit id of value
+	 * @param int $fk_new_unit the id of unit to convert in
+	 * @return double
+	 */
+	public function unitConverter($value, $fk_unit, $fk_new_unit = 0)
+	{
+		$value  = doubleval(price2num($value));
+		$fk_unit = intval($fk_unit);
+
+		// Calcul en unité de base
+		$scaleUnitPow = $this->scaleOfUnitPow($fk_unit);
+
+		// convert to standard unit
+		$value  = $value * $scaleUnitPow;
+		if($fk_new_unit !=0 ){
+			// Calcul en unité de base
+			$scaleUnitPow = $this->scaleOfUnitPow($fk_new_unit);
+			if(!empty($scaleUnitPow))
+			{
+				// convert to new unit
+				$value  = $value / $scaleUnitPow;
+			}
+		}
+		return round($value, 2);
+	}
+
+
+
+	/**
+	 * get scale of unit factor
+	 * @param $id int id of unit in dictionary
+	 * @return float|int
+	 */
+	public function scaleOfUnitPow($id)
+	{
+		$base = 10;
+		// TODO : add base col into unit dictionary table
+		$unit = $this->db->getRow('SELECT scale, unit_type from '.MAIN_DB_PREFIX.'c_units WHERE rowid = '.intval($id));
+		if($unit){
+			// TODO : if base exist in unit dictionary table remove this convertion exception and update convertion infos in database exemple time hour currently scale 3600 will become scale 2 base 60
+			if($unit->unit_type == 'time'){
+				return doubleval($unit->scale);
+			}
+
+			return pow($base, doubleval($unit->scale));
+		}
+
+		return 0;
 	}
 }

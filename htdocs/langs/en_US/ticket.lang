@@ -30,6 +30,7 @@ Permission56005=See tickets of all third parties (not effective for external use
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
@@ -132,7 +133,7 @@ TicketsDisableCustomerEmail=Always disable emails when a ticket is created from 
 #
 # Index & list page
 #
-TicketsIndex=Ticket - home
+TicketsIndex=Tickets area
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found

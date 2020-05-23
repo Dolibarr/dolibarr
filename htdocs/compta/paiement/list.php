@@ -45,30 +45,30 @@ $optioncss = GETPOST('optioncss', 'alpha');
 
 $facid	= GETPOST('facid', 'int');
 $socid	= GETPOST('socid', 'int');
-$userid	= GETPOST('userid', 'int');
-$day	= GETPOST('day', 'int');
+$userid = GETPOST('userid', 'int');
+$day = GETPOST('day', 'int');
 $month	= GETPOST('month', 'int');
-$year	= GETPOST('year', 'int');
+$year = GETPOST('year', 'int');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'facture', $facid, '');
 
-$paymentstatic=new Paiement($db);
-$accountstatic=new Account($db);
-$companystatic=new Societe($db);
+$paymentstatic = new Paiement($db);
+$accountstatic = new Account($db);
+$companystatic = new Societe($db);
 
-$search_ref=GETPOST("search_ref", "alpha");
-$search_account=GETPOST("search_account", "int");
-$search_paymenttype=GETPOST("search_paymenttype");
-$search_amount=GETPOST("search_amount", 'alpha');    // alpha because we must be able to search on "< x"
-$search_company=GETPOST("search_company", 'alpha');
-$search_payment_num=GETPOST('search_payment_num', 'alpha');
+$search_ref = GETPOST("search_ref", "alpha");
+$search_account = GETPOST("search_account", "int");
+$search_paymenttype = GETPOST("search_paymenttype");
+$search_amount = GETPOST("search_amount", 'alpha'); // alpha because we must be able to search on "< x"
+$search_company = GETPOST("search_company", 'alpha');
+$search_payment_num = GETPOST('search_payment_num', 'alpha');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -115,68 +115,68 @@ if (GETPOST("orphelins", "alpha"))
 {
     // Payments not linked to an invoice. Should not happend. For debug only.
     $sql = "SELECT p.rowid, p.ref, p.datep as dp, p.amount,";
-    $sql.= " p.statut, p.num_paiement,";
-    $sql.= " c.code as paiement_code";
+    $sql .= " p.statut, p.num_paiement as num_payment,";
+    $sql .= " c.code as paiement_code";
 	// Add fields from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
-    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE p.entity IN (" . getEntity('invoice').")";
-    $sql.= " AND pf.fk_facture IS NULL";
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+    $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql .= " WHERE p.entity IN (".getEntity('invoice').")";
+    $sql .= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 }
 else
 {
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
-    $sql.= " p.statut, p.num_paiement,";
-    $sql.= " c.code as paiement_code,";
-    $sql.= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
-    $sql.= " s.rowid as socid, s.nom as name, s.email";
+    $sql .= " p.statut, p.num_paiement as num_payment,";
+    $sql .= " c.code as paiement_code,";
+    $sql .= " ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal,";
+    $sql .= " s.rowid as socid, s.nom as name, s.email";
 	// Add fields from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
-    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
+    $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
     if (!$user->rights->societe->client->voir && !$socid)
     {
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE p.entity IN (" . getEntity('invoice') . ")";
-    if (! $user->rights->societe->client->voir && ! $socid)
+    $sql .= " WHERE p.entity IN (".getEntity('invoice').")";
+    if (!$user->rights->societe->client->voir && !$socid)
     {
-        $sql.= " AND sc.fk_user = " .$user->id;
+        $sql .= " AND sc.fk_user = ".$user->id;
     }
-    if ($socid > 0) $sql.= " AND f.fk_soc = ".$socid;
+    if ($socid > 0) $sql .= " AND f.fk_soc = ".$socid;
     if ($userid)
     {
-        if ($userid == -1) $sql.= " AND f.fk_user_author IS NULL";
-        else  $sql.= " AND f.fk_user_author = ".$userid;
+        if ($userid == -1) $sql .= " AND f.fk_user_author IS NULL";
+        else  $sql .= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
-    $sql.= dolSqlDateFilter("p.datep", $day, $month, $year);
+    $sql .= dolSqlDateFilter("p.datep", $day, $month, $year);
     if ($search_ref)       		    $sql .= natural_search('p.ref', $search_ref);
-    if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
-    if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
+    if ($search_account > 0)      	$sql .= " AND b.fk_account=".$search_account;
+    if ($search_paymenttype != "")  $sql .= " AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
     if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
 	// Add where from hooks
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-	$sql.=$hookmanager->resPrint;
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+	$sql .= $hookmanager->resPrint;
 }
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -215,10 +215,9 @@ if ($resql)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -252,10 +251,10 @@ if ($resql)
     print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
     print '<td class="liste_titre maxwidthsearch">';
-    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    $searchpicto = $form->showFilterAndCheckAddButtons(0);
     print $searchpicto;
     print '</td>';
-    if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+    if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
     {
         print '<td class="liste_titre right">';
         print '</td>';
@@ -323,7 +322,7 @@ if ($resql)
         if (!$i) $totalarray['nbfield']++;
 
         // Payment number
-        print '<td>'.$objp->num_paiement.'</td>';
+        print '<td>'.$objp->num_payment.'</td>';
         if (!$i) $totalarray['nbfield']++;
 
         // Account

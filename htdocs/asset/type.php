@@ -43,7 +43,7 @@ $type = GETPOST('type', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -609,37 +609,15 @@ if ($rowid > 0)
 			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
-		print '</table>';
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-		// Extra field
-		if (empty($reshook))
-		{
-			print '<br><br><table class="border centpercent">';
-			foreach ($extrafields->attributes[$object->element]['label'] as $key=>$label)
-			{
-				if (isset($_POST["options_".$key])) {
-					if (is_array($_POST["options_".$key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_".$key]);
-					} else {
-						$value = $_POST["options_".$key];
-					}
-				} else {
-					$value = $adht->array_options["options_".$key];
-				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key, $value);
-				print "</td></tr>\n";
-			}
-			print '</table><br><br>';
-		}
+		print '</table>';
 
 		dol_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print "</form>";

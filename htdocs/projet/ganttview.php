@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $id = GETPOST('id', 'intcomma');
@@ -41,11 +42,11 @@ $mine = ($mode == 'mine' ? 1 : 0);
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
-if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 // Security check
-$socid=0;
+$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
@@ -139,23 +140,23 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
     print $langs->trans("Usage");
     print '</td>';
     print '<td>';
-    if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
+    if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
     {
-    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha')!=''?' checked="checked"':'') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+    	print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
     	$htmltext = $langs->trans("ProjectFollowOpportunity");
     	print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
     	print '<br>';
     }
     if (empty($conf->global->PROJECT_HIDE_TASKS))
     {
-    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha')!=''?' checked="checked"':'') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
+    	print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
     	$htmltext = $langs->trans("ProjectFollowTasks");
     	print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
     	print '<br>';
     }
-    if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+    if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
     {
-    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha')!=''?' checked="checked"':'') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
+    	print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
     	$htmltext = $langs->trans("ProjectBillTimeDescription");
     	print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
     	print '<br>';
@@ -204,7 +205,7 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
     // Categories
     if ($conf->categorie->enabled) {
         print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
-        print $form->showCategories($object->id, 'project', 1);
+        print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
         print "</td></tr>";
     }
 
@@ -225,16 +226,16 @@ if (($id > 0 && is_numeric($id)) || !empty($ref))
 $linktocreatetaskParam = array();
 $linktocreatetaskUserRight = false;
 if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
-	if ($object->public || $userWrite > 0){
+	if ($object->public || $userWrite > 0) {
         $linktocreatetaskUserRight = true;
-	}else{
+	} else {
         $linktocreatetaskParam['attr']['title'] = $langs->trans("NotOwnerOfProject");
 	}
 }
 
 $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktolist = dolGetButtonTitle($langs->trans('GoToListOfTasks'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
+$linktolist = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
 print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'generic');
@@ -243,91 +244,91 @@ print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'generi
 // Get list of tasks in tasksarray and taskarrayfiltered
 // We need all tasks (even not limited to a user because a task to user
 // can have a parent that is not affected to him).
-$tasksarray=$task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid, 0);
+$tasksarray = $task->getTasksArray(0, 0, ($object->id ? $object->id : $id), $socid, 0);
 // We load also tasks limited to a particular user
 //$tasksrole=($_REQUEST["mode"]=='mine' ? $task->getUserRolesForProjectsOrTasks(0,$user,$object->id,0) : '');
 //var_dump($tasksarray);
 //var_dump($tasksrole);
 
 
-if (count($tasksarray)>0)
+if (count($tasksarray) > 0)
 {
 	// Show Gant diagram from $taskarray using JSGantt
 
-	$dateformat=$langs->trans("FormatDateShortJQuery");			// Used by include ganttchart.inc.php later
-	$datehourformat=$langs->trans("FormatDateShortJQuery").' '.$langs->trans("FormatHourShortJQuery");	// Used by include ganttchart.inc.php later
-	$array_contacts=array();
-	$tasks=array();
-	$task_dependencies=array();
-	$taskcursor=0;
-	foreach($tasksarray as $key => $val)	// Task array are sorted by "project, position, dateo"
+	$dateformat = $langs->trans("FormatDateShortJQuery"); // Used by include ganttchart.inc.php later
+	$datehourformat = $langs->trans("FormatDateShortJQuery").' '.$langs->trans("FormatHourShortJQuery"); // Used by include ganttchart.inc.php later
+	$array_contacts = array();
+	$tasks = array();
+	$task_dependencies = array();
+	$taskcursor = 0;
+	foreach ($tasksarray as $key => $val)	// Task array are sorted by "project, position, dateo"
 	{
 		$task->fetch($val->id, '');
 
-		$idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project);	// If start with -, id is a project id
+		$idparent = ($val->fk_parent ? $val->fk_parent : '-'.$val->fk_project); // If start with -, id is a project id
 
-		$tasks[$taskcursor]['task_id']=$val->id;
-		$tasks[$taskcursor]['task_alternate_id']=($taskcursor+1);		// An id that has same order than position (requird by ganttchart)
-		$tasks[$taskcursor]['task_project_id']=$val->fk_project;
-		$tasks[$taskcursor]['task_parent']=$idparent;
+		$tasks[$taskcursor]['task_id'] = $val->id;
+		$tasks[$taskcursor]['task_alternate_id'] = ($taskcursor + 1); // An id that has same order than position (requird by ganttchart)
+		$tasks[$taskcursor]['task_project_id'] = $val->fk_project;
+		$tasks[$taskcursor]['task_parent'] = $idparent;
 
 		$tasks[$taskcursor]['task_is_group'] = 0;
         $tasks[$taskcursor]['task_css'] = 'gtaskblue';
         $tasks[$taskcursor]['task_position'] = $val->rang;
         $tasks[$taskcursor]['task_planned_workload'] = $val->planned_workload;
 
-        if ($val->fk_parent != 0 && $task->hasChildren()> 0){
-            $tasks[$taskcursor]['task_is_group']=1;
-        	$tasks[$taskcursor]['task_css']='ggroupblack';
+        if ($val->fk_parent != 0 && $task->hasChildren() > 0) {
+            $tasks[$taskcursor]['task_is_group'] = 1;
+        	$tasks[$taskcursor]['task_css'] = 'ggroupblack';
             //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
         }
-        elseif ($task->hasChildren()> 0) {
+        elseif ($task->hasChildren() > 0) {
             $tasks[$taskcursor]['task_is_group'] = 1;
         	//$tasks[$taskcursor]['task_is_group'] = 0;
             $tasks[$taskcursor]['task_css'] = 'ggroupblack';
             //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
         }
-		$tasks[$taskcursor]['task_milestone']='0';
-		$tasks[$taskcursor]['task_percent_complete']=$val->progress;
+		$tasks[$taskcursor]['task_milestone'] = '0';
+		$tasks[$taskcursor]['task_percent_complete'] = $val->progress;
 		//$tasks[$taskcursor]['task_name']=$task->getNomUrl(1);
 		//print dol_print_date($val->date_start).dol_print_date($val->date_end).'<br>'."\n";
-		$tasks[$taskcursor]['task_name']=$val->ref.' - '.$val->label;
-		$tasks[$taskcursor]['task_start_date']=$val->date_start;
-		$tasks[$taskcursor]['task_end_date']=$val->date_end;
-		$tasks[$taskcursor]['task_color']='b4d1ea';
+		$tasks[$taskcursor]['task_name'] = $val->ref.' - '.$val->label;
+		$tasks[$taskcursor]['task_start_date'] = $val->date_start;
+		$tasks[$taskcursor]['task_end_date'] = $val->date_end;
+		$tasks[$taskcursor]['task_color'] = 'b4d1ea';
 
-		$idofusers=$task->getListContactId('internal');
-		$idofcontacts=$task->getListContactId('external');
-  		$s='';
-		if (count($idofusers)>0)
+		$idofusers = $task->getListContactId('internal');
+		$idofcontacts = $task->getListContactId('external');
+  		$s = '';
+		if (count($idofusers) > 0)
 		{
-			$s.=$langs->trans("Internals").': ';
-			$i=0;
-			foreach($idofusers as $valid)
+			$s .= $langs->trans("Internals").': ';
+			$i = 0;
+			foreach ($idofusers as $valid)
 			{
 				$userstatic->fetch($valid);
-				if ($i) $s.=', ';
-				$s.=$userstatic->login;
+				if ($i) $s .= ', ';
+				$s .= $userstatic->login;
 				$i++;
 			}
 		}
 		//if (count($idofusers)>0 && (count($idofcontacts)>0)) $s.=' - ';
-		if (count($idofcontacts)>0)
+		if (count($idofcontacts) > 0)
 		{
-			if ($s) $s.=' - ';
-			$s.=$langs->trans("Externals").': ';
-			$i=0;
-			$contactidfound=array();
-			foreach($idofcontacts as $valid)
+			if ($s) $s .= ' - ';
+			$s .= $langs->trans("Externals").': ';
+			$i = 0;
+			$contactidfound = array();
+			foreach ($idofcontacts as $valid)
 			{
 				if (empty($contactidfound[$valid]))
 				{
 					$res = $contactstatic->fetch($valid);
 					if ($res > 0)
 					{
-						if ($i) $s.=', ';
-						$s.=$contactstatic->getFullName($langs);
-						$contactidfound[$valid]=1;
+						if ($i) $s .= ', ';
+						$s .= $contactstatic->getFullName($langs);
+						$contactidfound[$valid] = 1;
 						$i++;
 					}
 				}

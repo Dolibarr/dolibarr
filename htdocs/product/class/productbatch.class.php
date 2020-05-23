@@ -31,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 class Productbatch extends CommonObject
 {
 	/**
+	 * Batches rules
+	 */
+	const BATCH_RULE_SELLBY_EATBY_DATES_FIRST = 1;
+
+	/**
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'productbatch';
@@ -107,19 +112,6 @@ class Productbatch extends CommonObject
 		if (!$error)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.self::$_table_element);
-
-			if (!$notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-			}
 		}
 
         // Commit or rollback
@@ -216,34 +208,19 @@ class Productbatch extends CommonObject
 
         // Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.self::$_table_element." SET";
-		$sql.= " fk_product_stock=".(isset($this->fk_product_stock)?$this->fk_product_stock:"null").",";
-		$sql.= " sellby=".(dol_strlen($this->sellby)!=0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
-		$sql.= " eatby=".(dol_strlen($this->eatby)!=0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql.= " batch=".(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").",";
-		$sql.= " qty=".(isset($this->qty)?$this->qty:"null").",";
-		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
-        $sql.= " WHERE rowid=".$this->id;
+		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? $this->fk_product_stock : "null").",";
+		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
+		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
+		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
+		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+        $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
-	    	}
-		}
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // Commit or rollback
 		if ($error)
@@ -276,22 +253,6 @@ class Productbatch extends CommonObject
 		$error = 0;
 
 		$this->db->begin();
-
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-		        // want this action calls a trigger.
-
-		        //// Call triggers
-		        //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-		        //$interface=new Interfaces($this->db);
-		        //$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-		        //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-		        //// End call triggers
-			}
-		}
 
 		if (!$error)
 		{
@@ -332,33 +293,33 @@ class Productbatch extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		$error=0;
+		$error = 0;
 
-		$object=new Productbatch($this->db);
+		$object = new Productbatch($this->db);
 
  		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+		$object->id = 0;
+		$object->statut = 0;
 
 		// Clear fields
 		// ...
 
 		// Create clone
-		$object->context['createfromclone']='createfromclone';
-		$result=$object->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
-			$this->error=$object->error;
-			$this->errors=array_merge($this->errors, $object->errors);
+			$this->error = $object->error;
+			$this->errors = array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 		}
 
@@ -540,4 +501,65 @@ class Productbatch extends CommonObject
             return -1;
         }
     }
+
+	/**
+	 * Return all batch for a product and a warehouse
+	 *
+	 * @param	DoliDB		$db    				Database object
+	 * @param	int			$fk_product         Id of product
+	 * @param	int			$fk_warehouse       Id of warehouse
+	 * @param	int			$qty_min            [=NULL] Minimum quantity
+	 * @param	string		$sortfield		    [=NULL] List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 * @param	string		$sortorder		    [=NULL] Sort order, separated by comma. Example: 'ASC,DESC';
+	 * @return  int|array   <0 if KO, array of batch
+	 *
+	 * @throws  Exception
+	 */
+	public static function findAllForProduct($db, $fk_product, $fk_warehouse = 0, $qty_min = null, $sortfield = null, $sortorder = null)
+	{
+		$productBatchList = array();
+
+		dol_syslog(__METHOD__.' fk_product='.$fk_product.', fk_warehouse='.$fk_warehouse.', qty_min='.$qty_min.', sortfield='.$sortfield.', sortorder='.$sortorder, LOG_DEBUG);
+
+		$sql  = "SELECT";
+		$sql .= " pl.rowid";
+		$sql .= ", pl.fk_product";
+		$sql .= ", pl.batch";
+		$sql .= ", pl.sellby";
+		$sql .= ", pl.eatby";
+		$sql .= ", pb.qty";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot as pl";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pl.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch AS pb ON pl.batch = pb.batch";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " WHERE p.entity IN (".getEntity('product').")";
+		$sql .= " AND pl.fk_product = ".$fk_product;
+		if ($fk_warehouse > 0) {
+			$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
+		}
+		if ($qty_min !== null) {
+			$sql .= " AND pb.qty > ".$qty_min;
+		}
+		$sql .= $db->order($sortfield, $sortorder);
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$productBatch             = new self($db);
+				$productBatch->id         = $obj->rowid;
+				$productBatch->fk_product = $obj->fk_product;
+				$productBatch->batch      = $obj->batch;
+				$productBatch->eatby      = $db->jdate($obj->eatby);
+				$productBatch->sellby     = $db->jdate($obj->sellby);
+				$productBatch->qty        = $obj->qty;
+				$productBatchList[]       = $productBatch;
+			}
+			$db->free($resql);
+
+			return $productBatchList;
+		} else {
+			dol_syslog(__METHOD__.' Error: '.$db->lasterror(), LOG_ERR);
+			return -1;
+		}
+	}
 }

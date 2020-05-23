@@ -39,7 +39,7 @@ function bank_prepare_head(Account $object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/compta/bank/card.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("BankAccount");
     $head[$h][2] = 'bankname';
     $h++;
 
@@ -211,7 +211,7 @@ function various_payment_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("VariousPayment");
 	$head[$h][2] = 'card';
 	$h++;
 

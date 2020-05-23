@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -62,7 +62,7 @@ $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -299,10 +299,12 @@ if (empty($reshook))
 	        $paiement->multicurrency_amounts = $multicurrency_amounts;
 	        $paiement->paiementid   = GETPOST('paiementid', 'int');
 
-	        $paiement->num_payment  = GETPOST('num_paiement', 'alpha');
+	        $paiement->num_payment  = GETPOST('num_paiement', 'alphanohtml');
 	        $paiement->note_private = GETPOST('comment', 'alpha');
-	        $paiement->num_paiement = $paiement->num_payment;		// For bacward compatibility
-	        $paiement->note         = $paiement->note_private;		// For bacward compatibility
+	        $paiement->num_paiement = $paiement->num_payment; // For backward compatibility
+	        $paiement->num_payment = $paiement->num_payment;
+	        $paiement->note         = $paiement->note_private; // For backward compatibility
+	        $paiement->note_private = $paiement->note_private;
 
 	        if (!$error)
 	        {
@@ -374,7 +376,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     $dateinvoice = ($datefacture == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datefacture);
 
     $sql = 'SELECT s.nom as name, s.rowid as socid,';
-    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.amount, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
+    $sql .= ' f.rowid, f.ref, f.ref_supplier, f.total_ttc as total, f.fk_mode_reglement, f.fk_account';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
     $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -812,7 +814,7 @@ if (empty($action) || $action == 'list')
     $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
     $sortfield = GETPOST("sortfield", 'alpha');
     $sortorder = GETPOST("sortorder", 'alpha');
-    $page = GETPOST("page", 'int');
+    $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
     if (empty($page) || $page == -1) { $page = 0; }
     $offset = $limit * $page;
     $pageprev = $page - 1;
@@ -820,12 +822,12 @@ if (empty($action) || $action == 'list')
     if (!$sortorder) $sortorder = 'DESC';
     if (!$sortfield) $sortfield = 'p.datep';
 
-    $sql = 'SELECT p.rowid as pid, p.datep as dp, p.amount as pamount, p.num_paiement,';
+    $sql = 'SELECT p.rowid as pid, p.ref, p.datep as dp, p.amount as pamount, p.num_paiement,';
     $sql .= ' s.rowid as socid, s.nom as name,';
     $sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
     $sql .= ' ba.rowid as bid, ba.label,';
     if (!$user->rights->societe->client->voir) $sql .= ' sc.fk_soc, sc.fk_user,';
-    $sql .= ' SUM(f.amount)';
+    $sql .= ' SUM(pf.amount)';
     $sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
@@ -887,8 +889,6 @@ if (empty($action) || $action == 'list')
 
     	$massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
-
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
         print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -896,7 +896,8 @@ if (empty($action) || $action == 'list')
         print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'supplier_invoice', 0, '', '', $limit, 0, 0, 1);
 
         $moreforfilter = '';
 
@@ -971,16 +972,24 @@ if (empty($action) || $action == 'list')
         print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
         print "</tr>\n";
 
+        $paymentfournstatic = new PaiementFourn($db);
+
         $i = 0;
         $totalarray = array();
         while ($i < min($num, $limit))
         {
             $objp = $db->fetch_object($resql);
 
+            $paymentfournstatic->id = $objp->pid;
+            $paymentfournstatic->ref = $objp->ref;
+            $paymentfournstatic->datepaye = $objp->dp;
+
             print '<tr class="oddeven">';
 
             // Ref payment
-            print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'), 'payment').' '.$objp->pid.'</a></td>';
+            print '<td class="nowrap">';
+            print $paymentfournstatic->getNomUrl(1);
+            print '</td>';
             if (!$i) $totalarray['nbfield']++;
 
             // Date

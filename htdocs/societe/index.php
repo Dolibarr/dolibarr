@@ -38,7 +38,7 @@ $hookmanager->initHooks(array('thirdpartiesindex'));
 $langs->load("companies");
 
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 
 // Security check
 $result = restrictedArea($user, 'societe', 0, '', '', '', '');
@@ -112,10 +112,10 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
     include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
     $dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
-	$dolgraph->setShowLegend(1);
+	$dolgraph->setShowLegend(2);
 	$dolgraph->setShowPercent(1);
 	$dolgraph->SetType(array('pie'));
-	$dolgraph->setWidth('100%');
+	$dolgraph->setHeight('200');
 	$dolgraph->draw('idgraphthirdparties');
 	print $dolgraph->show();
     print '</td></tr>'."\n";
@@ -134,7 +134,7 @@ else
         $statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
         $statstring .= "</tr>";
     }
-    if (!empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
     {
         $statstring2 = "<tr>";
         $statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
@@ -200,10 +200,10 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
-			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowLegend(2);
 			$dolgraph->setShowPercent(1);
 			$dolgraph->SetType(array('pie'));
-			$dolgraph->setWidth('100%');
+			$dolgraph->setHeight('200');
 			$dolgraph->draw('idgraphcateg');
 			print $dolgraph->show();
 		}
@@ -310,7 +310,7 @@ if ($result)
             	$thirdparty_static->name = $langs->trans("Prospect");
             	print $thirdparty_static->getNomUrl(0, 'prospect', 0, 1);
             }
-            if (!empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
+            if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $thirdparty_static->fournisseur)
             {
                 if ($thirdparty_static->client) print " / ";
             	$thirdparty_static->name = $langs->trans("Supplier");

@@ -141,7 +141,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= " ".(!isset($this->filtervalue) ? 'NULL' : "'".$this->db->escape($this->filtervalue)."'").",";
 		$sql .= " ".$user->id.",";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql.= " ".$user->id;
+		$sql .= " ".$user->id;
 		$sql .= ")";
 
 		$this->db->begin();
@@ -153,19 +153,6 @@ class AdvanceTargetingMailing extends CommonObject
 		if (!$error)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."advtargetemailing");
-
-			if (!$notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_CREATE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
 		}
 
 		// Commit or rollback
@@ -414,22 +401,6 @@ class AdvanceTargetingMailing extends CommonObject
             $this->errors[] = "Error ".$this->db->lasterror();
         }
 
-		//if (! $error)
-		//{
-		//	if (! $notrigger)
-		//	{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-		//	}
-		//}
-
 		// Commit or rollback
 		if ($error)
 		{
@@ -461,22 +432,6 @@ class AdvanceTargetingMailing extends CommonObject
 		$error = 0;
 
 		$this->db->begin();
-
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				// Uncomment this and change MYOBJECT to your own tag if you
-				// want this action calls a trigger.
-
-				//// Call triggers
-				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-				//$interface=new Interfaces($this->db);
-				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
-				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
-				//// End call triggers
-			}
-		}
 
 		if (!$error)
 		{
@@ -544,73 +499,73 @@ class AdvanceTargetingMailing extends CommonObject
     public function query_thirdparty($arrayquery)
 	{
         // phpcs:enable
-		global $langs,$conf,$extrafields;
+		global $langs, $conf, $extrafields;
 
 		$sql = "SELECT";
-		$sql.= " t.rowid";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "societe as t";
-		$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as te ON te.fk_object=t.rowid ";
 
-		$sqlwhere=array();
+		$sqlwhere = array();
 
-		$sqlwhere[]= 't.entity IN ('.getEntity('societe').')';
+		$sqlwhere[] = 't.entity IN ('.getEntity('societe').')';
 
-		if (count($arrayquery)>0) {
+		if (count($arrayquery) > 0) {
 			if (array_key_exists('cust_saleman', $arrayquery)) {
-				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
+				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=t.rowid ";
 			}
 			if (array_key_exists('cust_categ', $arrayquery)) {
-				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_societe as custcateg ON custcateg.fk_soc=t.rowid ";
+				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=t.rowid ";
 			}
 
 			if (!empty($arrayquery['cust_name'])) {
-				$sqlwhere[]= $this->transformToSQL('t.nom', $arrayquery['cust_name']);
+				$sqlwhere[] = $this->transformToSQL('t.nom', $arrayquery['cust_name']);
 			}
 			if (!empty($arrayquery['cust_code'])) {
-				$sqlwhere[]= $this->transformToSQL('t.code_client', $arrayquery['cust_code']);
+				$sqlwhere[] = $this->transformToSQL('t.code_client', $arrayquery['cust_code']);
 			}
 			if (!empty($arrayquery['cust_adress'])) {
-				$sqlwhere[]= $this->transformToSQL('t.address', $arrayquery['cust_adress']);
+				$sqlwhere[] = $this->transformToSQL('t.address', $arrayquery['cust_adress']);
 			}
 			if (!empty($arrayquery['cust_zip'])) {
-				$sqlwhere[]= $this->transformToSQL('t.zip', $arrayquery['cust_zip']);
+				$sqlwhere[] = $this->transformToSQL('t.zip', $arrayquery['cust_zip']);
 			}
 			if (!empty($arrayquery['cust_city'])) {
-				$sqlwhere[]= $this->transformToSQL('t.town', $arrayquery['cust_city']);
+				$sqlwhere[] = $this->transformToSQL('t.town', $arrayquery['cust_city']);
 			}
 			if (!empty($arrayquery['cust_mothercompany'])) {
-				$str=$this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
-				$sqlwhere[]= " (t.parent IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE (".$str.")))";
+				$str = $this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
+				$sqlwhere[] = " (t.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$str.")))";
 			}
-			if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status'])>0) {
-				$sqlwhere[]= " (t.status IN (".implode(',', $arrayquery['cust_status'])."))";
+			if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status']) > 0) {
+				$sqlwhere[] = " (t.status IN (".implode(',', $arrayquery['cust_status'])."))";
 			}
-			if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust'])>0) {
-				$sqlwhere[]= " (t.client IN (".implode(',', $arrayquery['cust_typecust'])."))";
+			if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
+				$sqlwhere[] = " (t.client IN (".implode(',', $arrayquery['cust_typecust'])."))";
 			}
-			if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status']>0)) {
-				$sqlwhere[]= " (t.fk_stcomm IN (".implode(',', $arrayquery['cust_comm_status'])."))";
+			if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
+				$sqlwhere[] = " (t.fk_stcomm IN (".implode(',', $arrayquery['cust_comm_status'])."))";
 			}
-			if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status'])>0) {
-				$sqlwhere[]= " (t.fk_prospectlevel IN ('".implode("','", $arrayquery['cust_prospect_status'])."'))";
+			if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {
+				$sqlwhere[] = " (t.fk_prospectlevel IN ('".implode("','", $arrayquery['cust_prospect_status'])."'))";
 			}
-			if (!empty($arrayquery['cust_typeent']) && count($arrayquery['cust_typeent'])>0) {
-				$sqlwhere[]= " (t.fk_typent IN (".implode(',', $arrayquery['cust_typeent'])."))";
+			if (!empty($arrayquery['cust_typeent']) && count($arrayquery['cust_typeent']) > 0) {
+				$sqlwhere[] = " (t.fk_typent IN (".implode(',', $arrayquery['cust_typeent'])."))";
 			}
-			if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman'])>0) {
-				$sqlwhere[]= " (saleman.fk_user IN (".implode(',', $arrayquery['cust_saleman'])."))";
+			if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
+				$sqlwhere[] = " (saleman.fk_user IN (".implode(',', $arrayquery['cust_saleman'])."))";
 			}
-			if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country'])>0) {
-				$sqlwhere[]= " (t.fk_pays IN (".implode(',', $arrayquery['cust_country'])."))";
+			if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
+				$sqlwhere[] = " (t.fk_pays IN (".implode(',', $arrayquery['cust_country'])."))";
 			}
-			if (!empty($arrayquery['cust_effectif_id']) && count($arrayquery['cust_effectif_id'])>0) {
-				$sqlwhere[]= " (t.fk_effectif IN (".implode(',', $arrayquery['cust_effectif_id'])."))";
+			if (!empty($arrayquery['cust_effectif_id']) && count($arrayquery['cust_effectif_id']) > 0) {
+				$sqlwhere[] = " (t.fk_effectif IN (".implode(',', $arrayquery['cust_effectif_id'])."))";
 			}
-			if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ'])>0) {
-				$sqlwhere[]= " (custcateg.fk_categorie IN (".implode(',', $arrayquery['cust_categ'])."))";
+			if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ']) > 0) {
+				$sqlwhere[] = " (custcateg.fk_categorie IN (".implode(',', $arrayquery['cust_categ'])."))";
 			}
-			if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language'])>0) {
-				$sqlwhere[]= " (t.default_lang IN ('".implode("','", $arrayquery['cust_language'])."'))";
+			if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language']) > 0) {
+				$sqlwhere[] = " (t.default_lang IN ('".implode("','", $arrayquery['cust_language'])."'))";
 			}
 
 			//Standard Extrafield feature
@@ -620,41 +575,41 @@ class AdvanceTargetingMailing extends CommonObject
 
 				$extrafields->fetch_name_optionals_label($elementtype);
 
-				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
 					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key])) {
-							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
 						if (!empty($arrayquery['options_'.$key.'_max'])) {
-							$sqlwhere[]= " (te.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
+							$sqlwhere[] = " (te.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-						if (!empty($arrayquery['options_'.$key.'_end_dt'])){
-							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
+						if (!empty($arrayquery['options_'.$key.'_end_dt'])) {
+							$sqlwhere[] = " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
-						if ($arrayquery['options_'.$key]!=''){
-							$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key].")";
+						if ($arrayquery['options_'.$key] != '') {
+							$sqlwhere[] = " (te.".$key." = ".$arrayquery['options_'.$key].")";
 						}
 					} else {
 						if (is_array($arrayquery['options_'.$key])) {
-							$sqlwhere[]= " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
+							$sqlwhere[] = " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
 						} elseif (!empty($arrayquery['options_'.$key])) {
-							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key]."')";
 						}
 					}
 				}
 			}
 
-			if (count($sqlwhere)>0)	$sql.= " WHERE ".implode(" AND ", $sqlwhere);
+			if (count($sqlwhere) > 0)	$sql .= " WHERE ".implode(" AND ", $sqlwhere);
 		}
 
 
-		dol_syslog(get_class($this) . "::query_thirdparty sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::query_thirdparty sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->thirdparty_lines = array();
@@ -693,62 +648,62 @@ class AdvanceTargetingMailing extends CommonObject
     public function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
         // phpcs:enable
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$sql = "SELECT";
-		$sql.= " t.rowid";
-		$sql.= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
-		$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "socpeople_extrafields as te ON te.fk_object=t.rowid ";
+		$sql .= " t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
+		$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object=t.rowid ";
 
-		if (! empty($withThirdpartyFilter)) {
-			$sql .= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe as ts ON ts.rowid=t.fk_soc";
-			$sql .= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_extrafields as tse ON tse.fk_object=ts.rowid ";
+		if (!empty($withThirdpartyFilter)) {
+			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe as ts ON ts.rowid=t.fk_soc";
+			$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields as tse ON tse.fk_object=ts.rowid ";
 		}
 
-		$sqlwhere=array();
+		$sqlwhere = array();
 
-		$sqlwhere[]= 't.entity IN ('.getEntity('socpeople').')';
+		$sqlwhere[] = 't.entity IN ('.getEntity('socpeople').')';
 
-		if (count($arrayquery)>0) {
+		if (count($arrayquery) > 0) {
 			if (array_key_exists('contact_categ', $arrayquery)) {
-				$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
+				$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_contact as contactcateg ON contactcateg.fk_socpeople=t.rowid ";
 			}
 
 			if (!empty($arrayquery['contact_lastname'])) {
-				$sqlwhere[]=$this->transformToSQL('t.lastname', $arrayquery['contact_lastname']);
+				$sqlwhere[] = $this->transformToSQL('t.lastname', $arrayquery['contact_lastname']);
 			}
 			if (!empty($arrayquery['contact_firstname'])) {
-				$sqlwhere[]=$this->transformToSQL('t.firstname', $arrayquery['contact_firstname']);
+				$sqlwhere[] = $this->transformToSQL('t.firstname', $arrayquery['contact_firstname']);
 			}
 			if (!empty($arrayquery['contact_country']) && count($arrayquery['contact_country'])) {
-				$sqlwhere[]= " (t.fk_pays IN (".$this->db->escape(implode(',', $arrayquery['contact_country']))."))";
+				$sqlwhere[] = " (t.fk_pays IN (".$this->db->escape(implode(',', $arrayquery['contact_country']))."))";
 			}
-			if (!empty($arrayquery['contact_status']) && count($arrayquery['contact_status'])>0) {
-				$sqlwhere[]= " (t.statut IN (".$this->db->escape(implode(',', $arrayquery['contact_status']))."))";
+			if (!empty($arrayquery['contact_status']) && count($arrayquery['contact_status']) > 0) {
+				$sqlwhere[] = " (t.statut IN (".$this->db->escape(implode(',', $arrayquery['contact_status']))."))";
 			}
-			if (!empty($arrayquery['contact_civility']) && count($arrayquery['contact_civility'])>0) {
-				$sqlwhere[]= " (t.civility IN ('".$this->db->escape(implode("','", $arrayquery['contact_civility']))."'))";
+			if (!empty($arrayquery['contact_civility']) && count($arrayquery['contact_civility']) > 0) {
+				$sqlwhere[] = " (t.civility IN ('".$this->db->escape(implode("','", $arrayquery['contact_civility']))."'))";
 			}
-			if ($arrayquery['contact_no_email']!='') {
+			if ($arrayquery['contact_no_email'] != '') {
 				$tmpwhere = '';
-				if (! empty($arrayquery['contact_no_email']))
+				if (!empty($arrayquery['contact_no_email']))
 				{
-					$tmpwhere.= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+					$tmpwhere .= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
 				}
 				else
 				{
-					$tmpwhere.= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+					$tmpwhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
 				}
-				$sqlwhere[]= $tmpwhere;
+				$sqlwhere[] = $tmpwhere;
 			}
-			if ($arrayquery['contact_update_st_dt']!='') {
-				$sqlwhere[]= " (t.tms >= '".$this->db->idate($arrayquery['contact_update_st_dt'])."' AND t.tms <= '".$this->db->idate($arrayquery['contact_update_end_dt'])."')";
+			if ($arrayquery['contact_update_st_dt'] != '') {
+				$sqlwhere[] = " (t.tms >= '".$this->db->idate($arrayquery['contact_update_st_dt'])."' AND t.tms <= '".$this->db->idate($arrayquery['contact_update_end_dt'])."')";
 			}
-			if ($arrayquery['contact_create_st_dt']!='') {
-				$sqlwhere[]= " (t.datec >= '".$this->db->idate($arrayquery['contact_create_st_dt'])."' AND t.datec <= '".$this->db->idate($arrayquery['contact_create_end_dt'])."')";
+			if ($arrayquery['contact_create_st_dt'] != '') {
+				$sqlwhere[] = " (t.datec >= '".$this->db->idate($arrayquery['contact_create_st_dt'])."' AND t.datec <= '".$this->db->idate($arrayquery['contact_create_end_dt'])."')";
 			}
-			if (!empty($arrayquery['contact_categ']) && count($arrayquery['contact_categ'])>0) {
-				$sqlwhere[]= " (contactcateg.fk_categorie IN (".$this->db->escape(implode(",", $arrayquery['contact_categ']))."))";
+			if (!empty($arrayquery['contact_categ']) && count($arrayquery['contact_categ']) > 0) {
+				$sqlwhere[] = " (contactcateg.fk_categorie IN (".$this->db->escape(implode(",", $arrayquery['contact_categ']))."))";
 			}
 
 			//Standard Extrafield feature
@@ -763,95 +718,95 @@ class AdvanceTargetingMailing extends CommonObject
 
 				$extrafields->fetch_name_optionals_label($elementtype);
 
-				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
 					if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 					($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 						if (!empty($arrayquery['options_'.$key.'_cnct'])) {
-							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
-						if (!empty($arrayquery['options_'.$key.'_max'.'_cnct'])) {
-							$sqlwhere[]= " (te.".$key." >= ".$arrayquery['options_'.$key.'_max'.'_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'.'_cnct'].")";
+						if (!empty($arrayquery['options_'.$key.'_max_cnct'])) {
+							$sqlwhere[] = " (te.".$key." >= ".$arrayquery['options_'.$key.'_max_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min_cnct'].")";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
 					($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-						if (!empty($arrayquery['options_'.$key.'_end_dt'.'_cnct'])){
-							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'.'_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'.'_cnct'])."')";
+						if (!empty($arrayquery['options_'.$key.'_end_dt_cnct'])) {
+							$sqlwhere[] = " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt_cnct'])."')";
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
-						if ($arrayquery['options_'.$key.'_cnct']!=''){
-							if ($arrayquery['options_'.$key.'_cnct']==0) {
-								$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct']." OR ((te.".$key." IS NULL) AND (te.fk_object IS NOT NULL)))";
+						if ($arrayquery['options_'.$key.'_cnct'] != '') {
+							if ($arrayquery['options_'.$key.'_cnct'] == 0) {
+								$sqlwhere[] = " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct']." OR ((te.".$key." IS NULL) AND (te.fk_object IS NOT NULL)))";
 							} else {
-								$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct'].")";
+								$sqlwhere[] = " (te.".$key." = ".$arrayquery['options_'.$key.'_cnct'].")";
 							}
 						}
 					} else {
 						if (is_array($arrayquery['options_'.$key.'_cnct'])) {
-							$sqlwhere[]= " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key.'_cnct'])."'))";
+							$sqlwhere[] = " (te.".$key." IN ('".implode("','", $arrayquery['options_'.$key.'_cnct'])."'))";
 						} elseif (!empty($arrayquery['options_'.$key.'_cnct'])) {
-							$sqlwhere[]= " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
+							$sqlwhere[] = " (te.".$key." LIKE '".$arrayquery['options_'.$key.'_cnct']."')";
 						}
 					}
 				}
 
-				if (! empty($withThirdpartyFilter)) {
+				if (!empty($withThirdpartyFilter)) {
 					if (array_key_exists('cust_saleman', $arrayquery)) {
-						$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as saleman ON saleman.fk_soc=ts.rowid ";
+						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_commerciaux as saleman ON saleman.fk_soc=ts.rowid ";
 					}
 					if (array_key_exists('cust_categ', $arrayquery)) {
-						$sql.= " LEFT OUTER JOIN " . MAIN_DB_PREFIX . "categorie_societe as custcateg ON custcateg.fk_soc=ts.rowid ";
+						$sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as custcateg ON custcateg.fk_soc=ts.rowid ";
 					}
 
 					if (!empty($arrayquery['cust_name'])) {
-						$sqlwhere[]= $this->transformToSQL('ts.nom', $arrayquery['cust_name']);
+						$sqlwhere[] = $this->transformToSQL('ts.nom', $arrayquery['cust_name']);
 					}
 					if (!empty($arrayquery['cust_code'])) {
-						$sqlwhere[]= $this->transformToSQL('ts.code_client', $arrayquery['cust_code']);
+						$sqlwhere[] = $this->transformToSQL('ts.code_client', $arrayquery['cust_code']);
 					}
 					if (!empty($arrayquery['cust_adress'])) {
-						$sqlwhere[]= $this->transformToSQL('ts.address', $arrayquery['cust_adress']);
+						$sqlwhere[] = $this->transformToSQL('ts.address', $arrayquery['cust_adress']);
 					}
 					if (!empty($arrayquery['cust_zip'])) {
-						$sqlwhere[]= $this->transformToSQL('ts.zip', $arrayquery['cust_zip']);
+						$sqlwhere[] = $this->transformToSQL('ts.zip', $arrayquery['cust_zip']);
 					}
 					if (!empty($arrayquery['cust_city'])) {
-						$sqlwhere[]= $this->transformToSQL('ts.town', $arrayquery['cust_city']);
+						$sqlwhere[] = $this->transformToSQL('ts.town', $arrayquery['cust_city']);
 					}
 					if (!empty($arrayquery['cust_mothercompany'])) {
-						$str=$this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
-						$sqlwhere[]= " (ts.parent IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "societe WHERE (".$str.")))";
+						$str = $this->transformToSQL('nom', $arrayquery['cust_mothercompany']);
+						$sqlwhere[] = " (ts.parent IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE (".$str.")))";
 					}
-					if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status'])>0) {
-						$sqlwhere[]= " (ts.status IN (".implode(',', $arrayquery['cust_status'])."))";
+					if (!empty($arrayquery['cust_status']) && count($arrayquery['cust_status']) > 0) {
+						$sqlwhere[] = " (ts.status IN (".implode(',', $arrayquery['cust_status'])."))";
 					}
-					if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust'])>0) {
-						$sqlwhere[]= " (ts.client IN (".implode(',', $arrayquery['cust_typecust'])."))";
+					if (!empty($arrayquery['cust_typecust']) && count($arrayquery['cust_typecust']) > 0) {
+						$sqlwhere[] = " (ts.client IN (".implode(',', $arrayquery['cust_typecust'])."))";
 					}
-					if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status']>0)) {
-						$sqlwhere[]= " (ts.fk_stcomm IN (".implode(',', $arrayquery['cust_comm_status'])."))";
+					if (!empty($arrayquery['cust_comm_status']) && count($arrayquery['cust_comm_status'] > 0)) {
+						$sqlwhere[] = " (ts.fk_stcomm IN (".implode(',', $arrayquery['cust_comm_status'])."))";
 					}
-					if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status'])>0) {
-						$sqlwhere[]= " (ts.fk_prospectlevel IN ('".implode("','", $arrayquery['cust_prospect_status'])."'))";
+					if (!empty($arrayquery['cust_prospect_status']) && count($arrayquery['cust_prospect_status']) > 0) {
+						$sqlwhere[] = " (ts.fk_prospectlevel IN ('".implode("','", $arrayquery['cust_prospect_status'])."'))";
 					}
-					if (!empty($arrayquery['cust_typeent']) && count($arrayquery['cust_typeent'])>0) {
-						$sqlwhere[]= " (ts.fk_typent IN (".implode(',', $arrayquery['cust_typeent'])."))";
+					if (!empty($arrayquery['cust_typeent']) && count($arrayquery['cust_typeent']) > 0) {
+						$sqlwhere[] = " (ts.fk_typent IN (".implode(',', $arrayquery['cust_typeent'])."))";
 					}
-					if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman'])>0) {
-						$sqlwhere[]= " (saleman.fk_user IN (".implode(',', $arrayquery['cust_saleman'])."))";
+					if (!empty($arrayquery['cust_saleman']) && count($arrayquery['cust_saleman']) > 0) {
+						$sqlwhere[] = " (saleman.fk_user IN (".implode(',', $arrayquery['cust_saleman'])."))";
 					}
-					if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country'])>0) {
-						$sqlwhere[]= " (ts.fk_pays IN (".implode(',', $arrayquery['cust_country'])."))";
+					if (!empty($arrayquery['cust_country']) && count($arrayquery['cust_country']) > 0) {
+						$sqlwhere[] = " (ts.fk_pays IN (".implode(',', $arrayquery['cust_country'])."))";
 					}
-					if (!empty($arrayquery['cust_effectif_id']) && count($arrayquery['cust_effectif_id'])>0) {
-						$sqlwhere[]= " (ts.fk_effectif IN (".implode(',', $arrayquery['cust_effectif_id'])."))";
+					if (!empty($arrayquery['cust_effectif_id']) && count($arrayquery['cust_effectif_id']) > 0) {
+						$sqlwhere[] = " (ts.fk_effectif IN (".implode(',', $arrayquery['cust_effectif_id'])."))";
 					}
-					if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ'])>0) {
-						$sqlwhere[]= " (custcateg.fk_categorie IN (".implode(',', $arrayquery['cust_categ'])."))";
+					if (!empty($arrayquery['cust_categ']) && count($arrayquery['cust_categ']) > 0) {
+						$sqlwhere[] = " (custcateg.fk_categorie IN (".implode(',', $arrayquery['cust_categ'])."))";
 					}
-					if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language'])>0) {
-						$sqlwhere[]= " (ts.default_lang IN ('".implode("','", $arrayquery['cust_language'])."'))";
+					if (!empty($arrayquery['cust_language']) && count($arrayquery['cust_language']) > 0) {
+						$sqlwhere[] = " (ts.default_lang IN ('".implode("','", $arrayquery['cust_language'])."'))";
 					}
 
 					//Standard Extrafield feature
@@ -865,41 +820,41 @@ class AdvanceTargetingMailing extends CommonObject
 
 						$extrafields->fetch_name_optionals_label($elementtype);
 
-						foreach($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
+						foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$val) {
 							if (($extrafields->attributes[$elementtype]['type'][$key] == 'varchar') ||
 								($extrafields->attributes[$elementtype]['type'][$key] == 'text')) {
 								if (!empty($arrayquery['options_'.$key])) {
-									$sqlwhere[]= " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+									$sqlwhere[] = " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
 								}
 							} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 								($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
 								if (!empty($arrayquery['options_'.$key.'_max'])) {
-									$sqlwhere[]= " (tse.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND tse.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
+									$sqlwhere[] = " (tse.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND tse.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
 								}
 							} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
 								($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-								if (!empty($arrayquery['options_'.$key.'_end_dt'])){
-									$sqlwhere[]= " (tse.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND tse.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
+								if (!empty($arrayquery['options_'.$key.'_end_dt'])) {
+									$sqlwhere[] = " (tse.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND tse.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
 								}
 							} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
-								if ($arrayquery['options_'.$key]!=''){
-									$sqlwhere[]= " (tse.".$key." = ".$arrayquery['options_'.$key].")";
+								if ($arrayquery['options_'.$key] != '') {
+									$sqlwhere[] = " (tse.".$key." = ".$arrayquery['options_'.$key].")";
 								}
 							} else {
 								if (is_array($arrayquery['options_'.$key])) {
-									$sqlwhere[]= " (tse.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
+									$sqlwhere[] = " (tse.".$key." IN ('".implode("','", $arrayquery['options_'.$key])."'))";
 								} elseif (!empty($arrayquery['options_'.$key])) {
-									$sqlwhere[]= " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
+									$sqlwhere[] = " (tse.".$key." LIKE '".$arrayquery['options_'.$key]."')";
 								}
 							}
 						}
 					}
 				}
 			}
-			if (count($sqlwhere)>0)	$sql.= " WHERE ".implode(" AND ", $sqlwhere);
+			if (count($sqlwhere) > 0)	$sql .= " WHERE ".implode(" AND ", $sqlwhere);
 		}
 
-		dol_syslog(get_class($this) . "::query_contact sql=" . $sql, LOG_DEBUG);
+		dol_syslog(get_class($this)."::query_contact sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->contact_lines = array();

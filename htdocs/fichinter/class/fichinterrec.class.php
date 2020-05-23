@@ -44,6 +44,11 @@ class FichinterRec extends Fichinter
     public $fk_element = 'fk_fichinter';
 
     /**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'titre';
+
+    /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
     public $picto = 'intervention';
@@ -243,10 +248,9 @@ class FichinterRec extends Fichinter
      *	@param	  int		$rowid	   	Id of object to load
      * 	@param		string	$ref			Reference of fichinter
      * 	@param		string	$ref_ext		External reference of fichinter
-     * 	@param		int		$ref_int		Internal reference of other object
      *	@return	 int		 			>0 if OK, <0 if KO, 0 if not found
      */
-    public function fetch($rowid = 0, $ref = '', $ref_ext = '', $ref_int = '')
+    public function fetch($rowid = 0, $ref = '', $ref_ext = '')
     {
         $sql = 'SELECT f.titre, f.fk_soc';
         $sql .= ', f.datec, f.duree, f.fk_projet, f.fk_contrat, f.description';
@@ -257,11 +261,6 @@ class FichinterRec extends Fichinter
         $sql .= ' FROM '.MAIN_DB_PREFIX.'fichinter_rec as f';
         if ($rowid > 0) $sql .= ' WHERE f.rowid='.$rowid;
         elseif ($ref) $sql .= " WHERE f.titre='".$this->db->escape($ref)."'";
-
-        /* This field are not used for template fichinter
-        if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-        if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
-        */
 
         dol_syslog(get_class($this)."::fetch rowid=".$rowid, LOG_DEBUG);
 
@@ -347,13 +346,13 @@ class FichinterRec extends Fichinter
                 $line = new FichinterLigne($this->db);
 
                 $line->id = $objp->rowid;
-                $line->label = $objp->custom_label;		// Label line
-                $line->desc = $objp->description;		// Description line
-                $line->product_type = $objp->product_type;		// Type of line
-                $line->product_ref = $objp->product_ref;		// Ref product
-                $line->product_label = $objp->product_label;		// Label product
-                $line->product_desc = $objp->product_desc;		// Description product
-                $line->fk_product_type = $objp->fk_product_type;	// Type of product
+                $line->label = $objp->custom_label; // Label line
+                $line->desc = $objp->description; // Description line
+                $line->product_type = $objp->product_type; // Type of line
+                $line->product_ref = $objp->product_ref; // Ref product
+                $line->product_label = $objp->product_label; // Label product
+                $line->product_desc = $objp->product_desc; // Description product
+                $line->fk_product_type = $objp->fk_product_type; // Type of product
                 $line->qty = $objp->qty;
                 $line->duree = $objp->duree;
                 $line->duration = $objp->duree;

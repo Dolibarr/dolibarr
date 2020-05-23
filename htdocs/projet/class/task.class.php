@@ -26,6 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 /**
@@ -204,7 +205,7 @@ class Task extends CommonObject
 		// Update extrafield
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -383,7 +384,7 @@ class Task extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -741,11 +742,12 @@ class Task extends CommonObject
 	 * @param	string	$filterontaskuser	Filter on user assigned to task
 	 * @param	array	$extrafields	    Show additional column from project or task
 	 * @param   int     $includebilltime    Calculate also the time to bill and billed
+	 * @param   array   $search_array_options Array of search
 	 * @return 	array						Array of tasks
 	 */
-	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0)
+	public function getTasksArray($usert = null, $userp = null, $projectid = 0, $socid = 0, $mode = 0, $filteronproj = '', $filteronprojstatus = '-1', $morewherefilter = '', $filteronprojuser = 0, $filterontaskuser = 0, $extrafields = array(), $includebilltime = 0, $search_array_options = array())
 	{
-		global $conf;
+		global $conf, $hookmanager;
 
 		$tasks = array();
 
@@ -757,6 +759,7 @@ class Task extends CommonObject
 		$sql .= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus, p.usage_bill_time,";
 		$sql .= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
 		$sql .= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+		$sql .= " t.description, ";
 		$sql .= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email,";
 		$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
 		if (!empty($extrafields->attributes['projet']['label']))
@@ -851,12 +854,21 @@ class Task extends CommonObject
 		if ($filteronproj) $sql .= natural_search(array("p.ref", "p.title"), $filteronproj);
 		if ($filteronprojstatus && $filteronprojstatus != '-1') $sql .= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql .= $morewherefilter;
+		// Add where from extra fields
+		$extrafieldsobjectkey = 'projet_task';
+		$extrafieldsobjectprefix = 'efpt.';
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+		// Add where from hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+		$sql .= $hookmanager->resPrint;
 		if ($includebilltime)
 		{
     		$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public, p.fk_statut, p.usage_bill_time,";
     		$sql .= " t.datec, t.dateo, t.datee, t.tms,";
     		$sql .= " t.rowid, t.ref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut,";
     		$sql .= " t.dateo, t.datee, t.planned_workload, t.rang,";
+    		$sql .= " t.description, ";
     		$sql .= " s.rowid, s.nom, s.email,";
 			$sql .= " p.fk_opp_status, p.opp_amount, p.opp_percent, p.budget_amount";
 			if (!empty($extrafields->attributes['projet']['label']))
@@ -868,6 +880,7 @@ class Task extends CommonObject
 				foreach ($extrafields->attributes['projet_task']['label'] as $key => $val) $sql .= ($extrafields->attributes['projet_task']['type'][$key] != 'separate' ? ",efpt.".$key : '');
 			}
 		}
+
 
 		$sql .= " ORDER BY p.ref, t.rang, t.dateo";
 

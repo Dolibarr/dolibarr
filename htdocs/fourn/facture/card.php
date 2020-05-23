@@ -497,11 +497,11 @@ if (empty($reshook))
 			}
 
 			// If some payments were already done, we change the amount to pay using same prorate
-			if (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
-				$alreadypaid = $object->getSommePaiement();		// This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
+			if (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED)) {
+				$alreadypaid = $object->getSommePaiement(); // This can be not 0 if we allow to create credit to reuse from credit notes partially refunded.
 				if ($alreadypaid && abs($alreadypaid) < abs($object->total_ttc)) {
 					$ratio = abs(($object->total_ttc - $alreadypaid) / $object->total_ttc);
-					foreach($amount_ht as $vatrate => $val) {
+					foreach ($amount_ht as $vatrate => $val) {
 						$amount_ht[$vatrate] = price2num($amount_ht[$vatrate] * $ratio, 'MU');
 						$amount_tva[$vatrate] = price2num($amount_tva[$vatrate] * $ratio, 'MU');
 						$amount_ttc[$vatrate] = price2num($amount_ttc[$vatrate] * $ratio, 'MU');
@@ -644,7 +644,7 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) $error++;
 
-		$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$datedue = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 
 		// Replacement invoice
@@ -657,7 +657,7 @@ if (empty($reshook))
 				$_GET['socid'] = $_POST['socid'];
 				$error++;
 			}
-			if (! (GETPOST('fac_replacement', 'int') > 0)) {
+			if (!(GETPOST('fac_replacement', 'int') > 0)) {
 				$error++;
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ReplaceInvoice")), null, 'errors');
 			}
@@ -905,6 +905,12 @@ if (empty($reshook))
 					$objectsrc->fetch($originid);
 					$objectsrc->fetch_thirdparty();
 
+					if (!empty($object->origin) && !empty($object->origin_id))
+					{
+						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
+					}
+
+					// Add also link with order if object is reception
 					if ($object->origin == 'reception')
 					{
 						$objectsrc->fetchObjectLinked();
@@ -913,13 +919,9 @@ if (empty($reshook))
 						{
 							foreach ($objectsrc->linkedObjectsIds['order_supplier'] as $key => $value)
 							{
-								$object->linked_objects['order_supplier'] = $value;
+								$object->linkedObjectsIds['order_supplier'] = $value;
 							}
 						}
-					}
-					elseif (!empty($object->origin) && !empty($object->origin_id))
- 					{
-						$object->linkedObjectsIds[$object->origin] = $object->origin_id;
 					}
 
 					$id = $object->create($user);
@@ -949,8 +951,8 @@ if (empty($reshook))
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
-									$lines[$i]->fetch_optionals($lines[$i]->rowid);
+								if (method_exists($lines[$i], 'fetch_optionals')) {
+									$lines[$i]->fetch_optionals();
 								}
 
 								// Dates
@@ -965,10 +967,22 @@ if (empty($reshook))
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
 
+								// FIXME If currency different from main currency, take multicurrency price
+								if ($object->multicurrency_code != $conf->currency || $object->multicurrency_tx != 1)
+								{
+									$pu = 0;
+									$pu_currency = $lines[$i]->multicurrency_subprice;
+								}
+								else
+								{
+									$pu = $lines[$i]->subprice;
+									$pu_currency = 0;
+								}
+
 								// FIXME Missing $lines[$i]->ref_supplier and $lines[$i]->label into addline and updateline methods. They are filled when coming from order for example.
 								$result = $object->addline(
 									$desc,
-									$lines[$i]->subprice,
+									$pu,
 									$lines[$i]->tva_tx,
 									$lines[$i]->localtax1_tx,
 									$lines[$i]->localtax2_tx,
@@ -986,7 +1000,7 @@ if (empty($reshook))
 									$lines[$i]->array_options,
 									$lines[$i]->fk_unit,
 									$lines[$i]->id,
-									0,
+									$pu_currency,
 									$lines[$i]->ref_supplier,
 									$lines[$i]->special_code
 								);
@@ -1583,7 +1597,7 @@ if (empty($reshook))
 		if (!$error)
 		{
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
 				if ($result < 0)
@@ -1681,7 +1695,7 @@ if ($action == 'create')
 {
 	$facturestatic = new FactureFournisseur($db);
 
-	print load_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'), '', 'supplier_invoice');
 
 	dol_htmloutput_events();
 
@@ -1744,13 +1758,13 @@ if ($action == 'create')
 			if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
 		}
 
-		$datetmp = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
 
 		// Replicate extrafields
-		$objectsrc->fetch_optionals($originid);
+		$objectsrc->fetch_optionals();
 		$object->array_options = $objectsrc->array_options;
 	}
 	else
@@ -1758,7 +1772,7 @@ if ($action == 'create')
 		$cond_reglement_id 	= $societe->cond_reglement_supplier_id;
 		$mode_reglement_id 	= $societe->mode_reglement_supplier_id;
 		$fk_account         = $societe->fk_account;
-		$datetmp = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datetmp = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 		$dateinvoice = ($datetmp == '' ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $datetmp);
 		$datetmp = dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']);
 		$datedue = ($datetmp == '' ?-1 : $datetmp);
@@ -3182,7 +3196,7 @@ else
 					}
 					// For credit note
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->fournisseur->facture->creer
-						&& (! empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
+						&& (!empty($conf->global->SUPPLIER_INVOICE_ALLOW_REUSE_OF_CREDIT_WHEN_PARTIALLY_REFUNDED) || $object->getSommePaiement() == 0)
 						) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc" title="'.dol_escape_htmltag($langs->trans("ConfirmConvertToReducSupplier2")).'">'.$langs->trans('ConvertToReduc').'</a></div>';
 					}

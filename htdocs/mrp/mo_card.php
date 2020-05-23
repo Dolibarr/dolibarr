@@ -137,7 +137,7 @@ if (empty($reshook))
     		else $backtopage = DOL_URL_ROOT.'/mrp/mo_card.php?id='.($id > 0 ? $id : '__ID__');
     	}
     }
-    if ($cancel && ! empty($backtopageforcancel)) {
+    if ($cancel && !empty($backtopageforcancel)) {
     	$backtopage = $backtopageforcancel;
     }
 
@@ -168,6 +168,35 @@ if (empty($reshook))
     if ($action == 'classin' && $permissiontoadd)
     {
     	$object->setProject(GETPOST('projectid', 'int'));
+    }
+
+    // Action close produced
+    if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd)
+    {
+    	$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+    	if ($result >= 0)
+    	{
+    		// Define output language
+    		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    		{
+    			$outputlangs = $langs;
+    			$newlang = '';
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    			if (!empty($newlang)) {
+    				$outputlangs = new Translate("", $conf);
+    				$outputlangs->setDefaultLang($newlang);
+    			}
+    			$model = $object->modelpdf;
+    			$ret = $object->fetch($id); // Reload to get new records
+
+    			$object->generateDocument($model, $outputlangs, 0, 0, 0);
+    		}
+    	}
+    	else
+    	{
+    		setEventMessages($object->error, $object->errors, 'errors');
+    	}
     }
 }
 
@@ -203,7 +232,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Mo")), '', 'cubes');
+	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Mo")), '', 'mrp');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -287,12 +316,13 @@ if ($action == 'create')
 	print '</div>';
 
 	if (GETPOST('fk_bom', 'int') > 0) {
-		print load_fiche_titre($langs->trans("ToConsume").' ('.$langs->trans("ForAQuantityOf1").')');
+		print load_fiche_titre($langs->trans("ToConsume"));
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
 		$object->lines = $objectbom->lines;
+		$object->bom = $objectbom;
 
 		$object->printOriginLinesList('', array());
 
@@ -306,7 +336,7 @@ if ($action == 'create')
 // Part to edit record
 if (($id || $ref) && $action == 'edit')
 {
-	print load_fiche_titre($langs->trans("MO"), '', 'cubes');
+	print load_fiche_titre($langs->trans("MO"), '', 'mrp');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -426,7 +456,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->mrp->creer, 'string', '', null, null, '', 1);*/
 	// Thirdparty
-	$morehtmlref .= $langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+	$morehtmlref .= $langs->trans('ThirdParty').' ';
+	$morehtmlref .= ': '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
@@ -451,7 +482,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	        if (!empty($object->fk_project)) {
 	            $proj = new Project($db);
 	            $proj->fetch($object->fk_project);
-	            $morehtmlref .= $proj->getNomUrl();
+	            $morehtmlref .= ' : '.$proj->getNomUrl();
 	        } else {
 	            $morehtmlref .= '';
 	        }
@@ -523,7 +554,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		if (!empty($object->lines))
     		{
     			$i = 0;
-    			foreach($object->lines as $line) {
+    			foreach ($object->lines as $line) {
     				if ($line->role == 'toconsume') {
     					if ($i) print ', ';
     					$tmpproduct = new Product($db);
@@ -542,7 +573,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		if (!empty($object->lines))
     		{
     			$i = 0;
-    			foreach($object->lines as $line) {
+    			foreach ($object->lines as $line) {
     				if ($line->role == 'toproduce') {
     					if ($i) print ', ';
     					$tmpproduct = new Product($db);
@@ -628,17 +659,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		{
     			if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_INPROGRESS)
     			{
+    				// TODO If production is already > 1, show only close, else show cancel
+    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_produced&confirm=yes">'.$langs->trans("Close").'</a>'."\n";
+
     				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
     			}
 
-    			if ($object->status == $object::STATUS_CANCELED)
+    			if ($object->status == $object::STATUS_PRODUCED || $object->status == $object::STATUS_CANCELED)
     			{
     				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
     			}
     		}
 
     		// Delete (need delete permission, or if draft, just need create/modify permission)
-    		if ($permissiontodelete)
+    		if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete">'.$langs->trans('Delete').'</a>'."\n";
     		}

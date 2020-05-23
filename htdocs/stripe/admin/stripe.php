@@ -165,7 +165,7 @@ print '<input type="hidden" name="action" value="setvalue">';
 
 dol_fiche_head($head, 'stripeaccount', '', -1);
 
-$stripearrayofwebhookevents = array('payout.created', 'payout.paid', 'charge.pending', 'charge.refunded', 'charge.succeeded', 'charge.failed', 'payment_intent.succeeded', 'payment_intent.payment_failed', 'payment_method.attached', 'payment_method.updated', 'payment_method.card_automatically_updated', 'payment_method.detached', 'source.chargeable', 'customer.deleted');
+$stripearrayofwebhookevents = array('account.updated', 'payout.created', 'payout.paid', 'charge.pending', 'charge.refunded', 'charge.succeeded', 'charge.failed', 'payment_intent.succeeded', 'payment_intent.payment_failed', 'payment_method.attached', 'payment_method.updated', 'payment_method.card_automatically_updated', 'payment_method.detached', 'source.chargeable', 'customer.deleted');
 
 print '<span class="opacitymedium">'.$langs->trans("StripeDesc")."</span><br>\n";
 

@@ -25,8 +25,8 @@
 *  \brief      Page to move config in api
 */
 
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
-require_once DOL_DOCUMENT_ROOT.'/includes/stripe/lib/Stripe.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/lib/Stripe.php';
 
 //global $stripe;
 global $conf;
@@ -55,4 +55,4 @@ else
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
 \Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
-\Stripe\Stripe::setApiVersion(empty($conf->global->STRIPE_FORCE_VERSION) ? "2019-05-16" : $conf->global->STRIPE_FORCE_VERSION); // force version API
+\Stripe\Stripe::setApiVersion(empty($conf->global->STRIPE_FORCE_VERSION) ? "2019-09-09" : $conf->global->STRIPE_FORCE_VERSION); // force version API

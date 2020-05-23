@@ -37,20 +37,20 @@ $hookmanager->initHooks(array('stockindex'));
 $langs->loadLangs(array('stocks', 'productbatch'));
 
 // Security check
-$result=restrictedArea($user, 'stock');
+$result = restrictedArea($user, 'stock');
 
 
 /*
  * View
  */
 
-$producttmp=new Product($db);
-$warehouse=new Entrepot($db);
+$producttmp = new Product($db);
+$warehouse = new Entrepot($db);
 
-$help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
+$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("", $langs->trans("Stocks"), $help_url);
 
-print load_fiche_titre($langs->trans("StocksArea"));
+print load_fiche_titre($langs->trans("StocksArea"), '', 'stock');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -58,7 +58,7 @@ print load_fiche_titre($langs->trans("StocksArea"));
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     print '<form method="post" action="'.DOL_URL_ROOT.'/product/stock/list.php">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -66,7 +66,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     print '<table class="noborder nohover centpercent">';
     print "<tr class=\"liste_titre\">";
     print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    print "<tr ".$bc[false]."><td>";
+    print '<tr class="oddevene"><td>';
     print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print "</table></div></form><br>";
 }
@@ -74,11 +74,11 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 $max = 15;
 
 $sql = "SELECT e.rowid, e.ref as label, e.lieu, e.statut as status";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql.= " WHERE e.statut in (0,1)";
-$sql.= " AND e.entity IN (".getEntity('stock').")";
-$sql.= $db->order('e.statut', 'DESC');
-$sql.= $db->plimit($max + 1, 0);
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql .= " WHERE e.statut in (0,1)";
+$sql .= " AND e.entity IN (".getEntity('stock').")";
+$sql .= $db->order('e.statut', 'DESC');
+$sql .= $db->plimit($max + 1, 0);
 
 $result = $db->query($sql);
 
@@ -132,20 +132,20 @@ else
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-// Last movements
-$max=10;
+// Latest movements
+$max = 10;
 $sql = "SELECT p.rowid, p.label as produit, p.tobatch, p.tosell, p.tobuy,";
-$sql.= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
-$sql.= " m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
-$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql.= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
-$sql.= ", ".MAIN_DB_PREFIX."product as p";
-$sql.= " WHERE m.fk_product = p.rowid";
-$sql.= " AND m.fk_entrepot = e.rowid";
-$sql.= " AND e.entity IN (".getEntity('stock').")";
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql.= " AND p.fk_product_type = 0";
-$sql.= $db->order("datem", "DESC");
-$sql.= $db->plimit($max, 0);
+$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
+$sql .= " m.value as qty, m.datem, m.batch, m.eatby, m.sellby";
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql .= ", ".MAIN_DB_PREFIX."stock_mouvement as m";
+$sql .= ", ".MAIN_DB_PREFIX."product as p";
+$sql .= " WHERE m.fk_product = p.rowid";
+$sql .= " AND m.fk_entrepot = e.rowid";
+$sql .= " AND e.entity IN (".getEntity('stock').")";
+if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
+$sql .= $db->order("datem", "DESC");
+$sql .= $db->plimit($max, 0);
 
 dol_syslog("Index:list stock movements", LOG_DEBUG);
 $resql = $db->query($sql);
@@ -158,7 +158,7 @@ if ($resql)
 	print "<tr class=\"liste_titre\">";
 	print '<th>'.$langs->trans("LastMovements", min($num, $max)).'</th>';
 	print '<th>'.$langs->trans("Product").'</th>';
-	if (! empty($conf->productbatch->enabled))
+	if (!empty($conf->productbatch->enabled))
 	{
 		print '<th>'.$langs->trans("Batch").'</th>';
 		print '<th>'.$langs->trans("SellByDate").'</th>';
@@ -168,7 +168,7 @@ if ($resql)
 	print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
 	print "</tr>\n";
 
-	$i=0;
+	$i = 0;
 	while ($i < min($num, $max))
 	{
 		$objp = $db->fetch_object($resql);
@@ -186,11 +186,11 @@ if ($resql)
 		$warehouse->lieu = $objp->lieu;
 
 		print '<tr class="oddeven">';
-		print '<td>'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
+		print '<td class="nowraponall">'.dol_print_date($db->jdate($objp->datem), 'dayhour').'</td>';
 		print '<td class="tdoverflowmax200">';
 		print $producttmp->getNomUrl(1);
 		print "</td>\n";
-		if (! empty($conf->productbatch->enabled))
+		if (!empty($conf->productbatch->enabled))
 		{
 			print '<td>'.$objp->batch.'</td>';
 			print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';

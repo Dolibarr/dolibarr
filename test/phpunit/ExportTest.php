@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/ImportTest.php
+ *      \file       test/phpunit/ExportTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -78,7 +78,11 @@ class ExportTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-	// Static methods
+	/**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -87,7 +91,11 @@ class ExportTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -235,23 +243,28 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $model='csv';
 
         // Build export file
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result, 'Error in CSV export');
 
         $model='tsv';
 
         // Build export file
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result, 'Error in TSV export');
 
-        $model='excel';
+        $model='excel2007new';
 
         // Build export file
+        /* ko on php 7.4 on travis (zip not available) */
+        print "Process build_file for model = ".$model."\n";
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($expectedresult, $result);
+        $this->assertEquals($expectedresult, $result, 'Error in Excel2007new export');
+
 
         return true;
     }
@@ -304,6 +317,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
     	$expectedresult=1;
     	$this->assertEquals($expectedresult,$result);
         */
+    	$this->assertEquals(true, true);
     	return true;
     }
 

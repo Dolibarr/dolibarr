@@ -321,7 +321,7 @@ if ($action == 'create')
 {
 	$object = new Account($db);
 
-	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'title_bank.png');
+	print load_fiche_titre($langs->trans("NewFinancialAccount"), '', 'bank_account');
 
 	if ($conf->use_javascript_ajax)
 	{
@@ -690,7 +690,7 @@ else
 		// Categories
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="titlefield">'.$langs->trans("Categories").'</td><td>';
-			print $form->showCategories($object->id, 'bank_account', 1);
+			print $form->showCategories($object->id, Categorie::TYPE_ACCOUNT, 1);
 			print "</td></tr>";
 		}
 
@@ -804,7 +804,7 @@ else
 		$object = new Account($db);
 		$object->fetch(GETPOST('id', 'int'));
 
-		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'title_bank.png');
+		print load_fiche_titre($langs->trans("EditFinancialAccount"), '', 'bank_account');
 
 		if ($conf->use_javascript_ajax)
 		{

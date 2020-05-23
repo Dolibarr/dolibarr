@@ -107,6 +107,10 @@ $modules = array(
 				array(
 						'code' => 'MAIN_DELAY_MEMBERS',
 						'img' => 'user'
+				),
+        array(
+						'code' => 'MAIN_DELAY_MEMBERS_SHIFT',
+						'img' => 'user'
 				)
 		),
 		'expensereport' => array(
@@ -130,31 +134,31 @@ $modules = array(
 
 $labelmeteo = array(0=>$langs->trans("No"), 1=>$langs->trans("Yes"), 2=>$langs->trans("OnMobileOnly"));
 
-if (! isset($conf->global->MAIN_DELAY_PROJECT_TO_CLOSE)) {
-	$conf->global->MAIN_DELAY_PROJECT_TO_CLOSE = 7;				// Must be same value than into conf.class.php
+if (!isset($conf->global->MAIN_DELAY_PROJECT_TO_CLOSE)) {
+	$conf->global->MAIN_DELAY_PROJECT_TO_CLOSE = 7; // Must be same value than into conf.class.php
 }
-if (! isset($conf->global->MAIN_DELAY_TASKS_TODO)) {
-	$conf->global->MAIN_DELAY_TASKS_TODO = 7;				// Must be same value than into conf.class.php
+if (!isset($conf->global->MAIN_DELAY_TASKS_TODO)) {
+	$conf->global->MAIN_DELAY_TASKS_TODO = 7; // Must be same value than into conf.class.php
 }
-if (! isset($conf->global->MAIN_DELAY_MEMBERS)) {
-	$conf->global->MAIN_DELAY_MEMBERS = 0;					// Must be same value than into conf.class.php
+if (!isset($conf->global->MAIN_DELAY_MEMBERS)) {
+	$conf->global->MAIN_DELAY_MEMBERS = 0; // Must be same value than into conf.class.php
 }
-if (! isset($conf->global->MAIN_DELAY_ACTIONS_TODO)) {
-	$conf->global->MAIN_DELAY_ACTIONS_TODO = 7;				// Must be same value than into conf.class.php
+if (!isset($conf->global->MAIN_DELAY_ACTIONS_TODO)) {
+	$conf->global->MAIN_DELAY_ACTIONS_TODO = 7; // Must be same value than into conf.class.php
 }
-if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
 	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
 }
-if (! isset($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)) {
+if (!isset($conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS)) {
 	$conf->global->MAIN_DELAY_SUPPLIER_ORDERS_TO_PROCESS = 7;
 }
-if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
 	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
 }
-if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
 	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
 }
-if (! isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
+if (!isset($conf->global->MAIN_DELAY_ORDERS_TO_PROCESS)) {
 	$conf->global->MAIN_DELAY_ORDERS_TO_PROCESS = 2;
 }
 
@@ -203,7 +207,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("DelaysOfToleranceBeforeWarning"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning());
+print '<span class="opacitymedium">'.$langs->transnoentities("DelaysOfToleranceDesc", img_warning('default', '', 'pictowarning nopaddingleft'));
 print " ".$langs->trans("OnlyActiveElementsAreShown", DOL_URL_ROOT.'/admin/modules.php')."</span><br>\n";
 print "<br>\n";
 

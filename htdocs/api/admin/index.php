@@ -96,7 +96,7 @@ llxHeader();
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"), $linkback, 'title_setup');
 
-print $langs->trans("ApiDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("ApiDesc")."</span><br>\n";
 print "<br>\n";
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -130,7 +130,9 @@ print '<td>&nbsp;</td>';
 print '</tr>';
 
 print '<tr class="oddeven">';
-print '<td>'.$langs->trans("RESTRICT_API_ON_IP").'</td>';
+print '<td>'.$langs->trans("RESTRICT_ON_IP");
+print ' '.$langs->trans("Example").': '.$langs->trans("IPListExample");
+print '</td>';
 print '<td><input type="text" name="API_RESTRICT_ON_IP" value="'.dol_escape_htmltag($conf->global->API_RESTRICT_ON_IP).'"></td>';
 print '<td>';
 print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'"></td>';
@@ -151,7 +153,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 // Show message
 $message = '';
 $url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
-$message .= $langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
 $message .= img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';

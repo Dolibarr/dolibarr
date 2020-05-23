@@ -77,11 +77,12 @@ if (!empty($userid) && $userid != -1) $stats_project->userid = $userid;
 if (!empty($socid) && $socid != -1) $stats_project->socid = $socid;
 if (!empty($year)) $stats_project->year = $year;
 
-
-
+/*
 if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
+	// Current stats of project amount per status
 	$data1 = $stats_project->getAllProjectByStatus();
+
 	if (!is_array($data1) && $data1 < 0) {
 		setEventMessages($stats_project->error, null, 'errors');
 	}
@@ -100,43 +101,42 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$i = 0; $tot = count($data1); $legend = array();
 		while ($i <= $tot)
 		{
-			$data1[$i][0] = $data1[$i][0]; // Required to avoid error "Could not draw pie with labels contained inside canvas"
 			$legend[] = $data1[$i][0];
 			$i++;
 		}
+
 		$px->SetData($data1);
 		unset($data1);
 
 		if ($nocolor)
-		$px->SetDataColor(array(
+			$px->SetDataColor(array(
 					array(
 							220,
 							220,
 							220
 					)
 			));
-			$px->SetLegend($legend);
-			$px->setShowLegend(0);
-			$px->setShowPointValue($showpointvalue);
-			$px->setShowPercent(1);
-			$px->SetMaxValue($px->GetCeilMaxValue());
-			$px->SetWidth($WIDTH);
-			$px->SetHeight($HEIGHT);
-			$px->SetShading(3);
-			$px->SetHorizTickIncrement(1);
-			$px->SetCssPrefix("cssboxes");
-			$px->SetType(array(
-					'pie'
-			));
-			$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
-			$result = $px->draw($filenamenb, $fileurlnb);
+
+		$px->SetLegend($legend);
+		$px->setShowLegend(0);
+		$px->setShowPointValue($showpointvalue);
+		$px->setShowPercent(1);
+		$px->SetMaxValue($px->GetCeilMaxValue());
+		$px->SetWidth($WIDTH);
+		$px->SetHeight($HEIGHT);
+		$px->SetShading(3);
+		$px->SetHorizTickIncrement(1);
+		$px->SetCssPrefix("cssboxes");
+		$px->SetType(array('pie'));
+		$px->SetTitle($langs->trans('OpportunitiesStatusForProjects'));
+		$result = $px->draw($filenamenb, $fileurlnb);
 		if ($result < 0) {
 			setEventMessages($px->error, null, 'errors');
 		}
 	} else {
-		setEventMessages(null, $mesgs, 'errors');
+		setEventMessages(null, $mesg, 'errors');
 	}
-}
+}*/
 
 
 // Build graphic number of object
@@ -186,13 +186,14 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	$mesg = $px2->isGraphKo();
 	if (!$mesg)
 	{
-		$px2->SetData($data);
 		$i = $startyear; $legend = array();
 		while ($i <= $endyear)
 		{
 			$legend[] = $i;
 			$i++;
 		}
+
+		$px2->SetData($data);
 		$px2->SetLegend($legend);
 		$px2->SetMaxValue($px2->GetCeilMaxValue());
 		$px2->SetMinValue(min(0, $px2->GetFloorMinValue()));
@@ -201,6 +202,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		$px2->SetYLabel($langs->trans("ProjectOppAmountOfProjectsByMonth"));
 		$px2->SetShading(3);
 		$px2->SetHorizTickIncrement(1);
+		$px2->SetType(array('bars', 'bars'));
 		$px2->mode = 'depth';
 		$px2->SetTitle($langs->trans("ProjectOppAmountOfProjectsByMonth"));
 
@@ -354,8 +356,8 @@ else {
 	$stringtoshow .= "<br>\n";
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
-		$stringtoshow .= $px->show();
-		$stringtoshow .= "<br>\n";
+		//$stringtoshow .= $px->show();
+		//$stringtoshow .= "<br>\n";
 		$stringtoshow .= $px2->show();
 		$stringtoshow .= "<br>\n";
 		$stringtoshow .= $px3->show();

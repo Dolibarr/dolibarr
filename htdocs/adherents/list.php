@@ -75,7 +75,7 @@ if ($statut < -1) $statut = '';
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -106,6 +106,9 @@ $fieldstosearchall = array(
 	'd.address'=>'Address',
 	'd.zip'=>'Zip',
 	'd.town'=>'Town',
+	'd.phone'=>"Phone",
+	'd.phone_perso'=>"PhonePerso",
+	'd.phone_mobile'=>"PhoneMobile",
 	'd.note_public'=>'NotePublic',
 	'd.note_private'=>'NotePrivate',
 );
@@ -255,6 +258,7 @@ $sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.gender, d.societe as
 $sql .= " d.civility, d.datefin, d.address, d.zip, d.town, d.state_id, d.country,";
 $sql .= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.skype, d.birth, d.public, d.photo,";
 $sql .= " d.fk_adherent_type as type_id, d.morphy, d.statut, d.datec as date_creation, d.tms as date_update,";
+$sql .= " d.note_private, d.note_public,";
 $sql .= " s.nom,";
 $sql .= " t.libelle as type, t.subscription,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -421,10 +425,9 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "member";
@@ -686,6 +689,8 @@ while ($i < min($num, $limit))
 	$memberstatic->socid = $obj->fk_soc;
 	$memberstatic->photo = $obj->photo;
 	$memberstatic->morphy = $obj->morphy;
+	$memberstatic->note_public = $obj->note_public;
+	$memberstatic->note_private = $obj->note_private;
 
 	if (!empty($obj->fk_soc)) {
 		$memberstatic->fetch_thirdparty();
@@ -707,7 +712,7 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['d.ref']['checked']))
 	{
 		print "<td>";
-		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref');
+		print $memberstatic->getNomUrl(-1, 0, 'card', 'ref', '', -1, 0, 1);
 		print "</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
@@ -943,8 +948,6 @@ print $hookmanager->resPrint;
 print "</table>\n";
 print "</div>";
 print '</form>';
-
-if ($num > $limit || $page) print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1);
 
 // End of page
 llxFooter();
