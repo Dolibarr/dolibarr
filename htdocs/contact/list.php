@@ -357,7 +357,7 @@ if (strlen($search_phone_mobile))   $sql .= natural_search('p.phone_mobile', $se
 if (strlen($search_fax))            $sql .= natural_search('p.fax', $search_fax);
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
-		if ($value['active'] && strlen($search_[$key])) {
+		if ($value['active'] && strlen($search_{$key})) {
 			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
 		}
 	}
@@ -668,7 +668,7 @@ if (!empty($conf->socialnetworks->enabled)) {
 			if (!empty($arrayfields['p.'.$key]['checked']))
 			{
 				print '<td class="liste_titre">';
-				print '<input class="flat" type="text" name="search_'.$key.'" size="6" value="'.dol_escape_htmltag($search_[$key]).'">';
+				print '<input class="flat" type="text" name="search_'.$key.'" size="6" value="'.dol_escape_htmltag($search_{$key}).'">';
 				print '</td>';
 			}
 		}
