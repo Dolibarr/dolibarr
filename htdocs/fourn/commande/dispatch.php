@@ -389,8 +389,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 		$errors = $object->errors;
 		$error++;
 	}
-	else
-	{
+	else {
 		// If module stock is enabled and the stock increase is done on purchase order dispatching
 		if ($entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 		{
@@ -412,8 +411,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	}
-	else
-	{
+	else {
 		$db->commit();
 	}
 }
@@ -446,8 +444,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 		$error++;
 		$errors=$supplierorderdispatch->errors;
 	}
-	else
-	{
+	else {
 		// If module stock is enabled and the stock increase is done on purchase order dispatching
 		if ($entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 		{
@@ -461,8 +458,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 					$errors=$mouv->errors;
 					$error++;
 				}
-				else
-				{
+				else {
 					$mouv->origin = &$object;
 					$result=$mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
 					if ($result < 0)
@@ -479,8 +475,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	}
-	else
-	{
+	else {
 		$db->commit();
 	}
 }
@@ -1151,8 +1146,7 @@ if ($id > 0 || !empty($ref)) {
 				{
 					print '<input style="width: 50px;" type="number" min="1" name="qty" value="' . $objp->qty . '" />';
 				}
-				else
-				{
+				else {
 					print $objp->qty;
 				}
 				print '<input type="hidden" name="price" value="'.$objp->subprice.'" />';
@@ -1171,8 +1165,7 @@ if ($id > 0 || !empty($ref)) {
 						print $langs->trans("ErrorNoWarehouseDefined");
 					}
 				}
-				else
-				{
+				else {
 					$warehouse_static->id = $objp->warehouse_id;
 					$warehouse_static->libelle = $objp->entrepot;
 					print $warehouse_static->getNomUrl(1);
@@ -1241,8 +1234,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</a>';
 					print '</td>';
 				}
-				else
-				{
+				else {
 					print '<td class="center valignmiddle">';
 					print '<input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" />';
 					print '</td>';
