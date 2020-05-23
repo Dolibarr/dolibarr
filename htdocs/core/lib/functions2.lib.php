@@ -904,11 +904,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
         	{
         		// If before of next new year date
         		if ($date < $nextnewyeardate && $yearoffsettype == '+') $yearoffset = 1;
-        	}
-        	// If after or equal of current new year date
+        	} // If after or equal of current new year date
         	elseif ($date >= $newyeardate && $yearoffsettype == '-') $yearoffset = -1;
-        }
-        // For backward compatibility
+        } // For backward compatibility
         elseif (date("m", $date) < $maskraz && empty($resetEveryMonth)) { $yearoffset = -1; }	// If current month lower that month of return to zero, year is previous year
 
         if ($yearlen == 4) $yearcomp = sprintf("%04d", date("Y", $date) + $yearoffset);

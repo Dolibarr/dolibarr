@@ -167,10 +167,10 @@ function getBrowserInfo($user_agent)
 	if (preg_match('/linux/i', $user_agent)) { $os = 'linux'; } elseif (preg_match('/macintosh/i', $user_agent)) { $os = 'macintosh'; } elseif (preg_match('/windows/i', $user_agent)) { $os = 'windows'; }
 
 	// Name
-	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'firefox'; $version = $reg[2]; } elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'edge'; $version = $reg[2]; } elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) { $name = 'chrome'; $version = $reg[2]; }    // we can have 'chrome (Mozilla...) chrome x.y' in one string
-	elseif (preg_match('/chrome/i', $user_agent, $reg)) { $name = 'chrome'; } elseif (preg_match('/iceweasel/i', $user_agent)) { $name = 'iceweasel'; } elseif (preg_match('/epiphany/i', $user_agent)) { $name = 'epiphany'; } elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'safari'; $version = $reg[2]; }	// Safari is often present in string for mobile but its not.
-	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'opera'; $version = $reg[2]; } elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) { $name = 'ie'; $version = end($reg); }    // MS products at end
-	elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) { $name = 'ie'; $version = end($reg); }    // MS products at end
+	if (preg_match('/firefox(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'firefox'; $version = $reg[2]; } elseif (preg_match('/edge(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'edge'; $version = $reg[2]; } elseif (preg_match('/chrome(\/|\s)([\d\.]+)/i', $user_agent, $reg)) { $name = 'chrome'; $version = $reg[2]; } // we can have 'chrome (Mozilla...) chrome x.y' in one string
+	elseif (preg_match('/chrome/i', $user_agent, $reg)) { $name = 'chrome'; } elseif (preg_match('/iceweasel/i', $user_agent)) { $name = 'iceweasel'; } elseif (preg_match('/epiphany/i', $user_agent)) { $name = 'epiphany'; } elseif (preg_match('/safari(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'safari'; $version = $reg[2]; } // Safari is often present in string for mobile but its not.
+	elseif (preg_match('/opera(\/|\s)([\d\.]*)/i', $user_agent, $reg)) { $name = 'opera'; $version = $reg[2]; } elseif (preg_match('/(MSIE\s([0-9]+\.[0-9]))|.*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) { $name = 'ie'; $version = end($reg); } // MS products at end
+	elseif (preg_match('/(Windows NT\s([0-9]+\.[0-9])).*(Trident\/[0-9]+.[0-9];.*rv:([0-9]+\.[0-9]+))/i', $user_agent, $reg)) { $name = 'ie'; $version = end($reg); } // MS products at end
 	elseif (preg_match('/l(i|y)n(x|ks)(\(|\/|\s)*([\d\.]+)/i', $user_agent, $reg)) { $name = 'lynxlinks'; $version = $reg[4]; }
 
 	if ($tablet) {
@@ -342,8 +342,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			{
 				$out = $_SESSION['lastsearch_limit_'.$relativepathstring];
 			}
-		}
-		// Else, retreive default values if we are not doing a sort
+		} // Else, retreive default values if we are not doing a sort
 		elseif (!isset($_GET['sortfield']))	// If we did a click on a field to sort, we do no apply default values. Same if option MAIN_ENABLE_DEFAULT_VALUES is not set
 		{
 			if (!empty($_GET['action']) && $_GET['action'] == 'create' && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
@@ -392,8 +391,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 							}
 						}
 					}
-				}
-				// Management of default search_filters and sort order
+				} // Management of default search_filters and sort order
 				//elseif (preg_match('/list.php$/', $_SERVER["PHP_SELF"]) && ! empty($paramname) && ! isset($_GET[$paramname]) && ! isset($_POST[$paramname]))
 				elseif (!empty($paramname) && !isset($_GET[$paramname]) && !isset($_POST[$paramname]))
 				{
@@ -1120,8 +1118,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			// This is when server run behind a reverse proxy
 			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != $remoteip) $data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].' -> '.$data['ip'];
 			elseif (!empty($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'] != $remoteip) $data['ip'] = $_SERVER['HTTP_CLIENT_IP'].' -> '.$data['ip'];
-		}
-		// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
+		} // This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
 		elseif (!empty($_SERVER['SERVER_ADDR'])) $data['ip'] = $_SERVER['SERVER_ADDR'];
 		// This is when PHP session is ran outside a web server, like from Windows command line (Not always defined, but useful if OS defined it).
 		elseif (!empty($_SERVER['COMPUTERNAME'])) $data['ip'] = $_SERVER['COMPUTERNAME'].(empty($_SERVER['USERNAME']) ? '' : '@'.$_SERVER['USERNAME']);
@@ -2083,8 +2080,7 @@ function dol_now($mode = 'gmt')
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond = getServerTimeZoneInt('now'); // Contains tz+dayling saving time
 		$ret = (int) (dol_now('gmt') + ($tzsecond * 3600));
-	}
-	/*elseif ($mode == 'tzref')				// Time for now with parent company timezone is added
+	} /*elseif ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getParentCompanyTimeZoneInt();    // Contains tz+dayling saving time
@@ -5579,7 +5575,7 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 		}
 
 		$text = strtr($text, $repTable);
-		if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
+		if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; } // /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
 		else $pattern = '/(<br[^>]*>)/U'; // /U is to have UNGREEDY regex to limit to one html tag.
 		$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
@@ -5776,7 +5772,7 @@ function dol_nboflines_bis($text, $maxlinesize = 0, $charset = 'UTF-8')
 	if (dol_textishtml($text)) $repTable = array("\t" => " ", "\n" => " ", "\r" => " ", "\0" => " ", "\x0B" => " ");
 
 	$text = strtr($text, $repTable);
-	if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; }	// /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
+	if ($charset == 'UTF-8') { $pattern = '/(<br[^>]*>)/Uu'; } // /U is to have UNGREEDY regex to limit to one html tag. /u is for UTF8 support
 	else $pattern = '/(<br[^>]*>)/U'; // /U is to have UNGREEDY regex to limit to one html tag.
 	$a = preg_split($pattern, $text, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 
@@ -8205,8 +8201,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         $return = !empty($html) ? $html : $statusLabel;
     } elseif ($displayMode == 1) {
         $return = !empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel);
-    }
-    // Use status with images (for backward compatibility)
+    } // Use status with images (for backward compatibility)
     elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
         $return = '';
         $htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
@@ -8251,8 +8246,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         } else { // $displayMode >= 6
             $return = $htmlLabel.' '.$htmlImg;
         }
-    }
-    // Use new badge
+    } // Use new badge
     elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
         $statusLabelShort = !empty($statusLabelShort) ? $statusLabelShort : $statusLabel;
 

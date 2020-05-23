@@ -78,9 +78,7 @@ if ($action == 'addcontact' && $user->rights->facture->creer)
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
-
-// Toggle the status of a contact
+} // Toggle the status of a contact
 elseif ($action == 'swapstatut' && $user->rights->facture->creer)
 {
 	if ($object->fetch($id))
@@ -89,9 +87,7 @@ elseif ($action == 'swapstatut' && $user->rights->facture->creer)
 	} else {
 		dol_print_error($db);
 	}
-}
-
-// Deletes a contact
+} // Deletes a contact
 elseif ($action == 'deletecontact' && $user->rights->facture->creer)
 {
 	$object->fetch($id);

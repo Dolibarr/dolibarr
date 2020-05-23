@@ -188,9 +188,7 @@ if (empty($reshook))
        		setEventMessages($object->error, $object->errors, 'errors');
        		$action = '';
         }
-	}
-
-	// Change status of invoice
+	} // Change status of invoice
 	elseif ($action == 'reopen' && $usercancreate) {
 		$result = $object->fetch($id);
 
@@ -203,9 +201,7 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-
-	// Delete invoice
+	} // Delete invoice
 	elseif ($action == 'confirm_delete' && $confirm == 'yes') {
 		$result = $object->fetch($id);
 		$object->fetch_thirdparty();
@@ -233,9 +229,7 @@ if (empty($reshook))
 				$action = '';
 			}
 		}
-	}
-
-	// Delete line
+	} // Delete line
 	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
 	{
 		$object->fetch($id);
@@ -267,17 +261,13 @@ if (empty($reshook))
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
-	}
-
-	// Delete link of credit note to invoice
+	} // Delete link of credit note to invoice
 	elseif ($action == 'unlinkdiscount' && $usercancreate)
 	{
 		$discount = new DiscountAbsolute($db);
 		$result = $discount->fetch(GETPOST("discountid"));
 		$discount->unlink_invoice();
-	}
-
-	// Validation
+	} // Validation
 	elseif ($action == 'valid' && $usercancreate)
 	{
 		$object->fetch($id);
@@ -377,15 +367,10 @@ if (empty($reshook))
 	    $result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
 	    if ($result < 0)
 	        dol_print_error($db, $object->error);
-	}
-
-
-	// Multicurrency Code
+	} // Multicurrency Code
 	elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
-	}
-
-	// Multicurrency rate
+	} // Multicurrency rate
 	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	} elseif ($action == 'setinvoicedate' && $usercancreate)
@@ -472,15 +457,11 @@ if (empty($reshook))
 				if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-
-	// Set incoterm
+	} // Set incoterm
 	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 	{
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
-	}
-
-	// bank account
+	} // bank account
 	elseif ($action == 'setbankaccount' && $usercancreate)
 	{
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
@@ -552,9 +533,7 @@ if (empty($reshook))
 	{
 		$object->fetch($id);
 		$object->set_ref_client(GETPOST('ref_client'));
-	}
-
-	// Classify to validated
+	} // Classify to validated
 	elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate)
 	{
 		$idwarehouse = GETPOST('idwarehouse', 'int');
@@ -668,9 +647,7 @@ if (empty($reshook))
 				else setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-
-	// Go back to draft status (unvalidate)
+	} // Go back to draft status (unvalidate)
 	elseif ($action == 'confirm_modif' && $usercanunvalidate)
 	{
 		$idwarehouse = GETPOST('idwarehouse', 'int');
@@ -751,9 +728,7 @@ if (empty($reshook))
 				}
 			}
 		}
-	}
-
-	// Classify "paid"
+	} // Classify "paid"
 	elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercanissuepayment)
 	{
 		$object->fetch($id);
@@ -782,9 +757,7 @@ if (empty($reshook))
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
 		}
-	}
-
-	// Convertir en reduc
+	} // Convertir en reduc
 	elseif ($action == 'confirm_converttoreduc' && $confirm == 'yes' && $usercancreate)
 	{
 		$object->fetch($id);
@@ -949,9 +922,7 @@ if (empty($reshook))
 				$db->rollback();
 			}
 		}
-	}
-
-	// Delete payment
+	} // Delete payment
 	elseif ($action == 'confirm_delete_paiement' && $confirm == 'yes' && $usercancreate)
 	{
 		$object->fetch($id);
@@ -967,9 +938,7 @@ if (empty($reshook))
 				setEventMessages($paiement->error, $paiement->errors, 'errors');
 			}
 		}
-	}
-
-	/*
+	} /*
 	 * Insert new invoice in database
 	 */
 	elseif ($action == 'add' && $usercancreate)
@@ -1853,9 +1822,7 @@ if (empty($reshook))
 			$_GET["originid"] = $_POST["originid"];
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	// Add a new line
+	} // Add a new line
 	elseif ($action == 'addline' && $usercancreate)
 	{
 		$langs->load('errors');
@@ -2000,8 +1967,7 @@ if (empty($reshook))
 				{
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-				}
-				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				} // On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
 				elseif ($tmpvat != $tmpprodvat)
 				{
@@ -2398,9 +2364,7 @@ if (empty($reshook))
 	} elseif ($action == 'updateline' && $usercancreate && $_POST['cancel'] == $langs->trans('Cancel')) {
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id); // To show again edited page
 		exit();
-	}
-
-	// Outing situation invoice from cycle
+	} // Outing situation invoice from cycle
 	elseif ($action == 'confirm_situationout' && $confirm == 'yes' && $usercancreate)
 	{
 	    $object->fetch($id, '', '', '', true);
@@ -2507,9 +2471,7 @@ if (empty($reshook))
 	            setEventMessages($langs->trans('ErrorFindNextSituationInvoice'), array(), 'errors');
 	        }
 	    }
-	}
-
-	// add lines from objectlinked
+	} // add lines from objectlinked
 	elseif ($action == 'import_lines_from_object'
 	    && $usercancreate
 	    && $object->statut == Facture::STATUS_DRAFT
@@ -2824,14 +2786,12 @@ if ($action == 'create')
 	}
 
 	// when payment condition is empty (means not override by payment condition form a other object, like third-party), try to use default value
-	if(empty($cond_reglement_id))
-	{
+	if (empty($cond_reglement_id)) {
 		$cond_reglement_id = GETPOST("cond_reglement_id");
 	}
 
 	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
-	if(empty($mode_reglement_id))
-	{
+	if (empty($mode_reglement_id)) {
 		$mode_reglement_id = GETPOST("mode_reglement_id");
 	}
 
@@ -2839,8 +2799,7 @@ if ($action == 'create')
 	$note_public = $object->getDefaultCreateValueFor('note_public', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_public : null));
 	$note_private = $object->getDefaultCreateValueFor('note_private', ((!empty($origin) && !empty($originid) && is_object($objectsrc) && !empty($conf->global->FACTURE_REUSE_NOTES_ON_CREATE_FROM)) ? $objectsrc->note_private : null));
 
-	if (!empty($conf->use_javascript_ajax))
-	{
+	if (!empty($conf->use_javascript_ajax)) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		print ajax_combobox('fac_replacement');
 		print ajax_combobox('fac_avoir');

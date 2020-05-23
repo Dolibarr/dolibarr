@@ -148,9 +148,7 @@ if ($action == 'validate' && $user->rights->deplacement->creer)
         header("Location: index.php");
         exit;
     }
-}
-
-// Update record
+} // Update record
 elseif ($action == 'update' && $user->rights->deplacement->creer)
 {
     if (!GETPOST('cancel', 'alpha'))
@@ -178,17 +176,13 @@ elseif ($action == 'update' && $user->rights->deplacement->creer)
         header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
         exit;
     }
-}
-
-// Set into a project
+} // Set into a project
 elseif ($action == 'classin' && $user->rights->deplacement->creer)
 {
     $object->fetch($id);
     $result = $object->setProject(GETPOST('projectid', 'int'));
     if ($result < 0) dol_print_error($db, $object->error);
-}
-
-// Set fields
+} // Set fields
 elseif ($action == 'setdated' && $user->rights->deplacement->creer)
 {
     $dated = dol_mktime(GETPOST('datedhour', 'int'), GETPOST('datedmin', 'int'), GETPOST('datedsec', 'int'), GETPOST('datedmonth', 'int'), GETPOST('datedday', 'int'), GETPOST('datedyear', 'int'));

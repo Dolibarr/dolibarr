@@ -700,12 +700,10 @@ if ($id > 0 || !empty($ref)) {
 			$i = 0;
 
 			if ($num) {
-
 				print '<tr class="liste_titre">';
 
 				print '<td>'.$langs->trans("Description").'</td>';
-				if (!empty($conf->productbatch->enabled))
-				{
+				if (!empty($conf->productbatch->enabled)) {
 					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
 					print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
@@ -731,11 +729,9 @@ if ($id > 0 || !empty($ref)) {
 				print '<td align="right">'.$langs->trans("Warehouse");
 
 				// Select warehouse to force it everywhere
-				if (count($listwarehouses) > 1)
-				{
+				if (count($listwarehouses) > 1) {
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
-				} elseif (count($listwarehouses) == 1)
-				{
+				} elseif (count($listwarehouses) == 1) {
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
 				}
 

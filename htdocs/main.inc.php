@@ -2040,7 +2040,7 @@ function top_menu_quickadd()
 
 	if (! empty($conf->service->enabled) && $user->rights->service->creer) {
 		$langs->load("products");
-		$dropDownQuickAddHtml.= '
+		$dropDownQuickAddHtml .= '
                 <!-- Service link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=1" title="'.$langs->trans("NewService").'">
@@ -2054,20 +2054,18 @@ function top_menu_quickadd()
 	// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
 	$parameters = array();
 	$result = $hookmanager->executeHooks('printQuickAddBlock', $parameters); // Note that $action and $object may have been modified by some hooks
-	if (is_numeric($result))
-	{
-		if ($result == 0)
+	if (is_numeric($result)) {
+		if ($result == 0) {
 			$dropDownQuickAddHtml.= $hookmanager->resPrint; // add
-		else
+		} else {
 			$dropDownQuickAddHtml = $hookmanager->resPrint; // replace
-	}
-	else
-	{
-		$dropDownQuickAddHtml.= $result; // For backward compatibility
+		}
+	} else {
+		$dropDownQuickAddHtml .= $result; // For backward compatibility
 	}
 
-	$dropDownQuickAddHtml.= '</div>';
-	$dropDownQuickAddHtml.= '</div>';
+	$dropDownQuickAddHtml .= '</div>';
+	$dropDownQuickAddHtml .= '</div>';
 
 	$html.= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">

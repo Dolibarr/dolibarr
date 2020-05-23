@@ -95,18 +95,14 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
-
-// Toggle the status of a contact
+} // Toggle the status of a contact
 elseif ($action == 'swapstatut' && $user->rights->propale->creer)
 {
 	if ($object->id > 0)
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-}
-
-// Deletes a contact
+} // Deletes a contact
 elseif ($action == 'deletecontact' && $user->rights->propale->creer)
 {
 	$result = $object->delete_contact($lineid);

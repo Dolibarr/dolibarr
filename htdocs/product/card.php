@@ -1672,9 +1672,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			print '</div>';
 
 			print '</form>';
-		}
-        // Fiche en mode visu
-        else {
+		} else {
+            // Fiche en mode visu
             $showbarcode = empty($conf->barcode->enabled) ? 0 : 1;
             if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode = 0;
 

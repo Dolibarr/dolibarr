@@ -1137,8 +1137,7 @@ if (empty($action) || $action == 'show_month')      // View by month
                 echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
-            }
-            /* Show days of the current month */
+            } /* Show days of the current month */
             elseif ($tmpday <= $max_day_in_month)
             {
                 $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
@@ -1152,8 +1151,7 @@ if (empty($action) || $action == 'show_month')      // View by month
                 echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
-            }
-            /* Show days after the current month (next month) */
+            } /* Show days after the current month (next month) */
             else {
                 $style = 'cal_other_month';
                 if ($iter_day == 6) $style .= ' cal_other_month_right';

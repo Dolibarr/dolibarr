@@ -764,13 +764,11 @@ if ($action == 'create')
 		if ($action == 'valid')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ValidMailing"), $langs->trans("ConfirmValidMailing"), "confirm_valid", '', '', 1);
-		}
-		// Confirm reset
+		} // Confirm reset
 		elseif ($action == 'reset')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ResetMailing"), $langs->trans("ConfirmResetMailing", $object->ref), "confirm_reset", '', '', 2);
-		}
-		// Confirm delete
+		} // Confirm delete
 		elseif ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(!empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''), $langs->trans("DeleteAMailing"), $langs->trans("ConfirmDeleteMailing"), "confirm_delete", '', '', 1);

@@ -86,8 +86,7 @@ function dol_setcache($memoryid, $data)
 		} else {
 			return -1;
 		}
-	}
-	// Using shmop
+	} // Using shmop
 	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
 		$result = dol_setshmop($memoryid, $data);
@@ -153,8 +152,7 @@ function dol_getcache($memoryid)
 		} else {
 			return -1;
 		}
-	}
-	// Using shmop
+	} // Using shmop
 	elseif (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x02))
 	{
 		$data = dol_getshmop($memoryid);

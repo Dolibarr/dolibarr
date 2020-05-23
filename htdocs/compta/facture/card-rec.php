@@ -275,18 +275,15 @@ if (empty($reshook))
 	if ($action == 'setconditions' && $user->rights->facture->creer)
 	{
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	}
-	// Set mode
+	} // Set mode
 	elseif ($action == 'setmode' && $user->rights->facture->creer)
 	{
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
-	}
-	// Set project
+	} // Set project
 	elseif ($action == 'classin' && $user->rights->facture->creer)
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
-	}
-	// Set bank account
+	} // Set bank account
 	elseif ($action == 'setref' && $user->rights->facture->creer)
 	{
 		//var_dump(GETPOST('ref', 'alpha'));exit;
@@ -297,45 +294,36 @@ if (empty($reshook))
 			$object->title = GETPOST('ref', 'alpha');
 			$object->ref = $object->title;
 		} else dol_print_error($db, $object->error, $object->errors);
-	}
-	// Set bank account
+	} // Set bank account
 	elseif ($action == 'setbankaccount' && $user->rights->facture->creer)
 	{
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
-	}
-	// Set frequency and unit frequency
+	} // Set frequency and unit frequency
 	elseif ($action == 'setfrequency' && $user->rights->facture->creer)
 	{
 		$object->setFrequencyAndUnit(GETPOST('frequency', 'int'), GETPOST('unit_frequency', 'alpha'));
-	}
-	// Set next date of execution
+	} // Set next date of execution
 	elseif ($action == 'setdate_when' && $user->rights->facture->creer)
 	{
 		$date = dol_mktime(GETPOST('date_whenhour'), GETPOST('date_whenmin'), 0, GETPOST('date_whenmonth'), GETPOST('date_whenday'), GETPOST('date_whenyear'));
 		if (!empty($date)) $object->setNextDate($date);
-	}
-	// Set max period
+	} // Set max period
 	elseif ($action == 'setnb_gen_max' && $user->rights->facture->creer)
 	{
 		$object->setMaxPeriod(GETPOST('nb_gen_max', 'int'));
-	}
-	// Set auto validate
+	} // Set auto validate
 	elseif ($action == 'setauto_validate' && $user->rights->facture->creer)
 	{
 		$object->setAutoValidate(GETPOST('auto_validate', 'int'));
-    }
-    // Set generate pdf
+    } // Set generate pdf
 	elseif ($action == 'setgenerate_pdf' && $user->rights->facture->creer)
 	{
 		$object->setGeneratepdf(GETPOST('generate_pdf', 'int'));
-	}
-    // Set model pdf
+	} // Set model pdf
 	elseif ($action == 'setmodelpdf' && $user->rights->facture->creer)
 	{
 		$object->setModelpdf(GETPOST('modelpdf', 'alpha'));
-	}
-
-	// Set status disabled
+	} // Set status disabled
 	elseif ($action == 'disable' && $user->rights->facture->creer)
 	{
 		$db->begin();
@@ -355,9 +343,7 @@ if (empty($reshook))
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	// Set status enabled
+	} // Set status enabled
 	elseif ($action == 'enable' && $user->rights->facture->creer)
 	{
 		$db->begin();
@@ -377,13 +363,10 @@ if (empty($reshook))
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	// Multicurrency Code
+	} // Multicurrency Code
 	elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
-	}
-
-	// Multicurrency rate
+	} // Multicurrency rate
 	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')), GETPOST('calculation_mode', 'int'));
 	}
@@ -554,8 +537,7 @@ if (empty($reshook))
 				{
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-				}
-				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				} // On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
 				elseif ($tmpvat != $tmpprodvat)
 				{

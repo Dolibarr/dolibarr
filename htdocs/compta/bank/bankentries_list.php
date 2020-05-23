@@ -1020,8 +1020,7 @@ if ($resql)
                 	if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
                 	{
                 		$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
-                	}
-                	// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
+                	} // If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
                 	else {
                 		$balance = $objforbalance->previoustotal;
                 	}

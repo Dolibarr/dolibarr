@@ -497,8 +497,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			if ($user->socid > 0)
 			{
 				if ($user->socid <> $objectid) return false;
-			}
-			// If internal user: Check permission for internal users that are restricted on their objects
+			} // If internal user: Check permission for internal users that are restricted on their objects
 			elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir))
 			{
 				$sql = "SELECT COUNT(sc.fk_soc) as nb";
@@ -508,8 +507,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " AND sc.fk_user = ".$user->id;
 				$sql .= " AND sc.fk_soc = s.rowid";
 				$sql .= " AND s.entity IN (".getEntity($sharedelement, 1).")";
-			}
-			// If multicompany and internal users with all permissions, check user is in correct entity
+			} // If multicompany and internal users with all permissions, check user is in correct entity
 			elseif (!empty($conf->multicompany->enabled))
 			{
 				$sql = "SELECT COUNT(s.rowid) as nb";
@@ -526,8 +524,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql .= " AND dbt.fk_soc = ".$user->socid;
-			}
-			// If internal user: Check permission for internal users that are restricted on their objects
+			} // If internal user: Check permission for internal users that are restricted on their objects
 			elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir))
 			{
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -536,8 +533,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql .= " AND (dbt.fk_soc IS NULL OR sc.fk_soc IS NOT NULL)"; // Contact not linked to a company or to a company of user
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
-			}
-			// If multicompany and internal users with all permissions, check user is in correct entity
+			} // If multicompany and internal users with all permissions, check user is in correct entity
 			elseif (!empty($conf->multicompany->enabled))
 			{
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
@@ -588,8 +584,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql .= " WHERE dbt.rowid IN (".$objectid.")";
 				$sql .= " AND dbt.".$dbt_keyfield." = ".$user->socid;
-			}
-			// If internal user: Check permission for internal users that are restricted on their objects
+			} // If internal user: Check permission for internal users that are restricted on their objects
 			elseif (!empty($conf->societe->enabled) && ($user->rights->societe->lire && !$user->rights->societe->client->voir))
 			{
 				if (empty($dbt_keyfield)) dol_print_error('', 'Param dbt_keyfield is required but not defined');
@@ -602,8 +597,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql .= " AND dbt.".$dbt_keyfield." = s.rowid";
 				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				$sql .= " AND sc.fk_user = ".$user->id;
-			}
-			// If multicompany and internal users with all permissions, check user is in correct entity
+			} // If multicompany and internal users with all permissions, check user is in correct entity
 			elseif (!empty($conf->multicompany->enabled))
 			{
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";

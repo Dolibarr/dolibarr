@@ -52,8 +52,7 @@ $type = 'propal';
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $error = 0;
-if ($action == 'updateMask')
-{
+if ($action == 'updateMask') {
 	$maskconstpropal = GETPOST('maskconstpropal', 'alpha');
 	$maskpropal = GETPOST('maskpropal', 'alpha');
 	if ($maskconstpropal) $res = dolibarr_set_const($db, $maskconstpropal, $maskpropal, 'chaine', 0, '', $conf->entity);
@@ -66,8 +65,7 @@ if ($action == 'updateMask')
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'specimen')
-{
+} elseif ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
 
 	$propal = new Propal($db);
@@ -87,8 +85,7 @@ if ($action == 'updateMask')
 		}
 	}
 
-	if ($filefound)
-	{
+	if ($filefound) {
 		require_once $file;
 
 		$module = new $classname($db);
@@ -105,8 +102,7 @@ if ($action == 'updateMask')
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
-} elseif ($action == 'setribchq')
-{
+} elseif ($action == 'setribchq') {
 	$rib = GETPOST('rib', 'alpha');
 	$chq = GETPOST('chq', 'alpha');
 
@@ -121,8 +117,7 @@ if ($action == 'updateMask')
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_PROPALE_DRAFT_WATERMARK')
-{
+} elseif ($action == 'set_PROPALE_DRAFT_WATERMARK') {
 	$draft = GETPOST('PROPALE_DRAFT_WATERMARK', 'alpha');
 
 	$res = dolibarr_set_const($db, "PROPALE_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
@@ -134,8 +129,7 @@ if ($action == 'updateMask')
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_PROPOSAL_FREE_TEXT')
-{
+} elseif ($action == 'set_PROPOSAL_FREE_TEXT') {
 	$freetext = GETPOST('PROPOSAL_FREE_TEXT', 'none'); // No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "PROPOSAL_FREE_TEXT", $freetext, 'chaine', 0, '', $conf->entity);
@@ -148,8 +142,7 @@ if ($action == 'updateMask')
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'setdefaultduration')
-{
+} elseif ($action == 'setdefaultduration') {
 	$res = dolibarr_set_const($db, "PROPALE_VALIDITY_DURATION", $value, 'chaine', 0, '', $conf->entity);
 
 	if (!$res > 0) $error++;
@@ -160,45 +153,35 @@ if ($action == 'updateMask')
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-} elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL')
-{
+} elseif ($action == 'set_BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL') {
     $res = dolibarr_set_const($db, "BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL", $value, 'chaine', 0, '', $conf->entity);
 
     if (!$res > 0) $error++;
 
-    if (!$error)
-    {
+    if (!$error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-// Activate a model
-elseif ($action == 'set')
-{
+} elseif ($action == 'set') {
+	// Activate a model
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-} elseif ($action == 'del')
-{
+} elseif ($action == 'del') {
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
         if ($conf->global->PROPALE_ADDON_PDF == "$value") dolibarr_del_const($db, 'PROPALE_ADDON_PDF', $conf->entity);
 	}
-} elseif ($action == 'setdoc')
-{
-    if (dolibarr_set_const($db, "PROPALE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
-	{
+} elseif ($action == 'setdoc') {
+    if (dolibarr_set_const($db, "PROPALE_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity)) {
 		$conf->global->PROPALE_ADDON_PDF = $value;
 	}
 
 	// On active le modele
 	$ret = delDocumentModel($value, $type);
-	if ($ret > 0)
-	{
+	if ($ret > 0) {
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-} elseif ($action == 'setmod')
-{
+} elseif ($action == 'setmod') {
 	// TODO Verifier si module numerotation choisi peut etre active
 	// par appel methode canBeActivated
 

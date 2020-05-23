@@ -700,8 +700,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 				}
 		    }
 		}
-	}
-	/* Use this list to have for all users */
+	} /* Use this list to have for all users */
 	else {
 		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";

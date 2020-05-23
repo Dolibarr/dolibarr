@@ -1603,9 +1603,8 @@ class Product extends CommonObject
 				if (isset($this->multiprices_recuperableonly[$thirdparty_buyer->price_level])) $tva_npr = $this->multiprices_recuperableonly[$thirdparty_buyer->price_level];
 				if (empty($tva_tx)) $tva_npr = 0;
 			}
-		}
-		// If price per customer
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+		} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
+			// If price per customer
 			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
 			$prodcustprice = new Productcustomerprice($db);
@@ -1624,14 +1623,12 @@ class Product extends CommonObject
 					if (empty($tva_tx)) $tva_npr = 0;
 				}
 			}
-		}
-		// If price per quantity
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
-			if ($this->prices_by_qty[0])	// yes, this product has some prices per quantity
-			{
+		} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) {
+			// If price per quantity
+			if ($this->prices_by_qty[0]) {
+				// yes, this product has some prices per quantity
 				// Search price into product_price_by_qty from $this->id
-				foreach ($this->prices_by_qty_list[0] as $priceforthequantityarray)
-				{
+				foreach ($this->prices_by_qty_list[0] as $priceforthequantityarray) {
 					if ($priceforthequantityarray['rowid'] != $pqp) continue;
 					// We found the price
 					if ($priceforthequantityarray['price_base_type'] == 'HT')
@@ -1643,11 +1640,10 @@ class Product extends CommonObject
 					break;
 				}
 			}
-		}
-		// If price per quantity and customer
-		elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
-			if ($this->prices_by_qty[$thirdparty_buyer->price_level]) // yes, this product has some prices per quantity
-			{
+		} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) {
+			// If price per quantity and customer
+			if ($this->prices_by_qty[$thirdparty_buyer->price_level]) {
+				// yes, this product has some prices per quantity
 				// Search price into product_price_by_qty from $this->id
 				foreach ($this->prices_by_qty_list[$thirdparty_buyer->price_level] as $priceforthequantityarray)
 				{
@@ -3777,9 +3773,8 @@ class Product extends CommonObject
                     $this->error = $this->db->lasterror();
                     return -1;
                 }
-            }
-            // If the supplier price already exists for this product and quantity
-            else {
+            } else {
+                 // If the supplier price already exists for this product and quantity
                 $this->product_fourn_price_id = $obj->rowid;
                 return 0;
             }

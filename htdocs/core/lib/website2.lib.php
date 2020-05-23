@@ -267,8 +267,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 		}
-	}
-	else {
+	} else {
 		$result1 = true;
 	}
 
