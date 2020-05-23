@@ -694,14 +694,13 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		    {
 			    $event->fetch_userassigned();
 				$listofuserid = $event->userassigned;
-				foreach ($listofuserid as $userid => $tmp)
-				{
+				foreach ($listofuserid as $userid => $tmp) {
 				   	if (!in_array($userid, $usernamesid)) $usernamesid[$userid] = $userid;
 				}
 		    }
 		}
-	} /* Use this list to have for all users */
-	else {
+	} else {
+		/* Use this list to have for all users */
 		$sql = "SELECT u.rowid, u.lastname as lastname, u.firstname, u.statut, u.login, u.admin, u.entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 		if ($usergroup > 0)	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug ON u.rowid = ug.fk_user";
@@ -709,8 +708,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 		if ($usergroup > 0)	$sql .= " AND ug.fk_usergroup = ".$usergroup;
 		//print $sql;
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 		    $num = $db->num_rows($resql);
 		    $i = 0;
 		    if ($num)

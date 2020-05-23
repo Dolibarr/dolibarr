@@ -1124,22 +1124,18 @@ if (empty($action) || $action == 'show_month')      // View by month
 
     // In loops, tmpday contains day nb in current month (can be zero or negative for days of previous month)
     //var_dump($eventarray);
-    for ($iter_week = 0; $iter_week < 6; $iter_week++)
-    {
+    for ($iter_week = 0; $iter_week < 6; $iter_week++) {
         echo " <tr>\n";
-        for ($iter_day = 0; $iter_day < 7; $iter_day++)
-        {
-        	/* Show days before the beginning of the current month (previous month)  */
-            if ($tmpday <= 0)
-            {
+        for ($iter_day = 0; $iter_day < 7; $iter_day++) {
+            if ($tmpday <= 0) {
+                /* Show days before the beginning of the current month (previous month)  */
                 $style = 'cal_other_month cal_past';
-        		if ($iter_day == 6) $style .= ' cal_other_month_right';
+                if ($iter_day == 6) $style .= ' cal_other_month_right';
                 echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $max_day_in_prev_month + $tmpday, $prev_month, $prev_year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
-            } /* Show days of the current month */
-            elseif ($tmpday <= $max_day_in_month)
-            {
+            } elseif ($tmpday <= $max_day_in_month) {
+                /* Show days of the current month */
                 $curtime = dol_mktime(0, 0, 0, $month, $tmpday, $year);
                 $style = 'cal_current_month';
                 if ($iter_day == 6) $style .= ' cal_current_month_right';
@@ -1151,8 +1147,8 @@ if (empty($action) || $action == 'show_month')      // View by month
                 echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
                 show_day_events($db, $tmpday, $month, $year, $month, $style, $eventarray, $maxprint, $maxnbofchar, $newparam);
                 echo "  </td>\n";
-            } /* Show days after the current month (next month) */
-            else {
+            } else {
+                /* Show days after the current month (next month) */
                 $style = 'cal_other_month';
                 if ($iter_day == 6) $style .= ' cal_other_month_right';
                 echo '  <td class="'.$style.' nowrap" width="14%" valign="top">';
@@ -1169,8 +1165,8 @@ if (empty($action) || $action == 'show_month')      // View by month
 	print '<input type="hidden" name="actionmove" value="mupdate">';
 	print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']).'">';
 	print '<input type="hidden" name="newdate" id="newdate">';
-} elseif ($action == 'show_week') // View by week
-{
+} elseif ($action == 'show_week') {
+    // View by week
     $newparam = $param; // newparam is for birthday links
     $newparam = preg_replace('/showbirthday=/i', 'showbirthday_=', $newparam); // To avoid replacement when replace day= is done
     $newparam = preg_replace('/action=show_month&?/i', '', $newparam);
@@ -1186,8 +1182,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
     print ' <tr class="liste_titre">';
     $i = 0;
-    while ($i < 7)
-    {
+    while ($i < 7) {
         echo '  <td align="center">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
         $i++;
     }
@@ -1195,8 +1190,7 @@ if (empty($action) || $action == 'show_month')      // View by month
 
     echo " <tr>\n";
 
-    for ($iter_day = 0; $iter_day < 7; $iter_day++)
-    {
+    for ($iter_day = 0; $iter_day < 7; $iter_day++) {
         // Show days of the current week
 		$curtime = dol_time_plus_duree($firstdaytoshow, $iter_day, 'd');
 		$tmparray = dol_getdate($curtime, true);
