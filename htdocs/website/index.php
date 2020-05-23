@@ -2978,6 +2978,14 @@ if ($action == 'editcss')
 
 	print '</td></tr>';
 
+	// RSS
+	print '<tr><td class="tdtop">';
+	$htmlhelp = $langs->trans('RSSFeedDesc');
+	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
+	print '</td><td>';
+	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
+	print '</td></tr>';
+
 	print '</table>';
 
 	dol_fiche_end();
