@@ -1996,8 +1996,7 @@ class ActionComm extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
