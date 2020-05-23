@@ -713,7 +713,7 @@ if ($resql)
 		if (!empty($arrayfields['e.date_delivery']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_livraison), "day");
+			print dol_print_date($db->jdate($obj->date_livraison), "dayhour");
 			/*$now = time();
     		if ( ($now - $db->jdate($obj->date_expedition)) > $conf->warnings->lim && $obj->statutid == 1 )
     		{
