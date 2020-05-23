@@ -76,7 +76,7 @@ $search_no_email = GETPOST("search_no_email", 'int');
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
-			$search_[$key] = GETPOST("search_".$key, 'alpha');
+			$search_{$key} = GETPOST("search_".$key, 'alpha');
 		}
 	}
 }
@@ -253,7 +253,7 @@ if (empty($reshook))
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
 				if ($value['active']) {
-					$search_[$key] = "";
+					$search_{$key} = "";
 				}
 			}
 		}
@@ -358,7 +358,7 @@ if (strlen($search_fax))            $sql .= natural_search('p.fax', $search_fax)
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_[$key])) {
-			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_[$key].'%\'';
+			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
 		}
 	}
 }
