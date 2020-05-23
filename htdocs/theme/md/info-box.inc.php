@@ -34,7 +34,7 @@ if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'backgro
 .bg-infobox-bank_account{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infobox-adherent{
+.bg-infobox-adherent, .bg-infobox-member{
 	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infobox-expensereport{
@@ -258,7 +258,7 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 .bg-infobox-bank_account i.fa{
 	color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
-.bg-infobox-adherent i.fa{
+.bg-infobox-adherent i.fa, .bg-infobox-member i.fa{
 	color: <?php print colorAgressiveness('#f39c12', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
 }
 .bg-infobox-expensereport i.fa{
