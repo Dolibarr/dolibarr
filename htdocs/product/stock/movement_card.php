@@ -975,7 +975,6 @@ if ($resql)
         $productlot->sellby = $objp->sellby;
 
         $warehousestatic->id = $objp->entrepot_id;
-        $warehousestatic->libelle = $objp->warehouse_ref; // deprecated
         $warehousestatic->label = $objp->warehouse_ref;
         $warehousestatic->lieu = $objp->lieu;
 

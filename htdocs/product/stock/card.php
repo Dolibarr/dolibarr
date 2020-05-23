@@ -97,7 +97,7 @@ if (empty($reshook))
 	{
 		$object->ref         = GETPOST("ref");
 		$object->fk_parent   = GETPOST("fk_parent");
-		$object->libelle     = GETPOST("libelle");
+		$object->label = GETPOST("libelle");
 		$object->description = GETPOST("desc");
 		$object->statut      = GETPOST("statut");
 		$object->lieu        = GETPOST("lieu");
@@ -108,8 +108,7 @@ if (empty($reshook))
 		$object->phone = GETPOST("phone");
 		$object->fax = GETPOST("fax");
 
-		if (!empty($object->libelle))
-		{
+		if (!empty($object->label)) {
 	        // Fill array 'array_options' with data from add form
 	        $ret = $extrafields->setOptionalsFromPost(null, $object);
 	        if ($ret < 0) {
@@ -167,7 +166,7 @@ if (empty($reshook))
 	{
 		if ($object->fetch($id))
 		{
-			$object->libelle     = GETPOST("libelle");
+			$object->label = GETPOST("libelle");
 			$object->fk_parent   = GETPOST("fk_parent");
 			$object->description = GETPOST("desc");
 			$object->statut      = GETPOST("statut");
