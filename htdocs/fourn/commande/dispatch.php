@@ -711,7 +711,6 @@ if ($id > 0 || !empty($ref)) {
 			$i = 0;
 
 			if ($num) {
-
 				print '<tr class="liste_titre">';
 
 				print '<td>'.$langs->trans("Description").'</td>';
