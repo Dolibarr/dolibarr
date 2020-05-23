@@ -324,7 +324,7 @@ if (empty($user->societe_id))
 	            	include_once $includes[$key];	// Loading a class cost around 1Mb
 
 	                $board=new $classe($db);
-	                $board->load_state_board($user);
+	                $board->load_state_board();
 	                $boardloaded[$classe]=$board;
 	            }
 	            else

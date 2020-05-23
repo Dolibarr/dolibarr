@@ -2182,12 +2182,20 @@ class Holiday extends CommonObject
     public function load_state_board()
     {
         // phpcs:enable
+		global $user;
+
         $this->nb=array();
 
         $sql = "SELECT count(h.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as h";
         $sql.= " WHERE h.statut > 1";
         $sql.= " AND h.entity IN (".getEntity('holiday').")";
+		if(!$user->rights->expensereport->read_all)
+		{
+			$userchildids = $user->getAllChildIds(1);
+			$sql.= " AND (h.fk_user IN (".join(',', $userchildids).")";
+			$sql.= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+		}
 
         $resql=$this->db->query($sql);
         if ($resql) {
@@ -2221,14 +2229,16 @@ class Holiday extends CommonObject
 
         $now=dol_now();
 
-        $userchildids = $user->getAllChildIds(1);
-
         $sql = "SELECT h.rowid, h.date_debut";
         $sql.= " FROM ".MAIN_DB_PREFIX."holiday as h";
         $sql.= " WHERE h.statut = 2";
         $sql.= " AND h.entity IN (".getEntity('holiday').")";
-        $sql.= " AND (h.fk_user IN (".join(',', $userchildids).")";
-        $sql.= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+		if(!$user->rights->expensereport->read_all)
+		{
+			$userchildids = $user->getAllChildIds(1);
+			$sql.= " AND (h.fk_user IN (".join(',', $userchildids).")";
+			$sql.= " OR h.fk_validator IN (".join(',', $userchildids)."))";
+		}
 
         $resql=$this->db->query($sql);
         if ($resql)
