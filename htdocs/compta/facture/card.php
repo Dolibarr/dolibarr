@@ -1025,7 +1025,7 @@ if (empty($reshook))
 		// Replacement invoice
 		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
 		{
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1086,7 +1086,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1269,7 +1269,7 @@ if (empty($reshook))
 		// Standard invoice or Deposit invoice, created from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0)
 		{
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1320,7 +1320,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1745,7 +1745,7 @@ if (empty($reshook))
 		// Situation invoices
 		if (GETPOST('type') == Facture::TYPE_SITUATION && (!empty($_POST['situations'])))
 		{
-			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($datefacture)) {
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date"));
@@ -2905,6 +2905,18 @@ if ($action == 'create')
 		$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
+	}
+
+	// when payment condition is empty (means not override by payment condition form a other object, like third-party), try to use default value
+	if(empty($cond_reglement_id))
+	{
+		$cond_reglement_id = GETPOST("cond_reglement_id");
+	}
+
+	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if(empty($mode_reglement_id))
+	{
+		$mode_reglement_id = GETPOST("mode_reglement_id");
 	}
 
 	if (!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();

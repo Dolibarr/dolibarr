@@ -458,7 +458,17 @@ if ($conf->use_javascript_ajax) {
 }
 print "</td>\n";
 print "</tr>\n";
-
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AlwaysShowFullArbo").'</td>';
+print '<td class="right">';
+if ($conf->use_javascript_ajax) {
+    print ajax_constantonoff('STOCK_ALWAYS_SHOW_FULL_ARBO');
+} else {
+    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+    print $form->selectarray("STOCK_ALWAYS_SHOW_FULL_ARBO", $arrval, $conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO);
+}
+print "</td>\n";
+print "</tr>\n";
 print '</table>';
 
 /*

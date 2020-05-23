@@ -197,6 +197,7 @@ $fileindex = $pathofwebsite.'/index.php';
 $filewrapper = $pathofwebsite.'/wrapper.php';
 $filemanifestjson = $pathofwebsite.'/manifest.json.php';
 $filereadme = $pathofwebsite.'/README.md';
+$filemaster = $pathofwebsite.'/master.inc.php';
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -1189,8 +1190,6 @@ if ($action == 'updatecss')
 		if (!$error)
 		{
     		// Save master.inc.php file
-    		$filemaster = $pathofwebsite.'/master.inc.php';
-
     		dol_syslog("Save master file ".$filemaster);
 
     		dol_mkdir($pathofwebsite);
@@ -1382,6 +1381,10 @@ if ($action == 'updatecss')
        			$error++;
        			setEventMessages('Failed to write file '.$filereadme, null, 'errors');
        		}
+
+
+       		// Save wrapper.php
+			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
 
 
     		// Message if no error
@@ -1727,8 +1730,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			}
 			else
 			{
-				$fileindex = $pathofwebsitenew.'/index.php';
 				$filetpl = $pathofwebsitenew.'/page'.$resultpage->id.'.tpl.php';
+				$fileindex = $pathofwebsitenew.'/index.php';
 				$filewrapper = $pathofwebsitenew.'/wrapper.php';
 
 				//var_dump($pathofwebsitenew);
@@ -2270,6 +2273,11 @@ if (!GETPOST('hide_websitemenu'))
 		*/
 
 		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
+
+		if (! empty($conf->categorie->enabled)) {
+			print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
+		}
+
 		if (! empty($conf->global->WEBSITE_ADD_REGENERATE_BUTTON)) {
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
 		}
@@ -2977,6 +2985,14 @@ if ($action == 'editcss')
 
 	print '</td></tr>';
 
+	// RSS
+	print '<tr><td class="tdtop">';
+	$htmlhelp = $langs->trans('RSSFeedDesc');
+	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
+	print '</td><td>';
+	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
+	print '</td></tr>';
+
 	print '</table>';
 
 	dol_fiche_end();
@@ -3629,6 +3645,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
 
@@ -3651,6 +3668,24 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
 
+					// Edit properties
+					print '<td>';
+					$param = '?action=replacesiteconfirm';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent');
+					$param .= '&optionmeta='.GETPOST('optionmeta');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
+					$param .= '&searchstring='.$searchkey;
+					$disabled = '';
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					if (empty($user->rights->website->write)) {
+						$disabled = ' disabled';
+						$urltoedithtmlsource = '';
+					}
+					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
+					print '</td>';
+
+					// Edit HTML source
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;

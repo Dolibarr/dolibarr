@@ -74,6 +74,8 @@ delete from llx_const where name = 'PROJECT_HIDE_TASKS' and entity = 0;
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
 -- VPGSQL8.2 DROP INDEX ix_fk_product_stock
 
+ALTER TABLE llx_actioncomm DROP COLUMN punctual;
+
 DELETE FROM llx_menu where module='supplier_proposal';
 
 UPDATE llx_website SET lang = 'en' WHERE lang like 'en_%';
@@ -250,6 +252,7 @@ ALTER TABLE llx_blockedlog ADD COLUMN object_version varchar(32) DEFAULT '';
 
 ALTER TABLE llx_product_lot MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_expeditiondet_batch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
