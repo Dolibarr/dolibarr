@@ -2979,15 +2979,10 @@ if ($action == 'editcss')
 
 	// RSS
 	print '<tr><td class="tdtop">';
-	//$htmlhelp = $langs->trans("Example").' :<br>';
-	//$htmlhelp .= dol_htmlentitiesbr($manifestjsoncontentdefault);
-	$htmlhelp = '';
-	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, 'rsstooltip');
+	$htmlhelp = $langs->trans('RSSFeedDesc');
+	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
 	print '</td><td>';
-	//print $langs->trans("RSS").': '.$form->selectyesno('WEBSITE_ENBALE_RSS', $website->use_rss, 1).'<br>';
-	//$doleditor = new DolEditor('WEBSITE_ENBALE_RSS', $manifestjsoncontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
-	//print $doleditor->Create(1, '', true, $langs->trans("File").' manifest.json', 'text');
-	print '/wrapper.php?rss=1[&l=XX]';
+	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
 	print '</td></tr>';
 
 	print '</table>';
