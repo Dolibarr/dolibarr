@@ -448,15 +448,15 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		{
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $lowercase{random_int(0, $max)};
+				$randomCode .= $lowercase[random_int(0, $max)];
 			}
 			$max = strlen($uppercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $uppercase{random_int(0, $max)};
+				$randomCode .= $uppercase[random_int(0, $max)];
 			}
 			$max = strlen($numbers) - 1;
 			for ($x = 0; $x < $nbofcharlast; $x++) {
-				$randomCode .= $numbers{random_int(0, $max)};
+				$randomCode .= $numbers[random_int(0, $max)];
 			}
 
 			$generated_password = str_shuffle($randomCode);
@@ -464,15 +464,15 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		{
 			$max = strlen($lowercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $lowercase{mt_rand(0, $max)};
+				$randomCode .= $lowercase[mt_rand(0, $max)];
 			}
 			$max = strlen($uppercase) - 1;
 			for ($x = 0; $x < $nbofchar; $x++) {
-				$randomCode .= $uppercase{mt_rand(0, $max)};
+				$randomCode .= $uppercase[mt_rand(0, $max)];
 			}
 			$max = strlen($numbers) - 1;
 			for ($x = 0; $x < $nbofcharlast; $x++) {
-				$randomCode .= $numbers{mt_rand(0, $max)};
+				$randomCode .= $numbers[mt_rand(0, $max)];
 			}
 
 			$generated_password = str_shuffle($randomCode);
@@ -495,9 +495,9 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		$max = strlen($numbers) - 1;
 		if (function_exists('random_int'))	// Cryptographic random
 		{
-			$generated_password = str_replace($replaceambiguouschars, $numbers{random_int(0, $max)}, $generated_password);
+			$generated_password = str_replace($replaceambiguouschars, $numbers[random_int(0, $max)], $generated_password);
 		} else {
-			$generated_password = str_replace($replaceambiguouschars, $numbers{mt_rand(0, $max)}, $generated_password);
+			$generated_password = str_replace($replaceambiguouschars, $numbers[mt_rand(0, $max)], $generated_password);
 		}
 	}
 

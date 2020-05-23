@@ -204,7 +204,7 @@ class AccountingAccountTest extends PHPUnit\Framework\TestCase
         $localobject->label='New label';
         $result=$localobject->update($user);
 
-        print __METHOD__." id=".$id." result=".$result."\n";
+        print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 
         return $localobject->id;

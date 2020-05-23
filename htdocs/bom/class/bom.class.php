@@ -997,11 +997,20 @@ class BOM extends CommonObject
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
 
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$productFournisseur = new ProductFournisseur($this->db);
+
 		foreach ($this->lines as &$line) {
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($line->fk_product);
+			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+			if (empty($line->unit_cost)) {
+				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)
+				{
+					$line->unit_cost = $productFournisseur->fourn_unitprice;
+				}
+			}
 
-			$line->unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp; // TODO : add option to work with cost_price or pmp
 			$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
 			$this->total_cost += $line->total_cost;
 		}

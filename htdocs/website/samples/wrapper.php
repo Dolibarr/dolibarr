@@ -12,6 +12,8 @@ $hashp = GETPOST('hashp', 'aZ09');
 $modulepart = GETPOST('modulepart', 'aZ09');
 $entity = GETPOST('entity', 'int') ?GETPOST('entity', 'int') : $conf->entity;
 $original_file = GETPOST("file", "alpha");
+$l = GETPOST('l', 'aZ09');
+$limit = GETPOST('limit', 'int');
 
 // Parameters for RSS
 $rss = GETPOST('rss', 'aZ09');
@@ -87,8 +89,8 @@ if ($rss) {
 	$type = '';
 	$cachedelay = 0;
 	$filename = $original_file;
-	$filters = array('type_container'=>'blogpost', 'lang'=>'en_US');
 	$dir_temp = $conf->website->dir_temp;
+
 	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 	$website = new Website($db);
@@ -96,7 +98,10 @@ if ($rss) {
 
 	$website->fetch('', $websitekey);
 
-	$MAXNEWS = 20;
+	$filters = array('type_container'=>'blogpost');
+	if ($l) $filters['lang'] = $l;
+
+	$MAXNEWS = ($limit ? $limit : 20);
 	$arrayofblogs = $websitepage->fetchAll($website->id, 'DESC', 'date_creation', $MAXNEWS, 0, $filters);
 	$eventarray = array();
 	if (is_array($arrayofblogs)) {
@@ -148,7 +153,7 @@ if ($rss) {
 		@chmod($outputfiletmp, octdec($conf->global->MAIN_UMASK));
 
 		// Write file
-		$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1');
+		$result = build_rssfile($format, $title, $desc, $eventarray, $outputfiletmp, '', $website->virtualhost.'/wrapper.php?rss=1'.($l ? '&l='.$l : ''), $l);
 
 		if ($result >= 0)
 		{
