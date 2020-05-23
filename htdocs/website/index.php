@@ -2273,7 +2273,11 @@ if (!GETPOST('hide_websitemenu'))
 		*/
 
 		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
-		print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
+
+		if (! empty($conf->categorie->enabled)) {
+			print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
+		}
+
 		if (! empty($conf->global->WEBSITE_ADD_REGENERATE_BUTTON)) {
 			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
 		}
