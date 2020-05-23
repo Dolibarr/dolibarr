@@ -1780,6 +1780,18 @@ if ($action == 'create')
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
+	// when payment condition is empty (means not override by payment condition form a other object, like third-party), try to use default value
+	if(empty($cond_reglement_id))
+	{
+		$cond_reglement_id = GETPOST("cond_reglement_id");
+	}
+
+	// when payment mode is empty (means not override by payment condition form a other object, like third-party), try to use default value
+	if(empty($mode_reglement_id))
+	{
+		$mode_reglement_id = GETPOST("mode_reglement_id");
+	}
+
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
