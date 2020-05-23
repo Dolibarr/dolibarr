@@ -591,6 +591,9 @@ div#moreinfo, div#infowarehouse {
 		height: calc(45% - 100px);
 	}
 
+	div#moreinfo, div#infowarehouse {
+	    padding: 0 5px 0 5px;
+	}
 
 	div.div1 {
 		padding-bottom: 0;

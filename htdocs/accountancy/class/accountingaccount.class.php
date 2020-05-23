@@ -553,24 +553,19 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Account deactivated
+	 * Deactivate an account (for status active or status reconcilable)
 	 *
 	 * @param  int  $id         Id
-     * @param  int  $mode       0=field active, 1=field active_customer_list, 2=field_active_supplier_list
+     * @param  int  $mode       0=field active, 1=field reconcilable
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    public function account_desactivate($id, $mode = 0)
+    public function accountDeactivate($id, $mode = 0)
     {
-        // phpcs:enable
 		$result = $this->checkUsage();
 
-        if ($mode == 0)
-        {
-            $fieldtouse = 'active';
-        }
-        elseif ($mode == 1)
+		$fieldtouse = 'active';
+        if ($mode == 1)
         {
 			$fieldtouse = 'reconcilable';
         }
@@ -582,7 +577,7 @@ class AccountingAccount extends CommonObject
 			$sql .= "SET ".$fieldtouse." = '0'";
 			$sql .= " WHERE rowid = ".$this->db->escape($id);
 
-			dol_syslog(get_class($this)."::account_desactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {

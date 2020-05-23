@@ -34,7 +34,7 @@ function payment_prepare_head(Paiement $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Payment");
 	$head[$h][2] = 'payment';
 	$h++;
 
@@ -69,7 +69,7 @@ function payment_supplier_prepare_head(Paiement $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Payment");
 	$head[$h][2] = 'payment';
 	$h++;
 

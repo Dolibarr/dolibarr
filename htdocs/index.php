@@ -80,7 +80,7 @@ llxHeader('', $title);
 $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
-print load_fiche_titre($langs->trans("HomeArea"), $resultboxes['selectboxlist'], 'home', 0, '', 'titleforhome');
+print load_fiche_titre('&nbsp;', $resultboxes['selectboxlist'], '', 0, '', 'titleforhome');
 
 if (!empty($conf->global->MAIN_MOTD))
 {
@@ -142,11 +142,11 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     		'orders',
     		'invoices',
     		'donations',
-    		'contracts',
-    		'interventions',
     		'supplier_proposals',
     		'supplier_orders',
     		'supplier_invoices',
+    		'contracts',
+    		'interventions',
     		'ticket'
     	);
 
@@ -689,7 +689,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                     }
                 }
 
-                $openedDashBoard .= '<div class="box-flex-item">'."\n";
+                $openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
                 $openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
                 $openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
                 $openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
@@ -736,6 +736,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
                 $openedDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
                 $openedDashBoard .= '	</div><!-- /.info-box -->'."\n";
+                $openedDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
                 $openedDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
                 $openedDashBoard .= "\n";
             }
@@ -754,7 +755,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
             }
             $text .= '. '.$langs->transnoentitiesnoconv("LateDesc");
 
-            $weatherDashBoard = '<div class="box-flex-item '.$appendClass.'">'."\n";
+            $weatherDashBoard = '<div class="box-flex-item '.$appendClass.'"><div class="box-flex-item-with-margin">'."\n";
             $weatherDashBoard .= '	<div class="info-box '.$openedDashBoardSize.' info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
             $weatherDashBoard .= '		<span class="info-box-icon">';
             $weatherDashBoard .= img_weather('', $weather->level, '', 0, 'valignmiddle width50');
@@ -778,6 +779,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
             $weatherDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
             $weatherDashBoard .= '	</div><!-- /.info-box -->'."\n";
+            $weatherDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
             $weatherDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
             $weatherDashBoard .= "\n";
 

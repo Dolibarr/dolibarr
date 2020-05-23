@@ -257,7 +257,7 @@ foreach ($cats as $cat) {
 $tabs = array(
     array(
         DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$rowid,
-        $langs->trans('Card')
+        $langs->trans('BankTransaction')
     ),
     array(
         DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$rowid,

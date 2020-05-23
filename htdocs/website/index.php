@@ -197,6 +197,7 @@ $fileindex = $pathofwebsite.'/index.php';
 $filewrapper = $pathofwebsite.'/wrapper.php';
 $filemanifestjson = $pathofwebsite.'/manifest.json.php';
 $filereadme = $pathofwebsite.'/README.md';
+$filemaster = $pathofwebsite.'/master.inc.php';
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -681,6 +682,7 @@ if ($action == 'addcontainer')
 				//$objectpage->htmlheader = preg_replace('/<meta name="msvalidate.01[^>]*>\n*/ims', '', $objectpage->htmlheader);
 				$objectpage->htmlheader = preg_replace('/<title>[^<]*<\/title>\n*/ims', '', $objectpage->htmlheader);
 				$objectpage->htmlheader = preg_replace('/<link[^>]*rel="shortcut[^>]*>\n/ims', '', $objectpage->htmlheader);
+				$objectpage->htmlheader = preg_replace('/<link[^>]*rel="alternate[^>]*>\n/ims', '', $objectpage->htmlheader);
 				$objectpage->htmlheader = preg_replace('/<link[^>]*rel="canonical[^>]*>\n/ims', '', $objectpage->htmlheader);
 
 				// Now loop to fetch JS
@@ -1155,7 +1157,8 @@ if ($action == 'updatecss')
 
 		if (GETPOSTISSET('virtualhost'))
 		{
-		    if (GETPOST('virtualhost', 'alpha') && !preg_match('/^http/', GETPOST('virtualhost', 'alpha')))
+			$tmpvirtualhost = preg_replace('/\/$/', '', GETPOST('virtualhost', 'alpha'));
+			if ($tmpvirtualhost && !preg_match('/^http/', $tmpvirtualhost))
     		{
     		    $error++;
     		    setEventMessages($langs->trans('ErrorURLMustStartWithHttp', $langs->transnoentitiesnoconv("VirtualHost")), null, 'errors');
@@ -1169,7 +1172,7 @@ if ($action == 'updatecss')
     				$arrayotherlang[$key] = substr(trim($val), 0, 2); // Kept short language code only
     			}
 
-    		    $object->virtualhost = GETPOST('virtualhost', 'alpha');
+    			$object->virtualhost = $tmpvirtualhost;
     		    $object->lang = GETPOST('WEBSITE_LANG', 'aZ09');
     		    $object->otherlang = join(',', $arrayotherlang);
     		    $object->use_manifest = GETPOST('use_manifest', 'alpha');
@@ -1187,8 +1190,6 @@ if ($action == 'updatecss')
 		if (!$error)
 		{
     		// Save master.inc.php file
-    		$filemaster = $pathofwebsite.'/master.inc.php';
-
     		dol_syslog("Save master file ".$filemaster);
 
     		dol_mkdir($pathofwebsite);
@@ -1380,6 +1381,10 @@ if ($action == 'updatecss')
        			$error++;
        			setEventMessages('Failed to write file '.$filereadme, null, 'errors');
        		}
+
+
+       		// Save wrapper.php
+			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
 
 
     		// Message if no error
@@ -1725,8 +1730,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			}
 			else
 			{
-				$fileindex = $pathofwebsitenew.'/index.php';
 				$filetpl = $pathofwebsitenew.'/page'.$resultpage->id.'.tpl.php';
+				$fileindex = $pathofwebsitenew.'/index.php';
 				$filewrapper = $pathofwebsitenew.'/wrapper.php';
 
 				//var_dump($pathofwebsitenew);
@@ -1944,7 +1949,23 @@ if ($action == 'exportsite')
 	else
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
-		$action = '';
+		$action = 'preview';
+	}
+}
+
+// Regenerate site
+if ($action == 'regeneratesite')
+{
+	$result = $object->rebuildWebSiteFiles();
+	if ($result > 0)
+	{
+		setEventMessages($langs->trans("PagesRegenerated"), null, 'mesgs');
+		$action = 'preview';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'preview';
 	}
 }
 
@@ -2207,17 +2228,24 @@ if (!GETPOST('hide_websitemenu'))
 
 		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditCss")).'" name="editcss">';
 
+		$importlabel = $langs->trans("ImportSite");
+		$exportlabel = $langs->trans("ExportSite");
+		if (! empty($conf->dol_optimize_smallscreen)) {
+			$importlabel = $langs->trans("Import");
+			$exportlabel = $langs->trans("Export");
+		}
+
 		if ($atleastonepage)
 		{
-			print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+			print '<input type="submit" class="button bordertransp" disabled="disabled" value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
 		}
 		else
 		{
-			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+			print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($importlabel).'" name="importsite">';
 		}
 
 		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
-		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($exportlabel).'" name="exportsite">';
 		print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 
 		print '<input type="submit" class="buttonDelete bordertransp" name="deletesite" value="'.$langs->trans("Delete").'"'.($atleastonepage ? ' disabled="disabled"' : '').'>';
@@ -2245,6 +2273,10 @@ if (!GETPOST('hide_websitemenu'))
 		*/
 
 		print '<a href="'.$_SERVER["PHP_SEFL"].'?action=replacesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("ReplaceWebsiteContent")).'"><span class="fa fa-search"><span></a>';
+		print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"><span></a>';
+		if (! empty($conf->global->WEBSITE_ADD_REGENERATE_BUTTON)) {
+			print '<a href="'.$_SERVER["PHP_SEFL"].'?action=regeneratesite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("RegenerateWebsiteContent")).'"><span class="fa fa-cogs"><span></a>';
+		}
 	}
 
 	print '</span>';
@@ -2261,7 +2293,7 @@ if (!GETPOST('hide_websitemenu'))
 
 		print '<span class="websiteinputurl valignmiddle" id="websiteinputurl">';
 		$linktotestonwebserver = '<a href="'.($virtualurl ? $virtualurl : '#').'" class="valignmiddle">';
-		$linktotestonwebserver .= $langs->trans("TestDeployOnWeb", $virtualurl).' '.img_picto('', 'globe');
+		$linktotestonwebserver .= '<span class="hideonsmartphone">'.$langs->trans("TestDeployOnWeb", $virtualurl).' </span>'.img_picto('', 'globe');
 		$linktotestonwebserver .= '</a>';
 		$htmltext = '';
 		if (empty($object->fk_default_home))
@@ -2949,6 +2981,14 @@ if ($action == 'editcss')
 
 	print '</td></tr>';
 
+	// RSS
+	print '<tr><td class="tdtop">';
+	$htmlhelp = $langs->trans('RSSFeedDesc');
+	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
+	print '</td><td>';
+	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
+	print '</td></tr>';
+
 	print '</table>';
 
 	dol_fiche_end();
@@ -3060,6 +3100,7 @@ if ($action == 'importsite')
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToImport").'</span><br><br>';
 
+	print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
 	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
 	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
 	print '<input type="submit" class="button" name="preview" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
@@ -3170,6 +3211,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthorid = $objectpage->fk_user_creat;
 		$pageusermodifid = $objectpage->fk_user_modif;
 		$pageauthoralias = $objectpage->author_alias;
+ 		$pagestatus = $objectpage->status;
 	}
 	else
 	{
@@ -3178,6 +3220,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthorid = $user->id;
 		$pageusermodifid = 0;
 		$pageauthoralias = '';
+		$pagestatus = 1;
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = GETPOST('WEBSITE_TITLE', 'alpha');
 	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
@@ -3186,7 +3229,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_IMAGE', 'alpha'))       $pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
 	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
-	if (GETPOST('htmlheader', 'none'))			$pagehtmlheader = GETPOST('htmlheader', 'none');
+	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
 
 	// Title
 	print '<tr><td class="fieldrequired">';
@@ -3380,6 +3423,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
+
+	if ($action != 'createcontainer')
+	{
+		print '<tr><td>';
+		print $langs->trans('Status');
+		print '</td><td>';
+		print ajax_object_onoff($objectpage, 'status', 'status', 'Enabled', 'Disabled');
+		//print dol_print_date($pagedatecreation, 'dayhour');
+		print '</td></tr>';
+	}
 
 	print '</table>';
 	if ($action == 'createcontainer')
@@ -3588,6 +3641,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
 
@@ -3610,6 +3664,24 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
 
+					// Edit properties
+					print '<td>';
+					$param = '?action=replacesiteconfirm';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent');
+					$param .= '&optionmeta='.GETPOST('optionmeta');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
+					$param .= '&searchstring='.$searchkey;
+					$disabled = '';
+					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
+					if (empty($user->rights->website->write)) {
+						$disabled = ' disabled';
+						$urltoedithtmlsource = '';
+					}
+					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
+					print '</td>';
+
+					// Edit HTML source
 					print '<td>';
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;

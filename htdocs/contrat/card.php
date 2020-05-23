@@ -1452,7 +1452,7 @@ else
 
 		print '<table class="border tableforfield" width="100%">';
 
-		// Ligne info remises tiers
+		// Line info of thirdparty discounts
 		print '<tr><td class="titlefield">'.$langs->trans('Discount').'</td><td colspan="3">';
 		if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount", $object->thirdparty->remise_percent);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -1501,8 +1501,6 @@ else
 			include DOL_DOCUMENT_ROOT.'/core/tpl/bloc_showhide.tpl.php';
 		}
 
-
-		$colorb = '666666';
 
 		$arrayothercontracts = $object->getListOfContracts('others');
 
@@ -1775,8 +1773,8 @@ else
 						print '<input id="buying_price" type="text" size="5" name="buying_price" value="'.price($objp->pa_ht, 0, '', 0).'"></td>';
 					}
 					print '<td class="center">';
-					print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
-					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+					print '<input type="submit" class="button margintoponly marginbottomonly" name="save" value="'.$langs->trans("Modify").'">';
+					print '<br><input type="submit" class="button margintoponly marginbottomonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					print '</tr>';
 

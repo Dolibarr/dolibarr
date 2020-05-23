@@ -8,7 +8,7 @@ CACHE MANIFEST
 # Files listed under CACHE will be ALWAYS cached after they are loaded.
 # And they will be always used from Cache after (even after refresh).
 CACHE:
-theme/dolibarr_logo.png
+theme/dolibarr_logo.svg
 support/
 support/index.php
 

@@ -161,7 +161,7 @@ if (empty($reshook))
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
             $mode = GETPOST('mode', 'int');
-    		$result = $accounting->account_desactivate($id, $mode);
+    		$result = $accounting->accountDeactivate($id, $mode);
     	}
 
     	$action = 'update';
@@ -267,7 +267,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $param = '';
+	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);

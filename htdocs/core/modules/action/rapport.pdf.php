@@ -255,7 +255,6 @@ class CommActionRapport
 				$eventstatic->id = $obj->id;
 				$eventstatic->percentage = $obj->percent;
 				$eventstatic->fulldayevent = $obj->fulldayevent;
-				$eventstatic->punctual = $obj->punctual;
 
 				$y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
 

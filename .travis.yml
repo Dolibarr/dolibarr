@@ -404,6 +404,10 @@ script:
   php upgrade.php 11.0.0 12.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade11001200.log
   php upgrade2.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-2.log
   php step5.php 11.0.0 12.0.0 > $TRAVIS_BUILD_DIR/upgrade11001200-3.log
+  php upgrade.php 12.0.0 13.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade12001300.log
+  php upgrade2.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-2.log
+  php step5.php 12.0.0 13.0.0 > $TRAVIS_BUILD_DIR/upgrade12001300-3.log
+
   # Enable modules not enabled into original dump
   php upgrade2.php 0.0.0 0.0.0 MAIN_MODULE_API,MAIN_MODULE_SUPPLIERPROPOSAL,MAIN_MODULE_WEBSITE,MAIN_MODULE_TICKETSUP,MAIN_MODULE_ACCOUNTING > $TRAVIS_BUILD_DIR/enablemodule.log
   echo $?

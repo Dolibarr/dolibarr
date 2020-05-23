@@ -3149,7 +3149,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         if (empty($srconly) && in_array($pictowithouttext, array(
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
         		'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
-        		'cash-register', 'check', 'close_title', 'company', 'contact', 'contract', 'cubes',
+        		'cash-register', 'category', 'check', 'close_title', 'company', 'contact', 'contract', 'cubes',
         		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
         		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
         		'intervention', 'label', 'language', 'list', 'listlight', 'lot',
@@ -3162,15 +3162,15 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'object_margin', 'object_money-bill-alt', 'object_multicurrency', 'object_order', 'object_payment',
         		'object_lot', 'object_mrp', 'object_payment', 'object_product', 'object_propal',
         		'object_other', 'object_paragraph', 'object_poll', 'object_printer', 'object_project', 'object_projectpub', 'object_propal', 'object_resource', 'object_rss', 'object_projecttask',
-        		'object_shipment', 'object_supplier_invoice', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
+        		'object_shipment', 'object_supplier_invoice', 'object_supplier_invoicea', 'object_supplier_invoiced', 'object_supplier_order', 'object_supplier_proposal', 'object_service', 'object_stock',
         		'object_technic', 'object_ticket', 'object_trip', 'object_user', 'object_group', 'object_member',
         		'object_phoning', 'object_phoning_mobile', 'object_phoning_fax', 'object_email', 'object_website',
         		'off', 'on', 'order',
         		'paiment', 'play', 'playdisabled', 'poll', 'printer', 'product', 'propal', 'projecttask', 'stock', 'resize', 'service', 'stats', 'trip',
-				'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'wrench',
+				'setup', 'sign-out', 'split', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'preview', 'project', 'projectpub', 'supplier_invoice', 'hrm', 'members', 'ticket', 'generic',
+				'home', 'companies', 'products', 'commercial', 'invoicing', 'pencil-ruler', 'preview', 'project', 'projectpub', 'supplier_invoice', 'hrm', 'members', 'ticket', 'generic',
         		'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
@@ -3178,7 +3178,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			$fakey = $pictowithouttext;
 			$facolor = ''; $fasize = '';
 			$fa = 'fas';
-			if (in_array($pictowithouttext, array('object_generic', 'note', 'off', 'on', 'object_bookmark', 'bookmark'))) {
+			if (in_array($pictowithouttext, array('object_generic', 'note', 'off', 'on', 'object_bookmark', 'bookmark', 'vcard'))) {
 				$fa = 'far';
 			}
 			if (in_array($pictowithouttext, array('skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp'))) {
@@ -3189,7 +3189,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		    $arrayconvpictotofa = array(
 		    	'account'=>'university', 'accountancy'=>'money-check-alt', 'action'=>'calendar-alt', 'address'=> 'address-book',
-		    	'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'billd'=>'file-medical', 'bom'=>'cubes',
+		    	'bank_account'=>'university', 'bill'=>'file-invoice-dollar', 'billa'=>'file-excel', 'supplier_invoicea'=>'file-excel', 'billd'=>'file-medical', 'supplier_invoiced'=>'file-medical', 'bom'=>'cubes',
 		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
@@ -3212,7 +3212,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'shipment'=>'dolly', 'stock'=>'box-open', 'stats' => 'chart-bar', 'split'=>'code-branch', 'supplier_invoice'=>'file-invoice-dollar', 'technic'=>'cogs', 'ticket'=>'ticket-alt',
 		    	'title_setup'=>'tools', 'title_accountancy'=>'money-check-alt', 'title_bank'=>'university', 'title_hrm'=>'umbrella-beach',
 		    	'title_agenda'=>'calendar-alt',
-		    	'uparrow'=>'mail-forward',
+		    	'uparrow'=>'mail-forward', 'vcard'=>'address-card',
 		    	'jabber'=>'comment-o',
 		    	'website'=>'globe-americas'
 		    );
@@ -3263,7 +3263,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			// Add CSS
 			$arrayconvpictotomorcess = array(
 				'action'=>'bg-infobox-action', 'account'=>'bg-infobox-bank_account', 'accountancy'=>'bg-infobox-bank_account',
-				'bank_account'=>'bg-infobox-bank_account', 'bill'=>'bg-infobox-commande', 'billa'=>'bg-infobox-commande', 'billd'=>'bg-infobox-commande',
+				'bank_account'=>'bg-infobox-bank_account',
+				'bill'=>'bg-infobox-commande', 'billa'=>'bg-infobox-commande', 'billd'=>'bg-infobox-commande',
 				'cash-register'=>'bg-infobox-bank_account', 'contract'=>'bg-infobox-contrat', 'check'=>'font-status4', 'conversation'=>'bg-infobox-contrat',
 				'donation'=>'bg-infobox-commande', 'dollyrevert'=>'flip', 'ecm'=>'bg-infobox-action',
 				'hrm'=>'bg-infobox-adherent', 'group'=>'bg-infobox-adherent', 'intervention'=>'bg-infobox-contrat',
@@ -3275,7 +3276,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'holiday'=>'bg-infobox-holiday', 'invoice'=>'bg-infobox-commande',
 				'payment'=>'bg-infobox-bank_account', 'poll'=>'bg-infobox-adherent', 'project'=>'bg-infobox-project', 'projecttask'=>'bg-infobox-project', 'propal'=>'bg-infobox-propal',
 				'resource'=>'bg-infobox-action',
-				'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
+				'supplier_invoice'=>'bg-infobox-order_supplier', 'supplier_invoicea'=>'bg-infobox-order_supplier', 'supplier_invoiced'=>'bg-infobox-order_supplier',
+				'supplier_order'=>'bg-infobox-order_supplier', 'supplier_proposal'=>'bg-infobox-supplier_proposal',
 				'ticket'=>'bg-infobox-contrat', 'title_accountancy'=>'bg-infobox-bank_account', 'title_hrm'=>'bg-infobox-holiday', 'trip'=>'bg-infobox-expensereport', 'title_agenda'=>'bg-infobox-action',
 				//'title_setup'=>'bg-infobox-action', 'tools'=>'bg-infobox-action',
 				'list-alt'=>'imgforviewmode', 'calendar'=>'imgforviewmode', 'calendarweek'=>'imgforviewmode', 'calendarmonth'=>'imgforviewmode', 'calendarday'=>'imgforviewmode', 'calendarperuser'=>'imgforviewmode'
@@ -5794,7 +5796,8 @@ function dolGetFirstLineOfText($text, $nboflines = 1, $charset = 'UTF-8')
 
 
 /**
- * Replace CRLF in string with a HTML BR tag
+ * Replace CRLF in string with a HTML BR tag.
+ * WARNING: The content after operation contains some HTML tags (the <br>) so be sure to also have encode the special chars of stringtoencode into HTML before.
  *
  * @param	string	$stringtoencode		String to encode
  * @param	int     $nl2brmode			0=Adding br before \n, 1=Replacing \n by br
@@ -6048,7 +6051,7 @@ function dol_textishtml($msg, $option = 0)
  *
  *  @param  string  $text1          Text 1
  *  @param  string  $text2          Text 2
- *  @param  bool    $forxml         false=Use <br>instead of \n if html content detected, true=Use <br /> instead of \n if html content detected
+ *  @param  bool    $forxml         true=Use <br /> instead of <br> if we have to add a br tag
  *  @param  bool    $invert         invert order of description lines (we often use config MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION in this parameter)
  *  @return string                  Text 1 + new line + Text2
  *  @see    dol_textishtml()
@@ -6063,9 +6066,9 @@ function dol_concatdesc($text1, $text2, $forxml = false, $invert = false)
     }
 
     $ret = '';
-    $ret .= (!dol_textishtml($text1) && dol_textishtml($text2)) ?dol_nl2br($text1, 0, $forxml) : $text1;
+    $ret .= (!dol_textishtml($text1) && dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text1, 0, 1, '', 1), 0, $forxml) : $text1;
     $ret .= (!empty($text1) && !empty($text2)) ? ((dol_textishtml($text1) || dol_textishtml($text2)) ? ($forxml ? "<br \>\n" : "<br>\n") : "\n") : "";
-    $ret .= (dol_textishtml($text1) && !dol_textishtml($text2)) ?dol_nl2br($text2, 0, $forxml) : $text2;
+    $ret .= (dol_textishtml($text1) && !dol_textishtml($text2)) ? dol_nl2br(dol_escape_htmltag($text2, 0, 1, '', 1), 0, $forxml) : $text2;
     return $ret;
 }
 

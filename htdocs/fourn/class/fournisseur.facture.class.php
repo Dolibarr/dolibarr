@@ -2356,6 +2356,9 @@ class FactureFournisseur extends CommonInvoice
         if ($this->type == self::TYPE_DEPOSIT)     $picto .= 'd'; // Deposit invoice
 
         $label = '<u>'.$langs->trans("SupplierInvoice").'</u>';
+        if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceReplace").'</u>';
+        elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+        elseif ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
         if (!empty($this->ref))
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->ref_supplier))
@@ -2370,9 +2373,6 @@ class FactureFournisseur extends CommonInvoice
             $label .= '<br><b>'.$langs->trans('VAT').':</b> '.price($this->total_tva, 0, $langs, 0, -1, -1, $conf->currency);
         if (!empty($this->total_ttc))
             $label .= '<br><b>'.$langs->trans('AmountTTC').':</b> '.price($this->total_ttc, 0, $langs, 0, -1, -1, $conf->currency);
-        if ($this->type == self::TYPE_REPLACEMENT) $label = $langs->transnoentitiesnoconv("ShowInvoiceReplace").': '.$this->ref;
-        elseif ($this->type == self::TYPE_CREDIT_NOTE) $label = $langs->transnoentitiesnoconv("ShowInvoiceAvoir").': '.$this->ref;
-        elseif ($this->type == self::TYPE_DEPOSIT)     $label = $langs->transnoentitiesnoconv("ShowInvoiceDeposit").': '.$this->ref;
         if ($moretitle) $label .= ' - '.$moretitle;
         if (isset($this->statut) && isset($this->alreadypaid)) {
         	$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5, $this->alreadypaid);

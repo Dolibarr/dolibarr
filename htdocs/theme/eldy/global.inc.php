@@ -17,6 +17,7 @@
 	--colorbacklinepair2: rgb(<?php print $colorbacklinepair2; ?>);
 	--colorbacklinepairhover: rgb(<?php print $colorbacklinepairhover; ?>);
 	--colorbacklinepairchecked: rgb(<?php print $colorbacklinepairchecked; ?>);
+	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
@@ -664,10 +665,10 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash, .editfieldlang {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 .fawidth30 {
@@ -1026,6 +1027,7 @@ table[summary="list_of_modules"] .fa-cog {
 .clearboth  { clear:both; }
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
+.minwidth75  { min-width: 75px; }
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)
 {
@@ -1187,6 +1189,18 @@ table[summary="list_of_modules"] .fa-cog {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
+    .tdoverflowmax100onsmartphone {			/* For tdoverflow, the max-midth become a minimum ! */
+	    max-width: 100px;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	}
+    .tdoverflowmax150onsmartphone {			/* For tdoverflow, the max-midth become a minimum ! */
+	    max-width: 100px;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    white-space: nowrap;
+	}
     .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
     	height: 40px !important;
     }
@@ -1325,7 +1339,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -1610,7 +1624,7 @@ div.nopadding {
 }
 
 td.nobordernopadding.widthpictotitle.col-picto {
-    color: var(--colortexttitlenotab);
+    color: #bbb;
     opacity: 0.85;
 }
 .table-list-of-attached-files .col-picto, .table-list-of-links .col-picto {
@@ -1621,6 +1635,17 @@ td.nobordernopadding.widthpictotitle.col-picto {
 .table-list-of-attached-files .col-picto .widthpictotitle, .table-list-of-links .col-picto .widthpictotitle {
 	width: unset;
     color: #999;
+}
+
+span.widthpictotitle.pictotitle {
+	/* background: rgba(70, 3, 62, 0.5); */
+    background: var(--colortexttitlenotab);
+    opacity: 0.8;
+    color: #fff !important;
+    padding: 7px;
+    border-radius: 2px;
+    min-width: 30px;
+    text-align: center;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -1706,6 +1731,7 @@ div.statusref {
 	margin-top: 8px;
 	margin-bottom: 10px;
 	clear: both;
+    text-align: right;
 }
 div.statusref img {
     padding-left: 8px;
@@ -1749,7 +1775,7 @@ img.photorefnoborder {
 	border-bottom: <?php echo $borderwidth ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 	/* border-bottom: 2px solid var(--colorbackhmenu1); */
 }
-.trextrafieldseparator td {
+.trextrafieldseparator td, .trextrafields_collapse_last td {
     /* border-bottom: 2px solid var(--colorbackhmenu1) !important; */
     border-bottom: 2px solid rgb(<?php echo $colortopbordertitle1 ?>) !important;
 }
@@ -2721,8 +2747,14 @@ a.tabTitle {
     text-decoration: none;
     white-space: nowrap;
 }
+.tabTitleText {
+	display: none;
+}
 .imgTabTitle {
 	max-height: 14px;
+}
+div.tabs div.tabsElem:first-of-type a.tab {
+    margin-left: 0px !important;
 }
 
 a.tabunactive {
@@ -3287,7 +3319,7 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 .trforbreak td {
 	font-weight: 500;
     border-bottom: 1pt solid black !important;
-	/* background-color: #<?php echo colorArrayToHex(colorStringToArray($colorbacklinebreak)); ?> !important; */
+	background-color: var(--colorbacklinebreak) !important; !important;
 }
 .trforbreak.nobold td a, .trforbreak.nobold span.secondary {
     font-weight: normal !important;
@@ -3598,8 +3630,19 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     margin-right: 8px;
 }
 
+
 @media only screen and (max-width: 767px)
 {
+	div.tabs {
+		padding-left: 0 !important;
+		padding-right: 0!important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
+
+	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
+		padding: 12px 12px 13px;
+	}
 	a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 		padding: 0px 0px 0px 0px;
 	}
@@ -3641,7 +3684,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	box-shadow: 0px 0px 8px 0px rgba(0,0,0,0.20);
 }
 span.boxstatstext {
-	opacity: 0.7;
+	opacity: 0.5;
     line-height: 18px;
     color: var(--colortext);
 }
@@ -3874,7 +3917,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
 
-.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.7em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
@@ -6366,7 +6409,6 @@ div.tabsElem a.tab {
 	    word-break: break-word;
 	}
 	.badge {
-		line-height: 1.2em;
 		min-width: auto;
 		font-size: 12px;
 	}

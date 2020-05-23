@@ -818,7 +818,7 @@ class Product extends CommonObject
     }
 
     /**
-     *    Update a record into database.
+     *  Update a record into database.
      *  If batch flag is set to on, we create records into llx_product_batch
      *
      * @param  int     $id          Id of product
@@ -1015,7 +1015,7 @@ class Product extends CommonObject
             $sql .= ", volume = ".($this->volume != '' ? "'".$this->db->escape($this->volume)."'" : 'null');
             $sql .= ", volume_units = ".($this->volume_units != '' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
             $sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
-            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
+            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (int) $this->seuil_stock_alerte : 'null');
             $sql .= ", description = '".$this->db->escape($this->description)."'";
             $sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
             $sql .= ", customcode = '".$this->db->escape($this->customcode)."'";

@@ -26,8 +26,12 @@ if (!defined('NOIPCHECK'))	   define('NOIPCHECK', '1'); // Do not check IP defin
 
 require '../../main.inc.php';
 
+if (!$conf->global->TAKEPOS_AUTO_ORDER) accessforbidden(); // If Auto Order is disabled never allow NO LOGIN access
+
 $_SESSION["basiclayout"] = 1;
-$_SESSION["publicterminal"] = true; // Is a public customer
+$_SESSION["takeposterminal"] = 1;
 
 define('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE', 1);
-include '../phone.php';
+if (GETPOSTISSET("mobilepage")) require '../invoice.php';
+elseif (GETPOSTISSET("genimg")) require DOL_DOCUMENT_ROOT.'/takepos/genimg/index.php';
+else require '../phone.php';

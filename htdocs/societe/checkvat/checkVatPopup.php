@@ -34,7 +34,6 @@ $WS_DOL_URL_WSDL = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.w
 $WS_METHOD = 'checkVat';
 
 
-
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 

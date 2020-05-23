@@ -20,7 +20,7 @@
 
 /**
  *  \file		htdocs/core/lib/ajax.lib.php
- *  \brief		Page called by Ajax request for produts
+ *  \brief		Page called to enhance interface with Javascript and Ajax features.
  */
 
 
