@@ -40,6 +40,7 @@ WebUserGroup=Web server uživatel / skupina
 NoSessionFound=Nastavení Vašeho PHP Vám neumožňuje výpis aktivních relací. Složka sloužící k uložení relací <b>(%s)</b> může být chráněna (např. nastavením oprávnění OS nebo PHP open_basedir).
 DBStoringCharset=Znaková sada pro databázi s daty
 DBSortingCharset=Znaková sada pro řazení databáze s daty
+HostCharset=Host charset
 ClientCharset=Klientská znaková sada
 ClientSortingCharset=Srovnání klientů
 WarningModuleNotActive=Modul <b>%s</b> musí být povolen
@@ -427,7 +428,7 @@ ExtrafieldCheckBox=Zaškrtávače
 ExtrafieldCheckBoxFromList=Zaškrtávací políčka z tabulky
 ExtrafieldLink=Odkaz na objekt
 ComputedFormula=Vypočtené pole
-ComputedFormulaDesc=Zde můžete zadat vzorec pomocí jiných vlastností objektu nebo libovolného kódování PHP pro získání dynamické vypočtené hodnoty. Můžete použít libovolné kompatibilní formule PHP včetně "?" operátor stavu a následující globální objekt: <strong> $ db, $ conf, $ langs, $ mysoc, $ user, $ objekt </strong>. <br> <strong> VAROVÁNÍ </strong>: K dispozici jsou pouze některé vlastnosti objektu $. Pokud potřebujete vlastnosti, které nejsou načteny, jednoduše přiveďte objekt do vzorce, jako ve druhém příkladu. <br> Použití vypočítaného pole znamená, že nemůžete zadat libovolnou hodnotu z rozhraní. Také pokud existuje syntaktická chyba, vzorec může vrátit nic. <br> <br> Příklad vzorce: <br> $ object-> id < 10 ? round($object-> id / 2, 2): ($ objekt-> id + 2 * $ user-> id) * (int) substr ($ mysoc-> zip, 1, 2 ) <br> <br> Příklad pro opětovné načtení objektu <br> (($ reloadedobj = new Societe ($ db)) && ($ reloadedobj-> fetch ($ obj-> id? $ Obj-> id: > rowid: $ object-> id))> 0))? $ reloadedobj-> array_options ['options_extrafieldkey'] * $ reloadedobj-> capital / 5: '-1' <br> <br> Jiný příklad vzoru pro zatížení objektu a jeho nadřazeného objektu: <br> ($ reloadedobj = new Task )) && ($ reloadedobj-> fetch ($ object-> id)> 0) && ($ secondloadedobj = nový projekt ($ db)) && ($ secondloadedobj-> fetch ($ reloadedobj-> fk_project)> 0))? $ secondloadedobj-> ref: 'Nadřazený projekt nebyl nalezen'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Uložte vypočítané pole
 ComputedpersistentDesc=Vypočítaná další pole pole budou uložena do databáze, hodnota však bude přepočítána pouze při změně objektu tohoto pole. Pokud vypočítané pole závisí na jiných objektech nebo globálních datech, může být tato hodnota špatná !!
 ExtrafieldParamHelpPassword=Pokud ponecháte toto pole prázdné, znamená to, že tato hodnota bude uložena bez šifrování (pole musí být skryto pouze s hvězdou na obrazovce). <br> Nastavte "auto" pro použití výchozího šifrovacího pravidla pro uložení hesla do databáze (pak hodnota bude číst pouze hash, žádný způsob získání původní hodnoty)
@@ -1015,7 +1016,7 @@ LocalTax2IsUsedDescES=Kurz IRPF ve výchozím nastavení při vytváření prosp
 LocalTax2IsNotUsedDescES=Standardně navrhovaný IRPF je 0. Konec pravidla.
 LocalTax2IsUsedExampleES=Ve Španělsku, na volné noze a nezávislí odborníci, kteří poskytují služby a firmy, kteří se rozhodli daňového systému modulů.
 LocalTax2IsNotUsedExampleES=Ve Španělsku jsou podniky, které nepodléhají daňovému systému modulů.
-RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps des not provide any reporting. Only few countries uses this type of tax.
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps does not provide any reporting. Only few countries uses this type of tax.
 UseRevenueStamp=Use a tax stamp
 UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=Zprávy o místních daních
@@ -1272,6 +1273,7 @@ RuleForGeneratedPasswords=Pravidla pro generování a ověřování hesel
 DisableForgetPasswordLinkOnLogonPage=Na stránce Přihlášení nezobrazujte odkaz Zapomenuté heslo
 UsersSetup=Uživatelé modul nastavení
 UserMailRequired=K vytvoření nového uživatele potřebujete e-mail
+UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
 UsersDocModules=Document templates for documents generated from user record
 GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
@@ -1731,7 +1733,7 @@ MultiCompanySetup=Nastavení více firemních modulů
 ##### Suppliers #####
 SuppliersSetup=Nastavení modulu dodavatele
 SuppliersCommandModel=Complete template of Purchase Order
-SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersCommandModelMuscadet=Complete template of Purchase Order (old implementation of cornas template)
 SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=Číslovací modely faktur dodavatelů
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
@@ -1803,6 +1805,7 @@ TopMenuDisableImages=Skrýt obrázky v Top nabídky
 LeftMenuBackgroundColor=barva pozadí na levé menu
 BackgroundTableTitleColor=Barva pozadí pro tabulku názvu linky
 BackgroundTableTitleTextColor=Barva textu pro název řádku tabulky
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=Barva pozadí pro liché řádky tabulky
 BackgroundTableLineEvenColor=barva pozadí pro sudé řádky tabulky
 MinimumNoticePeriod=Minimální výpovědní lhůta (Vaše žádost dovolená musí být provedeno před tímto zpožděním)
@@ -1936,7 +1939,7 @@ WithoutDolTrackingID=Dolibarr Reference not found in Message ID
 FormatZip=Zip
 MainMenuCode=Vstupní kód nabídky (hlavní menu)
 ECMAutoTree=Zobrazit automatický strom ECM
-OperationParamDesc=Definujte hodnoty, které chcete použít pro akci, nebo jak extrahovat hodnoty. Například: <br> objproperty1 = SET: abc <br> objproperty1 = SET: hodnota s nahrazením __objproperty1__ <br> objproperty3 = SETIFEMPTY: abc <br> objproperty4 = EXTRACT: HEADER: X-Myheaderkey. * [^ s] + (. *) <br> options_myextrafield = EXTRACT: SUBJECT: ([^]] *) <br> object.objproperty5 = EXTRACT: BODY: Název mé společnosti je (^ ^] *) <br><br> Použijte; char jako oddělovač extrahovat nebo nastavit několik vlastností.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Otevírací doba
 OpeningHoursDesc=Zadejte zde běžnou pracovní dobu vaší společnosti.
 ResourceSetup=Konfigurace modulu zdrojů
@@ -1995,3 +1998,5 @@ PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
+MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
+MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.
