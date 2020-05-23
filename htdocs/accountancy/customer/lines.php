@@ -394,7 +394,7 @@ if ($result) {
 		print '<td>';
 		if ($productstatic->id > 0) print $productstatic->getNomUrl(1);
 		if ($productstatic->id > 0 && $objp->product_label) print '<br>';
-		if ($objp->product_label) print '<span class="opacitymedium">'.$objp->product_label.'</span>;
+		if ($objp->product_label) print '<span class="opacitymedium">'.$objp->product_label.'</span>';
 		print '</td>';
 
 		print '<td class="tdoverflowonsmartphone">';
