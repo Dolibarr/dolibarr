@@ -197,6 +197,7 @@ $fileindex = $pathofwebsite.'/index.php';
 $filewrapper = $pathofwebsite.'/wrapper.php';
 $filemanifestjson = $pathofwebsite.'/manifest.json.php';
 $filereadme = $pathofwebsite.'/README.md';
+$filemaster = $pathofwebsite.'/master.inc.php';
 
 // Define $urlwithroot
 $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -1189,8 +1190,6 @@ if ($action == 'updatecss')
 		if (!$error)
 		{
     		// Save master.inc.php file
-    		$filemaster = $pathofwebsite.'/master.inc.php';
-
     		dol_syslog("Save master file ".$filemaster);
 
     		dol_mkdir($pathofwebsite);
@@ -1382,6 +1381,10 @@ if ($action == 'updatecss')
        			$error++;
        			setEventMessages('Failed to write file '.$filereadme, null, 'errors');
        		}
+
+
+       		// Save wrapper.php
+			$result = dolSaveIndexPage($pathofwebsite, '', '', $filewrapper);
 
 
     		// Message if no error
@@ -1727,8 +1730,8 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 			}
 			else
 			{
-				$fileindex = $pathofwebsitenew.'/index.php';
 				$filetpl = $pathofwebsitenew.'/page'.$resultpage->id.'.tpl.php';
+				$fileindex = $pathofwebsitenew.'/index.php';
 				$filewrapper = $pathofwebsitenew.'/wrapper.php';
 
 				//var_dump($pathofwebsitenew);
@@ -2976,6 +2979,14 @@ if ($action == 'editcss')
 	$doleditor = new DolEditor('WEBSITE_README', $readmecontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, $langs->trans("File").' README.md', 'text');
 
+	print '</td></tr>';
+
+	// RSS
+	print '<tr><td class="tdtop">';
+	$htmlhelp = $langs->trans('RSSFeedDesc');
+	print $form->textwithpicto($langs->trans('RSSFeed'), $htmlhelp, 1, 'help', '', 0, 2, '');
+	print '</td><td>';
+	print '/wrapper.php?rss=1[&l=XX][&limit=123]';
 	print '</td></tr>';
 
 	print '</table>';
