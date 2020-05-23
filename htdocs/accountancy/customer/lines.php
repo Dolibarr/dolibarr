@@ -325,7 +325,7 @@ if ($result) {
 	//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
-	print '<td class="liste_titre center"><input type="text" class="flat maxwidth100" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
+	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
 	print '<td class="liste_titre center">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
