@@ -33,8 +33,8 @@ if [ "x$1" = "xall" ]
 then
 	if [ "x$2" = "x" ]
 	then
-	    echo "tx pull"
-	    tx pull
+	    echo "tx pull -a"
+	    tx pull -a
 	else
 		for dir in `find htdocs/langs/* -type d`
 		do
