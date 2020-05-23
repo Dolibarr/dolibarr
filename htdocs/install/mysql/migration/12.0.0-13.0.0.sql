@@ -33,4 +33,7 @@
 
 -- For v13
 
+ALTER TABLE llx_commande MODIFY COLUMN date_livraison DATETIME;
+
 ALTER TABLE llx_website ADD COLUMN position integer DEFAULT 0;
+
