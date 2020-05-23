@@ -299,7 +299,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	            	include_once $includes[$val]; // Loading a class cost around 1Mb
 
 	                $board = new $class($db);
-	                $board->load_state_board($user);
+	                $board->load_state_board();
 	                $boardloaded[$class] = $board;
 	            }
 	            else

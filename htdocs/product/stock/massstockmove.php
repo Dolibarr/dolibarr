@@ -34,6 +34,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
 
+//init Hook
+$hookmanager->initHooks(array('massstockmove'));
+
 // Security check
 if ($user->socid) {
     $socid = $user->socid;
