@@ -73,8 +73,15 @@ if ($query == "cat")
 
 	preg_match('@src="([^"]+)"@', $image, $match);
 	$file = array_pop($match);
-	if ($file == "") header('Location: ../../public/theme/common/nophoto.png');
-	else header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
+	if ($file == "") {
+		header('Location: ../../public/theme/common/nophoto.png');
+	} else {
+		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			header('Location: '.$file.'&cache=1');
+		} else {
+			header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
+		}
+	}
 } else {
     // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
 

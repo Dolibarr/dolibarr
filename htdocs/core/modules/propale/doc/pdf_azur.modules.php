@@ -1024,11 +1024,11 @@ class pdf_azur extends ModelePDFPropales
 	 *	Show total to pay
 	 *
 	 *	@param	PDF			$pdf            Object PDF
-	 *	@param  Facture		$object         Object invoice
-	 *	@param  int			$deja_regle     Montant deja regle
-	 *	@param	int			$posy			Position depart
+	 *	@param  Propal		$object         Object propal
+	 *	@param  int			$deja_regle     Amount already paid
+	 *	@param	int			$posy			Start position
 	 *	@param	Translate	$outputlangs	Objet langs
-	 *	@return int							Position pour suite
+	 *	@return int							Position for continuation
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
@@ -1040,7 +1040,7 @@ class pdf_azur extends ModelePDFPropales
 		$tab2_hl = 4;
 		$pdf->SetFont('', '', $default_font_size - 1);
 
-		// Tableau total
+		// Total table
 		$col1x = 120; $col2x = 170;
 		if ($this->page_largeur < 210) // To work with US executive format
 		{

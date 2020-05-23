@@ -1142,7 +1142,7 @@ if ($resql)
 		if (!empty($arrayfields['c.date_delivery']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'day');
+			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}

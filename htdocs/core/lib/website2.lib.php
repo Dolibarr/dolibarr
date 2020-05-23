@@ -157,10 +157,15 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
+	// Add canonical reference
+	if ($object->virtualhost) {
+		$tplcontent .= '<link rel="canonical" href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" />'."\n";
+	}
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
 		// Add myself
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php').'" />'."\n";
+		$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
 
 		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
@@ -171,7 +176,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
-					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$tmppage->pageurl.'.php').'" />'."\n";
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
 			}
 		}
@@ -192,11 +197,10 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					}
 				}
 			}
-		} else dol_print_error($db);
-	}
-	// Add canonical reference
-	if ($object->virtualhost) {
-		$tplcontent .= '<link rel="canonical" href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" />'."\n";
+		} else {
+			dol_print_error($db);
+		}
+		$tplcontent .= '<?php } ?>'."\n";
 	}
 	// Add manifest.json on homepage
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
