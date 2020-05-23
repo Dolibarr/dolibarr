@@ -267,22 +267,13 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $param = '';
+   $param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
 	if ($search_label) $param .= '&search_label='.urlencode($search_label);
-<<<<<<< HEAD
-<<<<<<< HEAD
-	if ($search_labelshort) $param.= '&search_labelshort='.urlencode($search_labelshort);
-	if ($search_accountparent) $param .= '&search_accountparent='.urlencode($search_accountparent);
-=======
-	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
->>>>>>> upstream/11.0
-=======
 	if ($search_labelshort) $param .= '&search_labelshort='.urlencode($search_labelshort);
 	if ($search_accountparent > 0 || $search_accountparent == '0') $param .= '&search_accountparent='.urlencode($search_accountparent);
->>>>>>> upstream/develop
 	if ($search_pcgtype) $param .= '&search_pcgtype='.urlencode($search_pcgtype);
 	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
 
