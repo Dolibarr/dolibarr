@@ -251,8 +251,8 @@ if ($result) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
     if ($search_login)       $param .= '&search_login='.urlencode($search_login);
 	if ($search_lineid)      $param .= '&search_lineid='.urlencode($search_lineid);
 	if ($search_day)         $param .= '&search_day='.urlencode($search_day);
