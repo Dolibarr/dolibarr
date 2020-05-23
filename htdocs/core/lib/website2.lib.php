@@ -229,11 +229,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 
 
 /**
- * Save content of the index.php and wrapper.php page
+ * Save content of the index.php and/or wrapper.php page
  *
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
- * @param	string		$filetpl				File tpl to index.php page redirect to
+ * @param	string		$filetpl				File tpl the index.php page redirect to
  * @param	string		$filewrapper			Full path of file wrapper.php
  * @return	boolean								True if OK
  */
@@ -246,29 +246,39 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 
 	dol_mkdir($pathofwebsite);
 
-	dol_delete_file($fileindex);
-	$indexcontent = '<?php'."\n";
-	$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
-	$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
-	$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
-	$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
-	$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-	$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-	$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
-	$indexcontent .= "}\n";
-	$indexcontent .= "include_once './".basename($filetpl)."'\n";
-	$indexcontent .= '// END PHP ?>'."\n";
-	$result1 = file_put_contents($fileindex, $indexcontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+	if ($fileindex) {
+		dol_delete_file($fileindex);
+		$indexcontent = '<?php'."\n";
+		$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
+		$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+		$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+		$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
+		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+		$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
+		$indexcontent .= "}\n";
+		$indexcontent .= "include_once './".basename($filetpl)."'\n";
+		$indexcontent .= '// END PHP ?>'."\n";
+
+		$result1 = file_put_contents($fileindex, $indexcontent);
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+		}
 	}
-	dol_delete_file($filewrapper);
+	else {
+		$result1 = true;
+	}
 
-	$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
+	if ($filewrapper) {
+		dol_delete_file($filewrapper);
+		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
-	$result2 = file_put_contents($filewrapper, $wrappercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+		$result2 = file_put_contents($filewrapper, $wrappercontent);
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+		}
+	} else {
+		$result2 = true;
 	}
 
 	return ($result1 && $result2);
