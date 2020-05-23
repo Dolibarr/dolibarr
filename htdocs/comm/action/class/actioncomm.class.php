@@ -337,6 +337,20 @@ class ActionComm extends CommonObject
      */
     public $errors_to;
 
+	/**
+	 * Typical value for a event that is in a todo state
+	 */
+	const EVENT_TODO = 0;
+
+	/**
+	 * Typical value for a event that is in a progress state
+	 */
+	const EVENT_IN_PROGRESS = 50;
+
+	/**
+	 * Typical value for a event that is in a finished state
+	 */
+	const EVENT_FINISHED = 100;
 
     /**
      *      Constructor
@@ -2008,4 +2022,32 @@ class ActionComm extends CommonObject
 
         return $error;
     }
+
+	/**
+	 * Udpate the percent value of a event with the given id
+	 *
+	 * @param int		$id			The id of the event
+	 * @param int		$percent	The new percent value for the event
+	 * @return int					1 when update of the event was suscessfull, otherwise -1
+	 */
+	public function updatePercent($id, $percent)
+	{
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
+		$sql .= " SET percent = ".(int) $percent;
+		$sql .= " WHERE id=".$id;
+
+		if ($this->db->query($sql))
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
 }
