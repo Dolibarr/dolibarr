@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - agenda
 ActionsOwnedBy=Evento propiedad de
-AffectedTo=Asignado a
 Event=Evento
 ListOfActions=Lista de eventos
 ToUserOfGroup=A cualquier usuario del grupo

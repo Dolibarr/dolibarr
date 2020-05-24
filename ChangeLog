@@ -104,6 +104,7 @@ Following changes may create regressions for some external modules, but were nec
   by a "_" automatically when a reference (with a custom numbering mask that use it) is generated.  
 * Library jflot (replace with chartjs) and geoip (replaced with geoip2) were removed.  
 * Hidden constant COMMANDE_VALID_AFTER_CLOSE_PROPAL were renamed into ORDER_VALID_AFTER_CLOSE_PROPAL.
+* Object field ref_int is deprecated and set to not used, object fetch by only ref_int is not supported anymore.
 
 
 ***** ChangeLog for 11.0.3 compared to 11.0.2 *****

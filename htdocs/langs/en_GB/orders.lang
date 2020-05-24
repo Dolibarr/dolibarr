@@ -2,7 +2,5 @@
 StatusOrderCanceledShort=Cancelled
 StatusOrderCanceled=Cancelled
 PDFEinsteinDescription=A complete order model
-PDFEratostheneDescription=A complete order model
-PDFProformaDescription=A complete Proforma invoice template
 StatusSupplierOrderCanceledShort=Cancelled
 StatusSupplierOrderCanceled=Cancelled

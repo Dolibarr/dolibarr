@@ -63,7 +63,6 @@ UserModif=Gebruiker van laatste update
 PriceUHTCurrency=UP (valuta)
 AmountHT=Bedrag (excl. BTW)
 MulticurrencyRemainderToPay=Blijf betalen, oorspronkelijke valuta
-MulticurrencyPaymentAmount=Betalingsbedrag, oorspronkelijke valuta
 MulticurrencyAmountHT=Bedrag (excl. Btw), oorspronkelijke valuta
 MulticurrencyAmountTTC=Bedrag (incl. Btw), oorspronkelijke valuta
 MulticurrencyAmountVAT=Bedragsbelasting, oorspronkelijke valuta

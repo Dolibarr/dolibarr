@@ -3315,7 +3315,7 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 .trforbreak td {
 	font-weight: 500;
     border-bottom: 1pt solid black !important;
-	background-color: var(--colorbacklinebreak) !important; !important;
+	background-color: var(--colorbacklinebreak) !important;
 }
 .trforbreak.nobold td a, .trforbreak.nobold span.secondary {
     font-weight: normal !important;

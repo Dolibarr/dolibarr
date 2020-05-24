@@ -292,6 +292,7 @@ class Expedition extends CommonObject
 		$sql .= ", entity";
 		$sql .= ", ref_customer";
 		$sql .= ", ref_int";
+		$sql .= ", ref_ext";
 		$sql .= ", date_creation";
 		$sql .= ", fk_user_author";
 		$sql .= ", date_expedition";
@@ -316,6 +317,7 @@ class Expedition extends CommonObject
 		$sql .= ", ".$conf->entity;
 		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : "null");
 		$sql .= ", ".($this->ref_int ? "'".$this->db->escape($this->ref_int)."'" : "null");
+		$sql .= ", ".($this->ref_ext ? "'".$this->db->escape($this->ref_ext)."'" : "null");
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".$user->id;
 		$sql .= ", ".($this->date_expedition > 0 ? "'".$this->db->idate($this->date_expedition)."'" : "null");
@@ -1075,6 +1077,7 @@ class Expedition extends CommonObject
 
 		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
+		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
 		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
 		$sql .= " date_creation=".(dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').",";
