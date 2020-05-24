@@ -358,7 +358,6 @@ if (strlen($search_fax))            $sql .= natural_search('p.fax', $search_fax)
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_{$key})) {
-			//$sql.= natural_search("p.socialnetworks->'$.".$key."'", $search_{$key});
 			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
 		}
 	}

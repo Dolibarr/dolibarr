@@ -64,9 +64,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array ID mapping from type string
-	 *
-	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
+	 * @var array Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	protected $MAP_ID = array(
 		'product'      => 0,
@@ -79,7 +77,8 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 		'warehouse'    => 9,
-        'actioncomm'   => 10
+        'actioncomm'   => 10,
+		'website_page' => 11
 	);
 
     /**
@@ -1113,6 +1112,10 @@ class Categorie extends CommonObject
 	    global $conf, $langs;
 
 		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (is_null($type)) {
+			$this->error = 'BadValueForParameterType';
+			return -1;
+		}
 
         if (is_string($markafterid))
         {

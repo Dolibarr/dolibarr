@@ -250,11 +250,11 @@ foreach($filesToProcess as $fileToProcess)
 	{
 		if ( ! $oh = fopen($output, 'w') )
 		{
-			print "ERROR in writing to file $output\n";
+			print "ERROR in writing to file ".$output."\n";
 			exit;
 		}
 
-		print "Read Primary File $lPrimaryFile and write ".$output.":\n";
+		print "Read Primary File ".$lPrimaryFile." and write ".$output.":\n";
 
 		fwrite($oh, "# Dolibarr language file - Source file is en_US - ".(preg_replace('/\.lang$/', '', $fileToProcess))."\n");
 

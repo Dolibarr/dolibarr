@@ -252,6 +252,7 @@ ALTER TABLE llx_blockedlog ADD COLUMN object_version varchar(32) DEFAULT '';
 
 ALTER TABLE llx_product_lot MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_expeditiondet_batch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);

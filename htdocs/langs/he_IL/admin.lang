@@ -40,6 +40,7 @@ WebUserGroup=שרת אינטרנט המשתמש / קבוצה
 NoSessionFound=Your PHP configuration seems to not allow listing of active sessions. The directory used to save sessions (<b>%s</b>) may be protected (for example by OS permissions or by PHP directive open_basedir).
 DBStoringCharset=מאגר המידע charset לאחסון נתונים
 DBSortingCharset=מאגר המידע charset למיין נתונים
+HostCharset=Host charset
 ClientCharset=Client charset
 ClientSortingCharset=Client collation
 WarningModuleNotActive=<b>%s</b> מודול יש להפעיל
@@ -427,7 +428,7 @@ ExtrafieldCheckBox=Checkboxes
 ExtrafieldCheckBoxFromList=Checkboxes from table
 ExtrafieldLink=Link to an object
 ComputedFormula=Computed field
-ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Store computed field
 ComputedpersistentDesc=Computed extra fields will be stored in the database, however, the value will only be recalculated when the object of this field is changed. If the computed field depends on other objects or global data this value might be wrong!!
 ExtrafieldParamHelpPassword=Leaving this field blank means this value will be stored without encryption (field must be only hidden with star on screen).<br>Set  'auto' to use the default encryption rule to save password into database (then value read will be the hash only, no way to retrieve original value)
@@ -1015,7 +1016,7 @@ LocalTax2IsUsedDescES=The IRPF rate by default when creating prospects, invoices
 LocalTax2IsNotUsedDescES=כברירת מחדל IRPF המוצע הוא 0. קץ שלטון.
 LocalTax2IsUsedExampleES=בספרד, פרילנסרים ובעלי מקצוע עצמאיים המספקים שירותים וחברות אשר בחרו במערכת המס של מודולים.
 LocalTax2IsNotUsedExampleES=In Spain they are businesses not subject to tax system of modules.
-RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps des not provide any reporting. Only few countries uses this type of tax.
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps does not provide any reporting. Only few countries uses this type of tax.
 UseRevenueStamp=Use a tax stamp
 UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=Reports on local taxes
@@ -1272,6 +1273,7 @@ RuleForGeneratedPasswords=Rules to generate and validate passwords
 DisableForgetPasswordLinkOnLogonPage=Do not show the "Password Forgotten" link on the Login page
 UsersSetup=משתמשים מודול ההתקנה
 UserMailRequired=Email required to create a new user
+UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
 UsersDocModules=Document templates for documents generated from user record
 GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
@@ -1731,7 +1733,7 @@ MultiCompanySetup=רב החברה מודול ההתקנה
 ##### Suppliers #####
 SuppliersSetup=Vendor module setup
 SuppliersCommandModel=Complete template of Purchase Order
-SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersCommandModelMuscadet=Complete template of Purchase Order (old implementation of cornas template)
 SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=Vendor invoices numbering models
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
@@ -1803,6 +1805,7 @@ TopMenuDisableImages=Hide images in Top menu
 LeftMenuBackgroundColor=Background color for Left menu
 BackgroundTableTitleColor=Background color for Table title line
 BackgroundTableTitleTextColor=Text color for Table title line
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=Background color for odd table lines
 BackgroundTableLineEvenColor=Background color for even table lines
 MinimumNoticePeriod=Minimum notice period (Your leave request must be done before this delay)
@@ -1936,7 +1939,7 @@ WithoutDolTrackingID=Dolibarr Reference not found in Message ID
 FormatZip=רוכסן
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Opening hours
 OpeningHoursDesc=Enter here the regular opening hours of your company.
 ResourceSetup=Configuration of Resource module
@@ -1995,3 +1998,5 @@ PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
+MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
+MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.

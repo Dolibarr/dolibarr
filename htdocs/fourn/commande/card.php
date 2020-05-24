@@ -2625,15 +2625,15 @@ elseif (!empty($object->id))
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 
 			// Generated documents
-			$comfournref = dol_sanitizeFileName($object->ref);
-			$file = $conf->fournisseur->dir_output.'/commande/'.$comfournref.'/'.$comfournref.'.pdf';
-			$relativepath = $comfournref.'/'.$comfournref.'.pdf';
-			$filedir = $conf->fournisseur->dir_output.'/commande/'.$comfournref;
+			$objref = dol_sanitizeFileName($object->ref);
+			$file = $conf->fournisseur->dir_output.'/commande/'.$objref.'/'.$objref.'.pdf';
+			$relativepath = $objref.'/'.$objref.'.pdf';
+			$filedir = $conf->fournisseur->dir_output.'/commande/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->fournisseur->commande->lire;
 			$delallowed = $user->rights->fournisseur->commande->creer;
 
-			print $formfile->showdocuments('commande_fournisseur', $comfournref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang);
+			print $formfile->showdocuments('commande_fournisseur', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 0, 0, '', '', '', $object->thirdparty->default_lang);
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements

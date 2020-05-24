@@ -1922,7 +1922,6 @@ class CommandeFournisseur extends CommonOrder
 					if ($result < 0)
                     {
                         $error++;
-                        return -1;
                     }
 					// End call triggers
                 }
@@ -2030,6 +2029,7 @@ class CommandeFournisseur extends CommonOrder
             {
             	$this->errors[] = 'ErrorWhenRunningTrigger';
             	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            	$this->db->rollback();
             	return -1;
             }
             // End call triggers

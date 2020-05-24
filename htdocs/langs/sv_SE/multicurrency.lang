@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Flera valutor
+ErrorAddRateFail=Fel i tilläggspris
+ErrorAddCurrencyFail=Fel i tilläggsvaluta
+ErrorDeleteCurrencyFail=Radering misslyckades
+multicurrency_syncronize_error=Synkroniseringsfel: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Använd datumet för dokumentet för att hitta valutakursen istället för att använda den senast kända kursen
+multicurrency_useOriginTx=När ett objekt skapas från en annan, behåll originalfrekvensen från källobjektet (använd annars den senast kända kursen)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=You must create an account on website %s to use this functionality.<br>Get your <b>API key</b>.<br>If you use a free account, you can't change the <b>source currency</b> (USD by default).<br>If your main currency is not USD, the application will automatically recalculate it.<br><br>You are limited to 1000 synchronizations per month.
+multicurrency_appId=API-nyckel
+multicurrency_appCurrencySource=Source currency
+multicurrency_alternateCurrencySource=Alternate source currency
+CurrenciesUsed=Valutor som används
+CurrenciesUsed_help_to_add=Lägg till de olika valutorna och priserna du behöver använda på dina <b> förslag </b>, <b> beställer </b> etc.
+rate=Betygsätta
+MulticurrencyReceived=Mottagen, ursprunglig valuta
+MulticurrencyRemainderToTake=Återstående belopp, ursprunglig valuta
+MulticurrencyPaymentAmount=Betalningsbelopp, ursprunglig valuta
+AmountToOthercurrency=Belopp till (i valuta för mottagande konto)
+CurrencyRateSyncSucceed=Currency rate synchronization done successfuly
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Use the currency of the document for online payments

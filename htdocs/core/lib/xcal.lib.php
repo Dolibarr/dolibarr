@@ -334,9 +334,10 @@ function build_calfile($format, $title, $desc, $events_array, $outputfile)
  *  @param      string	$outputfile         Output file
  *  @param      string	$filter             (optional) Filter
  *  @param		string	$url				Url (If empty, forge URL for agenda RSS export)
+ *  @param		string	$langcode			Language code to show in header
  *  @return     int                         < 0 if ko, Nb of events in file if ok
  */
-function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '')
+function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filter = '', $url = '', $langcode = '')
 {
 	global $user, $conf, $langs;
 	global $dolibarr_main_url_root;
@@ -362,7 +363,9 @@ function build_rssfile($format, $title, $desc, $events_array, $outputfile, $filt
 		fwrite($fichier, '<rss version="2.0">');
 		fwrite($fichier, "\n");
 
-		fwrite($fichier, "<channel>\n<title>".$title."</title>\n");
+		fwrite($fichier, "<channel>\n");
+		fwrite($fichier, "<title>".$title."</title>\n");
+		if ($langcode) fwrite($fichier, "<language>".$langcode."</language>\n");
 
 		/*
         fwrite($fichier, "<description><![CDATA[".$desc.".]]></description>"."\n".

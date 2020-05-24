@@ -299,7 +299,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	            	include_once $includes[$val]; // Loading a class cost around 1Mb
 
 	                $board = new $class($db);
-	                $board->load_state_board($user);
+	                $board->load_state_board();
 	                $boardloaded[$class] = $board;
 	            }
 	            else
@@ -437,7 +437,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     if (!empty($conf->banque->enabled) && $user->rights->banque->lire && !$user->socid && empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT)) {
         include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
         $board = new RemiseCheque($db);
-        $dashboardlines['RemiseCheque'] = $board->load_board($user);
+        $dashboardlines[$board->element] = $board->load_board($user);
     }
 
     // Number of foundation members
@@ -452,21 +452,21 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->approve) {
         include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
         $board = new ExpenseReport($db);
-        $dashboardlines['ExpenseReport'] = $board->load_board($user, 'toapprove');
+        $dashboardlines[$board->element . '_toapprove'] = $board->load_board($user, 'toapprove');
     }
 
     // Number of expense reports to pay
     if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->to_paid) {
         include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
         $board = new ExpenseReport($db);
-        $dashboardlines['ExpenseReport'] = $board->load_board($user, 'topay');
+        $dashboardlines[$board->element . '_topay'] = $board->load_board($user, 'topay');
     }
 
     // Number of holidays to approve
     if (!empty($conf->holiday->enabled) && $user->rights->holiday->approve) {
         include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
         $board = new Holiday($db);
-        $dashboardlines['Holiday'] = $board->load_board($user);
+        $dashboardlines[$board->element] = $board->load_board($user);
     }
 
     $object = new stdClass();
@@ -551,28 +551,28 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
             array(
                 'groupName' => 'BankAccount',
                 'stats' =>
-                    array('bank_account', 'RemiseCheque'),
+                    array('bank_account', 'chequereceipt'),
             ),
-        'Adherent' =>
+        'member' =>
             array(
                 'groupName' => 'Members',
                 'globalStatsKey' => 'members',
                 'stats' =>
-            		array('member_shift', 'member_expired'),
+                    array('member_shift', 'member_expired'),
             ),
-        'ExpenseReport' =>
+        'expensereport' =>
             array(
                 'groupName' => 'ExpenseReport',
                 'globalStatsKey' => 'expensereports',
                 'stats' =>
-                    array('ExpenseReport'),
+                    array('expensereport_toapprove', 'expensereport_topay'),
             ),
-        'Holiday' =>
+        'holiday' =>
             array(
                 'groupName' => 'Holidays',
                 'globalStatsKey' => 'holidays',
                 'stats' =>
-                    array('Holiday'),
+                    array('holiday'),
             ),
     );
 
@@ -689,7 +689,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
                     }
                 }
 
-                $openedDashBoard .= '<div class="box-flex-item">'."\n";
+                $openedDashBoard .= '<div class="box-flex-item"><div class="box-flex-item-with-margin">'."\n";
                 $openedDashBoard .= '	<div class="info-box '.$openedDashBoardSize.'">'."\n";
                 $openedDashBoard .= '		<span class="info-box-icon bg-infobox-'.$groupKeyLowerCase.'">'."\n";
                 $openedDashBoard .= '		<i class="fa fa-dol-'.$groupKeyLowerCase.'"></i>'."\n";
@@ -736,6 +736,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
                 $openedDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
                 $openedDashBoard .= '	</div><!-- /.info-box -->'."\n";
+                $openedDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
                 $openedDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
                 $openedDashBoard .= "\n";
             }
@@ -754,7 +755,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
             }
             $text .= '. '.$langs->transnoentitiesnoconv("LateDesc");
 
-            $weatherDashBoard = '<div class="box-flex-item '.$appendClass.'">'."\n";
+            $weatherDashBoard = '<div class="box-flex-item '.$appendClass.'"><div class="box-flex-item-with-margin">'."\n";
             $weatherDashBoard .= '	<div class="info-box '.$openedDashBoardSize.' info-box-weather info-box-weather-level'.$weather->level.'">'."\n";
             $weatherDashBoard .= '		<span class="info-box-icon">';
             $weatherDashBoard .= img_weather('', $weather->level, '', 0, 'valignmiddle width50');
@@ -778,6 +779,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
             $weatherDashBoard .= '		</div><!-- /.info-box-content -->'."\n";
             $weatherDashBoard .= '	</div><!-- /.info-box -->'."\n";
+            $weatherDashBoard .= '</div><!-- /.box-flex-item-with-margin -->'."\n";
             $weatherDashBoard .= '</div><!-- /.box-flex-item -->'."\n";
             $weatherDashBoard .= "\n";
 
