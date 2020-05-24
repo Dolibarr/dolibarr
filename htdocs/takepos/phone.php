@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,15 +136,15 @@ elseif ($action == "editline") {
     }
 }
 else {
-// Title
-$title = 'TakePOS - Dolibarr '.DOL_VERSION;
-if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
-$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
+	// Title
+	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
+	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
+	$head = '<meta name="apple-mobile-web-app-title" content="TakePOS"/>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
-$arrayofcss = array('/takepos/css/phone.css');
-top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
+	$arrayofcss = array('/takepos/css/phone.css');
+	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 	?>
 <script language="javascript">
 	<?php
@@ -255,7 +255,7 @@ function AddProductConfirm(placeid, productid){
 function SetQty(place, selectedline, qty){
 	<?php
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
-	?>
+		?>
 	if (qty==0){
 		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
 		});
@@ -264,10 +264,10 @@ function SetQty(place, selectedline, qty){
 		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
-	<?php
+		<?php
 	}
 	else {
-	?>
+		?>
 	if (qty==0){
 		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
 		});
@@ -276,7 +276,7 @@ function SetQty(place, selectedline, qty){
 		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
-	<?php
+		<?php
 	}
 	?>	
 	LoadCats();
