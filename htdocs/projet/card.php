@@ -102,9 +102,7 @@ if (empty($reshook))
 			{
 				header("Location: index.php");
 				exit;
-			}
-			else
-			{
+			} else {
 				dol_syslog($object->error, LOG_DEBUG);
 				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
@@ -183,9 +181,7 @@ if (empty($reshook))
 					setEventMessages($langs->trans($object->error), null, 'errors');
 					$error++;
 				}
-			}
-			else
-			{
+			} else {
 				$langs->load("errors");
 				setEventMessages($langs->trans($object->error), null, 'errors');
 				$error++;
@@ -212,22 +208,16 @@ if (empty($reshook))
 					$backtopage = $backtopage.'&projectid='.$object->id; // Old method
 					header("Location: ".$backtopage);
 					exit;
-				}
-				else
-				{
+				} else {
 					header("Location:card.php?id=".$object->id);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 
 				$action = 'create';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'create';
 		}
 	}
@@ -334,9 +324,7 @@ if (empty($reshook))
 		{
 			$db->rollback();
 			$action = 'edit';
-		}
-		else
-		{
+		} else {
 			$db->commit();
 
 			if (GETPOST('socid', 'int') > 0) $object->fetch_thirdparty(GETPOST('socid', 'int'));
@@ -377,8 +365,7 @@ if (empty($reshook))
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret)
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
-			else
-				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 			$action = '';
 		}
 	}
@@ -420,9 +407,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			header("Location: list.php?restore_lastsearch_values=1");
 			exit;
-		}
-		else
-		{
+		} else {
 			dol_syslog($object->error, LOG_DEBUG);
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -442,9 +427,7 @@ if (empty($reshook))
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			// Load new object
 			$newobject = new Project($db);
 			$newobject->fetch($result);
@@ -609,8 +592,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		{
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
-		}
-		else print $text;
+		} else print $text;
 		if (!GETPOSTISSET('backtopage')) print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -703,9 +685,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	{
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	}
-	else
-	{
+	} else {
 		print ' &nbsp; &nbsp; ';
 		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	}
@@ -743,8 +723,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         	});
         });
         </script>';
-}
-elseif ($object->id > 0)
+} elseif ($object->id > 0)
 {
 	/*
      * Show or edit
@@ -895,8 +874,7 @@ elseif ($object->id > 0)
 			{
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-			}
-			else print $text;
+			} else print $text;
 			print '</td></tr>';
 		}
 
@@ -984,9 +962,7 @@ elseif ($object->id > 0)
 		}
 
 		print '</table>';
-	}
-	else
-	{
+	} else {
 		dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 		// Project card
@@ -1239,9 +1215,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 				}
 			}
@@ -1252,9 +1226,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
 				}
 			}
@@ -1265,9 +1237,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
 				}
 			}
@@ -1278,9 +1248,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
 				}
 			}
@@ -1346,9 +1314,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a>';
 				}
 			}
@@ -1359,9 +1325,7 @@ elseif ($object->id > 0)
 				if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 				{
 					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
 				}
 			}
@@ -1418,9 +1382,7 @@ elseif ($object->id > 0)
 	// Hook to add more things on page
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('mainCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-}
-else
-{
+} else {
 	print $langs->trans("RecordNotFound");
 }
 

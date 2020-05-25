@@ -609,9 +609,7 @@ if ($resql)
 				if (!$invoicerectmp->isMaxNbGenReached())
 				{
 					if (!$objp->suspended && $objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
-				}
-				else
-				{
+				} else {
 					print img_info($langs->trans("MaxNumberOfGenerationReached"));
 				}
 				print '</div>';
@@ -654,19 +652,14 @@ if ($resql)
 				if ($invoicerectmp->isMaxNbGenReached())
 				{
 					print $langs->trans("MaxNumberOfGenerationReached");
-				}
-				elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
+				} elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 					print $langs->trans("CreateBill").'</a>';
-				}
-				else
-				{
+				} else {
 					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 				}
-			}
-			else
-			{
+			} else {
 				print "&nbsp;";
 			}
 			if (!$i) $totalarray['nbfield']++;
@@ -676,9 +669,7 @@ if ($resql)
 
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		$colspan = 1;
 		foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
@@ -693,9 +684,7 @@ if ($resql)
 	print "</form>";
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

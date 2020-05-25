@@ -87,9 +87,7 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done
     	// Note: If calling page was an index.php not into htdocs (ie comm/index.php, ...), then this redirect will fails,
     	// but we don't want to change this because when URL is correct, we must be sure the redirect to install/index.php will be correct.
         $path = '';
-    }
-    else
-    {
+    } else {
         // If what we look is not index.php, we can try to guess location of root. May not work all the time.
     	// There is no real solution, because the only way to know the apache url relative path is to have it into conf file.
     	// If it fails to find correct $path, then only solution is to ask user to enter the correct URL to index.php or install/index.php
@@ -114,9 +112,7 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"]))    // If install not done
 if (!empty($dolibarr_strict_mode))
 {
 	error_reporting(E_ALL | E_STRICT);
-}
-else
-{
+} else {
 	error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
 }
 
@@ -156,8 +152,7 @@ if (!defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
     {
     	$csrfattack = false;
     	if (empty($_SERVER['HTTP_REFERER'])) $csrfattack = true; // An evil browser was used
-    	else
-    	{
+    	else {
     		$tmpa = parse_url($_SERVER['HTTP_HOST']);
     		$tmpb = parse_url($_SERVER['HTTP_REFERER']);
     		if ((empty($tmpa['host']) ? $tmpa['path'] : $tmpa['host']) != (empty($tmpb['host']) ? $tmpb['path'] : $tmpb['host'])) $csrfattack = true;

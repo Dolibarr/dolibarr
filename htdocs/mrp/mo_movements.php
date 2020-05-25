@@ -790,8 +790,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="center nowraponall">';
 			if ($productlot->id > 0)
 				print $productlot->getNomUrl(1);
-			else
-				print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
+			else print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 			print '</td>';
 		}
 		if (!empty($arrayfields['pl.eatby']['checked'])) {

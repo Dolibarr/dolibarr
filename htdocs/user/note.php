@@ -120,9 +120,7 @@ if ($id)
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('note_private', $object->note_private, '', 280, 'dolibarr_notes', 'In', true, false, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_8, '90%');
 		$doleditor->Create();
-	}
-	else
-	{
+	} else {
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 	}
 	print "</td></tr>";

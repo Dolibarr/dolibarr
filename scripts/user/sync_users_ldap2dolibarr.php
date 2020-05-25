@@ -93,8 +93,7 @@ print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_USER_DN."\n";
 if (!empty($conf->global->LDAP_FILTER_CONNECTION))
 	print 'Filter=('.$conf->global->LDAP_FILTER_CONNECTION.')'."\n"; // Note: filter is defined into function getRecords
-else
-	print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
+else print 'Filter=('.$conf->global->LDAP_KEY_USERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
 print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
@@ -254,8 +253,7 @@ if ($result >= 0) {
 		if (!$error || $forcecommit) {
 			if (!$error)
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else
-				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

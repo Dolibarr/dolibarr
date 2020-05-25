@@ -182,8 +182,7 @@ class EcmFiles extends CommonObject
 		if (!empty($this->ref))
 		{
 			$ref = $this->ref;
-		}
-		else {
+		} else {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 			$ref = dol_hash($this->filepath.'/'.$this->filename, 3);
 		}
@@ -199,16 +198,12 @@ class EcmFiles extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$maxposition = (int) $obj->maxposition;
-			}
-			else
-			{
+			} else {
 				$this->errors[] = 'Error '.$this->db->lasterror();
 				return --$error;
 			}
 			$maxposition = $maxposition + 1;
-		}
-		else
-		{
+		} else {
 			$maxposition = $this->position;
 		}
 
@@ -353,26 +348,21 @@ class EcmFiles extends CommonObject
 		if ($relativepath) {
 			$sql .= " AND t.filepath = '".$this->db->escape(dirname($relativepath))."' AND t.filename = '".$this->db->escape(basename($relativepath))."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		}
-		elseif (!empty($ref)) {		// hash of file path
+		} elseif (!empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		}
-		elseif (!empty($hashoffile)) {	// hash of content
+		} elseif (!empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
 			$sql .= " AND t.entity = ".$conf->entity; // unique key include the entity so each company has its own index
-		}
-		elseif (!empty($hashforshare)) {
+		} elseif (!empty($hashforshare)) {
 			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
 			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
-		}
-		elseif ($src_object_type && $src_object_id)
+		} elseif ($src_object_type && $src_object_id)
 		{
 			// Warning: May return several record, and only first one is returned !
 			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
 			$sql .= " AND t.entity = ".$conf->entity;
-		}
-		else {
+		} else {
 			$sql .= ' AND t.rowid = '.$this->db->escape($id); // rowid already unique
 		}
 
@@ -789,8 +779,7 @@ class EcmFiles extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';

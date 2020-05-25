@@ -192,9 +192,7 @@ if (empty($reshook))
 
     			$object->generateDocument($model, $outputlangs, 0, 0, 0);
     		}
-    	}
-    	else
-    	{
+    	} else {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
@@ -624,9 +622,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    		if ($permissiontoadd)
 	    		{
 	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-	    		}
-	    		else
-	    		{
+	    		} else {
 	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 	    		}
     		}
@@ -639,9 +635,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    			if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
 	    		    {
 	    		        print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-	    		    }
-	    		    else
-	    		    {
+	    		    } else {
 	    		    	$langs->load("errors");
 	    		        print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 	    		    }
@@ -675,9 +669,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    		else
-    		{
+    		} else {
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
     		}
     	}

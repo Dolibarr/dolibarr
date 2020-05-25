@@ -103,9 +103,7 @@ class box_external_rss extends ModeleBoxes
             // Show warning
             $title .= " ".img_error($langs->trans("FailedToRefreshDataInfoNotUpToDate", ($rssparser->getLastFetchDate() ?dol_print_date($rssparser->getLastFetchDate(), "dayhourtext") : $langs->trans("Unknown"))));
             $this->info_box_head = array('text' => $title, 'limit' => 0);
-        }
-        else
-        {
+        } else {
             $this->info_box_head = array(
                 'text' => $title,
                 'sublink' => $link,

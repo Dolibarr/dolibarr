@@ -140,8 +140,7 @@ if (!empty($_GET['code']))     // We are coming from oauth provider page
     } catch (Exception $e) {
         print $e->getMessage();
     }
-}
-else // If entry on page with no parameter, we arrive here
+} else // If entry on page with no parameter, we arrive here
 {
     $_SESSION["backtourlsavedbeforeoauthjump"] = $backtourl;
 
@@ -150,9 +149,7 @@ else // If entry on page with no parameter, we arrive here
     if (GETPOST('state'))
     {
     	$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
-    }
-    else
-    {
+    } else {
         $url = $apiService->getAuthorizationUri(); // Parameter state will be randomly generated
     }
 

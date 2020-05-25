@@ -189,22 +189,17 @@ if ($action == 'update')
 				if ($result > 0)
 				{
 					dolibarr_set_const($db, "MAIN_LOGIN_BACKGROUND", $original_file, 'chaine', 0, '', $conf->entity);
-				}
-				elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result))
+				} elseif (preg_match('/^ErrorFileIsInfectedWithAVirus/', $result))
 				{
 					$error++;
 					$langs->load("errors");
 					$tmparray = explode(':', $result);
 					setEventMessages($langs->trans('ErrorFileIsInfectedWithAVirus', $tmparray[1]), null, 'errors');
-				}
-				else
-				{
+				} else {
 					$error++;
 					setEventMessages($langs->trans("ErrorFailedToSaveFile"), null, 'errors');
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');

@@ -83,8 +83,7 @@ if (empty($reshook))
 		if ($result < 0)
 		{
 			setEventMessages($bprev->error, $bprev->errors, 'errors');
-		}
-		elseif ($result == 0)
+		} elseif ($result == 0)
 		{
 			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 			setEventMessages($mesg, null, 'errors');
@@ -93,9 +92,7 @@ if (empty($reshook))
 			{
 				$mesg .= '<span class="warning">'.$val."</span><br>\n";
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
 		}
 	}
@@ -174,22 +171,16 @@ if ($nb) {
         } else {
             print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">'.$langs->trans("CreateAll")."</a>\n";
 		}
-	}
-	else
-	{
+	} else {
 		if ($mysoc->isInEEC())
 		{
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateAll")."</a>\n";
 		}
 	}
-}
-else
-{
+} else {
     print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
@@ -307,17 +298,13 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
 	print "</form>";
 	print "<br>\n";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

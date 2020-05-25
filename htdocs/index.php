@@ -301,9 +301,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	                $board = new $class($db);
 	                $board->load_state_board();
 	                $boardloaded[$class] = $board;
-	            }
-	            else
-	            {
+	            } else {
 	                $board = $boardloaded[$class];
 	            }
 

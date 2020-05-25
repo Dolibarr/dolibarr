@@ -129,16 +129,12 @@ if ($result)
 
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
 
 	print '</table>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

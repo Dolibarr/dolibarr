@@ -117,9 +117,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 					if (defined('USEDOLIBARRSERVER')) {
 						header("Location: ".DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$newpageid.'&l='.GETPOST('l', 'aZ09'));
 						exit;
-					}
-					else
-					{
+					} else {
 						$newpageref = $obj->pageurl;
 						header("Location: ".$newpageref.'.php?l='.GETPOST('l', 'aZ09'));
 						exit;

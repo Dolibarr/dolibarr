@@ -311,14 +311,10 @@ if ($search_type != '' && $search_type != '-1')
 	if ($search_type == 1)
 	{
 		$texte = $langs->trans("Services");
-	}
-	else
-	{
+	} else {
 		$texte = $langs->trans("Products");
 	}
-}
-else
-{
+} else {
 	$texte = $langs->trans("ProductsAndServices");
 }
 
@@ -472,8 +468,7 @@ if ($resql)
 		if ($search_type == 0)
 		{
 			$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-		}
-		elseif ($search_type == 1)
+		} elseif ($search_type == 1)
 		{
 			$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 		}
@@ -1105,15 +1100,13 @@ if ($resql)
 				if ((float) $duration_value > 1)
 				{
 				    $dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-				}
-				elseif ((float) $duration_value > 0)
+				} elseif ((float) $duration_value > 0)
 				{
 				    $dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 				}
 				print $duration_value;
 				print ((!empty($duration_unit) && isset($dur[$duration_unit]) && $duration_value != '') ? ' '.$langs->trans($dur[$duration_unit]) : '');
-			}
-			elseif (!preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
+			} elseif (!preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
 			{
 				print $obj->duration;
 			}
@@ -1294,8 +1287,7 @@ if ($resql)
 						{
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
 							print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext);
-						}
-						else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+						} else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
 					}
 				}
 			}
@@ -1489,9 +1481,7 @@ if ($resql)
 	print "</table>";
 	print "</div>";
 	print '</form>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

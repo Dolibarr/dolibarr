@@ -238,8 +238,7 @@ class WebsitePage extends CommonObject
 		{
 			$sql .= ' AND t.rowid = '.$id;
 		}
-		else
-		{
+		else {
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
@@ -359,7 +358,7 @@ class WebsitePage extends CommonObject
 				} elseif ($key == 'lang' || $key == 't.lang') {
 					$listoflang = array();
 					$foundnull = 0;
-					foreach(explode(',', $value) as $tmpvalue) {
+					foreach (explode(',', $value) as $tmpvalue) {
 						if ($tmpvalue == 'null') {
 							$foundnull++;
 							continue;

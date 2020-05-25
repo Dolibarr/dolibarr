@@ -87,9 +87,7 @@ if (empty($template_id)) {
 if ($result < 0)
 {
 	setEventMessages($advTarget->error, $advTarget->errors, 'errors');
-}
-else
-{
+} else {
 	if (!empty($advTarget->id)) {
 		$array_query = json_decode($advTarget->filtervalue, true);
 	}

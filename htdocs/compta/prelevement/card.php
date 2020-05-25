@@ -408,9 +408,7 @@ if ($id > 0 || $ref)
 			if ($obj->statut == 3)
 			{
 		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
-			}
-			else
-			{
+			} else {
 		  		print "&nbsp;";
 			}
 
@@ -442,9 +440,7 @@ if ($id > 0 || $ref)
 		print '</form>';
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
