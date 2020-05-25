@@ -190,10 +190,12 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				{
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 				}
-				elseif ($val)	// $val is the Id of a contact
+				elseif ((int) $val > 0)	// $val is the Id of a contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = $val;
+				} else {
+					$tmparray[] = $val;
 				}
 			}
 		}
@@ -240,10 +242,12 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				{
 					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
 				}
-				elseif ($val)				// $val is the Id of a contact
+				elseif ((int) $val > 0)				// $val is the Id of a contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
+				} else {
+					$tmparray[] = $val;
 				}
 			}
 		}

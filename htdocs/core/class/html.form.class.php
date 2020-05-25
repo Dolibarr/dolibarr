@@ -6621,10 +6621,11 @@ class Form
 	 *  @param	string	$elemtype		Type of element we show ('category', ...). Will execute a formating function on it. To use in readonly mode if js component support HTML formatting.
 	 *  @param	string	$placeholder	String to use as placeholder
 	 *  @param	int		$addjscombo		Add js combo
+	 *  @param  int     $enablefreetag  0 no free tag, 1 enable free tag for elemtype
 	 *	@return	string					HTML multiselect string
 	 *  @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
-	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
+	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1, $enablefreetag = 0)
 	{
 		global $conf, $langs;
 
@@ -6666,13 +6667,50 @@ class Form
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').'.$tmpplugin.'({
 								dir: \'ltr\',
+								tags: '.($enablefreetag?'true':'false').',
 								// Specify format function for dropdown item
 								formatResult: formatResult,
-							 	templateResult: formatResult,		/* For 4.0 */
+								/* For 4.0 */
+							 	templateResult: formatResult,
 								// Specify format function for selected item
 								formatSelection: formatSelection,
-							 	templateSelection: formatSelection		/* For 4.0 */
-							});
+								/* For 4.0 */
+								templateSelection: formatSelection';
+				if ($enablefreetag && $elemtype == 'email') {
+					$out .= ',
+								createTag: function (params) {
+									var REGEX_EMAIL = "([a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@" +
+									"(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)";
+									// Dont offset to create a tag if there is no @ symbol
+									if (params.term.indexOf("@") === -1) {
+										// Return null to disable tag creation
+										return null;
+									}
+									var match = params.term.match(new RegExp("^([^<]*)\<" + REGEX_EMAIL + "\>$", "i"));
+									// console.log(match);
+									if (match !== null) {
+										return {
+											id: $.trim(match[1]) + " <" + match[2] + ">",
+											text: $.trim(match[1]) + " <" + match[2] + ">"
+										}
+									}
+									if (params.term.indexOf("<") >= 0) {
+										// Return null to disable tag creation
+										return null;
+									}
+									var match = params.term.match(new RegExp("^" + REGEX_EMAIL + "$", "i"));
+									// console.log(match);
+									if (match !== null) {
+										var pos = params.term.indexOf("@");
+										return {
+											id: $.trim(match[1].substring(0, pos)) + " <" + match[1] + ">",
+											text: $.trim(match[1].substring(0, pos)) + " <" + match[1] + ">"
+										}
+									}
+									return null;
+								}';
+				}
+				$out .= '			});
 						});'."\n";
 			}
 			elseif ($addjscombo == 2)
