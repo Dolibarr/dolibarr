@@ -3843,7 +3843,7 @@ div.info {
     padding-bottom: 8px;
     margin: 1em 0em 1em 0em;
     background: #eff8fc;
-    color: #668;
+    color: #558;
 }
 
 /* Warning message */
