@@ -53,7 +53,7 @@ $theme_bgcolor = array(hexdec('F4'), hexdec('F4'), hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 
 // Colors
-$colorbackhmenu1 = '55,61,90'; // topmenu
+$colorbackhmenu1 = '38,60,92'; // topmenu
 $colorbackvmenu1 = '250,250,250'; // vmenu
 $colortopbordertitle1 = '215,215,215'; // top border of title
 $colorbacktitle1 = '233,234,237'; // title of tables,list
@@ -75,7 +75,7 @@ $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
 $fontsize = '0.86em';
 $fontsizesmaller = '0.75em';
-$topMenuFontSize = '1.2em';
+$topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
 
