@@ -2288,7 +2288,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					$total_plannedworkload += $plannedworkload;
 					if (!in_array('plannedworkload', $hiddenfields))
 					{
-						print '<td class="right">'.($plannedworkload ? convertSecondToTime($plannedworkload) : '').'</td>';
+						print '<td class="right">'.($plannedworkload ?convertSecondToTime($plannedworkload) : '').'</td>';
 					}
 					if (!in_array('declaredprogress', $hiddenfields))
 					{
