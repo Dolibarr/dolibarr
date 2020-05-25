@@ -1012,9 +1012,9 @@ if (empty($reshook))
 	elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->availability($_POST['availability_id']);
 	}
-  
-  // Terms of payments
-	elseif ($action == 'setconditions' && $usercancreate) { 
+
+	// Terms of payments
+	elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$result = $object->set_remise_percent($user, GETPOST('remise_percent', 'alpha'));
