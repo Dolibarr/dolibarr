@@ -669,7 +669,6 @@ class FormMail extends Form
 				}
 				else
 				{
-					// The select combo
 					if (!empty($this->withto) && is_array($this->withto))
 					{
 						// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
