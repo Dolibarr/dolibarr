@@ -151,8 +151,7 @@ class Interfaces
                             //print 'Todo for '.$modName." : ".$newdir.'/'.$file."\n";
                             include_once $newdir.'/'.$file;
                             //print 'Done for '.$modName."\n";
-                        }
-                        catch (Exception $e)
+                        } catch (Exception $e)
                         {
                             dol_syslog('ko for '.$modName." ".$e->getMessage()."\n", LOG_ERR);
                         }
@@ -187,14 +186,11 @@ class Interfaces
                 {
                     //dol_syslog(get_class($this)."::run_triggers action=".$action." Launch runTrigger for file '".$files[$key]."'", LOG_DEBUG);
                     $result = $objMod->runTrigger($action, $object, $user, $langs, $conf);
-                }
-                elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
+                } elseif (method_exists($objMod, 'run_trigger'))	// Deprecated method
                 {
                     dol_syslog(get_class($this)."::run_triggers action=".$action." Launch old method run_trigger (rename your trigger into runTrigger) for file '".$files[$key]."'", LOG_WARNING);
                     $result = $objMod->run_trigger($action, $object, $user, $langs, $conf);
-                }
-                else
-                {
+                } else {
                     dol_syslog(get_class($this)."::run_triggers action=".$action." A trigger was declared for class ".get_class($objMod)." but method runTrigger was not found", LOG_ERR);
                 }
 
@@ -219,9 +215,7 @@ class Interfaces
                     elseif (!empty($objMod->error))  $this->errors[] = $objMod->error;
                     //dol_syslog("Error in trigger ".$action." - Nb of error string returned = ".count($this->errors), LOG_ERR);
                 }
-            }
-            else
-            {
+            } else {
                 dol_syslog(get_class($this)."::run_triggers action=".$action." Failed to instantiate trigger for file '".$files[$key]."'", LOG_ERR);
             }
         }
@@ -230,9 +224,7 @@ class Interfaces
         {
             dol_syslog(get_class($this)."::run_triggers action=".$action." Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko." - Nb of error string returned in this->errors = ".count($this->errors), LOG_ERR);
             return -$nbko;
-        }
-        else
-        {
+        } else {
             //dol_syslog(get_class($this)."::run_triggers Files found: ".$nbfile.", Files launched: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko, LOG_DEBUG);
             return $nbok;
         }
@@ -291,9 +283,7 @@ class Interfaces
                         {
                             $langs->load("errors");
                             print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger", $modName, "/htdocs/core/triggers/").'</div>';
-                        }
-                        else
-                        {
+                        } else {
                             include_once $newdir.'/'.$file;
                         }
 
@@ -328,48 +318,57 @@ class Interfaces
                 continue;
             }
 
-            $objMod = new $modName($db);
+            $text = '';
 
-            // Define disabledbyname and disabledbymodule
-            $disabledbyname = 0;
-            $disabledbymodule = 1;
-            $module = '';
+            try {
+	            $objMod = new $modName($db);
 
-            // Check if trigger file is disabled by name
-            if (preg_match('/NORUN$/i', $files[$key])) $disabledbyname = 1;
-            // Check if trigger file is for a particular module
-            if (preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/i', $files[$key], $reg))
-            {
-                $module = preg_replace('/^mod/i', '', $reg[2]);
-                $constparam = 'MAIN_MODULE_'.strtoupper($module);
-                if (strtolower($module) == 'all') $disabledbymodule = 0;
-                elseif (empty($conf->global->$constparam)) $disabledbymodule = 2;
-                $triggers[$j]['module'] = strtolower($module);
-            }
+	            if (is_subclass_of($objMod, 'DolibarrTriggers'))
+	            {
+		            // Define disabledbyname and disabledbymodule
+		            $disabledbyname = 0;
+		            $disabledbymodule = 1;
+		            $module = '';
 
-            // We set info of modules
-            $triggers[$j]['picto'] = $objMod->picto ?img_object('', $objMod->picto, 'class="valignmiddle pictomodule "') : img_object('', 'generic', 'class="valignmiddle pictomodule "');
-            $triggers[$j]['file'] = $files[$key];
-            $triggers[$j]['fullpath'] = $fullpath[$key];
-            $triggers[$j]['relpath'] = $relpath[$key];
-            $triggers[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
-            $triggers[$j]['version'] = $objMod->getVersion();
-            $triggers[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
-            if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = '';
+		            // Check if trigger file is disabled by name
+		            if (preg_match('/NORUN$/i', $files[$key])) $disabledbyname = 1;
+		            // Check if trigger file is for a particular module
+		            if (preg_match('/^interface_([0-9]+)_([^_]+)_(.+)\.class\.php/i', $files[$key], $reg))
+		            {
+		                $module = preg_replace('/^mod/i', '', $reg[2]);
+		                $constparam = 'MAIN_MODULE_'.strtoupper($module);
+		                if (strtolower($module) == 'all') $disabledbymodule = 0;
+		                elseif (empty($conf->global->$constparam)) $disabledbymodule = 2;
+		                $triggers[$j]['module'] = strtolower($module);
+		            }
 
-            $text = '<b>'.$langs->trans("Description").':</b><br>';
-            $text .= $objMod->getDesc().'<br>';
-            $text .= '<br><b>'.$langs->trans("Status").':</b><br>';
-            if ($disabledbyname == 1)
-            {
-                $text .= $langs->trans("TriggerDisabledByName").'<br>';
-                if ($disabledbymodule == 2) $text .= $langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';
-            }
-            else
-            {
-                if ($disabledbymodule == 0) $text .= $langs->trans("TriggerAlwaysActive").'<br>';
-                if ($disabledbymodule == 1) $text .= $langs->trans("TriggerActiveAsModuleActive", $module).'<br>';
-                if ($disabledbymodule == 2) $text .= $langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';
+		            // We set info of modules
+		            $triggers[$j]['picto'] = $objMod->picto ?img_object('', $objMod->picto, 'class="valignmiddle pictomodule "') : img_object('', 'generic', 'class="valignmiddle pictomodule "');
+		            $triggers[$j]['file'] = $files[$key];
+		            $triggers[$j]['fullpath'] = $fullpath[$key];
+		            $triggers[$j]['relpath'] = $relpath[$key];
+		            $triggers[$j]['iscoreorexternal'] = $iscoreorexternal[$key];
+		            $triggers[$j]['version'] = $objMod->getVersion();
+		            $triggers[$j]['status'] = img_picto($langs->trans("Active"), 'tick');
+		            if ($disabledbyname > 0 || $disabledbymodule > 1) $triggers[$j]['status'] = '';
+
+		            $text = '<b>'.$langs->trans("Description").':</b><br>';
+		            $text .= $objMod->getDesc().'<br>';
+		            $text .= '<br><b>'.$langs->trans("Status").':</b><br>';
+		            if ($disabledbyname == 1)
+		            {
+		                $text .= $langs->trans("TriggerDisabledByName").'<br>';
+		                if ($disabledbymodule == 2) $text .= $langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';
+		            } else {
+		                if ($disabledbymodule == 0) $text .= $langs->trans("TriggerAlwaysActive").'<br>';
+		                if ($disabledbymodule == 1) $text .= $langs->trans("TriggerActiveAsModuleActive", $module).'<br>';
+		                if ($disabledbymodule == 2) $text .= $langs->trans("TriggerDisabledAsModuleDisabled", $module).'<br>';
+		            }
+	            } else {
+	            	print 'Error: Trigger '.$modName.' does not extends DolibarrTriggers<br>';
+	            }
+            } catch (Exception $e) {
+            	print $e->getMessage();
             }
 
             $triggers[$j]['info'] = $text;

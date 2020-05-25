@@ -104,15 +104,11 @@ class CActionComm
 
                 $this->db->free($resql);
                 return 1;
-            }
-            else
-			{
+            } else {
                 $this->db->free($resql);
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -166,12 +162,12 @@ class CActionComm
 
                     if ($qualified && $obj->module)
                     {
-                        if ($obj->module == 'invoice' && !$conf->facture->enabled)	 $qualified = 0;
-                        if ($obj->module == 'order' && !$conf->commande->enabled) $qualified = 0;
-                        if ($obj->module == 'propal' && !$conf->propal->enabled)	 $qualified = 0;
-                        if ($obj->module == 'invoice_supplier' && !$conf->fournisseur->enabled)   $qualified = 0;
-                        if ($obj->module == 'order_supplier' && !$conf->fournisseur->enabled)   $qualified = 0;
-                        if ($obj->module == 'shipping' && !$conf->expedition->enabled)	 $qualified = 0;
+                        if ($obj->module == 'invoice' && !$conf->facture->enabled)	$qualified=0;
+                        if ($obj->module == 'order'   && !$conf->commande->enabled) $qualified=0;
+                        if ($obj->module == 'propal'  && !$conf->propal->enabled)	  $qualified=0;
+                        if ($obj->module == 'invoice_supplier' && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ! $conf->supplier_invoice->enabled))	$qualified=0;
+                        if ($obj->module == 'order_supplier'   && ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD)) || ! $conf->supplier_order->enabled))	$qualified=0;
+                        if ($obj->module == 'shipping' && !$conf->expedition->enabled)	 $qualified=0;
                     }
 
                     if ($qualified)
@@ -208,9 +204,7 @@ class CActionComm
             if ($idorcode == 'id') $this->liste_array = $repid;
             if ($idorcode == 'code') $this->liste_array = $repcode;
             return $this->liste_array;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }

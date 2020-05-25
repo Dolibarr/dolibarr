@@ -58,9 +58,7 @@ if (class_exists($keyforclass))
 			$this->export_help_array[$r][$fieldname] = $helpfield;
 		}
 	}
-}
-else
-{
+} else {
 	dol_print_error($this->db, 'Failed to find class '.$keyforclass.', even after the include of '.$keyforclassfile);
 }
 // End add common fields

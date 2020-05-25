@@ -133,7 +133,7 @@ class box_shipments extends ModeleBoxes
                     $societestatic->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $shipmentstatic->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -145,7 +145,7 @@ class box_shipments extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $orderstatic->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -158,7 +158,10 @@ class box_shipments extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedShipments"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                	'td' => 'class="center opacitymedium"',
+                	'text'=>$langs->trans("NoRecordedShipments")
+                );
 
                 $this->db->free($result);
             } else {

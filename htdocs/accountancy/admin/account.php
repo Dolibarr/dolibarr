@@ -119,8 +119,7 @@ if (empty($reshook))
 			{
 				$obj = $db->fetch_object($resql);
 				$country_code = $obj->code;
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 
 			// Try to load sql file
 			if ($country_code)
@@ -143,9 +142,7 @@ if (empty($reshook))
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans("ChartLoaded"), null, 'mesgs');
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->trans("ErrorDuringChartLoad"), null, 'warnings');
 				}
 			}
@@ -161,7 +158,7 @@ if (empty($reshook))
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
             $mode = GETPOST('mode', 'int');
-    		$result = $accounting->account_desactivate($id, $mode);
+    		$result = $accounting->accountDeactivate($id, $mode);
     	}
 
     	$action = 'update';
@@ -235,8 +232,7 @@ if (strlen(trim($search_account))) {
 			}
 			$sql .= " AND (aa.account_number LIKE '".$startchar.$search_account_tmp_clean."'";
 			$sql .= " OR aa.account_number LIKE '".$startchar.$search_account_clean."%')";
-		}
-		else $sql .= natural_search("aa.account_number", $search_account_tmp);
+		} else $sql .= natural_search("aa.account_number", $search_account_tmp);
 	}
 }
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
@@ -267,7 +263,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $param = '';
+	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
@@ -328,8 +324,7 @@ if ($resql)
 
             $i++;
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
     print "</select>";
     print ajax_combobox("chartofaccounts");
     print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
@@ -431,9 +426,7 @@ if ($resql)
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) $totalarray['nbfield']++;
-			}
-			else
-			{
+			} else {
 				print '<td>&nbsp;</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
@@ -488,11 +481,11 @@ if ($resql)
 		// Action
 		print '<td class="center">';
 		if ($user->rights->accounting->chartofaccount) {
-			print '<a href="./card.php?action=update&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
+			print '<a class="editfielda" href="./card.php?action=update&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="./card.php?action=delete&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
+			print '<a class="marginleftonly" href="./card.php?action=delete&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
 			print img_delete();
 			print '</a>';
 		}

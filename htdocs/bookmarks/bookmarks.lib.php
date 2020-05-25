@@ -41,9 +41,7 @@ function printDropdownBookmarksList()
     if (!empty($_SERVER["QUERY_STRING"]))
     {
         $url .= (dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '');
-    }
-    else
-    {
+    } else {
         global $sortfield, $sortorder;
         $tmpurl = '';
         // No urlencode, all param $url will be urlencoded later
@@ -60,7 +58,7 @@ function printDropdownBookmarksList()
     }
 
     $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? 'onsubmit="return false"' : '').'>';
+    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' onsubmit="return false"' : '').'>';
     $searchForm .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 
@@ -122,9 +120,7 @@ function printDropdownBookmarksList()
     		}
     		$searchForm .= '</select>';
     	}
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
 

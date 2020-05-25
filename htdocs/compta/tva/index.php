@@ -57,14 +57,11 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
-		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-		else
-		{
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) { // quaterly vat, we take last past complete quarter
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -3 - (($current_date['mon'] - $conf->global->SOCIETE_FISCAL_MONTH_START) % 3), 'm');
 				$date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
-			}
-			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
+			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) { // yearly vat
 				if ($current_date['mon'] < $conf->global->SOCIETE_FISCAL_MONTH_START) {
 					if (($conf->global->SOCIETE_FISCAL_MONTH_START - $current_date['mon']) > 6) {	// If period started from less than 6 years, we show past year
 						$year_start--;
@@ -76,15 +73,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 				}
 				$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 				$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
-			}
-			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
+			} elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) {	// monthly vat, we take last past complete month
 				$date_start = dol_time_plus_duree(dol_get_first_day($year_start, $current_date['mon'], false), -1, 'm');
 				$date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -176,9 +170,7 @@ function pt($db, $sql, $date)
             	$amountpaid = 0;
             	$previousmode = '';
             	$previousmonth = '';
-            }
-            else
-            {
+            } else {
             	$previousmode = $obj->mode;
             	$previousmonth = $obj->dm;
             }
@@ -207,8 +199,7 @@ function pt($db, $sql, $date)
         print "</table>";
 
         $db->free($result);
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
@@ -255,7 +246,7 @@ llxHeader('', $name);
 
 //$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
 //$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
-//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'invoicing');
+//print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'bill');
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
@@ -371,9 +362,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
 				'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
 				//'link'				=>$expensereport->getNomUrl(1)
 				);
-			}
-			else
-			{
+			} else {
 				//$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
 				//$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 				//$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];

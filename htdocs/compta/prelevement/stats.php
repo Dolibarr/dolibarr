@@ -73,7 +73,7 @@ if ($resql)
 print '<br>';
 print load_fiche_titre($langs->trans("WithdrawStatistics"), '', '');
 
-$ligne = new LignePrelevement($db, $user);
+$ligne = new LignePrelevement($db);
 
 $sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -125,9 +125,7 @@ if ($resql)
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
 	$db->free();
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -219,9 +217,7 @@ if ($resql)
 	print '</td><td class="right">&nbsp;</td>';
 	print "</tr></table>";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

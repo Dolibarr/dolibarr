@@ -261,8 +261,8 @@ if ($action == 'edit')
 
     clearstatcache();
 
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<table class="noborder centpercent tableforfield">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
     print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
@@ -324,17 +324,15 @@ if ($action == 'edit')
     print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
-}
-else
-{
+} else {
     dol_fiche_head($head, 'guisetup', $title, -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'id', $linkback, $user->rights->user->user->lire || $user->admin);
 
-    print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
+    print '<table class="noborder centpercent tableforfield">';
+    print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
     print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
@@ -348,8 +346,7 @@ else
     if (!empty($tmparray[$object->conf->MAIN_LANDING_PAGE]))
     {
         print $langs->trans($tmparray[$object->conf->MAIN_LANDING_PAGE]);
-    }
-    else print $object->conf->MAIN_LANDING_PAGE;
+    } else print $object->conf->MAIN_LANDING_PAGE;
     //print $form->selectarray('MAIN_LANDING_PAGE', $tmparray, (! empty($object->conf->MAIN_LANDING_PAGE)?$object->conf->MAIN_LANDING_PAGE:''), 0, 0, 0, '', 1);
     print '</td></tr>';
 
@@ -396,15 +393,11 @@ else
     if (empty($user->admin) && !empty($dolibarr_main_demo))
     {
         print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("FeatureDisabledInDemo")."\" href=\"#\">".$langs->trans("Modify")."</a>";
-    }
-    else
-    {
+    } else {
         if ($caneditfield || !empty($user->admin))       // Si utilisateur edite = utilisateur courant (pas besoin de droits particulier car il s'agit d'une page de modif d'output et non de données) ou si admin
         {
             print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("Modify").'</a>';
-        }
-        else
-        {
+        } else {
             print "<a class=\"butActionRefused classfortooltip\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Modify")."</a>";
         }
     }

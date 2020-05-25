@@ -65,7 +65,7 @@ $dir = $conf->ficheinter->dir_temp;
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'commercial');
+print load_fiche_titre($title, '', 'intervention');
 
 dol_mkdir($dir);
 
@@ -81,9 +81,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/interventionsnbinyear-'.$user->id.'-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/interventionsnbinyear-'.$year.'.png';
     $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsnbinyear-'.$year.'.png';
 }
@@ -121,9 +119,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenameamount = $dir.'/interventionsamountinyear-'.$user->id.'-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenameamount = $dir.'/interventionsamountinyear-'.$year.'.png';
     $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsamountinyear-'.$year.'.png';
 }
@@ -160,9 +156,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filename_avg = $dir.'/interventionsaverage-'.$user->id.'-'.$year.'.png';
     $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filename_avg = $dir.'/interventionsaverage-'.$year.'.png';
     $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=interventionstats&file=interventionsaverage-'.$year.'.png';
 }
@@ -313,8 +307,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     /*print "<br>\n";
     print $px2->show();

@@ -91,8 +91,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'USER_MODIFY')
+		} elseif ($action == 'USER_MODIFY')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap')
@@ -130,8 +129,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'USER_NEW_PASSWORD')
+		} elseif ($action == 'USER_NEW_PASSWORD')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap')
@@ -167,12 +165,10 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'USER_ENABLEDISABLE')
+		} elseif ($action == 'USER_ENABLEDISABLE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-		}
-		elseif ($action == 'USER_DELETE')
+		} elseif ($action == 'USER_DELETE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap')
@@ -190,8 +186,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'USER_SETINGROUP')
+		} elseif ($action == 'USER_SETINGROUP')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap')
@@ -228,8 +223,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'USER_REMOVEFROMGROUP')
+		} elseif ($action == 'USER_REMOVEFROMGROUP')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap')
@@ -292,8 +286,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'USERGROUP_MODIFY')
+		} elseif ($action == 'USERGROUP_MODIFY')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap')
@@ -329,8 +322,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'USERGROUP_DELETE')
+		} elseif ($action == 'USERGROUP_DELETE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE) && $conf->global->LDAP_SYNCHRO_ACTIVE === 'dolibarr2ldap')
@@ -369,8 +361,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'CONTACT_MODIFY')
+		} elseif ($action == 'CONTACT_MODIFY')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_CONTACT_ACTIVE))
@@ -406,8 +397,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'CONTACT_DELETE')
+		} elseif ($action == 'CONTACT_DELETE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_CONTACT_ACTIVE))
@@ -475,8 +465,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 				if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 			}
-		}
-		elseif ($action == 'MEMBER_VALIDATE')
+		} elseif ($action == 'MEMBER_VALIDATE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
@@ -499,8 +488,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 				}
 			}
-		}
-		elseif ($action == 'MEMBER_SUBSCRIPTION')
+		} elseif ($action == 'MEMBER_SUBSCRIPTION')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
@@ -527,8 +515,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					if ($result < 0) $this->error = "ErrorLDAP ".$ldap->error;
 				}
 			}
-		}
-		elseif ($action == 'MEMBER_MODIFY')
+		} elseif ($action == 'MEMBER_MODIFY')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
@@ -626,8 +613,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$this->errors[] = "ErrorLDAP ".$ldap->error;
 				}
 			}
-		}
-		elseif ($action == 'MEMBER_NEW_PASSWORD')
+		} elseif ($action == 'MEMBER_NEW_PASSWORD')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
@@ -653,8 +639,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 			}
-		}
-		elseif ($action == 'MEMBER_RESILIATE')
+		} elseif ($action == 'MEMBER_RESILIATE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
@@ -680,8 +665,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					}
 				}
 			}
-		}
-		elseif ($action == 'MEMBER_DELETE')
+		} elseif ($action == 'MEMBER_DELETE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_ACTIVE) && (string) $conf->global->LDAP_MEMBER_ACTIVE == '1')
@@ -764,8 +748,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$this->errors[] = "ErrorLDAP ".$ldap->error;
 				}
 			}
-		}
-		elseif ($action == 'MEMBER_TYPE_MODIFY')
+		} elseif ($action == 'MEMBER_TYPE_MODIFY')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')
@@ -807,8 +790,7 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					$this->errors[] = "ErrorLDAP ".$ldap->error;
 				}
 			}
-		}
-		elseif ($action == 'MEMBER_TYPE_DELETE')
+		} elseif ($action == 'MEMBER_TYPE_DELETE')
 		{
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 			if (!empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE) && (string) $conf->global->LDAP_MEMBER_TYPE_ACTIVE == '1')

@@ -172,9 +172,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers'))
 	{
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-	}
-	else
-	{
+	} else {
 		if ($id > 0) {
 			//$object->fetch($id);
             if (!empty($object->socpeopleassigned)) {
@@ -242,9 +240,7 @@ if (empty($reshook) && $action == 'add')
 		$error++; $donotclearsession = 1;
 		$action = 'create';
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
-	}
-	else
-	{
+	} else {
 		$object->type_code = GETPOST('actioncode', 'aZ09');
 	}
 
@@ -262,14 +258,11 @@ if (empty($reshook) && $action == 'add')
 			if (GETPOST('actioncode', 'aZ09') == 'AC_RDV' && $contact->getFullName($langs))
 			{
 				$object->label = $langs->transnoentitiesnoconv("TaskRDVWith", $contact->getFullName($langs));
-			}
-			else
-			{
+			} else {
 				if ($langs->trans("Action".$object->type_code) != "Action".$object->type_code)
 				{
 					$object->label = $langs->transnoentitiesnoconv("Action".$object->type_code)."\n";
-				}
-				else {
+				} else {
 					$cactioncomm->fetch($object->type_code);
 					$object->label = $cactioncomm->label;
 				}
@@ -317,7 +310,7 @@ if (empty($reshook) && $action == 'add')
 		if (GETPOST("doneby") > 0) $object->userdoneid = GETPOST("doneby", "int");
 	}
 
-	$object->note = trim(GETPOST("note"));
+	$object->note_private = trim(GETPOST("note"));
 
 	if (isset($_POST["contactid"])) $object->contact = $contact;
 
@@ -389,19 +382,14 @@ if (empty($reshook) && $action == 'add')
 				{
 					dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
 					header("Location: ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
-				}
-				elseif ($idaction)
+				} elseif ($idaction)
 				{
 					header("Location: ".DOL_URL_ROOT.'/comm/action/card.php?id='.$idaction.($moreparam ? '&'.$moreparam : ''));
-				}
-				else
-				{
+				} else {
 					header("Location: ".DOL_URL_ROOT.'/comm/action/index.php'.($moreparam ? '?'.$moreparam : ''));
 				}
 				exit;
-			}
-			else
-			{
+			} else {
 				// If error
 				$db->rollback();
 				$langs->load("errors");
@@ -409,9 +397,7 @@ if (empty($reshook) && $action == 'add')
 				setEventMessages($error, null, 'errors');
 				$action = 'create'; $donotclearsession = 1;
 			}
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create'; $donotclearsession = 1;
@@ -465,7 +451,6 @@ if (empty($reshook) && $action == 'update')
             $object->contactid = key($object->socpeopleassigned);
         }
 		$object->fk_project  = GETPOST("projectid", 'int');
-		$object->note        = GETPOST("note", "none"); // deprecated
 		$object->note_private = GETPOST("note", "none");
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
@@ -489,8 +474,7 @@ if (empty($reshook) && $action == 'update')
 			{
 				if ($val['id'] > 0 && $val['id'] != $assignedtouser) $listofuserid[$val['id']] = $val;
 			}
-		}
-		else {
+		} else {
 			$assignedtouser = (!empty($object->userownerid) && $object->userownerid > 0 ? $object->userownerid : 0);
 			if ($assignedtouser) $listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>($user->id == $assignedtouser ? $transparency : '')); // Owner first
 		}
@@ -517,9 +501,7 @@ if (empty($reshook) && $action == 'update')
 			$error++; $donotclearsession = 1;
 			$action = 'edit';
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type")), null, 'errors');
-		}
-		else
-		{
+		} else {
 			$result = $cactioncomm->fetch(GETPOST('actioncode', 'aZ09'));
 		}
 		if (empty($object->userownerid))
@@ -607,9 +589,7 @@ if (empty($reshook) && $action == 'update')
 				unset($_SESSION['assignedtouser']);
 
 				$db->commit();
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 			}
@@ -646,9 +626,7 @@ if (empty($reshook) && $action == 'confirm_delete' && GETPOST("confirm") == 'yes
 		{
 			header("Location: index.php");
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -756,9 +734,7 @@ if (empty($reshook) && GETPOST('actionmove', 'alpha') == 'mupdate')
     {
         header("Location: ".$backtopage);
         exit;
-    }
-    else
-    {
+    } else {
         $action = '';
     }
 }
@@ -958,8 +934,7 @@ if ($action == 'create')
 	$percent = -1;
 	if (isset($_GET['status']) || isset($_POST['status'])) $percent = GETPOST('status');
 	elseif (isset($_GET['percentage']) || isset($_POST['percentage'])) $percent = GETPOST('percentage');
-	else
-	{
+	else {
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent = '0';
 		elseif (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent = 100;
 	}
@@ -981,9 +956,7 @@ if ($action == 'create')
 		if ($assignedtouser) $listofuserid[$assignedtouser] = array('id'=>$assignedtouser, 'mandatory'=>0, 'transparency'=>$object->transparency); // Owner first
 		$listofuserid[$user->id]['transparency'] = GETPOSTISSET('transparency') ?GETPOST('transparency', 'alpha') : 1; // 1 by default at first init
 		$_SESSION['assignedtouser'] = json_encode($listofuserid);
-	}
-	else
-	{
+	} else {
 		if (!empty($_SESSION['assignedtouser']))
 		{
 			$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -1035,9 +1008,7 @@ if ($action == 'create')
 			$societe->fetch(GETPOST('socid', 'int'));
 			print $societe->getNomUrl(1);
 			print '<input type="hidden" id="socid" name="socid" value="'.GETPOST('socid', 'int').'">';
-		}
-		else
-		{
+		} else {
 			$events = array();
 			$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			//For external user force the company to user company
@@ -1122,7 +1093,7 @@ if ($action == 'create')
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ?GETPOST('note', 'none') : $object->note), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ?GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 
@@ -1188,7 +1159,7 @@ if ($id > 0)
 		$object->contactid   = GETPOST("contactid", 'int');
 		$object->fk_project  = GETPOST("projectid", 'int');
 
-		$object->note = GETPOST("note", 'none');
+		$object_private = GETPOST("note", 'none');
 	}
 
 	if ($result2 < 0 || $result3 < 0 || $result4 < 0 || $result5 < 0)
@@ -1266,9 +1237,7 @@ if ($id > 0)
 		    if ($object->type_code != 'AC_OTH_AUTO')
 		    {
 		    	$formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ?GETPOST("actioncode", 'aZ09') : $object->type_code, "actioncode", "systemauto");
-		    }
-		    else
-		    {
+		    } else {
                 print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
 		    }
 			print '</td></tr>';
@@ -1398,9 +1367,7 @@ if ($id > 0)
 	    		}
 	    	}
 	    	$_SESSION['assignedtouser'] = json_encode($listofuserid);
-	    }
-	    else
-	    {
+	    } else {
 	    	if (!empty($_SESSION['assignedtouser']))
 	    	{
 	    		$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -1523,9 +1490,7 @@ if ($id > 0)
 			    print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
 
 			    print '</td>';
-			}
-			else
-			{
+			} else {
 			    print '<td>';
 			    print dolGetElementUrl($object->fk_element, $object->elementtype, 1);
 			    print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
@@ -1540,7 +1505,7 @@ if ($id > 0)
         print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
         // Editeur wysiwyg
         require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-        $doleditor = new DolEditor('note', $object->note, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
+        $doleditor = new DolEditor('note', $object->note_private, '', 200, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_5, '90%');
         $doleditor->Create();
         print '</td></tr>';
 
@@ -1564,9 +1529,7 @@ if ($id > 0)
 		print '</div>';
 
 		print '</form>';
-	}
-	else
-	{
+	} else {
 		dol_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
 
@@ -1709,9 +1672,7 @@ if ($id > 0)
 				}
 			}
 			$_SESSION['assignedtouser'] = json_encode($listofuserid);
-		}
-		else
-		{
+		} else {
 			if (!empty($_SESSION['assignedtouser']))
 			{
 				$listofuserid = json_decode($_SESSION['assignedtouser'], true);
@@ -1797,9 +1758,7 @@ if ($id > 0)
 						print '<div class="paddingright"></div>';
 					}
 				}
-			}
-			else
-			{
+			} else {
 				print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 			}
 			print '</td></tr>';
@@ -1856,9 +1815,7 @@ if ($id > 0)
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=edit&id='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
-			}
-			else
-			{
+			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Modify").'</a></div>';
 			}
 
@@ -1866,9 +1823,7 @@ if ($id > 0)
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=clone&object='.$object->element.'&id='.$object->id.'">'.$langs->trans("ToClone").'</a></div>';
-			}
-			else
-			{
+			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("ToClone").'</a></div>';
 			}
 
@@ -1876,9 +1831,7 @@ if ($id > 0)
 			   (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete))
 			{
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?action=delete&id='.$object->id.'">'.$langs->trans("Delete").'</a></div>';
-			}
-			else
-			{
+			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Delete").'</a></div>';
 			}
 		}

@@ -54,7 +54,10 @@ $typetext = $type;
 if ($type == Categorie::TYPE_ACCOUNT) 			$title = $langs->trans('AccountsCategoriesArea');
 elseif ($type == Categorie::TYPE_WAREHOUSE) 	$title = $langs->trans('StocksCategoriesArea');
 elseif ($type == Categorie::TYPE_ACTIONCOMM)	$title = $langs->trans('ActionCommCategoriesArea');
-else 											$title = $langs->trans(ucfirst($type).'sCategoriesArea');
+elseif ($type == Categorie::TYPE_WEBSITE_PAGE)	$title = $langs->trans('WebsitePagesCategoriesArea');
+else {
+	$title = $langs->trans(ucfirst($type).'sCategoriesArea');
+}
 
 $arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
 $arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
@@ -69,8 +72,6 @@ if (!empty($user->rights->categorie->creer)) {
 
 print load_fiche_titre($title, $newcardbutton, 'object_category');
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
@@ -88,20 +89,9 @@ print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
 print '<tr class="oddeven nohover"><td>';
 print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="'.$catname.'"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
-/*
-// faire une rech dans une sous categorie uniquement
-print '<tr '.$bc[0].'><td>';
-print $langs->trans("SubCatOf").':</td><td>';
-
-print $form->select_all_categories('','subcatof');
-print '</td>';
-print '<td><input type="submit" class="button" value="'.$langs->trans ("Search").'"></td></tr>';
-*/
-
 print '</table></form>';
 
 
-//print '</td><td valign="top" width="70%">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
@@ -134,11 +124,9 @@ if ($catname || $id > 0)
 		print "\t</tr>\n";
 	}
 	print "</table>";
-}
-else print '&nbsp;';
+} else print '&nbsp;';
 
 
-//print '</td></tr></table>';
 print '</div></div></div>';
 
 print '<div class="fichecenter"><br>';
@@ -184,9 +172,7 @@ foreach ($fulltree as $key => $val)
 	'rowid'=>$val['rowid'],
 	'fk_menu'=>$val['fk_parent'],
 	'entry'=>'<table class="nobordernopadding centpercent"><tr><td><span class="noborderoncategories" '.($categstatic->color ? ' style="background: #'.$categstatic->color.';"' : ' style="background: #aaa"').'>'.$li.'</span></td>'.$counter.
-	//'<td width="50%">'.dolGetFirstLineOfText($desc).'</td>'.
-	'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td>'.
-	'</tr></table>'
+		'<td class="right" width="20px;"><a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].'&type='.$type.'">'.img_view().'</a></td></tr></table>'
 	);
 }
 
@@ -197,7 +183,7 @@ print '<table class="liste nohover" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
 if (!empty($conf->use_javascript_ajax))
 {
-	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder').' '.$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open').' '.$langs->trans("ExpandAll").'</a></div>';
+	print '<div id="iddivjstreecontrol"><a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a> | <a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div>';
 }
 print '</td></tr>';
 
@@ -208,9 +194,7 @@ if ($nbofentries > 0)
 	print '<tr class="pair"><td colspan="3">';
 	tree_recur($data, $data[0], 0);
 	print '</td></tr>';
-}
-else
-{
+} else {
 	print '<tr class="pair">';
 	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 	print '<td valign="middle">';

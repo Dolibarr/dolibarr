@@ -70,7 +70,6 @@ PRODUCT_DELETEInDolibarr=Produto%s exluído
 HOLIDAY_CREATEInDolibarr=Solicitação de licença %s criada
 HOLIDAY_MODIFYInDolibarr=Solicitação de licença %s alterada
 HOLIDAY_APPROVEInDolibarr=Solicitação de licença %s aprovada
-HOLIDAY_VALIDATEDInDolibarr=Solicitação de licença %s validada
 HOLIDAY_DELETEInDolibarr=Solicitação de licença %s excluída
 EXPENSE_REPORT_CREATEInDolibarr=Relatório de despesas %s criado
 EXPENSE_REPORT_VALIDATEInDolibarr=relatório de despesas %s validado

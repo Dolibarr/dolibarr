@@ -325,7 +325,6 @@ CompanyDeleted= شرکت "%s" از پایگاه داده حذف شد.
 ListOfContacts=فهرست طرف‌های‌تماس/نشانی‌ها
 ListOfContactsAddresses=فهرست طرف‌های‌تماس/نشانی‌ها
 ListOfThirdParties=فهرست شخص‌سوم‌ها
-ShowCompany=نمایش شخص‌سوم
 ShowContact=نمایش طرف‌تماس
 ContactsAllShort=همه (بدون صافی)
 ContactType=نوع طرف‌تماس
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=نام نمایندۀ فروش
 SaleRepresentativeLastname=نام خانوادگی نمایندۀ فروش
 ErrorThirdpartiesMerge=در هنگام حذف شخص‌سوم‌ها یک اشکال پیش آمد. لطفا گزارش‌کار را ببینید. تغییرات انجام نشد.
 NewCustomerSupplierCodeProposed=کد فروشنده یا کد مشتری قبلا استفاده شده است، یک کد جدید پیشنهاد می‌شود
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=نوع پرداخت - مشتری
 PaymentTermsCustomer=شرایط پرداخت - مشتری

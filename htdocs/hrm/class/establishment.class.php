@@ -260,9 +260,7 @@ class Establishment extends CommonObject
             $this->country      = $obj->country;
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -286,9 +284,7 @@ class Establishment extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -322,27 +318,22 @@ class Establishment extends CommonObject
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return img_picto($langs->trans($this->statuts_short[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 0 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
 			elseif ($status == 1 && !empty($this->statuts_short[$status])) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut4');
@@ -388,9 +379,7 @@ class Establishment extends CommonObject
 				}
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -417,9 +406,7 @@ class Establishment extends CommonObject
 				$obj = $this->db->fetch_object($result);
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 

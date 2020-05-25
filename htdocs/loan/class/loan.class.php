@@ -44,7 +44,7 @@ class Loan extends CommonObject
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto = 'bill';
+	public $picto = 'money-bill-alt';
 
 	/**
 	 * @var int ID
@@ -160,15 +160,11 @@ class Loan extends CommonObject
 
 				$this->db->free($resql);
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->free($resql);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -258,9 +254,7 @@ class Loan extends CommonObject
 			//dol_syslog("Loans::create this->id=".$this->id);
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -329,9 +323,7 @@ class Loan extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -375,9 +367,7 @@ class Loan extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -501,8 +491,7 @@ class Loan extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -571,9 +560,7 @@ class Loan extends CommonObject
 
 			$this->db->free($resql);
 			return $amount;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -618,15 +605,11 @@ class Loan extends CommonObject
 
 				$this->db->free($result);
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->free($result);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}

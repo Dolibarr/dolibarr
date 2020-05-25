@@ -325,7 +325,6 @@ CompanyDeleted=L'empresa "%s" ha estat eliminada
 ListOfContacts=Llistat de contactes
 ListOfContactsAddresses=Llistat de contactes
 ListOfThirdParties=Llista de tercers
-ShowCompany=Mostra el tercer
 ShowContact=Mostrar contacte
 ContactsAllShort=Tots (sense filtre)
 ContactType=Tipus de contacte
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Nom de l'agent comercial
 SaleRepresentativeLastname=Cognoms de l'agent comercial
 ErrorThirdpartiesMerge=S'ha produït un error en suprimir els tercers. Verifiqueu el registre. S'han revertit els canvis.
 NewCustomerSupplierCodeProposed=El codi de client o proveïdor ja utilitzat, es suggereix un codi nou
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Tipus de pagament - Client
 PaymentTermsCustomer=Condicions de pagament - Client

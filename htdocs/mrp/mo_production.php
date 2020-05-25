@@ -352,8 +352,7 @@ if (empty($reshook))
 	    				}
 	    			}
 	    		}
-    		}
-    		else {
+    		} else {
     			$consumptioncomplete = false;
     			$productioncomplete = false;
     		}
@@ -381,6 +380,33 @@ if (empty($reshook))
     		// Redirect to avoid to action done a second time if we make a back from browser
     		header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
     		exit;
+    	}
+    }
+
+    // Action close produced
+    if ($action == 'confirm_produced' && $confirm == 'yes' && $permissiontoadd)
+    {
+    	$result = $object->setStatut($object::STATUS_PRODUCED, 0, '', 'MRP_MO_PRODUCED');
+    	if ($result >= 0)
+    	{
+    		// Define output language
+    		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+    		{
+    			$outputlangs = $langs;
+    			$newlang = '';
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+    			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+    			if (!empty($newlang)) {
+    				$outputlangs = new Translate("", $conf);
+    				$outputlangs->setDefaultLang($newlang);
+    			}
+    			$model = $object->modelpdf;
+    			$ret = $object->fetch($id); // Reload to get new records
+
+    			$object->generateDocument($model, $outputlangs, 0, 0, 0);
+    		}
+    	} else {
+    		setEventMessages($object->error, $object->errors, 'errors');
     	}
     }
 }
@@ -563,9 +589,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-					}
-					else
-					{
+					} else {
 						$langs->load("errors");
 						print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 					}
@@ -599,6 +623,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			{
 				if ($object->status == $object::STATUS_VALIDATED || $object->status == $object::STATUS_INPROGRESS)
 				{
+					// TODO If production is already > 1, show only close, else show cancel
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_produced&confirm=yes">'.$langs->trans("Close").'</a>'."\n";
+
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
 				}
 
@@ -667,7 +694,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print load_fiche_titre($langs->trans('Consumption'), '', '', 0, '', '', $newlinetext);
 
     	print '<div class="div-table-responsive-no-min">';
-    	print '<table class="noborder noshadow centpercent'.' nobottom'.'">';
+    	print '<table class="noborder noshadow centpercent nobottom">';
 
     	print '<tr class="liste_titre">';
     	print '<td>'.$langs->trans("Product").'</td>';
@@ -684,6 +711,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	print '</tr>';
 
     	if ($action == 'addconsumeline') {
+    		print '<!-- Add line to consume -->'."\n";
     		print '<tr class="liste_titre">';
     		print '<td>';
     		print $form->select_produits('', 'productidtoadd', '', 0, 0, -1, 2, '', 0, array(), 0, '1', 0, 'maxwidth300');
@@ -691,7 +719,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		print '<td class="right"><input type="text" name="qtytoadd" value="1" class="width50 right"></td>';
     		print '<td class="right"></td>';
     		print '<td>';
-    		print '<input type="submit" class="button" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
+    		print '<input type="submit" class="button buttongen" name="addconsumelinebutton" value="'.$langs->trans("Add").'">';
     		print '</td>';
     		if ($conf->productbatch->enabled) {
     			print '<td></td>';
@@ -791,6 +819,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	    		if (in_array($action, array('consumeorproduce', 'consumeandproduceall'))) {
     	    			$i = 1;
+    	    			print '<!-- Enter line to consume -->'."\n";
     	    			print '<tr>';
     	    			print '<td>'.$langs->trans("ToConsume").'</td>';
     	    			$preselected = (GETPOSTISSET('qty-'.$line->id.'-'.$i) ? GETPOST('qty-'.$line->id.'-'.$i) : max(0, $line->qty - $alreadyconsumed));
@@ -800,8 +829,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print '<td>';
     	    			if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
     	    				if (empty($line->disable_stock_change)) {
-    	    					$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : 'ifone');
-    	    					print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1);
+    	    					$preselected = (GETPOSTISSET('idwarehouse-'.$line->id.'-'.$i) ? GETPOST('idwarehouse-'.$line->id.'-'.$i) : ($tmpproduct->fk_default_warehouse > 0 ? $tmpproduct->fk_default_warehouse : 'ifone'));
+    	    					print $formproduct->selectWarehouses($preselected, 'idwarehouse-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth300');
     	    				} else {
     	    					print '<span class="opacitymedium">'.$langs->trans("DisableStockChange").'</span>';
     	    				}
@@ -949,7 +978,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					print '<td>';
     					if ($tmpproduct->type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
     						$preselected = (GETPOSTISSET('idwarehousetoproduce-'.$line->id.'-'.$i) ? GETPOST('idwarehousetoproduce-'.$line->id.'-'.$i) : ($object->fk_warehouse > 0 ? $object->fk_warehouse : 'ifone'));
-    						print $formproduct->selectWarehouses($preselected, 'idwarehousetoproduce-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'csswarehouse_'.$line->id.'_'.$i);
+    						print $formproduct->selectWarehouses($preselected, 'idwarehousetoproduce-'.$line->id.'-'.$i, '', 1, 0, $line->fk_product, '', 1, 0, null, 'maxwidth300 csswarehouse_'.$line->id.'_'.$i);
     					} else {
     						print '<span class="opacitymedium">'.$langs->trans("NoStockChangeOnServices").'</span>';
     					}

@@ -41,7 +41,14 @@ class MouvementStock extends CommonObject
 	public $table_element = 'stock_mouvement';
 
 
+    /**
+     * @var int ID product
+     */
 	public $product_id;
+
+    /**
+     * @var int ID warehouse
+     */
 	public $warehouse_id;
 	public $qty;
 
@@ -58,7 +65,7 @@ class MouvementStock extends CommonObject
 	public $price;
 
 	/**
-     * @var int ID
+     * @var int ID user author
      */
 	public $fk_user_author;
 
@@ -540,6 +547,8 @@ class MouvementStock extends CommonObject
 			// Update PMP and denormalized value of stock qty at product level
 			if (!$error)
 			{
+				$newpmp = price2num($newpmp, 'MU');
+
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".$fk_product;
     			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
@@ -894,13 +903,13 @@ class MouvementStock extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock", LOG_ERR);
 				$result = -1;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::createBatch error invalid param dluo".$error, LOG_ERR);
+			dol_syslog(get_class($this)."::createBatch error invalid param dluo", LOG_ERR);
 			$result = -1;
 		}
 
@@ -1116,20 +1125,16 @@ class MouvementStock extends CommonObject
 		if ($mode == 0 || $mode == 1)
 		{
 			return $langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}

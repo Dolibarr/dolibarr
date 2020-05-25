@@ -79,9 +79,7 @@ class mailing_thirdparties extends MailingTargets
 		    $sql .= " WHERE s.email <> ''";
 		    $sql .= " AND s.entity IN (".getEntity('societe').")";
 		    $sql .= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		}
-		else
-		{
+		} else {
             $addFilter = "";
             if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
             {
@@ -90,21 +88,16 @@ class mailing_thirdparties extends MailingTargets
                 if ($_POST["filter_client"] == 0)
                 {
                     $addDescription .= $langs->trans('NorProspectNorCustomer');
-                }
-                elseif ($_POST["filter_client"] == 1)
+                } elseif ($_POST["filter_client"] == 1)
                 {
                     $addDescription .= $langs->trans('Customer');
-                }
-                elseif ($_POST["filter_client"] == 2)
+                } elseif ($_POST["filter_client"] == 2)
                 {
                     $addDescription .= $langs->trans('Prospect');
-                }
-                elseif ($_POST["filter_client"] == 3)
+                } elseif ($_POST["filter_client"] == 3)
                 {
                     $addDescription .= $langs->trans('ProspectCustomer');
-                }
-                else
-                {
+                } else {
                     $addDescription .= "Unknown status ".$_POST["filter_client"];
                 }
             }
@@ -119,9 +112,7 @@ class mailing_thirdparties extends MailingTargets
                 {
                     $addFilter .= " AND s.status=1";
                     $addDescription .= $langs->trans("Enabled");
-                }
-                else
-                {
+                } else {
                     $addFilter .= " AND s.status=0";
                     $addDescription .= $langs->trans("Disabled");
                 }
@@ -186,9 +177,7 @@ class mailing_thirdparties extends MailingTargets
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog($this->db->error());
 			$this->error = $this->db->error();
 			return -1;
@@ -285,9 +274,7 @@ class mailing_thirdparties extends MailingTargets
 				$s .= '</option>';
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 

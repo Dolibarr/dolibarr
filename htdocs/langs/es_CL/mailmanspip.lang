@@ -1,0 +1,24 @@
+# Dolibarr language file - Source file is en_US - mailmanspip
+MailmanTitle=Sistema de listas de correo de Mailman
+TestSubscribe=Para probar la suscripción a las listas de Mailman
+TestUnSubscribe=Para probar la cancelación de suscripción a las listas de Mailman
+MailmanCreationSuccess=La prueba de suscripción se ejecutó con éxito
+MailmanDeletionSuccess=La prueba de cancelación se ejecutó con éxito
+SynchroMailManEnabled=Se realizará una actualización de Mailman
+SynchroSpipEnabled=Se realizará una actualización de Spip
+DescADHERENT_MAILMAN_ADMINPW=Contraseña de administrador de Mailman
+DescADHERENT_MAILMAN_URL=URL para las suscripciones de Mailman
+DescADHERENT_MAILMAN_UNSUB_URL=URL para la cancelación de suscripciones de Mailman
+DescADHERENT_MAILMAN_LISTS=Lista (s) para la inscripción automática de nuevos miembros (separados por una coma)
+SPIPTitle=Sistema de gestión de contenido SPIP
+DescADHERENT_SPIP_DB=Nombre de la base de datos SPIP
+DescADHERENT_SPIP_USER=Inicio de sesión en la base de datos
+DescADHERENT_SPIP_PASS=Contraseña de la base de datos SPIP
+AddIntoSpip=Agregar a SPIP
+AddIntoSpipConfirmation=¿Seguro que quieres agregar este miembro a SPIP?
+AddIntoSpipError=Error al agregar al usuario en SPIP
+DeleteIntoSpip=Eliminar de SPIP
+DeleteIntoSpipConfirmation=¿Seguro que quieres eliminar este miembro de SPIP?
+DeleteIntoSpipError=Error al suprimir al usuario de SPIP
+SuccessToAddToMailmanList=%s se agregó correctamente a la lista de carteros %s o base de datos SPIP
+SuccessToRemoveToMailmanList=%s eliminado correctamente de la lista de correo %s o de la base de datos SPIP

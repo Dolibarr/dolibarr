@@ -72,11 +72,12 @@ $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 if ($user->id <> $id && !$canreaduser) accessforbidden();
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
@@ -170,9 +171,7 @@ if ($object->id)
 	$permtoedit = $user->rights->user->user->creer;
 	$param = '&id='.$object->id;
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	accessforbidden('', 0, 1);
 }
 

@@ -90,7 +90,7 @@ class box_birthdays_members extends ModeleBoxes
 			$sql .= " FROM ".MAIN_DB_PREFIX."adherent as u";
 			$sql .= " WHERE u.entity IN (".getEntity('adherent').")";
       		$sql .= " AND u.statut = 1";
-      		$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], $tmparray['year']);
+      		$sql .= dolSqlDateFilter('u.birth', 0, $tmparray['mon'], 0);
 			$sql .= " ORDER BY u.birth ASC";
 			$sql .= $this->db->plimit($max, 0);
 
@@ -133,16 +133,14 @@ class box_birthdays_members extends ModeleBoxes
 				if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center opacitymedium"', 'text'=>$langs->trans("None"));
 
 				$this->db->free($result);
-			}
-			else {
+			} else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($this->db->error().' sql='.$sql)
                 );
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

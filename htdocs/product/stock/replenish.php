@@ -177,13 +177,10 @@ if ($action == 'order' && isset($_POST['valid']))
 						$line->fk_unit = $productsupplier->fk_unit;
 	                    $suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
                 	}
-                }
-				elseif ($idprod == -1)
+                } elseif ($idprod == -1)
 				{
 					$errorQty++;
-				}
-                else
-				{
+				} else {
                     $error = $db->lasterror();
                     dol_print_error($db);
                 }
@@ -272,9 +269,7 @@ if ($action == 'order' && isset($_POST['valid']))
             setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
             header('Location: replenishorders.php');
             exit;
-        }
-        else
-        {
+        } else {
         	$db->rollback();
         }
     }
@@ -420,8 +415,7 @@ if ($usevirtualstock)
 		$sqlProductionToProduce .= " AND mp5.fk_product = p.rowid";
 		$sqlProductionToProduce .= " AND mp5.role IN ('toproduce', 'produced')";
 		$sqlProductionToProduce .= " AND mm5.status IN (1,2))";
-	} else
-	{
+	} else {
 		$sqlProductionToConsume = '0';
 		$sqlProductionToProduce = '0';
 	}
@@ -490,7 +484,7 @@ print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 
 dol_fiche_head($head, 'replenish', '', -1, '');
 
-print $langs->trans("ReplenishmentStatusDesc").'<br>'."\n";
+print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
@@ -588,16 +582,16 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 {
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
-	'<input type="hidden" name="token" value="'.newToken().'">'.
-	'<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">'.
-	'<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">'.
-	'<input type="hidden" name="sortfield" value="'.$sortfield.'">'.
-	'<input type="hidden" name="sortorder" value="'.$sortorder.'">'.
-	'<input type="hidden" name="type" value="'.$type.'">'.
-	'<input type="hidden" name="linecount" value="'.$num.'">'.
-	'<input type="hidden" name="action" value="order">'.
-	'<input type="hidden" name="mode" value="'.$mode.'">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">';
+print '<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="linecount" value="'.$num.'">';
+print '<input type="hidden" name="action" value="order">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
@@ -672,9 +666,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$stock = $prod->stock_theorique;
-		}
-		else
-		{
+		} else {
 			$stock = $prod->stock_reel;
 		}
 
@@ -714,8 +706,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			{
 				$picto = img_picto('', './img/yes', '', 1);
 				$disabled = 'disabled';
-			}
-			else {
+			} else {
 				$picto = img_picto('', './img/no', '', 1);
 			}
 		} else {

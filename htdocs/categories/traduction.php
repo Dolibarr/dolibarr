@@ -292,8 +292,7 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($action != 'add')
+} elseif ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
 

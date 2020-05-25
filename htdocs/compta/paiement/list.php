@@ -129,9 +129,7 @@ if (GETPOST("orphelins", "alpha"))
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
-}
-else
-{
+} else {
     $sql = "SELECT DISTINCT p.rowid, p.ref, p.datep as dp, p.amount,"; // DISTINCT is to avoid duplicate when there is a link to sales representatives
     $sql .= " p.statut, p.num_paiement as num_payment,";
     $sql .= " c.code as paiement_code,";
@@ -161,7 +159,7 @@ else
     if ($userid)
     {
         if ($userid == -1) $sql .= " AND f.fk_user_author IS NULL";
-        else  $sql .= " AND f.fk_user_author = ".$userid;
+        else $sql .= " AND f.fk_user_author = ".$userid;
     }
     // Search criteria
     $sql .= dolSqlDateFilter("p.datep", $day, $month, $year);
@@ -215,10 +213,9 @@ if ($resql)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
-    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+    print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit, 0, 0, 1);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -379,9 +376,7 @@ if ($resql)
     print "</table>\n";
     print "</div>";
     print "</form>\n";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

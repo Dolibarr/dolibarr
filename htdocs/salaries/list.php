@@ -49,16 +49,16 @@ $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "s.datep,s.rowid";
 if (!$sortorder) $sortorder = "DESC,DESC";
 $optioncss = GETPOST('optioncss', 'alpha');
 
-$filtre = $_GET["filtre"];
+$filtre = GETPOST("filtre", 'none');
 
-if (empty($_REQUEST['typeid']))
+if (!GETPOST('typeid', 'int'))
 {
 	$newfiltre = str_replace('filtre=', '', $filtre);
 	$filterarray = explode('-', $newfiltre);
@@ -67,10 +67,8 @@ if (empty($_REQUEST['typeid']))
 		$part = explode(':', $val);
 		if ($part[0] == 's.fk_typepayment') $typeid = $part[1];
 	}
-}
-else
-{
-	$typeid = $_REQUEST['typeid'];
+} else {
+	$typeid = GETPOST('typeid', 'int');
 }
 
 
@@ -141,6 +139,7 @@ if ($result)
 }
 $sql .= $db->plimit($limit + 1, $offset);
 
+
 $result = $db->query($sql);
 if ($result)
 {
@@ -167,9 +166,8 @@ if ($result)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
 
-    print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("SalariesPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -288,8 +286,7 @@ if ($result)
 				}
 	            $accountstatic->label = $obj->blabel;
 	        	print $accountstatic->getNomUrl(1);
-	        }
-	        else print '&nbsp;';
+	        } else print '&nbsp;';
 	        print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 	    }
@@ -317,9 +314,7 @@ if ($result)
 	print '</form>';
 
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

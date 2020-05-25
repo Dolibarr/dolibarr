@@ -40,13 +40,22 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'alpha');
+$sortorder = GETPOST("sortorder", 'alpha');
+$page = GETPOST("page", 'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (!$sortfield) $sortfield = 'a.datep,a.id';
+if (!$sortorder) $sortorder = 'DESC,DESC';
+
 if (GETPOST('actioncode', 'array'))
 {
     $actioncode = GETPOST('actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
     $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECTS));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -185,9 +194,7 @@ if (!empty($conf->agenda->enabled))
     if (!empty($user->rights->agenda->myactions->create) || !empty($user->rights->agenda->allactions->create))
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
-    }
-    else
-    {
+    } else {
         print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("AddAction").'</a>';
     }
 }
@@ -212,12 +219,12 @@ if (!empty($object->id))
     //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);
 
     // List of done actions
-    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode);
+    //show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 
     // List of all actions
     $filters = array();
     $filters['search_agenda_label'] = $search_agenda_label;
-    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters);
+    show_actions_done($conf, $langs, $db, $object, null, 0, $actioncode, '', $filters, $sortfield, $sortorder);
 }
 
 // End of page

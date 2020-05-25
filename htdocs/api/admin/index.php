@@ -54,9 +54,7 @@ if ($action == 'setproductionmode')
 				setEventMessages($langs->trans("ErrorFailedToCreateDir", $conf->api->dir_temp), null, 'errors');
 				$error++;
 			}
-		}
-		else
-		{
+		} else {
 			// Delete the cache file otherwise it does not update
 			$result = dol_delete_file($conf->api->dir_temp.'/routes.php');
 			if ($result < 0)
@@ -71,9 +69,7 @@ if ($action == 'setproductionmode')
     		header("Location: ".$_SERVER["PHP_SELF"]);
 	   	    exit;
 	    }
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -119,9 +115,7 @@ if ($production_mode)
     print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=0">';
     print img_picto($langs->trans("Activated"), 'switch_on');
     print '</a></td>';
-}
-else
-{
+} else {
     print '<td><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setproductionmode&value='.($i + 1).'&status=1">';
     print img_picto($langs->trans("Disabled"), 'switch_off');
     print '</a></td>';
@@ -153,7 +147,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 // Show message
 $message = '';
 $url = $urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
-$message .= $langs->trans("UrlToGetKeyToUseAPIs").':<br>';
+$message .= '<span class="opacitymedium">'.$langs->trans("UrlToGetKeyToUseAPIs").':</span><br>';
 $message .= img_picto('', 'globe').' '.$url;
 print $message;
 print '<br>';
@@ -165,9 +159,7 @@ if (dol_is_dir(DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/e
 {
     $url = DOL_MAIN_URL_ROOT.'/api/index.php/explorer';
     print img_picto('', 'globe').' <a href="'.$url.'" target="_blank">'.$url."</a><br>\n";
-}
-else
-{
+} else {
     print $langs->trans("NotAvailableWithThisDistribution");
 }
 

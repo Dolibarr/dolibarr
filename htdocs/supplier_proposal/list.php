@@ -358,9 +358,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierProposals').' - '.$soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfSupplierProposals');
 	}
 
@@ -431,7 +429,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_proposal', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendSupplierProposalRef";
 	$modelmail = "supplier_proposal_send";
@@ -534,7 +532,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_valid']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -545,7 +543,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_livraison']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -878,7 +876,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -950,9 +948,7 @@ if ($resql)
 	$delallowed = $user->rights->supplier_proposal->creer;
 
 	print $formfile->showdocuments('massfilesarea_supplier_proposal', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

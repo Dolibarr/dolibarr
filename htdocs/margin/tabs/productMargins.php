@@ -42,13 +42,12 @@ if (empty($user->rights->margins->liretous)) accessforbidden();
 
 $object = new Product($db);
 
-$mesg = '';
-
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
@@ -230,9 +229,7 @@ if ($id > 0 || !empty($ref))
                 {
                     $marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
-                }
-                else
-                {
+                } else {
                     $marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
                 }

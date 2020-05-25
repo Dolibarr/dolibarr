@@ -77,7 +77,7 @@ if (empty($reshook)) {
 		$editgroup = new Usergroup($db);
 		$result = $editgroup->fetch($id);
 		if ($result > 0) {
-			$result= $editgroup->addrights($rights, $module, '', $entity);
+			$result = $editgroup->addrights($rights, $module, '', $entity);
 			if ($result < 0) {
 				setEventMessages($editgroup->error, $editgroup->errors, 'errors');
 			}
@@ -188,9 +188,7 @@ if ($object->id > 0)
     			$i++;
     	}
     	$db->free($result);
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
 
@@ -324,9 +322,7 @@ if ($object->id > 0)
             		print '<td class="center nowrap">';
             		print img_picto($langs->trans("Active"), 'tick');
             		print '</td>';
-            	}
-            	else
-            	{
+            	} else {
             		// Do not own permission
             		if ($caneditperms)
             		{
@@ -334,9 +330,7 @@ if ($object->id > 0)
             		}
             		print '<td>&nbsp</td>';
             	}
-            }
-            else
-            {
+            } else {
             	// Do not own permission
             	if ($caneditperms)
             	{

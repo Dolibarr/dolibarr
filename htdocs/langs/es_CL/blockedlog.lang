@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - blockedlog
+BlockedLogDesc=Este módulo rastrea algunos eventos en un registro inalterable (que no se puede modificar una vez registrado) en una cadena de bloques, en tiempo real. Este módulo proporciona compatibilidad con los requisitos de las leyes de algunos países (como Francia con la ley Finanzas 2016 - Norme NF525).
+FingerprintsDesc=Esta es la herramienta para navegar o extraer los registros inalterables. Los registros inalterables se generan y archivan localmente en una tabla dedicada, en tiempo real cuando registra un evento de negocios. Puede usar esta herramienta para exportar este archivo y guardarlo en un soporte externo (algunos países, como Francia, le piden que lo haga todos los años). Tenga en cuenta que no hay ninguna función para eliminar este registro y que todos los cambios que se intentaron realizar directamente en este registro (por ejemplo, un pirata informático) se informarán con una huella digital no válida. Si realmente necesita purgar esta tabla porque usó su aplicación para una demostración / propósito de prueba y desea limpiar sus datos para comenzar su producción, puede pedir a su revendedor o integrador que reinicie su base de datos (se eliminarán todos sus datos).
+OkCheckFingerprintValidity=El registro de registro archivado es válido. Los datos en esta línea no se modificaron y la entrada sigue a la anterior.
+logPAYMENT_VARIOUS_CREATE=Pago (no asignado a una factura) creado
+logPAYMENT_VARIOUS_MODIFY=Pago (no asignado a una factura) modificado
+logPAYMENT_VARIOUS_DELETE=Pago (no asignado a una factura) supresión lógica.
+logPAYMENT_ADD_TO_BANK=Pago agregado al banco
+logBILL_UNPAYED=Factura del cliente fijada sin pagar
+logBILL_VALIDATE=Factura del cliente validada
+logBILL_SENTBYMAIL=Factura del cliente enviar por correo
+logMEMBER_SUBSCRIPTION_DELETE=Suscripción de miembros de eliminación lógica
+logCASHCONTROL_VALIDATE=Grabación de la cerca de efectivo
+ListOfTrackedEvents=Lista de eventos rastreados
+logDOC_PREVIEW=Vista previa de un documento validado para imprimir o descargar.
+ImpossibleToReloadObject=Objeto original (escriba %s, id %s) no vinculado (consulte la columna &#39;Datos completos&#39; para obtener datos guardados inalterables)
+BlockedLogActivatedBecauseRequiredByYourCountryLegislation=El módulo de Registros inalterables se activó debido a la legislación de su país. La desactivación de este módulo puede invalidar cualquier transacción futura con respecto a la ley y el uso de software legal, ya que no pueden ser validados por una auditoría fiscal.
+BlockedLogDisableNotAllowedForCountry=Lista de países donde el uso de este módulo es obligatorio (solo para evitar deshabilitar el módulo por error, si su país está en esta lista, no es posible deshabilitar el módulo sin editar primero esta lista. Tenga en cuenta también que habilitar / deshabilitar este módulo mantener una pista en el registro inalterable).
+TooManyRecordToScanRestrictFilters=Demasiados registros para escanear / analizar. Por favor restringe la lista con filtros más restrictivos.

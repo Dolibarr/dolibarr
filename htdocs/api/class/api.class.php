@@ -137,6 +137,15 @@ class DolibarrApi
         unset($object->labelStatus);
         unset($object->labelStatusShort);
 
+        unset($object->stats_propale);
+      	unset($object->stats_commande);
+        unset($object->stats_contrat);
+        unset($object->stats_facture);
+        unset($object->stats_commande_fournisseur);
+        unset($object->stats_reception);
+        unset($object->stats_mrptoconsume);
+        unset($object->stats_mrptoproduce);
+
         unset($object->element);
         unset($object->fk_element);
         unset($object->table_element);
@@ -241,8 +250,7 @@ class DolibarrApi
 		$featuresarray = array($resource);
 		if (preg_match('/&/', $resource)) {
 			$featuresarray = explode("&", $resource);
-		}
-		elseif (preg_match('/\|/', $resource)) {
+		} elseif (preg_match('/\|/', $resource)) {
 			$featuresarray = explode("|", $resource);
 		}
 
@@ -308,9 +316,7 @@ class DolibarrApi
 	    if (preg_match('/^\'(.*)\'$/', $tmpescaped, $regbis))
 	    {
 	        $tmpescaped = "'".$db->escape($regbis[1])."'";
-	    }
-	    else
-	    {
+	    } else {
 	        $tmpescaped = $db->escape($tmpescaped);
 	    }
 	    return $db->escape($tmp[0]).' '.strtoupper($db->escape($tmp[1]))." ".$tmpescaped;

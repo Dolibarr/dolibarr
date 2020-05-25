@@ -52,7 +52,7 @@ if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum c
 print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
 
 // Qty
-print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
+print '<td class="linecolqty right">'.$form->textwithpicto($langs->trans('Qty'), $langs->trans("QtyRequiredIfNoLoss")).'</td>';
 
 if ($conf->global->PRODUCT_USE_UNITS)
 {

@@ -109,8 +109,7 @@ class Members extends DolibarrApi
 			$sql .= ", ".MAIN_DB_PREFIX."categorie_member as c";
     	}
         $sql .= ' WHERE t.entity IN ('.getEntity('adherent').')';
-        if (!empty($typeid))
-        {
+        if (!empty($typeid)) {
             $sql .= ' AND t.fk_adherent_type='.$typeid;
         }
     	// Select members of given category
@@ -119,10 +118,8 @@ class Members extends DolibarrApi
 			$sql .= " AND c.fk_member = t.rowid ";
     	}
         // Add sql filters
-        if ($sqlfilters)
-        {
-            if (!DolibarrApi::_checkFilters($sqlfilters))
-            {
+        if ($sqlfilters) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
 	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -131,8 +128,7 @@ class Members extends DolibarrApi
 
         $sql .= $db->order($sortfield, $sortorder);
         if ($limit) {
-            if ($page < 0)
-            {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -141,13 +137,11 @@ class Members extends DolibarrApi
         }
 
         $result = $db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
-            while ($i < $min)
-            {
+            while ($i < $min) {
             	$obj = $db->fetch_object($result);
                 $member = new Adherent($this->db);
                 if ($member->fetch($obj->rowid)) {
@@ -155,8 +149,7 @@ class Members extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve member list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -236,13 +229,10 @@ class Members extends DolibarrApi
 
         // If there is no error, update() returns the number of affected rows
         // so if the update is a no op, the return value is zero.
-        if ($member->update(DolibarrApiAccess::$user) >= 0)
-        {
+        if ($member->update(DolibarrApiAccess::$user) >= 0) {
             return $this->get($id);
-        }
-        else
-        {
-        	throw new RestException(500, $member->error);
+        } else {
+            throw new RestException(500, $member->error);
         }
     }
 

@@ -223,7 +223,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Object card
 	// ------------------------------------------------------------
 	$linkback = '';
-	if ($socid) $linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListOfThirdParty").'</a>';
+	if ($socid) $linkback = '<a href="'.DOL_URL_ROOT.'/societe/website.php?socid='.$socid.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToListForThirdParty").'</a>';
 	if ($fk_website) $linkback = '<a href="'.DOL_URL_ROOT.'/website/website_card.php?fk_website='.$fk_website.'&restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
@@ -349,13 +349,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    print '<a name="builddoc"></a>'; // ancre
 
 	    // Documents
-	    /*$comref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref . '/' . $comref . '.pdf';
-	    $filedir = $conf->website->dir_output . '/' . $comref;
+	    /*$objref = dol_sanitizeFileName($object->ref);
+	    $relativepath = $objref . '/' . $objref . '.pdf';
+	    $filedir = $conf->website->dir_output . '/' . $objref;
 	    $urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 	    $genallowed = $user->rights->website->read;	// If you can read, you can build the PDF to read content
 	    $delallowed = $user->rights->website->create;	// If you can create/edit, you can remove a file on card
-	    print $formfile->showdocuments('website', $comref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+	    print $formfile->showdocuments('website', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		*/
 
 	    // Show links to link elements

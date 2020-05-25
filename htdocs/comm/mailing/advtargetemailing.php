@@ -87,9 +87,7 @@ if (empty($template_id)) {
 if ($result < 0)
 {
 	setEventMessages($advTarget->error, $advTarget->errors, 'errors');
-}
-else
-{
+} else {
 	if (!empty($advTarget->id)) {
 		$array_query = json_decode($advTarget->filtervalue, true);
 	}
@@ -147,15 +145,15 @@ if ($action == 'add') {
 			if (preg_match("/st_dt/", $key)) {
 				$dtarr = array();
 				$dtarr = explode('_', $key);
-				if (!array_key_exists('options_'.$dtarr[1].'_st_dt'.'_cnct', $array_query)) {
-					$array_query['options_'.$dtarr[1].'_st_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear'.'_cnct', 'int'));
+				if (!array_key_exists('options_'.$dtarr[1].'_st_dt_cnct', $array_query)) {
+					$array_query['options_'.$dtarr[1].'_st_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear_cnct', 'int'));
 				}
 			} elseif (preg_match("/end_dt/", $key)) {
 				// Special case for end date come with 3 inputs day, month, year
 				$dtarr = array();
 				$dtarr = explode('_', $key);
-				if (!array_key_exists('options_'.$dtarr[1].'_end_dt'.'_cnct', $array_query)) {
-					$array_query['options_'.$dtarr[1].'_end_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear'.'_cnct', 'int'));
+				if (!array_key_exists('options_'.$dtarr[1].'_end_dt_cnct', $array_query)) {
+					$array_query['options_'.$dtarr[1].'_end_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear_cnct', 'int'));
 				}
 			} else {
 				$array_query[$key] = GETPOST($key);
@@ -299,15 +297,15 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 				if (preg_match("/st_dt/", $key)) {
 					$dtarr = array();
 					$dtarr = explode('_', $key);
-					if (!array_key_exists('options_'.$dtarr[1].'_st_dt'.'_cnct', $array_query)) {
-						$array_query['options_'.$dtarr[1].'_st_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear'.'_cnct', 'int'));
+					if (!array_key_exists('options_'.$dtarr[1].'_st_dt_cnct', $array_query)) {
+						$array_query['options_'.$dtarr[1].'_st_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_st_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_st_dtyear_cnct', 'int'));
 					}
 				} elseif (preg_match("/end_dt/", $key)) {
 					// Special case for end date come with 3 inputs day, month, year
 					$dtarr = array();
 					$dtarr = explode('_', $key);
-					if (!array_key_exists('options_'.$dtarr[1].'_end_dt'.'_cnct', $array_query)) {
-						$array_query['options_'.$dtarr[1].'_end_dt'.'_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday'.'_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear'.'_cnct', 'int'));
+					if (!array_key_exists('options_'.$dtarr[1].'_end_dt_cnct', $array_query)) {
+						$array_query['options_'.$dtarr[1].'_end_dt_cnct'] = dol_mktime(0, 0, 0, GETPOST('options_'.$dtarr[1].'_end_dtmonth_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtday_cnct', 'int'), GETPOST('options_'.$dtarr[1].'_end_dtyear_cnct', 'int'));
 						// print $array_query['cnct_options_'.$dtarr[1].'_end_dt'];
 						// 01/02/1013=1361228400
 					}

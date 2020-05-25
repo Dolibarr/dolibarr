@@ -110,4 +110,3 @@ LibraryVersion=Version de la bibliothèque
 ExportableDatas=Données à l'exportation
 NoExportableData=Aucune donnée exportable (aucun module avec des données exportables chargées ou des autorisations manquantes)
 WebsiteSetup=Site de configuration du module
-WEBSITE_IMAGEDesc=Relative path of the image media. You can keep this empty as this is rarely used (it can be used by dynamic content to show a thumbnail in a list of blog posts). Use __WEBSITEKEY__ in the path if path depends on website name.

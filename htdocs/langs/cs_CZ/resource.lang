@@ -5,8 +5,8 @@ DeleteResource=Smazat zdroj
 ConfirmDeleteResourceElement=Potvrďte odstranění zdroje pro tento element
 NoResourceInDatabase=Žádný zdroj v databázi.
 NoResourceLinked=Žádný propojený zdroj
-
-ResourcePageIndex=Výpis zdrojů
+ActionsOnResource=Události týkající se tohoto zdroje
+ResourcePageIndex=Seznam zdrojů
 ResourceSingular=Zdroj
 ResourceCard=Karta zdroje
 AddResource=Vytvořit zdroj
@@ -18,7 +18,7 @@ ResourcesLinkedToElement=Zdroje propojené s prvkem
 
 ShowResource=Zobrazit zdroj
 
-ResourceElementPage=Prvky zdrojů
+ResourceElementPage=Zdroje prvku
 ResourceCreatedWithSuccess=Zdroj úspěšně vytvořen
 RessourceLineSuccessfullyDeleted=Propojení zdrojů bylo úspěšně odstraněno
 RessourceLineSuccessfullyUpdated=Propojení zdrojů bylo úspěšně aktualizováno
@@ -30,7 +30,10 @@ DictionaryResourceType=Typy zdrojů
 
 SelectResource=Výběr zdroje
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=Id zdroje
+AssetNumber=Sériové číslo
+ResourceTypeCode=Kód typu zdroje
 ImportDataset_resource_1=Zdroje
+
+ErrorResourcesAlreadyInUse=Některé zdroje se používají
+ErrorResourceUseInEvent=%s použitý v %s události

@@ -96,13 +96,10 @@ if ($action == 'edit')
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
 		    print $langs->trans("AlwaysActive");
-		}
-		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print $form->selectyesno($key, $conf->global->$key, 1);
-		}
-		else
-		{
+		} else {
 			print '<input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.$conf->global->$key.'">';
 		}
 		print '</td></tr>';
@@ -116,9 +113,7 @@ if ($action == 'edit')
 
 	print '</form>';
 	print '<br>';
-}
-else
-{
+} else {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -136,13 +131,10 @@ else
 		if ($key == 'DAV_ALLOW_PRIVATE_DIR')
 		{
 		    print $langs->trans("AlwaysActive");
-		}
-		elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
+		} elseif ($key == 'DAV_ALLOW_PUBLIC_DIR' || $key == 'DAV_ALLOW_ECM_DIR')
 		{
 			print yn($conf->global->$key);
-		}
-		else
-		{
+		} else {
 			print $conf->global->$key;
 		}
 		print '</td></tr>';

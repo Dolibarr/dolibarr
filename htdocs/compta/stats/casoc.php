@@ -113,9 +113,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 	if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
 	if ($q == 4) { $date_start = dol_get_first_day($year_start, 10, false); $date_end = dol_get_last_day($year_start, 12, false); }
-}
-else
-{
+} else {
 	// TODO We define q
 }
 
@@ -180,11 +178,10 @@ if ($modecompta == "CREANCES-DETTES")
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description = $langs->trans("RulesCADue");
 	if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description .= $langs->trans("DepositsAreNotIncluded");
-	else  $description .= $langs->trans("DepositsAreIncluded");
+	else $description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByThirdParties");
 	$calcmode = $langs->trans("CalcModeEngagement");
@@ -193,11 +190,9 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$description .= $langs->trans("DepositsAreIncluded");
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
-}
-elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
 {
 }
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -223,8 +218,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
-	}
-	elseif ($selected_cat) 	// Into a specific category
+	} elseif ($selected_cat) 	// Into a specific category
 	{
 	    $sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
@@ -241,8 +235,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql .= " AND cs.fk_soc is null";
-	}
-	elseif ($selected_cat) {	// Into a specific category
+	} elseif ($selected_cat) {	// Into a specific category
 	    $sql .= " AND (c.rowid = ".$db->escape($selected_cat);
 	    if ($subcat) $sql .= " OR c.fk_parent = ".$db->escape($selected_cat);
 	    $sql .= ")";
@@ -261,8 +254,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql .= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";
-	}
-	elseif ($selected_cat) 	// Into a specific category
+	} elseif ($selected_cat) 	// Into a specific category
 	{
 	    $sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_societe as cs";
 	}
@@ -275,8 +267,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	if ($selected_cat === -2)	// Without any category
 	{
 	    $sql .= " AND cs.fk_soc is null";
-	}
-	elseif ($selected_cat) {	// Into a specific category
+	} elseif ($selected_cat) {	// Into a specific category
 	    $sql .= " AND (c.rowid = ".$selected_cat;
 	    if ($subcat) $sql .= " OR c.fk_parent = ".$selected_cat;
 	    $sql .= ")";
@@ -625,7 +616,7 @@ if (count($amount)) {
 	print '<td>&nbsp;</td>';
 	print '<td>&nbsp;</td>';
 	if ($modecompta != 'CREANCES-DETTES') {
-	    print '<td colspan="1"></td>';
+	    print '<td></td>';
 	} else {
 	    print '<td class="right">'.price($catotal_ht).'</td>';
 	}

@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,10 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
@@ -39,6 +43,8 @@ if ($mode == 'customer' && !$user->rights->commande->lire) accessforbidden();
 if ($mode == 'supplier' && !$user->rights->fournisseur->commande->lire) accessforbidden();
 
 $object_status = GETPOST('object_status');
+$typent_id = GETPOST('typent_id', 'int');
+$categ_id = GETPOST('categ_id', 'categ_id');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
@@ -65,25 +71,27 @@ $langs->loadLangs(array('orders', 'companies', 'other', 'suppliers'));
 
 $form = new Form($db);
 $formorder = new FormOrder($db);
+$formcompany = new FormCompany($db);
+$formother = new FormOther($db);
 
-if ($mode == 'customer')
-{
-    $title = $langs->trans("OrdersStatistics");
-    $dir = $conf->commande->dir_temp;
-}
+$picto = 'order';
+$title = $langs->trans("OrdersStatistics");
+$dir = $conf->commande->dir_temp;
+
 if ($mode == 'supplier')
 {
+	$picto = 'supplier_order';
     $title = $langs->trans("OrdersStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
     $dir = $conf->fournisseur->commande->dir_temp;
 }
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'commercial');
+print load_fiche_titre($title, '', $picto);
 
 dol_mkdir($dir);
 
-$stats = new CommandeStats($db, $socid, $mode, ($userid > 0 ? $userid : 0));
+$stats = new CommandeStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($mode == 'customer')
 {
     if ($object_status != '' && $object_status >= -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
@@ -106,9 +114,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
     $filenamenb = $dir.'/ordersnbinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/ordersnbinyear-'.$year.'.png';
     if ($mode == 'customer') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersnbinyear-'.$year.'.png';
     if ($mode == 'supplier') $fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersnbinyear-'.$year.'.png';
@@ -149,9 +155,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
     $filenameamount = $dir.'/ordersamountinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenameamount = $dir.'/ordersamountinyear-'.$year.'.png';
     if ($mode == 'customer') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersamountinyear-'.$year.'.png';
     if ($mode == 'supplier') $fileurlamount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersamountinyear-'.$year.'.png';
@@ -190,9 +194,7 @@ if (!$user->rights->societe->client->voir || $user->socid)
     $filename_avg = $dir.'/ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$user->id.'-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filename_avg = $dir.'/ordersaverage-'.$year.'.png';
     if ($mode == 'customer') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=ordersaverage-'.$year.'.png';
     if ($mode == 'supplier') $fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstatssupplier&file=ordersaverage-'.$year.'.png';
@@ -265,6 +267,26 @@ print '<tr><td class="left">'.$langs->trans("ThirdParty").'</td><td class="left"
 if ($mode == 'customer') $filter = 's.client IN (1,2,3)';
 if ($mode == 'supplier') $filter = 's.fournisseur = 1';
 print $form->select_company($socid, 'socid', $filter, 1, 0, 0, array(), 0, '', 'style="width: 95%"');
+print '</td></tr>';
+// ThirdParty Type
+print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
+$sortparam_typent = (empty($conf->global->SOCIETE_SORT_ON_TYPEENT) ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 0, 0, 0, '', 0, 0, 0, $sortparam_typent);
+if ($user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+print '</td></tr>';
+// Category
+if ($mode == 'customer')
+{
+    $cat_type = Categorie::TYPE_CUSTOMER;
+    $cat_label = $langs->trans("Category").' '.lcfirst($langs->trans("Customer"));
+}
+if ($mode == 'supplier')
+{
+    $cat_type = Categorie::TYPE_SUPPLIER;
+    $cat_label = $langs->trans("Supplier").' '.lcfirst($langs->trans("Customer"));
+}
+print '<tr><td>'.$cat_label.'</td><td>';
+print $formother->select_categories($cat_type, $categ_id, 'categ_id', true);
 print '</td></tr>';
 // User
 print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
@@ -353,8 +375,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     print $px2->show();

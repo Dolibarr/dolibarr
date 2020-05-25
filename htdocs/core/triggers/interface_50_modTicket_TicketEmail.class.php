@@ -170,9 +170,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						}
 
 						$ok = 1;
-					}
-					else
-					{
+					} else {
 						$this->error = $userstat->error;
 						$this->errors = $userstat->errors;
 					}

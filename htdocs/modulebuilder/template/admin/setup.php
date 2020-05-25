@@ -115,9 +115,7 @@ if ($action == 'edit')
 
 	print '</form>';
 	print '<br>';
-}
-else
-{
+} else {
 	if (!empty($arrayofparameters))
 	{
 		print '<table class="noborder centpercent">';
@@ -136,9 +134,7 @@ else
 		print '<div class="tabsAction">';
 		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 		print '</div>';
-	}
-	else
-	{
+	} else {
 		print '<br>'.$langs->trans("NothingToSetup");
 	}
 }

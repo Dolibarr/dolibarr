@@ -63,8 +63,7 @@ if ($action == 'updateik')
 
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit;
-}
-elseif ($action == 'delete') // TODO add confirm
+} elseif ($action == 'delete') // TODO add confirm
 {
 	$expIk = new ExpenseReportIk($db);
 	if ($id > 0)
@@ -161,9 +160,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 			{
 				echo '<input id="" class="button" name="save" value="'.$langs->trans('Save').'" type="submit" />';
 				echo '<input class="button" value="'.$langs->trans('Cancel').'" onclick="javascript:history.go(-1)" type="button" />';
-			}
-			else
-			{
+			} else {
 				echo '<a href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
 				if (!empty($range->ik->id)) echo '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$range->ik->id.'">'.img_delete().'</a>';
 				// TODO add delete link

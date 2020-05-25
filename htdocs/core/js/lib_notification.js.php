@@ -37,8 +37,9 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
     top_httphead('text/javascript; charset=UTF-8');
 
     print 'var login = \''.$_SESSION['dol_login'].'\';'."\n";
+	print 'var nowtime = Date.now();';
     print 'var time_auto_update = '.$conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY.';'."\n"; // Always defined
-    print 'var time_js_next_test = (Date.now() + time_auto_update);'."\n";
+    print 'var time_js_next_test = (nowtime + time_auto_update);'."\n";
     ?>
 
 	/* Check if permission ok */
@@ -75,7 +76,7 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                     	var audio = null;
                         <?php
 						if (!empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
-							print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
+							print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav\');';
 						}
 						?>
 

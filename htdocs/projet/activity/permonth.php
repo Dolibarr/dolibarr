@@ -96,15 +96,12 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
 	$usertoprocess = $user;
 	$search_usertoprocessid = $usertoprocess->id;
-}
-elseif ($search_usertoprocessid > 0)
+} elseif ($search_usertoprocessid > 0)
 {
 	$usertoprocess = new User($db);
 	$usertoprocess->fetch($search_usertoprocessid);
 	$search_usertoprocessid = $usertoprocess->id;
-}
-else
-{
+} else {
 	$usertoprocess = new User($db);
 }
 
@@ -149,9 +146,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	{
 		$result = $object->fetch($taskid, $ref);
 		if ($result < 0) $error++;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
 		$error++;
 	}
@@ -188,9 +183,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -203,9 +196,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned"), null, 'warnings');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -225,9 +216,7 @@ if ($action == 'addtime' && $user->rights->projet->lire)
 	if (empty($timetoadd))
 	{
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
-	}
-	else
-	{
+	} else {
 		foreach ($timetoadd as $taskid => $value)     // Loop on each task
 		{
 			$updateoftaskdone = 0;
@@ -389,8 +378,7 @@ dol_fiche_head($head, 'inputpermonth', $langs->trans('TimeSpent'), -1, 'task');
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
 if ($mine || ($usertoprocess->id == $user->id)) print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
-else
-{
+else {
 	if (empty($usertoprocess->id) || $usertoprocess->id < 0)
 	{
 		if ($user->rights->projet->all->lire && !$socid) print $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
@@ -400,9 +388,7 @@ else
 if ($mine || ($usertoprocess->id == $user->id))
 {
 	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
-}
-else
-{
+} else {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
 print '</div>';
@@ -609,9 +595,7 @@ if (count($tasksarray) > 0)
 		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
-}
-else
-{
+} else {
 	print '<tr><td colspan="15"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
 }
 print "</table>";

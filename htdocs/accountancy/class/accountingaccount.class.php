@@ -553,24 +553,19 @@ class AccountingAccount extends CommonObject
 		}
 	}
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Account deactivated
+	 * Deactivate an account (for status active or status reconcilable)
 	 *
 	 * @param  int  $id         Id
-     * @param  int  $mode       0=field active, 1=field active_customer_list, 2=field_active_supplier_list
+     * @param  int  $mode       0=field active, 1=field reconcilable
 	 * @return int              <0 if KO, >0 if OK
 	 */
-    public function account_desactivate($id, $mode = 0)
+    public function accountDeactivate($id, $mode = 0)
     {
-        // phpcs:enable
 		$result = $this->checkUsage();
 
-        if ($mode == 0)
-        {
-            $fieldtouse = 'active';
-        }
-        elseif ($mode == 1)
+		$fieldtouse = 'active';
+        if ($mode == 1)
         {
 			$fieldtouse = 'reconcilable';
         }
@@ -582,7 +577,7 @@ class AccountingAccount extends CommonObject
 			$sql .= "SET ".$fieldtouse." = '0'";
 			$sql .= " WHERE rowid = ".$this->db->escape($id);
 
-			dol_syslog(get_class($this)."::account_desactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
+			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse." sql=".$sql, LOG_DEBUG);
 			$result = $this->db->query($sql);
 
 			if ($result) {
@@ -614,8 +609,7 @@ class AccountingAccount extends CommonObject
         if ($mode == 0)
         {
             $fieldtouse = 'active';
-        }
-        elseif ($mode == 1)
+        } elseif ($mode == 1)
         {
             $fieldtouse = 'reconcilable';
         }
@@ -666,28 +660,23 @@ class AccountingAccount extends CommonObject
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
 			elseif ($status == 0) return $langs->trans('Disabled');
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
 			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
 			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');

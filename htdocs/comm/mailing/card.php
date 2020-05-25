@@ -93,17 +93,13 @@ if (empty($reshook))
 		if (!GETPOST("clone_content", 'alpha') && !GETPOST("clone_receivers", 'alpha'))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			$result = $object->createFromClone($user, $object->id, GETPOST("clone_content", 'alpha'), GETPOST("clone_receivers", 'alpha'));
 			if ($result > 0)
 			{
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 				exit;
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -120,14 +116,11 @@ if (empty($reshook))
 			setEventMessages('<textarea cols="70" rows="'.ROWS_2.'" wrap="soft">php ./scripts/emailings/mailing-send.php '.$object->id.'</textarea>', null, 'warnings');
 			setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings');
 			$action = '';
-		}
-		elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+		} elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 		{
 			setEventMessages($langs->trans("NotEnoughPermissions"), null, 'warnings');
 			$action = '';
-		}
-		else
-		{
+		} else {
 			$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 			if ($object->statut == 0)
@@ -235,9 +228,7 @@ if (empty($reshook))
 								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN, 2);
-							}
-							else
-							{
+							} else {
 								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'order'.$obj->source_id, 2);
 								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'invoice'.$obj->source_id, 2);
@@ -316,9 +307,7 @@ if (empty($reshook))
 							if (!$resql2)
 							{
 								dol_print_error($db);
-							}
-							else
-							{
+							} else {
 								//if cheack read is use then update prospect contact status
 								if (strpos($message, '__CHECK_READ__') !== false)
 								{
@@ -350,9 +339,7 @@ if (empty($reshook))
                         	}
 
                         	//test if CHECK READ change statut prospect contact
-						}
-						else
-						{
+						} else {
 							// Mail failed
 							$nbko++;
 
@@ -369,9 +356,7 @@ if (empty($reshook))
 
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->transnoentitiesnoconv("NoMoreRecipientToSendTo"), null, 'mesgs');
 				}
 
@@ -381,16 +366,12 @@ if (empty($reshook))
 					$statut = 2; // Status 'sent partially' (because at least one error)
 					if ($nbok > 0) 	setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
 					else setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
-				}
-				else
-				{
+				} else {
 					if ($nbok >= $num)
 					{
 						$statut = 3; // Send to everybody
 						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
-					}
-					else
-					{
+					} else {
 						$statut = 2; // Status 'sent partially' (because not send to everybody)
 						setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
 					}
@@ -403,9 +384,7 @@ if (empty($reshook))
 				{
 					dol_print_error($db);
 				}
-			}
-			else
-			{
+			} else {
 				dol_syslog($db->error());
 				dol_print_error($db);
 			}
@@ -472,9 +451,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("MailSuccessfulySent", $mailfile->getValidAddress($object->email_from, 2), $mailfile->getValidAddress($object->sendto, 2)), null, 'mesgs');
 				$action = '';
-			}
-			else
-			{
+			} else {
 				setEventMessages($langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result, null, 'errors');
 				$action = 'test';
 			}
@@ -611,9 +588,7 @@ if (empty($reshook))
 
 			setEventMessages($mesg, $mesgs, 'errors');
 			$action = "edit";
-		}
-		else
-		{
+		} else {
 			$action = "edit";
 		}
 	}
@@ -627,9 +602,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 			exit;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -645,14 +618,10 @@ if (empty($reshook))
     			//setEventMessages($langs->trans("MailingSuccessfullyValidated"), null, 'mesgs');
     			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
     			exit;
-            }
-            else
-            {
+            } else {
                 setEventMessages($object->error, $object->errors, 'errors');
             }
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -675,15 +644,11 @@ if (empty($reshook))
 				$db->commit();
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 				exit;
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -742,7 +707,7 @@ if ($action == 'create')
 
 
 	// Print mail form
-	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'generic');
+	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
 	dol_fiche_head();
 
@@ -783,9 +748,7 @@ if ($action == 'create')
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("CreateMailing").'"></div>';
 
 	print '</form>';
-}
-else
-{
+} else {
 	if ($object->id > 0)
 	{
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
@@ -801,13 +764,11 @@ else
 		if ($action == 'valid')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ValidMailing"), $langs->trans("ConfirmValidMailing"), "confirm_valid", '', '', 1);
-		}
-		// Confirm reset
+		} // Confirm reset
 		elseif ($action == 'reset')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id, $langs->trans("ResetMailing"), $langs->trans("ConfirmResetMailing", $object->ref), "confirm_reset", '', '', 2);
-		}
-		// Confirm delete
+		} // Confirm delete
 		elseif ($action == 'delete')
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id.(!empty($urlfrom) ? '&urlfrom='.urlencode($urlfrom) : ''), $langs->trans("DeleteAMailing"), $langs->trans("ConfirmDeleteMailing"), "confirm_delete", '', '', 1);
@@ -841,8 +802,7 @@ else
 					setEventMessages($langs->trans("MailSendSetupIs2", $linktoadminemailbefore, $linktoadminemailend, $langs->transnoentitiesnoconv("MAIN_MAIL_SENDMODE"), $listofmethods['smtps']), null, 'warnings');
 					if (!empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"] = '';
-				}
-				elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+				} elseif ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 				{
 				    if (!empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 				    if (!empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
@@ -855,9 +815,7 @@ else
 					    setEventMessages($langs->trans("MailingNeedCommand2"), null, 'warnings'); // You can send online with constant...
 					}
 					$_GET["action"] = '';
-				}
-				else
-				{
+				} else {
 				    if (!empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 				    if (!empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
 
@@ -939,9 +897,7 @@ else
     				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
     				{
     					$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-    				}
-    				else
-    				{
+    				} else {
     					$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
     				}
 			    }
@@ -949,9 +905,7 @@ else
 				if ($text)
     			{
     			    print $form->textwithpicto($nbemail, $text, 1, 'warning');
-    			}
-    			else
-    			{
+    			} else {
     				print $nbemail;
     			}
 			}
@@ -998,9 +952,7 @@ else
 					if (!empty($conf->fckeditor->enabled) && !empty($conf->global->FCKEDITOR_ENABLE_MAILING))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditWithEditor").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;id='.$object->id.'">'.$langs->trans("EditWithTextEditor").'</a>';
 					}
 
@@ -1012,9 +964,7 @@ else
 				if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send)
 				{
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("TestMailing").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=test&amp;id='.$object->id.'">'.$langs->trans("TestMailing").'</a>';
 				}
 
@@ -1023,13 +973,10 @@ else
 					if ($object->nbemail <= 0)
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoTargetYet")).'">'.$langs->trans("ValidMailing").'</a>';
-					}
-					elseif (empty($user->rights->mailing->valider))
+					} elseif (empty($user->rights->mailing->valider))
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ValidMailing").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=valid&amp;id='.$object->id.'">'.$langs->trans("ValidMailing").'</a>';
 					}
 				}
@@ -1039,13 +986,10 @@ else
 					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
-					}
-					elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send)
+					} elseif (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send)
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=sendall&amp;id='.$object->id.'">'.$langs->trans("SendMailing").'</a>';
 					}
 				}
@@ -1060,9 +1004,7 @@ else
 					if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->send)
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("ResetMailing").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=reset&amp;id='.$object->id.'">'.$langs->trans("ResetMailing").'</a>';
 					}
 				}
@@ -1072,9 +1014,7 @@ else
 					if ($object->statut > 0 && (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !$user->rights->mailing->mailing_advance->delete))
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("DeleteMailing").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.(!empty($urlfrom) ? '&urlfrom='.$urlfrom : '').'">'.$langs->trans("DeleteMailing").'</a>';
 					}
 				}
@@ -1153,9 +1093,7 @@ else
 					print img_mime($listofpaths[$key]['name']).' '.$listofpaths[$key]['name'];
 					print '<br>';
 				}
-			}
-			else
-			{
+			} else {
 				print '<span class="opacitymedium">'.$langs->trans("NoAttachedFiles").'</span><br>';
 			}
 			print '</td></tr>';
@@ -1176,14 +1114,11 @@ else
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', false, true, empty($conf->global->FCKEDITOR_ENABLE_MAILING) ? 0 : 1, 20, '90%', $readonly);
 				$doleditor->Create();
-			}
-			else print dol_htmlentitiesbr($object->body);
+			} else print dol_htmlentitiesbr($object->body);
 			print '</div>';
 
 			dol_fiche_end();
-		}
-		else
-		{
+		} else {
 			/*
 			 * Mailing en mode edition (CKeditor or HTML source)
 			 */
@@ -1229,9 +1164,7 @@ else
 					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
 					{
 						$text .= $langs->trans('LimitSendingEmailing', $conf->global->MAILING_LIMIT_SENDBYWEB);
-					}
-					else
-					{
+					} else {
 						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
 				}
@@ -1239,9 +1172,7 @@ else
 				if ($text)
 				{
 					print $form->textwithpicto($nbemail, $text, 1, 'warning');
-				}
-				else
-				{
+				} else {
 					print $nbemail;
 				}
 			}
@@ -1315,9 +1246,7 @@ else
 					$out .= ' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Search"), 'delete.png', '', '', 1).'" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';
 					$out .= '<br></div>';
 				}
-			}
-			else
-			{
+			} else {
 				$out .= $langs->trans("NoAttachedFiles").'<br>';
 			}
 			// Add link to add file
@@ -1366,9 +1295,7 @@ else
 			print '</form>';
 			print '<br>';
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

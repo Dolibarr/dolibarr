@@ -61,7 +61,7 @@ $form = new Form($db);
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("StatisticsOfReceptions"), $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfReceptions"), '', 'dollyrevert');
 
 
 dol_mkdir($dir);
@@ -77,9 +77,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/receptionsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/receptionsnbinyear-'.$year.'.png';
 }
 
@@ -200,7 +198,7 @@ if (!count($arrayyears)) $arrayyears[$nowyear] = $nowyear;
 
 $h = 0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT.'/commande/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/reception/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
@@ -290,8 +288,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr valign="top"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     /*print $px2->show();

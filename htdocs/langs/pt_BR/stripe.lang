@@ -36,4 +36,3 @@ StripePayoutList=Lista de pagamentos do Stripe
 ToOfferALinkForTestWebhook=Link para configurar o Stripe WebHook para chamar o IPN (modo de teste)
 ToOfferALinkForLiveWebhook=Link para configurar Stripe WebHook para chamar o IPN (modo ao vivo)
 PaymentWillBeRecordedForNextPeriod=O pagamento será registrado para o próximo período.
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Devido às regras de autenticação forte do cliente, a criação de um cartão deve ser feita no backoffice do Stripe. Você pode clicar aqui para ativar o registro de cliente do Stripe: %s

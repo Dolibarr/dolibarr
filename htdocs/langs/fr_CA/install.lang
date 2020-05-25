@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - install
 ErrorPHPDoesNotSupportCurl=Votre installation PHP ne prend pas en charge Curl.
 AdminLoginCreatedSuccessfuly=Connexion administrateur Dolibarr '<b>%s</b>' créé avec succès.
-DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 FailedToCreateAdminLogin=Impossible de créer un compte administrateur Dolibarr.
 MigrationContractsIncoherentCreationDateUpdateSuccess=Correction mauvaise valeur de la date de création du contrat effectuée avec succès
 MigrationBankTransfertsUpdate=Mettre à jour les liens entre la saisie bancaire et un virement bancaire

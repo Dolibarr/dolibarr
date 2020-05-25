@@ -41,11 +41,12 @@ if ($user->socid > 0)
     $socid = $user->socid;
 }
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
@@ -114,8 +115,7 @@ if ($action == 'purge')
 {
 	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('PurgeSessions'), $langs->trans('ConfirmPurgeSessions'), 'confirm_purge', $formquestion, 'no', 2);
-}
-elseif ($action == 'lock')
+} elseif ($action == 'lock')
 {
 	$formquestion = array();
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?noparam=noparam', $langs->trans('LockNewSessions'), $langs->trans('ConfirmLockNewSessions', $user->login), 'confirm_lock', $formquestion, 'no', 1);
@@ -170,9 +170,7 @@ if ($savehandler == 'files')
 		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
 	}
 	print "</table>";
-}
-else
-{
+} else {
 	print $langs->trans("NoSessionListWithThisHandler");
 }
 
@@ -186,9 +184,7 @@ print '<div class="tabsAction">';
 if (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
 {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=lock">'.$langs->trans("LockNewSessions").'</a>';
-}
-else
-{
+} else {
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=confirm_unlock">'.$langs->trans("UnlockNewSessions").'</a>';
 }
 

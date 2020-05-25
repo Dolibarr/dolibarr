@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017		ATM-Consulting  	 <support@atm-consulting.fr>
+ * Copyright (C) 2020		Maxime DEMAREST  	 <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement_fourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->loadLangs(array('bills'));
@@ -70,9 +72,7 @@ if ($action == 'builddoc')
     if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
     {
         $outputlangs->charset_output = $sav_charset_output;
-    }
-    else
-    {
+    } else {
         $outputlangs->charset_output = $sav_charset_output;
         dol_print_error($db, $obj->error);
     }
@@ -86,12 +86,13 @@ if ($action == 'builddoc')
  */
 
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
 
 llxHeader('', $titre);
 
-print load_fiche_titre($titre, '', 'invoicing');
+print load_fiche_titre($titre, '', 'supplier_invoice');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
@@ -157,13 +158,14 @@ if ($year)
                 {
                     $tfile = $dir.'/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<tr class="oddeven"><td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a>'.$formfile->showPreview($file, 'facture_fournisseur', 'payments/'.$relativepath, 0).'</td>';
                     print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
                     print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td></tr>';
                 }
             }
             closedir($handle);
         }
+
         print '</table>';
     }
 }

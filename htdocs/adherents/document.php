@@ -45,11 +45,12 @@ $confirm = GETPOST('confirm', 'alpha');
 $result = restrictedArea($user, 'adherent', $id);
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
@@ -60,8 +61,7 @@ $form = new Form($db);
 $object = new Adherent($db);
 $membert = new AdherentType($db);
 $result = $object->fetch($id);
-if ($result < 0)
-{
+if ($result < 0) {
 	dol_print_error($db);
 	exit;
 }
@@ -85,16 +85,13 @@ $title = $langs->trans("Member")." - ".$langs->trans("Documents");
 $helpurl = "EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros";
 llxHeader("", $title, $helpurl);
 
-if ($id > 0)
-{
+if ($id > 0) {
     $result = $membert->fetch($object->typeid);
-	if ($result > 0)
-	{
+	if ($result > 0) {
 		// Build file list
 		$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
 		$totalsize = 0;
-		foreach ($filearray as $key => $file)
-		{
+		foreach ($filearray as $key => $file) {
 			$totalsize += $file['size'];
 		}
 
@@ -117,8 +114,7 @@ if ($id > 0)
 		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         // Login
-        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
-        {
+        if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED)) {
             print '<tr><td class="titlefield">'.$langs->trans("Login").' / '.$langs->trans("Id").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
         }
 
@@ -157,14 +153,10 @@ if ($id > 0)
 		$param = '&id='.$object->id;
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 		print "<br><br>";
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
-}
-else
-{
+} else {
     $langs->load("errors");
 	print $langs->trans("ErrorRecordNotFound");
 }

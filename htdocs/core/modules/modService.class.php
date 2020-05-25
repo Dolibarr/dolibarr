@@ -589,7 +589,7 @@ class modService extends DolibarrModules
 					'sp.remise_percent'=>'DiscountQtyMin'
 				));
 
-				if ($conf->multicurrency->enabled)
+				if (!empty($conf->multicurrency->enabled))
 				{
 				    $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
 				        'sp.fk_multicurrency'=>'CurrencyCodeId', //ideally this should be automatically obtained from the CurrencyCode on the next line
@@ -626,7 +626,7 @@ class modService extends DolibarrModules
 					// TODO Make this field not required and calculate it from price and qty
 					'sp.remise_percent' => '20'
 				));
-				if ($conf->multicurrency->enabled)
+				if (!empty($conf->multicurrency->enabled))
 				{
 					$this->import_examplevalues_array[$r] = array_merge($this->import_examplevalues_array[$r], array(
 						'sp.fk_multicurrency'=>'eg: 2, rowid for code of multicurrency currency',

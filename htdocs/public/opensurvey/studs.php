@@ -108,12 +108,10 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1')
 			{
 				$nouveauchoix .= "1";
-			}
-			elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
+			} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
 			{
 				$nouveauchoix .= "2";
-			}
-			else { // sinon c'est 0
+			} else { // sinon c'est 0
 				$nouveauchoix .= "0";
 			}
 		}
@@ -132,9 +130,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		{
 			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
-		}
-		else
-		{
+		} else {
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses)';
 			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."')";
 			$resql = $db->query($sql);
@@ -169,12 +165,9 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 						$result = $cmailfile->sendfile();
 					}
 				}
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 	}
 }
@@ -210,12 +203,10 @@ if ($testmodifier)
 		if (isset($_POST["choix".$i]) && $_POST["choix".$i] == '1')
 		{
 			$nouveauchoix .= "1";
-		}
-		elseif (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
+		} elseif (isset($_POST["choix".$i]) && $_POST["choix".$i] == '2')
 		{
 			$nouveauchoix .= "2";
-		}
-		else { // sinon c'est 0
+		} else { // sinon c'est 0
 			$nouveauchoix .= "0";
 		}
 	}
@@ -391,9 +382,7 @@ if ($object->format == "D")
 
 		print '</tr>'."\n";
 	}
-}
-else
-{
+} else {
 	//display of survey topics
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -480,9 +469,7 @@ while ($compteur < $num)
 				if (((string) $car) == "0") $sumagainst[$i]++;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
 		if ($compteur == $ligneamodifier)
 		{
@@ -508,9 +495,7 @@ while ($compteur < $num)
 				}
 				print '</td>'."\n";
 			}
-		}
-		else
-		{
+		} else {
 			for ($i = 0; $i < $nbcolonnes; $i++)
 			{
 				$car = substr($ensemblereponses, $i, 1);
@@ -690,13 +675,11 @@ if ($object->allow_spy) {
 
 				if (strpos($toutsujet[$i], '@') !== false) {
 					$toutsujetdate = explode("@", $toutsujet[$i]);
-					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').' ('.dol_print_date($toutsujetdate[0], '%A').')'.' - '.$toutsujetdate[1];
+					$meilleursujet .= dol_print_date($toutsujetdate[0], 'daytext').' ('.dol_print_date($toutsujetdate[0], '%A').') - '.$toutsujetdate[1];
 				} else {
 					$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').' ('.dol_print_date($toutsujet[$i], '%A').')';
 				}
-			}
-			else
-			{
+			} else {
 				$tmps = explode('@', $toutsujet[$i]);
 				$meilleursujet .= dol_htmlentities($tmps[0]);
 			}

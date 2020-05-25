@@ -179,14 +179,10 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 		if ($result)
 		{
 			print " OK with ref ".$object->ref."\n";;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db, $object->error);
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

@@ -325,7 +325,6 @@ CompanyDeleted=회사 "%s"이 (가) 데이터베이스에서 삭제되었습니�
 ListOfContacts=연락처 / 주소 목록
 ListOfContactsAddresses=List of contacts/addresses
 ListOfThirdParties=List of Third Parties
-ShowCompany=Show Third Party
 ShowContact=연락처 표시
 ContactsAllShort=모두 (필터 없음)
 ContactType=연락처 유형
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=영업 담당자의 이름
 SaleRepresentativeLastname=영업 대표자 성
 ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.
 NewCustomerSupplierCodeProposed=Customer or Vendor code already used, a new code is suggested
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Payment Type - Customer
 PaymentTermsCustomer=Payment Terms - Customer

@@ -53,7 +53,7 @@ class modReception extends DolibarrModules
 		$this->version = 'experimental';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto = "sending";
+		$this->picto = "dollyrevert";
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/reception/receipt",
@@ -197,7 +197,8 @@ class modReception extends DolibarrModules
 		$this->export_entities_array[$r] = array(
 			's.rowid'=>"company", 's.nom'=>'company', 's.address'=>'company', 's.zip'=>'company', 's.town'=>'company',
 			'd.nom'=>'company', 'co.label'=>'company', 'co.code'=>'company', 's.fk_pays'=>'company', 's.phone'=>'company', 's.siren'=>'company', 's.ape'=>'company', 's.siret'=>'company', 's.idprof4'=>'company', 's.idprof5'=>'company', 's.idprof6'=>'company',
-			'c.rowid'=>"reception", 'c.ref'=>"reception", 'c.ref_supplier'=>"reception", 'c.fk_soc'=>"reception", 'c.date_creation'=>"reception", 'c.date_delivery'=>"reception", 'c.tracking_number'=>'reception', 'c.height'=>"reception", 'c.width'=>"reception", 'c.size'=>'reception', 'c.size_units'=>'reception', 'c.weight'=>"reception", 'c.weight_units'=>'reception', 'c.fk_statut'=>"reception", 'c.note_public'=>"reception", 'ed.rowid'=>'reception_line', 'ed.comment'=>'reception_line', 'ed.qty'=>"reception_line",
+			'c.rowid'=>"reception", 'c.ref'=>"reception", 'c.ref_supplier'=>"reception", 'c.fk_soc'=>"reception", 'c.date_creation'=>"reception", 'c.date_delivery'=>"reception", 'c.tracking_number'=>'reception', 'c.height'=>"reception", 'c.width'=>"reception", 'c.size'=>'reception', 'c.size_units'=>'reception', 'c.weight'=>"reception", 'c.weight_units'=>'reception', 'c.fk_statut'=>"reception", 'c.note_public'=>"reception",
+			'ed.rowid'=>'reception_line', 'ed.comment'=>'reception_line', 'ed.qty'=>"reception_line",
 			'p.rowid'=>'product', 'p.ref'=>'product', 'p.label'=>'product', 'p.weight'=>'product', 'p.weight_units'=>'product', 'p.volume'=>'product', 'p.volume_units'=>'product'
 		);
 		if ($idcontacts && !empty($conf->global->RECEPTION_ADD_CONTACTS_IN_EXPORT)) $this->export_entities_array[$r] += array('sp.rowid'=>'contact', 'sp.lastname'=>'contact', 'sp.firstname'=>'contact', 'sp.note_public'=>'contact');

@@ -157,8 +157,7 @@ class Donations extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve donation list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -230,9 +229,7 @@ class Donations extends DolibarrApi
         if ($this->don->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
         	throw new RestException(500, $this->don->error);
         }
     }

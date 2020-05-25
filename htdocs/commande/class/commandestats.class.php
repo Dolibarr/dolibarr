@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,17 +46,20 @@ class CommandeStats extends Stats
     public $from;
     public $field;
     public $where;
+    public $join;
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param 	DoliDB	$db		   Database handler
-	 * @param 	int		$socid	   Id third party for filter. This value must be forced during the new to external user company if user is an external user.
-	 * @param 	string	$mode	   Option ('customer', 'supplier')
-	 * @param   int		$userid    Id user for filter (creation user)
+	 * @param 	DoliDB	$db		    Database handler
+	 * @param 	int		$socid	    Id third party for filter. This value must be forced during the new to external user company if user is an external user.
+	 * @param 	string	$mode	    Option ('customer', 'supplier')
+	 * @param   int		$userid     Id user for filter (creation user)
+     * @param	int		$typentid   Id typent of thirdpary for filter
+     * @param	int		$categid    Id category of thirdpary for filter
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0)
+	public function __construct($db, $socid, $mode, $userid = 0, $typentid = 0, $categid = 0)
 	{
 		global $user, $conf;
 
@@ -64,6 +68,7 @@ class CommandeStats extends Stats
 		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
 		$this->cachefilesuffix = $mode;
+        $this->join = '';
 
 		if ($mode == 'customer')
 		{
@@ -73,8 +78,7 @@ class CommandeStats extends Stats
 			$this->field = 'total_ht';
 			$this->field_line = 'total_ht';
 			$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
-		}
-		elseif ($mode == 'supplier')
+		} elseif ($mode == 'supplier')
 		{
 			$object = new CommandeFournisseur($this->db);
 			$this->from = MAIN_DB_PREFIX.$object->table_element." as c";
@@ -92,6 +96,19 @@ class CommandeStats extends Stats
 			$this->where .= " AND c.fk_soc = ".$this->socid;
 		}
         if ($this->userid > 0) $this->where .= ' AND c.fk_user_author = '.$this->userid;
+
+        if ($typentid)
+        {
+            $this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = c.fk_soc';
+            $this->where .= ' AND s.fk_typent = '.$typentid;
+        }
+
+        if ($categid)
+        {
+            $this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cats ON cats.fk_soc = c.fk_soc';
+            $this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as cat ON cat.rowid = cats.fk_categorie';
+            $this->where .= ' AND cat.rowid = '.$categid;
+        }
 	}
 
 	/**
@@ -108,6 +125,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -130,6 +148,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
@@ -151,6 +170,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -173,6 +193,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -193,6 +214,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT date_format(c.date_commande,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
         $sql .= $this->db->order('year', 'DESC');
@@ -214,6 +236,7 @@ class CommandeStats extends Stats
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " AND c.rowid = tl.fk_commande AND tl.fk_product = product.rowid";
     	$sql .= " AND c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";

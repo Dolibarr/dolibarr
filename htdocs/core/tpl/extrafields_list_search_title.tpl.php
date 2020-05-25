@@ -26,9 +26,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 				if (!empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key])) $sortonfield = '';
 				if ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] == 'separate') {
 					print '<th class="liste_titre thseparator"></th>';
-				}
-				else
-				{
+				} else {
 					$tooltip = empty($extrafields->attributes[$extrafieldsobjectkey]['help'][$key]) ? '' : $extrafields->attributes[$extrafieldsobjectkey]['help'][$key];
 
 					print getTitleFieldOfList($extrafields->attributes[$extrafieldsobjectkey]['label'][$key], 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align ? 'align="'.$align.'" data-titlekey="'.$key.'"' : 'data-titlekey="'.$key.'"'), $sortfield, $sortorder, '', $disablesortlink, $tooltip)."\n";

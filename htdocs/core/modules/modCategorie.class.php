@@ -120,7 +120,7 @@ class modCategorie extends DolibarrModules
 		$this->export_code[$r] = 'category_'.$r;
 		$this->export_label[$r] = 'CatSupList';
 		$this->export_icon[$r] = 'category';
-		$this->export_enabled[$r] = '$conf->fournisseur->enabled';
+		$this->export_enabled[$r] = '!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)';
 		$this->export_permission[$r] = array(array("categorie", "lire"), array("fournisseur", "lire"));
 		$this->export_fields_array[$r] = array(
 			'u.rowid'=>"CategId", 'u.label'=>"Label", 'u.description'=>"Description", 's.rowid'=>'IdThirdParty', 's.nom'=>'Name', 's.prefix_comm'=>"Prefix",
@@ -423,7 +423,7 @@ class modCategorie extends DolibarrModules
         );
 		$typeexample = "";
 		if ($conf->product->enabled) { $typeexample .= ($typeexample ? "/" : "")."0=Product"; }
-		if ($conf->fournisseur->enabled) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) { $typeexample .= ($typeexample ? "/" : "")."1=Supplier"; }
 		if ($conf->societe->enabled) { $typeexample .= ($typeexample ? "/" : "")."2=Customer-Prospect"; }
 		if ($conf->adherent->enabled) { $typeexample .= ($typeexample ? "/" : "")."3=Member"; }
         $this->import_examplevalues_array[$r] = array(
@@ -491,7 +491,7 @@ class modCategorie extends DolibarrModules
 			$this->import_examplevalues_array[$r] = array('cs.fk_categorie'=>"Imported category", 'cs.fk_socpeople'=>"123");
 		}
 
-		if (!empty($conf->fournisseur->enabled))
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
 		{
 			// Suppliers
 			$r++;
