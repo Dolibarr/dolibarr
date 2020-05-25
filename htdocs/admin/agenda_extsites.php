@@ -107,9 +107,7 @@ if ($actionsave)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
         if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -162,15 +160,11 @@ print '<td class="center">';
 if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('AGENDA_DISABLE_EXT', array('enabled'=>array(0=>'.hideifnotset')), null, 1);
-}
-else
-{
+} else {
 	if (empty($conf->global->AGENDA_DISABLE_EXT))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=1">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?save=1&AGENDA_DISABLE_EXT=0">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	}
 }

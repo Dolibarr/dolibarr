@@ -325,7 +325,6 @@ CompanyDeleted=Firma "%s" er slettet fra databasen.
 ListOfContacts=Oversikt over kontaktpersoner
 ListOfContactsAddresses=Oversikt over kontaktpersoner
 ListOfThirdParties=Liste over tredjeparter
-ShowCompany=Vis tredjepart
 ShowContact=Vis kontaktperson
 ContactsAllShort=Alle (ingen filter)
 ContactType=Kontaktperson type
@@ -447,6 +446,7 @@ SaleRepresentativeFirstname=Selgers fornavn
 SaleRepresentativeLastname=Selgers etternavn
 ErrorThirdpartiesMerge=Det oppsto en feil ved sletting av tredjepart. Vennligst sjekk loggen. Endringer er blitt tilbakestilt.
 NewCustomerSupplierCodeProposed=Kunde eller leverandørkode er allerede brukt, en ny kode blir foreslått
+KeepEmptyIfGenericAddress=Keep this field empty if this address is a generic address
 #Imports
 PaymentTypeCustomer=Betalingstype - Kunde
 PaymentTermsCustomer=Betalingsbetingelser - Kunde

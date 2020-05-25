@@ -47,7 +47,7 @@ $shipment = new Expedition($db);
 $helpurl = 'EN:Module_Shipments|FR:Module_Exp&eacute;ditions|ES:M&oacute;dulo_Expediciones';
 llxHeader('', $langs->trans("Shipment"), $helpurl);
 
-print load_fiche_titre($langs->trans("SendingsArea"));
+print load_fiche_titre($langs->trans("SendingsArea"), '', 'dolly');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -120,8 +120,7 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-	} else
-	{
+	} else {
 		print '<tr><td>'.$langs->trans("None").'</td><td></td><td></td></tr>';
 	}
 
@@ -193,8 +192,7 @@ if ($resql)
 		print "</table></div><br>";
 	}
 	$db->free($resql);
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 /*
  * Open orders
@@ -259,8 +257,7 @@ if ($resql)
 
 		print "</table></div><br>";
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 print '</div></div></div>';

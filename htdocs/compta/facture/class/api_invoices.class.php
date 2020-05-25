@@ -244,8 +244,7 @@ class Invoices extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve invoice list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -502,8 +501,7 @@ class Invoices extends DolibarrApi
 		}
 
         $result = $this->invoice->delete_contact($rowid);
-
-        if (!$result) {
+        if ($result < 0) {
             throw new RestException(500, 'Error when deleted the contact');
         }
 
@@ -549,9 +547,7 @@ class Invoices extends DolibarrApi
     	$updateRes = $this->invoice->deleteline($lineid);
     	if ($updateRes > 0) {
     		return $this->get($id);
-    	}
-    	else
-    	{
+    	} else {
     		throw new RestException(405, $this->invoice->error);
     	}
     }
@@ -600,7 +596,7 @@ class Invoices extends DolibarrApi
     /**
      * Delete invoice
      *
-     * @param int   $id Invoice ID
+     * @param int   $id 	Invoice ID
      * @return array
      */
     public function delete($id)
@@ -617,7 +613,8 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        if ($this->invoice->delete($id) < 0)
+		$result = $this->invoice->delete(DolibarrApiAccess::$user);
+        if ($result < 0)
         {
             throw new RestException(500);
         }
@@ -1041,14 +1038,11 @@ class Invoices extends DolibarrApi
             $discount = new DiscountAbsolute($this->db);
             if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
                 $discount->description = '(CREDIT_NOTE)';
-            }
-            elseif ($this->invoice->type == Facture::TYPE_DEPOSIT) {
+            } elseif ($this->invoice->type == Facture::TYPE_DEPOSIT) {
                 $discount->description = '(DEPOSIT)';
-            }
-            elseif ($this->invoice->type == Facture::TYPE_STANDARD || $this->invoice->type == Facture::TYPE_REPLACEMENT || $this->invoice->type == Facture::TYPE_SITUATION) {
+            } elseif ($this->invoice->type == Facture::TYPE_STANDARD || $this->invoice->type == Facture::TYPE_REPLACEMENT || $this->invoice->type == Facture::TYPE_SITUATION) {
                 $discount->description = '(EXCESS RECEIVED)';
-            }
-            else {
+            } else {
                 throw new RestException(500, 'Cant convert to reduc an Invoice of this type');
             }
 
@@ -1124,18 +1118,14 @@ class Invoices extends DolibarrApi
                     if ($result >= 0)
                     {
                         $this->db->commit();
-                    }
-                    else
-                    {
+                    } else {
                         $this->db->rollback();
                         throw new RestException(500, 'Could not set paid');
                     }
                 } else {
                     $this->db->commit();
                 }
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
                 throw new RestException(500, 'Discount creation error');
             }

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/rapport/pdf_paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Security check
@@ -68,9 +70,7 @@ if ($action == 'builddoc')
     if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
     {
         $outputlangs->charset_output = $sav_charset_output;
-    }
-    else
-    {
+    } else {
         $outputlangs->charset_output = $sav_charset_output;
         dol_print_error($db, $obj->error);
     }
@@ -84,11 +84,12 @@ if ($action == 'builddoc')
  */
 
 $formother = new FormOther($db);
+$formfile = new FormFile($db);
 
 llxHeader();
 
 $titre = ($year ? $langs->trans("PaymentsReportsForYear", $year) : $langs->trans("PaymentsReports"));
-print load_fiche_titre($titre, '', 'invoicing');
+print load_fiche_titre($titre, '', 'bill');
 
 // Formulaire de generation
 print '<form method="post" action="rapport.php?year='.$year.'">';
@@ -154,9 +155,11 @@ if ($year)
                 {
                     $tfile = $dir.'/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<tr class="oddeven">';
+                    print '<td><a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a>'.$formfile->showPreview($file, 'facture_paiement', $relativepath, 0).'</td>';
                     print '<td class="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
-                    print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td></tr>';
+                    print '<td class="right">'.dol_print_date(dol_filemtime($tfile), "dayhour").'</td>';
+                    print '</tr>';
                 }
             }
             closedir($handle);

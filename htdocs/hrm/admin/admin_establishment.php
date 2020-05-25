@@ -44,11 +44,16 @@ foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($
  * Actions
  */
 
+// None
+
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("Establishments"));
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder     = GETPOST("sortorder");
 $sortfield     = GETPOST("sortfield");
 if (!$sortorder) $sortorder = "DESC";
@@ -58,7 +63,7 @@ if (empty($page) || $page == -1) {
 	$page = 0;
 }
 
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -124,16 +129,12 @@ if ($result)
 
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
 
 	print '</table>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -878,9 +878,7 @@ class Setup extends DolibarrApi
         			$list[$tab->elementtype][$tab->name]['list'] = $tab->list;
         		}
         	}
-        }
-        else
-        {
+        } else {
             throw new RestException(503, 'Error when retrieving list of extra fields : '.$this->db->lasterror());
         }
 
@@ -1409,15 +1407,15 @@ class Setup extends DolibarrApi
      *
      * Note that conf variables that stores security key or password hashes can't be loaded with API.
      *
-     * @url	GET /conf
-     *
-     * @param	string			$confname	Name of conf variable to get
+     * @param	string			$constantname	Name of conf variable to get
      * @return  array|mixed 				Data without useless information
      *
+     * @url     GET conf/{constantname}
+     *
      * @throws RestException 403 Forbidden
-	 * @throws RestException 500 Error Bad or unknown value for constname
+     * @throws RestException 500 Error Bad or unknown value for constantname
      */
-    public function getConf($confname)
+    public function getConf($constantname)
     {
     	global $conf;
 
@@ -1426,14 +1424,14 @@ class Setup extends DolibarrApi
     		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
     	}
 
-    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $confname) || !isset($conf->global->$confname)) {
-    		throw new RestException(500, 'Error Bad or unknown value for constname');
+    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || !isset($conf->global->$constantname)) {
+    		throw new RestException(500, 'Error Bad or unknown value for constantname');
     	}
-    	if (preg_match('/(_pass|password|secret|_key|key$)/i', $confname)) {
+    	if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $constantname)) {
     		throw new RestException(403, 'Forbidden');
     	}
 
-    	return $conf->global->$confname;
+    	return $conf->global->$constantname;
     }
 
     /**
@@ -1484,14 +1482,10 @@ class Setup extends DolibarrApi
     		if (dol_is_file($xmlfile))
     		{
     			$xml = simplexml_load_file($xmlfile);
-    		}
-    		else
-    		{
+    		} else {
     			throw new RestException(500, $langs->trans('XmlNotFound').': '.$xmlfile);
     		}
-    	}
-    	else
-    	{
+    	} else {
     		$xmlarray = getURLContent($xmlremote);
 
     		// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
@@ -1500,9 +1494,7 @@ class Setup extends DolibarrApi
     			$xmlfile = $xmlarray['content'];
     			//print "xmlfilestart".$xmlfile."endxmlfile";
     			$xml = simplexml_load_string($xmlfile);
-    		}
-    		else
-    		{
+    		} else {
     			$errormsg = $langs->trans('XmlNotFound').': '.$xmlremote.' - '.$xmlarray['http_code'].' '.$xmlarray['curl_error_no'].' '.$xmlarray['curl_error_msg'];
     			throw new RestException(500, $errormsg);
     		}
@@ -1609,9 +1601,7 @@ class Setup extends DolibarrApi
     					$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
     					$out .= "</tr>\n";
     				}
-    			}
-    			else
-    			{
+    			} else {
     				$out .= '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
     			$out .= '</table>';
@@ -1659,9 +1649,7 @@ class Setup extends DolibarrApi
     				$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
     				$out .= '<td class="right"></td>'."\n";
     				$out .= "</tr>\n";
-    			}
-    			else
-    			{
+    			} else {
     				$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
     			$out .= '</table>';
@@ -1709,9 +1697,7 @@ class Setup extends DolibarrApi
     				$out .= '<td class="right">'.dol_print_size($totalsize).'</td>'."\n";
     				$out .= '<td class="right"></td>'."\n";
     				$out .= "</tr>\n";
-    			}
-    			else
-    			{
+    			} else {
     				$out .= '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     			}
     			$out .= '</table>';
@@ -1722,14 +1708,10 @@ class Setup extends DolibarrApi
     			if (empty($tmpfilelist) && empty($tmpfilelist2) && empty($tmpfilelist3))
     			{
     				//setEventMessages($langs->trans("FileIntegrityIsStrictlyConformedWithReference"), null, 'mesgs');
-    			}
-    			else
-    			{
+    			} else {
     				//setEventMessages($langs->trans("FileIntegritySomeFilesWereRemovedOrModified"), null, 'warnings');
     			}
-    		}
-    		else
-    		{
+    		} else {
     			throw new RestException(500, 'Error: Failed to found dolibarr_htdocs_dir into XML file '.$xmlfile);
     		}
 
@@ -1751,24 +1733,19 @@ class Setup extends DolibarrApi
     				$resultcomment = 'FileIntegrityIsOkButFilesWereAdded';
     				//$outcurrentchecksum =  $checksumget.' - <span class="'.$resultcode.'">'.$langs->trans("FileIntegrityIsOkButFilesWereAdded").'</span>';
     				$outcurrentchecksum = $checksumget;
-    			}
-    			else
-    			{
+    			} else {
     				$resultcode = 'ok';
     				$resultcomment = 'Success';
     				//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     				$outcurrentchecksum = $checksumget;
     			}
-    		}
-    		else
-    		{
+    		} else {
     			$resultcode = 'error';
     			$resultcomment = 'Error';
     			//$outcurrentchecksum = '<span class="'.$resultcode.'">'.$checksumget.'</span>';
     			$outcurrentchecksum = $checksumget;
     		}
-    	}
-    	else {
+    	} else {
     		throw new RestException(404, 'No signature file known');
     	}
 

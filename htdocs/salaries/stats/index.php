@@ -60,7 +60,7 @@ llxHeader();
 $title = $langs->trans("SalariesStatistics");
 $dir = $conf->salaries->dir_temp;
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title, '', 'object_payment');
 
 dol_mkdir($dir);
 
@@ -256,8 +256,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td align="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
 	print $px1->show();
 	print "<br>\n";
 	print $px2->show();

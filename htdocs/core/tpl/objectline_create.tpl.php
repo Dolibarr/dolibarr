@@ -60,26 +60,19 @@ if (!empty($extrafields))
 {
 	if ($this->table_element_line == 'commandedet') {
 		$objectline = new OrderLine($this->db);
-	}
-	elseif ($this->table_element_line == 'propaldet') {
+	} elseif ($this->table_element_line == 'propaldet') {
 		$objectline = new PropaleLigne($this->db);
-	}
-	elseif ($this->table_element_line == 'supplier_proposaldet') {
+	} elseif ($this->table_element_line == 'supplier_proposaldet') {
 		$objectline = new SupplierProposalLine($this->db);
-	}
-	elseif ($this->table_element_line == 'facturedet') {
+	} elseif ($this->table_element_line == 'facturedet') {
 		$objectline = new FactureLigne($this->db);
-	}
-	elseif ($this->table_element_line == 'contratdet') {
+	} elseif ($this->table_element_line == 'contratdet') {
 		$objectline = new ContratLigne($this->db);
-	}
-	elseif ($this->table_element_line == 'commande_fournisseurdet') {
+	} elseif ($this->table_element_line == 'commande_fournisseurdet') {
 		$objectline = new CommandeFournisseurLigne($this->db);
-	}
-	elseif ($this->table_element_line == 'facture_fourn_det') {
+	} elseif ($this->table_element_line == 'facture_fourn_det') {
 		$objectline = new SupplierInvoiceLine($this->db);
-	}
-	elseif ($this->table_element_line == 'facturedet_rec') {
+	} elseif ($this->table_element_line == 'facturedet_rec') {
 		$objectline = new FactureLigneRec($this->db);
 	}
 }
@@ -131,13 +124,11 @@ if ($nolinesbefore) {
 		{
 			if (empty($user->rights->margins->creer)) {
 				$colspan++;
-			}
-			else {
+			} else {
 				print '<td class="margininfos linecolmargin1 right">';
 				if ($conf->global->MARGIN_TYPE == "1")
 					echo $langs->trans('BuyingPrice');
-				else
-					echo $langs->trans('CostPrice');
+				else echo $langs->trans('CostPrice');
 				echo '</td>';
 				if (!empty($conf->global->DISPLAY_MARGIN_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_marginRate">'.$langs->trans('MarginRate').'</span></td>';
 				if (!empty($conf->global->DISPLAY_MARK_RATES)) echo '<td class="margininfos linecolmargin2 right"><span class="np_markRate">'.$langs->trans('MarkRate').'</span></td>';
@@ -186,9 +177,7 @@ if ($nolinesbefore) {
 				echo $langs->trans("FreeLineOfType");
 				echo '</label>';
 				echo ' ';
-			}
-			else
-			{
+			} else {
 				echo '<input type="hidden" id="prod_entry_mode_free" name="prod_entry_mode" value="free">';
 				// Show type selector
 				if ($forceall >= 0)
@@ -213,9 +202,7 @@ if ($nolinesbefore) {
 				if (!empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToSell');
 				elseif ((empty($conf->product->enabled) && !empty($conf->service->enabled)) || ($object->element == 'contrat' && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS))) echo $langs->trans('PredefinedServicesToSell');
 				else echo $langs->trans('PredefinedProductsAndServicesToSell');
-			}
-			else
-			{
+			} else {
 				if (!empty($conf->product->enabled) && empty($conf->service->enabled)) echo $langs->trans('PredefinedProductsToPurchase');
 				elseif (empty($conf->product->enabled) && !empty($conf->service->enabled)) echo $langs->trans('PredefinedServicesToPurchase');
 				else echo $langs->trans('PredefinedProductsAndServicesToPurchase');
@@ -231,9 +218,7 @@ if ($nolinesbefore) {
 				{
 					// hide products in closed warehouse, but show products for internal transfer
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
-				}
-				else
-				{
+				} else {
 					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 				}
 				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
@@ -254,9 +239,7 @@ if ($nolinesbefore) {
 				</script>
 					<?php
 				}
-			}
-			else
-			{
+			} else {
 				// $senderissupplier=2 is the same as 1 but disables test on minimum qty and disable autofill qty with minimum
 				if ($senderissupplier != 2)
 				{
@@ -266,9 +249,7 @@ if ($nolinesbefore) {
 					'warning' => $langs->trans("NoPriceDefinedForThisSupplier") // translation of an error saved into var 'warning' (for example shown we select a disabled option into combo)
 					);
 					$alsoproductwithnosupplierprice = 0;
-				}
-				else
-				{
+				} else {
 					$ajaxoptions = array(
 					'update' => array('remise_percent' => 'discount')			// html id tags that will be edited with each ajax json response key
 					);
@@ -448,9 +429,7 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 		print $form->selectDate($date_start, "date_start", $usehm, $usehm, 1, "addproduct");
 		print ' &nbsp; '.$langs->trans("DateEndPlanned").' ';
 		print $form->selectDate($date_end, "date_end", $usehm, $usehm, 1, "addproduct");
-	}
-	else
-	{
+	} else {
 		print $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 		print $form->selectDate($date_start, 'date_start', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 		print ' '.$langs->trans('to').' ';
@@ -813,7 +792,7 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		jQuery("#prod_entry_mode_free").prop('checked',true).change();
 		jQuery("#prod_entry_mode_predef").prop('checked',false).change();
 		jQuery("#search_idprod, #idprod, #search_idprodfournprice, #buying_price").val('');
-		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
+		jQuery("#price_ht, #multicurrency_price_ht, #price_ttc, #price_ttc, #fourn_ref, #tva_tx, #buying_price, #title_fourn_ref, #title_vat, #title_up_ht, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").show();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").show();
 		jQuery("#fournprice_predef").hide();
 	}
@@ -825,11 +804,13 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		<?php if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT)) { ?>
 			jQuery("#price_ht").val('').show();
 			jQuery("#multicurrency_price_ht").val('').show();
+			jQuery("#title_up_ht, #title_up_ht_currency").show();
 		<?php } else { ?>
 			jQuery("#price_ht").val('').hide();
 			jQuery("#multicurrency_price_ht").val('').hide();
+			jQuery("#title_up_ht, #title_up_ht_currency").hide();
 		<?php } ?>
-		jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_vat, #title_up_ht_currency, #title_up_ttc, #title_up_ttc_currency").hide();
+		jQuery("#price_ttc, #fourn_ref, #tva_tx, #title_fourn_ref, #title_vat, #title_up_ttc, #title_up_ttc_currency").hide();
 		jQuery("#np_marginRate, #np_markRate, .np_marginRate, .np_markRate, #units, #title_units").hide();
 		jQuery("#buying_price").show();
 		jQuery('#trlinefordates, .divlinefordates').show();

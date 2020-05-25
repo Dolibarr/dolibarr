@@ -128,7 +128,6 @@ RequiredIfCustomer=Erforderlich falls Geschäftspartner Kunde oder Interessent i
 RequiredIfSupplier=Erforderlich, wenn der Partner Lieferant ist
 ValidityControledByModule=Durch Modul validiert
 ListOfThirdParties=Liste der Geschäftspartner
-ShowCompany=Geschäftspartner anzeigen
 ShowContact=Zeige Kontaktangaben
 ContactsAllShort=Alle (Kein Filter)
 ContactForOrdersOrShipments=Bestellungs- oder Lieferkontakt

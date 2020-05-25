@@ -57,7 +57,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	public function info()
 	{
 		global $langs;
-	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -91,8 +91,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		}
-		elseif ($object->ismultientitymanaged == 2) {
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -122,15 +121,14 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
+		// First we get the max value
 		$posindice = 9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."mymodule_myobject";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
 			$sql .= " AND entity = ".$conf->entity;
-		}
-		elseif ($object->ismultientitymanaged == 2) {
+		} elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -140,9 +138,7 @@ class mod_myobject_standard extends ModeleNumRefMyObject
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_myobject_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}

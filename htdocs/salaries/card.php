@@ -158,9 +158,7 @@ if ($action == 'add' && empty($cancel))
 				header("Location: list.php");
 				exit;
 			}
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = "create";
@@ -193,22 +191,16 @@ if ($action == 'delete')
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/salaries/list.php');
 				exit;
-			}
-			else
-			{
+			} else {
 				$object->error = $accountline->error;
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 	}
 }
@@ -264,7 +256,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"), '', 'object_payment');
 
 	dol_fiche_head('', '');
 
@@ -493,14 +485,10 @@ if ($id)
 		if (!empty($user->rights->salaries->delete))
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 	print "</div>";

@@ -64,7 +64,7 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 llxHeader("", $langs->trans("Orders"), $help_url);
 
 
-print load_fiche_titre($langs->trans("OrdersArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -106,6 +106,7 @@ if ($resql)
     $total = 0;
     $totalinprocess = 0;
     $dataseries = array();
+    $colorseries = array();
     $vals = array();
     // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
     while ($i < $num)
@@ -172,9 +173,7 @@ if ($resql)
     //if ($totalinprocess != $total)
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -231,9 +230,7 @@ if (!empty($conf->commande->enabled))
                 print '</td></tr>';
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table></div><br>";
@@ -322,8 +319,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 $max = 10;
 
@@ -409,8 +405,7 @@ if (!empty($conf->commande->enabled))
 		}
 
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 /*
@@ -494,8 +489,7 @@ if (!empty($conf->commande->enabled))
 			}
 		}
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 

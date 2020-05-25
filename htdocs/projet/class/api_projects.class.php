@@ -171,8 +171,7 @@ class Projects extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve project list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -452,9 +451,7 @@ class Projects extends DolibarrApi
         if ($this->project->update(DolibarrApiAccess::$user) >= 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->project->error);
         }
     }

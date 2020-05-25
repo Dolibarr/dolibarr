@@ -249,6 +249,13 @@ class Website extends CommonObject
             // }
         }
 
+	    if (! $error) {
+	    	$stringtodolibarrfile = "# Some properties for Dolibarr web site CMS\n";
+	    	$stringtodolibarrfile .= "param=value\n";
+	    	//print $conf->website->dir_output.'/'.$this->ref.'/.dolibarr';exit;
+	    	file_put_contents($conf->website->dir_output.'/'.$this->ref.'/.dolibarr', $stringtodolibarrfile);
+        }
+
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
@@ -668,7 +675,7 @@ class Website extends CommonObject
 
 		if (!$error)
 		{
-			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0);
+			dolCopyDir($pathofwebsiteold, $pathofwebsitenew, $conf->global->MAIN_UMASK, 0, null, 2);
 
 			// Check symlink to medias and restore it if ko
 			$pathtomedias = DOL_DATA_ROOT.'/medias'; // Target
@@ -721,8 +728,7 @@ class Website extends CommonObject
 						$newidforhome = $objectpagenew->id;
 					}
 				}
-				else
-				{
+				else {
 					setEventMessages($objectpageold->error, $objectpageold->errors, 'errors');
 					$error++;
 				}
@@ -927,30 +933,34 @@ class Website extends CommonObject
 		    $arrayreplacementincss['file=logos%2Fthumbs%2F'.$mysoc->logo] = "file=logos%2Fthumbs%2F__LOGO_KEY__";
 		}
 
+		// Create output directories
+		dol_syslog("Create containers dir");
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey');
+		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey');
+
+		// Copy files into 'containers'
 		$srcdir = $conf->website->dir_output.'/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
-		// Create containers dir
-		dol_syslog("Create containers dir");
-		dol_mkdir($conf->website->dir_temp.'/'.$website->ref.'/containers');
-
-		// Copy files into medias
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
-		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
+		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename, 2);
 
+		// Copy files into medias/image
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
+		// Copy files into medias/js
 		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
 		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey';
 
-		// Copy containers files
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacementinfilename);
 
+		// Make some replacement into some files
 		$cssindestdir = $conf->website->dir_temp.'/'.$website->ref.'/containers/styles.css.php';
 		dolReplaceInFile($cssindestdir, $arrayreplacementincss);
 
@@ -1078,8 +1088,7 @@ class Website extends CommonObject
 		{
 			return $filename;
 		}
-		else
-		{
+		else {
 			global $errormsg;
 			$this->error = $errormsg;
 			return '';
@@ -1195,11 +1204,11 @@ class Website extends CommonObject
 					$newid = ($reg[2] + $maxrowid);
 					$aliasesarray = explode(',', $reg[3]);
 
-					$objectpagestatic->fetch($newid);
-
 					dol_syslog("Found ID ".$oldid." to replace with ID ".$newid." and shortcut aliases to create: ".$reg[3]);
 
 					dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
+
+					$objectpagestatic->fetch($newid);
 
 					// The move is not enough, so we regenerate page
 					$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
@@ -1252,10 +1261,86 @@ class Website extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return $object->id;
+		}
+	}
+
+	/**
+	 * Rebuild all files of a containers of a website. TODO Add other files too.
+	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
+	 *
+	 * @return 	int						<0 if KO, >0 if OK
+	 */
+	public function rebuildWebSiteFiles()
+	{
+		global $conf;
+
+		$error = 0;
+
+		$object = $this;
+		if (empty($object->ref))
+		{
+			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
+			return -1;
+		}
+
+		$objectpagestatic = new WebsitePage($this->db);
+
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page WHERE fk_website = '.$this->id;
+
+		$resql = $this->db->query($sql);
+		if (! $resql) {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+
+		$num = $this->db->num_rows($resql);
+
+		$i=0;
+		while ($i < $num) {
+			$obj = $this->db->fetch_object($resql);
+
+			$newid = $obj->rowid;
+
+			$objectpagestatic->fetch($newid);
+
+			$aliasesarray = explode(',', $objectpagestatic->aliasalt);
+
+			$filetpl = $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php';
+			$result = dolSavePageContent($filetpl, $object, $objectpagestatic);
+			if (!$result) {
+				$this->errors[] = 'Failed to write file '.basename($filetpl);
+				$error++;
+			}
+
+			// Regenerate alternative aliases pages
+			if (is_array($aliasesarray))
+			{
+				foreach ($aliasesarray as $aliasshortcuttocreate)
+				{
+					if (trim($aliasshortcuttocreate))
+					{
+						$filealias = $conf->website->dir_output.'/'.$object->ref.'/'.trim($aliasshortcuttocreate).'.php';
+						$result = dolSavePageAlias($filealias, $object, $objectpagestatic);
+						if (!$result) {
+							$this->errors[] = 'Failed to write file '.basename($filealias);
+							$error++;
+						}
+					}
+				}
+			}
+
+			$i++;
+		}
+
+		if ($error)
+		{
+			return -1;
+		}
+		else {
+			return 1;
 		}
 	}
 

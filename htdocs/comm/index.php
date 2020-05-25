@@ -35,7 +35,7 @@ if (!empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/cl
 if (!empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->supplier_proposal->enabled))  require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->commande->enabled))  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 if (!$user->rights->societe->lire) accessforbidden();
 
@@ -76,7 +76,7 @@ $companystatic = new Societe($db);
 if (!empty($conf->propal->enabled)) $propalstatic = new Propal($db);
 if (!empty($conf->supplier_proposal->enabled)) $supplierproposalstatic = new SupplierProposal($db);
 if (!empty($conf->commande->enabled)) $orderstatic = new Commande($db);
-if (!empty($conf->fournisseur->enabled)) $supplierorderstatic = new CommandeFournisseur($db);
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) $supplierorderstatic = new CommandeFournisseur($db);
 
 llxHeader("", $langs->trans("CommercialArea"));
 
@@ -102,7 +102,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
         $listofsearchfields['search_supplier_proposal'] = array('text'=>'SupplierProposalShort');
     }
     // Search supplier order
-    if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
     {
     	$listofsearchfields['search_supplier_order'] = array('text'=>'SupplierOrder');
     }
@@ -209,22 +209,17 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table></div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -297,22 +292,17 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
             {
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
-        }
-        else
-        {
+        } else {
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table></div><br>";
 
         $db->free($resql);
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -379,8 +369,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 				print '</td>';
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
-				}
-				else {
+				} else {
 					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
 				}
 				$i++;
@@ -389,23 +378,18 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
             {
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table>";
 		print "</div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -414,7 +398,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 /*
  * Draft suppliers orders
  */
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
 {
     $langs->load("orders");
 
@@ -472,8 +456,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande-
                 print '</td>';
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
-				}
-				else {
+				} else {
 					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
 				}
                 $i++;
@@ -482,14 +465,11 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande-
  			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
             {
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
-        }
-        else
-        {
+        } else {
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table>";
@@ -570,9 +550,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 			}
 
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table>";
@@ -581,7 +559,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 }
 
 // Last suppliers
-if (!empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
@@ -629,9 +607,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table>';
@@ -717,9 +693,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -805,8 +779,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="right">'.price($obj->total_ht).'</td>';
-				}
-				else {
+				} else {
 					print '<td class="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
@@ -817,17 +790,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -913,8 +883,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="right">'.price($obj->total_ht).'</td>';
-				}
-				else {
+				} else {
 					print '<td class="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>'."\n";
@@ -925,17 +894,14 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

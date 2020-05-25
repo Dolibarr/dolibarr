@@ -33,7 +33,8 @@ class Orders extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'socid'
+        'socid',
+    	'date'
     );
 
     /**
@@ -222,8 +223,7 @@ class Orders extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -233,7 +233,9 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Create order object
+     * Create a sale order
+     *
+     * Exemple: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
      *
      * @param   array   $request_data   Request data
      * @return  int     ID of order
@@ -566,9 +568,7 @@ class Orders extends DolibarrApi
         if ($this->commande->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
         	throw new RestException(500, $this->commande->error);
         }
     }
@@ -696,7 +696,7 @@ class Orders extends DolibarrApi
         $result = $this->commande->set_reopen(DolibarrApiAccess::$user);
         if ($result < 0) {
             throw new RestException(405, $this->commande->error);
-        }elseif ($result == 0) {
+        } elseif ($result == 0) {
             throw new RestException(304);
         }
 

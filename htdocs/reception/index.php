@@ -47,7 +47,7 @@ $reception = new Reception($db);
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
 llxHeader('', $langs->trans("Reception"), $helpurl);
 
-print load_fiche_titre($langs->trans("ReceptionsArea"));
+print load_fiche_titre($langs->trans("ReceptionsArea"), '', 'dollyrevert');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -120,8 +120,7 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-	}
-	else {
+	} else {
 		print '<tr><td><span class="opacitymedium">'.$langs->trans("None").'</span></td><td></td><td></td></tr>';
 	}
 
@@ -182,16 +181,14 @@ if ($resql)
 				$orderstatic->id = $obj->commande_fournisseur_id;
 				$orderstatic->ref = $obj->commande_fournisseur_ref;
 				print $orderstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print '</td></tr>';
 			$i++;
 		}
 		print "</table></div><br>";
 	}
 	$db->free($resql);
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 

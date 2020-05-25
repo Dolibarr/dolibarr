@@ -66,7 +66,7 @@ $extrafields = new ExtraFields($db);
 
 $morehead = '';
 if (!empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
-else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php'.'">';
+else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php">';
 
 llxHeaderVierge($langs->trans("MemberCard"), $morehead);
 
@@ -84,9 +84,7 @@ if ($id > 0)
 	if (empty($object->public))
 	{
 		 print $langs->trans("ErrorThisMemberIsNotPublic");
-	}
-	else
-	{
+	} else {
 		print '<table class="public_border" cellspacing="0" width="100%" cellpadding="3">';
 
 		print '<tr><td width="15%">'.$langs->trans("Type").'</td><td class="valeur">'.$object->type."</td></tr>\n";

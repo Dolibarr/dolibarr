@@ -111,9 +111,7 @@ class DoliDBSqlite3 extends DoliDB
             $this->addCustomFunction('WEEKDAY');
             $this->addCustomFunction('date_format');
             //$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-        else
-        {
+        } else {
             // host, login ou password incorrect
             $this->connected = false;
             $this->ok = false;
@@ -339,8 +337,7 @@ class DoliDBSqlite3 extends DoliDB
             //$this->db = new PDO("sqlite:".$dir.'/database_'.$name.'.sdb');
 			$this->db = new SQLite3($database_name);
             //$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        }
-        catch (Exception $e)
+        } catch (Exception $e)
         {
             $this->error = self::LABEL.' '.$e->getMessage().' current dir='.$database_name;
             return '';
@@ -467,8 +464,7 @@ class DoliDBSqlite3 extends DoliDB
             if ($ret) {
                 $ret->queryString = $query;
             }
-        }
-        catch (Exception $e)
+        } catch (Exception $e)
         {
             $this->error = $this->db->lastErrorMsg();
         }
@@ -553,9 +549,7 @@ class DoliDBSqlite3 extends DoliDB
         {
             if (!is_object($resultset)) { $resultset = $this->_results; }
             return $resultset->fetchArray(SQLITE3_NUM);
-        }
-        else
-        {
+        } else {
             // si le curseur est un booleen on retourne la valeur 0
             return false;
         }
@@ -641,8 +635,7 @@ class DoliDBSqlite3 extends DoliDB
         if (!$this->connected) {
             // Si il y a eu echec de connexion, $this->db n'est pas valide.
             return 'DB_ERROR_FAILED_TO_CONNECT';
-        }
-        else {
+        } else {
             // Constants to convert error code to a generic Dolibarr error code
             /*$errorcode_map = array(
             1004 => 'DB_ERROR_CANNOT_CREATE',
@@ -706,8 +699,7 @@ class DoliDBSqlite3 extends DoliDB
         if (!$this->connected) {
             // Si il y a eu echec de connexion, $this->db n'est pas valide pour sqlite_error.
             return 'Not connected. Check setup parameters in conf/conf.php file and your sqlite version';
-        }
-        else {
+        } else {
             return $this->error;
         }
     }
@@ -751,8 +743,7 @@ class DoliDBSqlite3 extends DoliDB
             if ($cryptType == 2)
             {
                 $return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
-            }
-            elseif ($cryptType == 1)
+            } elseif ($cryptType == 1)
             {
                 $return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
@@ -784,8 +775,7 @@ class DoliDBSqlite3 extends DoliDB
             if ($cryptType == 2)
             {
                 $return = 'AES_DECRYPT('.$value.',\''.$cryptKey.'\')';
-            }
-            elseif ($cryptType == 1)
+            } elseif ($cryptType == 1)
             {
                 $return = 'DES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
@@ -931,10 +921,8 @@ class DoliDBSqlite3 extends DoliDB
             {
                 if (preg_match("/null/i", $field_desc['default']))
                     $sqlfields[$i] .= " default ".$field_desc['default'];
-                else
-                    $sqlfields[$i] .= " default '".$field_desc['default']."'";
-            }
-            elseif (preg_match("/^[^\s]/i", $field_desc['null']))
+                else $sqlfields[$i] .= " default '".$field_desc['default']."'";
+            } elseif (preg_match("/^[^\s]/i", $field_desc['null']))
                 $sqlfields[$i] .= " ".$field_desc['null'];
 
             elseif (preg_match("/^[^\s]/i", $field_desc['extra']))
@@ -991,8 +979,7 @@ class DoliDBSqlite3 extends DoliDB
 
     	if (!$this->query($sql))
     		return -1;
-    	else
-    		return 1;
+    	else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1043,8 +1030,7 @@ class DoliDBSqlite3 extends DoliDB
         {
             if (preg_match("/null/i", $field_desc['default']))
             $sql .= " default ".$field_desc['default'];
-            else
-            $sql .= " default '".$field_desc['default']."'";
+            else $sql .= " default '".$field_desc['default']."'";
         }
         if (preg_match("/^[^\s]/i", $field_desc['extra']))
         $sql .= " ".$field_desc['extra'];
@@ -1280,8 +1266,7 @@ class DoliDBSqlite3 extends DoliDB
                 $obj = $this->fetch_row($resql);
                 //dol_syslog(get_class($this)."::select_db getServerParametersValues $var=". print_r($obj, true), LOG_DEBUG);
                 $result[$var] = $obj[0];
-            }
-            else {
+            } else {
                 // TODO Récupérer le message
                 $result[$var] = 'FAIL';
             }
@@ -1325,7 +1310,7 @@ class DoliDBSqlite3 extends DoliDB
         if ($this->db)
         {
         	$newname = preg_replace('/_/', '', $name);
-            $localname = __CLASS__.'::'.'db'.$newname;
+            $localname = __CLASS__.'::db'.$newname;
             $reflectClass = new ReflectionClass(__CLASS__);
             $reflectFunction = $reflectClass->getMethod('db'.$newname);
             if ($arg_count < 0) {
@@ -1354,12 +1339,11 @@ class DoliDBSqlite3 extends DoliDB
         if ($y == 0 && $month == 0) return 0;
         $num = (365 * $y + 31 * ($month - 1) + $day);
         if ($month <= 2) {
-            $y--; }
-        else {
+            $y--; } else {
             $num -= floor(($month * 4 + 23) / 10);
-        }
-        $temp = floor(($y / 100 + 1) * 3 / 4);
-        return $num + floor($y / 4) - $temp;
+			}
+			$temp = floor(($y / 100 + 1) * 3 / 4);
+			return $num + floor($y / 4) - $temp;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

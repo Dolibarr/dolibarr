@@ -92,9 +92,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 			if (!empty($_SERVER["WINDIR"])) $facility = constant('LOG_USER');
 
 			dol_syslog("admin/syslog: facility ".$facility);
-		}
-		else
-		{
+		} else {
 		    $errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
 		}
 
@@ -116,8 +114,7 @@ class mod_syslog_syslog extends LogHandler implements LogHandlerInterface
 		if (!empty($conf->global->SYSLOG_FACILITY))  // Example LOG_USER
 		{
 			$facility = constant($conf->global->SYSLOG_FACILITY);
-		}
-		else $facility = constant('LOG_USER');
+		} else $facility = constant('LOG_USER');
 
 		// (int) is required to avoid error parameter 3 expected to be long
 		openlog('dolibarr', LOG_PID | LOG_PERROR, (int) $facility);

@@ -233,9 +233,7 @@ class modBlockedLog extends DolibarrModules
         if ($b->alreadyUsed(1))
         {
             $res = $b->create($user, '0000000000'); // If already used for something else than SET or UNSET, we log with error
-        }
-        else
-        {
+        } else {
             $res = $b->create($user);
         }
         if ($res <= 0) {

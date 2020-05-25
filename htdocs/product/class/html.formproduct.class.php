@@ -101,13 +101,10 @@ class FormProduct
 			if (!empty($batch))
 			{
 				$sql .= ", pb.qty as stock";
-			}
-			else
-			{
+			} else {
 				$sql .= ", ps.reel as stock";
 			}
-		}
-		elseif ($sumStock)
+		} elseif ($sumStock)
 		{
 			$sql .= ", sum(ps.reel) as stock";
 		}
@@ -125,9 +122,7 @@ class FormProduct
 		if (count($warehouseStatus))
 		{
 			$sql .= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
-		}
-		else
-		{
+		} else {
 			$sql .= " AND e.statut = 1";
 		}
 
@@ -178,9 +173,7 @@ class FormProduct
 			}
 
 			return $num;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -254,8 +247,10 @@ class FormProduct
 			$out .= $comboenhancement;
 		}
 
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
+		if (strpos($htmlname, 'search_') !== 0) {
+			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
+		}
 
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
 		if ($empty) $out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
@@ -268,9 +263,7 @@ class FormProduct
 			{
 				if ($arraytypes['stock'] <= 0) {
 					$label .= ' <span class= \'text-warning\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
-				}
-				else
-				{
+				} else {
 					$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
 				}
 			}
@@ -434,9 +427,7 @@ class FormProduct
 		if (!is_array($objectLines) || !count($objectLines))
 		{
 			if (!empty($fk_product)) $productIdArray[] = $fk_product;
-		}
-		else
-		{
+		} else {
 			foreach ($objectLines as $line) {
 				if ($line->fk_product) $productIdArray[] = $line->fk_product;
 			}
@@ -456,9 +447,7 @@ class FormProduct
 		if (!empty($fk_product))
 		{
 			$productIdArray = array($fk_product); // only show lot stock for product
-		}
-		else
-		{
+		} else {
 			foreach ($this->cache_lot as $key => $value)
 			{
 				$productIdArray[] = $key;
@@ -475,8 +464,7 @@ class FormProduct
 					$label .= $arraytypes['batch'];
 					if ($arraytypes['qty'] <= 0) {
 						$label .= ' <span class=\'text-warning\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
-					}
-					else {
+					} else {
 						$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
 					}
 
@@ -524,9 +512,7 @@ class FormProduct
 		if ($cacheLoaded)
 		{
 			return count($this->cache_lot);
-		}
-		else
-		{
+		} else {
 			// clear cache
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
@@ -558,9 +544,7 @@ class FormProduct
 				}
 
 				return $num;
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db);
 				return -1;
 			}

@@ -166,8 +166,7 @@ if ($lastUpdate)
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
     print '<strong>'.dol_print_date($db->jdate($object->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
-}
-else print $langs->trans('None');
+} else print $langs->trans('None');
 print "</div><br>\n";
 
 $moreforfilter = '';

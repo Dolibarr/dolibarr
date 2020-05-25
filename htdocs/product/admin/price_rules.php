@@ -141,7 +141,7 @@ for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
 	$price_options[$i] = $langs->trans('SellingPrice').' '.$i;
 }
 
-$genPriceOptions = function($level) use ($price_options) {
+$genPriceOptions = function ($level) use ($price_options) {
 
 	$return = array();
 

@@ -45,12 +45,14 @@ $id = GETPOST('id', 'int');
 $search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'alpha');
 $search_project = GETPOST('search_project');
-if (!isset($_GET['search_projectstatus']) && !isset($_POST['search_projectstatus']))
+
+$search_projectstatus = GETPOST('search_projectstatus');
+if (!isset($search_projectstatus) || $search_projectstatus === '')
 {
 	if ($search_all != '') $search_projectstatus = -1;
 	else $search_projectstatus = 1;
 }
-else $search_projectstatus = GETPOST('search_projectstatus');
+
 $search_project_ref = GETPOST('search_project_ref');
 $search_project_title = GETPOST('search_project_title');
 $search_task_ref = GETPOST('search_task_ref');
@@ -243,8 +245,7 @@ if ($resql)
 	{
 		$listofprojectcontacttype[$obj->rowid] = $obj->code;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
 // Get id of types of contacts for tasks (This list never contains a lot of elements)
 $listoftaskcontacttype = array();
@@ -258,8 +259,7 @@ if ($resql)
 	{
 		$listoftaskcontacttype[$obj->rowid] = $obj->code;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0] = '0'; // To avoid sql syntax error if not found
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is assigned only once.
@@ -435,13 +435,12 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 // Show description of content
 $texthelp = '';
 if ($search_task_user == $user->id) $texthelp .= $langs->trans("MyTasksDesc");
-else
-{
+else {
     if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("TasksOnProjectsDesc");
     else $texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "task";
@@ -751,9 +750,7 @@ while ($i < min($num, $limit))
 				$socstatic->id = $obj->socid;
 				$socstatic->name = $obj->name;
 				print $socstatic->getNomUrl(1);
-			}
-			else
-			{
+			} else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -854,9 +851,7 @@ while ($i < min($num, $limit))
 		        print convertSecondToTime($obj->tobill, 'allhourmin');
 		        $totalarray['val']['t.tobill'] += $obj->tobill;
 		        $totalarray['totaltobill'] += $obj->tobill;
-		    }
-		    else
-		    {
+		    } else {
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';
@@ -873,9 +868,7 @@ while ($i < min($num, $limit))
 		        print convertSecondToTime($obj->billed, 'allhourmin');
 		        $totalarray['val']['t.billed'] += $obj->billed;
 		        $totalarray['totalbilled'] += $obj->billed;
-		    }
-		    else
-		    {
+		    } else {
 		        print '<span class="opacitymedium">'.$langs->trans("NA").'</span>';
 		    }
 		    print '</td>';
@@ -886,7 +879,7 @@ while ($i < min($num, $limit))
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -940,8 +933,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 		{
 			if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
 			else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-		}
-		elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
+		} elseif ($totalarray['totalplannedworkloadfield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totalplannedworkload'], $plannedworkloadoutputformat).'</td>';
 		elseif ($totalarray['totaldurationeffectivefield'] == $i) print '<td class="center">'.convertSecondToTime($totalarray['totaldurationeffective'], $timespentoutputformat).'</td>';
 		elseif ($totalarray['totalprogress_calculatedfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationeffective'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';
 		elseif ($totalarray['totalprogress_declaredfield'] == $i) print '<td class="center">'.($totalarray['totalplannedworkload'] > 0 ? round(100 * $totalarray['totaldurationdeclared'] / $totalarray['totalplannedworkload'], 2).' %' : '').'</td>';

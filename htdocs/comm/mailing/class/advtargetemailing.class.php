@@ -165,9 +165,7 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -221,9 +219,7 @@ class AdvanceTargetingMailing extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -284,9 +280,7 @@ class AdvanceTargetingMailing extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -351,9 +345,7 @@ class AdvanceTargetingMailing extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
 			return -1;
@@ -411,9 +403,7 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -453,9 +443,7 @@ class AdvanceTargetingMailing extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -570,7 +558,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 			//Standard Extrafield feature
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-				$elementtype = Societe::$table_element;
+				$socstatic = new Societe($this->db);
+				$elementtype = $socstatic->table_element;
 
 				$extrafields->fetch_name_optionals_label($elementtype);
 
@@ -688,9 +677,7 @@ class AdvanceTargetingMailing extends CommonObject
 				if (!empty($arrayquery['contact_no_email']))
 				{
 					$tmpwhere .= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
-				}
-				else
-				{
+				} else {
 					$tmpwhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
 				}
 				$sqlwhere[] = $tmpwhere;
@@ -707,7 +694,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 			//Standard Extrafield feature
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-				$elementtype = Contact::$table_element;
+				$contactstatic = new Contact($this->db);
+				$elementtype = $contactstatic->table_element;
 
 				// fetch optionals attributes and labels
 				dol_include_once('/core/class/extrafields.class.php');
@@ -724,13 +712,13 @@ class AdvanceTargetingMailing extends CommonObject
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'int') ||
 						($extrafields->attributes[$elementtype]['type'][$key] == 'double')) {
-						if (!empty($arrayquery['options_'.$key.'_max'.'_cnct'])) {
-							$sqlwhere[] = " (te.".$key." >= ".$arrayquery['options_'.$key.'_max'.'_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'.'_cnct'].")";
+						if (!empty($arrayquery['options_'.$key.'_max_cnct'])) {
+							$sqlwhere[] = " (te.".$key." >= ".$arrayquery['options_'.$key.'_max_cnct']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min_cnct'].")";
 						}
 					} elseif (($extrafields->attributes[$elementtype]['type'][$key] == 'date') ||
 					($extrafields->attributes[$elementtype]['type'][$key] == 'datetime')) {
-						if (!empty($arrayquery['options_'.$key.'_end_dt'.'_cnct'])) {
-							$sqlwhere[] = " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'.'_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'.'_cnct'])."')";
+						if (!empty($arrayquery['options_'.$key.'_end_dt_cnct'])) {
+							$sqlwhere[] = " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt_cnct'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt_cnct'])."')";
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'boolean') {
 						if ($arrayquery['options_'.$key.'_cnct'] != '') {
@@ -809,7 +797,8 @@ class AdvanceTargetingMailing extends CommonObject
 
 					//Standard Extrafield feature
 					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
-						$elementtype = Societe::$table_element;
+						$socstatic = new Societe($this->db);
+						$elementtype = $socstatic->table_element;
 
 						// fetch optionals attributes and labels
 						dol_include_once('/core/class/extrafields.class.php');

@@ -34,13 +34,12 @@ if (!empty($user->socid)) $socid = $user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 
 
-$mesg = '';
-
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "DESC";
@@ -106,7 +105,7 @@ if ($socid > 0)
         print '</td></tr>';
     }
 
-    if (!empty($conf->fournisseur->enabled) && $object->fournisseur && !empty($user->rights->fournisseur->lire))
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled) || ! empty($conf->supplier_invoice->enabled)) && $object->fournisseur && !empty($user->rights->fournisseur->lire))
     {
         print '<tr><td class="titlefield">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
@@ -236,9 +235,7 @@ if ($socid > 0)
     	{
     		$marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
     		$markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
-    	}
-    	else
-    	{
+    	} else {
     		$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
     		$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
     	}
@@ -255,9 +252,7 @@ if ($socid > 0)
     		print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
     	print '<td class="right">&nbsp;</td>';
     	print "</tr>\n";
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
     print "</table>";
@@ -265,9 +260,7 @@ if ($socid > 0)
 
     print '<br>';
     $db->free($result);
-}
-else
-{
+} else {
 	dol_print_error('', 'Parameter socid not defined');
 }
 

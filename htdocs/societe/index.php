@@ -95,8 +95,7 @@ if ($result)
         if (!empty($conf->societe->enabled) && $objp->client == 0 && $objp->fournisseur == 0) { $found = 1; $third['other']++; }
         if ($found) $total++;
     }
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover centpercent">'."\n";
@@ -119,9 +118,7 @@ if (!empty($conf->use_javascript_ajax) && ((round($third['prospect']) ? 1 : 0) +
 	$dolgraph->draw('idgraphthirdparties');
 	print $dolgraph->show();
     print '</td></tr>'."\n";
-}
-else
-{
+} else {
     if (!empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
     {
         $statstring = "<tr>";
@@ -134,7 +131,7 @@ else
         $statstring .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td class="right">'.round($third['customer']).'</td>';
         $statstring .= "</tr>";
     }
-    if (!empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
     {
         $statstring2 = "<tr>";
         $statstring2 .= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td class="right">'.round($third['supplier']).'</td>';
@@ -185,9 +182,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				if ($i < $nbmax)
 				{
 					$dataseries[] = array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				} else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
@@ -206,9 +201,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			$dolgraph->setHeight('200');
 			$dolgraph->draw('idgraphcateg');
 			print $dolgraph->show();
-		}
-		else
-		{
+		} else {
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -310,7 +303,7 @@ if ($result)
             	$thirdparty_static->name = $langs->trans("Prospect");
             	print $thirdparty_static->getNomUrl(0, 'prospect', 0, 1);
             }
-            if (!empty($conf->fournisseur->enabled) && $thirdparty_static->fournisseur)
+            if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $thirdparty_static->fournisseur)
             {
                 if ($thirdparty_static->client) print " / ";
             	$thirdparty_static->name = $langs->trans("Supplier");
@@ -334,9 +327,7 @@ if ($result)
         print '</div>';
         print "<!-- End last thirdparties modified -->\n";
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

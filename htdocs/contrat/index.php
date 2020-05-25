@@ -70,7 +70,7 @@ $now = dol_now();
 
 llxHeader();
 
-print load_fiche_titre($langs->trans("ContractsArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("ContractsArea"), '', 'contract');
 
 
 //print '<table border="0" width="100%" class="notopnoleftnoright">';
@@ -140,9 +140,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 // Search by status (only expired)
@@ -179,9 +177,7 @@ if ($resql)
         $i++;
     }
     $db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -298,16 +294,12 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 				//$tot_ttc+=$obj->total_ttc;
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoContracts").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -360,7 +352,7 @@ if ($result)
 		$obj = $db->fetch_object($result);
 
 		print '<tr class="oddeven">';
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->cid);
 		$staticcontrat->id = $obj->cid;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -383,9 +375,7 @@ if ($result)
 	$db->free($result);
 
 	print "</table></div>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -425,7 +415,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -439,9 +429,7 @@ if ($resql)
             $productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
             print $productstatic->getNomUrl(1, '', 20);
-		}
-		else
-		{
+		} else {
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
             if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
             else print '</a> '.dol_trunc($obj->note, 20);
@@ -462,9 +450,7 @@ if ($resql)
 	$db->free();
 
 	print "</table></div>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -506,7 +492,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -519,9 +505,7 @@ if ($resql)
             $productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
             print $productstatic->getNomUrl(1, '', 20);
-		}
-		else
-		{
+		} else {
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
             if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
             else print '</a> '.dol_trunc($obj->note, 20);
@@ -541,9 +525,7 @@ if ($resql)
 	$db->free();
 
 	print "</table></div>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -586,7 +568,7 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 
-		print '<td width="110" class="nowrap">';
+		print '<td class="nowraponall">';
 		$staticcontrat->ref = ($obj->ref ? $obj->ref : $obj->fk_contrat);
 		$staticcontrat->id = $obj->fk_contrat;
 		print $staticcontrat->getNomUrl(1, 16);
@@ -599,9 +581,7 @@ if ($resql)
             $productstatic->ref = $obj->pref;
 			$productstatic->entity = $obj->pentity;
             print $productstatic->getNomUrl(1, '', 20);
-		}
-		else
-		{
+		} else {
 		    print '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$obj->fk_contrat.'">'.img_object($langs->trans("ShowService"), "service");
             if ($obj->label) print ' '.dol_trunc($obj->label, 20).'</a>';
             else print '</a> '.dol_trunc($obj->note, 20);
@@ -621,9 +601,7 @@ if ($resql)
 	$db->free();
 
 	print "</table></div>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

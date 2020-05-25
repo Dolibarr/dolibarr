@@ -56,9 +56,7 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
         {
             $openid->SetApprovedURL($protocol.$_SERVER["HTTP_HOST"].$_SERVER["SCRIPT_NAME"]); // Send Response from OpenID server to this script
             $openid->Redirect(); // This will redirect user to OpenID Server
-        }
-        else
-        {
+        } else {
             $error = $openid->GetError();
             return false;
         }
@@ -89,21 +87,17 @@ function check_user_password_openid($usertotest, $passwordtotest, $entitytotest)
                     $login = $obj->login;
                 }
             }
-        }
-        elseif ($openid->IsError() === true)
+        } elseif ($openid->IsError() === true)
         {
             // ON THE WAY, WE GOT SOME ERROR
             $error = $openid->GetError();
             return false;
-        }
-        else
-        {
+        } else {
             // Signature Verification Failed
             //echo "INVALID AUTHORIZATION";
             return false;
         }
-    }
-    elseif ($_GET['openid_mode'] == 'cancel')
+    } elseif ($_GET['openid_mode'] == 'cancel')
     {
         // User Canceled your Request
         //echo "USER CANCELED REQUEST";

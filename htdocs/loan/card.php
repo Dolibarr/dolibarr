@@ -68,9 +68,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			setEventMessages($loan->error, null, 'errors');
 		}
 	}
@@ -85,9 +83,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
 			header("Location: index.php");
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($loan->error, null, 'errors');
 		}
 	}
@@ -153,9 +149,7 @@ if (empty($reshook))
 					$action = 'create';
 				}
 			}
-		}
-		else
-		{
+		} else {
 			header("Location: index.php");
 			exit();
 		}
@@ -176,9 +170,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
 				$action = 'edit';
-			}
-			else
-			{
+			} else {
 				$object->datestart = $datestart;
 				$object->dateend	        = $dateend;
 				$object->capital	        = $capital;
@@ -201,15 +193,11 @@ if (empty($reshook))
 			{
 				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 				exit;
-			}
-			else
-			{
+			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-		else
-		{
+		} else {
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
 			exit;
 		}
@@ -253,7 +241,7 @@ if ($action == 'create')
 	//WYSIWYG Editor
 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-	print load_fiche_titre($langs->trans("NewLoan"), '', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewLoan"), '', 'money-bill-alt');
 
 	$datec = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
@@ -274,9 +262,7 @@ if ($action == 'create')
 		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
 		$form->select_comptes(GETPOST("accountid"), "accountid", 0, "courant=1", 1); // Show list of bank account with courant
 		print '</td></tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr><td>'.$langs->trans("Account").'</td><td>';
 		print $langs->trans("NoBankAccountDefined");
 		print '</td></tr>';
@@ -359,8 +345,7 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account(GETPOST('accountancy_account_interest') ?GETPOST('accountancy_account_interest') : $conf->global->LOAN_ACCOUNTING_ACCOUNT_INTEREST, 'accountancy_account_interest', 1, '', 1, 1);
 		print '</td></tr>';
-	}
-	else // For external software
+	} else // For external software
 	{
 		// Accountancy_account_capital
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("LoanAccountancyCapitalCode").'</td>';
@@ -475,7 +460,7 @@ if ($id > 0)
 		print '<div class="fichehalfleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Capital
 		if ($action == 'edit')
@@ -483,9 +468,7 @@ if ($id > 0)
 			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("LoanCapital").'</td><td>';
 			print '<input name="capital" size="10" value="'.$object->capital.'"></td></tr>';
 			print '</td></tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr><td class="titlefield">'.$langs->trans("LoanCapital").'</td><td>'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
@@ -495,9 +478,7 @@ if ($id > 0)
 		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>';
 		    print '<input name="insurance_amount" size="10" value="'.$object->insurance_amount.'"></td></tr>';
 		    print '</td></tr>';
-		}
-		else
-		{
+		} else {
 		    print '<tr><td class="titlefield">'.$langs->trans("Insurance").'</td><td>'.price($object->insurance_amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 		}
 
@@ -507,9 +488,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print $form->selectDate($object->datestart, 'start', 0, 0, 0, 'update', 1, 0);
-		}
-		else
-		{
+		} else {
 			print dol_print_date($object->datestart, "day");
 		}
 		print "</td></tr>";
@@ -520,9 +499,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print $form->selectDate($object->dateend, 'end', 0, 0, 0, 'update', 1, 0);
-		}
-		else
-		{
+		} else {
 			print dol_print_date($object->dateend, "day");
 		}
 		print "</td></tr>";
@@ -533,9 +510,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<input name="nbterm" size="4" value="'.$object->nbterm.'">';
-		}
-		else
-		{
+		} else {
 			print $object->nbterm;
 		}
 		print '</td></tr>';
@@ -546,9 +521,7 @@ if ($id > 0)
 		if ($action == 'edit')
 		{
 			print '<input name="rate" size="4" value="'.$object->rate.'">%';
-		}
-		else
-		{
+		} else {
 			print price($object->rate).'%';
 		}
 		print '</td></tr>';
@@ -564,15 +537,11 @@ if ($id > 0)
 			if (!empty($conf->accounting->enabled))
 			{
 				print $formaccounting->select_account($object->account_capital, 'accountancy_account_capital', 1, '', 1, 1);
-			}
-			else
-			{
+			} else {
 				print '<input name="accountancy_account_capital" size="16" value="'.$object->account_capital.'">';
 			}
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td class="nowrap">';
 			print $langs->trans("LoanAccountancyCapitalCode");
 			print '</td><td>';
@@ -602,15 +571,11 @@ if ($id > 0)
 			if (!empty($conf->accounting->enabled))
 			{
 				print $formaccounting->select_account($object->account_insurance, 'accountancy_account_insurance', 1, '', 1, 1);
-			}
-			else
-			{
+			} else {
 				print '<input name="accountancy_account_insurance" size="16" value="'.$object->account_insurance.'">';
 			}
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td class="nowrap">';
 			print $langs->trans("LoanAccountancyInsuranceCode");
 			print '</td><td>';
@@ -640,15 +605,11 @@ if ($id > 0)
 			if (!empty($conf->accounting->enabled))
 			{
 				print $formaccounting->select_account($object->account_interest, 'accountancy_account_interest', 1, '', 1, 1);
-			}
-			else
-			{
+			} else {
 				print '<input name="accountancy_account_interest" size="16" value="'.$object->account_interest.'">';
 			}
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td class="nowrap">';
 			print $langs->trans("LoanAccountancyInterestCode");
 			print '</td><td>';
@@ -742,9 +703,7 @@ if ($id > 0)
 			print '</div>';
 
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -804,9 +763,7 @@ if ($id > 0)
 				print "</div>";
 			}
 		}
-	}
-	else
-	{
+	} else {
 		// Loan not found
 		dol_print_error('', $object->error);
 	}

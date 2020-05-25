@@ -18,10 +18,10 @@
 -- ===================================================================
 
 --
--- Bons de prelevement
+-- Direct debit or credit orders
 --
--- statut 1 : transmis a la banque
--- statut 2 : credite
+-- statut 1 : sent to the bank
+-- statut 2 : paid
 --
 create table llx_prelevement_bons
 (

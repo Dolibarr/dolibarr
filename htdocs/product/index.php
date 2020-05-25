@@ -101,7 +101,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     	foreach ($listofsearchfields as $key => $value)
     	{
     		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-    		print '<tr '.$bc[false].'>';
+    		print '<tr class="oddeven">';
     		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
     		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
     		print '</tr>';
@@ -201,7 +201,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
-	print '<tr '.$bc[0].'><td class="center" colspan="2">';
+	print '<tr class="oddeven"><td class="center" colspan="2">';
 	$sql = "SELECT c.label, count(*) as nb";
 	$sql .= " FROM ".MAIN_DB_PREFIX."categorie_product as cs";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
@@ -225,9 +225,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 				if ($i < $nbmax)
 				{
 					$dataseries[] = array($obj->label, round($obj->nb));
-				}
-				else
-				{
+				} else {
 					$rest += $obj->nb;
 				}
 				$total += $obj->nb;
@@ -247,9 +245,7 @@ if (!empty($conf->categorie->enabled) && !empty($conf->global->CATEGORY_GRAPHSTA
 			$dolgraph->setHeight('200');
 			$dolgraph->draw('idstatscategproduct');
 			print $dolgraph->show($total ? 0 : 1);
-		}
-		else
-		{
+		} else {
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
@@ -385,9 +381,7 @@ if ((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && ($us
 			print '</div>';
 			print '<br>';
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -413,7 +407,7 @@ llxFooter();
 $db->close();
 
 
-/*
+/**
  *  Print html activity for product type
  *
  *  @param      int $product_type   Type of product
@@ -422,7 +416,6 @@ $db->close();
 function activitytrim($product_type)
 {
 	global $conf, $langs, $db;
-	global $bc;
 
 	// We display the last 3 years
 	$yearofbegindate = date('Y', dol_time_plus_duree(time(), -3, "y"));
@@ -458,8 +451,7 @@ function activitytrim($product_type)
 
 			if ($product_type == 0)
 				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ProductSellByQuarterHT").'</td>';
-			else
-				print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
+			else print '<tr class="liste_titre"><td class=left>'.$langs->trans("ServiceSellByQuarterHT").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter1").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter2").'</td>';
 			print '<td class=right>'.$langs->trans("Quarter3").'</td>';

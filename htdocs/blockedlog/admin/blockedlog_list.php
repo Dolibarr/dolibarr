@@ -133,15 +133,11 @@ if ($action === 'downloadblockchain') {
 			{
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
-			}
-			else
-			{	// If not data found for filter, we do not need previoushash neither firstid
+			} else {	// If not data found for filter, we do not need previoushash neither firstid
 				$previoushash = 'nodata';
 				$firstid = '';
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			setEventMessages($db->lasterror, null, 'errors');
 		}
@@ -211,9 +207,7 @@ if ($action === 'downloadblockchain') {
 					$statusofrecord = 'Valid';
 					if ($loweridinerror > 0) $statusofrecordnote = 'ValidButFoundAPreviousKO';
 					else $statusofrecordnote = '';
-				}
-				else
-				{
+				} else {
 					$statusofrecord = 'KO';
 					$statusofrecordnote = 'LineCorruptedOrNotMatchingPreviousOne';
 					$loweridinerror = $obj->rowid;
@@ -223,20 +217,20 @@ if ($action === 'downloadblockchain') {
 				{
 					$statusofrecordnote = $langs->trans("PreviousFingerprint").': '.$previoushash.($statusofrecordnote ? ' - '.$statusofrecordnote : '');
 				}
-				print $obj->rowid
-					.';'.$obj->date_creation
-					.';"'.$obj->user_fullname.'"'
-					.';'.$obj->action
-					.';'.$obj->element
-					.';'.$obj->amounts
-					.';'.$obj->fk_object
-					.';'.$obj->date_object
-					.';"'.$obj->ref_object.'"'
-					.';'.$obj->signature
-					.';'.$statusofrecord
-					.';'.$statusofrecordnote
-					.';"'.str_replace('"', '""', $obj->object_data).'"'
-					."\n";
+				print $obj->rowid;
+				print ';'.$obj->date_creation;
+				print ';"'.str_replace('"', '""', $obj->user_fullname).'"';
+				print ';'.$obj->action;
+				print ';'.$obj->element;
+				print ';'.$obj->amounts;
+				print ';'.$obj->fk_object;
+				print ';'.$obj->date_object;
+				print ';"'.str_replace('"', '""', $obj->ref_object).'"';
+				print ';'.$obj->signature;
+				print ';'.$statusofrecord;
+				print ';'.$statusofrecordnote;
+				print ';"'.str_replace('"', '""', $obj->object_data).'"';
+				print "\n";
 
 				// Set new previous hash for next fetch
 				$previoushash = $obj->signature;
@@ -245,9 +239,7 @@ if ($action === 'downloadblockchain') {
 			}
 
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
@@ -263,9 +255,7 @@ $form = new Form($db);
 if (GETPOST('withtab', 'alpha'))
 {
 	$title = $langs->trans("ModuleSetup").' '.$langs->trans('BlockedLog');
-}
-else
-{
+} else {
 	$title = $langs->trans("BrowseBlockedLog");
 }
 
@@ -279,9 +269,7 @@ if (!is_array($blocks))
 	if ($blocks == -2)
 	{
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
-	}
-	else
-	{
+	} else {
 		dol_print_error($block_static->db, $block_static->error, $block_static->errors);
 		exit;
 	}
@@ -440,9 +428,7 @@ if (!empty($conf->global->BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR)) {
 
 	// TODO Make a full scan of table in reverse order of id of $block, so we can use the parameter $previoushash into checkSignature to save requests
 	// to find the $loweridinerror.
-}
-else
-{
+} else {
 	// This is version that optimize the memory (but will not report errors that are outside the filter range)
 	$loweridinerror = 0;
 	$checkresult = array();
@@ -510,9 +496,7 @@ if (is_array($blocks))
 		   	{
 		   		if ($checkresult[$block->id]) print img_picto($langs->trans('OkCheckFingerprintValidityButChainIsKo'), 'statut4');
 		   		else print img_picto($langs->trans('KoCheckFingerprintValidity'), 'statut8');
-		   	}
-		   	else
-		   	{
+		   	} else {
 		   		print img_picto($langs->trans('OkCheckFingerprintValidity'), 'statut4');
 		   	}
 

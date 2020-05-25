@@ -51,9 +51,7 @@ if ($action == 'presend')
 		if ($object->element == 'invoice_supplier')
 		{
 			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-		}
-		else
-		{
+		} else {
 			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 		}
 
@@ -103,9 +101,7 @@ if ($action == 'presend')
 			if ($object->element == 'invoice_supplier')
 			{
 				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			}
-			else
-			{
+			} else {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
@@ -146,23 +142,18 @@ if ($action == 'presend')
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
-	}
-	elseif ($object->element == 'societe')
+	} elseif ($object->element == 'societe')
 	{
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;
 		}
-	}
-	elseif ($object->element == 'contact')
+	} elseif ($object->element == 'contact')
 	{
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	elseif ($object->element == 'user' || $object->element == 'member')
+	} elseif ($object->element == 'user' || $object->element == 'member')
 	{
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	else
-	{
+	} else {
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {

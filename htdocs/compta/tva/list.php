@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2019 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
@@ -72,9 +72,7 @@ if (empty($_REQUEST['typeid']))
 		$part = explode(':', $val);
 		if ($part[0] == 't.fk_typepayment') $typeid = $part[1];
 	}
-}
-else
-{
+} else {
 	$typeid = $_REQUEST['typeid'];
 }
 
@@ -160,9 +158,8 @@ if ($result)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("VATPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans("VATPayments"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -229,9 +226,7 @@ if ($result)
 		if ($obj->payment_code <> '')
 		{
 			$type = '<td>'.$langs->trans("PaymentTypeShort".$obj->payment_code).' '.$obj->num_payment.'</td>';
-		}
-		else
-		{
+		} else {
 			$type = '<td>&nbsp;</td>';
 		}
 
@@ -267,8 +262,7 @@ if ($result)
 
 				$bankstatic->label = $obj->blabel;
 				print $bankstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print '</td>';
 		}
 		// Amount
@@ -292,9 +286,7 @@ if ($result)
 	print '</form>';
 
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

@@ -96,9 +96,7 @@ if ($action == 'set')
  	if (!$error)
     {
         $db->commit();
-    }
-    else
-    {
+    } else {
         $db->rollback();
     }
 } elseif ($action == 'updateMask') {
@@ -133,7 +131,7 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_prepare_head();
-dol_fiche_head($head, 'setup', 'TakePOS', -1);
+dol_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
 // Numbering modules
 $now = dol_now();
@@ -195,9 +193,7 @@ foreach ($dirmodels as $reldir)
 						if ($conf->global->TAKEPOS_REF_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
+						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
@@ -274,7 +270,7 @@ if (!empty($conf->service->enabled))
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $langs->trans("RootCategoryForProductsToSellDesc"));
 print '<td colspan="2">';
-print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0);
+print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0);
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
 
@@ -362,7 +358,7 @@ if (is_array($formmail->lines_model)) {
         if (!empty($arrayofmessagename[$modelmail->label])) {
             $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
         }
-        $arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+        $arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->topic)).$moreonlabel;
     }
 }
 //var_dump($arraydefaultmessage);
@@ -434,19 +430,6 @@ print "</td></tr>\n";
 //print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
 //print "</td></tr>\n";
 
-print '</table>';
-print '</div>';
-
-print '<br>';
-
-// Bar Restaurant mode
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-
-print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("Other").'</td><td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
 print '<tr class="oddeven"><td>';
 print $langs->trans("EnableBarOrRestaurantFeatures");
 print '</td>';
@@ -455,48 +438,6 @@ print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0,
 //print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
 print "</td></tr>\n";
 
-if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD != "browser") {
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-	print '<td colspan="2">';
-	print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
-	//print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
-	print '</td></tr>';
-
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderNotes");
-	print '<td colspan="2">';
-	print ajax_constantonoff("TAKEPOS_ORDER_NOTES", array(), $conf->entity, 0, 0, 1, 0);
-	//print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
-	print '</td></tr>';
-}
-
-if ($conf->global->TAKEPOS_BAR_RESTAURANT)
-{
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("BasicPhoneLayout");
-	print '<td colspan="2">';
-	//print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
-	print ajax_constantonoff("TAKEPOS_PHONE_BASIC_LAYOUT", array(), $conf->entity, 0, 0, 1, 0);
-	print '</td></tr>';
-
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("ProductSupplements");
-	print '<td colspan="2">';
-	//print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
-	print ajax_constantonoff("TAKEPOS_SUPPLEMENTS", array(), $conf->entity, 0, 0, 1, 0);
-	print '</td></tr>';
-
-	if ($conf->global->TAKEPOS_SUPPLEMENTS)
-	{
-		print '<tr class="oddeven"><td>';
-		print $langs->trans("SupplementCategory");
-		print '<td colspan="2">';
-		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
-		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
-		print "</td></tr>\n";
-	}
-}
 print '</table>';
 print '</div>';
 

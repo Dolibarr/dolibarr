@@ -55,11 +55,12 @@ $result = restrictedArea($user, 'don', $id, '');
 
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
@@ -103,7 +104,7 @@ if ($object->id)
 
 	$head = donation_prepare_head($object);
 
-	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'generic');
+	dol_fiche_head($head, 'documents', $langs->trans("Donation"), -1, 'donation');
 
 
 	// Build file list
@@ -185,9 +186,7 @@ if ($object->id)
     $permtoedit = $user->rights->don->creer;
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

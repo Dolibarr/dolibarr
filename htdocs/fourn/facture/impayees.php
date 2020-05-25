@@ -54,9 +54,10 @@ $search_company = GETPOST('search_company', 'alpha');
 $search_amount_no_tax = GETPOST('search_amount_no_tax', 'alpha');
 $search_amount_all_tax = GETPOST('search_amount_all_tax', 'alpha');
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortfield) $sortfield = "f.date_lim_reglement";
@@ -289,9 +290,7 @@ if ($user->rights->fournisseur->facture->lire)
 		print '</form>';
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

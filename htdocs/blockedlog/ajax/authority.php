@@ -44,26 +44,23 @@ $signature = GETPOST('s');
 $newblock = GETPOST('b');
 $hash = GETPOST('h');
 
-if($auth->fetch(0, $signature)<=0) {
+if ($auth->fetch(0, $signature) <= 0) {
 	$auth->signature = $signature;
 	$auth->create($user);
 }
 
 
-if(!empty($hash)) {
+if (!empty($hash)) {
 	echo $auth->checkBlockchain($hash) ? 'hashisok' : 'hashisjunk';
-}
-elseif(!empty($newblock)){
-	if($auth->checkBlock($newblock)) {
+} elseif (!empty($newblock)) {
+	if ($auth->checkBlock($newblock)) {
 		$auth->addBlock($newblock);
 		$auth->update($user);
 
 		echo 'blockadded';
-	}
-	else{
+	} else {
 		echo 'blockalreadyadded';
 	}
-}
-else{
+} else {
 	echo 'idontunderstandwhatihavetodo';
 }

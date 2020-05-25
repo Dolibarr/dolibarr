@@ -177,15 +177,14 @@ $(document).ready(function(){
 if (empty($user->socid))	// If internal user or not defined
 {
 	$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
-}
-else                        	// If external user
+} else // If external user
 {
 	$conf->standard_menu = (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENUFRONT_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 }
 
 // Load the menu manager (only if not already done)
 $file_menu = $conf->standard_menu;
-if (GETPOST('menu')) $file_menu = GETPOST('menu'); // example: menu=eldy_menu.php
+if (GETPOST('menu', 'aZ09')) $file_menu = GETPOST('menu', 'aZ09');     // example: menu=eldy_menu.php
 if (!class_exists('MenuManager'))
 {
 	$menufound = 0;

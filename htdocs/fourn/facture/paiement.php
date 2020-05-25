@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004		Eric Seigne				<eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley / Ocebo	<marc@ocebo.com>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -168,8 +168,7 @@ if (empty($reshook))
 	            }
 
 	            $formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => $_POST[$key]);
-	        }
-			elseif (substr($key, 0, 21) == 'multicurrency_amount_')
+	        } elseif (substr($key, 0, 21) == 'multicurrency_amount_')
 			{
 				$cursorfacid = substr($key, 21);
 	            $multicurrency_amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
@@ -345,9 +344,7 @@ if (empty($reshook))
 	            else $loc = DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$paiement_id;
 	            header('Location: '.$loc);
 	            exit;
-	        }
-	        else
-	        {
+	        } else {
 	            $db->rollback();
 	        }
 	    }
@@ -497,9 +494,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<tr><td class="fieldrequired">'.$langs->trans('Account').'</td><td>';
                 $form->select_comptes(empty($accountid) ? $obj->fk_account : $accountid, 'accountid', 0, '', 2);
                 print '</td></tr>';
-            }
-            else
-            {
+            } else {
                 print '<tr><td>&nbsp;</td></tr>';
             }
             print '<tr><td>'.$langs->trans('Numero').'</td><td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement']) ? '' : $_POST['num_paiement']).'"></td></tr>';
@@ -531,9 +526,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	            if ($object->type != FactureFournisseur::TYPE_CREDIT_NOTE)
 	            {
 	                $sql .= ' AND f.type IN (0,1,3,5)'; // Standard invoice, replacement, deposit, situation
-	            }
-	            else
-	            {
+	            } else {
 	                $sql .= ' AND f.type = 2'; // If paying back a credit note, we show all credit notes
 	            }
                 // Group by because we have a total
@@ -627,9 +620,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        {
 	                            print '<td class="center nowraponall">';
 	                            print dol_print_date($db->jdate($objp->df), 'day').'</td>';
-	                        }
-	                        else
-	                        {
+	                        } else {
 	                            print '<td class="center"><b>!!!</b></td>';
 	                        }
 
@@ -645,9 +636,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                            }
 
 	                            print '</td>';
-	                        }
-	                        else
-	                        {
+	                        } else {
 	                            print '<td class="center"><b>--</b></td>';
 	                        }
 
@@ -700,9 +689,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                        		print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
 	                        		print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 	                        		print '<input type="text" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
-	                        }
-	                        else
-	                        {
+	                        } else {
 	                        	print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
 	                        	print '<input type="hidden" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
 	                        }
@@ -725,9 +712,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 											print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
 											print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
 											print '<input type="text" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
-									}
-									else
-									{
+									} else {
 										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
 										print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
 									}
@@ -767,9 +752,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	                    print "</div>";
 	                }
 	                $db->free($resql);
-	            }
-	            else
-	            {
+	            } else {
 	                dol_print_error($db);
 	            }
 			}
@@ -802,8 +785,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
             print '</form>';
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
 }
 
 /*
@@ -822,7 +804,7 @@ if (empty($action) || $action == 'list')
     if (!$sortorder) $sortorder = 'DESC';
     if (!$sortfield) $sortfield = 'p.datep';
 
-    $sql = 'SELECT p.rowid as pid, p.datep as dp, p.amount as pamount, p.num_paiement,';
+    $sql = 'SELECT p.rowid as pid, p.ref, p.datep as dp, p.amount as pamount, p.num_paiement,';
     $sql .= ' s.rowid as socid, s.nom as name,';
     $sql .= ' c.code as paiement_type, c.libelle as paiement_libelle,';
     $sql .= ' ba.rowid as bid, ba.label,';
@@ -889,8 +871,6 @@ if (empty($action) || $action == 'list')
 
     	$massactionbutton = $form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
-        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
-
         print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
         if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
         print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -898,7 +878,8 @@ if (empty($action) || $action == 'list')
         print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
         print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
         print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-        print '<input type="hidden" name="page" value="'.$page.'">';
+
+        print_barre_liste($langs->trans('SupplierPayments'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'supplier_invoice', 0, '', '', $limit, 0, 0, 1);
 
         $moreforfilter = '';
 
@@ -973,16 +954,24 @@ if (empty($action) || $action == 'list')
         print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
         print "</tr>\n";
 
+        $paymentfournstatic = new PaiementFourn($db);
+
         $i = 0;
         $totalarray = array();
         while ($i < min($num, $limit))
         {
             $objp = $db->fetch_object($resql);
 
+            $paymentfournstatic->id = $objp->pid;
+            $paymentfournstatic->ref = $objp->ref;
+            $paymentfournstatic->datepaye = $objp->dp;
+
             print '<tr class="oddeven">';
 
             // Ref payment
-            print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/card.php?id='.$objp->pid.'">'.img_object($langs->trans('ShowPayment'), 'payment').' '.$objp->pid.'</a></td>';
+            print '<td class="nowrap">';
+            print $paymentfournstatic->getNomUrl(1);
+            print '</td>';
             if (!$i) $totalarray['nbfield']++;
 
             // Date
@@ -1043,9 +1032,7 @@ if (empty($action) || $action == 'list')
         print "</table>";
         print "</div>";
         print "</form>\n";
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }

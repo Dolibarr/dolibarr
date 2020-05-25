@@ -54,8 +54,8 @@ abstract class CommonObjectLine extends CommonObject
 	 *	Returns the translation key from units dictionary.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
-	 * 	@param	string $type Label type (long or short)
-	 *	@return	string|int <0 if ko, label if ok
+	 * 	@param	string $type 	Label type (long or short). This can be a translation key.
+	 *	@return	string|int 		<0 if ko, label if ok
 	 */
 	public function getLabelOfUnit($type = 'long')
 	{
@@ -82,9 +82,7 @@ abstract class CommonObjectLine extends CommonObject
 			$label = $res[$label_type];
 			$this->db->free($resql);
 			return $label;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error().' sql='.$sql;
 			dol_syslog(get_class($this)."::getLabelOfUnit Error ".$this->error, LOG_ERR);
 			return -1;

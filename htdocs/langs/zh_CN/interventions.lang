@@ -41,9 +41,7 @@ InterventionsArea=干预区
 DraftFichinter=干预草稿
 LastModifiedInterventions=最近变更的 %s 干预
 FichinterToProcess=要处理的干预措施
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=随访客户联系
-# Modele numérotation
 PrintProductsOnFichinter=在干预卡上也打印“产品”类型（不仅是服务）
 PrintProductsOnFichinterDetails=从订单生成干预
 UseServicesDurationOnFichinter=使用服务持续时间从订单生成干预
@@ -53,14 +51,16 @@ InterventionStatistics=干预统计
 NbOfinterventions=No. of intervention cards
 NumberOfInterventionsByMonth=No. of intervention cards by month (date of validation)
 AmountOfInteventionNotIncludedByDefault=默认情况下，干预金额不包括在利润中（在大多数情况下，时间表用于计算花费的时间）。将选项PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT添加到1到home-setup-other以包含它们。
-##### Exports #####
 InterId=干预身份
 InterRef=干预编号
 InterDateCreation=日期创建干预
 InterDuration=持续干预
 InterStatus=现状干预
 InterNote=注意干预
+InterLine=Line of intervention
 InterLineId=线路ID干预
 InterLineDate=行日期干预
 InterLineDuration=线路持续时间干预
 InterLineDesc=线描述干预
+RepeatableIntervention=Template of intervention
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template

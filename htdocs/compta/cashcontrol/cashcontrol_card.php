@@ -107,8 +107,7 @@ if (GETPOST('cancel', 'alpha'))
 {
 	if ($action == 'valid') {
 		$action = 'view';
-	}
-	else {
+	} else {
 		$action = 'create';
 	}
 }
@@ -144,8 +143,7 @@ if ($action == "start")
 		$action = 'create';
 		$error++;
 	}
-}
-elseif ($action == "add")
+} elseif ($action == "add")
 {
 	if (GETPOST('opening', 'alpha') == '')
 	{
@@ -177,9 +175,7 @@ elseif ($action == "add")
 		{
 			$db->commit();
 			$action = "view";
-		}
-		else
-		{
+		} else {
 			$db->rollback;
 			$action = "view";
 		}
@@ -217,9 +213,7 @@ if ($action == "valid")	// validate = close
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("CashFenceDone"), null);
 		$db->commit();
 	}
@@ -253,9 +247,7 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
         setEventMessages("RecordDeleted", null, 'mesgs');
         header("Location: ".$backurlforlist);
         exit;
-    }
-    else
-    {
+    } else {
         if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
         else setEventMessages($object->error, null, 'errors');
     }
@@ -282,8 +274,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 		$syear = $object->year_close;
 		$smonth = $object->month_close;
 		$sday = $object->day_close;
-	}
-	elseif (GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '-1')
+	} elseif (GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '' && GETPOST('posnumber', 'alpha') != '-1')
 	{
 		$posmodule = GETPOST('posmodule', 'alpha');
 		$terminalid = GETPOST('posnumber', 'alpha');
@@ -327,11 +318,8 @@ if ($action == "create" || $action == "start" || $action == 'close')
     			{
     				$obj = $db->fetch_object($resql);
     				if ($obj) $initialbalanceforterminal[$terminalid][$key] = $obj->total;
-    			}
-    			else dol_print_error($db);
-			}
-			else
-			{
+    			} else dol_print_error($db);
+			} else {
 				setEventMessages($langs->trans("SetupOfTerminalNotComplete", $terminaltouse), null, 'errors');
 			    $error++;
 			}
@@ -350,8 +338,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 			if ($key == 'cash')       $sql .= " AND cp.code = 'LIQ'";
 			elseif ($key == 'cheque') $sql .= " AND cp.code = 'CHQ'";
 			elseif ($key == 'card')   $sql .= " AND cp.code = 'CB'";
-			else
-			{
+			else {
 				dol_print_error('Value for key = '.$key.' not supported');
 				exit;
 			}
@@ -371,8 +358,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 					$theoricalamountforterminal[$terminalid][$key] = price2num($theoricalamountforterminal[$terminalid][$key] + $obj->total);
 					$theoricalnbofinvoiceforterminal[$terminalid][$key] = $obj->nb;
 				}
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 		}
 	}
 
@@ -388,14 +374,11 @@ if ($action == "create" || $action == "start" || $action == 'close')
 	    if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    {
 		    print '<input type="hidden" name="action" value="add">';
-	    }
-	    elseif ($action == 'close')
+	    } elseif ($action == 'close')
 	    {
 	    	print '<input type="hidden" name="action" value="valid">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
-	    }
-		else
-	    {
+	    } else {
 	    	print '<input type="hidden" name="action" value="start">';
 	    }
 
@@ -469,9 +452,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 		if ($action == 'start' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '' && GETPOST('posnumber') != '-1')
 		{
 			print '';
-		}
-		else
-		{
+		} else {
 			print '<input type="submit" name="add" class="button" value="'.$langs->trans("Start").'">';
 		}
 		print '</td>';
@@ -569,8 +550,7 @@ if ($action == "create" || $action == "start" || $action == 'close')
 			{
 				$object->fetch($id);
 				print $object->opening;
-			}
-			else print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+			} else print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 			print '">';
 			print '</td>';
 			// Amount per payment type
@@ -608,11 +588,10 @@ if (empty($action) || $action == "view" || $action == "close")
 
     if ($result <= 0) {
     	print $langs->trans("ErrorRecordNotFound");
-    }
-    else {
+    } else {
     	$head = array();
     	$head[0][0] = DOL_URL_ROOT.'/compta/cashcontrol/cashcontrol_card.php?id='.$object->id;
-    	$head[0][1] = $langs->trans("Card");
+    	$head[0][1] = $langs->trans("CashControl");
     	$head[0][2] = 'cashcontrol';
 
 	    dol_fiche_head($head, 'cashcontrol', $langs->trans("CashControl"), -1, 'account');
@@ -706,14 +685,11 @@ if (empty($action) || $action == "view" || $action == "close")
 	    	if ($action == 'start' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '' && GETPOST('posnumber', 'int') != '-1')
 	    	{
 	    		print '<input type="hidden" name="action" value="add">';
-	    	}
-	    	elseif ($action == 'close')
+	    	} elseif ($action == 'close')
 	    	{
 	    		print '<input type="hidden" name="action" value="valid">';
 	    		print '<input type="hidden" name="id" value="'.$id.'">';
-	    	}
-	    	else
-	    	{
+	    	} else {
 	    		print '<input type="hidden" name="action" value="start">';
 	    	}
 
@@ -860,8 +836,7 @@ if (empty($action) || $action == "view" || $action == "close")
 	    		{
 	    			$object->fetch($id);
 	    			print $object->opening;
-	    		}
-	    		else print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
+	    		} else print (GETPOSTISSET('opening') ?price2num(GETPOST('opening', 'alpha')) : price($initialbalanceforterminal[$terminalid]['cash']));
 	    		print '">';
 	    		print '</td>';
 	    		// Amount per payment type

@@ -193,8 +193,7 @@ foreach ($list_account as $key) {
 	$reg = array();
 	if (preg_match('/---(.*)---/', $key, $reg)) {
 		print '<tr class="liste_titre"><td>'.$langs->trans($reg[1]).'</td><td></td></tr>';
-	}
-	else {
+	} else {
 		print '<tr class="oddeven value">';
 		// Param
 		$label = $langs->trans($key);

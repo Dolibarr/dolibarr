@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
@@ -207,9 +207,7 @@ if ($action == "correct_stock")
 	        	$origin_element,
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
-        }
-        else
-		{
+        } else {
 	        $result = $product->correct_stock(
 	            $user,
 	            $id,
@@ -227,9 +225,7 @@ if ($action == "correct_stock")
         {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
-        }
-        else
-        {
+        } else {
             $error++;
             setEventMessages($product->error, $product->errors, 'errors');
             $action = 'correction';
@@ -312,15 +308,11 @@ if ($action == "transfert_stock" && !$cancel)
                         $batch = $pdluo->batch;
                         $eatby = $pdluo->eatby;
                         $sellby = $pdluo->sellby;
-                    }
-                    else
-                    {
+                    } else {
                         setEventMessages($pdluo->error, $pdluo->errors, 'errors');
                         $error++;
                     }
-                }
-                else
-                {
+                } else {
                     $srcwarehouseid = $id;
                     $batch = GETPOST('batch_number', 'alpha');
                     $eatby = $d_eatby;
@@ -356,9 +348,7 @@ if ($action == "transfert_stock" && !$cancel)
                         GETPOST('inventorycode', 'alpha')
                     );
                 }
-            }
-            else
-            {
+            } else {
                 // Remove stock
                 $result1 = $product->correct_stock(
                     $user,
@@ -389,15 +379,11 @@ if ($action == "transfert_stock" && !$cancel)
                 {
                     header("Location: ".$backtopage);
                     exit;
-                }
-                else
-                {
+                } else {
                     header("Location: movement_list.php?id=".$object->id);
                     exit;
                 }
-            }
-            else
-            {
+            } else {
                 setEventMessages($product->error, $product->errors, 'errors');
                 $db->rollback();
                 $action = 'transfert';
@@ -502,20 +488,9 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-if (empty($search_inventorycode))
-{
-	$sql .= $db->plimit($limit + 1, $offset);
-}
-else
-{
-	$limit = 0;
-}
-
 //print $sql;
 
 $resql = $db->query($sql);
-
-if (!empty($search_inventorycode)) $limit = $db->num_rows($resql);
 
 if ($resql)
 {
@@ -543,8 +518,7 @@ if ($resql)
     $i = 0;
     $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
-	else
-	{
+	else {
 		$texte = $langs->trans("ListOfStockMovements");
 		if ($id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 	}
@@ -620,9 +594,7 @@ if ($resql)
         {
             $obj = $db->fetch_object($resqlbis);
             $lastmovementdate = $db->jdate($obj->datem);
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
@@ -630,9 +602,7 @@ if ($resql)
         if ($lastmovementdate)
         {
             print dol_print_date($lastmovementdate, 'dayhour');
-        }
-        else
-        {
+        } else {
             print $langs->trans("None");
         }
         print "</td></tr>";
@@ -952,7 +922,6 @@ if ($resql)
 
 
     $arrayofuniqueproduct = array();
-
     while ($i < ($limit ? min($num, $limit) : $num)) {
         $objp = $db->fetch_object($resql);
 
@@ -975,7 +944,6 @@ if ($resql)
         $productlot->sellby = $objp->sellby;
 
         $warehousestatic->id = $objp->entrepot_id;
-        $warehousestatic->libelle = $objp->warehouse_ref; // deprecated
         $warehousestatic->label = $objp->warehouse_ref;
         $warehousestatic->lieu = $objp->lieu;
 
@@ -1049,14 +1017,12 @@ if ($resql)
         {
 	        // Inventory code
 	        print '<td><a href="'
-								.DOL_URL_ROOT.'/product/stock/movement_card.php'
-								.'?id='.$objp->entrepot_id
-								.'&amp;search_inventorycode='.$objp->inventorycode
-							    .'&amp;search_type_mouvement='.$objp->type_mouvement
+						.DOL_URL_ROOT.'/product/stock/movement_card.php?id='.urlencode($objp->entrepot_id)
+						.'&search_inventorycode='.urlencode($objp->inventorycode)
+						.'&search_type_mouvement='.urlencode($objp->type_mouvement)
 						.'">'
-							.$objp->inventorycode
-						.'</a>'
-					.'</td>';
+						.$objp->inventorycode
+						.'</a></td>';
         }
         if (!empty($arrayfields['m.label']['checked']))
         {
@@ -1151,9 +1117,7 @@ if ($resql)
     	print "<br>\n";
         //print '</td></tr>';
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

@@ -175,7 +175,7 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		// Si origin du ticket
+		// If ticket created from another object
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
@@ -225,7 +225,7 @@ class FormTicket
 				if ($this->withthreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
 				}
-				print '<input class="text minwidth300" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" autofocus />';
 				print '</td></tr>';
 			}
 		}
@@ -247,7 +247,7 @@ class FormTicket
 		$doleditor->Create();
 		print '</td></tr>';
 
-		// FK_USER_CREATE
+		// User of creation
 		if ($this->withusercreate > 0 && $this->fk_user_create) {
 			print '<tr><td class="titlefield">'.$langs->trans("CreatedBy").'</td><td>';
 			$langs->load("users");
@@ -270,6 +270,7 @@ class FormTicket
 				print '<tr><td class="titlefield">'.$langs->trans("ThirdParty").'</td><td>';
 				$events = array();
 				$events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
+				print img_picto('', 'company', 'class="paddingright"');
 				print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
 				print '</td></tr>';
 				if (!empty($conf->use_javascript_ajax) && !empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
@@ -330,6 +331,7 @@ class FormTicket
 				print '<tr><td>'.$langs->trans("Contact").'</td><td>';
 				// If no socid, set to -1 to avoid full contacts list
 				$selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
+				print img_picto('', 'contact', 'class="paddingright"');
 				$nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
 				print ' ';
 				$formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');

@@ -42,11 +42,12 @@ $pageid  = GETPOST('pageid', 'int');
 if (empty($module)) $module = 'ecm';
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
@@ -73,8 +74,7 @@ if ($module == 'ecm')
 
 	$relativepath = $ecmdir->getRelativePath();
 	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-}
-else	// For example $module == 'medias'
+} else // For example $module == 'medias'
 {
 	$relativepath = $section;
 	$upload_dir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
@@ -109,9 +109,7 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC))
 		if (is_numeric($resupload) && $resupload > 0)
 		{
 			$result = $ecmdir->changeNbOfFiles('+');
-		}
-		else
-		{
+		} else {
    			$langs->load("errors");
 			if ($resupload < 0)	// Unknown error
 			{
@@ -119,15 +117,12 @@ if (GETPOST("sendit") && !empty($conf->global->MAIN_UPLOAD_DOC))
 			} elseif (preg_match('/ErrorFileIsInfectedWithAVirus/', $resupload)) {
 				// Files infected by a virus
 				setEventMessages($langs->trans("ErrorFileIsInfectedWithAVirus"), null, 'errors');
-			}
-			else	// Known error
+			} else // Known error
 			{
 				setEventMessages($langs->trans($resupload), null, 'errors');
 			}
 		}
-	}
-	else
-	{
+	} else {
 		// Failed transfer (exceeding the limit file?)
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorFailToCreateDir", $upload_dir), null, 'errors');
@@ -166,20 +161,15 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes')
 			$langs->load('errors');
 			setEventMessages($langs->trans($ecmdir->error, $ecmdir->label), null, 'errors');
 		}
-	}
-	else
-	{
+	} else {
 		if ($deletedirrecursive)
 		{
 			$resbool = dol_delete_dir_recursive($upload_dir, 0, 1);
-		}
-		else
-		{
+		} else {
 			$resbool = dol_delete_dir($upload_dir, 1);
 		}
 		if ($resbool) $result = 1;
-		else
-		{
+		else {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorFailToDeleteDir", $upload_dir), null, 'errors');
 			$result = 0;
@@ -202,9 +192,7 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 		$oldlabel = $ecmdir->label;
 		$olddir = $ecmdir->getRelativePath(0);
 		$olddir = $conf->ecm->dir_output.'/'.$olddir;
-	}
-	else
-	{
+	} else {
 		$olddir = GETPOST('section', 'alpha');
 		$olddir = $conf->medias->multidir_output[$conf->entity].'/'.$relativepath;
 	}
@@ -241,20 +229,14 @@ if ($action == 'update' && !GETPOST('cancel', 'alpha'))
 				// Set new value after renaming
 				$relativepath = $ecmdir->getRelativePath();
 				$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 			}
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 		}
-	}
-	else
-	{
+	} else {
 		$newdir = $conf->medias->multidir_output[$conf->entity].'/'.GETPOST('oldrelparentdir', 'alpha').'/'.GETPOST('label', 'alpha');
 
 		$result = @rename($olddir, $newdir);
@@ -333,15 +315,12 @@ if ($module == 'ecm')
 		if ($i == 0 && $action == 'edit')
 		{
 			$s = '<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$tmpecmdir->label.'">';
-		}
-		else $s = $tmpecmdir->getNomUrl(1).$s;
+		} else $s = $tmpecmdir->getNomUrl(1).$s;
 		if ($tmpecmdir->fk_parent)
 		{
 			$s = ' -> '.$s;
 			$result = $tmpecmdir->fetch($tmpecmdir->fk_parent);
-		}
-		else
-		{
+		} else {
 			$tmpecmdir = 0;
 		}
 		$i++;
@@ -364,8 +343,7 @@ if ($module == 'medias')
 				$s .= '<input type="text" name="label" class="minwidth300" maxlength="32" value="'.$subdir.'">';
 				$s .= '<input type="hidden" name="oldrelparentdir" value="'.dirname($section).'">';
 				$s .= '<input type="hidden" name="oldreldir" value="'.basename($section).'">';
-			}
-			else $s .= $subdir;
+			} else $s .= $subdir;
 		}
 		if ($i < (count($subdirs) - 1))
 		{
@@ -396,8 +374,7 @@ if ($module == 'ecm')
 		print '<textarea class="flat quatrevingtpercent" name="description">';
 		print $ecmdir->description;
 		print '</textarea>';
-	}
-	else print dol_nl2br($ecmdir->description);
+	} else print dol_nl2br($ecmdir->description);
 	print '</td></tr>';
 
 	print '<tr><td class="titlefield">'.$langs->trans("ECMCreationUser").'</td><td>';
@@ -410,9 +387,7 @@ print '<tr><td class="titlefield">'.$langs->trans("ECMCreationDate").'</td><td>'
 if ($module == 'ecm')
 {
 	print dol_print_date($ecmdir->date_c, 'dayhour');
-}
-else
-{
+} else {
 	//var_dump($upload_dir);
 	print dol_print_date(dol_filemtime($upload_dir), 'dayhour');
 }
@@ -421,9 +396,7 @@ print '<tr><td>'.$langs->trans("ECMDirectoryForFiles").'</td><td>';
 if ($module == 'ecm')
 {
 	print '/ecm/'.$relativepath;
-}
-else
-{
+} else {
 	print '/'.$module.'/'.$relativepath;
 }
 print '</td></tr>';
@@ -476,9 +449,7 @@ if ($action != 'edit' && $action != 'delete')
 	if ($permtoadd)
 	{
 		print '<a class="butAction" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create'.($module ? '&module='.$module : '').'&catParent='.$section.'">'.$langs->trans('ECMAddSection').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('ECMAddSection').'</a>';
 	}
 
@@ -487,9 +458,7 @@ if ($action != 'edit' && $action != 'delete')
 	if ($permtoadd)
 	{
 		print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete_dir'.($module ? '&module='.$module : '').'&section='.$section.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionDeleteRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
 	/*}

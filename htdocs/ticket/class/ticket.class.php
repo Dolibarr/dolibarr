@@ -184,7 +184,7 @@ class Ticket extends CommonObject
 		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
 		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'tdoverflowmax150'),
-		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75'),
+		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75', 'autofocusoncreate'=>1),
 		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
 		'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
 		'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
@@ -408,11 +408,9 @@ class Ticket extends CommonObject
 
 			//Update extrafield
 			if (!$error) {
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
-					$result = $this->insertExtraFields();
-					if ($result < 0) {
-						$error++;
-					}
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
 				}
 			}
 
@@ -543,9 +541,7 @@ class Ticket extends CommonObject
 
 				$this->db->free($resql);
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
 		} else {
@@ -838,11 +834,9 @@ class Ticket extends CommonObject
 
 		if (!$error) {
 			// Update extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 		}
 
@@ -1181,116 +1175,33 @@ class Ticket extends CommonObject
 		// phpcs:enable
 		global $langs;
 
-		if ($mode == 0) {
-			return $langs->trans($this->statuts[$status]);
+		$labelStatus = $this->statuts[$status];
+		$labelStatusShort = $this->statuts_short[$status];
+
+		if ($status == self::STATUS_NOT_READ) {
+			$statusType = 'status0';
+		} elseif ($status == self::STATUS_READ) {
+			$statusType = 'status1';
+		} elseif ($status == self::STATUS_ASSIGNED) {
+			$statusType = 'status3';
+		} elseif ($status == self::STATUS_IN_PROGRESS) {
+			$statusType = 'status4';
+		} elseif ($status == self::STATUS_WAITING) {
+			$statusType = 'status3';
+		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
+			$statusType = 'status9';
+		} elseif ($status == self::STATUS_CANCELED) {
+			$statusType = 'status9';
+		} elseif ($status == self::STATUS_CLOSED) {
+			$statusType = 'status6';
+		} else {
+			$labelStatus = $langs->trans('Unknown');
+			$labelStatusShort = $langs->trans('Unknown');
+			$statusType = 'status0';
+			$mode = 0;
 		}
-		elseif ($mode == 1) {
-			return $langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 2) {
-			if ($status == self::STATUS_NOT_READ) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_READ) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_ASSIGNED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_IN_PROGRESS) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_NEED_MORE_INFO) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_WAITING) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_CLOSED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_CANCELED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-		}
-		elseif ($mode == 3) {
-			if ($status == self::STATUS_NOT_READ) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket');
-			}
-			elseif ($status == self::STATUS_READ) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket');
-			}
-			elseif ($status == self::STATUS_ASSIGNED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket');
-			}
-			elseif ($status == self::STATUS_IN_PROGRESS) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket');
-			}
-			elseif ($status == self::STATUS_NEED_MORE_INFO) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket');
-			}
-			elseif ($status == self::STATUS_WAITING) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket');
-			}
-			elseif ($status == self::STATUS_CLOSED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket');
-			}
-			elseif ($status == self::STATUS_CANCELED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket');
-			}
-		}
-		elseif ($mode == 4) {
-			if ($status == self::STATUS_NOT_READ) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_READ) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_ASSIGNED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_IN_PROGRESS) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_NEED_MORE_INFO) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_WAITING) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_CLOSED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-			elseif ($status == self::STATUS_CANCELED) {
-				return img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket').' '.$langs->trans($this->statuts_short[$status]);
-			}
-		}
-		elseif ($mode == 5 || $mode == 6) {
-			if ($status == self::STATUS_NOT_READ) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut0.png@ticket');
-			}
-			elseif ($status == self::STATUS_READ) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut1.png@ticket');
-			}
-			elseif ($status == self::STATUS_ASSIGNED) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut2.png@ticket');
-			}
-			elseif ($status == self::STATUS_IN_PROGRESS) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut3.png@ticket');
-			}
-			elseif ($status == self::STATUS_NEED_MORE_INFO) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut5.png@ticket');
-			}
-			elseif ($status == self::STATUS_WAITING) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut6.png@ticket');
-			}
-			elseif ($status == self::STATUS_CLOSED) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut8.png@ticket');
-			}
-			elseif ($status == self::STATUS_CANCELED) {
-				return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]), 'statut9.png@ticket');
-			}
-		}
+
+		return dolGetStatus($langs->trans($labelStatus), $langs->trans($labelStatusShort), '', $statusType, $mode);
 	}
 
 
@@ -1341,8 +1252,7 @@ class Ticket extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1432,9 +1342,7 @@ class Ticket extends CommonObject
 		if ($id_assign_user > 0)
 		{
 			$sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
-		}
-		else
-		{
+		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
 		$sql .= " WHERE rowid = ".$this->id;
@@ -1520,10 +1428,10 @@ class Ticket extends CommonObject
 
 				if ($info_sendto['source'] == 'internal') {
 					$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$this->track_id;
-					$message .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : '.'<a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
+					$message .= "\n".$langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$this->track_id.'</a>'."\n";
 				} else {
 					$url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/' : dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$this->track_id;
-					$message .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : '.'<a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
+					$message .= "\n".$langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$this->track_id.'</a>'."\n";
 				}
 
 				$message .= "\n";
@@ -1638,7 +1546,7 @@ class Ticket extends CommonObject
 		// Insert entry into agenda with code 'TICKET_MSG'
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
-		$actioncomm->type_code = 'AC_OTH_AUTO';
+		$actioncomm->type_code = 'AC_OTH';
 		$actioncomm->code = 'TICKET_MSG';
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
@@ -2589,7 +2497,7 @@ class Ticket extends CommonObject
 						$url_internal_ticket = dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id;
 
 						// altairis: make html link on url
-						$message .= "\n".$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : '.'<a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>'."\n";
+						$message .= "\n".$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a>'."\n";
 
 						// Add global email address recipient
 						if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
@@ -2651,7 +2559,7 @@ class Ticket extends CommonObject
 							// If public interface is not enable, use link to internal page into mail
 							$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
 								(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE.'/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.$object->track_id;
-							$message .= "\n".$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : '.'<a href="'.$url_public_ticket.'">'.$object->track_id.'</a>'."\n";
+							$message .= "\n".$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a>'."\n";
 
 							// Build final message
 							$message = $message_intro.$message;
@@ -2845,9 +2753,7 @@ class Ticket extends CommonObject
 				}
 			}
 			return $response;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -2888,9 +2794,7 @@ class Ticket extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;

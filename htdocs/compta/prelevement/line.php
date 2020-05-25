@@ -43,9 +43,22 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if ($page == -1 || $page == null) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if ($sortorder == "") $sortorder = "DESC";
+if ($sortfield == "") $sortfield = "pl.fk_soc";
+
+
+/*
+ * Actions
+ */
 
 if ($action == 'confirm_rejet')
 {
@@ -60,9 +73,7 @@ if ($action == 'confirm_rejet')
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-		}
-
-		elseif ($daterej > dol_now())
+		} elseif ($daterej > dol_now())
 		{
 			$error++;
 			$langs->load("error");
@@ -77,7 +88,7 @@ if ($action == 'confirm_rejet')
 
 		if (!$error)
 		{
-			$lipre = new LignePrelevement($db, $user);
+			$lipre = new LignePrelevement($db);
 
 			if ($lipre->fetch($id) == 0)
 
@@ -89,14 +100,10 @@ if ($action == 'confirm_rejet')
 				header("Location: line.php?id=".$id);
 				exit;
 			}
-		}
-		else
-		{
+		} else {
 			$action = "rejet";
 		}
-	}
-	else
-	{
+	} else {
 		header("Location: line.php?id=".$id);
 		exit;
 	}
@@ -113,13 +120,13 @@ llxHeader('', $langs->trans("StandingOrder"));
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("StandingOrder");
 $hselected = $h;
 $h++;
 
 if ($id)
 {
-	$lipre = new LignePrelevement($db, $user);
+	$lipre = new LignePrelevement($db);
 
 	if ($lipre->fetch($id) == 0)
 	{
@@ -148,25 +155,19 @@ if ($id)
 				{
 					/* Historique pour certaines install */
 					print $langs->trans("Unknown");
-				}
-				else
-				{
+				} else {
 					print dol_print_date($rej->date_rejet, 'day');
 				}
 				print '</td></tr>';
 				print '<tr><td width="20%">'.$langs->trans("RefusedInvoicing").'</td><td>'.$rej->invoicing.'</td></tr>';
-			}
-			else
-			{
+			} else {
 				print '<tr><td width="20%">'.$resf.'</td></tr>';
 			}
 		}
 
 		print '</table>';
 		dol_fiche_end();
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -232,30 +233,15 @@ if ($id)
 			if ($user->rights->prelevement->bons->credit)
 			{
 	  			print "<a class=\"butAction\" href=\"line.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
-			}
-			else
-			{
+			} else {
 				print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
 			}
-		}
-		else
-		{
+		} else {
 			print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
 		}
 	}
 
 	print "</div>";
-
-
-
-	if ($page == -1 || $page == null) { $page = 0; }
-
-	$offset = $conf->liste_limit * $page;
-	$pageprev = $page - 1;
-	$pagenext = $page + 1;
-
-	if ($sortorder == "") $sortorder = "DESC";
-	if ($sortfield == "") $sortfield = "pl.fk_soc";
 
 	/*
 	 * List of invoices
@@ -327,9 +313,7 @@ if ($id)
 		print "</table>";
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

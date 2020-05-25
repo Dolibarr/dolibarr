@@ -163,9 +163,7 @@ if (empty($reshook))
 				$urltogo = ($backtopage ? $backtopage : DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 				header("Location: ".$urltogo);
 				exit;
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 				$action = "create";
@@ -198,22 +196,16 @@ if (empty($reshook))
 					$db->commit();
 					header("Location: ".DOL_URL_ROOT.'/compta/bank/various_payment/list.php');
 					exit;
-				}
-				else
-				{
+				} else {
 					$object->error = $accountline->error;
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 		}
 	}
@@ -277,7 +269,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'invoicing');
+	print load_fiche_titre($langs->trans("NewVariousPayment"), '', 'object_payment');
 
 	dol_fiche_head('', '');
 
@@ -375,8 +367,7 @@ if ($action == 'create')
         print '<td>';
 		print $formaccounting->select_account($accountancy_code, 'accountancy_code', 1, null, 1, 1);
         print '</td></tr>';
-	}
-	else // For external software
+	} else // For external software
 	{
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("AccountAccounting").'</td>';
 		print '<td><input class="minwidth100 maxwidthonsmartphone" name="accountancy_code" value="'.$accountancy_code.'">';
@@ -391,14 +382,11 @@ if ($action == 'create')
         if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
         {
             print $formaccounting->select_auxaccount($subledger_account, 'subledger_account', 1, '');
-        }
-        else
-        {
+        } else {
             print '<input type="text" class="maxwidth200 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
         }
         print '</td></tr>';
-    }
-    else // For external software
+    } else // For external software
     {
         print '<tr><td>'.$langs->trans("SubledgerAccount").'</td>';
         print '<td><input class="minwidth100 maxwidthonsmartphone" name="subledger_account" value="'.$subledger_account.'">';
@@ -564,14 +552,10 @@ if ($id)
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a></div>';
 			}
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.(dol_escape_htmltag($langs->trans("NotAllowed"))).'">'.$langs->trans("Delete").'</a></div>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a></div>';
 	}
 

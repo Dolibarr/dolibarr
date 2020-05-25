@@ -43,7 +43,7 @@ class ExtraFields
     public $db;
 
 	/**
-     * @var string type of element (for what object is the extrafield)
+     * @var array Array with type of element (for what object is the extrafield)
 	 * @deprecated
      */
     public $attribute_elementtype;
@@ -253,11 +253,8 @@ class ExtraFields
 				$this->error = '';
 				$this->errno = 0;
 				return 1;
-			}
-			else return -2;
-		}
-		else
-		{
+			} else return -2;
+		} else {
 			return -1;
 		}
 	}
@@ -338,16 +335,12 @@ class ExtraFields
 					$resql = $this->db->query($sql, 1, 'dml');
 				}
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->errno = $this->db->lasterrno();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -401,13 +394,10 @@ class ExtraFields
 			if (is_array($param) && count($param) > 0)
 			{
 				$params = serialize($param);
-			}
-			elseif (strlen($param) > 0)
+			} elseif (strlen($param) > 0)
 			{
 				$params = trim($param);
-			}
-			else
-			{
+			} else {
 				$params = '';
 			}
 
@@ -465,9 +455,7 @@ class ExtraFields
 			if ($this->db->query($sql))
 			{
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->errno = $this->db->lasterrno();
 				return -1;
@@ -527,9 +515,7 @@ class ExtraFields
 			}
 
 			return $result;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -562,15 +548,11 @@ class ExtraFields
 			if ($resql)
 			{
 				return 1;
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db);
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -659,29 +641,21 @@ class ExtraFields
 					if ($unique)
 					{
 						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." ADD UNIQUE INDEX uk_".$table."_".$attrname." (".$attrname.")";
-					}
-					else
-					{
+					} else {
 						$sql = "ALTER TABLE ".MAIN_DB_PREFIX.$table." DROP INDEX uk_".$table."_".$attrname;
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -739,13 +713,10 @@ class ExtraFields
 			if (is_array($param) && count($param) > 0)
 			{
 				$params = serialize($param);
-			}
-			elseif (strlen($param) > 0)
+			} elseif (strlen($param) > 0)
 			{
 				$params = trim($param);
-			}
-			else
-			{
+			} else {
 				$params = '';
 			}
 
@@ -756,9 +727,7 @@ class ExtraFields
 				$sql_del .= " WHERE name = '".$attrname."'";
 				$sql_del .= " AND entity IN (0, ".($entity === '' ? $conf->entity : $entity).")";
 				$sql_del .= " AND elementtype = '".$elementtype."'";
-			}
-			else
-			{
+			} else {
 				// We want on all entities ($entities = '0'), we delete on all only (we keep setup specific to each entity)
 				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."extrafields";
 				$sql_del .= " WHERE name = '".$attrname."'";
@@ -823,16 +792,12 @@ class ExtraFields
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_print_error($this->db);
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -932,9 +897,7 @@ class ExtraFields
 				}
 			}
 			if ($elementtype) $this->attributes[$elementtype]['loaded'] = 1; // If nothing found, we also save tag 'loaded'
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this)."::fetch_name_optionals_label ".$this->error, LOG_ERR);
 		}
@@ -991,8 +954,7 @@ class ExtraFields
 			$totalizable = $this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		}
-		else	// Old usage
+		} else // Old usage
 		{
 			$label = $this->attribute_label[$key];
 			$type = $this->attribute_type[$key];
@@ -1020,39 +982,29 @@ class ExtraFields
 			if ($type == 'date')
 			{
 				$morecss = 'minwidth100imp';
-			}
-			elseif ($type == 'datetime' || $type == 'link')
+			} elseif ($type == 'datetime' || $type == 'link')
 			{
 				$morecss = 'minwidth200imp';
-			}
-			elseif (in_array($type, array('int', 'integer', 'double', 'price')))
+			} elseif (in_array($type, array('int', 'integer', 'double', 'price')))
 			{
 				$morecss = 'maxwidth75';
-			}
-			elseif ($type == 'password')
+			} elseif ($type == 'password')
 			{
 				$morecss = 'maxwidth100';
-			}
-			elseif ($type == 'url')
+			} elseif ($type == 'url')
 			{
 				$morecss = 'minwidth400';
-			}
-			elseif ($type == 'boolean')
+			} elseif ($type == 'boolean')
 			{
 				$morecss = '';
-			}
-			else
-			{
+			} else {
 				if (round($size) < 12)
 				{
 					$morecss = 'minwidth100';
-				}
-				elseif (round($size) <= 48)
+				} elseif (round($size) <= 48)
 				{
 					$morecss = 'minwidth200';
-				}
-				else
-				{
+				} else {
 					$morecss = 'minwidth400';
 				}
 			}
@@ -1070,48 +1022,38 @@ class ExtraFields
 
 			// TODO Must also support $moreparam
 			$out = $form->selectDate($value, $keyprefix.$key.$keysuffix, $showtime, $showtime, $required, '', 1, (($keyprefix != 'search_' && $keyprefix != 'search_options_') ? 1 : 0), 0, 1);
-		}
-		elseif (in_array($type, array('int', 'integer')))
+		} elseif (in_array($type, array('int', 'integer')))
 		{
 			$tmp = explode(',', $size);
 			$newsize = $tmp[0];
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$newsize.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-		}
-		elseif (preg_match('/varchar/', $type))
+		} elseif (preg_match('/varchar/', $type))
 		{
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" maxlength="'.$size.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
-		}
-		elseif (in_array($type, array('mail', 'phone', 'url')))
+		} elseif (in_array($type, array('mail', 'phone', 'url')))
 		{
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
-		}
-		elseif ($type == 'text')
+		} elseif ($type == 'text')
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
-			}
-			else
-			{
+			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		}
-		elseif ($type == 'html')
+		} elseif ($type == 'html')
 		{
 			if (!preg_match('/search_/', $keyprefix))		// If keyprefix is search_ or search_options_, we must just use a simple text field
 			{
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, !empty($conf->fckeditor->enabled) && $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, '90%');
 				$out = $doleditor->Create(1);
-			}
-			else
-			{
+			} else {
 				$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').'>';
 			}
-		}
-		elseif ($type == 'boolean')
+		} elseif ($type == 'boolean')
 		{
 			if (empty($mode))
 			{
@@ -1122,27 +1064,22 @@ class ExtraFields
 					$checked = ' value="1" ';
 				}
 				$out = '<input type="checkbox" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.$checked.' '.($moreparam ? $moreparam : '').'>';
-			}
-			else
-			{
+			} else {
 				$out .= $form->selectyesno($keyprefix.$key.$keysuffix, $value, 1, false, 1);
 			}
-		}
-		elseif ($type == 'price')
+		} elseif ($type == 'price')
 		{
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> '.$langs->getCurrencySymbol($conf->currency);
-		}
-		elseif ($type == 'double')
+		} elseif ($type == 'double')
 		{
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value = price($value);
 			}
 			$out = '<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam ? $moreparam : '').'> ';
-		}
-		elseif ($type == 'select')
+		} elseif ($type == 'select')
 		{
 			$out = '';
 			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
@@ -1166,8 +1103,7 @@ class ExtraFields
 				$out .= '</option>';
 			}
 			$out .= '</select>';
-		}
-		elseif ($type == 'sellist')
+		} elseif ($type == 'sellist')
 		{
 			$out = '';
 			if (!empty($conf->use_javascript_ajax) && !empty($conf->global->MAIN_EXTRAFIELDS_USE_SELECT2))
@@ -1326,13 +1262,11 @@ class ExtraFields
                 }
 			}
 			$out .= '</select>';
-		}
-		elseif ($type == 'checkbox')
+		} elseif ($type == 'checkbox')
 		{
 			$value_arr = explode(',', $value);
 			$out = $form->multiselectarray($keyprefix.$key.$keysuffix, (empty($param['options']) ?null:$param['options']), $value_arr, '', 0, '', 0, '100%');
-		}
-		elseif ($type == 'radio')
+		} elseif ($type == 'radio')
 		{
 			$out = '';
 			foreach ($param['options'] as $keyopt => $val)
@@ -1343,13 +1277,11 @@ class ExtraFields
 				$out .= ($value == $keyopt ? 'checked' : '');
 				$out .= '/><label for="'.$keyprefix.$key.$keysuffix.'_'.$keyopt.'">'.$val.'</label><br>';
 			}
-		}
-		elseif ($type == 'chkbxlst')
+		} elseif ($type == 'chkbxlst')
 		{
 			if (is_array($value)) {
 				$value_arr = $value;
-			}
-			else {
+			} else {
 				$value_arr = explode(',', $value);
 			}
 
@@ -1547,14 +1479,12 @@ class ExtraFields
                     $out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, '', 0, '', 0, '100%');
                 }
 			}
-		}
-		elseif ($type == 'link')
+		} elseif ($type == 'link')
 		{
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath'
 			$showempty = (($required && $default != '') ? 0 : 1);
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss);
-		}
-		elseif ($type == 'password')
+		} elseif ($type == 'password')
 		{
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out = '<input style="display:none" type="text" name="fakeusernameremembered">'; // Hidden field to reduce impact of evil Google Chrome autopopulate bug.
@@ -1602,8 +1532,7 @@ class ExtraFields
 			$list = dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
 			$help = $this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden = (empty($list) ? 1 : 0); // If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
-		}
-		else	// Old usage
+		} else // Old usage
 		{
 			//dol_syslog("Warning: parameter 'extrafieldsobjectkey' is missing", LOG_WARNING);
 			$label = $this->attribute_label[$key];
@@ -1630,17 +1559,14 @@ class ExtraFields
 		{
 			$showsize = 10;
 			$value = dol_print_date($value, 'day');
-		}
-		elseif ($type == 'datetime')
+		} elseif ($type == 'datetime')
 		{
 			$showsize = 19;
 			$value = dol_print_date($value, 'dayhour');
-		}
-		elseif ($type == 'int')
+		} elseif ($type == 'int')
 		{
 			$showsize = 10;
-		}
-		elseif ($type == 'double')
+		} elseif ($type == 'double')
 		{
 			if (!empty($value)) {
 				//$value=price($value);
@@ -1648,37 +1574,31 @@ class ExtraFields
 				$number_decimals = $sizeparts[1];
 				$value = price($value, 0, $langs, 0, 0, $number_decimals, '');
 			}
-		}
-		elseif ($type == 'boolean')
+		} elseif ($type == 'boolean')
 		{
 			$checked = '';
 			if (!empty($value)) {
 				$checked = ' checked ';
 			}
 			$value = '<input type="checkbox" '.$checked.' '.($moreparam ? $moreparam : '').' readonly disabled>';
-		}
-		elseif ($type == 'mail')
+		} elseif ($type == 'mail')
 		{
 			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
-		}
-		elseif ($type == 'url')
+		} elseif ($type == 'url')
 		{
 			$value = dol_print_url($value, '_blank', 32, 1);
-		}
-		elseif ($type == 'phone')
+		} elseif ($type == 'phone')
 		{
 			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
-		}
-		elseif ($type == 'price')
+		} elseif ($type == 'price')
 		{
-			$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
-		}
-		elseif ($type == 'select')
+			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			if ($value || $value == '0') $value = price($value, 0, $langs, 0, 0, -1);
+		} elseif ($type == 'select')
 		{
 			if ($langfile && $param['options'][$value]) $value = $langs->trans($param['options'][$value]);
 			else $value = $param['options'][$value];
-		}
-		elseif ($type == 'sellist')
+		} elseif ($type == 'sellist')
 		{
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
@@ -1739,9 +1659,7 @@ class ExtraFields
 							$value .= $obj->$field_toshow.' ';
 						}
 					}
-				}
-				else
-				{
+				} else {
 					$translabel = '';
 					if (!empty($obj->{$InfoFieldList[1]})) {
 						$translabel = $langs->trans($obj->{$InfoFieldList[1]});
@@ -1752,14 +1670,11 @@ class ExtraFields
 						$value = $obj->{$InfoFieldList[1]};
 					}
 				}
-			}
-			else dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
-		}
-		elseif ($type == 'radio')
+			} else dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
+		} elseif ($type == 'radio')
 		{
 			$value = $param['options'][$value];
-		}
-		elseif ($type == 'checkbox')
+		} elseif ($type == 'checkbox')
 		{
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1771,8 +1686,7 @@ class ExtraFields
 				}
 			}
 			$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
-		}
-		elseif ($type == 'chkbxlst')
+		} elseif ($type == 'chkbxlst')
 		{
 			$value_arr = explode(',', $value);
 
@@ -1839,8 +1753,7 @@ class ExtraFields
 			} else {
 				dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 			}
-		}
-		elseif ($type == 'link')
+		} elseif ($type == 'link')
 		{
 			$out = '';
 
@@ -1861,28 +1774,21 @@ class ExtraFields
 						$object->fetch($value);
 						$value = $object->getNomUrl(3);
 					}
-				}
-				else
-				{
+				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
 					return 'Error bad setup of extrafield';
 				}
 			}
-		}
-		elseif ($type == 'text')
+		} elseif ($type == 'text')
 		{
 			$value = dol_htmlentitiesbr($value);
-		}
-		elseif ($type == 'html')
+		} elseif ($type == 'html')
 		{
 			$value = dol_htmlentitiesbr($value);
-		}
-		elseif ($type == 'password')
+		} elseif ($type == 'password')
 		{
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
-		}
-		else
-		{
+		} else {
 			$showsize = round($size);
 			if ($showsize > 48) $showsize = 48;
 		}
@@ -1912,36 +1818,28 @@ class ExtraFields
         if ($type == 'date')
 		{
 			$align = "center";
-		}
-		elseif ($type == 'datetime')
+		} elseif ($type == 'datetime')
 		{
 			$align = "center";
-		}
-		elseif ($type == 'int')
+		} elseif ($type == 'int')
 		{
 			$align = "right";
-		}
-		elseif ($type == 'price')
+		} elseif ($type == 'price')
 		{
 			$align = "right";
-		}
-		elseif ($type == 'double')
+		} elseif ($type == 'double')
 		{
 			$align = "right";
-		}
-		elseif ($type == 'boolean')
+		} elseif ($type == 'boolean')
 		{
 			$align = "center";
-		}
-		elseif ($type == 'radio')
+		} elseif ($type == 'radio')
 		{
 			$align = "center";
-		}
-		elseif ($type == 'checkbox')
+		} elseif ($type == 'checkbox')
 		{
 			$align = "center";
-		}
-		elseif ($type == 'price')
+		} elseif ($type == 'price')
 		{
 			$align = "right";
 		}
@@ -2064,14 +1962,12 @@ class ExtraFields
 					// Clean parameters
 					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key = dol_mktime(0, 0, 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
-				}
-				elseif (in_array($key_type, array('datetime')))
+				} elseif (in_array($key_type, array('datetime')))
 				{
 					// Clean parameters
 					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key = dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
-				}
-				elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
+				} elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
 				{
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
@@ -2079,14 +1975,11 @@ class ExtraFields
 					} else {
 						$value_key = '';
 					}
-				}
-				elseif (in_array($key_type, array('price', 'double')))
+				} elseif (in_array($key_type, array('price', 'double')))
 				{
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
-				}
-				else
-				{
+				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
 				}
@@ -2098,12 +1991,10 @@ class ExtraFields
 				$langs->load('errors');
 				setEventMessages($langs->trans('ErrorFieldsRequired').' : '.implode(', ', $error_field_required), null, 'errors');
 				return -1;
-			}
-			else {
+			} else {
 				return 1;
 			}
-		}
-		else {
+		} else {
 			return 0;
 		}
 	}
@@ -2123,9 +2014,7 @@ class ExtraFields
 		if (is_string($extrafieldsobjectkey) && is_array($this->attributes[$extrafieldsobjectkey]['label']))
 		{
 			$extralabels = $this->attributes[$extrafieldsobjectkey]['label'];
-		}
-		else
-		{
+		} else {
 			$extralabels = $extrafieldsobjectkey;
 		}
 
@@ -2147,23 +2036,19 @@ class ExtraFields
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix."year")) continue; // Value was not provided, we should not set it.
 					// Clean parameters
 					$value_key = dol_mktime(GETPOST($keysuffix."options_".$key.$keyprefix."hour", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."min", 'int'), 0, GETPOST($keysuffix."options_".$key.$keyprefix."month", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."day", 'int'), GETPOST($keysuffix."options_".$key.$keyprefix."year", 'int'));
-				}
-				elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
+				} elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
 				{
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
 					$value_key = implode(',', $value_arr);
-				}
-				elseif (in_array($key_type, array('price', 'double', 'int')))
+				} elseif (in_array($key_type, array('price', 'double', 'int')))
 				{
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					$value_key = price2num($value_arr);
-				}
-				else
-				{
+				} else {
 					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue; // Value was not provided, we should not set it.
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
 				}

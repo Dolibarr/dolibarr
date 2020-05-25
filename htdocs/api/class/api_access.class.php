@@ -18,7 +18,7 @@
 
 // Create the autoloader for Luracast
 require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
-call_user_func(function() {
+call_user_func(function () {
     $loader = Luracast\Restler\AutoLoader::instance();
     spl_autoload_register($loader);
     return $loader;
@@ -128,8 +128,7 @@ class DolibarrApiAccess implements iAuthenticate
 						$conf->setValues($db);
 					}
 				}
-			}
-			else {
+			} else {
 				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
 			}
 
@@ -157,9 +156,7 @@ class DolibarrApiAccess implements iAuthenticate
 			if ($fuser->admin) {
 				static::$role = 'admin';
             }
-        }
-		else
-		{
+        } else {
 		    throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 

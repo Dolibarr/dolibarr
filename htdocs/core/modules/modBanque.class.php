@@ -143,6 +143,7 @@ class modBanque extends DolibarrModules
 		//--------
 		$r = 0;
 
+		// Bank lines
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Ecritures bancaires et releves';
@@ -174,6 +175,7 @@ class modBanque extends DolibarrModules
 		$this->export_sql_end[$r] .= ' AND ba.entity IN ('.getEntity('bank_account').')';
 		$this->export_sql_order[$r] = ' ORDER BY b.datev, b.num_releve';
 
+		//
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'Bordereaux remise Chq/Fact';

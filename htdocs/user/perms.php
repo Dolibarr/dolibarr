@@ -208,9 +208,7 @@ if ($result)
 		$i++;
 	}
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -239,9 +237,7 @@ if ($result)
 		$i++;
 	}
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -294,9 +290,9 @@ print '</tr>'."\n";
 //print "xx".$conf->global->MAIN_USE_ADVANCED_PERMS;
 $sql = "SELECT r.id, r.libelle as label, r.module, r.perms, r.subperms, r.module_position";
 $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql .= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
-$sql .= " AND r.entity = " . $entity;
-if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'";  // Hide advanced perms if option is not enabled
+$sql .= " WHERE r.libelle NOT LIKE 'tou%'"; // On ignore droits "tous"
+$sql .= " AND r.entity = ".$entity;
+if (empty($conf->global->MAIN_USE_ADVANCED_PERMS)) $sql .= " AND r.perms NOT LIKE '%_advance'"; // Hide advanced perms if option is not enabled
 $sql .= " ORDER BY r.family_position, r.module_position, r.module, r.id";
 
 $result = $db->query($sql);
@@ -386,8 +382,7 @@ if ($result)
         	print '<td class="center nowrap">';
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
-        }
-        elseif (in_array($obj->id, $permsuser))					// Permission granted by user
+        } elseif (in_array($obj->id, $permsuser))					// Permission granted by user
         {
         	if ($caneditperms)
         	{
@@ -396,8 +391,7 @@ if ($result)
         	print '<td class="center nowrap">';
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
-        }
-        elseif (is_array($permsgroupbyentity[$entity]))
+        } elseif (is_array($permsgroupbyentity[$entity]))
         {
         	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
 	        {
@@ -410,9 +404,7 @@ if ($result)
 	        	print '<td class="center nowrap">';
 	        	print img_picto($langs->trans("Active"), 'tick');
 	        	print '</td>';
-	        }
-	        else
-	        {
+	        } else {
 	        	// Do not own permission
 	        	if ($caneditperms)
 	        	{
@@ -420,9 +412,7 @@ if ($result)
 	        	}
 	        	print '<td>&nbsp</td>';
 	        }
-        }
-        else
-        {
+        } else {
         	// Do not own permission
         	if ($caneditperms)
         	{
@@ -439,8 +429,7 @@ if ($result)
 
 		$i++;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 print '</table>';
 print '</div>';
 

@@ -172,8 +172,7 @@ class Interventions extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve intervention list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
