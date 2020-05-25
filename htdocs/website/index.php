@@ -1547,7 +1547,7 @@ if ($action == 'updatemeta')
 	if (!$error) {
 		// Supplier categories association
 		$categoriesarray = GETPOST('categories', 'array');
-		$result = $objectpage->setCategories($categoriesarray, Categorie::TYPE_WEBSITE_PAGE);
+		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0)
 		{
 			$error++;

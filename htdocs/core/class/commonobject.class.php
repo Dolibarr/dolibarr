@@ -8166,7 +8166,7 @@ abstract class CommonObject
      * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
      * @return	int							<0 if KO, >0 if OK
      */
-    public function setCategories($categories, $type_categ)
+    public function setCategoriesCommon($categories, $type_categ)
     {
     	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 

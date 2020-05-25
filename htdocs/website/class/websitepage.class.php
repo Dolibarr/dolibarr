@@ -720,6 +720,21 @@ class WebsitePage extends CommonObject
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return $this->setCategoriesCommon($categories, Categorie::TYPE_WEBSITE_PAGE);
+	}
 
 	/**
 	 * Initialise object with example values
