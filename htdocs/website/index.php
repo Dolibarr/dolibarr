@@ -39,6 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formwebsite.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->loadLangs(array("admin", "other", "website", "errors"));
 
@@ -1555,6 +1556,17 @@ if ($action == 'updatemeta')
 				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 				$action = 'editmeta';
 			}
+		}
+	}
+
+	if (!$error) {
+		// Supplier categories association
+		$categoriesarray = GETPOST('categories', 'array');
+		$result = $objectpage->setCategories($categoriesarray, Categorie::TYPE_WEBSITE_PAGE);
+		if ($result < 0)
+		{
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -3235,20 +3247,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
 	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
 
-	// Title
-	print '<tr><td class="fieldrequired">';
-	print $langs->trans('WEBSITE_TITLE');
-	print '</td><td>';
-	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'" autofocus>';
-	print '</td></tr>';
-
-	// Alias
-	print '<tr><td class="titlefieldcreate fieldrequired">';
-	print $langs->trans('WEBSITE_PAGENAME');
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
-	print '</td></tr>';
-
 	// Type of container
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
@@ -3264,6 +3262,27 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ?GETPOST('sample', 'alpha') : 'empty'));
 		print '</td></tr>';
 	}
+
+	// Title
+	print '<tr><td class="fieldrequired">';
+	print $langs->trans('WEBSITE_TITLE');
+	print '</td><td>';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'" autofocus>';
+	print '</td></tr>';
+
+	// Alias
+	print '<tr><td class="titlefieldcreate fieldrequired">';
+	print $langs->trans('WEBSITE_PAGENAME');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '</td></tr>';
+
+	print '<tr><td class="titlefieldcreate">';
+	$htmlhelp = $langs->trans("WEBSITE_ALIASALTDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'aliastooltip');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth500" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
+	print '</td></tr>';
 
 	print '<tr><td>';
 	print $langs->trans('WEBSITE_DESCRIPTION');
@@ -3365,12 +3384,28 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	}
 	print '</td></tr>';
 
-	print '<tr><td class="titlefieldcreate">';
-	$htmlhelp = $langs->trans("WEBSITE_ALIASALTDesc");
-	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'aliastooltip');
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
-	print '</td></tr>';
+	// Categories
+	if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
+	{
+		$langs->load('categories');
+
+		if (! GETPOSTISSET('categories')) {
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', null, null, null, 1);
+			$c = new Categorie($db);
+			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
+			$arrayselected = array();
+			foreach ($cats as $cat) {
+				$arrayselected[] = $cat->id;
+			}
+
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', null, null, 1);
+		}
+
+		print '<tr class="visibleifsupplier"><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td colspan="3">';
+		print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), null, null, null, null, "90%");
+		print "</td></tr>";
+	}
+
 
 	$fuser = new User($db);
 

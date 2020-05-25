@@ -4070,7 +4070,7 @@ class Form
 	 *    Return list of categories having choosed type
 	 *
 	 *    @param	string|int	            $type				Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) is deprecated.
-	 *    @param    string		            $selected    		Id of category preselected or 'auto' (autoselect category if there is only one element)
+	 *    @param    string		            $selected    		Id of category preselected or 'auto' (autoselect category if there is only one element). Not used if $outputmode = 1.
 	 *    @param    string		            $htmlname			HTML field name
 	 *    @param    int			            $maxlength      	Maximum length for labels
      *    @param    int|string|array    	$markafterid        Keep only or removed all categories including the leaf $markafterid in category tree (exclude) or Keep only of category is inside the leaf starting with this id.

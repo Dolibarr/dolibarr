@@ -8523,8 +8523,68 @@ abstract class CommonObject
         }
     }
 
+    /* Part for categories/tags */
+
     /**
-     *  copy related categories to another object
+     * Sets object to given categories.
+     *
+     * Deletes object from existing categories not supplied.
+     * Adds it to non existing supplied categories.
+     * Existing categories are left untouch.
+     *
+     * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+     * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
+     * @return	int							<0 if KO, >0 if OK
+     */
+    public function setCategories($categories, $type_categ)
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+    	// Handle single category
+    	if (!is_array($categories)) {
+    		$categories = array($categories);
+    	}
+
+    	// Get current categories
+    	$c = new Categorie($this->db);
+    	$existing = $c->containing($this->id, $type_categ, 'id');
+
+    	// Diff
+    	if (is_array($existing)) {
+    		$to_del = array_diff($existing, $categories);
+    		$to_add = array_diff($categories, $existing);
+    	} else {
+    		$to_del = array(); // Nothing to delete
+    		$to_add = $categories;
+    	}
+
+    	$error = 0;
+
+    	// Process
+    	foreach ($to_del as $del) {
+    		if ($c->fetch($del) > 0) {
+    			$c->del_type($this, $type_categ);
+    		}
+    	}
+    	foreach ($to_add as $add) {
+    		if ($c->fetch($add) > 0)
+    		{
+    			$result = $c->add_type($this, $type_categ);
+    			if ($result < 0)
+    			{
+    				$error++;
+    				$this->error = $c->error;
+    				$this->errors = $c->errors;
+    				break;
+    			}
+    		}
+    	}
+
+    	return $error ? -1 : 1;
+    }
+
+    /**
+     * Copy related categories to another object
      *
      * @param  int		$fromId	Id object source
      * @param  int		$toId	Id object cible
