@@ -89,6 +89,8 @@ if ($mode == 'sconly') $param = '&mode=sconly';
 if ($sortfield) $param .= '&sortfield='.$sortfield;
 if ($sortorder) $param .= '&sortorder='.$sortorder;
 
+$totalnboflines = 0;
+$num = 0;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -99,14 +101,15 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+$nav = '';
 if ($mode != 'sconly')
 {
-    $center = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'object_payment', 0, '', '', $limit, 1);
+    $nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
 }
 else
 {
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'object_payment', 0, '', '', $limit, 0);
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 0);
 }
 
 if ($year) $param .= '&year='.$year;
