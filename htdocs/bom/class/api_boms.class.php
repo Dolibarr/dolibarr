@@ -164,8 +164,7 @@ class Boms extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve bom list');
         }
         if (!count($obj_ret)) {
@@ -228,9 +227,7 @@ class Boms extends DolibarrApi
         if ($this->bom->update($id, DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->bom->error);
         }
     }

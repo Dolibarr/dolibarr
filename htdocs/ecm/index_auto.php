@@ -102,9 +102,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages('Error '.$langs->trans($ecmdir->error), null, 'errors');
 		$action = "create";
 	}
@@ -127,8 +125,7 @@ if ($action == 'confirm_deletefile')
 	    		exit;
 	    	}
 	    	$relativepath = $ecmdir->getRelativePath();
-    	}
-    	else $relativepath = '';
+    	} else $relativepath = '';
     	$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
     	$file = $upload_dir."/".GETPOST('urlfile'); // Do not use urldecode here ($_GET and $_POST are already decoded by PHP).
 
@@ -221,15 +218,11 @@ if ($action == 'refreshmanual')
                     //print "Yes with id ".$parentdirisindatabase."<br>\n";
                     $fk_parent = $parentdirisindatabase;
                     //break;  // We found parent, we can stop the while loop
-                }
-                else
-				{
+                } else {
                     dol_syslog("No");
                     //print "No<br>\n";
                 }
-            }
-            else
-            {
+            } else {
                 dol_syslog("Parent is root");
                 $fk_parent = 0; // Parent is root
             }
@@ -255,13 +248,10 @@ if ($action == 'refreshmanual')
                     $sqltree[] = $newdirsql; // We complete fulltree for following loops
                     //var_dump($sqltree);
                     $adirwascreated = 1;
-                }
-                else
-                {
+                } else {
                     dol_syslog("Failed to create directory ".$ecmdirtmp->label, LOG_ERR);
                 }
-            }
-            else {
+            } else {
                 $txt = "Parent of ".$dirdesc['fullname']." not found";
                 dol_syslog($txt);
                 //print $txt."<br>\n";
@@ -418,9 +408,7 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $act
 			    print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.$val['module'].'">';
 			    print $val['label'];
    			    print '</a>';
-			}
-			else
-			{
+			} else {
 			    print '<a class="fmdirlia jqft ecmjqft" href="'.$_SERVER["PHP_SELF"].'?module='.$val['module'].'">';
 			    print $val['label'];
 			    print '</a>';

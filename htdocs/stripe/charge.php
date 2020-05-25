@@ -65,9 +65,7 @@ if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETP
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-else
-{
+} else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
 }
@@ -85,9 +83,7 @@ if (!$rowid)
 	if ($stripeacc)
 	{
 		$list = \Stripe\Charge::all($option, array("stripe_account" => $stripeacc));
-	}
-	else
-	{
+	} else {
 		$list = \Stripe\Charge::all($option);
 	}
 
@@ -179,21 +175,16 @@ if (!$rowid)
 		if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
 		{
 			$societestatic->fetch($tmparray['CUS']);
-		}
-		elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
+		} elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
 		{
 			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
-		}
-		else
-		{
+		} else {
 			$societestatic->id = 0;
 		}
 		if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
 		{
 			$memberstatic->fetch($tmparray['MEM']);
-		}
-		else
-		{
+		} else {
 			$memberstatic->id = 0;
 		}
 
@@ -231,8 +222,7 @@ if (!$rowid)
 		if ($societestatic->id > 0)
 		{
 			print $societestatic->getNomUrl(1);
-		}
-		elseif ($memberstatic->id > 0)
+		} elseif ($memberstatic->id > 0)
 		{
 			print $memberstatic->getNomUrl(1);
 		}

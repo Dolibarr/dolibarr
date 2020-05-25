@@ -99,9 +99,7 @@ if ($action == "set")
         print "<tr><td>";
         print $langs->trans("ServerConnection")." : ".$conf->db->host.'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
         $ok = 1;
-    }
-    else
-    {
+    } else {
         print "<tr><td>Failed to connect to server : ".$conf->db->host.'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
     }
 
@@ -110,9 +108,7 @@ if ($action == "set")
         if ($db->database_selected)
         {
             dolibarr_install_syslog("step2: successful connection to database: ".$conf->db->name);
-        }
-        else
-        {
+        } else {
             dolibarr_install_syslog("step2: failed connection to database :".$conf->db->name, LOG_ERR);
             print "<tr><td>Failed to select database ".$conf->db->name.'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
             $ok = 0;
@@ -201,9 +197,7 @@ if ($action == "set")
                 if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')	// For Mysql 5.5+, we must replace type=innodb with ENGINE=innodb
                 {
                     $buffer = preg_replace('/type=innodb/i', 'ENGINE=innodb', $buffer);
-                }
-                else
-                {
+                } else {
                     // Keyword ENGINE is MySQL-specific, so scrub it for
                     // other database types (mssql, pgsql)
                     $buffer = preg_replace('/type=innodb/i', '', $buffer);
@@ -225,16 +219,12 @@ if ($action == "set")
                 {
                     // print "<td>OK requete ==== $buffer</td></tr>";
                     $db->free($resql);
-                }
-                else
-                {
+                } else {
                     if ($db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS' ||
                     $db->errno() == 'DB_ERROR_TABLE_OR_KEY_ALREADY_EXISTS')
                     {
                         //print "<td>Deja existante</td></tr>";
-                    }
-                    else
-                    {
+                    } else {
                         print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey", $name);
                         print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$buffer.' <br>Executed query : '.$db->lastquery;
                         print "\n</td>";
@@ -242,9 +232,7 @@ if ($action == "set")
                         $error++;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey", $name);
                 print "</td>";
                 print '<td><span class="error">'.$langs->trans("Error").' Failed to open file '.$dir.$file.'</span></td></tr>';
@@ -261,9 +249,7 @@ if ($action == "set")
                 print $langs->trans("TablesAndPrimaryKeysCreation").'</td><td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
                 $ok = 1;
             }
-        }
-        else
-        {
+        } else {
             print '<tr><td>'.$langs->trans("ErrorFailedToFindSomeFiles", $dir).'</td><td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
             dolibarr_install_syslog("step2: failed to find files to create database in directory ".$dir, LOG_ERR);
         }
@@ -368,9 +354,7 @@ if ($action == "set")
                         {
                             //print "<td>OK requete ==== $buffer</td></tr>";
                             $db->free($resql);
-                        }
-                        else
-                        {
+                        } else {
                             if ($db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS' ||
                             $db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
                             $db->errno() == 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS' ||
@@ -379,9 +363,7 @@ if ($action == "set")
                             {
                                 //print "<td>Deja existante</td></tr>";
                                 $key_exists = 1;
-                            }
-                            else
-                            {
+                            } else {
                                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable", $name);
                                 print "<br>\n".$langs->trans("Request").' '.$requestnb.' : '.$db->lastqueryerror();
                                 print "\n</td>";
@@ -391,9 +373,7 @@ if ($action == "set")
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 print "<tr><td>".$langs->trans("CreateOtherKeysForTable", $name);
                 print "</td>";
                 print '<td><span class="error">'.$langs->trans("Error")." Failed to open file ".$dir.$file."</span></td></tr>";
@@ -464,16 +444,12 @@ if ($action == "set")
                     {
                         $ok = 1;
                         $db->free($resql);
-                    }
-                    else
-                    {
+                    } else {
                         if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS'
                         || $db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS')
                         {
                             //print "Insert line : ".$buffer."<br>\n";
-                        }
-                        else
-                        {
+                        } else {
                             $ok = 0;
 
                             print "<tr><td>".$langs->trans("FunctionsCreation");
@@ -490,9 +466,7 @@ if ($action == "set")
             if ($ok)
             {
                 print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
-            }
-            else
-            {
+            } else {
                 print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
                 $ok = 1;
             }
@@ -588,15 +562,11 @@ if ($action == "set")
                     if ($resql)
                     {
                         //$db->free($resql);     // Not required as request we launch here does not return memory needs.
-                    }
-                    else
-                    {
+                    } else {
                         if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                         {
                             //print "<tr><td>Insertion ligne : $buffer</td><td>";
-                        }
-                        else
-                        {
+                        } else {
                             $ok = 0;
                             $okallfile = 0;
                             print '<span class="error">'.$langs->trans("ErrorSQL")." : ".$db->lasterrno()." - ".$db->lastqueryerror()." - ".$db->lasterror()."</span><br>";
@@ -613,17 +583,13 @@ if ($action == "set")
         if ($ok)
         {
             print '<td><img src="../theme/eldy/img/tick.png" alt="Ok"></td></tr>';
-        }
-        else
-        {
+        } else {
             print '<td><img src="../theme/eldy/img/error.png" alt="Error"></td></tr>';
             $ok = 1; // Data loading are not blocking errors
         }
     }
     print '</table>';
-}
-else
-{
+} else {
     print 'Parameter action=set not defined';
 }
 

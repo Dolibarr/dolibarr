@@ -119,9 +119,7 @@ foreach ($list as $key)
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td><input style="width: 80%" type"text" name="uri'.$key[0].'" value="'.$redirect_uri.'">';
         print '</td></tr>';
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven value">';
         print '<td>'.$langs->trans("UseTheFollowingUrlAsRedirectURI").'</td>';
         print '<td>'.$langs->trans("FeatureNotYetSupported").'</td>';

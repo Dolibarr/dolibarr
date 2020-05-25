@@ -215,8 +215,7 @@ class MenuManager
 		                {
 		                    if (in_array($val['mainmenu'], array('cashdesk', 'websites'))) print $langs->trans("Access");
 		                    else print $langs->trans("Dashboard");
-		                }
-		                else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
+		                } else print $langs->trans(ucfirst($val['mainmenu'])."Dashboard");
 		                print '</a>';
 		                print '</li>'."\n";
 		            }
@@ -226,13 +225,10 @@ class MenuManager
 		                if ($val['enabled'])
 		                {
 		                    $lastlevel[0] = 'enabled';
-		                }
-		                elseif ($showmenu)                 // Not enabled but visible (so greyed)
+		                } elseif ($showmenu)                 // Not enabled but visible (so greyed)
 		                {
 		                    $lastlevel[0] = 'greyed';
-		                }
-		                else
-		                {
+		                } else {
 		                    $lastlevel[0] = 'hidden';
 		                }
 		            }
@@ -281,21 +277,16 @@ class MenuManager
 		                            //print ' data-ajax="false"';
 		                            print '>';
 		                            $lastlevel2[$val2['level']] = 'enabled';
-		                        }
-		                        else					// Not allowed but visible (greyed)
+		                        } else // Not allowed but visible (greyed)
 		                        {
 		                            print '<a href="#" class="vsmenudisabled">';
 		                            $lastlevel2[$val2['level']] = 'greyed';
 		                        }
-		                    }
-		                    else
-		                    {
+		                    } else {
 		                        if ($val2['enabled'])	// Allowed
 		                        {
 		                            $lastlevel2[$val2['level']] = 'enabled';
-		                        }
-		                        else
-		                        {
+		                        } else {
 		                            $lastlevel2[$val2['level']] = 'greyed';
 		                        }
 		                    }
@@ -375,9 +366,7 @@ class MenuManager
 						if (($alt % 2 == 0))
 						{
 							print '<div class="blockvmenub lockvmenuimpair blockvmenuunique'.($lastopened ? ' blockvmenulast' : '').($alt == 1 ? ' blockvmenufirst' : '').'">'."\n";
-						}
-						else
-						{
+						} else {
 							print '<div class="blockvmenu blockvmenupair blockvmenuunique'.($lastopened ? ' blockvmenulast' : '').($alt == 1 ? ' blockvmenufirst' : '').'">'."\n";
 						}
 					}
@@ -397,9 +386,7 @@ class MenuManager
 						if ($this->menu->liste[$i]['enabled'])
 						{
 							print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.dol_buildpath($this->menu->liste[$i]['url'], 1).'"'.($this->menu->liste[$i]['target'] ? ' target="'.$this->menu->liste[$i]['target'].'"' : '').'>'.$this->menu->liste[$i]['titre'].'</a></div>'."\n";
-						}
-						else
-						{
+						} else {
 							print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$this->menu->liste[$i]['titre'].'</font></div>'."\n";
 						}
 						print '<div class="menu_top"></div>'."\n";
@@ -419,9 +406,7 @@ class MenuManager
 							else print '<span class="vsmenu">';
 							if ($this->menu->liste[$i]['url']) print $this->menu->liste[$i]['titre'].'</a>';
 							else print '</span>';
-						}
-						else
-						{
+						} else {
 							print $tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$this->menu->liste[$i]['titre'].'</font>';
 						}
 

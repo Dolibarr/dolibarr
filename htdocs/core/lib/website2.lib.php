@@ -197,8 +197,9 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					}
 				}
 			}
+		} else {
+			dol_print_error($db);
 		}
-		else dol_print_error($db);
 		$tplcontent .= '<?php } ?>'."\n";
 	}
 	// Add manifest.json on homepage
@@ -266,8 +267,7 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 		if (!empty($conf->global->MAIN_UMASK)) {
 			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
 		}
-	}
-	else {
+	} else {
 		$result1 = true;
 	}
 
@@ -530,8 +530,7 @@ function showWebsiteTemplates(Website $website)
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 

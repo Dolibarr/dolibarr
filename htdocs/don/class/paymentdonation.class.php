@@ -167,9 +167,7 @@ class PaymentDonation extends CommonObject
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_donation");
 				$this->ref = $this->id;
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -188,9 +186,7 @@ class PaymentDonation extends CommonObject
             $this->total = $totalamount; // deprecated
 		    $this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -258,9 +254,7 @@ class PaymentDonation extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -341,9 +335,7 @@ class PaymentDonation extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -411,9 +403,7 @@ class PaymentDonation extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -466,9 +456,7 @@ class PaymentDonation extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -592,9 +580,7 @@ class PaymentDonation extends CommonObject
                         dol_print_error($this->db);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -603,9 +589,7 @@ class PaymentDonation extends CommonObject
         if (!$error)
         {
             return 1;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -628,9 +612,7 @@ class PaymentDonation extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}

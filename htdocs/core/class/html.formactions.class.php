@@ -147,9 +147,7 @@ class FormActions
 	            print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
     	        print '<span class="hideonsmartphone hideifna">%</span>';
             }
-        }
-        else
-		{
+        } else {
             print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit ? '' : ' disabled').'>%';
         }
     }
@@ -247,9 +245,7 @@ class FormActions
 	        			if (is_object($cacheusers[$actioncomm->userownerid]))
 	        			{
 	        				$tmpuser = $cacheusers[$actioncomm->userownerid];
-	        			}
-	        			else
-	        			{
+	        			} else {
 	        				$tmpuser = new User($this->db);
 	        				$tmpuser->fetch($actioncomm->userownerid);
 	        				$cacheusers[$actioncomm->userownerid] = $tmpuser;
@@ -269,8 +265,7 @@ class FormActions
 					{
 						if ($actioncomm->type_picto) {
 							$imgpicto = img_picto('', $actioncomm->type_picto);
-						}
-						else {
+						} else {
 							if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
 							elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
 							elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
@@ -298,8 +293,7 @@ class FormActions
 		        		if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year'])
 		        		{
 		        			if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes'] && $tmpa['seconds'] != $tmpb['seconds']) print '-'.dol_print_date($actioncomm->datef, 'hour', 'tzuserrel');
-		        		}
-		        		else print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
+		        		} else print '-'.dol_print_date($actioncomm->datef, 'dayhour', 'tzuserrel');
 	        		}
 	        		print '</td>';
 	        		print '<td class="right">';
@@ -309,9 +303,7 @@ class FormActions
 
 	        		$cursorevent++;
 	        	}
-        	}
-        	else
-        	{
+        	} else {
         		print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         	}
 
@@ -372,9 +364,7 @@ class FormActions
 		{
 	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
 			$out .= $form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
-		}
-		else
-		{
+		} else {
 			$out .= $form->selectarray($htmlname, $arraylist, $selected, 0, 0, 0, '', 0, 0, 0, '', 'minwidth200'.($morecss ? ' '.$morecss : ''), 1);
 		}
 

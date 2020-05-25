@@ -244,9 +244,7 @@ class box_actions extends ModeleBoxes
 					$out .= '}, '.($conf->global->SHOW_DIALOG_HOMEPAGE * 1000).');';
 				}
 				$out .= '</script>';
-			}
-			else
-			{
+			} else {
 				$out .= '<script>';
 				$out .= '$("#dialogboxaction").dialog({ autoOpen: false });';
 				$out .= '</script>';

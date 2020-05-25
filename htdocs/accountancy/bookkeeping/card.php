@@ -138,9 +138,7 @@ if ($action == "confirm_update") {
 			}
 		}
 	}
-}
-
-elseif ($action == "add") {
+} elseif ($action == "add") {
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
@@ -199,9 +197,7 @@ elseif ($action == "add") {
 			$action = '';
 		}
 	}
-}
-
-elseif ($action == "confirm_delete") {
+} elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
 
 	$result = $object->fetch($id, null, $mode);
@@ -216,9 +212,7 @@ elseif ($action == "confirm_delete") {
 		}
 	}
 	$action = '';
-}
-
-elseif ($action == "confirm_create") {
+} elseif ($action == "confirm_create") {
 	$error = 0;
 
 	$object = new BookKeeping($db);
@@ -628,9 +622,7 @@ if ($action == 'create')
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 						{
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
-						}
-						else
-						{
+						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
@@ -685,9 +677,7 @@ if ($action == 'create')
 					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-					}
-					else
-					{
+					} else {
 						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
 					print '</td>';
@@ -707,9 +697,7 @@ if ($action == 'create')
 					if ($total_debit == $total_credit)
 					{
 						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 

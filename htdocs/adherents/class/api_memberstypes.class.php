@@ -101,10 +101,8 @@ class MembersTypes extends DolibarrApi
         $sql .= ' WHERE t.entity IN ('.getEntity('member_type').')';
 
         // Add sql filters
-        if ($sqlfilters)
-        {
-            if (!DolibarrApi::_checkFilters($sqlfilters))
-            {
+        if ($sqlfilters) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
 	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
@@ -113,8 +111,7 @@ class MembersTypes extends DolibarrApi
 
         $sql .= $db->order($sortfield, $sortorder);
         if ($limit) {
-            if ($page < 0)
-            {
+            if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
@@ -123,13 +120,11 @@ class MembersTypes extends DolibarrApi
         }
 
         $result = $db->query($sql);
-        if ($result)
-        {
+        if ($result) {
             $i = 0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
-            while ($i < $min)
-            {
+            while ($i < $min) {
             	$obj = $db->fetch_object($result);
                 $membertype = new AdherentType($this->db);
                 if ($membertype->fetch($obj->rowid)) {
@@ -137,8 +132,7 @@ class MembersTypes extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve member type list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -204,13 +198,10 @@ class MembersTypes extends DolibarrApi
 
         // If there is no error, update() returns the number of affected rows
         // so if the update is a no op, the return value is zero.
-        if ($membertype->update(DolibarrApiAccess::$user) >= 0)
-        {
+        if ($membertype->update(DolibarrApiAccess::$user) >= 0) {
             return $this->get($id);
-        }
-        else
-        {
-        	throw new RestException(500, $membertype->error);
+        } else {
+            throw new RestException(500, $membertype->error);
         }
     }
 

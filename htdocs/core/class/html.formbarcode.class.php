@@ -176,8 +176,7 @@ class FormBarCode
             }
             $out .= "</select>";
             $out .= ajax_combobox("select_".$htmlname);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
         return $out;

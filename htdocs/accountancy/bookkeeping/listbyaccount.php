@@ -254,18 +254,14 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		$result = $object->deleteByYearAndJournal($delyear, $deljournal, '', ($delmonth > 0 ? $delmonth : 0));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
 		header("Location: listbyaccount.php".($param ? '?'.$param : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
 	}
 }
@@ -276,9 +272,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
@@ -537,9 +531,7 @@ while ($i < min($num, $limit))
 				print price($sous_total_debit - $sous_total_credit);
 				print '</td>';
 				print '<td></td>';
-			}
-			else
-			{
+			} else {
 				print '<td></td>';
 				print '<td class="nowraponall right">';
 				print price($sous_total_credit - $sous_total_debit);
@@ -611,8 +603,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		}
-		elseif ($line->doc_type == 'supplier_invoice')
+		} elseif ($line->doc_type == 'supplier_invoice')
 		{
 			$langs->loadLangs(array('bills'));
 
@@ -625,8 +616,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 			$subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
-		}
-		elseif ($line->doc_type == 'expense_report')
+		} elseif ($line->doc_type == 'expense_report')
 		{
 			$langs->loadLangs(array('trips'));
 
@@ -639,9 +629,7 @@ while ($i < min($num, $limit))
 			$filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
 			$documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-		}
-		else
-		{
+		} else {
 			// Other type
 		}
 
@@ -742,9 +730,7 @@ if ($balance > 0 )
 	print price($sous_total_debit - $sous_total_credit);
 	print '</td>';
 	print '<td></td>';
-}
-else
-{
+} else {
 	print '<td></td>';
 	print '<td class="nowraponall right">';
 	print price($sous_total_credit - $sous_total_debit);

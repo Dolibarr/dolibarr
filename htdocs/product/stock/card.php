@@ -135,9 +135,7 @@ if (empty($reshook))
 	                setEventMessages($object->error, $object->errors, 'errors');
 	            }
 	        }
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("ErrorWarehouseRefRequired"), null, 'errors');
 			$action = "create"; // Force retour sur page creation
 		}
@@ -153,9 +151,7 @@ if (empty($reshook))
 		    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = '';
 		}
@@ -195,14 +191,11 @@ if (empty($reshook))
 				$object->setCategories($categories);
 	            $action = '';
 	        }
-		}
-		else
-		{
+		} else {
 			$action = 'edit';
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras') {
 	    $object->oldcopy = dol_clone($object);
 
 	    // Fill array 'array_options' with data from update form
@@ -314,9 +307,7 @@ if ($action == 'create')
 		if ($key == 1)
 		{
 			print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
-		}
-		else
-		{
+		} else {
 			print '<option value="'.$key.'">'.$langs->trans($value).'</option>';
 		}
 	}
@@ -344,9 +335,7 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-}
-else
-{
+} else {
     $id = GETPOST("id", 'int');
 	if ($id > 0 || $ref)
 	{
@@ -498,13 +487,11 @@ else
 				{
 					if ($user->rights->stock->creer)
 						print "<a class=\"butAction\" href=\"card.php?action=edit&id=".$object->id."\">".$langs->trans("Modify")."</a>";
-					else
-						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
+					else print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Modify")."</a>";
 
 					if ($user->rights->stock->supprimer)
 						print "<a class=\"butActionDelete\" href=\"card.php?action=delete&id=".$object->id."\">".$langs->trans("Delete")."</a>";
-					else
-						print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
+					else print "<a class=\"butActionRefused classfortooltip\" href=\"#\">".$langs->trans("Delete")."</a>";
 				}
 			}
 
@@ -669,9 +656,7 @@ else
                 print '<td class="liste_total">&nbsp;</td>';
 				print '<td class="liste_total">&nbsp;</td>';
 				print '</tr>';
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 			print "</table>\n";
@@ -749,9 +734,7 @@ else
 				if ($key == $object->statut)
 				{
 					print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
-				}
-				else
-				{
+				} else {
 					print '<option value="'.$key.'">'.$langs->trans($value).'</option>';
 				}
 			}

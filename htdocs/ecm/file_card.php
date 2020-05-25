@@ -113,9 +113,7 @@ if ($cancel)
     {
         header("Location: ".$backtopage);
         exit;
-    }
-    else
-    {
+    } else {
     	header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
         exit;
     }
@@ -170,9 +168,7 @@ if ($action == 'update')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$object->share = getRandomPassword(true);
-		}
-		else
-		{
+		} else {
 			$object->share = '';
 		}
 
@@ -184,9 +180,7 @@ if ($action == 'update')
 			{
 				setEventMessages($object->error, $object->errors, 'warnings');
 			}
-		}
-		else
-		{
+		} else {
 			// Call create to insert record
 			$object->entity = $conf->entity;
 			$object->filepath = preg_replace('/[\\/]+$/', '', $newdirrelativetodocument);
@@ -211,9 +205,7 @@ if ($action == 'update')
         $urlfile = $newlabel;
         header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
         exit;
-    }
-    else
-    {
+    } else {
         $db->rollback();
     }
 }
@@ -257,9 +249,7 @@ while ($tmpecmdir && $result > 0)
 	{
 		$s = ' -> '.$s;
 		$result = $tmpecmdir->fetch($tmpecmdir->fk_parent);
-	}
-	else
-	{
+	} else {
 		$tmpecmdir = 0;
 	}
 	$i++;
@@ -298,9 +288,7 @@ $object->fetch(0, '', $filepathtodocument);
 if (!empty($object->label))
 {
 	print $object->label;
-}
-else
-{
+} else {
 	print img_warning().' '.$langs->trans("FileNotYetIndexedInDatabase");
 }
 print '</td></tr>';
@@ -348,20 +336,14 @@ if (!empty($object->share))
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;
 		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here
-	}
-	else
-	{
+	} else {
 		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
-}
-else
-{
+} else {
 	if ($action != 'edit')
 	{
 		print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
-	}
-	else
-	{
+	} else {
 		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
 }

@@ -208,9 +208,7 @@ if ($result)
 		$i++;
 	}
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -239,9 +237,7 @@ if ($result)
 		$i++;
 	}
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -386,8 +382,7 @@ if ($result)
         	print '<td class="center nowrap">';
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
-        }
-        elseif (in_array($obj->id, $permsuser))					// Permission granted by user
+        } elseif (in_array($obj->id, $permsuser))					// Permission granted by user
         {
         	if ($caneditperms)
         	{
@@ -396,8 +391,7 @@ if ($result)
         	print '<td class="center nowrap">';
         	print img_picto($langs->trans("Active"), 'tick');
         	print '</td>';
-        }
-        elseif (is_array($permsgroupbyentity[$entity]))
+        } elseif (is_array($permsgroupbyentity[$entity]))
         {
         	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
 	        {
@@ -410,9 +404,7 @@ if ($result)
 	        	print '<td class="center nowrap">';
 	        	print img_picto($langs->trans("Active"), 'tick');
 	        	print '</td>';
-	        }
-	        else
-	        {
+	        } else {
 	        	// Do not own permission
 	        	if ($caneditperms)
 	        	{
@@ -420,9 +412,7 @@ if ($result)
 	        	}
 	        	print '<td>&nbsp</td>';
 	        }
-        }
-        else
-        {
+        } else {
         	// Do not own permission
         	if ($caneditperms)
         	{
@@ -439,8 +429,7 @@ if ($result)
 
 		$i++;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 print '</table>';
 print '</div>';
 

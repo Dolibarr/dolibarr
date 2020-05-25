@@ -179,8 +179,7 @@ class Categories extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -243,9 +242,7 @@ class Categories extends DolibarrApi
         if ($this->category->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->category->error);
         }
     }

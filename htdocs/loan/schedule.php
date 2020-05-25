@@ -237,8 +237,7 @@ if ($object->nbterm > 0 && count($echeance->lines) == 0)
 		$i++;
 		$capital = $cap_rest;
 	}
-}
-elseif (count($echeance->lines) > 0)
+} elseif (count($echeance->lines) > 0)
 {
 	$i = 1;
 	$capital = $object->capital;

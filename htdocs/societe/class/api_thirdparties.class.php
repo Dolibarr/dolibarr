@@ -143,9 +143,7 @@ class Thirdparties extends DolibarrApi
 
     	// Select thirdparties of given category
     	if ($category > 0) {
-			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; }
-			elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; }
-			else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
+			if (!empty($mode) && $mode != 4) { $sql .= " AND c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid"; } elseif (!empty($mode) && $mode == 4) { $sql .= " AND cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid"; } else { $sql .= " AND ((c.fk_categorie = ".$db->escape($category)." AND c.fk_soc = t.rowid) OR (cc.fk_categorie = ".$db->escape($category)." AND cc.fk_soc = t.rowid))"; }
     	}
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc";
@@ -195,8 +193,7 @@ class Thirdparties extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve thirdparties : '.$db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -466,9 +463,7 @@ class Thirdparties extends DolibarrApi
 			$db->rollback();
 
 			throw new RestException(500, 'Error failed to merged thirdparty '.$this->companytoremove->id.' into '.$id.'. Enable and read log file for more information.');
-		}
-		else
-		{
+		} else {
 			$db->commit();
 		}
 
@@ -1105,8 +1100,7 @@ class Thirdparties extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(404, 'Account not found');
 		}
 
@@ -1312,9 +1306,7 @@ class Thirdparties extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			throw new RestException(404, 'Bank account not found');
 		}
 
@@ -1330,9 +1322,7 @@ class Thirdparties extends DolibarrApi
 		if ($result > 0)
 		{
 			return array("success" => $result);
-		}
-		else
-		{
+		} else {
 			throw new RestException(500);
 		}
     }

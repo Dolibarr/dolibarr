@@ -114,9 +114,7 @@ class FormAdmin
 			if ($selected == $keytouse)
 			{
 				$out .= '<option value="'.$keytouse.'" selected>'.$valuetoshow.'</option>';
-			}
-			else
-			{
+			} else {
 				$out .= '<option value="'.$keytouse.'">'.$valuetoshow.'</option>';
 			}
 		}
@@ -184,9 +182,7 @@ class FormAdmin
     	                        if ($file == $selected)
     	                        {
     	        					$menuarray[$prefix.'_'.$file] = '<option value="'.$file.'" selected>'.$filelib.'</option>';
-    	                        }
-    	                        else
-    	                        {
+    	                        } else {
     	                            $menuarray[$prefix.'_'.$file] = '<option value="'.$file.'">'.$filelib.'</option>';
     	                        }
     	                    }
@@ -385,9 +381,7 @@ class FormAdmin
 
                 $i++;
             }
-        }
-        else
-		{
+        } else {
 			dol_print_error($this->db);
 			return '';
 		}
@@ -405,9 +399,7 @@ class FormAdmin
             if ($selected == $key)
 			{
 				$out .= '<option value="'.$key.'" selected>'.$value.'</option>';
-			}
-			else
-			{
+			} else {
 				$out .= '<option value="'.$key.'">'.$value.'</option>';
 			}
 		}
