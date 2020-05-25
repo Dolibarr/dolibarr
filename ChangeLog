@@ -187,6 +187,7 @@ NEW: Can force ref of a variant product
 
 For developers or integrators:
 
+NEW: Add a method $form->widgetForTranslation to allow any field of a form to be entered into different languages.
 NEW: Add API to get types of expense reports
 NEW: API filter bankaccounts by category
 NEW: API filter contacts by category
