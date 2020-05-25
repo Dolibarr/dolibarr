@@ -183,7 +183,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 			unset($tmplangs);
 
 			$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
-			foreach($filesarray2 as $key => $file) {
+			foreach ($filesarray2 as $key => $file) {
 				if (! preg_match('/\.lang$/', $file)) {
 					continue;
 				}
