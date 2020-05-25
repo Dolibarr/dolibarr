@@ -200,7 +200,7 @@ CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	fk_emailcollector INTEGER NOT NULL,
 	type varchar(128) NOT NULL,
-	rulevalue varchar(255) NULL,
+	rulevalue varchar(128) NULL,
 	date_creation datetime NOT NULL,
 	tms timestamp NOT NULL,
 	fk_user_creat integer NOT NULL,

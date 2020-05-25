@@ -412,11 +412,13 @@ foreach ($modulesdir as $dir)
 									}
 
 									$familyposition = $familyinfo[$familykey]['position'];
-									if ($external)
+									$listOfOfficialModuleGroups = array('hr', 'technic', 'interface', 'technic', 'portal', 'financial', 'crm', 'base', 'products', 'srm', 'ecm', 'projects', 'other');
+									if ($external && ! in_array($familykey, $listOfOfficialModuleGroups))
 									{
-										// TODO Find a solution so modules with their own family are always at end
-										//var_dump($familyposition);
-										//$familyposition += 100;
+										// If module is extern and into a custom group (not into an official predefined one), it must appear at end (custom groups should not be before official groups).
+										if (is_numeric($familyposition)) {
+											$familyposition = sprintf("%03d", (int) $familyposition + 100);
+										}
 									}
 
 									$orders[$i] = $familyposition."_".$familykey."_".$moduleposition."_".$j; // Sort by family, then by module position then number
@@ -678,7 +680,9 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		if (preg_match('/development/i', $version))  $versiontrans .= img_warning($langs->trans("Development"), 'style="float: left"');
 		if (preg_match('/experimental/i', $version)) $versiontrans .= img_warning($langs->trans("Experimental"), 'style="float: left"');
 		if (preg_match('/deprecated/i', $version))   $versiontrans .= img_warning($langs->trans("Deprecated"), 'style="float: left"');
-		$versiontrans .= $objMod->getVersion(1);
+		if ($objMod->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
+			$versiontrans .= $objMod->getVersion(1);
+		}
 
 		// Define imginfo
 		$imginfo = "info";
@@ -1194,7 +1198,7 @@ if ($mode == 'develop')
 	print '<tr class="oddeven" height="80">'."\n";
 	print '<td class="left">';
 	//span class="fa fa-bug"></span>
-	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
+	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
@@ -1204,7 +1208,7 @@ if ($mode == 'develop')
 	print '<tr class="oddeven" height="80">'."\n";
 	$url = 'https://partners.dolibarr.org';
 	print '<td class="left">';
-	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a>';
+	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';

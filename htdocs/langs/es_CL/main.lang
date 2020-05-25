@@ -193,7 +193,6 @@ AmountTTC=Monto (impuesto inc.)
 AmountVAT=IVA
 MulticurrencyAlreadyPaid=Ya pagado, moneda original.
 MulticurrencyRemainderToPay=Permanecer en el pago, moneda original
-MulticurrencyPaymentAmount=Importe del pago, moneda original
 MulticurrencyAmountHT=Importe (sin IVA), moneda original
 MulticurrencyAmountTTC=Importe (inc. De impuestos), moneda original
 MulticurrencyAmountVAT=Importe de la cantidad, moneda original

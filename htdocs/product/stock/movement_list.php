@@ -1012,7 +1012,6 @@ if ($resql)
 
         $warehousestatic->id = $objp->entrepot_id;
         $warehousestatic->ref = $objp->warehouse_ref;
-        $warehousestatic->libelle = $objp->warehouse_ref; // deprecated
         $warehousestatic->label = $objp->warehouse_ref;
         $warehousestatic->lieu = $objp->lieu;
         $warehousestatic->fk_parent = $objp->fk_parent;
@@ -1086,15 +1085,11 @@ if ($resql)
         if (!empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.'<a href="'
-								.DOL_URL_ROOT.'/product/stock/movement_card.php'
-								.'?id='.$objp->entrepot_id
-								.'&amp;search_inventorycode='.$objp->inventorycode
-							    .'&amp;search_type_mouvement='.$objp->type_mouvement
-						.'">'
-							.$objp->inventorycode
-						.'</a>'
-					.'</td>';
+	        print '<td><a href="'
+						.DOL_URL_ROOT.'/product/stock/movement_card.php?id='.urlencode($objp->entrepot_id)
+						.'&search_inventorycode='.urlencode($objp->inventorycode)
+					    .'&search_type_mouvement='.urlencode($objp->type_mouvement)
+						.'">'.$objp->inventorycode.'</a></td>';
         }
         if (!empty($arrayfields['m.label']['checked']))
         {

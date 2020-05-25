@@ -979,7 +979,6 @@ class BOM extends CommonObject
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
@@ -1005,6 +1004,7 @@ class BOM extends CommonObject
 
 	/**
 	 * BOM costs calculation based on cost_price or pmp of each BOM line
+	 *
 	 * @return void
 	 */
 	public function calculateCosts()
@@ -1013,17 +1013,28 @@ class BOM extends CommonObject
 		$this->unit_cost = 0;
 		$this->total_cost = 0;
 
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+		$productFournisseur = new ProductFournisseur($this->db);
+
 		foreach ($this->lines as &$line) {
 			$tmpproduct = new Product($this->db);
 			$tmpproduct->fetch($line->fk_product);
+			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
+			if (empty($line->unit_cost)) {
+				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)
+				{
+					$line->unit_cost = $productFournisseur->fourn_unitprice;
+				}
+			}
 
-			$line->unit_cost = (!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp; // TODO : add option to work with cost_price or pmp
 			$line->total_cost = price2num($line->qty * $line->unit_cost, 'MT');
 			$this->total_cost += $line->total_cost;
 		}
 
 		$this->total_cost = price2num($this->total_cost, 'MT');
-		$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+		if ($this->qty) {
+			$this->unit_cost = price2num($this->total_cost / $this->qty, 'MU');
+		}
 	}
 }
 

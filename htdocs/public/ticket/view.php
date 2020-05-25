@@ -370,7 +370,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		}
 
 		// Message list
-		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
+		print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'object_conversation');
 		$object->viewTicketMessages(false, true, $object->dao);
 	}
 	else

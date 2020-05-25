@@ -40,6 +40,7 @@ WebUserGroup=Servidor web usuari/grup
 NoSessionFound=Sembla que el seu PHP no pot llistar les sessions actives. El directori de salvaguardat de sessions (<b>%s</b>) pot estar protegit (per exemple, pels permisos del sistema operatiu o per la directiva open_basedir del seu PHP).
 DBStoringCharset=Codificació base de dades per emmagatzematge de dades
 DBSortingCharset=Codificació base de dades per classificar les dades
+HostCharset=Host charset
 ClientCharset=Joc de caràcters del client
 ClientSortingCharset="Collation" del client
 WarningModuleNotActive=Mòdul <b>%s</b> no actiu
@@ -99,9 +100,9 @@ NoMaxSizeByPHPLimit=Cap limitació interna en el seu servidor PHP
 MaxSizeForUploadedFiles=Tamany màxim dels documents a pujar (0 per prohibir la pujada)
 UseCaptchaCode=Utilització de codi gràfic (CAPTCHA) en el login
 AntiVirusCommand=Ruta completa cap al comandament antivirus
-AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
+AntiVirusCommandExample=Exemple per al dimoni ClamAv (requerix clamav-daemon): /usr/bin/clamdscan<br>Exemple per a ClamWin (molt molt lent): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
 AntiVirusParam= Paràmetres complementaris en la línia de comandes
-AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+AntiVirusParamExample=Exemple per al dimoni de ClamAv: --fdpass <br> Exemple per a ClamWin: --database = "C: \\ Program Files (x86) \\ ClamWin \\ lib"
 ComptaSetup=Configuració del mòdul Comptabilitat
 UserSetup=Configuració de gestió d'usuaris
 MultiCurrencySetup=Configuració multi-divisa
@@ -199,7 +200,7 @@ FeatureDisabledInDemo=Opció deshabilitada en demo
 FeatureAvailableOnlyOnStable=Funcionalitat disponible únicament en versions estables oficials 
 BoxesDesc=Els panells són components que mostren algunes dades que poden afegir-se per personalitzar algunes pàgines. Pots triar entre mostrar el panell o no seleccionant la pàgina de destí i fent clic a 'Activar', o fent clic en la paperera per desactivar.
 OnlyActiveElementsAreShown=Només els elements de <a href="%s"> mòduls activats</a> són mostrats
-ModulesDesc=The modules/applications determine which features are available in the software. Some modules require permissions to be granted to users after activating the module. Click the on/off button <span class="small valignmiddle">%s</span> of each module to enable or disable a module/application.
+ModulesDesc=Els mòduls / aplicacions determinen quines funcions estan disponibles al programari. Alguns mòduls requereixen concedir permisos als usuaris després d'activar el mòdul. Feu clic al botó on / off <span class="small valignmiddle"> %s </span> de cada mòdul per habilitar o desactivar un mòdul / aplicació.
 ModulesMarketPlaceDesc=Pots trobar més mòduls per descarregar en pàgines web externes per internet...
 ModulesDeployDesc=Si els permisos en el seu sistema d'arxius ho permiteixen, pot utilitzar aquesta ferramente per instal·lar un mòdul extern. El mòdul estarà aleshores visible en la pestanya <strong>%s</strong>
 ModulesMarketPlaces=Trobar mòduls/complements externs
@@ -427,7 +428,7 @@ ExtrafieldCheckBox=Caselles de verificació
 ExtrafieldCheckBoxFromList=Caselles de verificació des de taula
 ExtrafieldLink=Enllaç a un objecte
 ComputedFormula=Camp calculat
-ComputedFormulaDesc=Podeu introduir aquí una fórmula usant altres propietats d'objecte o qualsevol codi PHP per obtenir un valor calculat dinàmic. Podeu utilitzar qualsevol fórmula compatible amb PHP, inclòs l'operador "?" i els següents objectes globals: <strong> $db, $conf, $langs, $mysoc, $user, $object</strong>. <br><strong> AVÍS</strong>: Només algunes propietats de $object poden estar disponibles. Si necessiteu una propietat que no s'hagi carregat, tan sols busqueu l'objecte en la formula com en el segon exemple. <br> L'ús d'un camp calculat significa que no podeu introduir cap valor des de la interfície. A més, si hi ha un error de sintaxi, la fórmula potser no torni res.  <br><br> Exemple de fórmula: <br> $object->id <10? round($object->id/2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)  <br><br> Exemple de recarrega d'object<br> (($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id : ($obj->rowid ? $obj->rowid : $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5 : '-1'<br><br> Un altre exemple de fórmula per forçar la càrrega de l'objecte i el seu objecte principal: <br> (($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : 'Parent project not found'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Emmagatzemar el camp computat
 ComputedpersistentDesc=Els camps addicionals computats s’emmagatzemaran a la base de dades, però, el valor només es tornarà a calcular quan l’objecte d’aquest camp s’ha canviat. Si el camp calculat depèn d'altres objectes o dades globals, aquest valor podria estar equivocat !!
 ExtrafieldParamHelpPassword=Mantenir aquest camp buit significa que el valor s'emmagatzema sense xifrar (el camp només ha d'estar amagat amb una estrella sobre la pantalla). <br> Establiu aquí el valor 'auto' per utilitzar la regla de xifrat per defecte per guardar la contrasenya a la base de dades (el valor llegit serà només el "hash", no hi haurà cap manera de recuperar el valor original)
@@ -449,7 +450,7 @@ DefaultLink=Enllaç per defecte
 SetAsDefault=Indica'l com Defecte
 ValueOverwrittenByUserSetup=Atenció: Aquest valor pot ser sobreescrit per un valor específic de la configuració de l'usuari (cada usuari pot tenir la seva pròpia url clicktodial)
 ExternalModule=Mòdul extern
-InstalledInto=Installed into directory %s
+InstalledInto=Instal·lat al directori %s
 BarcodeInitForthird-parties=Inicialització massiva de codis de barres per a tercers
 BarcodeInitForProductsOrServices=Inici massiu de codi de barres per productes o serveis
 CurrentlyNWithoutBarCode=Actualment, té <strong>%s</strong> registres a <strong>%s</strong> %s sense codi de barres definit.
@@ -991,7 +992,7 @@ VATIsNotUsedDesc=El tipus d'IVA proposat per defecte és 0. Aquest és el cas d'
 VATIsUsedExampleFR=A França, es tracta de les societats o organismes que trien un règim fiscal general (General simplificat o General normal), règim en el qual es declara l'IVA.
 VATIsNotUsedExampleFR=A França, es tracta d'associacions que no siguin declarades per vendes o empreses, organitzacions o professions liberals que hagin triat el sistema fiscal de la microempresa (Impost sobre vendes en franquícia) i paguen una franquícia. Impost sobre vendes sense declaració d'impost sobre vendes. Aquesta elecció mostrarà la referència "Impost sobre vendes no aplicable - art-293B de CGI" a les factures.
 ##### Local Taxes #####
-TypeOfSaleTaxes=Type of sales tax
+TypeOfSaleTaxes=Tipus d’impost sobre vendes
 LTRate=Tarifa
 LocalTax1IsNotUsed=No subjecte
 LocalTax1IsUsedDesc=Utilitzar un 2on tipus d'impost (diferent de l'IVA)
@@ -1015,9 +1016,9 @@ LocalTax2IsUsedDescES=El tipus d'IRPF proposat per defecte en les creacions de p
 LocalTax2IsNotUsedDescES=El tipus d'IRPF proposat per defecte es 0. Final de regla.
 LocalTax2IsUsedExampleES=A Espanya, es tracta de persones físiques: autònoms i professionals independents que presten serveis i empreses que han triat el règim fiscal de mòduls.
 LocalTax2IsNotUsedExampleES=A Espanya, es tracta d'empreses no subjectes al règim fiscal de mòduls.
-RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps des not provide any reporting. Only few countries uses this type of tax.
-UseRevenueStamp=Use a tax stamp
-UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps does not provide any reporting. Only few countries uses this type of tax.
+UseRevenueStamp=Utilitzar un segell fiscal
+UseRevenueStampExample=El valor del segell fiscal està definit per defecte en la configuració dels diccionaris (%s - %s - %s)
 CalcLocaltax=Informes d'impostos locals
 CalcLocaltax1=Vendes - Compres
 CalcLocaltax1Desc=Els informes es calculen amb la diferència entre les vendes i les compres
@@ -1025,7 +1026,7 @@ CalcLocaltax2=Compres
 CalcLocaltax2Desc=Els informes es basen en el total de les compres
 CalcLocaltax3=Vendes
 CalcLocaltax3Desc=Els informes es basen en el total de les vendes
-NoLocalTaxXForThisCountry=According to the setup of taxes (See %s - %s - %s), your country does not need to use such type of tax
+NoLocalTaxXForThisCountry=Segons la configuració d’impostos (vegeu %s - %s - %s), el vostre país no necessita utilitzar aquest tipus d’impost
 LabelUsedByDefault=Etiqueta utilitzada per defecte si no es troba cap traducció per aquest codi
 LabelOnDocuments=Etiqueta sobre documents
 LabelOrTranslationKey=Clau de traducció o cadena
@@ -1116,8 +1117,8 @@ Delays_MAIN_DELAY_EXPENSEREPORTS=Informe de despeses per aprovar
 Delays_MAIN_DELAY_HOLIDAYS=Dies lliures a aprovar
 SetupDescription1=Abans de començar a utilitzar Dolibarr cal definir alguns paràmetres inicials i habilitar/configurar els mòduls.
 SetupDescription2=Les dues seccions següents són obligatòries (les dues primeres entrades al menú Configuració):
-SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
-SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
+SetupDescription3= <a href="%s"> %s -> %s </a> <br> <br> Paràmetres bàsics utilitzats per personalitzar el comportament predeterminat de la teva aplicació (per exemple, per a les funcions relacionades amb el país).
+SetupDescription4= <a href="%s"> %s -> %s </a> <br> <br> Aquest programari és un conjunt de molts mòduls / aplicacions. Els mòduls relacionats amb les vostres necessitats s’han d’activar i configurar. Les entrades del menú apareixen amb l’activació d’aquests mòduls.
 SetupDescription5=Altres entrades del menú d'instal·lació gestionen paràmetres opcionals.
 LogEvents=Auditoria de la seguretat d'esdeveniments
 Audit=Auditoria
@@ -1136,7 +1137,7 @@ LogEventDesc=Habiliteu el registre per a esdeveniments de seguretat específics.
 AreaForAdminOnly=Els paràmetres de configuració només poden ser establerts per <b>usuaris administradors</b>.
 SystemInfoDesc=La informació del sistema és informació tècnica accessible només en només lectura als administradors.
 SystemAreaForAdminOnly=Aquesta àrea només està disponible per als usuaris administradors. Els permisos d'usuari de Dolibarr no poden canviar aquesta restricció.
-CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
+CompanyFundationDesc=Editeu la informació de la vostra empresa / organització. Feu clic al botó "%s" al final de la pàgina quan hagi acabat.
 AccountantDesc=Si teniu un comptable extern, podeu editar aquí la seva informació.
 AccountantFileNumber=Número de fila
 DisplayDesc=Els paràmetres que afecten l'aspecte i el comportament de Dolibarr es poden modificar aquí.
@@ -1272,8 +1273,9 @@ RuleForGeneratedPasswords=Regles per generar i validar contrasenyes
 DisableForgetPasswordLinkOnLogonPage=No mostri l'enllaç "Contrasenya oblidada" a la pàgina d'inici de sessió
 UsersSetup=Configuració del mòdul usuaris
 UserMailRequired=Es necessita un correu electrònic per crear un nou usuari
-UsersDocModules=Document templates for documents generated from user record
-GroupsDocModules=Document templates for documents generated from a group record
+UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
+UsersDocModules=Plantilles de documents per a documents generats a partir d'un registre d'usuari
+GroupsDocModules=Plantilles de documents per a documents generats a partir d’un registre de grup
 ##### HRM setup #####
 HRMSetup=Configuració de mòdul de gestió de recursos humans
 ##### Company setup #####
@@ -1305,7 +1307,7 @@ BillsPDFModules=Models de documents de factures
 BillsPDFModulesAccordindToInvoiceType=Model de documents de factures d'acord amb el tipus de factura
 PaymentsPDFModules=Models de documents de pagament
 ForceInvoiceDate=Forçar la data de factura a la data de validació
-SuggestedPaymentModesIfNotDefinedInInvoice=Suggested payments mode on invoice by default if not defined on the invoice
+SuggestedPaymentModesIfNotDefinedInInvoice=Mode de pagament per defecte suggerit per a la factura, quan no estigui definit a la factura
 SuggestPaymentByRIBOnAccount=Suggereix el pagament per retirada per compte
 SuggestPaymentByChequeToAddress=Suggereix pagament mitjançant xec a
 FreeLegalTextOnInvoices=Text lliure en factures
@@ -1317,7 +1319,7 @@ SupplierPaymentSetup=Configuració de pagaments a proveïdors
 PropalSetup=Configuració del mòdul Pressupostos
 ProposalsNumberingModules=Models de numeració de pressupostos
 ProposalsPDFModules=Models de documents de pressupostos
-SuggestedPaymentModesIfNotDefinedInProposal=Suggested payments mode on proposal by default if not defined on the proposal
+SuggestedPaymentModesIfNotDefinedInProposal=Mode de pagament per defecte suggerit per al pressupost, quan no estigui definit al pressupost
 FreeLegalTextOnProposal=Text lliure en pressupostos
 WatermarkOnDraftProposal=Marca d'aigua en pressupostos esborrany (en cas d'estar buit)
 BANK_ASK_PAYMENT_BANK_DURING_PROPOSAL=Preguntar compte bancari del pressupost
@@ -1332,7 +1334,7 @@ WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER=Preguntar per el magatzem d'origen per a la
 ##### Suppliers Orders #####
 BANK_ASK_PAYMENT_BANK_DURING_SUPPLIER_ORDER=Demana el compte bancari de destí de la comanda de compra
 ##### Orders #####
-SuggestedPaymentModesIfNotDefinedInOrder=Suggested payments mode on sale order by default if not defined on the order
+SuggestedPaymentModesIfNotDefinedInOrder=Mode de pagament per defecte suggerit per a la comanda de venda, quan no estigui definit a la comanda de venda
 OrdersSetup=Configuració de gestió d'ordres de vendes
 OrdersNumberingModules=Models de numeració de comandes
 OrdersModelModule=Models de documents de comandes
@@ -1731,7 +1733,7 @@ MultiCompanySetup=Configuració del mòdul Multi-empresa
 ##### Suppliers #####
 SuppliersSetup=Configuració del mòdul de Proveïdor
 SuppliersCommandModel=Plantilla completa de comanda de compra
-SuppliersCommandModelMuscadet=Plantilla completa de comanda de compra 
+SuppliersCommandModelMuscadet=Plantilla completa de comanda de compra (antiga implementació de la plantilla cornas)
 SuppliersInvoiceModel=Plantilla completa de factura de proveïdor
 SuppliersInvoiceNumberingModel=Models de numeració de factures de proveïdor
 IfSetToYesDontForgetPermission=Si establiu un valor vàlid, no us oblideu d'establir els permisos necessaris als grups o persones habilitades per la segona aprovació
@@ -1803,6 +1805,7 @@ TopMenuDisableImages=Oculta les imatges en el menú superior
 LeftMenuBackgroundColor=Color de fons pel menú de l'esquerra
 BackgroundTableTitleColor=Color de fons per línies de títol en taules
 BackgroundTableTitleTextColor=Color del text per a la línia del títol de la taula
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=Color de fons per les línies senars de les taules
 BackgroundTableLineEvenColor=Color de fons per les línies parells de les taules
 MinimumNoticePeriod=Període mínim de notificació (La solicitud de dia lliure serà donada abans d'aquest període)
@@ -1936,7 +1939,7 @@ WithoutDolTrackingID=No s'ha trobat la referència de Dolibarr a l'ID del missat
 FormatZip=Codi postal
 MainMenuCode=Codi d'entrada del menú (menu principal)
 ECMAutoTree=Mostra l'arbre ECM automàtic
-OperationParamDesc=Definiu els valors a utilitzar per a l’acció o com extreure valors. Per exemple: <br> objproperty1 = SET: abc <br> objproperty1 = SET: un valor amb substitució de __objpropietat1__ <br> objproperty3 = SETIFEMPTY: abc <br> objproperty4 = EXTRACTE: HEADER: X-Myheaderkey. * [^ s] + (. *) <br> options_myextrafield = EXTRACTE: ASSIGNATURA: ([^ s] *) <br> object.objproperty5 = EXTRACTE: COS: el nom de la meva empresa és ([^ s] *) <br><br> Utilitza un; char com a separador per extreure o establir diverses propietats.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Horari d'obertura
 OpeningHoursDesc=Introduïu aquí l'horari habitual d'obertura de la vostra empresa.
 ResourceSetup=Configuració del mòdul de recursos
@@ -1970,7 +1973,7 @@ WarningValueHigherSlowsDramaticalyOutput=Advertència, els valors més alts fren
 ModuleActivated=El mòdul %s està activat i alenteix la interfície
 EXPORTS_SHARE_MODELS=Els models d’exportació es comparteixen amb tothom
 ExportSetup=Configuració del mòdul Export
-ImportSetup=Setup of module Import
+ImportSetup=Configuració del mòdul Import
 InstanceUniqueID=ID únic de la instància
 SmallerThan=Menor que
 LargerThan=Major que
@@ -1991,7 +1994,9 @@ MakeAnonymousPing=Creeu un ping &quot;+1&quot; anònim al servidor de bases Doli
 FeatureNotAvailableWithReceptionModule=Funció no disponible quan el mòdul Recepció està habilitat
 EmailTemplate=Plantilla per correu electrònic
 EMailsWillHaveMessageID=Els correus electrònics tindran una etiqueta "Referències" que coincideix amb aquesta sintaxi
-PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated in 2 different languages in the same generated PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
+PDF_USE_ALSO_LANGUAGE_CODE=Si voleu tenir alguns textos del vostre PDF duplicats en 2 idiomes diferents en el mateix PDF generat, heu d’establir aquí aquest segon idioma a fi que el PDF generat contingui 2 idiomes diferents a la mateixa pàgina, el triat per generar el PDF i aquest segon ( només algunes plantilles PDF suporten això). Manteniu-lo buit per a 1 idioma per PDF.
 FafaIconSocialNetworksDesc=Introduïu aquí el codi de la icona de FontAwesome. Si no sabeu què és FontAwesome, podeu utilitzar el llibre genèric d’adreces.
-RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
-JumpToBoxes=Jump to Setup -> Widgets
+RssNote=Nota: Cada definició de canal RSS proporciona un giny que heu d'habilitar per tenir-lo disponible al tauler de control
+JumpToBoxes=Vés a Configuració -> Ginys
+MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
+MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.

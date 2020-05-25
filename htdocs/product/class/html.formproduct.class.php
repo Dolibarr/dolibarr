@@ -254,8 +254,10 @@ class FormProduct
 			$out .= $comboenhancement;
 		}
 
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
-		if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
+		if (strpos($htmlname, 'search_') !== 0) {
+			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
+		}
 
 		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
 		if ($empty) $out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';

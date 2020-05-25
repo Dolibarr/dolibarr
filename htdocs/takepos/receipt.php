@@ -25,7 +25,7 @@
  *	\brief      Page to show a receipt.
  */
 
-require '../main.inc.php'; // Load $user and permissions
+if (!isset($action)) require '../main.inc.php'; // If this file is called from send.php avoid load again
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk", "companies"));

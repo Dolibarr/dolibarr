@@ -297,7 +297,15 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($massaction == 'withdrawrequest')
+if ($massaction == 'makepayment'){
+	$arrayofselected=is_array($toselect)?$toselect:array();
+
+	$loc = dol_buildpath('/compta/paiement.php', 2).'?action=create&facids='.implode(',', $arrayofselected);
+
+	header('Location: '.$loc);
+	exit;
+}
+elseif ($massaction == 'withdrawrequest')
 {
 	$langs->load("withdrawals");
 
@@ -657,6 +665,7 @@ if ($resql)
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 		'presend'=>$langs->trans("SendByMail"),
+		//'makepayment'=>$langs->trans("InvoicePaymentsLimits"),   TODO Blank page when using this
 	);
 	if ($conf->prelevement->enabled) {
         	$langs->load("withdrawals");
@@ -691,7 +700,7 @@ if ($resql)
 	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($langs->trans('BillsCustomers').' '.($socid ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton, '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans('BillsCustomers').' '.($socid ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendBillRef";
 	$modelmail = "facture_send";
@@ -1530,7 +1539,7 @@ if ($resql)
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation

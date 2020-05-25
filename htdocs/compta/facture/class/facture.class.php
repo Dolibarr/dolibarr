@@ -1178,6 +1178,30 @@ class Facture extends CommonInvoice
 			    unset($object->lines[$i]);
 			    unset($object->products[$i]); // Tant que products encore utilise
 			}
+						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
+			// If it's a service with start and end dates
+			if (!empty($line->date_start) && !empty($line->date_end) ) {
+				// Get the dates
+				$start = dol_getdate($line->date_start);
+				$end = dol_getdate($line->date_end);
+
+				// Get the first and last day of the month
+				$first = dol_get_first_day($start['year'], $start['mon']);
+				$last = dol_get_first_day($end['year'], $end['mon']);
+
+				// Get diff betweend start/end of month and previously filled
+				$diffFirst = num_between_day($first, dol_mktime($start['hours'], $start['minutes'], $start['seconds'], $start['mon'], $start['mday'], $start['year'], 'user'));
+				$diffLast = num_between_day(dol_mktime($end['hours'], $end['minutes'], $end['seconds'], $end['mon'], $end['mday'], $end['year'], 'user'), $last);
+
+				// If there is <= 1d (or 2?) of start/or/end of month
+				if ($diffFirst <= 2 && $diffLast <= 2) {
+					$nextMonth = dol_get_next_month($end['mon'], $end['year']);
+					$newFirst = dol_get_first_day($nextMonth['year'], $nextMonth['month']);
+					$newLast = dol_get_last_day($nextMonth['year'], $nextMonth['month']);
+					$object->lines[$i]->date_start = $newFirst;
+					$object->lines[$i]->date_end = $newLast;
+				}
+			}
 		}
 
 		// Create clone
@@ -1394,11 +1418,11 @@ class Facture extends CommonInvoice
         $label = '';
 
         if ($user->rights->facture->lire) {
-            $label = '<u>'.$langs->trans("ShowInvoice").'</u>';
-            if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceReplace").'</u>';
-            if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceAvoir").'</u>';
-            if ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceDeposit").'</u>';
-            if ($this->type == self::TYPE_SITUATION)   $label = '<u>'.$langs->transnoentitiesnoconv("ShowInvoiceSituation").'</u>';
+            $label = '<u>'.$langs->trans("Invoice").'</u>';
+            if ($this->type == self::TYPE_REPLACEMENT) $label = '<u>'.$langs->transnoentitiesnoconv("ReplacementInvoice").'</u>';
+            if ($this->type == self::TYPE_CREDIT_NOTE) $label = '<u>'.$langs->transnoentitiesnoconv("CreditNote").'</u>';
+            if ($this->type == self::TYPE_DEPOSIT)     $label = '<u>'.$langs->transnoentitiesnoconv("Deposit").'</u>';
+            if ($this->type == self::TYPE_SITUATION)   $label = '<u>'.$langs->transnoentitiesnoconv("InvoiceSituation").'</u>';
             if (!empty($this->ref))
                 $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
             if (!empty($this->ref_client))
@@ -1426,7 +1450,7 @@ class Facture extends CommonInvoice
 		{
 		    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		    {
-		        $label = $langs->trans("ShowInvoice");
+		        $label = $langs->trans("Invoice");
 		        $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 		    }
 		    $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -2186,13 +2210,16 @@ class Facture extends CommonInvoice
 				}
 			}
 
-
+            // Invoice line extrafileds
+			$main = MAIN_DB_PREFIX.'facturedet';
+			$ef = $main."_extrafields";
+			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 
-			if ($this->db->query($sql) && $this->delete_linked_contact())
+			if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact())
 			{
 				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
 
@@ -5477,6 +5504,13 @@ class FactureLigne extends CommonInvoiceLine
 		}
 		// End call triggers
 
+        // extrafields
+        $result = $this->deleteExtraFields();
+        if ($result < 0)
+        {
+            $this->db->rollback();
+            return -1;
+        }
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
@@ -5569,7 +5603,7 @@ class FactureLigne extends CommonInvoiceLine
 				    $sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
 				    $sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
 				    $sql .= ' WHERE fd.fk_prev_id ='.$this->fk_prev_id;
-				    $sql .= ' AND f.situation_cycle_ref = '.$tmpinvoice->situation_cycle_ref; // Prevent cycle outed
+				    $sql .= ' AND f.situation_cycle_ref = '.$invoicecache[$invoiceid]->situation_cycle_ref; // Prevent cycle outed
 				    $sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
 
 				    $res = $this->db->query($sql);
@@ -5577,6 +5611,8 @@ class FactureLigne extends CommonInvoiceLine
 				        while ($obj = $this->db->fetch_object($res)) {
 				            $returnPercent = $returnPercent + floatval($obj->situation_percent);
 				        }
+				    } else {
+				    	dol_print_error($this->db);
 				    }
 				}
 

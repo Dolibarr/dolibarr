@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/projet/activity/index.php
  *	\ingroup    projet
- *	\brief      Page activite perso du module projet
+ *	\brief      Page on activity of projects
  */
 
 require "../../main.inc.php";
@@ -92,7 +92,7 @@ else
 	else $tooltiphelp = $langs->trans("TasksPublicDesc");
 }
 
-print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
+print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'projecttask', 0, $morehtml);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 

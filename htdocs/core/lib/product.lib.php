@@ -41,7 +41,7 @@ function product_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/product/card.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("ProductOrService");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -55,7 +55,7 @@ function product_prepare_head($object)
 
 	if (!empty($object->status_buy) || (!empty($conf->margin->enabled) && !empty($object->status)))   // If margin is on and product on sell, we may need the cost price even if product os not on purchase
 	{
-    	if ((!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    	if (((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
     	|| (!empty($conf->margin->enabled) && $user->rights->margin->liretous)
     	)
     	{
@@ -216,7 +216,7 @@ function productlot_prepare_head($object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT."/product/stock/productlot_card.php?id=".$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("Lot");
     $head[$h][2] = 'card';
 	$h++;
 
@@ -353,6 +353,24 @@ function show_stats_for_company($product, $socid)
 	print '<td class="right" width="25%">'.$langs->trans("TotalQuantity").'</td>';
 	print '</tr>';
 
+	// MO
+	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
+	{
+		$nblines++;
+		//$ret = $product->load_stats_mo($socid);
+		if ($ret < 0) dol_print_error($db);
+		$langs->load("orders");
+		print '<tr><td>';
+		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
+		print '</td><td class="right">';
+		print $product->stats_mo['suppliers'];
+		print '</td><td class="right">';
+		print $product->stats_mo['nb'];
+		print '</td><td class="right">';
+		print $product->stats_mo['qty'];
+		print '</td>';
+		print '</tr>';
+	}
 	// Customer proposals
 	if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 	{
@@ -379,7 +397,7 @@ function show_stats_for_company($product, $socid)
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("propal");
 		print '<tr><td>';
-		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'propal').' '.$langs->trans("SupplierProposals").'</a>';
+		print '<a href="supplier_proposal.php?id='.$product->id.'">'.img_object('', 'supplier_proposal').' '.$langs->trans("SupplierProposals").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_proposal_supplier['suppliers'];
 		print '</td><td class="right">';
@@ -408,38 +426,20 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier orders
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
 	{
 		$nblines++;
 		$ret = $product->load_stats_commande_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("orders");
 		print '<tr><td>';
-		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'order').' '.$langs->trans("SuppliersOrders").'</a>';
+		print '<a href="commande_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_order').' '.$langs->trans("SuppliersOrders").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['suppliers'];
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['nb'];
 		print '</td><td class="right">';
 		print $product->stats_commande_fournisseur['qty'];
-		print '</td>';
-		print '</tr>';
-	}
-	// MO
-	if (!empty($conf->mrp->enabled) && $user->rights->mrp->read)
-	{
-		$nblines++;
-		//$ret = $product->load_stats_mo($socid);
-		if ($ret < 0) dol_print_error($db);
-		$langs->load("orders");
-		print '<tr><td>';
-		print '<a href="mo.php?id='.$product->id.'">'.img_object('', 'mrp').' '.$langs->trans("MO").'</a>';
-		print '</td><td class="right">';
-		print $product->stats_mo['suppliers'];
-		print '</td><td class="right">';
-		print $product->stats_mo['nb'];
-		print '</td><td class="right">';
-		print $product->stats_mo['qty'];
 		print '</td>';
 		print '</tr>';
 	}
@@ -462,14 +462,14 @@ function show_stats_for_company($product, $socid)
 		print '</tr>';
 	}
 	// Supplier invoices
-	if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+	if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 	{
 		$nblines++;
 		$ret = $product->load_stats_facture_fournisseur($socid);
 		if ($ret < 0) dol_print_error($db);
 		$langs->load("bills");
 		print '<tr><td>';
-		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'bill').' '.$langs->trans("SuppliersInvoices").'</a>';
+		print '<a href="facture_fournisseur.php?id='.$product->id.'">'.img_object('', 'supplier_invoice').' '.$langs->trans("SuppliersInvoices").'</a>';
 		print '</td><td class="right">';
 		print $product->stats_facture_fournisseur['suppliers'];
 		print '</td><td class="right">';

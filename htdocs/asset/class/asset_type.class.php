@@ -202,7 +202,7 @@ class AssetType extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (! $error)
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)

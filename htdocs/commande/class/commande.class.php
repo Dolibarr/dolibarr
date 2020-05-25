@@ -2018,7 +2018,7 @@ class Commande extends CommonOrder
 	/**
 	 *	Load array lines
 	 *
-	 *	@param		int		$only_product	Return only physical products
+	 *	@param		int		$only_product	Return only physical products, not services
 	 *	@param		int		$loadalsotranslation	Return translation for products
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
@@ -3407,6 +3407,19 @@ class Commande extends CommonOrder
 		{
 			$this->errors[] = $langs->trans('SomeShipmentExists');
 			$error++;
+		}
+
+		if (!$error)
+		{
+			// Delete extrafields of order details
+                        $main = MAIN_DB_PREFIX.'commandedet';
+                        $ef = $main."_extrafields";
+                        $sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_commande = ".$this->id.")";
+			if (!$this->db->query($sql))
+			{
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
 		}
 
 		if (!$error)

@@ -556,9 +556,15 @@ foreach ($accounts as $key=>$type)
     }
 
     // Extra fields
+	if (is_array($objecttmp->array_options)) {
+		$obj = new stdClass();
+		foreach ($objecttmp->array_options as $k => $v) {
+			$obj->$k = $v;
+		}
+	}
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
-    $parameters = array('arrayfields'=>$arrayfields);
+    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
     $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objecttmp); // Note that $action and $objecttmpect may have been modified by hook
     print $hookmanager->resPrint;
 	// Date creation

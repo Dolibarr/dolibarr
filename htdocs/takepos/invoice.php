@@ -32,7 +32,7 @@ if (!defined('NOREQUIREMENU')) { define('NOREQUIREMENU', '1'); }
 if (!defined('NOREQUIREHTML')) { define('NOREQUIREHTML', '1'); }
 if (!defined('NOREQUIREAJAX')) { define('NOREQUIREAJAX', '1'); }
 
-require '../main.inc.php';
+if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -47,13 +47,11 @@ $idproduct = GETPOST('idproduct', 'int');
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 $placeid = 0; // $placeid is ID of invoice
 
-if (empty($user->rights->takepos->run)) {
+if (empty($user->rights->takepos->run) && !defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	accessforbidden();
 }
 
-
-
-if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone')
+if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 'phone') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))
 {
 	// DIRECT LINK TO THIS PAGE FROM MOBILE AND NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "")
@@ -72,10 +70,12 @@ if ($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout == 
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+	$arrayofcss = array(
+	'/takepos/css/pos.css.php',
+	'/takepos/js/jquery.colorbox-min.js'
+	);
+	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-	print '<link rel="stylesheet" href="css/pos.css.php">
-	<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>';
 }
 
 /**
@@ -597,7 +597,7 @@ if ($action == "valid" || $action == "history")
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     }
-    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+    if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
     {
     	$sectionwithinvoicelink .= ' <button id="buttonsend" type="button" onclick="SendTicket('.$placeid.');">'.$langs->trans('SendTicket').'</button>';
     }
@@ -626,6 +626,12 @@ $(document).ready(function() {
         if (selectedline==this.id) return; // If is already selected
         else selectedline=this.id;
         selectedtext=$('#'+selectedline).find("td:first").html();
+		<?php
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			print '$("#phonediv1").load("auto_order.php?action=editline&placeid="+placeid+"&selectedline="+selectedline, function() {
+			});';
+		}
+		?>
     });
 
     /* Autoselect the line */
@@ -690,7 +696,7 @@ if ($action == "search") {
 function SendTicket(id)
 {
     console.log("Open box to select the Print/Send form");
-    $.colorbox({href:"send.php?facid="+id, width:"90%", height:"50%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
+    $.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
 }
 
 function Print(id){
@@ -744,7 +750,7 @@ $( document ).ready(function() {
 
     $("#customerandsales").html('');
 
-	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth100" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
+	$("#customerandsales").append('<a class="valignmiddle tdoverflowmax100 minwidth75" id="customer" onclick="Customer();" title="<?php print dol_escape_js($s); ?>"><span class="fas fa-building paddingrightonly"></span><?php print dol_escape_js($s); ?></a>');
 
 	<?php
 	$sql = "SELECT rowid, datec, ref FROM ".MAIN_DB_PREFIX."facture";
@@ -873,6 +879,7 @@ if ($_SESSION["basiclayout"] != 1)
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	print '<td class="linecolht right nowraponall">'.$langs->trans('TotalTTCShort').'</td>';
 }
+else print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 print "</tr>\n";
 
 
@@ -885,12 +892,11 @@ if ($_SESSION["basiclayout"] == 1)
         $categories = $categorie->get_full_arbo('product');
 		$htmlforlines = '';
         foreach ($categories as $row) {
-			$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
+			$htmlforlines .= '<div class="leftcat';
 			$htmlforlines .= '" onclick="LoadProducts('.$row['id'].');">';
-			$htmlforlines .= '<td class="left">';
+			$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=cat&query=cat&id='.$row['id'].'"><br>';
 			$htmlforlines .= $row['label'];
-			$htmlforlines .= '</td>';
-			$htmlforlines .= '</tr>'."\n";
+			$htmlforlines .= '</div>'."\n";
 		}
 		$htmlforlines .= '</table>';
 		$htmlforlines .= '</table>';
@@ -906,12 +912,11 @@ if ($_SESSION["basiclayout"] == 1)
 		$prods = $object->getObjectsInCateg("product");
 		$htmlforlines = '';
 		foreach ($prods as $row) {
-			$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
+			$htmlforlines .= '<div class="leftcat';
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
-			$htmlforlines .= '<td class="left">';
-			$htmlforlines .= $row->label;
-			$htmlforlines .= '</td>';
-			$htmlforlines .= '</tr>'."\n";
+			$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
+			$htmlforlines .= $row->label.''.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+			$htmlforlines .= '</div>'."\n";
 		}
 		$htmlforlines .= '</table>';
 		print $htmlforlines;
@@ -987,6 +992,7 @@ if ($placeid > 0)
             }
             $htmlforlines .= '" id="'.$line->id.'">';
             $htmlforlines .= '<td class="left">';
+			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '<span class="phoneqty">'.$line->qty."</span> x ";
             //if ($line->product_label) $htmlforlines.= '<b>'.$line->product_label.'</b>';
             if (isset($line->product_type))
             {
@@ -1021,7 +1027,8 @@ if ($placeid > 0)
 	            }
             }
             if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
-            if ($_SESSION["basiclayout"] != 1)
+            if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty-1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty+1).');" class="publicphonebutton2 phonegreen">+</button>';
+			if ($_SESSION["basiclayout"] != 1)
 			{
 				$moreinfo = '';
 				$moreinfo .= $langs->transcountry("TotalHT", $mysoc->country_code).': '.price($line->total_ht);

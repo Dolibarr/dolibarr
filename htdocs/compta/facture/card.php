@@ -1025,7 +1025,7 @@ if (empty($reshook))
 		// Replacement invoice
 		if ($_POST['type'] == Facture::TYPE_REPLACEMENT)
 		{
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1086,7 +1086,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1269,7 +1269,7 @@ if (empty($reshook))
 		// Standard invoice or Deposit invoice, created from a Predefined template invoice
 		if (($_POST['type'] == Facture::TYPE_STANDARD || $_POST['type'] == Facture::TYPE_DEPOSIT) && GETPOST('fac_rec', 'int') > 0)
 		{
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1320,7 +1320,7 @@ if (empty($reshook))
 				$action = 'create';
 			}
 
-			$dateinvoice = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$dateinvoice = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($dateinvoice))
 			{
 				$error++;
@@ -1745,7 +1745,7 @@ if (empty($reshook))
 		// Situation invoices
 		if (GETPOST('type') == Facture::TYPE_SITUATION && (!empty($_POST['situations'])))
 		{
-			$datefacture = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$datefacture = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 			if (empty($datefacture)) {
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date"));
@@ -1768,6 +1768,8 @@ if (empty($reshook))
 
 				if (!empty($origin) && !empty($originid))
 				{
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+
 					$object->origin = $origin;
 					$object->origin_id = $originid;
 
@@ -1799,6 +1801,17 @@ if (empty($reshook))
 						$line->fk_prev_id = $line->id;
 						$line->fetch_optionals();
 						$line->situation_percent = $line->get_prev_progress($object->id); // get good progress including credit note
+
+						// The $line->situation_percent has been modified, so we must recalculate all amounts
+						$tabprice = calcul_price_total($line->qty, $line->subprice, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 0, 'HT', 0, $line->product_type, $mysoc, '', $line->situation_percent);
+						$line->total_ht = $tabprice[0];
+						$line->total_tva = $tabprice[1];
+						$line->total_ttc = $tabprice[2];
+						$line->total_localtax1 = $tabprice[9];
+						$line->total_localtax2 = $tabprice[10];
+						$line->multicurrency_total_ht  = $tabprice[16];
+						$line->multicurrency_total_tva = $tabprice[17];
+						$line->multicurrency_total_ttc = $tabprice[18];
 
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
 						if ($line->fk_remise_except)
@@ -1844,6 +1857,7 @@ if (empty($reshook))
 				{
 					$nextSituationInvoice = new Facture($db);
 					$nextSituationInvoice->fetch($id);
+
 					// create extrafields with data from create form
 					$extrafields->fetch_name_optionals_label($nextSituationInvoice->table_element);
 					$ret = $extrafields->setOptionalsFromPost(null, $nextSituationInvoice);
@@ -2770,7 +2784,7 @@ if ($action == 'create')
 	$facturestatic = new Facture($db);
 	$extrafields->fetch_name_optionals_label($facturestatic->table_element);
 
-	print load_fiche_titre($langs->trans('NewBill'), '', 'invoicing');
+	print load_fiche_titre($langs->trans('NewBill'), '', 'bill');
 
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
@@ -2891,6 +2905,18 @@ if ($action == 'create')
 		$dateinvoice = (empty($dateinvoice) ? (empty($conf->global->MAIN_AUTOFILL_DATE) ?-1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
+	}
+
+	// when payment condition is empty (means not override by payment condition form a other object, like third-party), try to use default value
+	if(empty($cond_reglement_id))
+	{
+		$cond_reglement_id = GETPOST("cond_reglement_id");
+	}
+
+	// when payment mode is empty (means not override by payment mode form a other object, like third-party), try to use default value
+	if(empty($mode_reglement_id))
+	{
+		$mode_reglement_id = GETPOST("mode_reglement_id");
 	}
 
 	if (!empty($soc->id)) $absolute_discount = $soc->getAvailableDiscounts();
@@ -3120,10 +3146,10 @@ if ($action == 'create')
 			print '</div></div>';
 
 			// Next situation invoice
-			$opt = $form->selectSituationInvoices(GETPOST('originid'), $socid);
+			$opt = $form->selectSituationInvoices(GETPOST('originid', 'int'), $socid);
 
 			print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
-			$tmp = '<input type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOST('originid') ? ' checked' : '');
+			$tmp = '<input type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOST('originid', 'int') ? ' checked' : '');
 			if ($opt == ('<option value ="0" selected>'.$langs->trans('NoSituations').'</option>') || (GETPOST('origin') && GETPOST('origin') != 'facture' && GETPOST('origin') != 'commande'))
 				$tmp .= ' disabled';
 			$tmp .= '> ';
@@ -4619,7 +4645,7 @@ elseif ($id > 0 || !empty($ref))
 
 	        $current_situation_counter = array();
 	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-	            $totalpaye_prev = $prev_invoice->getSommePaiement();
+	            $tmptotalpaidforthisinvoice = $prev_invoice->getSommePaiement();
 	            $total_prev_ht += $prev_invoice->total_ht;
 	            $total_prev_ttc += $prev_invoice->total_ttc;
 	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE) ?-1 : 1) * $prev_invoice->situation_counter;
@@ -4630,7 +4656,7 @@ elseif ($id > 0 || !empty($ref))
 	            if (!empty($conf->banque->enabled)) print '<td class="right"></td>';
 	            print '<td class="right">'.price($prev_invoice->total_ht).'</td>';
 	            print '<td class="right">'.price($prev_invoice->total_ttc).'</td>';
-	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $totalpaye_prev).'</td>';
+	            print '<td class="right">'.$prev_invoice->getLibStatut(3, $tmptotalpaidforthisinvoice).'</td>';
 	            print '</tr>';
 	        }
 	    }
@@ -5268,7 +5294,7 @@ elseif ($id > 0 || !empty($ref))
 			{
 				if (!$objectidnext)
 				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').''.$object->id.'&amp;action=create&amp;type=2'.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?socid='.$object->socid.'&amp;fac_avoir='.$object->id.'&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').''.($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">'.$langs->trans("CreateCreditNote").'</a>';
 				}
 			}
 

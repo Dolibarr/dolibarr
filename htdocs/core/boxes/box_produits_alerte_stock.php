@@ -88,7 +88,9 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
+			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
+			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
 			$sql .= " SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
 			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
@@ -103,8 +105,10 @@ class box_produits_alerte_stock extends ModeleBoxes
     		    $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
     		    $sql .= $hookmanager->resPrint;
     		}
-		    $sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
-			$sql .= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
+		    $sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
+		    $sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+		    $sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export";
+		    $sql .= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
 			$sql .= $this->db->order('p.seuil_stock_alerte', 'DESC');
 			$sql .= $this->db->plimit($max, 0);
 
@@ -142,6 +146,15 @@ class box_produits_alerte_stock extends ModeleBoxes
                     $productstatic->type = $objp->fk_product_type;
                     $productstatic->label = $objp->label;
 					$productstatic->entity = $objp->entity;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',

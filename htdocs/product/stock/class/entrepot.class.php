@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,11 @@ class Entrepot extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'stock';
-	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+    /**
+     * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string	Label
@@ -112,7 +116,7 @@ class Entrepot extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
@@ -184,11 +188,10 @@ class Entrepot extends CommonObject
 
 		$error = 0;
 
-		if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
+		$this->label = trim(!empty($this->label) ? $this->label : $this->libelle);
 
-		$this->label = trim($this->label);
-		if ($this->label == '')
-		{
+		// Error if label not defined
+		if ($this->label == '') {
 			$this->error = "ErrorFieldRequired";
 			return 0;
 		}
@@ -272,7 +275,7 @@ class Entrepot extends CommonObject
         $error = 0;
 
 	    if (empty($id)) $id = $this->id;
-	    if (empty($this->label)) $this->label = $this->libelle;		// For backward compatibility
+	    if (empty($this->label)) $this->label = $this->libelle; // For backward compatibility
 
 		// Check if new parent is already a child of current warehouse
 		if (!empty($this->fk_parent))
@@ -286,7 +289,8 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		$this->label = trim($this->label);
+		$this->label = trim(!empty($this->label) ? $this->label : $this->libelle);
+
 		$this->description = trim($this->description);
 
 		$this->lieu = trim($this->lieu);
@@ -709,7 +713,7 @@ class Entrepot extends CommonObject
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $showfullpath = 0, $notooltip = 0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 		$langs->load("stocks");
 
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
@@ -745,8 +749,18 @@ class Entrepot extends CommonObject
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-        if ($withpicto != 2) $result .= ($showfullpath ? $this->get_full_arbo() : (empty($this->label) ? $this->libelle : $this->label));
+        if ($withpicto != 2) $result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label));
         $result .= $linkend;
+
+        global $action;
+        $hookmanager->initHooks(array('warehousedao'));
+        $parameters = array('id'=>$this->id, 'getnomurl'=>$result, 'withpicto' => $withpicto, 'option' => $option, 'showfullpath' => $showfullpath, 'notooltip'=> $notooltip);
+        $reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) {
+            $result = $hookmanager->resPrint;
+        } else {
+            $result .= $hookmanager->resPrint;
+        }
 
 		return $result;
 	}

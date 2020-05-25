@@ -71,6 +71,9 @@ class Product extends CommonObject
      */
     public $ismultientitymanaged = 1;
 
+
+    public $picto = 'product';
+
     /**
      * {@inheritdoc}
      */
@@ -815,7 +818,7 @@ class Product extends CommonObject
     }
 
     /**
-     *    Update a record into database.
+     *  Update a record into database.
      *  If batch flag is set to on, we create records into llx_product_batch
      *
      * @param  int     $id          Id of product
@@ -1012,7 +1015,7 @@ class Product extends CommonObject
             $sql .= ", volume = ".($this->volume != '' ? "'".$this->db->escape($this->volume)."'" : 'null');
             $sql .= ", volume_units = ".($this->volume_units != '' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
             $sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
-            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
+            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (int) $this->seuil_stock_alerte : 'null');
             $sql .= ", description = '".$this->db->escape($this->description)."'";
             $sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
             $sql .= ", customcode = '".$this->db->escape($this->customcode)."'";
@@ -1440,14 +1443,14 @@ class Product extends CommonObject
         }
     }
 
-    /*
-    * Sets an accountancy code for a product.
-    * Also calls PRODUCT_MODIFY trigger when modified
-    *
-    * @param string $type It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
-    * @param string $value Accountancy code
-    * @return int <0 KO >0 OK
-    */
+    /**
+     * Sets an accountancy code for a product.
+     * Also calls PRODUCT_MODIFY trigger when modified
+     *
+     * @param 	string $type 	It can be 'buy', 'buy_intra', 'buy_export', 'sell', 'sell_intra' or 'sell_export'
+     * @param 	string $value 	Accountancy code
+     * @return 	int 			<0 KO >0 OK
+     */
     public function setAccountancyCode($type, $value)
     {
         global $user, $langs, $conf;
@@ -4734,7 +4737,7 @@ class Product extends CommonObject
             $op[1] = "-".trim($nbpiece);
 
             $movementstock = new MouvementStock($this->db);
-            $movementstock->setOrigin($origin_element, $origin_id);	// Set ->origin and ->origin->id
+            $movementstock->setOrigin($origin_element, $origin_id); // Set ->origin and ->origin->id
             $result = $movementstock->_create($user, $this->id, $id_entrepot, $op[$movement], $movement, $price, $label, $inventorycode);
 
             if ($result >= 0) {
@@ -4918,7 +4921,7 @@ class Product extends CommonObject
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_sending_client = $this->stats_expedition['qty'];
 		}
-		if (!empty($conf->fournisseur->enabled))
+		if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled))
 		{
 		    $filterStatus = '1,2,3,4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
@@ -4926,7 +4929,7 @@ class Product extends CommonObject
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_commande_fournisseur = $this->stats_commande_fournisseur['qty'];
 		}
-		if (!empty($conf->fournisseur->enabled) && empty($conf->reception->enabled))
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
 		{
             $filterStatus = '4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
@@ -4934,7 +4937,7 @@ class Product extends CommonObject
 			if ($result < 0) dol_print_error($this->db, $this->error);
 			$stock_reception_fournisseur = $this->stats_reception['qty'];
 		}
-		if (!empty($conf->fournisseur->enabled) && !empty($conf->reception->enabled))
+		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && empty($conf->reception->enabled))
 		{
             $filterStatus = '4';
             if (isset($includedraftpoforvirtual)) $filterStatus = '0,'.$filterStatus;
@@ -5384,11 +5387,11 @@ class Product extends CommonObject
             $label_type = 'short_label';
         }
 
-        $sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+        $sql = 'select '.$label_type.', code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
         $resql = $this->db->query($sql);
         if ($resql && $this->db->num_rows($resql) > 0) {
             $res = $this->db->fetch_array($resql);
-            $label = $res[$label_type];
+            $label = ($label_type == 'short' ? $res[$label_type] : 'unit'.$res['code']);
             $this->db->free($resql);
             return $label;
         }
@@ -5631,4 +5634,15 @@ class Product extends CommonObject
             dol_print_error($this->db);
         }
     }
+}
+
+
+
+/**
+ * Class to manage products or services.
+ * Do not use 'Service' as class name since it is already used by APIs.
+ */
+class ProductService extends Product
+{
+	public $picto = 'service';
 }

@@ -219,10 +219,14 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 {
 	global $db, $langs, $conf, $user;
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
+	global $website;
+	global $includehtmlcontentopened;
 
 	$nbrep = 0;
 
-	dol_syslog("dolWebsiteOutput start (contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').')');
+	dol_syslog("dolWebsiteOutput start - contenttype=".$contenttype." containerid=".$containerid." USEDOLIBARREDITOR=".(defined('USEDOLIBARREDITOR') ? '1' : '')." USEDOLIBARRSERVER=".(defined('USEDOLIBARRSERVER') ? '1' : '').' includehtmlcontentopened='.$includehtmlcontentopened);
+
+	//print $containerid.' '.$content;
 
 	// Define $urlwithroot
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -241,8 +245,6 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 	}
 	elseif (defined('USEDOLIBARRSERVER'))	// REPLACEMENT OF LINKS When page called from Dolibarr server
 	{
-		global $website;
-
 		$content = str_replace('<link rel="stylesheet" href="/styles.css', '<link rel="stylesheet" href="styles.css', $content);
 
 		// Protect the link styles.css.php to any replacement that we make after.
@@ -259,6 +261,8 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		// Replace relative link /xxx.php#aaa or /xxx.php with dolibarr URL:  ...href="....php" (we discard param ?...)
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3"', $content, -1, $nbrep);
 		// Replace relative link /xxx.php?a=b&c=d#aaa or /xxx.php?a=b&c=d with dolibarr URL
+		// Warning: we may replace twice if href="..." was inside an include (dolWebsiteOutput called by include and the by final page), that's why
+		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
@@ -291,12 +295,19 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 		$content = str_replace('src="!~!~!~/viewimage.php', 'src="!~!~!~'.DOL_URL_ROOT.'/viewimage.php', $content);
 		$content = str_replace('href="!~!~!~/document.php', 'href="!~!~!~'.DOL_URL_ROOT.'/document.php', $content);
 
-		// Remove the protection tag !~!~!~
-		$content = str_replace('!~!~!~', '', $content);
+		// Remove the protection tag !~!~!~, but only if this is the parent page and not an include
+		if (empty($includehtmlcontentopened)) {
+			$content = str_replace('!~!~!~', '', $content);
+		}
 	}
 	else									// REPLACEMENT OF LINKS When page called from virtual host
 	{
 		$symlinktomediaexists = 1;
+		if ($website->virtualhost) {
+			$content = preg_replace('/^(<link[^>]*rel="canonical" href=")\//m', '\1'.$website->virtualhost.'/', $content, -1, $nbrep);
+		}
+		//print 'rrrrrrrrr'.$website->virtualhost.$content;
+
 
 		// Make a change into HTML code to allow to include images from medias directory correct with direct link for virtual server
 		// <img alt="" src="/dolibarr_dev/htdocs/viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
@@ -511,6 +522,9 @@ function includeContainer($containerref)
 		print 'ERROR: RECURSIVE CONTENT LEVEL. Depth of recursive call is more than the limit of '.$MAXLEVEL.".\n";
 		return;
 	}
+
+	//dol_syslog("Include container ".$containerref.' includehtmlcontentopened='.$includehtmlcontentopened);
+
 	// file_get_contents is not possible. We must execute code with include
 	//$content = file_get_contents($fullpathfile);
 	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
@@ -520,7 +534,7 @@ function includeContainer($containerref)
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
-	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
+	print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
 	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 	if (!$res)
@@ -533,14 +547,15 @@ function includeContainer($containerref)
 
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
+ * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software'...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
 function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
 
 	if ($type == 'software')
 	{
@@ -551,7 +566,7 @@ function getStructuredData($type, $data = array())
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/GameApplication",
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
 			"aggregateRating": {
 				"@type": "AggregateRating",
 				"ratingValue": "'.$data['ratingvalue'].'",
@@ -563,6 +578,44 @@ function getStructuredData($type, $data = array())
 				"priceCurrency": "'.($data['currency'] ? $data['currency'] : $conf->currency).'"
 			}
 		}'."\n";
+		$ret .= '</script>'."\n";
+	}
+	elseif ($type == 'organization')
+	{
+		$companyname = $mysoc->name;
+		$url = $mysoc->url;
+
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
+			"contactPoint": {
+				"@type": "ContactPoint",
+				"contactType": "Contact",
+				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+			},'."\n";
+		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
+			$ret .= '"sameAs": [';
+			$i = 0;
+			foreach($mysoc->socialnetworks as $key => $value) {
+				if ($key == 'linkedin') {
+					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
+				} elseif ($key == 'youtube') {
+					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+				}
+				else {
+					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
+				}
+				$i++;
+				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
+			}
+			$ret .= '],'."\n";
+		}
+		$ret .= "\n".'}'."\n";
 		$ret .= '</script>'."\n";
 	}
 	elseif ($type == 'blogpost')
@@ -581,7 +634,7 @@ function getStructuredData($type, $data = array())
 
 			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
 			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-			$image = str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$image = 'medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
 			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
@@ -598,6 +651,7 @@ function getStructuredData($type, $data = array())
 				  "image": [
 				    "'.dol_escape_json($image).'"
 				   ],
+				  "dateCreated": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
 				  "author": {
@@ -609,11 +663,22 @@ function getStructuredData($type, $data = array())
 				     "name": "'.dol_escape_json($companyname).'",
 				     "logo": {
 				        "@type": "ImageObject",
-				        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				        "url": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
 				     }
-				   },
-				  "description": "'.dol_escape_json($description).'"
-				}'."\n";
+				   },'."\n";
+			if ($websitepage->keywords) {
+				$ret .= '"keywords": [';
+				$i = 0;
+				$arrayofkeywords = explode(',', $websitepage->keywords);
+				foreach($arrayofkeywords as $keyword) {
+					$ret.= '"'.dol_escape_json($keyword).'"';
+					$i++;
+					if ($i < count($arrayofkeywords)) $ret .= ', ';
+				}
+				$ret .= '],'."\n";
+			}
+			$ret .= '"description": "'.dol_escape_json($description).'"';
+			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		}
 	}
@@ -720,9 +785,10 @@ function getSocialNetworkSharingLinks()
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -764,6 +830,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
+		if ($langcode) {
+			$sql .= " AND lang ='".$db->escape($langcode)."'";
+		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
 			$typestring = '';

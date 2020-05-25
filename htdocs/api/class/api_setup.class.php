@@ -1426,10 +1426,10 @@ class Setup extends DolibarrApi
     		throw new RestException(403, 'Error API open to admin users only or to the login user defined with constant API_LOGIN_ALLOWED_FOR_ADMIN_CHECK');
     	}
 
-    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || ! isset($conf->global->$constantname)) {
+    	if (!preg_match('/^[a-zA-Z0-9_]+$/', $constantname) || !isset($conf->global->$constantname)) {
     		throw new RestException(500, 'Error Bad or unknown value for constantname');
     	}
-    	if (preg_match('/(_pass|password|secret|_key|key$)/i', $constantname)) {
+    	if (preg_match('/(_pass|_pw|password|secret|_key|key$)/i', $constantname)) {
     		throw new RestException(403, 'Forbidden');
     	}
 

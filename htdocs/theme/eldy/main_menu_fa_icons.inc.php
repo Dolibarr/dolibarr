@@ -8,7 +8,7 @@
     font-style: normal;
     font-variant: normal;
     text-rendering: auto;
-    line-height: 26px;
+    line-height: 23px;
 	font-size: <?php echo $topMenuFontSize; ?>;
     -webkit-font-smoothing: antialiased;
     text-align:center;

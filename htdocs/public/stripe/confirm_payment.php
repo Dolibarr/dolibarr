@@ -129,8 +129,8 @@ try {
     ));
 }
 
-/*
- * generate payment response
+/**
+ * Generate payment response
  *
  * @param \Stripe\PaymentIntent $intent PaymentIntent
  * @return void

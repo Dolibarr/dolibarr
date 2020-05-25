@@ -1448,8 +1448,6 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -1458,6 +1456,9 @@ $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+llxHeader('', $langs->trans('Proposal'), $help_url);
+
 $now = dol_now();
 
 // Add new proposal
@@ -1465,7 +1466,7 @@ if ($action == 'create')
 {
 	$currency_code = $conf->currency;
 
-	print load_fiche_titre($langs->trans("NewProp"));
+	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
@@ -2595,13 +2596,13 @@ if ($action == 'create')
 		/*
 		 * Documents generes
 		 */
-		$filename = dol_sanitizeFileName($object->ref);
+		$objref = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->propal->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));

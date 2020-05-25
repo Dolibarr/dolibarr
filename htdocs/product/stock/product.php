@@ -674,7 +674,8 @@ if ($id > 0 || $ref)
 			}
 
 			// Number of supplier order running
-			if (!empty($conf->fournisseur->enabled)) {
+			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+			{
 				if ($found) $helpondiff .= '<br>'; else $found = 1;
 				$result = $object->load_stats_commande_fournisseur(0, '3,4', 1);
 				$helpondiff .= $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$object->stats_commande_fournisseur['qty'];
@@ -684,7 +685,7 @@ if ($id > 0 || $ref)
 			}
 
 			// Number of product from supplier order already received (partial receipt)
-			if (!empty($conf->fournisseur->enabled)) {
+			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 				if ($found) $helpondiff .= '<br>'; else $found = 1;
 				$helpondiff .= $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
 			}
@@ -866,7 +867,6 @@ if (!$variants) {
 
 			$entrepotstatic->id = $obj->rowid;
 			$entrepotstatic->ref = $obj->ref;
-			$entrepotstatic->libelle = $obj->ref;
 			$entrepotstatic->label = $obj->ref;
 			$entrepotstatic->lieu = $obj->lieu;
 			$entrepotstatic->fk_parent = $obj->fk_parent;

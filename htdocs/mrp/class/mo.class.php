@@ -929,7 +929,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MO_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MRP_MO_UNVALIDATE');
 	}
 
 	/**
@@ -954,7 +954,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MO_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MRP_MO_CANCEL');
 	}
 
 	/**
@@ -967,7 +967,7 @@ class Mo extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
+		if ($this->status != self::STATUS_PRODUCED && $this->status != self::STATUS_CANCELED)
 		{
 			return 0;
 		}
@@ -979,7 +979,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MO_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MRP_MO_REOPEN');
 	}
 
     /**
@@ -1008,7 +1008,7 @@ class Mo extends CommonObject
         }
 
         $url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
-        if ($option = 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
+        if ($option == 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
@@ -1226,10 +1226,10 @@ class Mo extends CommonObject
 	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
+	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
