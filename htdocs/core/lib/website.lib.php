@@ -616,7 +616,7 @@ function getStructuredData($type, $data = array())
 			}
 			$ret .= ']'."\n";
 		}
-		$ret .= "\n".'}'."\n";
+		$ret .= '}'."\n";
 		$ret .= '</script>'."\n";
 	}
 	elseif ($type == 'blogpost')
