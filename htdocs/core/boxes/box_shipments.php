@@ -133,7 +133,7 @@ class box_shipments extends ModeleBoxes
                     $societestatic->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $shipmentstatic->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -145,7 +145,7 @@ class box_shipments extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="nowraponall"',
                         'text' => $orderstatic->getNomUrl(1),
                         'asis' => 1,
                     );

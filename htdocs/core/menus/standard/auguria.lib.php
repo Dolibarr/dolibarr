@@ -145,7 +145,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		 $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 		 }*/
 		else {
-			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
 			$logoContainerAdditionalClass = '';
 		}
 

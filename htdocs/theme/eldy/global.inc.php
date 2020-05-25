@@ -20,6 +20,7 @@
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
+	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
@@ -31,7 +32,7 @@
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
 	--oddevencolor: #202020;
-	--colorboxstatsborder: #ddd;
+	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
 	--fieldrequiredcolor: #000055;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
@@ -62,6 +63,7 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	            --colorbackbody: #1d1e20;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
+	            --colortexttitlenotab2: rgb(220,220,220);
 	            --colortexttitle: rgb(220,220,220);
 	            --colortext: rgb(220,220,220);
 	            --colortextlink: #4390dc;
@@ -2684,7 +2686,7 @@ div.tabBar.tabBarNoTop {
 /* tabBar used for creation/update/send forms */
 div.tabBarWithBottom {
 	padding-bottom: 18px;
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #bbb;
 }
 div.tabBarWithBottom tr {
 	background: unset !important;
@@ -3584,7 +3586,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     background: var(--colorbackbody);
     border: 1px solid var(--colorboxstatsborder);
     border-left: 6px solid var(--colorboxstatsborder);
-    box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+    /* box-shadow: 1px 1px 8px var(--colorboxstatsborder); */
     border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
@@ -3837,7 +3839,7 @@ div.info {
     padding-bottom: 8px;
     margin: 1em 0em 1em 0em;
     background: #eff8fc;
-    color: #668;
+    color: #558;
 }
 
 /* Warning message */
@@ -3977,9 +3979,14 @@ div.titre {
 	padding-top: 5px;
     padding-bottom: 5px;
 }
-div.titre, .secondary {
-	font-family: <?php print $fontlist ?>;
-	color: var(--colortexttitlenotab);
+.secondary, div.titre {
+    color: var(--colortexttitlenotab);
+}
+.tertiary {
+	color: var(--colortexttitlenotab2);
+}
+table.table-fiche-title:first-of-type div {
+    color: var(--colortexttitlenotab);
 }
 
 table.table-fiche-title .col-title div.titre{

@@ -51,7 +51,7 @@ $theme_bgcolor = array(hexdec('F4'), hexdec('F4'), hexdec('F4'));
 $theme_bgcoloronglet = array(hexdec('DE'), hexdec('E7'), hexdec('EC'));
 
 // Colors
-$colorbackhmenu1 = '55,61,90'; // topmenu
+$colorbackhmenu1 = '38,60,92'; // topmenu
 $colorbackvmenu1 = '250,250,250'; // vmenu
 $colortopbordertitle1 = '215,215,215'; // top border of title
 $colorbacktitle1 = '233,234,237'; // title of tables,list
@@ -65,21 +65,22 @@ $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
 $colorbackbody = '255,255,255';
-$colortexttitlenotab = '0,113,120'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
+$colortexttitlenotab = '0,123,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
+$colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
 $colortexttitle = '0,0,0';
 $colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
 $fontsize = '0.86em';
 $fontsizesmaller = '0.75em';
-$topMenuFontSize = '1.2em';
+$topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
 $toolTipFontColor = '#333';
 
 // text color
 $textSuccess   = '#28a745';
 $colorblind_deuteranopes_textSuccess = '#37de5d';
-$textWarning   = '#a37c0d'; // See $badgeWarning
+$textWarning   = '#bc9526'; // See $badgeWarning
 $textDanger    = '#9f4705'; // See $badgeDanger
 $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
 
@@ -88,7 +89,7 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 $badgePrimary   = '#007bff';
 $badgeSecondary = '#cccccc';
 $badgeSuccess   = '#55a580';
-$badgeWarning   = '#a37c0d'; // See $textDanger bc9526
+$badgeWarning   = '#bc9526'; // See $textWarning bc9526
 $badgeDanger    = '#9f4705'; // See $textDanger
 $badgeInfo      = '#aaaabb';
 $badgeDark      = '#343a40';

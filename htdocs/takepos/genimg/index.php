@@ -58,7 +58,7 @@ if ($query == "cat")
 		} else {
 			$filename = $obj['photo'];
 		}
-		$file = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
+		$file = DOL_URL_ROOT.'/viewimage.php?cache=1&publictakepos=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
 		header('Location: '.$file);
 		exit;
 	}

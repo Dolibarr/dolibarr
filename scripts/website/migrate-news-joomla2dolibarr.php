@@ -44,6 +44,7 @@ $image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
 
 $max = (!isset($argv[4]) || (empty($argv[4]) && $argv[4] !== '0')) ? '10' : $argv[4];
 $excludeid = (empty($argv[5]) ? '' : $argv[5]);
+$forcelang = (empty($argv[6]) ? '' : $argv[6]);
 
 if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print '***** '.$script_file.' *****'."\n";
@@ -136,7 +137,7 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		}
 		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
 
-		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
+		$language = ($forcelang ? $forcelang : ($obj->language && $obj->language != '*' ? $obj->language : 'en'));
 		$keywords = $obj->metakey;
 		$author_alias = $obj->username;
 

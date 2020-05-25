@@ -844,6 +844,9 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 		print $langs->trans('Place')." <b>".$label."</b> - ";
 		print $langs->trans('Floor')." <b>".$floor."</b> - ";
 	}
+	elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) print $mysoc->name;
+	elseif ($mobilepage == "cats") print $langs->trans('Category');
+	elseif ($mobilepage == "products") print $langs->trans('Label');
 }
 // In phone version only show when is invoice page
 if ($mobilepage == "invoice" || $mobilepage == "") {
@@ -858,7 +861,7 @@ if ($_SESSION["basiclayout"] != 1)
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	print '<td class="linecolht right nowraponall">'.$langs->trans('TotalTTCShort').'</td>';
 }
-else print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
+elseif ($mobilepage == "invoice") print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 print "</tr>\n";
 
 
@@ -871,11 +874,14 @@ if ($_SESSION["basiclayout"] == 1)
         $categories = $categorie->get_full_arbo('product');
 		$htmlforlines = '';
         foreach ($categories as $row) {
-			$htmlforlines .= '<div class="leftcat';
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '<div class="leftcat';
+			else $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
 			$htmlforlines .= '" onclick="LoadProducts('.$row['id'].');">';
-			$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=cat&query=cat&id='.$row['id'].'"><br>';
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=cat&query=cat&id='.$row['id'].'"><br>';
+			else $htmlforlines .= '<td class="left">';
 			$htmlforlines .= $row['label'];
-			$htmlforlines .= '</div>'."\n";
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '</div>'."\n";
+			else $htmlforlines .= '</td></tr>'."\n";
 		}
 		$htmlforlines .= '</table>';
 		$htmlforlines .= '</table>';
@@ -891,11 +897,20 @@ if ($_SESSION["basiclayout"] == 1)
 		$prods = $object->getObjectsInCateg("product");
 		$htmlforlines = '';
 		foreach ($prods as $row) {
-			$htmlforlines .= '<div class="leftcat';
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '<div class="leftcat';
+			else $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
-			$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
-			$htmlforlines .= $row->label.''.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
-			$htmlforlines .= '</div>'."\n";
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+				$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
+				$htmlforlines .= $row->label.''.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+				$htmlforlines .= '</div>'."\n";
+			}
+			else {
+				$htmlforlines .= '<td class="left">';
+				$htmlforlines .= $row->label;
+				$htmlforlines .= '<div class="right">'.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</div>';
+				$htmlforlines .= '</tr>'."\n";
+			}
 		}
 		$htmlforlines .= '</table>';
 		print $htmlforlines;
@@ -970,7 +985,6 @@ if ($placeid > 0)
             $htmlforlines .= '" id="'.$line->id.'">';
             $htmlforlines .= '<td class="left">';
 			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '<span class="phoneqty">'.$line->qty."</span> x ";
-            //if ($line->product_label) $htmlforlines.= '<b>'.$line->product_label.'</b>';
             if (isset($line->product_type))
             {
                 if (empty($line->product_type)) $htmlforlines .= img_object('', 'product').' ';

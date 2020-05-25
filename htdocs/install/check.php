@@ -391,7 +391,7 @@ if (!file_exists($conffile))
 		{
 			$choice .= '<br>';
 			//print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
-			$choice .= '<div class="center"><div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div></div>';
+			$choice .= '<div class="center"><div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div></div>';
 			// <img src="../theme/eldy/img/tick.png" alt="Ok"> ';
 		}
 
@@ -493,7 +493,7 @@ if (!file_exists($conffile))
                 $choice .= '<br>';
                 //print $langs->trans("InstallChoiceRecommanded",DOL_VERSION,$conf->global->MAIN_VERSION_LAST_UPGRADE);
                 $choice .= '<div class="center">';
-                $choice .= '<div class="ok">'.$langs->trans("InstallChoiceSuggested").'</div>';
+                $choice .= '<div class="ok suggestedchoice">'.$langs->trans("InstallChoiceSuggested").'</div>';
                 if ($count < count($migarray))	// There are other choices after
                 {
                     print $langs->trans("MigrateIsDoneStepByStep", DOL_VERSION);
