@@ -5,19 +5,19 @@ RemoteControlSupport=Онлайн в реално време / дистанци�
 OtherSupport=Друга поддръжка
 ToSeeListOfAvailableRessources=За да се свържете/вижте наличните ресурси:
 HelpCenter=Помощен център
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+DolibarrHelpCenter=Dolibarr център за помощ и поддръжка
+ToGoBackToDolibarr=В противен случай, <a href="%s">кликнете тук, за да продължите да използвате Dolibarr</a>.
+TypeOfSupport=Тип поддръжка
 TypeSupportCommunauty=Общност (безплатно)
 TypeSupportCommercial=Търговски
 TypeOfHelp=Тип
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=Нуждаете се от помощ или поддръжка?
 Efficiency=Ефективност
 TypeHelpOnly=Само помощ
 TypeHelpDev=Помощ + развитие
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Помощ + развитие + обучение
+BackToHelpCenter=В противен случай <a href="%s">се върнете в началната страница на помощния център</a>.
+LinkToGoldMember=Можете да се обадите на някой от обучаващите, предварително избрани от Dolibarr за вашия език (%s), като кликнете върху тяхната джаджа (статуса и максималната цена са автоматично актуализирани):
 PossibleLanguages=Поддържани езици
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SubscribeToFoundation=Помогнете на проекта Dolibarr, като се присъедините към фондацията
 SeeOfficalSupport=За официална поддръжка на Dolibarr за Вашият език: <br><b><a href="%s" target="_blank">%s</a></b>

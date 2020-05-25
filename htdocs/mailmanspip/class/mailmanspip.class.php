@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,7 +47,7 @@ class MailmanSpip
     /**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
     /**
      * @var string[]	Array of error strings
@@ -65,7 +65,7 @@ class MailmanSpip
 	 *
 	 *	@param 		DoliDB		$db		Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
     }
@@ -75,7 +75,7 @@ class MailmanSpip
      *
      * @return boolean
      */
-    function isSpipEnabled()
+    public function isSpipEnabled()
     {
         if (defined("ADHERENT_USE_SPIP") && (ADHERENT_USE_SPIP == 1))
         {
@@ -90,7 +90,7 @@ class MailmanSpip
      *
      * @return boolean
      */
-    function checkSpipConfig()
+    public function checkSpipConfig()
     {
         if (defined('ADHERENT_SPIP_SERVEUR') && defined('ADHERENT_SPIP_USER') && defined('ADHERENT_SPIP_PASS') && defined('ADHERENT_SPIP_DB'))
         {
@@ -108,7 +108,7 @@ class MailmanSpip
      *
      * @return boolean|DoliDB		Boolean of DoliDB
      */
-    function connectSpip()
+    public function connectSpip()
     {
         $resource = getDoliDBInstance('mysql', ADHERENT_SPIP_SERVEUR, ADHERENT_SPIP_USER, ADHERENT_SPIP_PASS, ADHERENT_SPIP_DB, ADHERENT_SPIP_PORT);
 
@@ -156,8 +156,8 @@ class MailmanSpip
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
         @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT)?5:$conf->global->MAIN_USE_CONNECT_TIMEOUT);
-        curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT)?30:$conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, empty($conf->global->MAIN_USE_CONNECT_TIMEOUT) ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
+        curl_setopt($ch, CURLOPT_TIMEOUT, empty($conf->global->MAIN_USE_RESPONSE_TIMEOUT) ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
@@ -176,14 +176,14 @@ class MailmanSpip
         return $result;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction qui donne les droits redacteurs dans spip
      *
      *	@param	Adherent	$object		Object with data (->firstname, ->lastname, ->email and ->login)
      *  @return	int					=0 if KO, >0 if OK
      */
-    function add_to_spip($object)
+    public function add_to_spip($object)
     {
         // phpcs:enable
         dol_syslog(get_class($this)."::add_to_spip");
@@ -197,9 +197,9 @@ class MailmanSpip
                 if ($mydb)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-                    $mdpass=dol_hash($object->pass);
-                    $htpass=crypt($object->pass,makesalt());
-                    $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname,$object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+                    $mdpass = dol_hash($object->pass);
+                    $htpass = crypt($object->pass, makesalt());
+                    $query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".dolGetFirstLastname($object->firstname, $object->lastname)."\",\"".$object->email."\",\"".$object->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
 
                     $result = $mydb->query($query);
 
@@ -220,14 +220,14 @@ class MailmanSpip
         return 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction qui enleve les droits redacteurs dans spip
      *
      *	@param	Adherent	$object		Object with data (->login)
      *  @return	int					=0 if KO, >0 if OK
      */
-    function del_to_spip($object)
+    public function del_to_spip($object)
     {
         // phpcs:enable
         dol_syslog(get_class($this)."::del_to_spip");
@@ -261,14 +261,14 @@ class MailmanSpip
         return 0;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Fonction qui dit si cet utilisateur est un redacteur existant dans spip
      *
      *	@param	object	$object		Object with data (->login)
      *  @return int     			1=exists, 0=does not exists, -1=error
      */
-    function is_in_spip($object)
+    public function is_in_spip($object)
     {
         // phpcs:enable
         if ($this->isSpipEnabled())
@@ -313,7 +313,7 @@ class MailmanSpip
         return -1;
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Subscribe an email to all mailing-lists
      *
@@ -321,45 +321,45 @@ class MailmanSpip
      *  @param	array	$listes    	To force mailing-list (string separated with ,)
      *  @return	int		  			<0 if KO, >=0 if OK
      */
-    function add_to_mailman($object,$listes='')
+    public function add_to_mailman($object, $listes = '')
     {
         // phpcs:enable
-        global $conf,$langs,$user;
+        global $conf, $langs, $user;
 
         dol_syslog(get_class($this)."::add_to_mailman");
 
-        $this->mladded_ok=array();
-        $this->mladded_ko=array();
+        $this->mladded_ok = array();
+        $this->mladded_ko = array();
 
-        if (! function_exists("curl_init"))
+        if (!function_exists("curl_init"))
         {
             $langs->load("errors");
-            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+            $this->error = $langs->trans("ErrorFunctionNotAvailableInPHP", "curl_init");
             return -1;
         }
 
         if ($conf->adherent->enabled)	// Synchro for members
         {
-	        if (! empty($conf->global->ADHERENT_MAILMAN_URL))
+	        if (!empty($conf->global->ADHERENT_MAILMAN_URL))
 	        {
-	            if ($listes == '' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+	            if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists = explode(',', $listes);
 
-	            $categstatic=new Categorie($this->db);
+	            $categstatic = new Categorie($this->db);
 
 	            foreach ($lists as $list)
 	            {
 	                // Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	                $tmp=explode(':',$list);
-	                if (! empty($tmp[2]))
+	                $tmp = explode(':', $list);
+	                if (!empty($tmp[2]))
 	                {
-	                    $list=$tmp[2];
+	                    $list = $tmp[2];
 	                    if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
 	                    {
 	                        dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
 	                        continue;
 	                    }
-	                    if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
+	                    if ($object->element == 'member' && $tmp[0] == 'CATEG' && !in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
 	                    {
 	                        dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
 	                        continue;
@@ -371,22 +371,22 @@ class MailmanSpip
 
 					if ($result === false)
 					{
-						$this->mladded_ko[$list]=$object->email;
+						$this->mladded_ko[$list] = $object->email;
 					    return -2;
 					}
-					else $this->mladded_ok[$list]=$object->email;
+					else $this->mladded_ok[$list] = $object->email;
 	            }
 	            return count($lists);
 	        }
 	        else
-	       {
-	            $this->error="ADHERENT_MAILMAN_URL not defined";
+	        {
+	            $this->error = "ADHERENT_MAILMAN_URL not defined";
 	            return -1;
 	        }
         }
     }
 
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Unsubscribe an email from all mailing-lists
      *  Used when a user is resiliated
@@ -395,45 +395,45 @@ class MailmanSpip
      *  @param	array	$listes     To force mailing-list (string separated with ,)
      *  @return int         		<0 if KO, >=0 if OK
      */
-    function del_to_mailman($object,$listes='')
+    public function del_to_mailman($object, $listes = '')
     {
         // phpcs:enable
-        global $conf,$langs,$user;
+        global $conf, $langs, $user;
 
         dol_syslog(get_class($this)."::del_to_mailman");
 
-        $this->mlremoved_ok=array();
-        $this->mlremoved_ko=array();
+        $this->mlremoved_ok = array();
+        $this->mlremoved_ko = array();
 
-        if (! function_exists("curl_init"))
+        if (!function_exists("curl_init"))
         {
             $langs->load("errors");
-            $this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
+            $this->error = $langs->trans("ErrorFunctionNotAvailableInPHP", "curl_init");
             return -1;
         }
 
         if ($conf->adherent->enabled)	// Synchro for members
         {
-	        if (! empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
+	        if (!empty($conf->global->ADHERENT_MAILMAN_UNSUB_URL))
 	        {
-	            if ($listes=='' && ! empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists=explode(',',$conf->global->ADHERENT_MAILMAN_LISTS);
-	            else $lists=explode(',',$listes);
+	            if ($listes == '' && !empty($conf->global->ADHERENT_MAILMAN_LISTS)) $lists = explode(',', $conf->global->ADHERENT_MAILMAN_LISTS);
+	            else $lists = explode(',', $listes);
 
-	            $categstatic=new Categorie($this->db);
+	            $categstatic = new Categorie($this->db);
 
 	            foreach ($lists as $list)
 	            {
 	            	// Filter on type something (ADHERENT_MAILMAN_LISTS = "mailinglist0,TYPE:typevalue:mailinglist1,CATEG:categvalue:mailinglist2")
-	            	$tmp=explode(':',$list);
-	            	if (! empty($tmp[2]))
+	            	$tmp = explode(':', $list);
+	            	if (!empty($tmp[2]))
 	            	{
-	            		$list=$tmp[2];
+	            		$list = $tmp[2];
 	            		if ($object->element == 'member' && $tmp[0] == 'TYPE' && $object->type != $tmp[1])    // Filter on member type label
 	            		{
 	            			dol_syslog("We ignore list ".$list." because object member type ".$object->type." does not match ".$tmp[1], LOG_DEBUG);
 	            			continue;
 	            		}
-	            		if ($object->element == 'member' && $tmp[0] == 'CATEG' && ! in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
+	            		if ($object->element == 'member' && $tmp[0] == 'CATEG' && !in_array($tmp[1], $categstatic->containing($object->id, 'member', 'label')))    // Filter on member category
 	            		{
 	            			dol_syslog("We ignore list ".$list." because object member is not into category ".$tmp[1], LOG_DEBUG);
 	            			continue;
@@ -445,16 +445,16 @@ class MailmanSpip
 
 					if ($result === false)
 					{
-						$this->mlremoved_ko[$list]=$object->email;
+						$this->mlremoved_ko[$list] = $object->email;
 					    return -2;
 					}
-					else $this->mlremoved_ok[$list]=$object->email;
+					else $this->mlremoved_ok[$list] = $object->email;
 	            }
 	            return count($lists);
 	        }
 	        else
 			{
-	            $this->error="ADHERENT_MAILMAN_UNSUB_URL not defined";
+	            $this->error = "ADHERENT_MAILMAN_UNSUB_URL not defined";
 	            return -1;
 	        }
         }

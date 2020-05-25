@@ -1,36 +1,36 @@
 # Dolibarr language file - Source file is en_US - resource
 MenuResourceIndex=Ressourcer
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceAdd=Ny ressource
+DeleteResource=Slet ressource
+ConfirmDeleteResourceElement=Bekræft slette ressourcen for dette element
+NoResourceInDatabase=Ingen ressource i database.
+NoResourceLinked=Ingen ressource linket
+ActionsOnResource=Arrangementer om denne ressource
+ResourcePageIndex=Ressourcer liste
+ResourceSingular=Ressource
+ResourceCard=Ressource kort
+AddResource=Opret en ressource
+ResourceFormLabel_ref=Ressource navn
+ResourceType=Ressourcetype
+ResourceFormLabel_description=Ressource beskrivelse
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=Ressourcer forbundet med element
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=Vis ressource
 
-ShowResource=Show resource
+ResourceElementPage=Element ressourcer
+ResourceCreatedWithSuccess=Ressource oprettet med succes
+RessourceLineSuccessfullyDeleted=Ressource linje slettet korrekt
+RessourceLineSuccessfullyUpdated=Ressource linje opdateret
+ResourceLinkedWithSuccess=Ressource forbundet med succes
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=Bekræft for at slette denne ressource
+RessourceSuccessfullyDeleted=Ressource slettet korrekt
+DictionaryResourceType=Type af ressourcer
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=Vælg ressource
 
-SelectResource=Select resource
-
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
+IdResource=Id ressource
+AssetNumber=Serienummer
+ResourceTypeCode=Ressource type kode
 ImportDataset_resource_1=Ressourcer

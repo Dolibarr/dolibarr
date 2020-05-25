@@ -236,7 +236,7 @@ if (!defined('QRCODEDEFS')) {
 	/**
 	 * if false, checks all masks available, otherwise value tells count of masks need to be checked, mask id are got randomly
 	 */
-	// @CHANGE LDR
+	// @CHANGE DOL LDR
 	define('QR_FIND_FROM_RANDOM', false);
 
 	/**

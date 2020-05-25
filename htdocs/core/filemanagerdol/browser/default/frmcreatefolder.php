@@ -16,10 +16,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
+define('NOTOKENRENEWAL', 1); // Disables token renewal
 
 require '../../../../main.inc.php';
 ?>
@@ -34,10 +34,10 @@ require '../../../../main.inc.php';
  * choice:
  *
  *  - GNU General Public License Version 2 or later (the "GPL")
- *    http://www.gnu.org/licenses/gpl.html
+ *    https://www.gnu.org/licenses/gpl.html
  *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
- *    http://www.gnu.org/licenses/lgpl.html
+ *    https://www.gnu.org/licenses/lgpl.html
  *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
@@ -126,7 +126,7 @@ window.onload = function()
 					<button type="button" style="WIDTH: 100%" onclick="CreateFolder();">
 						<table cellSpacing="0" cellPadding="0" border="0">
 							<tr>
-								<td><?php echo img_picto_common('','treemenu/folder.gif','width="16" height="16"'); ?></td>
+								<td><?php echo img_picto_common('', 'treemenu/folder.gif', 'width="16" height="16"'); ?></td>
 								<td>&nbsp;</td>
 								<td class="nowrap">Create New Folder</td>
 							</tr>

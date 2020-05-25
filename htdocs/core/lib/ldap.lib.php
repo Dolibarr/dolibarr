@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -35,7 +35,7 @@ function ldap_prepare_head()
 	$langs->load("ldap");
 
 	// Onglets
-	$head=array();
+	$head = array();
 	$h = 0;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/ldap.php";
@@ -43,7 +43,7 @@ function ldap_prepare_head()
 	$head[$h][2] = 'ldap';
 	$h++;
 
-	if (! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
+	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
 		$head[$h][1] = $langs->trans("LDAPUsersSynchro");
@@ -51,7 +51,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (! empty($conf->global->LDAP_SYNCHRO_ACTIVE))
+	if (!empty($conf->global->LDAP_SYNCHRO_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_groups.php";
 		$head[$h][1] = $langs->trans("LDAPGroupsSynchro");
@@ -59,7 +59,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (! empty($conf->societe->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
+	if (!empty($conf->societe->enabled) && !empty($conf->global->LDAP_CONTACT_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
 		$head[$h][1] = $langs->trans("LDAPContactsSynchro");
@@ -67,7 +67,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (! empty($conf->adherent->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
+	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");
@@ -75,7 +75,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 
-	if (! empty($conf->adherent->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
+	if (!empty($conf->adherent->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members_types.php";
 		$head[$h][1] = $langs->trans("LDAPMembersTypesSynchro");
@@ -87,7 +87,7 @@ function ldap_prepare_head()
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname);   												to remove a tab
-	complete_head_from_modules($conf,$langs,'',$head,$h,'ldap');
+	complete_head_from_modules($conf, $langs, '', $head, $h, 'ldap');
 
 	return $head;
 }
@@ -103,28 +103,28 @@ function ldap_prepare_head()
  *  @param	string	$objectclass	Class
  *  @return	void
  */
-function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
+function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 {
 	global $langs, $conf, $user;
 	//print 'key='.$key.' dn='.$dn.' objectclass='.$objectclass;
 
 	print '<br>';
-	if (! function_exists("ldap_connect"))
+	if (!function_exists("ldap_connect"))
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPFunctionsNotAvailableOnPHP').'">'.$butlabel.'</a>';
 	}
-	else if (empty($conf->global->LDAP_SERVER_HOST))
+	elseif (empty($conf->global->LDAP_SERVER_HOST))
 	{
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('LDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	}
-	else if (empty($key) || empty($dn) || empty($objectclass))
+	elseif (empty($key) || empty($dn) || empty($objectclass))
 	{
 		$langs->load("errors");
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans('ErrorLDAPSetupNotComplete').'">'.$butlabel.'</a>';
 	}
 	else
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
+		print '<a class="butAction reposition" href="'.$_SERVER["PHP_SELF"].'?action='.$testlabel.'">'.$butlabel.'</a>';
 	}
 	print '<br><br>';
 }
@@ -141,42 +141,41 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
  * @param   int		$subcount	Subcount
  * @return  int
  */
-function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
+function show_ldap_content($result, $level, $count, $var, $hide = 0, $subcount = 0)
 {
 	global $bc, $conf;
 
 	$count--;
-	if ($count == 0) return -1;	// To stop loop
-	if (! is_array($result)) return -1;
+	if ($count == 0) return -1; // To stop loop
+	if (!is_array($result)) return -1;
 
-	foreach($result as $key => $val)
+	foreach ($result as $key => $val)
 	{
 		if ("$key" == "objectclass") continue;
 		if ("$key" == "count") continue;
 		if ("$key" == "dn") continue;
 		if ("$val" == "objectclass") continue;
 
-		$lastkey[$level]=$key;
+		$lastkey[$level] = $key;
 
 		if (is_array($val))
 		{
-			$hide=0;
-			if (! is_numeric($key))
+			$hide = 0;
+			if (!is_numeric($key))
 			{
-
-				print '<tr '.$bc[$var].' valign="top">';
+				print '<tr class="oddeven">';
 				print '<td>';
 				print $key;
 				print '</td><td>';
-				if (strtolower($key) == 'userpassword') $hide=1;
+				if (strtolower($key) == 'userpassword') $hide = 1;
 			}
-			show_ldap_content($val,$level+1,$count,$var,$hide,$val["count"]);
+			show_ldap_content($val, $level + 1, $count, $var, $hide, $val["count"]);
 		}
-		else if ($subcount)
+		elseif ($subcount)
 		{
 			$subcount--;
-			$newstring=dol_htmlentitiesbr($val);
-			if ($hide) print preg_replace('/./i','*',$newstring);
+			$newstring = dol_htmlentitiesbr($val);
+			if ($hide) print preg_replace('/./i', '*', $newstring);
 			else print $newstring;
 			print '<br>';
 		}
@@ -184,4 +183,3 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 	}
 	return 1;
 }
-

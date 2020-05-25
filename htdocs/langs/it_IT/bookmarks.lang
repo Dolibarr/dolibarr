@@ -18,3 +18,4 @@ SetHereATitleForLink=Dai un titolo al segnalibro
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Usa un indirizzo http esterno o uno relativo a Dolibarr
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Scegli se la pagina collegata deve essera aperta in una nuova finestra oppure no
 BookmarksManagement=Gestione segnalibri
+BookmarksMenuShortCut=Ctrl + Maiusc + m

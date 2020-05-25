@@ -1,18 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Käytetty kirjanpitotili käyttäjän sidosryhmille
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accounting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accounting account on user is not defined.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Oletus kirjanpitotili palkkamaksuille
 Salary=Palkka
 Salaries=Palkat
 NewSalaryPayment=Uusi palkanmaksu
+AddSalaryPayment=Add salary payment
 SalaryPayment=Palkanmaksu
 SalariesPayments=Palkkojen maksut
 ShowSalaryPayment=Näytä palkanmaksu
 THM=Keskimääräinen tuntipalkka
 TJM=Keskimääräinen päiväpalkka
 CurrentSalary=Nykyinen palkka
-THMDescription=Jos projektimoduli on käytössä, tätä arvoa voi käyttää projektin aikakustannuksen laskemiseen käyttäjän syöttämien tuntien perusteella
-TJMDescription=Tätä arvoa ei toistaiseksi käytetä laskentaan, se on olemassa vain tiedoksi
+THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently for information only and is not used for any calculation
 LastSalaries=Viimeisimmät %s palkkamaksut
 AllSalaries=Kaikki Palkkamaksut
-SalariesStatistics=Statistiques salaires
+SalariesStatistics=Salary statistics
+# Export
+SalariesAndPayments=Salaries and payments

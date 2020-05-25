@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 $langs->load("trips");
 
 // Security check
-$id = GETPOST('id','int');
-if ($user->societe_id) $socid=$user->societe_id;
+$id = GETPOST('id', 'int');
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 
@@ -43,24 +43,24 @@ $result = restrictedArea($user, 'expensereport', $id, 'expensereport');
 
 $form = new Form($db);
 
-$title=$langs->trans("ExpenseReport") . " - " . $langs->trans("Info");
-$helpurl="EN:Module_Expense_Reports";
-llxHeader("",$title,$helpurl);
+$title = $langs->trans("ExpenseReport")." - ".$langs->trans("Info");
+$helpurl = "EN:Module_Expense_Reports";
+llxHeader("", $title, $helpurl);
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$object = new ExpenseReport($db);
-	$object->fetch($id,$ref);
+	$object->fetch($id, $ref);
 	$object->info($object->id);
 
 	$head = expensereport_prepare_head($object);
 
 	dol_fiche_head($head, 'info', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-	$morehtmlref='<div class="refidno">';
-    $morehtmlref.='</div>';
+	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -71,12 +71,12 @@ if ($id > 0 || ! empty($ref))
 	print '<br>';
 
 	print '<table width="100%"><tr><td>';
-    dol_print_object_info($object);
-    print '</td></tr></table>';
+	dol_print_object_info($object);
+	print '</td></tr></table>';
 
-    print '</div>';
+	print '</div>';
 
-    dol_fiche_end();
+	dol_fiche_end();
 }
 
 // End of page

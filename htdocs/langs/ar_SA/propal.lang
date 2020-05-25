@@ -22,13 +22,13 @@ SearchAProposal=بحث اقتراح
 NoProposal=No proposal
 ProposalsStatistics=مقترحات تجارية 'إحصاءات
 NumberOfProposalsByMonth=عدد شهر
-AmountOfProposalsByMonthHT=المبلغ في الشهر (بعد خصم الضريبة)
+AmountOfProposalsByMonthHT=Amount by month (excl. tax)
 NbOfProposals=عدد من المقترحات والتجاري
 ShowPropal=وتظهر اقتراح
 PropalsDraft=المسودات
 PropalsOpened=فتح
 PropalStatusDraft=مشروع (لا بد من التحقق من صحة)
-PropalStatusValidated=Validated (proposal is opened)
+PropalStatusValidated=صادق (اقتراح فتح)
 PropalStatusSigned=وقعت (لمشروع القانون)
 PropalStatusNotSigned=لم يتم التوقيع (مغلقة)
 PropalStatusBilled=فواتير
@@ -56,7 +56,6 @@ CopyPropalFrom=اقتراح إنشاء التجارية عن طريق نسخ و�
 CreateEmptyPropal=Create empty commercial proposal or from list of products/services
 DefaultProposalDurationValidity=تقصير مدة صلاحية اقتراح التجارية (أيام)
 UseCustomerContactAsPropalRecipientIfExist=Use contact/address with type 'Contact following-up proposal' if defined instead of third party address as proposal recipient address
-ClonePropal=اقتراح استنساخ التجارية
 ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
 ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=واقتراح الخطوط التجارية
@@ -77,10 +76,11 @@ TypeContact_propal_external_BILLING=الزبون فاتورة الاتصال
 TypeContact_propal_external_CUSTOMER=اتصل العملاء اقتراح متابعة
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=اقتراح نموذج كامل (logo...)
-DocModelCyanDescription=اقتراح نموذج كامل (logo...)
+DocModelAzurDescription=A complete proposal model 
+DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=إنشاء نموذج افتراضي
 DefaultModelPropalToBill=القالب الافتراضي عند إغلاق الأعمال المقترح (أن الفاتورة)
 DefaultModelPropalClosed=القالب الافتراضي عند إغلاق الأعمال المقترح (فواتير)
 ProposalCustomerSignature=قبول كتابي، ختم الشركة والتاريخ والتوقيع
-ProposalsStatisticsSuppliers=Supplier proposals statistics
+ProposalsStatisticsSuppliers=Vendor proposals statistics
+CaseFollowedBy=Case followed by

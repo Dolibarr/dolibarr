@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *       \file       htdocs/core/ajax/fileupload.php
+ *       \file       htdocs/core/class/fileupload.class.php
  *       \brief      File to return Ajax response on file upload
  */
 
@@ -41,16 +41,18 @@ class FileUpload
 	 * @param int		$fk_element		fk_element
 	 * @param string	$element		element
 	 */
-	function __construct($options=null,$fk_element=null,$element=null)
+	public function __construct($options = null, $fk_element = null, $element = null)
 	{
 		global $db, $conf;
 		global $object;
+		global $hookmanager;
+		$hookmanager->initHooks(array('fileupload'));
 
-		$this->fk_element=$fk_element;
-		$this->element=$element;
+		$this->fk_element = $fk_element;
+		$this->element = $element;
 
-		$pathname=$filename=$element;
-		if (preg_match('/^([^_]+)_([^_]+)/i',$element,$regs))
+		$pathname = $filename = $element;
+		if (preg_match('/^([^_]+)_([^_]+)/i', $element, $regs))
 		{
 			$pathname = $regs[1];
 			$filename = $regs[2];
@@ -61,35 +63,35 @@ class FileUpload
 		// For compatibility
 		if ($element == 'propal') {
 			$pathname = 'comm/propal';
-			$dir_output=$conf->$element->dir_output;
+			$dir_output = $conf->$element->dir_output;
 		}
 		elseif ($element == 'facture') {
 			$pathname = 'compta/facture';
-			$dir_output=$conf->$element->dir_output;
+			$dir_output = $conf->$element->dir_output;
 		}
 		elseif ($element == 'project') {
 			$element = $pathname = 'projet';
-			$dir_output=$conf->$element->dir_output;
+			$dir_output = $conf->$element->dir_output;
 		}
 		elseif ($element == 'project_task') {
-			$pathname = 'projet'; $filename='task';
-			$dir_output=$conf->projet->dir_output;
+			$pathname = 'projet'; $filename = 'task';
+			$dir_output = $conf->projet->dir_output;
 			$parentForeignKey = 'fk_project';
 			$parentClass = 'Project';
 			$parentElement = 'projet';
 			$parentObject = 'project';
 		}
 		elseif ($element == 'fichinter') {
-			$element='ficheinter';
-			$dir_output=$conf->$element->dir_output;
+			$element = 'ficheinter';
+			$dir_output = $conf->$element->dir_output;
 		}
 		elseif ($element == 'order_supplier') {
-			$pathname = 'fourn'; $filename='fournisseur.commande';
-			$dir_output=$conf->fournisseur->commande->dir_output;
+			$pathname = 'fourn'; $filename = 'fournisseur.commande';
+			$dir_output = $conf->fournisseur->commande->dir_output;
 		}
 		elseif ($element == 'invoice_supplier') {
-			$pathname = 'fourn'; $filename='fournisseur.facture';
-			$dir_output=$conf->fournisseur->facture->dir_output;
+			$pathname = 'fourn'; $filename = 'fournisseur.facture';
+			$dir_output = $conf->fournisseur->facture->dir_output;
 		}
 		elseif ($element == 'product') {
 			$dir_output = $conf->product->multidir_output[$conf->entity];
@@ -98,14 +100,14 @@ class FileUpload
 			$dir_output = $conf->productbatch->multidir_output[$conf->entity];
 		}
 		elseif ($element == 'action') {
-			$pathname = 'comm/action'; $filename='actioncomm';
-			$dir_output=$conf->agenda->dir_output;
+			$pathname = 'comm/action'; $filename = 'actioncomm';
+			$dir_output = $conf->agenda->dir_output;
 		}
 		elseif ($element == 'chargesociales') {
-			$pathname = 'compta/sociales'; $filename='chargesociales';
-			$dir_output=$conf->tax->dir_output;
+			$pathname = 'compta/sociales'; $filename = 'chargesociales';
+			$dir_output = $conf->tax->dir_output;
 		} else {
-			$dir_output=$conf->$element->dir_output;
+			$dir_output = $conf->$element->dir_output;
 		}
 
 		dol_include_once('/'.$pathname.'/class/'.$filename.'.class.php');
@@ -135,14 +137,14 @@ class FileUpload
 
 		$object_ref = dol_sanitizeFileName($object->ref);
 		if ($element == 'invoice_supplier') {
-			$object_ref = get_exdir($object->id,2,0,0,$object,'invoice_supplier') . $object_ref;
-		} else if ($element == 'project_task') {
-			$object_ref = $object->project->ref . '/' . $object_ref;
+			$object_ref = get_exdir($object->id, 2, 0, 0, $object, 'invoice_supplier').$object_ref;
+		} elseif ($element == 'project_task') {
+			$object_ref = $object->project->ref.'/'.$object_ref;
 		}
 
 		$this->options = array(
 				'script_url' => $_SERVER['PHP_SELF'],
-				'upload_dir' => $dir_output . '/' . $object_ref . '/',
+				'upload_dir' => $dir_output.'/'.$object_ref.'/',
 				'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/',
 				'param_name' => 'files',
 				// Set the following option to 'POST', if your server does not support
@@ -176,13 +178,25 @@ class FileUpload
 		),
 		*/
 						'thumbnail' => array(
-								'upload_dir' => $dir_output . '/' . $object_ref . '/thumbs/',
+								'upload_dir' => $dir_output.'/'.$object_ref.'/thumbs/',
 								'upload_url' => DOL_URL_ROOT.'/document.php?modulepart='.$element.'&attachment=1&file=/'.$object_ref.'/thumbs/',
 								'max_width' => 80,
 								'max_height' => 80
 						)
 				)
 		);
+
+        $hookmanager->executeHooks(
+            'overrideUploadOptions',
+            array(
+                'options' => &$options,
+                'element' => $element
+            ),
+            $object,
+            $action,
+            $hookmanager
+        );
+
 		if ($options) {
 			$this->options = array_replace_recursive($this->options, $options);
 		}
@@ -202,7 +216,7 @@ class FileUpload
 		(isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ($_SERVER['SERVER_NAME'].
 				($https && $_SERVER['SERVER_PORT'] === 443 ||
 						$_SERVER['SERVER_PORT'] === 80 ? '' : ':'.$_SERVER['SERVER_PORT']))).
-						substr($_SERVER['SCRIPT_NAME'],0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
+						substr($_SERVER['SCRIPT_NAME'], 0, strrpos($_SERVER['SCRIPT_NAME'], '/'));
 	}
 
 	/**
@@ -234,12 +248,12 @@ class FileUpload
 		{
 			$file = new stdClass();
 			$file->name = $file_name;
-			$file->mime = dol_mimetype($file_name,'',2);
+			$file->mime = dol_mimetype($file_name, '', 2);
 			$file->size = filesize($file_path);
 			$file->url = $this->options['upload_url'].rawurlencode($file->name);
-			foreach($this->options['image_versions'] as $version => $options) {
+			foreach ($this->options['image_versions'] as $version => $options) {
 				if (is_file($options['upload_dir'].$file_name)) {
-					$tmp=explode('.',$file->name);
+					$tmp = explode('.', $file->name);
 					$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 				}
 			}
@@ -280,9 +294,9 @@ class FileUpload
 				return false;
 			}
 
-			$res=vignette($file_path,$maxwidthmini,$maxheightmini,'_mini');  // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
+			$res = vignette($file_path, $maxwidthmini, $maxheightmini, '_mini'); // We don't use ->addThumbs here because there is no object and we don't need all thumbs, only the "mini".
 
-			if (preg_match('/error/i',$res)) return false;
+			if (preg_match('/error/i', $res)) return false;
 			return true;
 		}
 		else
@@ -398,7 +412,7 @@ class FileUpload
 		}
 		if ($this->options['discard_aborted_uploads'])
 		{
-			while(is_file($this->options['upload_dir'].$file_name))
+			while (is_file($this->options['upload_dir'].$file_name))
 			{
 				$file_name = $this->upcountName($file_name);
 			}
@@ -421,7 +435,7 @@ class FileUpload
 	{
 		$file = new stdClass();
 		$file->name = $this->trimFileName($name, $type, $index);
-		$file->mime = dol_mimetype($file->name,'',2);
+		$file->mime = dol_mimetype($file->name, '', 2);
 		$file->size = intval($size);
 		$file->type = $type;
 		if ($this->validate($uploaded_file, $file, $error, $index) && dol_mkdir($this->options['upload_dir']) >= 0)
@@ -447,16 +461,16 @@ class FileUpload
 			if ($file_size === $file->size)
 			{
 				$file->url = $this->options['upload_url'].rawurlencode($file->name);
-				foreach($this->options['image_versions'] as $version => $options)
+				foreach ($this->options['image_versions'] as $version => $options)
 				{
 					if ($this->createScaledImage($file->name, $options))
 					{
-						$tmp=explode('.',$file->name);
+						$tmp = explode('.', $file->name);
 						$file->{$version.'_url'} = $options['upload_url'].rawurlencode($tmp[0].'_mini.'.$tmp[1]);
 					}
 				}
 			}
-			else if ($this->options['discard_aborted_uploads'])
+			elseif ($this->options['discard_aborted_uploads'])
 			{
 				unlink($file_path);
 				$file->error = 'abort';
@@ -558,7 +572,7 @@ class FileUpload
 		$success = is_file($file_path) && $file_name[0] !== '.' && unlink($file_path);
 		if ($success)
 		{
-			foreach($this->options['image_versions'] as $version => $options)
+			foreach ($this->options['image_versions'] as $version => $options)
 			{
 				$file = $options['upload_dir'].$file_name;
 				if (is_file($file))

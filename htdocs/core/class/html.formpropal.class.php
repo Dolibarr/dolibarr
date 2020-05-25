@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,26 +27,26 @@
  */
 class FormPropal
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
-	
-	/**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error = '';
 
 
-	/**
-	 * Constructor
-	 *
-	 * @param		DoliDB		$db      Database handler
-	 */
-	public function __construct($db)
-	{
-		$this->db = $db;
-	}
+    /**
+     * Constructor
+     *
+     * @param		DoliDB		$db      Database handler
+     */
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
     /**
      *    Return combo list of differents status of a proposal
@@ -60,33 +60,30 @@ class FormPropal
      *    @param    string  $htmlname       Name of select field
      *    @return	void
      */
-    function selectProposalStatus($selected='',$short=0, $excludedraft=0, $showempty=1, $mode='customer',$htmlname='propal_statut')
+    public function selectProposalStatus($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_statut')
     {
         global $langs;
 
-        $prefix='';
-        $listofstatus=array();
-        if ($mode == 'supplier')
-        {
-            $prefix='SupplierProposalStatus';
+        $prefix = '';
+        $listofstatus = array();
+        if ($mode == 'supplier') {
+            $prefix = 'SupplierProposalStatus';
 
             $langs->load("supplier_proposal");
-            $listofstatus=array(
+            $listofstatus = array(
                 0=>array('id'=>0, 'code'=>'PR_DRAFT'),
                 1=>array('id'=>1, 'code'=>'PR_OPEN'),
                 2=>array('id'=>2, 'code'=>'PR_SIGNED'),
                 3=>array('id'=>3, 'code'=>'PR_NOTSIGNED'),
                 4=>array('id'=>4, 'code'=>'PR_CLOSED')
             );
-        }
-        else
-        {
-            $prefix="PropalStatus";
+        } else {
+            $prefix = "PropalStatus";
 
             $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
             $sql .= " WHERE active = 1";
             dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
-            $resql=$this->db->query($sql);
+            $resql = $this->db->query($sql);
             if ($resql)
             {
                 $num = $this->db->num_rows($resql);
@@ -96,7 +93,7 @@ class FormPropal
                     while ($i < $num)
                     {
                         $obj = $this->db->fetch_object($resql);
-                        $listofstatus[$obj->id]=array('id'=>$obj->id,'code'=>$obj->code,'label'=>$obj->label);
+                        $listofstatus[$obj->id] = array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>$obj->label);
                         $i++;
                     }
                 }
@@ -110,15 +107,15 @@ class FormPropal
         print '<select class="flat" name="'.$htmlname.'">';
         if ($showempty) print '<option value="-1">&nbsp;</option>';
 
-        foreach($listofstatus as $key => $obj)
+        foreach ($listofstatus as $key => $obj)
         {
             if ($excludedraft)
             {
-				if ($obj['code'] == 'Draft' || $obj['code'] == 'PR_DRAFT')
-				{
-					$i++;
-					continue;
-				}
+                if ($obj['code'] == 'Draft' || $obj['code'] == 'PR_DRAFT')
+                {
+                    $i++;
+                    continue;
+                }
             }
             if ($selected != '' && $selected == $obj['id'])
             {
@@ -128,17 +125,17 @@ class FormPropal
             {
                 print '<option value="'.$obj['id'].'">';
             }
-            $key=$obj['code'];
-            if ($langs->trans($prefix.$key.($short?'Short':'')) != $prefix.$key.($short?'Short':''))
+            $key = $obj['code'];
+            if ($langs->trans($prefix.$key.($short ? 'Short' : '')) != $prefix.$key.($short ? 'Short' : ''))
             {
-                print $langs->trans($prefix.$key.($short?'Short':''));
+                print $langs->trans($prefix.$key.($short ? 'Short' : ''));
             }
             else
-			{
-                $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Validated','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
-                if (! empty($conv_to_new_code[$obj['code']])) $key=$conv_to_new_code[$obj['code']];
+            {
+                $conv_to_new_code = array('PR_DRAFT'=>'Draft', 'PR_OPEN'=>'Validated', 'PR_CLOSED'=>'Closed', 'PR_SIGNED'=>'Signed', 'PR_NOTSIGNED'=>'NotSigned', 'PR_FAC'=>'Billed');
+                if (!empty($conv_to_new_code[$obj['code']])) $key = $conv_to_new_code[$obj['code']];
 
-                print ($langs->trans($prefix.$key.($short?'Short':''))!=$prefix.$key.($short?'Short':''))?$langs->trans($prefix.$key.($short?'Short':'')):($obj['label']?$obj['label']:$obj['code']);
+                print ($langs->trans($prefix.$key.($short ? 'Short' : '')) != $prefix.$key.($short ? 'Short' : '')) ? $langs->trans($prefix.$key.($short ? 'Short' : '')) : ($obj['label'] ? $obj['label'] : $obj['code']);
             }
             print '</option>';
             $i++;

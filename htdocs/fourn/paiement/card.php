@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,16 +34,16 @@ require DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 $langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers'));
 
-$id			= GETPOST('id','int');
-$action		= GETPOST('action','alpha');
-$confirm	= GETPOST('confirm','alpha');
+$id = GETPOST('id', 'int');
+$action		= GETPOST('action', 'alpha');
+$confirm	= GETPOST('confirm', 'alpha');
 
 $object = new PaiementFourn($db);
 
 // PDF
-$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
-$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
-$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 /*
  * Actions
@@ -54,11 +54,11 @@ if ($action == 'setnote' && $user->rights->fournisseur->facture->creer)
 	$db->begin();
 
 	$object->fetch($id);
-	$result = $object->update_note(GETPOST('note','none'));
+	$result = $object->update_note(GETPOST('note', 'none'));
 	if ($result > 0)
 	{
 		$db->commit();
-		$action='';
+		$action = '';
 	}
 	else
 	{
@@ -87,8 +87,8 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->fournisse
 }
 
 if ($action == 'confirm_valide' && $confirm == 'yes' &&
-	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
-	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+	((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
+	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 )
 {
 	$db->begin();
@@ -107,7 +107,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' &&
 	}
 }
 
-if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
+if ($action == 'setnum_paiement' && !empty($_POST['num_paiement']))
 {
 	$object->fetch($id);
 	$res = $object->update_num($_POST['num_paiement']);
@@ -121,10 +121,10 @@ if ($action == 'setnum_paiement' && ! empty($_POST['num_paiement']))
 	}
 }
 
-if ($action == 'setdatep' && ! empty($_POST['datepday']))
+if ($action == 'setdatep' && !empty($_POST['datepday']))
 {
 	$object->fetch($id);
-	$datepaye = dol_mktime(GETPOST('datephour','int'), GETPOST('datepmin','int'), GETPOST('datepsec','int'), GETPOST('datepmonth','int'), GETPOST('datepday','int'), GETPOST('datepyear','int'));
+	$datepaye = dol_mktime(GETPOST('datephour', 'int'), GETPOST('datepmin', 'int'), GETPOST('datepsec', 'int'), GETPOST('datepmonth', 'int'), GETPOST('datepday', 'int'), GETPOST('datepyear', 'int'));
 	$res = $object->update_date($datepaye);
 	if ($res === 0)
 	{
@@ -139,7 +139,7 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 // Build document
 $upload_dir = $conf->fournisseur->payment->dir_output;
 // TODO: get the appropriate permisson
-$permissioncreate = true;
+$permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
@@ -149,7 +149,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 llxHeader();
 
-$result=$object->fetch($id);
+$result = $object->fetch($id);
 
 $form = new Form($db);
 $formfile = new FormFile($db);
@@ -176,15 +176,15 @@ if ($result > 0)
 		print $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide');
 	}
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/paiement.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/paiement.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
-	dol_banner_tab($object,'id',$linkback,1,'rowid','ref');
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent">';
 
 	/*print '<tr>';
 	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
@@ -192,14 +192,14 @@ if ($result > 0)
 	print '</td></tr>';*/
 
 	// Date payment
-	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datehourpicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
+	print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && $user->rights->fournisseur->facture->creer, 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment mode
-	$labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
+	$labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype;
-	print $object->num_paiement?' - '.$object->num_paiement:'';
+	print $object->num_paiement ? ' - '.$object->num_paiement : '';
 	print '</td></tr>';
 
 	// Payment numero
@@ -210,31 +210,31 @@ if ($result > 0)
     */
 
 	// Amount
-	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
+	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
 
-	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
 		print '<tr><td colspan="2">'.$langs->trans('Status').'</td><td colspan="3">'.$object->getLibStatut(4).'</td></tr>';
 	}
 
-	$allow_delete = 1 ;
+	$allow_delete = 1;
 	// Bank account
-	if (! empty($conf->banque->enabled))
+	if (!empty($conf->banque->enabled))
 	{
 		if ($object->bank_account)
 		{
-			$bankline=new AccountLine($db);
+			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
 			if ($bankline->rappro)
 			{
-				$allow_delete=0;
+				$allow_delete = 0;
 				$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
 			}
 
 			print '<tr>';
 			print '<td colspan="2">'.$langs->trans('BankAccount').'</td>';
 			print '<td colspan="3">';
-			$accountstatic=new Account($db);
+			$accountstatic = new Account($db);
 			$accountstatic->fetch($bankline->fk_account);
 			print $accountstatic->getNomUrl(1);
 			print '</td>';
@@ -243,15 +243,15 @@ if ($result > 0)
 			print '<tr>';
 			print '<td colspan="2">'.$langs->trans('BankTransactionLine').'</td>';
 			print '<td colspan="3">';
-			print $bankline->getNomUrl(1,0,'showconciliated');
+			print $bankline->getNomUrl(1, 0, 'showconciliated');
 			print '</td>';
 			print '</tr>';
 		}
 	}
 
 	// Note
-	print '<tr><td colspan="2">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-	print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->fournisseur->facture->creer,'textarea');
+	print '<tr><td colspan="2">'.$form->editfieldkey("Note", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+	print $form->editfieldval("Note", 'note', $object->note, $object, $user->rights->fournisseur->facture->creer, 'textarea');
 	print '</td></tr>';
 
 	print '</table>';
@@ -267,7 +267,7 @@ if ($result > 0)
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf,'.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 	$sql .= ' WHERE pf.fk_facturefourn = f.rowid AND f.fk_soc = s.rowid';
 	$sql .= ' AND pf.fk_paiementfourn = '.$object->id;
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -275,7 +275,7 @@ if ($result > 0)
 		$i = 0;
 		$total = 0;
 		print '<b>'.$langs->trans("Invoices").'</b><br>';
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
 		print '<td>'.$langs->trans('RefSupplier').'</td>';
@@ -287,14 +287,14 @@ if ($result > 0)
 
 		if ($num > 0)
 		{
-			$facturestatic=new FactureFournisseur($db);
+			$facturestatic = new FactureFournisseur($db);
 
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
 
-				$facturestatic->id=$objp->facid;
-				$facturestatic->ref=($objp->ref?$objp->ref:$objp->rowid);
+				$facturestatic->id = $objp->facid;
+				$facturestatic->ref = ($objp->ref ? $objp->ref : $objp->rowid);
 
 				print '<tr class="oddeven">';
 				// Ref
@@ -304,7 +304,7 @@ if ($result > 0)
 				// Ref supplier
 				print '<td>'.$objp->ref_supplier."</td>\n";
 				// Third party
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->name.'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'), 'company').' '.$objp->name.'</a></td>';
 				// Expected to pay
 				print '<td class="right">'.price($objp->total_ttc).'</td>';
 				// Payed
@@ -340,18 +340,18 @@ if ($result > 0)
 	 */
 
 	print '<div class="tabsAction">';
-	if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
+	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{
-		if ($user->societe_id == 0 && $object->statut == 0 && $action == '')
+		if ($user->socid == 0 && $object->statut == 0 && $action == '')
 		{
-			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->facture->creer))
-		   	|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
+			if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->facture->creer))
+		   	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_invoice_advance->validate)))
 			{
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 			}
 		}
 	}
-	if ($user->societe_id == 0 && $action == '')
+	if ($user->socid == 0 && $action == '')
 	{
 		if ($user->rights->fournisseur->facture->supprimer)
 		{
@@ -373,18 +373,18 @@ if ($result > 0)
 	// Documents generes
 
 	include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
-	$modellist=ModelePDFSuppliersPayments::liste_modeles($db);
+	$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
 	if (is_array($modellist))
 	{
-		$ref=dol_sanitizeFileName($object->ref);
+		$ref = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
-		$urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
-		$genallowed=$user->rights->fournisseur->facture->lire;
-		$delallowed=$user->rights->fournisseur->facture->creer;
-		$modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+		$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
+		$genallowed = $user->rights->fournisseur->facture->lire;
+		$delallowed = $user->rights->fournisseur->facture->creer;
+		$modelpdf = (!empty($object->modelpdf) ? $object->modelpdf : (empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF) ? '' : $conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
 
-		print $formfile->showdocuments('supplier_payment',$ref,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
-		$somethingshown=$formfile->numoffiles;
+		print $formfile->showdocuments('supplier_payment', $ref, $filedir, $urlsource, $genallowed, $delallowed, $modelpdf, 1, 0, 0, 40, 0, '', '', '', $societe->default_lang);
+		$somethingshown = $formfile->numoffiles;
 	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';

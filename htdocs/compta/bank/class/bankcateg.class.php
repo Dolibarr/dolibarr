@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,7 +33,7 @@ class BankCateg // extends CommonObject
     /**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
-	public $picto='generic';
+	public $picto = 'generic';
 
 	/**
      * @var int ID
@@ -211,10 +211,10 @@ class BankCateg // extends CommonObject
 		$this->db->begin();
 
 		// Delete link between tag and bank account
-		if (! $error)
+		if (!$error)
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_account";
-    		$sql.= " WHERE fk_categorie = ".$this->id;
+    		$sql .= " WHERE fk_categorie = ".$this->id;
 
     		$resql = $this->db->query($sql);
     		if (!$resql)
@@ -225,10 +225,10 @@ class BankCateg // extends CommonObject
 		}
 
 		// Delete link between tag and bank lines
-		if (! $error)
+		if (!$error)
 		{
 		    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class";
-		    $sql.= " WHERE fk_categ = ".$this->id;
+		    $sql .= " WHERE fk_categ = ".$this->id;
 
 		    $resql = $this->db->query($sql);
 		    if (!$resql)
@@ -239,7 +239,7 @@ class BankCateg // extends CommonObject
 		}
 
 		// Delete bank categ
-		if (! $error)
+		if (!$error)
 		{
     		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_categ";
     		$sql .= " WHERE rowid=".$this->id;
@@ -269,18 +269,15 @@ class BankCateg // extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param  int $fromid Id of object to clone
-	 * @return int New id of clone
+	 * @param	User	$user		User making the clone
+	 * @param   int     $fromid     Id of object to clone
+	 * @return  int                 New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
-		global $user;
-
 		$error = 0;
 
 		$object = new BankCateg($this->db);
-
-		$object->context['createfromclone'] = 'createfromclone';
 
 		$this->db->begin();
 
@@ -290,6 +287,7 @@ class BankCateg // extends CommonObject
 		$object->statut = 0;
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options

@@ -11,8 +11,22 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-INSERT INTO llx_mymodule_myobject VALUES (
-	1, 1, 'mydata'
-);
+
+-- delete from llx_mymodule_myobject;
+--INSERT INTO llx_mymodule_myobject VALUES (1, 1, 'mydata');
+
+
+-- delete from llx_c_mydictionarytabme;
+--INSERT INTO llx_c_mydictionarytabme (code,label,active) VALUES ('ABC', 'Label ABC',   1);
+--INSERT INTO llx_c_mydictionarytabme (code,label,active) VALUES ('DEF', 'Label DEF', 1);
+
+
+-- new types of automatic events to record in agenda
+-- 'code' must be a value matching 'MYOBJECT_ACTION'
+-- 'elementtype' must be value 'mymodule' ('myobject@mymodule' may be possible but should not be required)
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_VALIDATE','MyObject validated','Executed when myobject is validated', 'mymodule', 1000);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_UNVALIDATE','MyObject unvalidated','Executed when myobject is unvalidated', 'mymodule', 1001);
+--insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MYOBJECT_DELETE','MyObject deleted','Executed when myobject deleted', 'mymodule', 1004);
+

@@ -1,13 +1,12 @@
 # Dolibarr language file - Source file is en_US - mails
 MailTitle=Beschreibung
+MailText=Nachricht
+MailMessage=E-Mail-Text
 ResetMailing=E-Mail-Kampagne erneut senden
 MailingStatusValidated=Bestätigt
-CloneEMailing=E-Mail-Kampagne duplizieren
 CloneContent=Nachricht duplizieren
 MailingArea=E-Mail-Kampagnenübersicht
 MailNoChangePossible=Die Empfängerliste einer freigegebenen E-Mail-Kampagne kann nicht mehr geändert werden
-SearchAMailing=Suche E-Mail-Kampagne
-SendMailing=E-Mail-Kampagne versenden
 LimitSendingEmailing=Aus Sicherheits- und Zeitüberschreitungsgründen ist der Online-Versadn von E-Mails auf <b>%s</b> Empfänger je Sitzung beschränkt.
 IdRecord=Eintrags ID
 ANotificationsWillBeSent=1 Benachrichtigung wird per E-Mail versandt

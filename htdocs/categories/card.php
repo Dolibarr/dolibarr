@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -35,23 +35,23 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->load("categories");
 
 // Security check
-$socid=GETPOST('socid','int');
+$socid = GETPOST('socid', 'int');
 if (!$user->rights->categorie->lire) accessforbidden();
 
-$action		= GETPOST('action','alpha');
-$cancel		= GETPOST('cancel','alpha');
-$origin		= GETPOST('origin','alpha');
-$catorigin	= GETPOST('catorigin','int');
-$type 		= GETPOST('type','alpha');
-$urlfrom	= GETPOST('urlfrom','alpha');
-$backtopage = GETPOST('backtopage','alpha');
+$action		= GETPOST('action', 'alpha');
+$cancel		= GETPOST('cancel', 'alpha');
+$origin		= GETPOST('origin', 'alpha');
+$catorigin = GETPOST('catorigin', 'int');
+$type = GETPOST('type', 'alpha');
+$urlfrom	= GETPOST('urlfrom', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$socid=GETPOST('socid','int');
-$label=GETPOST('label');
-$description=GETPOST('description');
-$color=GETPOST('color');
-$visible=GETPOST('visible');
-$parent=GETPOST('parent');
+$socid = GETPOST('socid', 'int');
+$label = GETPOST('label');
+$description = GETPOST('description');
+$color = GETPOST('color');
+$visible = GETPOST('visible');
+$parent = GETPOST('parent');
 
 if ($origin)
 {
@@ -68,7 +68,7 @@ if ($catorigin && $type == Categorie::TYPE_PRODUCT) $idCatOrigin = $catorigin;
 $object = new Categorie($db);
 
 $extrafields = new ExtraFields($db);
-$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categorycard'));
@@ -89,32 +89,32 @@ if ($action == 'add' && $user->rights->categorie->creer)
 			header("Location: ".$urlfrom);
 			exit;
 		}
-		else if ($idProdOrigin)
+		elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idCompanyOrigin)
+		elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idSupplierOrigin)
+		elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idMemberOrigin)
+		elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idContactOrigin)
+		elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type);
 			exit;
 		}
-		else if ($idProjectOrigin)
+		elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 			exit;
@@ -130,17 +130,17 @@ if ($action == 'add' && $user->rights->categorie->creer)
 
 	$object->label			= $label;
 	$object->color			= $color;
-	$object->description	= dol_htmlcleanlastbr($description);
+	$object->description = dol_htmlcleanlastbr($description);
 	$object->socid			= ($socid ? $socid : 'null');
-	$object->visible		= $visible;
-	$object->type			= $type;
+	$object->visible = $visible;
+	$object->type = $type;
 
 	if ($parent != "-1") $object->fk_parent = $parent;
 
-	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
+	$ret = $extrafields->setOptionalsFromPost(null, $object);
 	if ($ret < 0) $error++;
 
-	if (! $object->label)
+	if (!$object->label)
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
@@ -148,7 +148,7 @@ if ($action == 'add' && $user->rights->categorie->creer)
 	}
 
 	// Create category in database
-	if (! $error)
+	if (!$error)
 	{
 		$result = $object->create($user);
 		if ($result > 0)
@@ -179,32 +179,32 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 			header("Location: ".$backtopage);
 			exit;
 		}
-		else if ($idProdOrigin)
+		elseif ($idProdOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProdOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idCompanyOrigin)
+		elseif ($idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idCompanyOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idSupplierOrigin)
+		elseif ($idSupplierOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idSupplierOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idMemberOrigin)
+		elseif ($idMemberOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idMemberOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idContactOrigin)
+		elseif ($idContactOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idContactOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		else if ($idProjectOrigin)
+		elseif ($idProjectOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
@@ -223,8 +223,8 @@ if (($action == 'add' || $action == 'confirmed') && $user->rights->categorie->cr
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$helpurl='';
-llxHeader("",$langs->trans("Categories"),$helpurl);
+$helpurl = '';
+llxHeader("", $langs->trans("Categories"), $helpurl);
 
 if ($user->rights->categorie->creer)
 {
@@ -234,11 +234,11 @@ if ($user->rights->categorie->creer)
 		dol_set_focus('#label');
 
 		print '<form action="'.$_SERVER['PHP_SELF'].'?type='.$type.'" method="POST">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="urlfrom" value="'.$urlfrom.'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		print '<input type="hidden" name="id" value="'.GETPOST('origin','alpha').'">';
+		print '<input type="hidden" name="id" value="'.GETPOST('origin', 'alpha').'">';
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 		if ($origin) print '<input type="hidden" name="origin" value="'.$origin.'">';
@@ -258,13 +258,13 @@ if ($user->rights->categorie->creer)
 		// Description
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('description',$description,'',200,'dolibarr_notes','',false,true,$conf->global->FCKEDITOR_ENABLE_PRODUCTDESC,ROWS_6,'90%');
+		$doleditor = new DolEditor('description', $description, '', 200, 'dolibarr_notes', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_6, '90%');
 		$doleditor->Create();
 		print '</td></tr>';
 
 		// Color
 		print '<tr><td>'.$langs->trans("Color").'</td><td>';
-		print $formother->selectColor($color,'color');
+		print $formother->selectColor($color, 'color');
 		print '</td></tr>';
 
 		// Parent category
@@ -273,12 +273,12 @@ if ($user->rights->categorie->creer)
 		print ajax_combobox('parent');
 		print '</td></tr>';
 
-		$parameters=array();
-		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
 		if (empty($reshook))
 		{
-			print $object->showOptionals($extrafields,'edit');
+			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
 		print '</table>';

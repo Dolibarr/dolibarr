@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===========================================================================
 
@@ -29,7 +29,7 @@ create table llx_const
   name        varchar(180) NOT NULL,
   entity      integer DEFAULT 1 NOT NULL,	-- multi company id
   value       text NOT NULL, 				-- max 65535 caracteres
-  type        varchar(64) DEFAULT 'string',
+  type        varchar(64) DEFAULT 'string', -- null or 'encrypted' if param has been encrypted 
   visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
   tms         timestamp

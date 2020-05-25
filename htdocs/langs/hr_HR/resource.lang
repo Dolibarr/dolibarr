@@ -5,13 +5,13 @@ DeleteResource=Obriši sredstvo
 ConfirmDeleteResourceElement=Potvrdite brisanje sredstva za ovaj element
 NoResourceInDatabase=Nema sredstava u bazi
 NoResourceLinked=Nema povezanih sredstava
-
+ActionsOnResource=Events about this resource
 ResourcePageIndex=Popis sredstava
 ResourceSingular=Sredstvo
 ResourceCard=Kartica sredstva
-AddResource=Kreiraj sredstvo
+AddResource=Izradi sredstvo
 ResourceFormLabel_ref=Naziv sredstva
-ResourceType=Tip sredstva
+ResourceType=Vrsta sredstva
 ResourceFormLabel_description=Opis sredstva
 
 ResourcesLinkedToElement=Sredstva povezana s elementom

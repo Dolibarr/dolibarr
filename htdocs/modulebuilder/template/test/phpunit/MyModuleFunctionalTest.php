@@ -13,11 +13,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file    test/functional/MyModuleFunctionalTest.php
+ * \file    test/phpunit/MyModuleFunctionalTest.php
  * \ingroup mymodule
  * \brief   Example Selenium test.
  *
@@ -69,14 +69,14 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		),
 		// Geckodriver does not keep the session at the moment?!
 		// XPath selectors also don't seem to work
-//        array(
-//            'browser' => 'Mozilla Firefox on Linux',
-//            'browserName' => 'firefox',
-//            'sessionStrategy' => 'shared',
-//            'desiredCapabilities' => array(
-//                'marionette' => true
-//            )
-//        )
+		//array(
+		//    'browser' => 'Mozilla Firefox on Linux',
+		//    'browserName' => 'firefox',
+		//    'sessionStrategy' => 'shared',
+		//    'desiredCapabilities' => array(
+		//        'marionette' => true,
+		//    ),
+		//)
 	);
 
 	/**
@@ -99,7 +99,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Global test setup
-     * @return void
+	 * @return void
 	 */
 	public static function setUpBeforeClass()
 	{
@@ -107,7 +107,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Unit test setup
-     * @return void
+	 * @return void
 	 */
 	public function setUp()
 	{
@@ -117,7 +117,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Verify pre conditions
-     * @return void
+	 * @return void
 	 */
 	protected function assertPreConditions()
 	{
@@ -125,7 +125,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Handle Dolibarr authentication
-     * @return void
+	 * @return void
 	 */
 	private function authenticate()
 	{
@@ -146,13 +146,13 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Test enabling developer mode
-     * @return bool
+	 * @return bool
 	 */
 	public function testEnableDeveloperMode()
 	{
 		$this->url('/admin/const.php');
 		$this->authenticate();
-		$main_features_level_path='//input[@value="MAIN_FEATURES_LEVEL"]/following::input[@type="text"]';
+		$main_features_level_path = '//input[@value="MAIN_FEATURES_LEVEL"]/following::input[@type="text"]';
 		$main_features_level = $this->byXPath($main_features_level_path);
 		$main_features_level->clear();
 		$main_features_level->value('2');
@@ -166,13 +166,13 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test enabling the module
 	 *
 	 * @depends testEnableDeveloperMode
-     * @return bool
+	 * @return bool
 	 */
 	public function testModuleEnabled()
 	{
 		$this->url('/admin/modules.php');
 		$this->authenticate();
-		$module_status_image_path='//a[contains(@href, "' . self::$module_id . '")]/img';
+		$module_status_image_path = '//a[contains(@href, "'.self::$module_id.'")]/img';
 		$module_status_image = $this->byXPath($module_status_image_path);
 		if (strstr($module_status_image->attribute('src'), 'switch_off.png')) {
 			// Enable the module
@@ -192,7 +192,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test access to the configuration page
 	 *
 	 * @depends testModuleEnabled
-     * @return bool
+	 * @return bool
 	 */
 	public function testConfigurationPage()
 	{
@@ -205,7 +205,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test access to the about page
 	 *
 	 * @depends testConfigurationPage
-     * @return bool
+	 * @return bool
 	 */
 	public function testAboutPage()
 	{
@@ -218,7 +218,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test about page is rendering Markdown
 	 *
 	 * @depends testAboutPage
-     * @return bool
+	 * @return bool
 	 */
 	public function testAboutPageRendersMarkdownReadme()
 	{
@@ -235,7 +235,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test box is properly declared
 	 *
 	 * @depends testModuleEnabled
-     * @return bool
+	 * @return bool
 	 */
 	public function testBoxDeclared()
 	{
@@ -248,7 +248,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test trigger is properly enabled
 	 *
 	 * @depends testModuleEnabled
-     * @return bool
+	 * @return bool
 	 */
 	public function testTriggerDeclared()
 	{
@@ -265,7 +265,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 	 * Test trigger is properly declared
 	 *
 	 * @depends testTriggerDeclared
-     * @return bool
+	 * @return bool
 	 */
 	public function testTriggerEnabled()
 	{
@@ -280,7 +280,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Verify post conditions
-     * @return void
+	 * @return void
 	 */
 	protected function assertPostConditions()
 	{
@@ -288,7 +288,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Unit test teardown
-     * @return void
+	 * @return void
 	 */
 	public function tearDown()
 	{
@@ -296,7 +296,7 @@ class MyModuleFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 
 	/**
 	 * Global test teardown
-     * @return void
+	 * @return void
 	 */
 	public static function tearDownAfterClass()
 	{

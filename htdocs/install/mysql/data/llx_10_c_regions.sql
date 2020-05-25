@@ -9,6 +9,7 @@
 -- Copyright (C) 2012      Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2015	   Ferran Marcet        <fmarcet@2byte.es>
+-- Copyright (C) 2019~	   Lao Tian        <281388879@qq.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 
 --
@@ -44,25 +45,16 @@ insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,   6,'97601',3,'Mayotte');
 
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  11,'75056',1,'Île-de-France');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  21,'51108',0,'Champagne-Ardenne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  22,'80021',0,'Picardie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  23,'76540',0,'Haute-Normandie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  24,'45234',2,'Centre');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  25,'14118',0,'Basse-Normandie');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  26,'21231',0,'Bourgogne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  31,'59350',2,'Nord-Pas-de-Calais');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  41,'57463',0,'Lorraine');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  42,'67482',1,'Alsace');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  43,'25056',0,'Franche-Comté');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  24,'45234',2,'Centre-Val de Loire');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  27,'21231',0,'Bourgogne-Franche-Comté');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  28,'76540',0,'Normandie');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  32,'59350',4,'Hauts-de-France');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  44,'67482',2,'Grand Est');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  52,'44109',4,'Pays de la Loire');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  53,'35238',0,'Bretagne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  54,'86194',2,'Poitou-Charentes');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  72,'33063',1,'Aquitaine');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  73,'31555',0,'Midi-Pyrénées');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  74,'87085',2,'Limousin');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  82,'69123',2,'Rhône-Alpes');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  83,'63113',1,'Auvergne');
-insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  91,'34172',2,'Languedoc-Roussillon');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  75,'33063',0,'Nouvelle-Aquitaine');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  76,'31355',1,'Occitanie');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  84,'69123',1,'Auvergne-Rhône-Alpes');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  93,'13055',0,'Provence-Alpes-Côte d''Azur');
 insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values ( 1,  94,'2A004',0,'Corse');
 
@@ -352,3 +344,39 @@ INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES (25
 -- Regions Slovenia (rowid country=202)
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ('202', '20203', 'SI03', NULL, 'East Slovenia');
 INSERT INTO llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom) VALUES ('202', '20204', 'SI04', NULL, 'West Slovenia');
+
+-- Regions China (rowid country=9)
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,901, '京',0,'北京市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,902, '津',0,'天津市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,903, '沪',0,'上海市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,904, '渝',0,'重庆市');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,905, '冀',0,'河北省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,906, '晋',0,'山西省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,907, '辽',0,'辽宁省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,908, '吉',0,'吉林省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,909, '黑',0,'黑龙江省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,910, '苏',0,'江苏省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,911, '浙',0,'浙江省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,912, '皖',0,'安徽省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,913, '闽',0,'福建省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,914, '赣',0,'江西省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,915, '鲁',0,'山东省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,916, '豫',0,'河南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,917, '鄂',0,'湖北省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,918, '湘',0,'湖南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,919, '粤',0,'广东省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,920, '琼',0,'海南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,921, '川',0,'四川省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,922, '贵',0,'贵州省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,923, '云',0,'云南省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,924, '陕',0,'陕西省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,925, '甘',0,'甘肃省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,926, '青',0,'青海省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,927, '台',0,'台湾省');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,928, '蒙',0,'内蒙古自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,929, '桂',0,'广西壮族自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,930, '藏',0,'西藏自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,931, '宁',0,'宁夏回族自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,932, '新',0,'新疆维吾尔自治区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,933, '港',0,'香港特别行政区');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (9,934, '澳',0,'澳门特别行政区');

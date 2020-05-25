@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -34,5 +34,6 @@ create table llx_mailing_cibles
   source_id			integer,
   source_type		varchar(16),
   date_envoi		datetime,
+  tms				timestamp,
   error_text		varchar(255)						-- text with error if statut is -1
 )ENGINE=innodb;

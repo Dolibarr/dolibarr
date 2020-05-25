@@ -11,7 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program.  If not, see http://www.gnu.org/licenses/.
+-- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
 CREATE TABLE llx_emailcollector_emailcollectorfilter(
@@ -19,9 +19,9 @@ CREATE TABLE llx_emailcollector_emailcollectorfilter(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	fk_emailcollector INTEGER NOT NULL,
 	type varchar(128) NOT NULL, 
-	rulevalue varchar(255) NULL, 
+	rulevalue varchar(128) NULL, 
 	date_creation datetime NOT NULL, 
-	tms timestamp NOT NULL, 
+	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 

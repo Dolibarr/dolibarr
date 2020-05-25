@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Auglýsing
-CommercialArea=Eiðsvík
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Viðskiptavinur
 Customers=Viðskiptavinir
 Prospect=Prospect
@@ -59,7 +59,7 @@ ActionAC_FAC=Senda viðskiptavinur reikning í pósti
 ActionAC_REL=Senda viðskiptavinur reikning í pósti (áminning)
 ActionAC_CLO=Loka
 ActionAC_EMAILING=Senda massi tölvupósti
-ActionAC_COM=Senda viðskiptavina þess með pósti
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Senda skipum með pósti
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

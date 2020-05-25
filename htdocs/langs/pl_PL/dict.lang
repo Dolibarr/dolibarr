@@ -290,6 +290,7 @@ CurrencyXOF=Franków CFA BCEAO
 CurrencySingXOF=Frank CFA BCEAO
 CurrencyXPF=Franków CFP
 CurrencySingXPF=Frank CFP
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=cent
 CurrencyCentINR=Paisa
 CurrencyCentSingINR=Paise

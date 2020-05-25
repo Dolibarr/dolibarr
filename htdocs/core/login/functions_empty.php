@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,14 +31,14 @@
  * @param   int		$entitytotest   Number of instance (always 1 if module multicompany not enabled)
  * @return	string					Login if OK, '' if KO
  */
-function check_user_password_empty($usertotest,$passwordtotest,$entitytotest)
+function check_user_password_empty($usertotest, $passwordtotest, $entitytotest)
 {
 	global $langs;
 
 	dol_syslog("functions_empty::check_user_password_empty usertotest=".$usertotest);
 
-	$login='';
-	$_SESSION["dol_loginmesg"]=$langs->trans("FailedToLogin");
+	$login = '';
+	$_SESSION["dol_loginmesg"] = $langs->trans("FailedToLogin");
 
 	return $login;
 }

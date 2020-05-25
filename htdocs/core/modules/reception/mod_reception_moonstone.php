@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2018	   Quentin Vial-Gouteyron    <quentin.vial-gouteyron@atm-consulting.fr>
+/* Copyright (C) 2018		Quentin Vial-Gouteyron	<quentin.vial-gouteyron@atm-consulting.fr>
+ * Copyright (C) 2019		Frédéric France			<frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -22,49 +23,49 @@
  *  \brief      File of class to manage reception numbering rules Moonstone
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/reception/modules_reception.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 
 /**
  *	Class to manage reception numbering rules Moonstone
  */
 class mod_reception_moonstone extends ModelNumRefReception
 {
-	var $version='dolibarr';
-	var $error = '';
-	var $nom = 'Moonstone';
+    public $version = 'dolibarr';
+    public $error = '';
+    public $nom = 'Moonstone';
 
-	/**
-	 *	Return default description of numbering model
-	 *
-	 *	@return     string      text description
-	 */
-	function info()
+    /**
+     *  Return default description of numbering model
+     *
+     *  @return     string      text description
+     */
+    public function info()
     {
-    	global $conf,$langs;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
-		$form = new Form($this->db);
+		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstreception" value="RECEPTION_MOONSTONE_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconstreception" value="RECEPTION_MOONSTONE_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes",$langs->transnoentities("Reception"),$langs->transnoentities("Reception"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a",$langs->transnoentities("Reception"),$langs->transnoentities("Reception"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
+		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Reception"), $langs->transnoentities("Reception"));
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td align="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreception" value="'.$conf->global->RECEPTION_MOONSTONE_MASK.'">',$tooltip,1,1).'</td>';
-		$texte.= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskreception" value="'.$conf->global->RECEPTION_MOONSTONE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '</tr>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
     }
@@ -74,19 +75,19 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *
 	 *	@return     string      Example
 	 */
-    function getExample()
+    public function getExample()
     {
-     	global $conf,$langs,$mysoc;
+     	global $conf, $langs, $mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$old_code_type=$mysoc->typent_code;
-    	$mysoc->code_client='CCCCCCCCCC';
-    	$mysoc->typent_code='TTTTTTTTTT';
-     	$numExample = $this->getNextValue($mysoc,'');
-		$mysoc->code_client=$old_code_client;
-		$mysoc->typent_code=$old_code_type;
+    	$old_code_client = $mysoc->code_client;
+    	$old_code_type = $mysoc->typent_code;
+    	$mysoc->code_client = 'CCCCCCCCCC';
+    	$mysoc->typent_code = 'TTTTTTTTTT';
+     	$numExample = $this->getNextValue($mysoc, '');
+		$mysoc->code_client = $old_code_client;
+		$mysoc->typent_code = $old_code_type;
 
-		if (! $numExample)
+		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
@@ -100,28 +101,28 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	@param	Object		$reception	Reception object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    function getNextValue($objsoc,$reception)
+    public function getNextValue($objsoc, $reception)
     {
-		global $db,$conf;
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask=$conf->global->RECEPTION_MOONSTONE_MASK;
+		$mask = $conf->global->RECEPTION_MOONSTONE_MASK;
 
-		if (! $mask)
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return 0;
 		}
 
 		$date = $reception->date_reception;
 
-		$numFinal=get_next_value($db,$mask,'reception','ref','',$objsoc,$date);
+		$numFinal = get_next_value($db, $mask, 'reception', 'ref', '', $objsoc, $date);
 
 		return  $numFinal;
-	}
+    }
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return next free value
 	 *
@@ -129,9 +130,9 @@ class mod_reception_moonstone extends ModelNumRefReception
 	 *	@param	Object		$objforref	Reception object
 	 *	@return string      			Next free value
 	 */
-	function reception_get_num($objsoc,$objforref)
+	public function reception_get_num($objsoc, $objforref)
 	{
 		// phpcs:enable
-		return $this->getNextValue($objsoc,$objforref);
+		return $this->getNextValue($objsoc, $objforref);
 	}
 }

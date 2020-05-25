@@ -29,7 +29,7 @@ ExpenseReportApprovedMessage=La note de frais %s a été approuvée.<br>- Utilis
 ExpenseReportRefused=Une note de frais a été refusée
 ExpenseReportRefusedMessage=La note de frais %s a été refusée.<br>- Utilisateur : %s<br>- Refusée par : %s<br>- Motif du refus : %s<br>Cliquez ici pour afficher la note de frais: %s
 ExpenseReportCanceled=Une note de frais a été annulée
-ExpenseReportCanceledMessage=La note de frais %s a été annulée.<br>- Utilisateur : %s<br>- Annulée par : %s<br>- Motif de l'annulation :%s<br>Cliquez ici pour afficher la note de frais %s
+ExpenseReportCanceledMessage=La note de frais %s a été annulée.<br>- Utilisateur : %s<br>- Annulée par : %s<br>- Motif de l'annulation : %s<br>Cliquez ici pour afficher la note de frais %s
 ExpenseReportPaid=Une note de frais a été réglée
 ExpenseReportPaidMessage=La note de frais %s a été réglée.<br>- Utilisateur : %s<br>- Réglée par : %s<br>Cliquez ici pour afficher la note de frais %s
 TripId=Id note de frais
@@ -73,23 +73,19 @@ EX_PAR_VP=Stationnement
 EX_CAM_VP=Entretien et réparation
 DefaultCategoryCar=Mode de déplacement par défaut
 DefaultRangeNumber=Numéro de plage par défaut
-
+UploadANewFileNow=Téléverser un nouveau document maintenant
 Error_EXPENSEREPORT_ADDON_NotDefined=Erreur, la règle pour la numérotation des notes de frais n'a pas été définie dans la configuration du module 'Notes de Frais'
 ErrorDoubleDeclaration=Vous avez déclaré une autre note de frais dans une période similaire.
 AucuneLigne=Aucune note de frais déclarée
-
 ModePaiement=Mode de paiement
-
 VALIDATOR=Utilisateur responsable de l'approbation
 VALIDOR=Approuvé par
 AUTHOR=Enregistré par
 AUTHORPAIEMENT=Payé par
 REFUSEUR=Refusé par
 CANCEL_USER=Supprimé par
-
 MOTIF_REFUS=Motif
 MOTIF_CANCEL=Motif
-
 DATE_REFUS=Date refus
 DATE_SAVE=Date validation
 DATE_CANCEL=Date annulation
@@ -113,7 +109,6 @@ NoTripsToExportCSV=Pas de note de frais à exporter dans cette période
 ExpenseReportPayment=Paiement des notes de frais
 ExpenseReportsToApprove=Notes de frais à approuver
 ExpenseReportsToPay=Notes de frais à payer
-CloneExpenseReport=Cloner la note de frais
 ConfirmCloneExpenseReport=Êtes-vous sûr de vouloir cloner cette note de frais ?
 ExpenseReportsIk=index des frais kilométriques des notes de frais
 ExpenseReportsRules=Règle de note de frais
@@ -140,7 +135,6 @@ OnExpense=Ligne de dépense
 ExpenseReportRuleSave=Règle de calcul enregistrée
 ExpenseReportRuleErrorOnSave=Erreur: %s
 RangeNum=Plage %d
-
 ExpenseReportConstraintViolationError=Violation de contrainte ID [%s]: %s est supérieur à %s %s
 byEX_DAY=par jour (limité à %s)
 byEX_MON=par mois (limité à%s)
@@ -151,7 +145,7 @@ nolimitbyEX_DAY=par jour (sans limite)
 nolimitbyEX_MON=par mois (sans limite)
 nolimitbyEX_YEA=par an (sans limite)
 nolimitbyEX_EXP=par ligne (sans limite)
-
 CarCategory=Catégorie de voiture
 ExpenseRangeOffset=Montant décalage: %s
 RangeIk=Barème kilométrique
+AttachTheNewLineToTheDocument=Lié la ligne à un document téléversé

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *	\brief      File of predefined functions for HTML forms for order module
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 /**
  *	Class to manage HTML output components for orders
@@ -31,15 +31,15 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 class FormOrder extends Form
 {
 
-	/**
-     *    Return combo list of differents status of a orders
+    /**
+     *  Return combo list of differents status of a orders
      *
-     *    @param	string	$selected   Preselected value
-     *    @param	int		$short		Use short labels
-     *    @param	string	$hmlname	Name of HTML select element
-     *    @return	void
+     *  @param	string	$selected   Preselected value
+     *  @param	int		$short		Use short labels
+     *  @param	string	$hmlname	Name of HTML select element
+     *  @return	void
      */
-    public function selectSupplierOrderStatus($selected='', $short=0, $hmlname='order_status')
+    public function selectSupplierOrderStatus($selected = '', $short = 0, $hmlname = 'order_status')
     {
 	    $options = array();
 
@@ -74,18 +74,18 @@ class FormOrder extends Form
 	 *  @param  int		$addempty		0=list with no empty value, 1=list with empty value
 	 *  @return	array					Tableau des sources de commandes
 	 */
-	public function selectInputMethod($selected='',$htmlname='source_id',$addempty=0)
+	public function selectInputMethod($selected = '', $htmlname = 'source_id', $addempty = 0)
 	{
 		global $langs;
 
-        $listofmethods=array();
+        $listofmethods = array();
 
 		$sql = "SELECT rowid, code, libelle as label";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_input_method";
-		$sql.= " WHERE active = 1";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_input_method";
+		$sql .= " WHERE active = 1";
 
 		dol_syslog(get_class($this)."::selectInputMethod", LOG_DEBUG);
-		$resql=$this->db->query($sql);
+		$resql = $this->db->query($sql);
 
 		if (!$resql) {
 			dol_print_error($this->db);
@@ -96,9 +96,8 @@ class FormOrder extends Form
 			$listofmethods[$obj->rowid] = $langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : $obj->label;
 		}
 
-		print Form::selectarray($htmlname,$listofmethods,$selected,$addempty);
+		print Form::selectarray($htmlname, $listofmethods, $selected, $addempty);
 
 		return 1;
 	}
 }
-

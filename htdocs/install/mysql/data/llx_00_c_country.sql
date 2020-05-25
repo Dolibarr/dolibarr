@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2014 	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2014 	   Alexandre Spangaro   <aspangaro@open-dsi.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Do not add comment at end of line. This file is parsed by install and -- are removed
 
@@ -274,4 +274,8 @@ INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (24
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (244,'ME','MNE','Monténégro',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (245,'BL','BLM','Saint-Barthélemy',1,0);
 INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (246,'MF','MAF','Saint-Martin',1,0);
+INSERT INTO llx_c_country (rowid,code,code_iso,label,active,favorite) VALUES (247,'XK','XKX','Kosovo',1,0);
 
+
+-- Set field eec
+UPDATE llx_c_country SET eec = 1 WHERE code IN ('AT','BE','BG','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GR','HR','NL','HU','IE','IM','IT','LT','LU','LV','MC','MT','PL','PT','RO','SE','SK','SI','UK');

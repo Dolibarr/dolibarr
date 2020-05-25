@@ -4,6 +4,7 @@ LinkedFiles=Arquivos vinculados e documentos
 NoLinkFound=Não há links registrados
 LinkComplete=O arquivo foi associada com sucesso
 ErrorFileNotLinked=O arquivo não pôde ser vinculado
+LinkRemoved=A ligação %s foi removida
 ErrorFailedToDeleteLink=Falha ao remover link '<b>%s</b>'
 ErrorFailedToUpdateLink=Falha ao atualizar link '<b>%s</b>'
 URLToLink=URL para link

@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum en Wiki ondersteuning
 EMailSupport=E-mailondersteuning
-RemoteControlSupport=Directe online ondersteuning en ondersteuning op afstand
+RemoteControlSupport=Online realtime / externe ondersteuning
 OtherSupport=Andere ondersteuning
 ToSeeListOfAvailableRessources=Om contact op te nemen zie de beschikbare bronnen:
-HelpCenter=Ondersteuningscentrum
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+HelpCenter=Helpcentrum
+DolibarrHelpCenter=Help- en ondersteuningscentrum van Dolibarr
+ToGoBackToDolibarr=Anders <a href="%s">klikt u hier om Dolibarr te blijven gebruiken</a> .
+TypeOfSupport=Soort ondersteuning
 TypeSupportCommunauty=Gemeenschap (gratis)
 TypeSupportCommercial=Commercieel (betaald)
 TypeOfHelp=Soort
@@ -15,9 +15,9 @@ NeedHelpCenter=Hulp of support nodig?
 Efficiency=Efficiëntie
 TypeHelpOnly=Alleen Hulp
 TypeHelpDev=Hulp & Ontwikkeling
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Help + Ontwikkeling + Training
+BackToHelpCenter=<a href="%s">Ga anders terug naar de startpagina van het Helpcentrum</a> .
+LinkToGoldMember=U kunt een van de door Dolibarr geselecteerde trainers voor uw taal (%s) bellen door op hun Widget te klikken (status en maximumprijs worden automatisch bijgewerkt):
 PossibleLanguages=Ondersteunde talen
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
+SubscribeToFoundation=Help het Dolibarr-project, abonneer u op de stichting
 SeeOfficalSupport=Voor officiële Dolibarr ondersteuning in uw taal: <br><b><a href="%s" target="_blank">%s</a></b>

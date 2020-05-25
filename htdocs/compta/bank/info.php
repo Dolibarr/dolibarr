@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,10 +43,10 @@ $object->fetch($id);
 $object->info($id);
 
 
-$h=0;
+$h = 0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
+$head[$h][1] = $langs->trans("BankTransaction");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;

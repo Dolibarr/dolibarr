@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,7 +25,7 @@
  * \brief      Description and activation file for module ExternalSite
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -39,7 +39,7 @@ class modExternalSite extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
      */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 
@@ -51,7 +51,7 @@ class modExternalSite extends DolibarrModules
 		// It is used to sort modules in module setup page
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
 		$this->description = "This module include an external web site or page into Dolibarr menus and view it into a Dolibarr frame.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -59,7 +59,7 @@ class modExternalSite extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module
-		$this->picto='bookmark';
+		$this->picto = 'bookmark';
 		// Call to inside lang's file
 		$this->langfiles = array("externalsite");
 
@@ -70,19 +70,19 @@ class modExternalSite extends DolibarrModules
 		$this->config_page_url = array("externalsite.php@externalsite");
 
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 
 		// Constants
 		// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 'current' or 'allentities', deleteonunactive)
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0)
 		// );
-		$this->const = array(0=>array('EXTERNALSITE_LABEL','chaine','ExternalSite','To declare label to use into external site menu entry', 0));
+		$this->const = array(0=>array('EXTERNALSITE_LABEL', 'chaine', 'ExternalSite', 'To declare label to use into external site menu entry', 0));
 
 		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+		$this->boxes = array(); // List of boxes
+		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
@@ -92,14 +92,14 @@ class modExternalSite extends DolibarrModules
     	//$r++;
 
 		// Permissions
-		$this->rights_class = 'externalsite';	// Permission key
-		$this->rights = array();		// Permission array used by this module
+		$this->rights_class = 'externalsite'; // Permission key
+		$this->rights = array(); // Permission array used by this module
 
         // Menus
 		//------
-		$r=0;
+		$r = 0;
 
-		$this->menu[$r]=array(
+		$this->menu[$r] = array(
 			'fk_menu'=>0,
 			'type'=>'top',
 			'titre'=>'__[EXTERNALSITE_LABEL]__',
@@ -115,4 +115,3 @@ class modExternalSite extends DolibarrModules
 		$r++;
 	}
 }
-

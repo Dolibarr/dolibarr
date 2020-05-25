@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -44,10 +44,10 @@ function valeur($sql)
 
 	$valeur = 0;
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$obj=$db->fetch_object($resql);
+		$obj = $db->fetch_object($resql);
 		$valeur = $obj->amount;
 		$db->free($resql);
 	}

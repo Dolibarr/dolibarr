@@ -1,6 +1,6 @@
 <?php
-/* <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
+/* Copyright (C) 2015	ATM Consulting	<support@atm-consulting.fr>
+ * Copyright (C) 2018	Regis Houssin	<regis.houssin@inodbox.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,32 @@ function multicurrencyAdminPrepareHead()
     $head[$h][2] = 'settings';
     $h++;
 
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'multicurrency');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency');
 
     return $head;
+}
+
+/**
+ * Prepare array with list of currency tabs
+ *
+ * @param	array	$aCurrencies	Currencies array
+ * @return  array					Array of tabs
+ */
+function multicurrencyLimitPrepareHead($aCurrencies)
+{
+	global $langs;
+
+	$i = 0;
+	$head = array();
+
+	foreach ($aCurrencies as $currency)
+	{
+		$head[$i][0] = $_SERVER['PHP_SELF'].'?currencycode='.$currency;
+		$head[$i][1] = $langs->trans("Currency".$currency).' ('.$langs->getCurrencySymbol($currency).')';
+		$head[$i][2] = $currency;
+
+		$i++;
+	}
+
+	return $head;
 }

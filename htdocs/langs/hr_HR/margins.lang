@@ -31,14 +31,14 @@ MARGIN_TYPE=Kupovno/troškovna cijena sugerirana za izračun marže
 MargeType1=Margin on Best vendor price
 MargeType2=Marža prema Procjenjenoj prosječnoj cijeni (PPC)
 MargeType3=Marža po cijeni troškova
-MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best vendor price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best vendor price if WAP not yet defined
 CostPrice=Cijena troška
 UnitCharges=Troškovi jedinice
 Charges=Troškovi
-AgentContactType=Tip kontakta komercijalnog agenta
+AgentContactType=Vrsta kontakta komercijalnog agenta
 AgentContactTypeDetails=Odredite koji tip kontakta (povezan na računu) će biti korišten za izvještaj marže po prodajnom predstavniku
 rateMustBeNumeric=Stopa mora biti brojčana vrijednost
 markRateShouldBeLesserThan100=Mark rate should be lower than 100
 ShowMarginInfos=Prikaži infomacije o marži
 CheckMargins=Detalji marže
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any dedicated sale representative and some third parties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

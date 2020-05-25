@@ -1,21 +1,19 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuração do módulo PayPal
-PaypalDesc=Este modulo oferece paginas que permitem o pagamento no <a href="http://www.paypal.com" target="_blank">PayPal</a> aos clientes. Pode ser usado para o pagamento livre ou para o pagamento de algum objeto Dolibarr (fatura, pedido, ...)
-PaypalOrCBDoPayment=Pagar com PayPal (Cartão de Crédito ou Paypal)
-PaypalDoPayment=Pagar com Paypal
+PaypalDesc=Este módulo permite o pagamento por clientes via <a href="http://www.paypal.com" target="_blank">PayPal</a>. Isso pode ser usado para um pagamento ad-hoc ou para um pagamento relacionado a um objeto Dolibarr (fatura, pedido, ...)
+PaypalOrCBDoPayment=Pague com PayPal (cartão ou PayPal)
 PAYPAL_API_SANDBOX=Modo teste/caixa de areia
 PAYPAL_API_USER=API usuario
 PAYPAL_API_PASSWORD=API senha
 PAYPAL_API_SIGNATURE=API assinatura
 PAYPAL_SSLVERSION=Versão do SSL do cURL
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferecer pagamento "integral" (Cartao de credito + Paypal) ou somente "Paypal"
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pagamento "integral" (cartão de crédito + PayPal) ou apenas "PayPal"
 PaypalModeIntegral=Integralmente
 PaypalModeOnlyPaypal=PayPal apenas
-ONLINE_PAYMENT_CSS_URL=URL opcional de CSS na página de pagamento
 ThisIsTransactionId=Eis o id da transação: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Adicionar URL do pagamento Paypal quando se envia o documento por e-mail
+PAYPAL_ADD_PAYMENT_URL=Inclua o URL de pagamento do PayPal quando enviar um documento por e-mail
 NewOnlinePaymentFailed=Foi tentado novo pagamento online, mas sem hêxito
-ONLINE_PAYMENT_SENDEMAIL=Endereço e-mail para aviso apos o pagamento (positivo ou nao)
+ONLINE_PAYMENT_SENDEMAIL=Endereço de e-mail para notificações após cada tentativa de pagamento (para sucesso e falha)
 ReturnURLAfterPayment=Retornar ao URL após o pagamento
 ValidationOfOnlinePaymentFailed=A validação do pagamento online falhou
 PaymentSystemConfirmPaymentPageWasCalledButFailed=A página de confirmação de pagamento, que foi chamada pelo sistema de pagamento, retornou um erro
@@ -25,4 +23,7 @@ DetailedErrorMessage=Mensagem de erro detalhada
 ShortErrorMessage=Mensagem curta de erro
 ErrorCode=Código do erro
 ErrorSeverityCode=Erro grave de código
-PaypalLiveEnabled=Paypal live ativado (caso contrário, teste/modo caixa de areia)
+PaypalLiveEnabled=Modo "ao vivo" do PayPal ativado (caso contrário, modo teste/sandbox)
+PostActionAfterPayment=Poste as ações após os pagamentos
+CardOwner=Titular do cartão
+PayPalBalance=Crédito Paypal

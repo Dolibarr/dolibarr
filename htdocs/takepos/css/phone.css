@@ -1,0 +1,199 @@
+html,body {
+    box-sizing: border-box;
+	padding:3px;
+    margin:0;
+    height:100%;
+	width:100%;
+	background-color: #FFF !important;
+}
+
+.container{
+	width: 100%;
+	height: 100%;
+	margin: 0 auto;
+	overflow: visible;
+	box-sizing: border-box;
+}
+
+.phonerow1{
+	margin: 0 auto;
+	width: 100%;
+	height: auto;
+	min-height: 40%;
+}
+
+.phonerow2{
+	margin: 0 auto;
+	width: 100%;
+	height: auto;
+}
+
+.phonebuttonsrow{
+	margin: 0 auto;
+	width: 100%;
+	height: 5%;
+}
+
+.phonediv1{
+	height:100%;
+	min-height: 100%;
+	width: 100%;
+	text-align: center;
+	box-sizing: border-box;
+	overflow: auto;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+.phonediv2{
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+.phonediv3{
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+	padding-top: 0;
+	padding-bottom: 10px;
+	padding-right: 5px;
+	padding-left: 5px;
+}
+
+button.phonebutton {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	overflow: visible; /* removes extra width in IE */
+	width:24%;
+	height:90%;
+	font-weight: bold;
+}
+
+button.publicphonebutton {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	overflow: visible; /* removes extra width in IE */
+	width:33%;
+	height:50px;
+	font-weight: bold;
+	color: #fff;
+}
+
+.phoneblue{
+	color: #fff;
+	background-color: #428bca;
+	border-color: #357ebd;
+}
+
+.phonegreen{
+	color: #fff;
+	background-color: #5cb85c;
+	border-color: #4cae4c;
+	font-size:20px;
+	text-align:center;
+	width:20px;
+}
+
+.phonetable{
+	width:130px;
+}
+
+.phoneqty{
+	font-size:24px;
+	font-weight: bold;
+	
+	
+}
+
+.phonered{
+	color: #fff;
+	background-color: #dc3545;
+	border-color: #dc3545;
+	font-size:20px;
+	text-align:center;
+	width:20px;
+}
+
+.phoneorange{
+	color: #fff;
+	background-color: #f0ad4e;
+	border-color: #eea236;
+}
+
+.total{
+	width:100% !important;
+	font-size:24px;
+}
+
+.width24{
+		font-size:24px;
+}
+
+.leftcat{
+	margin-top:15px;
+	float:left;
+	width: 50%;
+	text-align:center;
+	height:150px;;
+	overflow:hidden;
+	margin-bottom:5px;
+	font-size:18px;
+	color:#5B5858;
+	font-weight: bold;
+}
+
+button.publicphonebutton2 {
+	display: inline-block;
+	position: relative;
+	padding: 0;
+	line-height: normal;
+	cursor: pointer;
+	vertical-align: middle;
+	text-align: center;
+	overflow: visible; /* removes extra width in IE */
+	width:33%;
+	font-weight: bold;
+	padding: 8px 16px;
+}
+
+.div-table-responsive-no-min{
+	margin-top:20px;
+}
+
+.comment {
+    float: left;
+    width: 100%;
+    height: auto;
+}
+
+.comment-text-area {
+    float: left;
+    width: 80%;
+    height: auto;
+}
+
+.textinput {
+    float: left;
+    width: 100%;
+    min-height: 75px;
+    outline: none;
+    resize: none;
+    border: 1px solid grey;
+}

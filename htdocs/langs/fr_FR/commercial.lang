@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Commercial
+Commercial=Commerce
 CommercialArea=Espace commercial
 Customer=Client
 Customers=Clients
@@ -73,8 +73,8 @@ StatusProsp=Status prospection
 DraftPropals=Propositions brouillons
 NoLimit=Pas de limite
 ToOfferALinkForOnlineSignature=Lien pour signature en ligne
-WelcomeOnOnlineSignaturePage=Bienvenue sur la page pour accepter les propositions commerciales de%s
-ThisScreenAllowsYouToSignDocFrom=Cet écran vous permet d'accepter et signer ou de refuser le devis ou la proposition commerciale
-ThisIsInformationOnDocumentToSign=Ceci est une information sur le document à accepter ou à refuser
+WelcomeOnOnlineSignaturePage=Bienvenue sur la page pour accepter les propositions commerciales de %s
+ThisScreenAllowsYouToSignDocFrom=Cet écran vous permet d'accepter et signer en ligne, ou de refuser, le devis ou la proposition commerciale
+ThisIsInformationOnDocumentToSign=Voici les informations sur le document à accepter ou refuser
 SignatureProposalRef=Signature du devis ou proposition commerciale %s
 FeatureOnlineSignDisabled=Fonctionnalité pour la signature en ligne désactivée ou document généré avant l'activation de la fonctionnalité

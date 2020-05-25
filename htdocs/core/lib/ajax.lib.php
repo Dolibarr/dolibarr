@@ -14,13 +14,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
  *  \file		htdocs/core/lib/ajax.lib.php
- *  \brief		Page called by Ajax request for produts
+ *  \brief		Page called to enhance interface with Javascript and Ajax features.
  */
 
 
@@ -31,7 +31,7 @@
  *
  *  @param	string	$selected           Preselected value
  *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$url                Url for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
+ *	@param	string	$url                Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
  *  @param	string	$urloption			More parameters on URL request
  *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
  *  @param	int		$autoselect			Automatic selection if just one value
@@ -43,23 +43,23 @@
  *                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  *	@return string              		Script
  */
-function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
+function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array())
 {
-    if (empty($minLength)) $minLength=1;
+    if (empty($minLength)) $minLength = 1;
 
-    $dataforrenderITem='ui-autocomplete';
-    $dataforitem='ui-autocomplete-item';
+    $dataforrenderITem = 'ui-autocomplete';
+    $dataforitem = 'ui-autocomplete-item';
     // Allow two constant to use other values for backward compatibility
-    if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem=constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
-    if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem=constant('JS_QUERY_AUTOCOMPLETE_ITEM');
+    if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem = constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+    if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem = constant('JS_QUERY_AUTOCOMPLETE_ITEM');
 
     // Input search_htmlname is original field
     // Input htmlname is a second input field used when using ajax autocomplete.
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
 
-	$script.= '<!-- Javascript code for autocomplete of field '.$htmlname.' -->'."\n";
-	$script.= '<script type="text/javascript">'."\n";
-	$script.= '$(document).ready(function() {
+	$script .= '<!-- Javascript code for autocomplete of field '.$htmlname.' -->'."\n";
+	$script .= '<script>'."\n";
+	$script .= '$(document).ready(function() {
 					var autoselect = '.$autoselect.';
 					var options = '.json_encode($ajaxoptions).';
 
@@ -107,9 +107,10 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 	    						}
 						    }
                     });
+
     				$("input#search_'.$htmlname.'").autocomplete({
     					source: function( request, response ) {
-    						$.get("'.$url.($urloption?'?'.$urloption:'').'", { '.$htmlname.': request.term }, function(data){
+    						$.get("'.$url.($urloption ? '?'.$urloption : '').'", { '.$htmlname.': request.term }, function(data){
 								if (data != null)
 								{
 									response($.map( data, function(item) {
@@ -133,7 +134,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 										return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
 									}));
 								}
-								else console.error("Error: Ajax url '.$url.($urloption?'?'.$urloption:'').' has returned an empty page. Should be an empty json array.");
+								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
 							}, "json");
 						},
 						dataType: "json",
@@ -202,7 +203,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
 					};
 
   				});';
-	$script.= '</script>';
+	$script .= '</script>';
 
 	return $script;
 }
@@ -221,11 +222,11 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
  *	@param	int		$autoselect			Automatic selection if just one value
  *	@return string              		Script
  */
-function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLength=2, $autoselect=0)
+function ajax_multiautocompleter($htmlname, $fields, $url, $option = '', $minLength = 2, $autoselect = 0)
 {
 	$script = '<!-- Autocomplete -->'."\n";
-	$script.= '<script type="text/javascript">';
-	$script.= 'jQuery(document).ready(function() {
+	$script .= '<script>';
+	$script .= 'jQuery(document).ready(function() {
 					var fields = '.json_encode($fields).';
 					var nboffields = fields.length;
 					var autoselect = '.$autoselect.';
@@ -235,7 +236,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
     					dataType: "json",
     					minLength: '.$minLength.',
     					source: function( request, response ) {
-    						jQuery.getJSON( "'.$url.($option?'?'.$option:'').'", { '.$htmlname.': request.term }, function(data){
+    						jQuery.getJSON( "'.$url.($option ? '?'.$option : '').'", { '.$htmlname.': request.term }, function(data){
 								response( jQuery.map( data, function( item ) {
 									if (autoselect == 1 && data.length == 1) {
 										jQuery("#'.$htmlname.'").val(item.value);
@@ -314,7 +315,7 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
     					}
 					});
   				});';
-	$script.= '</script>';
+	$script .= '</script>';
 
 	return $script;
 }
@@ -326,17 +327,17 @@ function ajax_multiautocompleter($htmlname, $fields, $url, $option='', $minLengt
  *	@param	string	$message	Message of dialog box
  *	@param	int		$w			Width of dialog box
  *	@param	int		$h			height of dialog box
- *	@return	void
+ *	@return	string
  */
-function ajax_dialog($title,$message,$w=350,$h=150)
+function ajax_dialog($title, $message, $w = 350, $h = 150)
 {
 	global $langs;
 
-	$newtitle=dol_textishtml($title)?dol_string_nohtmltag($title,1):$title;
-	$msg= '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
-	$msg.= $message;
-	$msg.= '</div>'."\n";
-    $msg.= '<script type="text/javascript">
+	$newtitle = dol_textishtml($title) ?dol_string_nohtmltag($title, 1) : $title;
+	$msg = '<div id="dialog-info" title="'.dol_escape_htmltag($newtitle).'">';
+	$msg .= $message;
+	$msg .= '</div>'."\n";
+    $msg .= '<script>
     jQuery(function() {
         jQuery("#dialog-info").dialog({
 	        resizable: false,
@@ -352,7 +353,7 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 	});
 	</script>';
 
-    $msg.= "\n";
+    $msg .= "\n";
 
     return $msg;
 }
@@ -369,28 +370,27 @@ function ajax_dialog($title,$message,$w=350,$h=150)
  * @param	int		$forcefocus					Force focus on field
  * @param	string	$widthTypeOfAutocomplete	'resolve' or 'off'
  * @return	string								Return html string to convert a select field into a combo, or '' if feature has been disabled for some reason.
- * @see selectArrayAjax of html.form.class
+ * @see selectArrayAjax() of html.form.class
  */
-function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $forcefocus=0, $widthTypeOfAutocomplete='resolve')
+function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 0, $forcefocus = 0, $widthTypeOfAutocomplete = 'resolve')
 {
 	global $conf;
 
-	// select2 disabled for smartphones with standard browser.
-	// TODO With select2 v4, it seems ok, except that responsive style on table become crazy when scrolling at end of array)
-	if (! empty($conf->browser->layout) && $conf->browser->layout == 'phone') return '';
+	// select2 can be disabled for smartphones
+	if (!empty($conf->browser->layout) && $conf->browser->layout == 'phone' && !empty($conf->global->MAIN_DISALLOW_SELECT2_WITH_SMARTPHONE)) return '';
 
-	if (! empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
+	if (!empty($conf->global->MAIN_DISABLE_AJAX_COMBOX)) return '';
 	if (empty($conf->use_javascript_ajax)) return '';
-	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && ! defined('REQUIRE_JQUERY_MULTISELECT')) return '';
-	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
+	if (empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) && !defined('REQUIRE_JQUERY_MULTISELECT')) return '';
+	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
-	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
+	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete = 0;
 
-    $tmpplugin='select2';
-    $msg="\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
-          <script type="text/javascript">
+    $tmpplugin = 'select2';
+    $msg = "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
+          <script>
         	$(document).ready(function () {
-        		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
+        		$(\''.(preg_match('/^\./', $htmlname) ? $htmlname : '#'.$htmlname).'\').'.$tmpplugin.'({
         		    dir: \'ltr\',
         			width: \''.$widthTypeOfAutocomplete.'\',		/* off or resolve */
 					minimumInputLength: '.$minLengthToAutocomplete.',
@@ -411,12 +411,12 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 					},
 					dropdownCssClass: \'ui-dialog\'
 				})';
-	if ($forcefocus) $msg.= '.select2(\'focus\')';
-	$msg.= ';'."\n";
+	if ($forcefocus) $msg .= '.select2(\'focus\')';
+	$msg .= ';'."\n";
 
 	if (is_array($events) && count($events))    // If an array of js events to do were provided.
 	{
-		$msg.= '
+		$msg .= '
 			jQuery("#'.$htmlname.'").change(function () {
 				var obj = '.json_encode($events).';
 		   		$.each(obj, function(key,values) {
@@ -465,8 +465,8 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 			}';
 	}
 
-	$msg.= '});'."\n";
-    $msg.= "</script>\n";
+	$msg .= '});'."\n";
+    $msg .= "</script>\n";
 
     return $msg;
 }
@@ -474,34 +474,38 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 /**
  * 	On/off button for constant
  *
- * 	@param	string	$code			Name of constant
- * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
- * 	@param	int		$entity			Entity to set
- *  @param	int		$revertonoff	Revert on/off
- *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
+ * 	@param	string	$code					Name of constant
+ * 	@param	array	$input					Array of options. ("disabled"|"enabled'|'set'|'del') => CSS element to switch, 'alert' => message to show, ... Example: array('disabled'=>array(0=>'cssid'))
+ * 	@param	int		$entity					Entity to set. Use current entity if null.
+ *  @param	int		$revertonoff			Revert on/off
+ *  @param	int		$strict					Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param	int		$forcereload			Force to reload page if we click/change value (this is supported only when there is no 'alert' option in input)
+ *  @param	string	$marginleftonlyshort	1 = Add a short left margin on picto, 2 = Add a larger left margin on picto, 0 = No margin left. Works for fontawesome picto only.
  * 	@return	string
  */
-function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0, $strict=0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcereload = 0, $marginleftonlyshort = 2)
 {
-	global $conf, $langs;
+	global $conf, $langs, $user;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
+	if (! isset($input)) $input = array();
 
 	if (empty($conf->use_javascript_ajax))
 	{
-		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"),'off').'</a>';
-		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"),'on').'</a>';
+		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 	else
 	{
-		$out= "\n<!-- Ajax code to switch constant ".$code." -->".'
-		<script type="text/javascript">
+		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
+		<script>
 			$(document).ready(function() {
 				var input = '.json_encode($input).';
 				var url = \''.DOL_URL_ROOT.'/core/ajax/constantonoff.php\';
 				var code = \''.$code.'\';
 				var entity = \''.$entity.'\';
 				var strict = \''.$strict.'\';
+				var userid = \''.$user->id.'\';
 				var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
 				var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
 
@@ -510,9 +514,9 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 					if (input.alert && input.alert.set) {
 						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
 						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict);
+						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict, userid);
 					} else {
-						setConstant(url, code, input, entity);
+						setConstant(url, code, input, entity, 0, '.$forcereload.', userid);
 					}
 				});
 
@@ -521,39 +525,40 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 					if (input.alert && input.alert.del) {
 						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
 						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict);
+						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict, userid);
 					} else {
-						delConstant(url, code, input, entity);
+						delConstant(url, code, input, entity, 0, '.$forcereload.', userid);
 					}
 				});
 			});
 		</script>'."\n";
 
-		$out.= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
-		$out.= '<span id="set_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'hideobject':'').'">'.($revertonoff?img_picto($langs->trans("Enabled"),'switch_on'):img_picto($langs->trans("Disabled"),'switch_off')).'</span>';
-		$out.= '<span id="del_'.$code.'" class="linkobject '.(! empty($conf->global->$code)?'':'hideobject').'">'.($revertonoff?img_picto($langs->trans("Disabled"),'switch_off'):img_picto($langs->trans("Enabled"),'switch_on')).'</span>';
-		$out.="\n";
+		$out .= '<div id="confirm_'.$code.'" title="" style="display: none;"></div>';
+		$out .= '<span id="set_'.$code.'" class="valignmiddle linkobject '.(!empty($conf->global->$code) ? 'hideobject' : '').'">'.($revertonoff ?img_picto($langs->trans("Enabled"), 'switch_on', '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= '<span id="del_'.$code.'" class="valignmiddle linkobject '.(!empty($conf->global->$code) ? '' : 'hideobject').'">'.($revertonoff ?img_picto($langs->trans("Disabled"), 'switch_off', '', false, 0, 0, '', '', $marginleftonlyshort) : img_picto($langs->trans("Enabled"), 'switch_on', '', false, 0, 0, '', '', $marginleftonlyshort)).'</span>';
+		$out .= "\n";
 	}
 
 	return $out;
 }
 
 /**
- *  On/off button for object
+ *  On/off button to change status of an object
+ *  This is called when MAIN_DIRECT_STATUS_UPDATE is set and it use tha ajax service objectonoff.php
  *
- *  @param  int     $object     Id product to set
+ *  @param  Object  $object     Object to set
  *  @param  string  $code       Name of constant : status or status_buy for product by example
- *  @param  string  $field      Name of database field : tosell or tobuy for product by example
+ *  @param  string  $field      Name of database field : 'tosell' or 'tobuy' for product by example
  *  @param  string  $text_on    Text if on
  *  @param  string  $text_off   Text if off
  *  @param  array   $input      Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  *  @return string              html for button on/off
  */
-function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=array())
+function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input = array())
 {
     global $langs;
 
-    $out= '<script type="text/javascript">
+    $out = '<script>
         $(function() {
             var input = '.json_encode($input).';
 
@@ -618,8 +623,8 @@ function ajax_object_onoff($object, $code, $field, $text_on, $text_off, $input=a
             });
         });
     </script>';
-    $out.= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'hideobject':'').'">'.img_picto($langs->trans($text_off),'switch_off').'</span>';
-    $out.= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code==1?'':'hideobject').'">'.img_picto($langs->trans($text_on),'switch_on').'</span>';
+    $out .= '<span id="set_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? 'hideobject' : '').'">'.img_picto($langs->trans($text_off), 'switch_off').'</span>';
+    $out .= '<span id="del_'.$code.'_'.$object->id.'" class="linkobject '.($object->$code == 1 ? '' : 'hideobject').'">'.img_picto($langs->trans($text_on), 'switch_on').'</span>';
 
     return $out;
 }

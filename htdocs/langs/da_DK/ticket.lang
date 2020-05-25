@@ -1,0 +1,305 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Opgaver
+Module56000Desc=Opgave system til udstedelse eller forespørgsels styring
+
+Permission56001=Se opgaver
+Permission56002=Ændre opgaver
+Permission56003=Slet opgave
+Permission56004=Administrer opgaver
+Permission56005=Se opgaver fra alle tredjepart (ikke effektiv for eksterne brugere, vær altid begrænset til den tredjepart, de er afhængige af)
+
+TicketDictType=Opgaver - Typer
+TicketDictCategory=Opgave - Grupper
+TicketDictSeverity=Opgave - Sværhedsgrader
+TicketDictResolution=Opgave - Afsluttet
+TicketTypeShortBUGSOFT=Funktionssvigt logik
+TicketTypeShortBUGHARD=Funktionssvigt udstyr
+TicketTypeShortCOM=Kommercielt spørgsmål
+
+TicketTypeShortHELP=Anmodning om hjælp
+TicketTypeShortISSUE=Problem, fejl eller problemer
+TicketTypeShortREQUEST=Skift eller anmodning om forbedring
+TicketTypeShortPROJET=Projekt
+TicketTypeShortOTHER=Andre
+
+TicketSeverityShortLOW=Lav
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Høj
+TicketSeverityShortBLOCKING=Kritiske / Blokering
+
+ErrorBadEmailAddress=Felt '%s' forkert
+MenuTicketMyAssign=Mine opgaver
+MenuTicketMyAssignNonClosed=Mine åbne opgaver
+MenuListNonClosed=Åbene opgaver
+
+TypeContact_ticket_internal_CONTRIBUTOR=Bidragyder
+TypeContact_ticket_internal_SUPPORTTEC=Tildelt bruger
+TypeContact_ticket_external_SUPPORTCLI=Kundekontakt / hændelsesporing
+TypeContact_ticket_external_CONTRIBUTOR=Ekstern bidragyder
+
+OriginEmail=Email kilde
+Notify_TICKET_SENTBYMAIL=Send opgaver besked via Email
+
+# Status
+NotRead=Ikke læst
+Read=Læs
+Assigned=Tildelt
+InProgress=I gang
+NeedMoreInformation=Venter på information
+Answered=Besvaret
+Waiting=Venter
+Closed=Lukket
+Deleted=Slettet
+
+# Dict
+Type=Type
+Category=Analytisk kode
+Severity=Alvorlighed
+
+# Email templates
+MailToSendTicketMessage=At sende Email fra opgave besked
+
+#
+# Admin page
+#
+TicketSetup=Opsætning af opgavemodul
+TicketSettings=Indstillinger
+TicketSetupPage=
+TicketPublicAccess=En offentlig grænseflade, der kræver ingen identifikation, er tilgængelig på følgende url
+TicketSetupDictionaries=Typen af opgave, sværhedsgrad og analytiske koder kan konfigureres fra ordbøger
+TicketParamModule=Indstilling af modulvariabler
+TicketParamMail=Email opsætning
+TicketEmailNotificationFrom=Meddelelses Email fra
+TicketEmailNotificationFromHelp=Bruges i opgave besked svar med et eksempel
+TicketEmailNotificationTo=Meddelelser Email til
+TicketEmailNotificationToHelp=Send Email meddelelser til denne adresse.
+TicketNewEmailBodyLabel=Tekstbesked sendt efter oprettelse af en opgave
+TicketNewEmailBodyHelp=Teksten, der er angivet her, indsættes i e-mailen, der bekræfter oprettelsen af ​​en ny opgave fra den offentlige grænseflade. Oplysninger til opgaven tilføjes automatisk.
+TicketParamPublicInterface=Opsætning af offentlig grænseflade
+TicketsEmailMustExist=Kræv en eksisterende Email adresse for at oprette en opgave
+TicketsEmailMustExistHelp=I den offentlige grænseflade skal Email adressen allerede udfyldes i databasen for at oprette en ny opgave.
+PublicInterface=Offentlig grænseflade
+TicketUrlPublicInterfaceLabelAdmin=Alternativ URL til offentlig interface
+TicketUrlPublicInterfaceHelpAdmin=Det er muligt at definere et alias til webserveren og dermed stille den offentlige grænseflade til rådighed med en anden URL (serveren skal fungere som en proxy på denne nye URL)
+TicketPublicInterfaceTextHomeLabelAdmin=Velkommen tekst til den offentlige grænseflade
+TicketPublicInterfaceTextHome=Du kan oprette en support opgave eller se eksisterende fra sin identifikations opgave spor.
+TicketPublicInterfaceTextHomeHelpAdmin=Teksten, der er defineret her, vises på hjemmesiden for den offentlige grænseflade.
+TicketPublicInterfaceTopicLabelAdmin=Interface titel
+TicketPublicInterfaceTopicHelp=Denne tekst vises som titlen på den offentlige grænseflade.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Hjælp tekst til meddelelsesindgangen
+TicketPublicInterfaceTextHelpMessageHelpAdmin=Denne tekst vises over brugerens meddelelses indtastningsområde.
+ExtraFieldsTicket=Ekstra attributter
+TicketCkEditorEmailNotActivated=HTML editor er ikke aktiveret. Indsæt venligst FCKEDITOR_ENABLE_MAIL indhold til 1 for at få det.
+TicketsDisableEmail=Send ikke e-mails til oprettelse af opgave eller beskedoptagelse
+TicketsDisableEmailHelp=Som standard sendes e-mails, når der oprettes nye opgave eller meddelelser. Aktivér denne mulighed for at deaktivere *alle* e-mail meddelelser
+TicketsLogEnableEmail=Aktivér log via Email
+TicketsLogEnableEmailHelp=Ved hver ændring sendes en mail ** til hver kontaktperson **, der er knyttet til opgaven.
+TicketParams=Parametre
+TicketsShowModuleLogo=Vis modulets logo i den offentlige grænseflade
+TicketsShowModuleLogoHelp=Aktivér denne mulighed for at skjule logo-modulet på siderne i den offentlige grænseflade
+TicketsShowCompanyLogo=Vis firmaets logo i den offentlige grænseflade
+TicketsShowCompanyLogoHelp=Aktivér denne mulighed for at skjule logoet for hovedvirksomheden på siderne i den offentlige grænseflade
+TicketsEmailAlsoSendToMainAddress=Send også besked til hoved e-mail-adresse
+TicketsEmailAlsoSendToMainAddressHelp=Aktivér denne mulighed for at sende en email til "Meddelelses email fra" adresse (se opsætning nedenfor)
+TicketsLimitViewAssignedOnly=Begræns skærmen til opgaver, der er tildelt den aktuelle bruger (ikke effektiv for eksterne brugere, skal du altid begrænse til den tredjepart, de er afhængige af)
+TicketsLimitViewAssignedOnlyHelp=Kun opgaver tildelt den aktuelle bruger vil være synlige. Gælder ikke for en bruger med billetforvaltningsrettigheder.
+TicketsActivatePublicInterface=Aktivér den offentlige grænseflade
+TicketsActivatePublicInterfaceHelp=Offentlig grænseflade tillader alle besøgende at lave opgaver.
+TicketsAutoAssignTicket=Tildel automatisk brugeren, der oprettede opgaven
+TicketsAutoAssignTicketHelp=Når du opretter en opgave, kan brugeren automatisk tildeles opgaven.
+TicketNumberingModules=Opgave nummerering modul
+TicketNotifyTiersAtCreation=Underret tredjepart ved oprettelsen
+TicketGroup=Gruppe
+TicketsDisableCustomerEmail=Deaktiver altid Emails, når en opgave oprettes fra den offentlige grænseflade
+#
+# Index & list page
+#
+TicketsIndex=Opgave - hjem
+TicketList=Liste over opgaver
+TicketAssignedToMeInfos=Denne side viser en opgaveliste oprettet af eller tildelt den aktuelle bruger
+NoTicketsFound=Ingen opgaver fundet
+NoUnreadTicketsFound=Der blev ikke fundet nogen ulæst opgaver
+TicketViewAllTickets=Se alle opgaver
+TicketViewNonClosedOnly=Se kun åbne opgaver
+TicketStatByStatus=Opgaver efter status
+OrderByDateAsc=Sorter efter stigende dato
+OrderByDateDesc=Sorter efter faldende dato
+ShowAsConversation=Vis som samtaleliste
+MessageListViewType=Vis som tabelliste
+
+#
+# Ticket card
+#
+Ticket=Opgave
+TicketCard=Opgavekort
+CreateTicket=Opret opgave
+EditTicket=Rediger opgave
+TicketsManagement=Opgaver Management
+CreatedBy=Lavet af
+NewTicket=Ny opgave
+SubjectAnswerToTicket=Opgave svar
+TicketTypeRequest=Anmodningstype
+TicketCategory=Analytisk kode
+SeeTicket=Se opgave
+TicketMarkedAsRead=Opgaven er blevet markeret som læst
+TicketReadOn=Læs videre
+TicketCloseOn=Udløbsdato
+MarkAsRead=Markér opgaven som læst
+TicketHistory=Opgave historik
+AssignUser=Tildel til bruger
+TicketAssigned=Opgaven er nu tildelt
+TicketChangeType=Skift type
+TicketChangeCategory=Skift analytisk kode
+TicketChangeSeverity=Ændre sværhedsgrad
+TicketAddMessage=Tilføj en besked
+AddMessage=Tilføj en besked
+MessageSuccessfullyAdded=Opgave tilføjet
+TicketMessageSuccessfullyAdded=Meddelelse med succes tilføjet
+TicketMessagesList=Meddelelsesliste
+NoMsgForThisTicket=Ingen besked til denne opgave
+Properties=Klassifikation
+LatestNewTickets=Seneste %s nyeste opgaver (ikke læses)
+TicketSeverity=Alvorlighed
+ShowTicket=Se opgave
+RelatedTickets=Relaterede opgaver
+TicketAddIntervention=Opret indgreb
+CloseTicket=Luk opgave
+CloseATicket=Luk en opgave
+ConfirmCloseAticket=Bekræft afslutningen af opgaven
+ConfirmDeleteTicket=Venligst bekræft sletning af opgaven
+TicketDeletedSuccess=Opgave slettet med succes
+TicketMarkedAsClosed=Opgaven mærket som lukket
+TicketDurationAuto=Beregnet varighed
+TicketDurationAutoInfos=Varighed beregnes automatisk fra handlings modulet
+TicketUpdated=Opgave opdateret
+SendMessageByEmail=Send besked via email
+TicketNewMessage=Ny besked
+ErrorMailRecipientIsEmptyForSendTicketMessage=Modtageren er tom. Ingen email send
+TicketGoIntoContactTab=Gå til fanen "Kontakter" for at vælge dem
+TicketMessageMailIntro=Introduktion
+TicketMessageMailIntroHelp=Denne tekst tilføjes kun i begyndelsen af ​​e-mailen og bliver ikke gemt.
+TicketMessageMailIntroLabelAdmin=Introduktion til meddelelsen, når du sender e-mail
+TicketMessageMailIntroText=Hej, <br> Et nyt svar blev sendt på en billet, som du kontakter. Her er meddelelsen: <br>
+TicketMessageMailIntroHelpAdmin=Denne tekst indsættes før teksten til svaret på en opgave.
+TicketMessageMailSignature=Underskrift
+TicketMessageMailSignatureHelp=Denne tekst tilføjes kun i slutningen af ​​e-mailen og bliver ikke gemt.
+TicketMessageMailSignatureText=<p>Med venlig hilsen</p><p> -- </p>
+TicketMessageMailSignatureLabelAdmin=Signatur af svar Email
+TicketMessageMailSignatureHelpAdmin=Denne tekst indsættes efter svarmeddelelsen.
+TicketMessageHelp=Kun denne tekst gemmes i meddelelseslisten på billetkort.
+TicketMessageSubstitutionReplacedByGenericValues=Substitutionsvariabler erstattes af generiske værdier.
+TimeElapsedSince=Tid forløbet siden
+TicketTimeToRead=Tid forløbet før læst
+TicketContacts=Kontakter billet
+TicketDocumentsLinked=Dokumenter knyttet til opgaven
+ConfirmReOpenTicket=Bekræft genåbne denne opgave?
+TicketMessageMailIntroAutoNewPublicMessage=En ny besked blev sendt på opgaven med emnet %s:
+TicketAssignedToYou=Opgave tildelt
+TicketAssignedEmailBody=Du er blevet tildelt opgave # %s ved %s
+MarkMessageAsPrivate=Markér besked som privat
+TicketMessagePrivateHelp=Denne meddelelse vises ikke til eksterne brugere
+TicketEmailOriginIssuer=Udsteder ved oprindelsen af opgaven
+InitialMessage=Indledende besked
+LinkToAContract=Link til en kontrakt
+TicketPleaseSelectAContract=Vælg en kontrakt
+UnableToCreateInterIfNoSocid=Kan ikke oprette en intervention, når der ikke er defineret nogen tredjepart
+TicketMailExchanges=Email udvekslinger
+TicketInitialMessageModified=Indledende besked ændret
+TicketMessageSuccesfullyUpdated=Meddelelsen er opdateret
+TicketChangeStatus=Skift status
+TicketConfirmChangeStatus=Bekræft statusændringen: %s?
+TicketLogStatusChanged=Status ændret: %s til %s
+TicketNotNotifyTiersAtCreate=Ikke underret firma på create
+Unread=Ulæst
+TicketNotCreatedFromPublicInterface=Ikke tilgængelig. Opgaven blev ikke oprettet fra den offentlige grænseflade.
+PublicInterfaceNotEnabled=Den offentlige grænseflade var ikke aktiveret
+ErrorTicketRefRequired=Opgave reference navn er påkrævet
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Opgave %s læst af %s
+NoLogForThisTicket=Ingen log på denne opgave endnu
+TicketLogAssignedTo=Opgave %s tildelt %s
+TicketLogPropertyChanged=Opgave %s ændret: klassificering fra %s til %s
+TicketLogClosedBy=Opgave %s lukket af %s
+TicketLogReopen=Opgave %s genåbnet
+
+#
+# Public pages
+#
+TicketSystem=Opgavesystem
+ShowListTicketWithTrackId=Vis opgave liste fra spor ID
+ShowTicketWithTrackId=Vis opgave fra spor ID
+TicketPublicDesc=Du kan oprette en support opgave eller tjekke fra et eksisterende ID.
+YourTicketSuccessfullySaved=Opgave er blevet gemt!
+MesgInfosPublicTicketCreatedWithTrackId=En ny opgave er oprettet med ID %s og Ref %s.
+PleaseRememberThisId=Vær venlig at holde sporingsnummeret, som vi måske spørger dig senere.
+TicketNewEmailSubject=Bekræftelse af oprettelse af opgave - Ref %s (offentlig opgave ID %s)
+TicketNewEmailSubjectCustomer=Ny support opgave
+TicketNewEmailBody=Dette er en automatisk email for at bekræfte, at du har registreret en ny opgave.
+TicketNewEmailBodyCustomer=Dette er en automatisk email for at bekræfte en ny opgave er netop blevet oprettet til din konto.
+TicketNewEmailBodyInfosTicket=Information til overvågning af opgaven
+TicketNewEmailBodyInfosTrackId=Opgavesporingsnummer: %s
+TicketNewEmailBodyInfosTrackUrl=Du kan se opgavens fremskridt ved at klikke på linket ovenfor.
+TicketNewEmailBodyInfosTrackUrlCustomer=Du kan se fremskridt på opgaven i den specifikke grænseflade ved at klikke på nedenstående link
+TicketEmailPleaseDoNotReplyToThisEmail=Venligst svar ikke direkte på denne email! Brug linket til at svare på grænsefladen.
+TicketPublicInfoCreateTicket=Denne formular giver dig mulighed for at optage en support opgave i vores styringssystem.
+TicketPublicPleaseBeAccuratelyDescribe=Beskriv venligst problemet korrekt. Giv den mest mulige information, så vi kan identificere din anmodning korrekt.
+TicketPublicMsgViewLogIn=Indtast venligst opgave ID
+TicketTrackId=Offentlig sporings ID
+OneOfTicketTrackId=Et af dine sporings ID'er
+ErrorTicketNotFound=Opgave med sporings ID %s ikke fundet!
+Subject=Emne
+ViewTicket=Se opgave
+ViewMyTicketList=Se min opgave liste
+ErrorEmailMustExistToCreateTicket=Fejl: Email adresse ikke fundet i vores database
+TicketNewEmailSubjectAdmin=Ny opgave oprettet - Ref %s (offentlig opgave ID %s)
+TicketNewEmailBodyAdmin=<p> Opgaven er netop oprettet med ID # %s, se information: </p>
+SeeThisTicketIntomanagementInterface=Se opgave i ledelses grænseflade
+TicketPublicInterfaceForbidden=Den offentlige grænseflade for opgaver var ikke aktiveret
+ErrorEmailOrTrackingInvalid=Dårlig værdi for sporing af ID eller Email
+OldUser=Gammel bruger
+NewUser=Ny bruger
+NumberOfTicketsByMonth=Antal opgaver pr. Måned
+NbOfTickets=Antal opgaver
+# notifications
+TicketNotificationEmailSubject=Opgave %s opdateret
+TicketNotificationEmailBody=Dette er en automatisk besked, der giver dig besked om, at opgave %s er blevet opdateret
+TicketNotificationRecipient=Meddelelsesmodtager
+TicketNotificationLogMessage=Logbesked
+TicketNotificationEmailBodyInfosTrackUrlinternal=Se opgave i grænseflade
+TicketNotificationNumberEmailSent=Meddelelses Email sendt: %s
+
+ActionsOnTicket=Begivenheder ved opgaven
+
+#
+# Boxes
+#
+BoxLastTicket=Nyligt oprettede opgaver
+BoxLastTicketDescription=Seneste %s oprettet opgave
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Ingen nyere ulæste opgaver
+BoxLastModifiedTicket=Seneste ændrede opgaver
+BoxLastModifiedTicketDescription=Seneste %s ændrede opgaver
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Ingen nyligt ændrede opgaver

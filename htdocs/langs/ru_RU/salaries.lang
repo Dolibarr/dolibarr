@@ -1,18 +1,21 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Учет используется для пользователей контрагентов
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Выделенный бухгалтерский счет, указанный в карточке пользователя, будет использоваться только для учета во вспомогательной книги. Этот будет использоваться для Главной книги и в качестве значения по умолчанию для учета вспомогательной книги, если выделенная пользовательский бухгалтерский счет для пользователя не определен.
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Бухгалтерский счет по умолчанию для выплат заработной платы
 Salary=Зарплата
 Salaries=Зарплаты
 NewSalaryPayment=Новая выплата зарплаты
+AddSalaryPayment=Добавить выплату зарплаты
 SalaryPayment=Выплата зарплаты
 SalariesPayments=Выплата зарплат
 ShowSalaryPayment=Показать выплату зарплаты
-THM=Average hourly rate
-TJM=Average daily rate
+THM=Средняя почасовая ставка
+TJM=Среднесуточная ставка
 CurrentSalary=Текущая зарплата
-THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
-LastSalaries=Latest %s salary payments
-AllSalaries=All salary payments
-SalariesStatistics=Statistiques salaires
+THMDescription=Это значение может использоваться для расчета затрат времени, затраченного на проект, введенный пользователями, если используется модуль Проектов
+TJMDescription=Это значение в настоящее время только для информации и не используется для каких-либо расчетов
+LastSalaries=Последние%s выплат зарплаты 
+AllSalaries=Все выплаты зарплаты
+SalariesStatistics=Статистика зарплаты
+# Export
+SalariesAndPayments=Заработная плата и выплаты

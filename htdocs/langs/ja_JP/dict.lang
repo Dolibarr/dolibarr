@@ -290,6 +290,7 @@ CurrencyXOF=CFAフランBCEAO
 CurrencySingXOF=CFAフランBCEAO
 CurrencyXPF=CFPフラン
 CurrencySingXPF=CFPフラン
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=セント
 CurrencyCentINR=パイサ
 CurrencyCentSingINR=パイサ（複数）

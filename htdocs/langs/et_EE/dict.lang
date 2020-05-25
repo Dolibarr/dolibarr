@@ -290,6 +290,7 @@ CurrencyXOF=CFA frangid BCEAO
 CurrencySingXOF=CFA frank BCEAO
 CurrencyXPF=CFP frangid
 CurrencySingXPF=CFP frank
+CurrencyCentEUR=cents
 CurrencyCentSingEUR=sent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise

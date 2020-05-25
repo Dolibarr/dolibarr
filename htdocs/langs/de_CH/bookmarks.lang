@@ -1,2 +1,10 @@
 # Dolibarr language file - Source file is en_US - bookmarks
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Verlinkte Seite in neuem oder gleichem Fenster öffnen
+AddThisPageToBookmarks=Füge diese Seite zu deinen Lesezeichen hinzu.
+EditBookmarks=Lesezeichen anzeigen und bearbeiten
+OpenANewWindow=Neuen Tab öffnen
+BookmarkTitle=Name des Lesezeichens
+BehaviourOnClick=Was soll passieren, wenn ein Lesezeichen - Link angewählt wird?
+SetHereATitleForLink=Gib dem Lesezeichen einen Namen
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Verwende einen externen Link (https://URL) oder zeige auf das lokale Verzeichnis (/DOLIBARR_ROOT/htdocs/...)
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Gib an, ob der Link im selben- oder einem neuen Fenster geladen werden soll.
+BookmarksManagement=Lesezeichen - Verwaltung

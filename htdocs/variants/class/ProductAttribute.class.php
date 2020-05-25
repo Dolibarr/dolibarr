@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -36,7 +36,7 @@ class ProductAttribute
 
 	/**
 	 * Ref of the product attribute
-	 * @var
+	 * @var string
 	 */
 	public $ref;
 
@@ -86,12 +86,12 @@ class ProductAttribute
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->ref = $result->ref;
-		$this->label = $result->label;
-		$this->rang = $result->rang;
+		$this->id = $obj->rowid;
+		$this->ref = $obj->ref;
+		$this->label = $obj->label;
+		$this->rang = $obj->rang;
 
 		return 1;
 	}
@@ -111,7 +111,6 @@ class ProductAttribute
 		if ($query)
 		{
     		while ($result = $this->db->fetch_object($query)) {
-
     			$tmp = new ProductAttribute($this->db);
     			$tmp->id = $result->rowid;
     			$tmp->ref = $result->ref;
@@ -175,9 +174,10 @@ class ProductAttribute
 	/**
 	 * Deletes a product attribute
 	 *
-	 * @return int <0 KO, >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function delete()
+	public function delete($user = null)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 
@@ -249,7 +249,7 @@ class ProductAttribute
 		foreach ($tmp_order as $order => $rowid) {
 			$tmp = new ProductAttribute($this->db);
 			$tmp->fetch($rowid);
-			$tmp->rang = $order+1;
+			$tmp->rang = $order + 1;
 
 			if ($tmp->update($user) < 0) {
 				return -1;
