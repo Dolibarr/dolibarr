@@ -600,7 +600,7 @@ function getStructuredData($type, $data = array())
 			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
 			$ret .= ",\n";
-			$ret .= 'sameAs": [';
+			$ret .= '"sameAs": [';
 			$i = 0;
 			foreach($mysoc->socialnetworks as $key => $value) {
 				if ($key == 'linkedin') {
