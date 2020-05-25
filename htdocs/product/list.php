@@ -1255,6 +1255,8 @@ if ($resql)
 					print '<td class="right nowraponall">';
 					if ($obj->tosell)
 					{
+						// TODO Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
+						// then reuse the cache array if we need prices for other price levels
 						$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
 						$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
 						$resultp .= " WHERE fk_product = ".$obj->rowid;
