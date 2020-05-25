@@ -64,6 +64,8 @@ create table llx_facturedet_rec_extrafields
 
 ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
 
+ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
+
 -- This var is per entity now, so we remove const if global if exists
 delete from llx_const where name = 'PROJECT_HIDE_TASKS' and entity = 0;
 

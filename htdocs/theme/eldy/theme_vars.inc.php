@@ -82,7 +82,7 @@ $toolTipFontColor = '#333';
 // text color
 $textSuccess   = '#28a745';
 $colorblind_deuteranopes_textSuccess = '#37de5d';
-$textWarning   = '#a37c0d'; // See $badgeWarning
+$textWarning   = '#bc9526'; // See $badgeWarning
 $textDanger    = '#9f4705'; // See $badgeDanger
 $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
 
@@ -91,7 +91,7 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 $badgePrimary   = '#007bff';
 $badgeSecondary = '#cccccc';
 $badgeSuccess   = '#55a580';
-$badgeWarning   = '#a37c0d'; // See $textDanger bc9526
+$badgeWarning   = '#bc9526'; // See $textWarning bc9526
 $badgeDanger    = '#9f4705'; // See $textDanger
 $badgeInfo      = '#aaaabb';
 $badgeDark      = '#343a40';
