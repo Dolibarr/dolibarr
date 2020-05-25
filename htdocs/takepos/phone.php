@@ -39,8 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// Decode place if it is an order from customer phone
-	$key = GETPOST('key');
-	$place = dol_decode($key);
+	if (GETPOSTISSET("key")) $place = dol_decode(GETPOST('key'));
+	else $place = GETPOST('place', 'aZ09');
 }
 else $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
@@ -87,9 +87,31 @@ elseif ($action == "publicpayment") {
 	print '<br>';
 }
 elseif ($action == "checkplease") {
-	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('Cash').'</button>';
-	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('CreditCard').'</button>';
-	print '<br>';
+	if (GETPOSTISSET("payment")){
+		print '<h1>'.$langs->trans('StatusOrderDelivered').'</h1>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$printer = new dolReceiptPrinter($db);
+		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]});
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->text($langs->trans('IM'));
+		$printer->printer->feed();
+		$printer->printer->text($langs->trans('Place').": ".$place);
+		$printer->printer->feed();
+		$printer->printer->text($langs->trans('Payment').": ".$langs->trans(GETPOST('payment', 'alpha')));
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->close();
+	}
+	else{
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\');">'.$langs->trans('Cash').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\');">'.$langs->trans('CreditCard').'</button>';
+		print '<br>';
+	}
 }
 elseif ($action == "editline") {
 	$placeid = GETPOST('placeid', 'int');
@@ -231,6 +253,9 @@ function AddProductConfirm(placeid, productid){
 }
 
 function SetQty(place, selectedline, qty){
+	<?php
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		?>
 	if (qty==0){
 		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
 		});
@@ -239,6 +264,21 @@ function SetQty(place, selectedline, qty){
 		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
+		<?php
+	}
+	else {
+		?>
+	if (qty==0){
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		});
+	}
+	else{
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		});
+	}
+		<?php
+	}
+	?>	
 	LoadCats();
 }
 
@@ -301,14 +341,16 @@ function Exit(){
     window.location.href='../user/logout.php';
 }
 
-function CheckPlease(){
-	$("#phonediv1").load("auto_order.php?action=checkplease&place="+place, function() {
-	});
-	console.log("Request the check to the waiter");
-	$.ajax({
-		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=thecheck&=place='.$place; ?>",
-	});
+function CheckPlease(payment){
+	if (payment==undefined){
+		$("#phonediv1").load("auto_order.php?action=checkplease&place="+place, function() {
+		});
+	}
+	else{
+		console.log("Request the check to the waiter");
+		$("#phonediv1").load("auto_order.php?action=checkplease&place=<?php echo $place;?>&payment="+payment, function() {
+		});
+	}
 }
 
 </script>
