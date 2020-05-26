@@ -198,12 +198,10 @@ a.info-box-text{ text-decoration: none;}
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
-//$prefix = 'background-';
 if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
 
-if (!isset($conf->global->THEME_AGRESSIVENESS_RATIO) && $prefix) $conf->global->THEME_AGRESSIVENESS_RATIO = -50;
-if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENESS_RATIO = GETPOST('THEME_AGRESSIVENESS_RATIO', 'int');
-//var_dump($conf->global->THEME_AGRESSIVENESS_RATIO);
+if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.7;
+if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
 
 ?>
 .info-box-icon {
@@ -211,38 +209,76 @@ if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) $conf->global->THEME_AGRESSIVENES
 	color: #fff !important;
 	<?php } ?>
     opacity: 0.95;
+    <?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
+        filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+    <?php } ?>
 }
 
 .bg-infobox-project{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#6c6aa8', $conf->global->THEME_AGRESSIVENESS_RATIO); ?> !important;
+	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#a47080', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #a47080 !important;
 }
 .bg-infobox-propal,
 .bg-infobox-facture,
 .bg-infobox-commande{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#99a17d', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #99a17d !important;
 }
 .bg-infobox-supplier_proposal,
 .bg-infobox-invoice_supplier,
 .bg-infobox-order_supplier{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#599caf', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #599caf !important;
 }
 .bg-infobox-contrat, .bg-infobox-ticket{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#46a676', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #46a676 !important;
 }
 .bg-infobox-bank_account{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#b0a53e', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #b0a53e !important;
 }
 .bg-infobox-adherent, .bg-infobox-member {
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #79633f !important;
 }
 .bg-infobox-expensereport{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#79633f', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #79633f !important;
 }
 .bg-infobox-holiday{
-	<?php echo $prefix; ?>color: <?php print colorAgressiveness('#755114', $conf->global->THEME_AGRESSIVENESS_RATIO); ?>  !important;
+	<?php echo $prefix; ?>color: #755114 !important;
+}
+
+.infobox-adherent, .infobox-member {
+	color: #79633f !important;
+}
+.infobox-project{
+	color: #6c6aa8 !important;
+}
+.infobox-action{
+	color: #a47080 !important;
+}
+.infobox-propal,
+.infobox-facture,
+.infobox-commande{
+	color: #99a17d !important;
+}
+.infobox-supplier_proposal,
+.infobox-invoice_supplier,
+.infobox-order_supplier{
+	color: #599caf !important;
+}
+.infobox-contrat, .infobox-ticket{
+	color: #46a676 !important;
+}
+.infobox-bank_account{
+	color: #b0a53e !important;
+}
+.infobox-adherent, .infobox-member {
+	color: #79633f !important;
+}
+.infobox-expensereport{
+	color: #79633f !important;
+}
+.infobox-holiday{
+	color: #755114 !important;
 }
 
 
