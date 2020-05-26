@@ -768,9 +768,10 @@ function getSocialNetworkSharingLinks()
  * @param	string		$sortfield			Sort Fields
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
+ * @param	array		$otherfilters		Other filters
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -784,8 +785,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$error++;
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("EmptySearchString");
-	} elseif (dol_strlen($searchstring) < 2)
-	{
+	} elseif (dol_strlen($searchstring) < 2) {
 		$weblangs->load("errors");
 		$error++;
 		$arrayresult['code'] = 'KO';
@@ -807,10 +807,13 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo)))
 	{
-		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
-		$sql .= " WHERE fk_website = ".$website->id;
+		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
+		if (is_array($otherfilters) && ! empty($otherfilters['category'])) {
+			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
+		}
+		$sql .= " WHERE wp.fk_website = ".$website->id;
 		if ($langcode) {
-			$sql .= " AND lang ='".$db->escape($langcode)."'";
+			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
 		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
@@ -818,20 +821,23 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			foreach ($tmparrayoftype as $tmptype) {
 				$typestring .= ($typestring ? ", " : "")."'".trim($tmptype)."'";
 			}
-			$sql .= " AND type_container IN (".$typestring.")";
+			$sql .= " AND wp.type_container IN (".$typestring.")";
 		}
 		$sql .= " AND (";
 		$searchalgo = '';
 		if (preg_match('/meta/', $algo))
 		{
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."title LIKE '%".$db->escape($searchstring)."%' OR description LIKE '%".$db->escape($searchstring)."%'";
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."keywords LIKE '".$db->escape($searchstring).",%' OR keywords LIKE '% ".$db->escape($searchstring)."%'"; // TODO Use a better way to scan keywords
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.title LIKE '%".$db->escape($searchstring)."%' OR wp.description LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.keywords LIKE '".$db->escape($searchstring).",%' OR wp.keywords LIKE '% ".$db->escape($searchstring)."%'"; // TODO Use a better way to scan keywords
 		}
 		if (preg_match('/content/', $algo))
 		{
-			$searchalgo .= ($searchalgo ? ' OR ' : '')."content LIKE '%".$db->escape($searchstring)."%'";
+			$searchalgo .= ($searchalgo ? ' OR ' : '')."wp.content LIKE '%".$db->escape($searchstring)."%'";
 		}
 		$sql .= $searchalgo;
+		if (is_array($otherfilters) && ! empty($otherfilters['category'])) {
+			$sql .= ' AND cwp.fk_website_page = wp.rowid AND cwp.fk_categorie = '.((int) $otherfilters['category']);
+		}
 		$sql .= ")";
 		$sql .= $db->order($sortfield, $sortorder);
 		$sql .= $db->plimit($max);
