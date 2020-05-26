@@ -647,7 +647,7 @@ class Form
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
-                $ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' ' . $name . ' ' . $name . 'select valignmiddle" name="' . $name . '"'.($disabled ? ' disabled="disabled"' : '').'>';
+                $ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' ' . $name . ' ' . $name . 'select valignmiddle alignstart" name="' . $name . '"'.($disabled ? ' disabled="disabled"' : '').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters = array();
@@ -713,17 +713,18 @@ class Form
                         urlform = urlform + "#show_files";
     	            }
         			$( this ).closest("form").attr("action", urlform);
-                    console.log("we select a mass action "+massaction+" - "+urlform);
+                    console.log("we select a mass action name='.$name.' massaction="+massaction+" - "+urlform);
         	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
         			if ($(this).val() != \'0\')
     	  			{
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', false);
-                                        jQuery(".' . $name . 'other").show();
+										jQuery(".' . $name . 'other").hide();	/* To disable if another div was open */
+                                        jQuery(".' . $name . '"+massaction).show();
     	  			}
     	  			else
     	  			{
                                         jQuery(".' . $name . 'confirmed").prop(\'disabled\', true);
-                                        jQuery(".' . $name . 'other").hide();
+										jQuery(".' . $name . 'other").hide();	/* To disable any div open */
     	  			}
     	        });
         	});

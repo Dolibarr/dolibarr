@@ -292,6 +292,8 @@ if ($action == 'replacesiteconfirm') {
 	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
 }
 
+$usercanedit = $user->rights->website->write;
+
 
 
 /*
@@ -378,6 +380,46 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searc
 {
 	$action = 'replacesite';
 	$massaction = '';
+}
+
+// Set categoery
+if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $usercanedit)
+{
+	$error = 0;
+
+	$db->begin();
+
+	$categoryid = GETPOST('setcategory', 'none');
+	if ($categoryid > 0) {
+		$nbupdate = 0;
+		$tmpwebsitepage = new WebsitePage($db);
+		$category = new Categorie($db);
+		$category->fetch($categoryid);
+
+		foreach($toselect as $tmpid) {
+			$tmpwebsitepage->id = $tmpid;
+			$result = $category->add_type($tmpwebsitepage, 'website_page');
+			if ($result < 0 && $result != -3) {
+				$error++;
+				setEventMessages($category->error, $category->errors, 'errors');
+				break;
+			} else {
+				$nbupdate++;
+			}
+		}
+	}
+
+	if ($error) {
+		$db->rollback();
+	} else {
+		if ($nbupdate) {
+			setEventMessages($langs->trans("RecordsModified", $nbupdate), null, 'mesgs');
+		}
+
+		$db->commit();
+	}
+	// Now we reload list
+	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
 }
 
 // Replacement of string into pages
@@ -3558,7 +3600,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '<input type="hidden" name="website" value="'.$website->ref.'">';
 
 
-	print '<!-- Replace string -->'."\n";
+	print '<!-- Search page and replace string -->'."\n";
 	print '<div class="fiche"><br>';
 
 	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"), '', 'search');
@@ -3652,20 +3694,27 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			// List of mass actions available
 			$arrayofmassactions = array();
 			if ($user->rights->website->writephp && $searchkey) $arrayofmassactions['replace'] = $langs->trans("Replace");
+			if ($user->rights->website->write) $arrayofmassactions['setcategory'] = $langs->trans("ClassifyInCategory");
 			if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 
 			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
-			$massactionbutton .= '<div class="massactionother hidden">';
+			$massactionbutton .= '<div class="massactionother massactionreplace hidden">';
 			$massactionbutton .= $langs->trans("ReplaceString");
-			$massactionbutton .= '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
+			$massactionbutton .= ' <input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
+			$massactionbutton .= '</div>';
+			$massactionbutton .= '<div class="massactionother massactionsetcategory hidden">';
+			$massactionbutton .= $langs->trans("Category");
+			$massactionbutton .= ' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('setcategory') ? GETPOST('setcategory') : '', 'setcategory', 64, 0, 0, 0, 'minwidth300 alignstart');
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+			$massactionbutton .= ajax_combobox('setcategory');
 			$massactionbutton .= '</div>';
 
 			$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 			$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
-			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit, 1, 1, 1);
+			print_barre_liste($langs->trans("Results"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1, 1, 1);
 
 			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);

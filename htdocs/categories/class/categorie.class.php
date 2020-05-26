@@ -655,10 +655,10 @@ class Categorie extends CommonObject
 	 * Link an object to the category
 	 *
 	 * @param   CommonObject 	$obj  	Object to link to category
-	 * @param   string     		$type 	Type of category ('product', ...)
+	 * @param   string     		$type 	Type of category ('product', ...). Use '' to take $obj->element.
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
-	public function add_type($obj, $type)
+	public function add_type($obj, $type = '')
 	{
         // phpcs:enable
 		global $user, $langs, $conf;
@@ -666,6 +666,8 @@ class Categorie extends CommonObject
 		$error = 0;
 
 		if ($this->id == -1) return -2;
+
+		if (empty($type)) $type = $obj->element;
 
         $this->db->begin();
 

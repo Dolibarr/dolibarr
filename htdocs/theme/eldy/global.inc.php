@@ -552,6 +552,9 @@ textarea.centpercent {
     text-align: center;
     margin: 0px auto;
 }
+.alignstart {
+    text-align: start;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
