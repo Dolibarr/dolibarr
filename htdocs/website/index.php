@@ -374,9 +374,10 @@ if ($action == 'unsetshowsubcontainers')
 	exit;
 }
 
-if (($action == 'replacesite' || $action == 'replacesiteconfirm') && !$searchkey)
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey)
 {
 	$action = 'replacesite';
+	$massaction = '';
 }
 
 // Replacement of string into pages
@@ -3648,9 +3649,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 			// List of mass actions available
 			$arrayofmassactions = array();
-			if ($user->rights->website->writephp) $arrayofmassactions['replace'] = $langs->trans("Replace");
+			if ($user->rights->website->writephp && $searchkey) $arrayofmassactions['replace'] = $langs->trans("Replace");
 			if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+
 			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 			$massactionbutton .= '<div class="massactionother hidden">';
 			$massactionbutton .= $langs->trans("ReplaceString");

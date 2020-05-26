@@ -780,26 +780,26 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 
 	if (!is_object($weblangs)) $weblangs = $langs;
 
-	if (empty($searchstring))
+	if (empty($searchstring) && empty($type) && empty($langcode) && empty($otherfilters))
 	{
 		$error++;
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("EmptySearchString");
-	} elseif (dol_strlen($searchstring) < 2) {
+	} elseif ($searchstring && dol_strlen($searchstring) < 2) {
 		$weblangs->load("errors");
 		$error++;
 		$arrayresult['code'] = 'KO';
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	} else {
 		$tmparrayoftype = explode(',', $type);
-		foreach ($tmparrayoftype as $tmptype) {
+		/*foreach ($tmparrayoftype as $tmptype) {
 			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
 				$error++;
 				$arrayresult['code'] = 'KO';
 				$arrayresult['message'] = 'Bad value for parameter type';
 				break;
 			}
-		}
+		}*/
 	}
 
 	$searchdone = 0;
@@ -819,7 +819,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$tmparrayoftype = explode(',', $type);
 			$typestring = '';
 			foreach ($tmparrayoftype as $tmptype) {
-				$typestring .= ($typestring ? ", " : "")."'".trim($tmptype)."'";
+				$typestring .= ($typestring ? ", " : "")."'".$db->escape(trim($tmptype))."'";
 			}
 			$sql .= " AND wp.type_container IN (".$typestring.")";
 		}
