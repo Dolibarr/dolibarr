@@ -241,7 +241,7 @@ print '<br>';
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
-print '<table width="100%" class="border">';
+print '<table class="border centpercent tableforfield">';
 
 // Description
 print '<tr><td class="titlefield notopnoleft tdtop">';
