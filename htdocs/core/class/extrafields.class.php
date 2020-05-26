@@ -2157,7 +2157,7 @@ class ExtraFields
 				}
 				elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
 				{
-					if (! GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) continue;	// Value was not provided, we should not set it.
+					// even we receve nothing from this input we need to update it because checkbox send nothing when nothing is selected
 					$value_arr = GETPOST($keysuffix."options_".$key.$keyprefix);
 					// Make sure we get an array even if there's only one checkbox
 					$value_arr = (array) $value_arr;
