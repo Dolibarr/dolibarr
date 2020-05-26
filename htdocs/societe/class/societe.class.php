@@ -106,6 +106,13 @@ class Societe extends CommonObject
 	);
 
 	/**
+	 * Build as [parentChildTable]=>[childTable]=>array(parentChildTable.PrimaryKey,childTable.ForeignKey,WhereClause)
+	 *  Define into Contrcutor because of MAIN_DB_PREFIX cannot be use here
+	 * @var array	List of Parent's child's child tables. To know object to delete on cascade.
+	 */
+	protected $parentchildchildtablesoncascade = array();
+
+	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'company';
@@ -653,6 +660,22 @@ class Societe extends CommonObject
 		$this->forme_juridique_code = 0;
 		$this->tva_assuj = 1;
 		$this->status = 1;
+
+		$this->parentchildchildtablesoncascade = array(
+			'socpeople'=>
+				array(
+					MAIN_DB_PREFIX.'socpeople_extrafields' =>
+				      array(MAIN_DB_PREFIX.'socpeople.rowid',MAIN_DB_PREFIX.'socpeople_extrafields.fk_object',''),
+				    MAIN_DB_PREFIX.'element_contact' =>
+				      array(MAIN_DB_PREFIX.'socpeople.rowid',
+				            MAIN_DB_PREFIX.'element_contact.fk_socpeople',
+				            MAIN_DB_PREFIX.'element_contact.fk_c_type_contact IN (SELECT ct.rowid FROM '.MAIN_DB_PREFIX.'c_type_contact as ct WHERE ct.source=\'external\')'),
+					MAIN_DB_PREFIX.'societe_contacts' =>
+						array(MAIN_DB_PREFIX.'socpeople.rowid',
+						      MAIN_DB_PREFIX.'societe_contacts.fk_socpeople',
+						      MAIN_DB_PREFIX.'societe_contacts.fk_c_type_contact IN (SELECT ct.rowid FROM '.MAIN_DB_PREFIX.'c_type_contact as ct WHERE ct.source=\'external\')'),
+					)
+		);
 	}
 
 
@@ -1673,6 +1696,22 @@ class Societe extends CommonObject
 
 			foreach ($this->childtablesoncascade as $tabletodelete)
 			{
+				if (!$error && array_key_exists($tabletodelete, $this->parentchildchildtablesoncascade))
+				{
+					if (count($this->parentchildchildtablesoncascade[$tabletodelete])>0){
+						foreach($this->parentchildchildtablesoncascade[$tabletodelete] as $childtabletodelete=>$dataToDelette) {
+							$sql = "DELETE FROM ". $childtabletodelete;
+							$sql .= " WHERE ".$dataToDelette[1]." IN (SELECT ".$dataToDelette[0]." FROM ".MAIN_DB_PREFIX.$tabletodelete." WHERE fk_soc = " . $id.")";
+							if (!empty($dataToDelette[3])) {
+								$sql .= " AND ".$dataToDelette[3];
+							}
+							if (!$this->db->query($sql)) {
+								$error++;
+								$this->errors[] = $this->db->lasterror();
+							}
+						}
+					}
+				}
 				if (!$error)
 				{
 					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete;
@@ -1683,6 +1722,7 @@ class Societe extends CommonObject
 						$this->errors[] = $this->db->lasterror();
 					}
 				}
+
 			}
 
 			// Removed extrafields
