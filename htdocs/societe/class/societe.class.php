@@ -107,7 +107,7 @@ class Societe extends CommonObject
 
 	/**
 	 * Build as [parentChildTable]=>[childTable]=>array(parentChildTable.PrimaryKey,childTable.ForeignKey,WhereClause)
-	 *  Define into Contrcutor because of MAIN_DB_PREFIX cannot be use here
+	 *  Define into Contructor because of MAIN_DB_PREFIX cannot be use here
 	 * @var array	List of Parent's child's child tables. To know object to delete on cascade.
 	 */
 	protected $parentchildchildtablesoncascade = array();
