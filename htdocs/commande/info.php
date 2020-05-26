@@ -20,7 +20,7 @@
 /**
  *      \file       htdocs/commande/info.php
  *      \ingroup    commande
- *		\brief      Page des informations d'une commande
+ *		\brief      Sale Order info page
  */
 
 require '../main.inc.php';
