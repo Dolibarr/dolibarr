@@ -1722,7 +1722,6 @@ class Societe extends CommonObject
 						$this->errors[] = $this->db->lasterror();
 					}
 				}
-
 			}
 
 			// Removed extrafields
