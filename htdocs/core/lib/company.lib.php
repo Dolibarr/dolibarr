@@ -802,7 +802,10 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
                         print '<tr class="oddeven">';
 
                         // Ref
-                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"), ($obj->public ? 'projectpub' : 'project'))." ".$obj->ref.'</a></td>';
+                        print '<td>';
+                        print $projecttmp->getNomUrl(1);
+                        print '</td>';
+
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
