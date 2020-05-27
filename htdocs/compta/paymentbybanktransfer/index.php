@@ -28,7 +28,7 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -75,9 +75,9 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 
-print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
 print '<td class="right">';
-print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
+print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
 print $bprev->NbFactureAPrelever();
 print '</a>';
 print '</td></tr>';
@@ -100,11 +100,11 @@ $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
-$sql .= " AND f.entity IN (".getEntity('invoice').")";
+$sql .= " AND f.entity IN (".getEntity('supplier_invoice').")";
 $sql .= " AND f.total_ttc > 0";
 if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 {
-	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+	$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 }
 $sql .= " AND pfd.traite = 0 AND pfd.fk_facture_fourn = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -177,9 +177,11 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 /*
  * Withdraw receipts
  */
+
 $limit = 5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " WHERE p.type = 'bank-transfer'";
 $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 
@@ -198,26 +200,30 @@ if ($result)
     print '<th class="right">'.$langs->trans("Status").'</th>';
     print '</tr>';
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+    if ($num > 0) {
+	    while ($i < min($num, $limit))
+	    {
+	        $obj = $db->fetch_object($result);
 
+	        print '<tr class="oddeven">';
 
-        print '<tr class="oddeven">';
+	        print "<td>";
+	        $bprev->id = $obj->rowid;
+	        $bprev->ref = $obj->ref;
+	        $bprev->statut = $obj->statut;
+	        print $bprev->getNomUrl(1);
+	        print "</td>\n";
+	        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
+	        print '<td class="right">'.price($obj->amount)."</td>\n";
+	        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
-        print "<td>";
-        $bprev->id = $obj->rowid;
-        $bprev->ref = $obj->ref;
-        $bprev->statut = $obj->statut;
-        print $bprev->getNomUrl(1);
-        print "</td>\n";
-        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-        print '<td class="right">'.price($obj->amount)."</td>\n";
-        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
-
-        print "</tr>\n";
-        $i++;
+	        print "</tr>\n";
+	        $i++;
+	    }
+    } else {
+    	print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
+
     print "</table></div><br>";
     $db->free($result);
 }

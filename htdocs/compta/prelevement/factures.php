@@ -42,6 +42,8 @@ $prev_id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+$type = GETPOST('type', 'aZ09');
+
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');

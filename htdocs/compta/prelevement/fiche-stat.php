@@ -39,6 +39,8 @@ if ($user->socid > 0) accessforbidden();
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+$type = GETPOST('type', 'aZ09');
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
