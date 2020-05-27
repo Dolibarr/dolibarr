@@ -14,7 +14,6 @@ FieldsTitle=Titre des champs
 FieldTitle=Titre du champ
 Sheet=Drap
 NoImportableData=Aucune donnée importable (aucun module avec des définitions permettant d'importer des données)
-SQLUsedForExport=SQL Request used to extract data
 LineLabel=Étiquette de ligne
 LineDescription=Description de la ligne
 LineUnitPrice=Prix ​​unitaire de la ligne

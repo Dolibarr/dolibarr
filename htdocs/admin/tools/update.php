@@ -98,14 +98,10 @@ if (function_exists('curl_init'))
 
 			// Show version
 			print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b><br>';
-		}
-		else
-		{
+		} else {
 			print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b><br>';
 		}
-	}
-	else
-	{
+	} else {
 		print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">'.$langs->trans("Check").'</a><br>';
 	}
 }

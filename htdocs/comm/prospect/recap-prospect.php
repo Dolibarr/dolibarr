@@ -83,9 +83,7 @@ if ($socid > 0)
 
 
 	print $langs->trans("FeatureNotYetAvailable");
-}
-else
-{
+} else {
   	dol_print_error($db);
 }
 

@@ -138,7 +138,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
-print $langs->trans("AntiVirusCommandExample");
+print '<span class="opacitymedium">'.$langs->trans("AntiVirusCommandExample").'</span>';
 // Check command in inside safe_mode
 print '</td>';
 print '<td>';
@@ -161,7 +161,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
-print $langs->trans("AntiVirusParamExample");
+print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
 print '<input type="text" name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(!empty($conf->global->MAIN_ANTIVIRUS_PARAM) ?dol_escape_htmltag($conf->global->MAIN_ANTIVIRUS_PARAM) : '').'">';

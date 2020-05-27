@@ -129,9 +129,7 @@ class Auth
                 $this->login($aLogin);
                 $this->passwd($aPasswd);
                 $ret = 0;
-            }
-            else
-            {
+            } else {
                 $ret = -1;
             }
         }

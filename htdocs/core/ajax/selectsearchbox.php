@@ -99,7 +99,7 @@ if (!empty($conf->commande->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUS
 }
 if (!empty($conf->expedition->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_SHIPMENT_DISABLED) && $user->rights->expedition->lire)
 {
-	$arrayresult['searchintoshipment'] = array('position'=>80, 'img'=>'object_sending', 'label'=>$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text'=>img_picto('', 'object_sending').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
+	$arrayresult['searchintoshipment'] = array('position'=>80, 'img'=>'object_shipment', 'label'=>$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'text'=>img_picto('', 'object_shipment').' '.$langs->trans("SearchIntoCustomerShipments", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/expedition/list.php'.($search_boxvalue ? '?sall='.urlencode($search_boxvalue) : ''));
 }
 if (!empty($conf->facture->enabled) && empty($conf->global->MAIN_SEARCHFORM_CUSTOMER_INVOICE_DISABLED) && $user->rights->facture->lire)
 {
@@ -161,8 +161,7 @@ $reshook = $hookmanager->executeHooks('addSearchEntry', $parameters);
 if (empty($reshook))
 {
 	$arrayresult = array_merge($arrayresult, $hookmanager->resArray);
-}
-else $arrayresult = $hookmanager->resArray;
+} else $arrayresult = $hookmanager->resArray;
 
 // This allow to keep a search entry to the top
 if (!empty($conf->global->DEFAULT_SEARCH_INTO_MODULE)) {

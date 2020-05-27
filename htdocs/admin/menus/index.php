@@ -118,9 +118,7 @@ if ($action == 'up')
 	$sql .= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'down')
+} elseif ($action == 'down')
 {
 	$current = array();
 	$next = array();
@@ -174,9 +172,7 @@ elseif ($action == 'down')
 	$sql .= " WHERE m.rowid = ".$next['rowid'];
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'confirm_delete' && $confirm == 'yes')
+} elseif ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$db->begin();
 
@@ -191,9 +187,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 
 		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit;
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 
 		$reload = 0;
@@ -277,8 +271,8 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
-print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
+print '<td class="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('', 'folder', 'class="paddingright"').$langs->trans("UndoExpandAll").'</a>';
+print ' | <a href="#">'.img_picto('', 'folder-open', 'class="paddingright"').$langs->trans("ExpandAll").'</a></div></td>';
 print '</tr>';
 
 print '<tr>';
@@ -408,9 +402,7 @@ if ($conf->use_javascript_ajax)
 	}
 
 	print '</div>';
-}
-else
-{
+} else {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }

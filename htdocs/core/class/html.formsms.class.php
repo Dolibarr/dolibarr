@@ -179,9 +179,7 @@ function limitChars(textarea, limit, infodiv)
                 if ($this->fromsms)
                 {
                     print $this->fromsms;
-                }
-                else
-                {
+                } else {
                     if ($this->fromtype)
                     {
                         $langs->load("errors");
@@ -190,58 +188,45 @@ function limitChars(textarea, limit, infodiv)
                 }
                 print "</td></tr>\n";
                 print "</td></tr>\n";
-            }
-            else
-            {
+            } else {
                 print '<tr><td class="'.$morecss.'">'.$langs->trans("SmsFrom")."</td><td>";
                 //print '<input type="text" name="fromname" size="30" value="'.$this->fromsms.'">';
                 if ($conf->global->MAIN_SMS_SENDMODE == 'ovh')        // For backward compatibility        @deprecated
                 {
                     dol_include_once('/ovh/class/ovhsms.class.php');
-                    try
-                    {
+                    try {
                         $sms = new OvhSms($this->db);
                         if (empty($conf->global->OVHSMS_ACCOUNT))
                         {
                             $resultsender = 'ErrorOVHSMS_ACCOUNT not defined';
-                        }
-                        else
-                        {
+                        } else {
                             $resultsender = $sms->SmsSenderList();
                         }
-                    }
-                    catch (Exception $e)
+                    } catch (Exception $e)
                     {
                         dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                     }
-                }
-                elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
+                } elseif (!empty($conf->global->MAIN_SMS_SENDMODE))    // $conf->global->MAIN_SMS_SENDMODE looks like a value 'class@module'
                 {
                     $tmp = explode('@', $conf->global->MAIN_SMS_SENDMODE);
                     $classfile = $tmp[0]; $module = (empty($tmp[1]) ? $tmp[0] : $tmp[1]);
                     dol_include_once('/'.$module.'/class/'.$classfile.'.class.php');
-                    try
-                    {
+                    try {
                         $classname = ucfirst($classfile);
                         if (class_exists($classname))
                         {
                         	$sms = new $classname($this->db);
                         	$resultsender = $sms->SmsSenderList();
-                        }
-                        else
-                        {
+                        } else {
                         	$sms = new stdClass();
                         	$sms->error = 'The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
                         }
-                    }
-                    catch (Exception $e)
+                    } catch (Exception $e)
                     {
                         dol_print_error('', 'Error to get list of senders: '.$e->getMessage());
                         exit;
                     }
-                }
-                else
-                {
+                } else {
                     dol_syslog("Warning: The SMS sending method has not been defined into MAIN_SMS_SENDMODE", LOG_WARNING);
 	                $resultsender = array();
                     $resultsender[0]->number = $this->fromsms;
@@ -255,9 +240,7 @@ function limitChars(textarea, limit, infodiv)
                         print '<option value="'.$obj->number.'">'.$obj->number.'</option>';
                     }
                     print '</select>';
-                }
-                else
-                {
+                } else {
                     print '<span class="error">'.$langs->trans("SmsNoPossibleSenderFound");
                     if (is_object($sms) && !empty($sms->error)) print ' '.$sms->error;
                     print '</span>';
@@ -278,9 +261,7 @@ function limitChars(textarea, limit, infodiv)
             if ($this->withtoreadonly)
             {
                 print (!is_array($this->withto) && !is_numeric($this->withto)) ? $this->withto : "";
-            }
-            else
-            {
+            } else {
                 print "<input size=\"16\" id=\"sendto\" name=\"sendto\" value=\"".dol_escape_htmltag(!is_array($this->withto) && $this->withto != '1' ? (isset($_REQUEST["sendto"]) ?GETPOST("sendto") : $this->withto) : "+")."\">";
                 if (!empty($this->withtosocid) && $this->withtosocid > 0)
                 {
@@ -317,9 +298,7 @@ function limitChars(textarea, limit, infodiv)
             {
                 print nl2br($defaultmessage);
                 print '<input type="hidden" name="message" value="'.dol_escape_htmltag($defaultmessage).'">';
-            }
-            else
-            {
+            } else {
                 print '<textarea class="quatrevingtpercent" name="message" id="message" rows="'.ROWS_4.'" onkeyup="limitChars(this, 160, \'charlimitinfospan\')">'.$defaultmessage.'</textarea>';
                 print '<div id="charlimitinfo">'.$langs->trans("SmsInfoCharRemain").': <span id="charlimitinfospan">'.(160 - dol_strlen($defaultmessage)).'</span></div></td>';
             }

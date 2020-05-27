@@ -287,9 +287,7 @@ class ActionsCardProduct
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db, $sql);
 		}
 	}
@@ -407,14 +405,12 @@ class ActionsCardProduct
 							$this->type 	= $obj->fk_product_type;
 							$this->entity = $obj->entity;
 							$datas[$alias] = $this->getNomUrl(1, '', 24);
-						}
-						elseif ($alias == 'stock')
+						} elseif ($alias == 'stock')
 						{
 							$this->load_stock();
 							if ($this->stock_reel < $obj->seuil_stock_alerte) $datas[$alias] = $this->stock_reel.' '.img_warning($langs->trans("StockTooLow"));
 							else $datas[$alias] = $this->stock_reel;
-						}
-						elseif ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias, 40);
+						} elseif ($alias == 'label')	$datas[$alias] = dol_trunc($obj->$alias, 40);
 						elseif (preg_match('/price/i', $alias))	$datas[$alias] = price($obj->$alias);
 						elseif ($alias == 'datem') $datas[$alias] = dol_print_date($this->db->jdate($obj->$alias), 'day');
 						elseif ($alias == 'status') $datas[$alias] = $this->LibStatut($obj->$alias, 5);
@@ -427,9 +423,7 @@ class ActionsCardProduct
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}

@@ -235,9 +235,7 @@ if ($socid > 0)
     	{
     		$marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
     		$markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
-    	}
-    	else
-    	{
+    	} else {
     		$marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
     		$markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
     	}
@@ -254,9 +252,7 @@ if ($socid > 0)
     		print "<td class=\"right\">".(($markRate === '') ? 'n/a' : price(price2num($markRate, 'MT'))."%")."</td>\n";
     	print '<td class="right">&nbsp;</td>';
     	print "</tr>\n";
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
     print "</table>";
@@ -264,9 +260,7 @@ if ($socid > 0)
 
     print '<br>';
     $db->free($result);
-}
-else
-{
+} else {
 	dol_print_error('', 'Parameter socid not defined');
 }
 

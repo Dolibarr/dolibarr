@@ -58,7 +58,6 @@ ConsumeOrProduce=Consumir ou Produzir
 ConsumeAndProduceAll=Consumir e produzir todos
 Manufactured=Fabricado
 TheProductXIsAlreadyTheProductToProduce=O produto a ser adicionado já é o produto a ser produzido.
-ForAQuantityOf1=Para uma quantidade a produzir de 1
 ConfirmValidateMo=Tem certeza de que deseja validar esta ordem de fabricação?
 ConfirmProductionDesc=Ao clicar em '%s', você validará o consumo e / ou produção para as quantidades definidas. Isso também atualizará o estoque e registrará movimentos de estoque.
 ProductionForRef=Produção de %s

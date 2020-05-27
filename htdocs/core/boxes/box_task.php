@@ -93,15 +93,13 @@ class box_task extends ModeleBoxes
         $filterValue = 'all';
         if (in_array(GETPOST($cookie_name), array('all', 'im_project_contact', 'im_task_contact'))) {
             $filterValue = GETPOST($cookie_name);
-        }
-        elseif (!empty($_COOKIE[$cookie_name])) {
+        } elseif (!empty($_COOKIE[$cookie_name])) {
             $filterValue = $_COOKIE[$cookie_name];
         }
 
         if ($filterValue == 'im_task_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedTo");
-        }
-        elseif ($filterValue == 'im_project_contact') {
+        } elseif ($filterValue == 'im_project_contact') {
             $textHead .= ' : '.$langs->trans("WhichIamLinkedToProject");
         }
 
@@ -158,8 +156,7 @@ class box_task extends ModeleBoxes
             if ($filterValue === 'im_task_contact') {
                 $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = pt.rowid AND ec.fk_socpeople = '".$user->id."' )";
                 $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project_task' AND tc.source = 'internal' )";
-            }
-            elseif ($filterValue === 'im_project_contact') {
+            } elseif ($filterValue === 'im_project_contact') {
                 $sql .= " JOIN ".MAIN_DB_PREFIX."element_contact as ec ON (ec.element_id = p.rowid AND ec.fk_socpeople = '".$user->id."' )";
                 $sql .= " JOIN ".MAIN_DB_PREFIX."c_type_contact  as tc ON (ec.fk_c_type_contact = tc.rowid AND tc.element = 'project' AND tc.source = 'internal' )";
             }

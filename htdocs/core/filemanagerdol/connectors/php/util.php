@@ -81,18 +81,14 @@ function ConvertToXmlAttribute($value)
 	if (defined('PHP_OS'))
 	{
 		$os = PHP_OS;
-	}
-	else
-	{
+	} else {
 		$os = php_uname();
 	}
 
 	if (strtoupper(substr($os, 0, 3)) === 'WIN' || FindBadUtf8($value))
 	{
 		return (utf8_encode(htmlspecialchars($value)));
-	}
-	else
-	{
+	} else {
 		return (htmlspecialchars($value));
 	}
 }

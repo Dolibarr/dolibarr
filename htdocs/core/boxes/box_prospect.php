@@ -149,8 +149,8 @@ class box_prospect extends ModeleBoxes
 
                 if ($num == 0) {
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'class="center"',
-                        'text'=>$langs->trans("NoRecordedProspects"),
+                        'td' => 'class="center opacitymedium"',
+                        'text'=> $langs->trans("NoRecordedProspects"),
                     );
                 }
 

@@ -241,8 +241,7 @@ if ($resql) {
 		preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthese on tente recherche de traduction
 		if ($reg[1] && $langs->transnoentitiesnoconv($reg[1]) != $reg[1])
 			$description = $langs->transnoentitiesnoconv($reg[1]);
-		else
-			$description = $objp->label;
+		else $description = $objp->label;
 
 		/*
 		 * Ajout les liens (societe, company...)

@@ -184,7 +184,7 @@ class Ticket extends CommonObject
 		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
 		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'tdoverflowmax150'),
-		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75'),
+		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75', 'autofocusoncreate'=>1),
 		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
 		'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
 		'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
@@ -541,9 +541,7 @@ class Ticket extends CommonObject
 
 				$this->db->free($resql);
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
 		} else {
@@ -1182,29 +1180,21 @@ class Ticket extends CommonObject
 
 		if ($status == self::STATUS_NOT_READ) {
 			$statusType = 'status0';
-		}
-		elseif ($status == self::STATUS_READ) {
+		} elseif ($status == self::STATUS_READ) {
 			$statusType = 'status1';
-		}
-		elseif ($status == self::STATUS_ASSIGNED) {
+		} elseif ($status == self::STATUS_ASSIGNED) {
 			$statusType = 'status3';
-		}
-		elseif ($status == self::STATUS_IN_PROGRESS) {
+		} elseif ($status == self::STATUS_IN_PROGRESS) {
 			$statusType = 'status4';
-		}
-		elseif ($status == self::STATUS_WAITING) {
+		} elseif ($status == self::STATUS_WAITING) {
 			$statusType = 'status3';
-		}
-		elseif ($status == self::STATUS_NEED_MORE_INFO) {
+		} elseif ($status == self::STATUS_NEED_MORE_INFO) {
 			$statusType = 'status9';
-		}
-		elseif ($status == self::STATUS_CANCELED) {
+		} elseif ($status == self::STATUS_CANCELED) {
 			$statusType = 'status9';
-		}
-		elseif ($status == self::STATUS_CLOSED) {
+		} elseif ($status == self::STATUS_CLOSED) {
 			$statusType = 'status6';
-		}
-		else {
+		} else {
 			$labelStatus = $langs->trans('Unknown');
 			$labelStatusShort = $langs->trans('Unknown');
 			$statusType = 'status0';
@@ -1262,8 +1252,7 @@ class Ticket extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1353,9 +1342,7 @@ class Ticket extends CommonObject
 		if ($id_assign_user > 0)
 		{
 			$sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut = ".Ticket::STATUS_ASSIGNED;
-		}
-		else
-		{
+		} else {
 			$sql .= " SET fk_user_assign=null, fk_statut = ".Ticket::STATUS_READ;
 		}
 		$sql .= " WHERE rowid = ".$this->id;
@@ -1559,7 +1546,7 @@ class Ticket extends CommonObject
 		// Insert entry into agenda with code 'TICKET_MSG'
 		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$actioncomm = new ActionComm($this->db);
-		$actioncomm->type_code = 'AC_OTH_AUTO';
+		$actioncomm->type_code = 'AC_OTH';
 		$actioncomm->code = 'TICKET_MSG';
 		if ($this->private) {
 			$actioncomm->code = 'TICKET_MSG_PRIVATE';
@@ -2766,9 +2753,7 @@ class Ticket extends CommonObject
 				}
 			}
 			return $response;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -2809,9 +2794,7 @@ class Ticket extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;

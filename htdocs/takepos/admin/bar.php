@@ -52,9 +52,7 @@ if (GETPOST('action', 'alpha') == 'set')
     {
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -85,7 +83,7 @@ print '<input type="hidden" name="action" value="set">';
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="titlefieldcreate">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD != "browser") {
@@ -157,7 +155,7 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
 		print '<td>';
 		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
 		print '<td>';
-		print "<img src='".DOL_DOCUMENT_ROOT."/takepos/genimg/qr.php?id=".dol_encode($row['rowid'])."' height='42' width='42'>";
+		print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?id=".dol_encode($row['rowid'])."' height='42' width='42'>";
 		print '</td></tr>';
     }
 

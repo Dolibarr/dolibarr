@@ -53,17 +53,13 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
     $q = GETPOST("q");
     if (empty($q))
 	{
-		if (GETPOST("month")) { $date_start = dol_get_first_day($year_start, GETPOST("month"), false); $date_end = dol_get_last_day($year_start, GETPOST("month"), false); }
-		else
-		{
+		if (GETPOST("month")) { $date_start = dol_get_first_day($year_start, GETPOST("month"), false); $date_end = dol_get_last_day($year_start, GETPOST("month"), false); } else {
 			$date_start = dol_get_first_day($year_start, empty($conf->global->SOCIETE_FISCAL_MONTH_START) ? 1 : $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end = dol_time_plus_duree($date_start, 3, 'm') - 1;
 			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 			elseif ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end = dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -201,9 +197,7 @@ if ($calc == 0 || $calc == 2)
 					if ($coll->assuj == '1')
 					{
 						$intra = $langs->trans('Unknown');
-					}
-					else
-					{
+					} else {
 						$intra = '';
 					}
 				}
@@ -229,16 +223,13 @@ if ($calc == 0 || $calc == 2)
 	    print '<td class="nowrap right">'.price($totalamount).'</td>';
 		print '<td class="nowrap right">'.price($total).'</td>';
 		print '</tr>';
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		if ($coll_list == -1)
 			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 		elseif ($coll_list == -2)
 			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-		else
-			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
+		else print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
 	}
 }
 
@@ -274,9 +265,7 @@ if ($calc == 0 || $calc == 1) {
 					if ($coll->assuj == '1')
 					{
 						$intra = $langs->trans('Unknown');
-					}
-					else
-					{
+					} else {
 						$intra = '';
 					}
 				}
@@ -304,16 +293,13 @@ if ($calc == 0 || $calc == 1) {
 		print '</tr>';
 
 		print '</table>';
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		if ($coll_list == -1)
 			print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
 		elseif ($coll_list == -2)
 			print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
-		else
-			print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
+		else print '<tr><td colspan="5">'.$langs->trans("Error").'</td></tr>';
 	}
 }
 

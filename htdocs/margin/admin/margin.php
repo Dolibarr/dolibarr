@@ -47,9 +47,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -61,9 +59,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -73,9 +69,7 @@ if ($action == 'remises')
 	if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
 	{
 		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -85,9 +79,7 @@ if ($action == 'typemarges')
 	if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
 	{
 		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -97,9 +89,7 @@ if ($action == 'contact')
 	if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
 	{
 		  setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -166,15 +156,11 @@ print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARGIN_RATES');
-}
-else
-{
+} else {
 	if (empty($conf->global->DISPLAY_MARGIN_RATES))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARGIN_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
@@ -189,15 +175,11 @@ print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('DISPLAY_MARK_RATES');
-}
-else
-{
+} else {
 	if (empty($conf->global->DISPLAY_MARK_RATES))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_DISPLAY_MARK_RATES">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
@@ -212,15 +194,11 @@ print '<td colspan="2">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('ForceBuyingPriceIfNull');
-}
-else
-{
+} else {
 	if (empty($conf->global->ForceBuyingPriceIfNull))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_ForceBuyingPriceIfNull">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }

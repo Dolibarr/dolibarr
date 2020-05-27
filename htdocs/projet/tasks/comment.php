@@ -74,9 +74,7 @@ if (!empty($project_ref) && !empty($withproject))
 		if (count($objectsarray) > 0)
 		{
 			$id = $objectsarray[0]->id;
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.(empty($mode) ? '' : '&mode='.$mode));
 		}
 	}
@@ -280,8 +278,7 @@ if ($id > 0 || !empty($ref))
 		{
 		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
 		    $object->next_prev_filter = " fk_projet in (".$projectsListId.")";
-		}
-		else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
+		} else $object->next_prev_filter = " fk_projet = ".$projectstatic->id;
 
 		$morehtmlref = '';
 

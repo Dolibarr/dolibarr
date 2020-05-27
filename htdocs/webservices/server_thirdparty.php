@@ -378,14 +378,12 @@ function getThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'thirdparty'=>$thirdparty_result_fields);
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -515,8 +513,7 @@ function createThirdParty($authentication, $thirdparty)
 
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
         }
-        else
-        {
+        else {
             $db->rollback();
             $error++;
             $errorcode = 'KO';
@@ -750,8 +747,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
                 $i++;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = $db->lasterrno();
             $errorlabel = $db->lasterror();
@@ -765,8 +761,7 @@ function getListOfThirdParties($authentication, $filterthirdparty)
             'thirdparties'=>$arraythirdparties
         );
     }
-    else
-    {
+    else {
         $objectresp = array(
             'result'=>array('result_code' => 'OK', 'result_label' => ''),
             'thirdparties'=>$arraythirdparties
@@ -828,8 +823,7 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 
 					$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
 				}
-				else
-				{
+				else {
 					$db->rollback();
 					$error++;
 					$errorcode = 'KO';
@@ -837,14 +831,12 @@ function deleteThirdParty($authentication, $id = '', $ref = '', $ref_ext = '')
 					dol_syslog("Function: deleteThirdParty cant delete");
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
