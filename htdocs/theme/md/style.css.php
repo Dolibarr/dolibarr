@@ -2001,6 +2001,9 @@ div.mainmenu {
 	margin-left: 0px;
 	min-width: 40px;
 }
+a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
+    outline: none;
+}
 
 /* Do not load menu img if hidden to save bandwidth */
 <?php if (empty($dol_hide_topmenu)) { ?>
