@@ -3720,6 +3720,9 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			if (GETPOST('optioncontent')) $param .= '&optioncontent=content';
 			if (GETPOST('optionmeta')) $param .= '&optionmeta=meta';
 			if (GETPOST('optionsitefiles')) $param .= '&optionsitefiles=optionsitefiles';
+			if (GETPOST('optioncontainertype')) $param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+			if (GETPOST('optionlanguage')) $param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+			if (GETPOST('optioncategory')) $param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
 
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
@@ -3751,14 +3754,18 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
 
-					// Edit properties
-					print '<td>';
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent');
-					$param .= '&optionmeta='.GETPOST('optionmeta');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
-					$param .= '&searchstring='.$searchkey;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
+					// Edit properties
+					print '<td>';
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
@@ -3770,12 +3777,6 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 
 					// Edit HTML source
 					print '<td>';
-					$param = '?action=replacesiteconfirm';
-					$param .= '&websiteid='.$website->id;
-					$param .= '&optioncontent='.GETPOST('optioncontent');
-					$param .= '&optionmeta='.GETPOST('optionmeta');
-					$param .= '&optionsitefiles='.GETPOST('optionsitefiles');
-					$param .= '&searchstring='.$searchkey;
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
@@ -3817,8 +3818,18 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					}
 					print '</td>';
 
+					$param = '?action=replacesiteconfirm';
+					$param .= '&websiteid='.$website->id;
+					$param .= '&optioncontent='.GETPOST('optioncontent', 'aZ09');
+					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
+					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
+					$param .= '&optionlanguage='.GETPOST('optionlanguage', 'aZ09');
+					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
+					$param .= '&searchstring='.urlencode($searchkey);
+
 					print '<td>';
-					$backtopageurl = $_SERVER["PHP_SELF"].'?action=replacesiteconfirm&searchstring='.urlencode($searchkey).'&optioncontent='.GETPOST('optioncontent', 'aZ09').'&optionmeta='.GETPOST('optionmeta', 'aZ09').'&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
+					$backtopageurl = $_SERVER["PHP_SELF"].$param;
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 
