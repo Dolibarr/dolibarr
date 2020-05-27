@@ -639,7 +639,7 @@ class FormFile
 				$class = 'ModelePDF'.ucfirst($submodulepart);
 				if (!class_exists($class))
 					$class = 'pdf_'.$modelselected;
-				
+
 				if (class_exists($class))
 				{
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
