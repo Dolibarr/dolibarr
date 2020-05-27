@@ -2513,7 +2513,7 @@ class Ticket extends CommonObject
 							// URL ticket
 							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id;
 							$message .= "\n\n";
-							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : ' . '<a href="' . $url_internal_ticket . '">' . $object->track_id . '</a>';
+							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : <a href="' . $url_internal_ticket . '">' . $object->track_id . '</a>';
 
 							$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
 						}
