@@ -3,14 +3,18 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 
 
-/* ICONS INFO BOX */
+/*
+ * Component: Info Box
+ * -------------------
+ */
+
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 $prefix = '';
 if (!empty($conf->global->THEME_INFOBOX_COLOR_ON_BACKGROUND)) $prefix = 'background-';
 
-if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.5;
+if (!isset($conf->global->THEME_SATURATE_RATIO)) $conf->global->THEME_SATURATE_RATIO = 0.7;
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = GETPOST('THEME_SATURATE_RATIO', 'int');
 
 ?>
@@ -97,11 +101,17 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	/* box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); */
 	border-radius: 2px;
 	margin-bottom: 15px;
-	border: 1px solid #ddd;
+	border: 1px solid #e9e9e9;
 }
 .info-box.info-box-sm{
     min-height: 80px;
     margin-bottom: 10px;
+}
+.info-box-more {
+    float: right;
+    top: 4px;
+    position: absolute;
+    right: 10px;
 }
 
 .info-box small {
@@ -149,23 +159,19 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 .info-box-sm .info-box-icon {
     width: 80px;
     font-size: 25px;
-    line-height: 100px;
+    line-height: 92px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
 }
 .info-box-module .info-box-icon {
-	height: 108px;
+	height: 98px;
 }
 .info-box-icon > img {
 	max-width: 100%;
 }
 .info-box-module .info-box-icon > img {
     max-width: 55%;
-}
-.info-box-content {
-	padding: 5px 10px;
-	margin-left: 90px;
 }
 
 .info-box-icon-text{
@@ -232,7 +238,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 
 .info-box-content {
 	padding: 5px 10px;
-	margin-left: 90px;
+	margin-left: 84px;
 }
 
 .info-box-number {
@@ -252,10 +258,10 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
-	padding-bottom: 5px;
+	margin-bottom: 6px;
 }
 .info-box-text{
-	font-size: 12px;
+	font-size: 0.92em;
 }
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}
@@ -434,5 +440,5 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
     max-width: 350px;
 }
 .info-box-module .info-box-content {
-	height: 7em;
+	height: 6.3em;
 }

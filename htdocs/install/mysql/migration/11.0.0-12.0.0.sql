@@ -72,6 +72,9 @@ delete from llx_const where name = 'PROJECT_HIDE_TASKS' and entity = 0;
 
 -- For v12
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
+
+
 -- Delete an old index that is duplicated
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
 -- VPGSQL8.2 DROP INDEX ix_fk_product_stock

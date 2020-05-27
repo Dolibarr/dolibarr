@@ -2650,8 +2650,8 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 div.tabs {
     text-align: <?php print $left; ?>;
     padding-top: 10px;
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 6px;
+    padding-right: 6px;
 	clear:both;
 	height:100%;
 }
@@ -2867,6 +2867,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	color: unset !important;
 }
 .nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+div.tabs.nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
 .nopaddingright {
@@ -5120,6 +5123,9 @@ span#select2-taskid-container[title^='--'] {
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);
     color: #<?php echo $colortextbackhmenu; ?>;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] span {
+    color: #fff !important;
 }
 
 span.select2.select2-container.select2-container--default {

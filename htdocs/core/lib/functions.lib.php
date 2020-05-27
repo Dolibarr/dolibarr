@@ -1187,7 +1187,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	$out = "\n".'<!-- dol_get_fiche_head -->';
 
 	if ((!empty($title) && $showtitle) || $morehtmlright || !empty($links)) {
-		$out .= '<div class="tabs" data-role="controlgroup" data-type="horizontal">'."\n";
+		$out .= '<div class="tabs'.($picto ? '' : ' nopaddingleft').'" data-role="controlgroup" data-type="horizontal">'."\n";
 	}
 
 	// Show right part
