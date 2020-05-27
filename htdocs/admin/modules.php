@@ -543,8 +543,8 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="floatright right">';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
 	$moreforfilter .= '</div>';
 
 	$moreforfilter .= '<div class="floatright right margintoponly marginrightonly" style="padding-top: 3px">'.$moreinfo.'</div>';
@@ -654,7 +654,8 @@ if ($mode == 'common' || $mode == 'commonkanban')
 			}
 
 			$familytext = empty($familyinfo[$familykey]['label']) ? $familykey : $familyinfo[$familykey]['label'];
-			print load_fiche_titre($familytext, '', '');
+
+			print load_fiche_titre($familytext, '', '', 0, '', 'modulefamilygroup');
 
 			if ($mode == 'commonkanban') {
 				print '<div class="box-flex-container">';

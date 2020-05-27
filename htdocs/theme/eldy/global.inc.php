@@ -2651,8 +2651,8 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 div.tabs {
     text-align: <?php print $left; ?>;
     padding-top: 10px;
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 6px;
+    padding-right: 6px;
 	clear:both;
 	height:100%;
 }
@@ -2868,6 +2868,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	color: unset !important;
 }
 .nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+div.tabs.nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
 .nopaddingright {
