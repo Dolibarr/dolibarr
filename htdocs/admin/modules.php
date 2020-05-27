@@ -1198,7 +1198,7 @@ if ($mode == 'develop')
 	print '<tr class="oddeven" height="80">'."\n";
 	print '<td class="left">';
 	//span class="fa fa-bug"></span>
-	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
+	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png">';
 	print '<div class="imgmaxheight50 logo_setup"></div>';
 	print '</td>';
 	print '<td>'.$langs->trans("TryToUseTheModuleBuilder", $langs->transnoentitiesnoconv("ModuleBuilder")).'</td>';
@@ -1208,7 +1208,7 @@ if ($mode == 'develop')
 	print '<tr class="oddeven" height="80">'."\n";
 	$url = 'https://partners.dolibarr.org';
 	print '<td class="left">';
-	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a>';
+	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner.png"></a>';
 	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';

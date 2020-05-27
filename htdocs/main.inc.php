@@ -1209,7 +1209,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
 		// Favicon
-		$favicon = DOL_URL_ROOT.'/theme/dolibarr_logo_256x256.png';
+		$favicon = DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png';
 		if (!empty($mysoc->logo_squarred_mini)) $favicon = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=mycompany&file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
 		if (!empty($conf->global->MAIN_FAVICON_URL)) $favicon = $conf->global->MAIN_FAVICON_URL;
 		if (empty($conf->dol_use_jmobile)) print '<link rel="shortcut icon" type="image/x-icon" href="'.$favicon.'"/>'."\n"; // Not required into an Android webview
@@ -1262,7 +1262,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOSTISSET('dol_optimize_smallscreen')) { $themeparam .= '&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen', 'int'); }
 		if (GETPOSTISSET('dol_no_mouse_hover')) { $themeparam .= '&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover', 'int'); }
 		if (GETPOSTISSET('dol_use_jmobile')) { $themeparam .= '&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile', 'int'); $conf->dol_use_jmobile = GETPOST('dol_use_jmobile', 'int'); }
-		if (GETPOSTISSET('THEME_AGRESSIVENESS_RATIO')) { $themeparam .= '&amp;THEME_AGRESSIVENESS_RATIO='.GETPOST('THEME_AGRESSIVENESS_RATIO', 'int'); }
+		if (GETPOSTISSET('THEME_SATURATE_RATIO')) { $themeparam .= '&amp;THEME_SATURATE_RATIO='.GETPOST('THEME_SATURATE_RATIO', 'int'); }
 
 		if (!defined('DISABLE_JQUERY') && !$disablejs && $conf->use_javascript_ajax)
 		{

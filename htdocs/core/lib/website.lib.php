@@ -559,7 +559,7 @@ function getStructuredData($type, $data = array())
 
 	if ($type == 'software')
 	{
-		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret = '<!-- Add structured data for software post -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
@@ -585,7 +585,7 @@ function getStructuredData($type, $data = array())
 		$companyname = $mysoc->name;
 		$url = $mysoc->url;
 
-		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret = '<!-- Add structured data for organization -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
@@ -597,8 +597,9 @@ function getStructuredData($type, $data = array())
 				"@type": "ContactPoint",
 				"contactType": "Contact",
 				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
-			},'."\n";
+			}'."\n";
 		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
+			$ret .= ",\n";
 			$ret .= '"sameAs": [';
 			$i = 0;
 			foreach($mysoc->socialnetworks as $key => $value) {
@@ -613,9 +614,9 @@ function getStructuredData($type, $data = array())
 				$i++;
 				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
 			}
-			$ret .= '],'."\n";
+			$ret .= ']'."\n";
 		}
-		$ret .= "\n".'}'."\n";
+		$ret .= '}'."\n";
 		$ret .= '</script>'."\n";
 	}
 	elseif ($type == 'blogpost')
@@ -684,7 +685,7 @@ function getStructuredData($type, $data = array())
 	}
 	elseif ($type == 'product')
 	{
-		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret = '<!-- Add structured data for product -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",

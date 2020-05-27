@@ -46,7 +46,7 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_AP
     "name": "<?php echo $appli; ?>",
     "icons": [
         {
-            "src": "<?php echo DOL_URL_ROOT.'/theme/dolibarr_logo_256x256.png'; ?>",
+            "src": "<?php echo DOL_URL_ROOT.'/theme/dolibarr_256x256_color.png'; ?>",
             "sizes": "256x256",
             "type": "image/png"
         }

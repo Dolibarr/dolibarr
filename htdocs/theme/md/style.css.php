@@ -2005,6 +2005,9 @@ div.mainmenu {
 	margin-left: 0px;
 	min-width: 40px;
 }
+a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
+    outline: none;
+}
 
 /* Do not load menu img if hidden to save bandwidth */
 <?php if (empty($dol_hide_topmenu)) { ?>
@@ -3921,8 +3924,10 @@ div.titre {
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
-div.titre, .secondary {
-	font-family: <?php print $fontlist ?>;
+.secondary, div.titre {
+	color: var(--colortexttitlenotab);
+}
+.tertiary {
 	color: var(--colortexttitlenotab);
 }
 
