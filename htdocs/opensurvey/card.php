@@ -214,7 +214,7 @@ print '<input type="hidden" name="action" value="update">';
 $head = opensurvey_prepare_head($object);
 
 
-dol_fiche_head($head, 'general', $langs->trans("Survey"), -1, DOL_URL_ROOT.'/opensurvey/img/object_opensurvey.png', 1);
+dol_fiche_head($head, 'general', $langs->trans("Survey"), -1, 'poll');
 
 $morehtmlref = '';
 

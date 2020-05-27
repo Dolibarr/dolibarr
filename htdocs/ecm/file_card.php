@@ -138,6 +138,12 @@ if ($action == 'update')
 
     $oldfile = $olddir.$oldlabel;
     $newfile = $newdir.$newlabel;
+    $newfileformove = $newfile;
+    // If old file end with .noexe, new file must also end with .noexe
+    if (preg_match('/\.noexe$/', $oldfile) && ! preg_match('/\.noexe$/', $newfileformove)) {
+    	$newfileformove .= '.noexe';
+    }
+    //var_dump($oldfile);var_dump($newfile);exit;
 
     // Now we update index of file
     $db->begin();
@@ -145,7 +151,7 @@ if ($action == 'update')
     //print $oldfile.' - '.$newfile;
     if ($newlabel != $oldlabel)
     {
-        $result = dol_move($oldfile, $newfile); // This include update of database
+    	$result = dol_move($oldfile, $newfileformove); // This include update of database
         if (!$result)
         {
             $langs->load('errors');
@@ -185,7 +191,7 @@ if ($action == 'update')
 			$object->entity = $conf->entity;
 			$object->filepath = preg_replace('/[\\/]+$/', '', $newdirrelativetodocument);
 			$object->filename = $newlabel;
-			$object->label = md5_file(dol_osencode($newfile)); // hash of file content
+			$object->label = md5_file(dol_osencode($newfileformove)); // hash of file content
 			$object->fullpath_orig = '';
 			$object->gen_or_uploaded = 'unknown';
 			$object->description = ''; // indexed content
@@ -203,6 +209,11 @@ if ($action == 'update')
         $db->commit();
 
         $urlfile = $newlabel;
+        // If old file end with .noexe, new file must also end with .noexe
+        if (preg_match('/\.noexe$/', $newfileformove)) {
+        	$urlfile .= '.noexe';
+        }
+
         header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
         exit;
     } else {
@@ -255,9 +266,13 @@ while ($tmpecmdir && $result > 0)
 	$i++;
 }
 
+$urlfiletoshow = preg_replace('/\.noexe$/', '', $urlfile);
+
 $s = img_picto('', 'object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$langs->trans("ECMRoot").'</a> -> '.$s.' -> ';
-if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfile.'">';
-else $s .= $urlfile;
+if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfiletoshow.'">';
+else $s .= $urlfiletoshow;
+
+$morehtml = '';
 
 $object->ref = ''; // Force to hide ref
 dol_banner_tab($object, '', $morehtml, 0, '', '', $s);
@@ -280,10 +295,9 @@ print dol_print_size($totalsize);
 print '</td></tr>';
 */
 
+// Hash of file content
 print '<tr><td>'.$langs->trans("HashOfFileContent").'</td><td>';
 $object = new EcmFiles($db);
-//$filenametosearch=basename($filepath);
-//$filedirtosearch=basedir($filepath);
 $object->fetch(0, '', $filepathtodocument);
 if (!empty($object->label))
 {

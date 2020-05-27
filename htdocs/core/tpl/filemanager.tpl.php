@@ -174,8 +174,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 	    if ($action == 'deletefile') print $form->formconfirm('eeeee', $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile', '', '', 'deletefile');
 
 	    print '</td></tr>';
-    } else // Show filtree when ajax is disabled (rare)
-    {
+    } else { // Show filtree when ajax is disabled (rare)
         print '<tr><td style="padding-left: 20px">';
 
         $_POST['modulepart'] = $module;
@@ -208,7 +207,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 <div class="pane-in ecm-in-layout-center">
 <div id="ecmfileview" class="ecmfileview">
 <?php
-// Start right panel
+// Start right panel - List of content of a directory
 
 
 $mode = 'noajax';

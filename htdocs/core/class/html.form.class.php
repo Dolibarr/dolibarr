@@ -4050,7 +4050,6 @@ class Form
     public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0)
 	{
 		global $langs, $conf;
-		global $useglobalvars;
 
 		$more = '<!-- formconfirm -->';
 		$formconfirm = '';
@@ -4190,7 +4189,7 @@ class Form
 					if (isset($input['inputko']) && $input['inputko'] == 1) array_push($inputko, $input['name']);
 				}
 			}
-			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
+			// Show JQuery confirm box.
 			$formconfirm .= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
 			if (!empty($formquestion['text'])) {
 				$formconfirm .= '<div class="confirmtext">'.$formquestion['text'].'</div>'."\n";

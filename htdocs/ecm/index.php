@@ -124,7 +124,6 @@ if ($action == 'confirm_deletefile')
 	if (GETPOST('confirm') == 'yes')
 	{
 		// GETPOST('urlfile','alpha') is full relative URL from ecm root dir. Contains path of all sections.
-		//var_dump(GETPOST('urlfile'));exit;
 
 		$upload_dir = $conf->ecm->dir_output.($relativepath ? '/'.$relativepath : '');
 		$file = $upload_dir."/".GETPOST('urlfile', 'alpha');
@@ -132,7 +131,9 @@ if ($action == 'confirm_deletefile')
 		$ret = dol_delete_file($file); // This include also the delete from file index in database.
 		if ($ret)
 		{
-			setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile', 'alpha')), null, 'mesgs');
+			$urlfiletoshow = GETPOST('urlfile', 'alpha');
+			$urlfiletoshow = preg_replace('/\.noexe$/', '', $urlfiletoshow);
+			setEventMessages($langs->trans("FileWasRemoved", $urlfiletoshow), null, 'mesgs');
 			$result = $ecmdir->changeNbOfFiles('-');
 		} else {
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile', 'alpha')), null, 'errors');

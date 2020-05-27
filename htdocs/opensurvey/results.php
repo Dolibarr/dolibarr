@@ -413,10 +413,11 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 
 print '<form name="formulaire4" action="#" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = opensurvey_prepare_head($object);
 
-dol_fiche_head($head, 'preview', $langs->trans("Survey"), -1, DOL_URL_ROOT.'/opensurvey/img/object_opensurvey.png', 1);
+dol_fiche_head($head, 'preview', $langs->trans("Survey"), -1, 'poll');
 
 $morehtmlref = '';
 
@@ -510,6 +511,7 @@ if (GETPOST('ajoutsujet'))
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
 	print '<form name="formulaire" action="" method="POST">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage', 'alpha').'">';
 
 	print '<div class="center">'."\n";
@@ -594,6 +596,7 @@ if ($user->rights->opensurvey->write) {
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 print '<form name="formulaire" action="" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="cadre"> '."\n";
 
@@ -753,7 +756,7 @@ if ($object->format == "D")
 		print '<td class="sujet">'.dol_htmlentities($tmp[0]).'</td>'."\n";
 	}
 
-	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('', dol_buildpath('/opensurvey/img/add-16.png', 1), '', 1).'</a></td>'."\n";
+	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a></td>'."\n";
 	print '</tr>'."\n";
 }
 

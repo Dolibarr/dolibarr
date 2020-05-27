@@ -343,7 +343,7 @@ if ($useajax || $action == 'delete')
 	$section_id = $section;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-	$useglobalvars = 1;
+
 	$form = new Form($db);
 	$formquestion['urlfile'] = array('type'=>'hidden', 'value'=>$urlfile, 'name'=>'urlfile'); // We must always put field, even if empty because it is filled by javascript later
 	$formquestion['section'] = array('type'=>'hidden', 'value'=>$section, 'name'=>'section'); // We must always put field, even if empty because it is filled by javascript later
