@@ -171,7 +171,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	if (!$error && $action == "add_message" && $display_ticket && GETPOSTISSET('btn_add_message'))
 	{
 		// TODO Add message...
-		$ret = $object->dao->newMessage($user, $action, 0);
+		$ret = $object->dao->newMessage($user, $action, 0, 1);
 
 
 
