@@ -870,7 +870,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 			{
 				$rel_filetorenamebefore = preg_replace('/^[\\/]/', '', $rel_filetorenamebefore);
 				$rel_filetorenameafter = preg_replace('/^[\\/]/', '', $rel_filetorenameafter);
-				//var_dump($rel_filetorenamebefore.' - '.$rel_filetorenameafter);
+				//var_dump($rel_filetorenamebefore.' - '.$rel_filetorenameafter);exit;
 
 				dol_syslog("Try to rename also entries in database for full relative path before = ".$rel_filetorenamebefore." after = ".$rel_filetorenameafter, LOG_DEBUG);
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -893,6 +893,7 @@ function dol_move($srcfile, $destfile, $newmask = 0, $overwriteifexists = 1, $te
 
 					$ecmfile->filepath = $rel_dir;
 					$ecmfile->filename = $filename;
+
 					$resultecm = $ecmfile->update($user);
 				}
 				elseif ($resultecm == 0)   // If no entry were found for src files, create/update target file
@@ -995,7 +996,7 @@ function dolCheckVirus($src_file)
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
- *	@return int|string       			>0 if OK, <0 or string if KO
+ *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile')
@@ -1005,6 +1006,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 
 	$reshook = 0;
 	$file_name = $dest_file;
+	$successcode = 1;
 
 	if (empty($nohook))
 	{
@@ -1055,6 +1057,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		if (isAFileWithExecutableContent($dest_file) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 		{
 			$file_name .= '.noexe';
+			$successcode = 2;
 		}
 
 		// Security:
@@ -1109,7 +1112,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		{
 			if (!empty($conf->global->MAIN_UMASK)) @chmod($file_name_osencoded, octdec($conf->global->MAIN_UMASK));
 			dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=".$conf->global->MAIN_UMASK, LOG_DEBUG);
-			return 1; // Success
+			return $successcode; // Success
 		}
 		else
 		{
@@ -1118,7 +1121,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 	}
 
-	return 1; // Success
+	return $successcode; // Success
 }
 
 /**
@@ -1173,8 +1176,6 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 	}
 	else
 	{
-		$error = 0;
-
 		//print "x".$file." ".$disableglob;exit;
 		$file_osencoded = dol_osencode($file); // New filename encoded in OS filesystem encoding charset
 		if (empty($disableglob) && !empty($file_osencoded))
@@ -1197,10 +1198,11 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 						$rel_filetodelete = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filename);
 						if (!preg_match('/(\/temp\/|\/thumbs\/|\.meta$)/', $rel_filetodelete))     // If not a tmp file
 						{
-							$rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
-
 							if (is_object($db) && $indexdatabase)		// $db may not be defined when lib is in a context with define('NOREQUIREDB',1)
 							{
+								$rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
+								$rel_filetodelete = preg_replace('/\.noexe$/', '', $rel_filetodelete);
+
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
 								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 								$ecmfile = new EcmFiles($db);
@@ -1564,6 +1566,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				$destfile = dol_string_nohtmltag($destfile);
 				$destfull = dol_string_nohtmltag($destfull);
 
+				// Move file from temp directory to final directory. A .noexe may also be appended on file name.
 				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles);
 
 				if (is_numeric($resupload) && $resupload > 0)   // $resupload can be 'ErrorFileAlreadyExists'
@@ -1600,10 +1603,10 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 					// Update table of files
 					if ($donotupdatesession == 1)
 					{
-						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile), $TFile['name'][$i], 'uploaded', 0);
+						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile).($resupload == 2 ? '.noexe' : ''), $TFile['name'][$i], 'uploaded', 0);
 						if ($result < 0)
 						{
-							setEventMessages('FailedToAddFileIntoDatabaseIndex', '', 'warnings');
+							setEventMessages('WarningFailedToAddFileIntoDatabaseIndex', '', 'warnings');
 						}
 					}
 
@@ -1714,7 +1717,7 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  *  See also commonGenerateDocument that also add/update database index when a file is generated.
  *
  *  @param      string	$dir			Directory name (full real path without ending /)
- *  @param		string	$file			File name
+ *  @param		string	$file			File name (May end with '.noexe')
  *  @param		string	$fullpathorig	Full path of origin for file (can be '')
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *  @param		int		$setsharekey	Set also the share key
@@ -1730,7 +1733,7 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 	if (!preg_match('/[\\/]temp[\\/]|[\\/]thumbs|\.meta$/', $rel_dir))     // If not a tmp dir
 	{
-		$filename = basename($file);
+		$filename = basename(preg_replace('/\.noexe$/', '', $file));
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
