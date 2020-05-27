@@ -2453,7 +2453,7 @@ class Ticket extends CommonObject
 			$id = $object->createTicketMessage($user, 0, $listofpaths, $listofmimes, $listofnames);
 			if ($id <= 0) {
 				$error++;
-				$this->errors = $object->error;
+				$this->error = $object->error;
 				$this->errors = $object->errors;
 				$action = 'add_message';
 			}
