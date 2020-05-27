@@ -139,9 +139,7 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_holiday_madonna::getNextValue", LOG_DEBUG);
 			return -1;
 		}

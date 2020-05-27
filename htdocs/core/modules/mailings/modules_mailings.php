@@ -98,9 +98,7 @@ class MailingTargets // This can't be abstract as it is used for some method
         {
             $obj = $this->db->fetch_object($result);
             return $obj->nb;
-        }
-        else
-        {
+        } else {
         	$this->error = $this->db->lasterror();
             return -1;
         }
@@ -144,8 +142,7 @@ class MailingTargets // This can't be abstract as it is used for some method
                 $this->error = $this->db->error();
                 return -1;
             }
-        }
-        else {
+        } else {
             return -1;
         }
         return $nb;
@@ -192,9 +189,7 @@ class MailingTargets // This can't be abstract as it is used for some method
         		if ($result)
         		{
         			$j++;
-        		}
-        		else
-        		{
+        		} else {
         			if ($this->db->errno() != 'DB_ERROR_RECORD_ALREADY_EXISTS')
         			{
         				// Si erreur autre que doublon

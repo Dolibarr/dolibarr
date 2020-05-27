@@ -46,7 +46,7 @@ function societe_prepare_head(Societe $object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("ThirdParty");
     $head[$h][2] = 'card';
     $h++;
 
@@ -73,9 +73,7 @@ function societe_prepare_head(Societe $object)
 		    $head[$h][2] = 'contact';
 		    $h++;
 		}
-    }
-    else
-	{
+    } else {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
 		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddresses");
@@ -134,8 +132,7 @@ function societe_prepare_head(Societe $object)
     			$nbNote = $obj->nb;
     			$i++;
     		}
-    	}
-    	else {
+    	} else {
     		dol_print_error($db);
     	}
 		if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -227,8 +224,7 @@ function societe_prepare_head(Societe $object)
                 $nbBankAccount = $obj->nb;
                 $i++;
             }
-        }
-        else {
+        } else {
             dol_print_error($db);
         }
 
@@ -261,8 +257,7 @@ function societe_prepare_head(Societe $object)
     			$nbNote = $obj->nb;
     			$i++;
     		}
-    	}
-    	else {
+    	} else {
     		dol_print_error($db);
     	}
     	if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
@@ -296,8 +291,7 @@ function societe_prepare_head(Societe $object)
         			$nbNote = $obj->nb;
         			$i++;
         		}
-        	}
-        	else {
+        	} else {
         		dol_print_error($db);
         	}
 
@@ -367,7 +361,7 @@ function societe_prepare_head2($object)
     $head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/card.php?socid='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("ThirdParty");
     $head[$h][2] = 'company';
     $h++;
 
@@ -474,15 +468,12 @@ function getCountry($searchkey, $withcode = '', $dbtouse = 0, $outputlangs = '',
             elseif ($withcode == 3) $result = $obj->rowid;
             elseif ($withcode === 'all') $result = array('id'=>$obj->rowid, 'code'=>$obj->code, 'label'=>$label);
             else $result = $label;
-        }
-        else
-        {
+        } else {
             $result = 'NotDefined';
         }
         $dbtouse->free($resql);
         return $result;
-    }
-    else dol_print_error($dbtouse, '');
+    } else dol_print_error($dbtouse, '');
     return 'Error';
 }
 
@@ -531,42 +522,32 @@ function getState($id, $withcode = '', $dbtouse = 0, $withregion = 0, $outputlan
             if ($withcode == 1) {
                 if ($withregion == 1) {
                     return $label = $obj->region_name.' - '.$obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
-                }
-                else {
+                } else {
                     return $label = $obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
                 }
-            }
-            elseif ($withcode == 2) {
+            } elseif ($withcode == 2) {
                 if ($withregion == 1) {
                     return $label = $obj->region_name.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
-                }
-                else {
+                } else {
                     return $label = ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
                 }
-            }
-            elseif ($withcode === 'all') {
+            } elseif ($withcode === 'all') {
                 if ($withregion == 1) {
                     return array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>$label, 'region_code'=>$obj->region_code, 'region'=>$obj->region_name);
-                }
-                else {
+                } else {
                     return array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>$label);
                 }
-            }
-            else {
+            } else {
                 if ($withregion == 1) {
                     return $label = $obj->region_name.' - '.$label;
-                }
-                else {
+                } else {
                     return $label;
                 }
             }
-        }
-        else
-        {
+        } else {
             return $langs->transnoentitiesnoconv("NotDefined");
         }
-    }
-    else dol_print_error($dbtouse, '');
+    } else dol_print_error($dbtouse, '');
 }
 
 /**
@@ -606,9 +587,7 @@ function currency_name($code_iso, $withcode = '', $outputlangs = null)
             $label = ($obj->label != '-' ? $obj->label : '');
             if ($withcode) return ($label == $code_iso) ? "$code_iso" : "$code_iso - $label";
             else return $label;
-        }
-        else
-        {
+        } else {
             return $code_iso;
         }
     }
@@ -641,9 +620,7 @@ function getFormeJuridiqueLabel($code)
             $obj = $db->fetch_object($resql);
             $label = ($obj->libelle != '-' ? $obj->libelle : '');
             return $label;
-        }
-        else
-        {
+        } else {
             return $langs->trans("NotDefined");
         }
     }
@@ -802,7 +779,10 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
                         print '<tr class="oddeven">';
 
                         // Ref
-                        print '<td><a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$projecttmp->id.'">'.img_object($langs->trans("ShowProject"), ($obj->public ? 'projectpub' : 'project'))." ".$obj->ref.'</a></td>';
+                        print '<td>';
+                        print $projecttmp->getNomUrl(1);
+                        print '</td>';
+
                         // Label
                         print '<td>'.$obj->title.'</td>';
                         // Date start
@@ -831,15 +811,11 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
                     }
                     $i++;
                 }
-            }
-            else
-			{
+            } else {
             	print '<tr class="oddeven"><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
             }
             $db->free($result);
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
         print "</table>";
@@ -1238,9 +1214,7 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '')
             print "</tr>\n";
             $i++;
         }
-    }
-    else
-	{
+    } else {
 		$colspan = 1;
 		foreach ($arrayfields as $key => $val) { if (!empty($val['checked'])) $colspan++; }
 		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
@@ -1326,9 +1300,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         // Recherche histo sur actioncomm
         if (is_object($objcon) && $objcon->id > 0) {
             $sql = "SELECT DISTINCT a.id, a.label as label,";
-        }
-        else
-        {
+        } else {
             $sql = "SELECT a.id, a.label as label,";
         }
         $sql .= " a.datep as dp,";
@@ -1339,9 +1311,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
         $sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
         if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')))      $sql .= ", sp.lastname, sp.firstname";
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", m.lastname, m.firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", m.lastname, m.firstname";
         elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')  $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product')  $sql .= ", o.ref";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')   $sql .= ", o.ref";
@@ -1366,9 +1336,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             $sql .= " ON er.resource_type = 'dolresource'";
             $sql .= " AND er.element_id = a.id";
             $sql .= " AND er.resource_id = ".$filterobj->id;
-        }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ }
-        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
+        } elseif (is_object($filterobj) && get_class($filterobj) == 'Project') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql .= ", ".MAIN_DB_PREFIX."adherent as m";
         elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseur as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql .= ", ".MAIN_DB_PREFIX."product as o";
         elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql .= ", ".MAIN_DB_PREFIX."ticket as o";
@@ -1379,39 +1347,32 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $sql .= " WHERE a.entity IN (".getEntity('agenda').")";
         if ($force_filter_contact === false) {
             if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur')) && $filterobj->id) $sql .= " AND a.fk_soc = ".$filterobj->id;
-            elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ }
-            elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql .= " AND a.fk_project = ".$filterobj->id;
+            elseif (is_object($filterobj) && get_class($filterobj) == 'Dolresource') { /* Nothing */ } elseif (is_object($filterobj) && get_class($filterobj) == 'Project' && $filterobj->id) $sql .= " AND a.fk_project = ".$filterobj->id;
             elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent')
             {
                 $sql .= " AND a.fk_element = m.rowid AND a.elementtype = 'member'";
                 if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-            }
-            elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
+            } elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur')
             {
                 $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'order_supplier'";
                 if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-            }
-            elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
+            } elseif (is_object($filterobj) && get_class($filterobj) == 'Product')
             {
                 $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'product'";
                 if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-            }
-            elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
+            } elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket')
             {
                 $sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'ticket'";
                 if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-            }
-            elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')
+            } elseif (is_object($filterobj) && get_class($filterobj) == 'BOM')
             {
             	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'bom'";
             	if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-            }
-            elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')
+            } elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat')
             {
             	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = 'contract'";
             	if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
-            }
-            elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element)
+            } elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid']) && is_array($filterobj->fields['ref']) && $filterobj->table_element && $filterobj->element)
             {
             	$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element)."'";
             	if ($filterobj->id) $sql .= " AND a.fk_element = ".$filterobj->id;
@@ -1425,14 +1386,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             {
                 if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
                 elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
-                else
-                {
+                else {
                     if ($actioncode == 'AC_OTH') $sql .= " AND c.type != 'systemauto'";
                     elseif ($actioncode == 'AC_OTH_AUTO') $sql .= " AND c.type = 'systemauto'";
                 }
-            }
-            else
-            {
+            } else {
                 if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
                 elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
                 else $sql .= " AND c.code = '".$db->escape($actioncode)."'";
@@ -1549,9 +1507,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 	            $numaction++;
 	            $i++;
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        dol_print_error($db);
 	    }
     }
@@ -1576,9 +1532,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             (is_null($filterobj) || get_class($filterobj) == 'Societe'))
         {
             $out .= '<input type="hidden" name="id" value="'.$objcon->id.'" />';
-        }
-        else
-        {
+        } else {
             $out .= '<input type="hidden" name="id" value="'.$filterobj->id.'" />';
         }
         if ($filterobj && get_class($filterobj) == 'Societe') $out .= '<input type="hidden" name="socid" value="'.$filterobj->id.'" />';
@@ -1742,8 +1696,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element']))
             {
             	$out .= dolGetElementUrl($histo[$key]['fk_element'], $histo[$key]['elementtype'], 1);
-            }
-            else $out .= '&nbsp;';
+            } else $out .= '&nbsp;';
             $out .= '</td>';
 
             // Contact(s) for action
@@ -1772,8 +1725,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 					}
 				}
 				$out .= '</td>';
-			}
-            else {
+			} else {
             	$out .= '<td>&nbsp;</td>';
             }
 

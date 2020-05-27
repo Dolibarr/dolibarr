@@ -47,7 +47,6 @@ FetchAndCreate=Procure e comece a criar
 BlogPost=Postagem do blog
 WebsiteAccounts=Conta do website
 AddWebsiteAccount=Criar conta do site
-BackToListOfThirdParty=Voltar à lista para Terceiros
 DisableSiteFirst=Desativar o site primeiro
 MyContainerTitle=Título do meu site
 AnotherContainer=É assim que se inclui o conteúdo de outra página / contêiner (você pode ter um erro aqui se ativar o código dinâmico porque o subcontêiner incorporado pode não existir)

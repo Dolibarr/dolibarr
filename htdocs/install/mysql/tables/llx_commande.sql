@@ -64,8 +64,8 @@ create table llx_commande
   fk_currency				varchar(3),						-- currency code
   fk_cond_reglement			integer,						-- condition de reglement
   fk_mode_reglement			integer,						-- mode de reglement
-  
-  date_livraison			date 	  default NULL,
+
+  date_livraison			datetime 	  default NULL,
   fk_shipping_method		integer,						-- shipping method id
   fk_warehouse				integer default NULL,
   fk_availability			integer NULL,

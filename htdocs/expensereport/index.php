@@ -233,14 +233,11 @@ if ($result)
 
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table></div><br>';
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 print '</div></div></div>';
 

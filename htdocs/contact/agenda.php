@@ -76,9 +76,7 @@ if (GETPOST('actioncode', 'array'))
 {
     $actioncode = GETPOST('actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
     $actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');
@@ -159,9 +157,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
  	}
    	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
     $objcanvas->display_canvas($action); // Show template
-}
-else
-{
+} else {
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------

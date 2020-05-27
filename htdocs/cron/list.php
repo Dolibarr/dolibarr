@@ -132,9 +132,7 @@ if (empty($reshook))
 	    {
 	        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 	        $action = '';
-	    }
-	    else
-	    {
+	    } else {
 	        $object = new Cronjob($db);
 	    	$job = $object->fetch($id);
 
@@ -155,9 +153,7 @@ if (empty($reshook))
 	    		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
 	    		}
 	    		$action = '';
-	    	}
-	    	else
-	    	{
+	    	} else {
 	    		setEventMessages($object->error, $object->errors, 'errors');
 	    		$action = '';
 	    	}
@@ -196,9 +192,7 @@ if (empty($reshook))
 				elseif ($massaction == 'enable') $result = $tmpcron->setStatut(Cronjob::STATUS_ENABLED);
 				//else dol_print_error($db, 'Bad value for massaction');
 				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -444,9 +438,7 @@ if ($num > 0)
 			$object->ref = $langs->trans($obj->label);
 			print $object->getNomUrl(0, '', 1);
 			$object->ref = $obj->rowid;
-		}
-		else
-		{
+		} else {
 			//print $langs->trans('CronNone');
 		}
 		print '</td>';
@@ -466,8 +458,7 @@ if ($num > 0)
 			$texttoshow .= $langs->trans('CronMethod').': '.$obj->methodename;
 			$texttoshow .= '<br>'.$langs->trans('CronArgs').': '.$obj->params;
 			$texttoshow .= '<br>'.$langs->trans('Comment').': '.$langs->trans($obj->note);
-		}
-		elseif ($obj->jobtype == 'command')
+		} elseif ($obj->jobtype == 'command')
 		{
 			$text = $langs->trans('CronCommand');
 			$texttoshow = $langs->trans('CronCommand').': '.dol_trunc($obj->command);
@@ -586,9 +577,7 @@ if ($num > 0)
 
 		$i++;
 	}
-}
-else
-{
+} else {
 	print '<tr><td colspan="9" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
 }
 

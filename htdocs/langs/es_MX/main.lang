@@ -85,7 +85,6 @@ DefaultValue=Valor predeterminado
 PriceUTTC=P.U. (IVA incl.)
 AmountInvoice=Importe de la factura
 AmountPayment=Importe de pago
-MulticurrencyPaymentAmount=Monto del pago, moneda original
 AmountLT1=Importe impuestos 2
 AmountLT2=Importe impuestos 3
 AmountAverage=Importe promedio

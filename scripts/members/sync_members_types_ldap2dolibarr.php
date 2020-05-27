@@ -162,8 +162,7 @@ if ($result >= 0) {
 		if (!$error || $forcecommit) {
 			if (!$error)
 				print $langs->transnoentities("NoErrorCommitIsDone")."\n";
-			else
-				print $langs->transnoentities("ErrorButCommitIsDone")."\n";
+			else print $langs->transnoentities("ErrorButCommitIsDone")."\n";
 			$db->commit();
 		} else {
 			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone", $error)."\n";

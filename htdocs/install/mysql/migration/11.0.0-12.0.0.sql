@@ -54,6 +54,20 @@ create table llx_c_shipment_package_type
     entity       integer DEFAULT 1 NOT NULL -- Multi company id 
 )ENGINE=innodb;
 
+create table llx_facturedet_rec_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
+
+ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
+
+-- This var is per entity now, so we remove const if global if exists
+delete from llx_const where name = 'PROJECT_HIDE_TASKS' and entity = 0;
 
 
 -- For v12
@@ -61,6 +75,8 @@ create table llx_c_shipment_package_type
 -- Delete an old index that is duplicated
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
 -- VPGSQL8.2 DROP INDEX ix_fk_product_stock
+
+ALTER TABLE llx_actioncomm DROP COLUMN punctual;
 
 DELETE FROM llx_menu where module='supplier_proposal';
 
@@ -238,6 +254,7 @@ ALTER TABLE llx_blockedlog ADD COLUMN object_version varchar(32) DEFAULT '';
 
 ALTER TABLE llx_product_lot MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_product_batch MODIFY COLUMN batch varchar(128);
+ALTER TABLE llx_expeditiondet_batch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
@@ -275,4 +292,6 @@ ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 
+UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
 
+ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';

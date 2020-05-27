@@ -41,9 +41,7 @@ InterventionsArea=Intervenţii
 DraftFichinter=Intervenții schita
 LastModifiedInterventions=Ultimele %s intervenţii modificate
 FichinterToProcess=Intervenții la proces
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contact client urmărire intervenţie
-# Modele numérotation
 PrintProductsOnFichinter=Printează si liniile de tip ''produs''( nu numai serviciile) pe fişa intervenţiei
 PrintProductsOnFichinterDetails=intervenții generate din comenzi
 UseServicesDurationOnFichinter=Utilizați durata serviciilor pentru intervențiile generate din comenzi
@@ -53,14 +51,16 @@ InterventionStatistics=Statistici intervenţii
 NbOfinterventions=Numărul cardurilor de intervenție
 NumberOfInterventionsByMonth=Numărul cardurilor de intervenție pe lună (data validării)
 AmountOfInteventionNotIncludedByDefault=Suma de intervenție nu este inclusă implicit în profit (în majoritatea cazurilor, foile de pontaj sunt utilizate pentru a calcula timpul petrecut). Adăugați opțiunea PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT la 1 în acasa-gestionare-altul pentru a-l include.
-##### Exports #####
 InterId=Id Intervenţie
 InterRef=Ref. Intervenţie
 InterDateCreation=Data crearea Intervenție
 InterDuration=Durată Intervenție
 InterStatus=Status Intervenție 
 InterNote=Nota interventie
+InterLine=Line of intervention
 InterLineId=Id linie Intervenţie
 InterLineDate=Data linie interventie
 InterLineDuration=Durată linie  Intervenție
 InterLineDesc=Descriere linie Intervenţie
+RepeatableIntervention=Template of intervention
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template

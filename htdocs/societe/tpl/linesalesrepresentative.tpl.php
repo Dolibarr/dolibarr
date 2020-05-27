@@ -48,6 +48,5 @@ if ($nbofsalesrepresentative > 0)
 		print $userstatic->getNomUrl(-1);
 		print ' ';
 	}
-}
-else print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
+} else print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
 print '</td></tr>';

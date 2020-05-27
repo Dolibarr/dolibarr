@@ -58,12 +58,13 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'pl.fk_soc';
 if (!$sortorder) $sortorder = 'DESC';
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
+
 
 /*
  * Actions
@@ -271,10 +272,6 @@ if ($id > 0 || $ref)
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-        /*print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
-		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-		print '<input class="flat" type="file" name="userfile"><br>';
-		print '</td></tr>';*/
 		print '</table><br>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
@@ -321,7 +318,7 @@ if ($id > 0 || $ref)
 	}
 
 
-	$ligne = new LignePrelevement($db, $user);
+	$ligne = new LignePrelevement($db);
 
 	/*
 	 * Lines into withdraw request
@@ -411,9 +408,7 @@ if ($id > 0 || $ref)
 			if ($obj->statut == 3)
 			{
 		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
-			}
-			else
-			{
+			} else {
 		  		print "&nbsp;";
 			}
 
@@ -445,9 +440,7 @@ if ($id > 0 || $ref)
 		print '</form>';
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

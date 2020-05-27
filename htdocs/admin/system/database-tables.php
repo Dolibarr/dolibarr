@@ -61,18 +61,15 @@ if (preg_match('/mysql/i', $conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS";
 	$base = 1;
-}
-elseif ($conf->db->type == 'pgsql')
+} elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname, contype FROM pg_constraint;";
 	$base = 2;
-}
-elseif ($conf->db->type == 'mssql')
+} elseif ($conf->db->type == 'mssql')
 {
 	//$sqls[0] = "";
 	//$base=3;
-}
-elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
+} elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
 {
 	//$sql = "SELECT name, type FROM sqlite_master";
 	$base = 4;
@@ -82,9 +79,7 @@ elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
 if (!$base)
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
-}
-else
-{
+} else {
 	if ($base == 1)
 	{
         print '<div class="div-table-responsive-no-min">';
@@ -120,9 +115,7 @@ else
 				if (isset($obj->Engine) && $obj->Engine == "MyISAM")
 				{
 				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDB</a></td>';
-				}
-				else
-				{
+				} else {
 					print '<td>&nbsp;</td>';
 				}
 				print '<td>'.$obj->Row_format.'</td>';

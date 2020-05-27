@@ -81,14 +81,12 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 	if ($module == 'ecm')
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$object->id;
-		$head[$h][1] = $langs->trans("Card");
+		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
 		$h++;
-	}
-	else
-	{
+	} else {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/dir_card.php?section='.$section.'&module='.$module;
-		$head[$h][1] = $langs->trans("Card");
+		$head[$h][1] = $langs->trans("Directory");
 		$head[$h][2] = 'card';
 		$h++;
 	}
@@ -109,7 +107,7 @@ function ecm_file_prepare_head($object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/ecm/file_card.php?section='.$object->section_id.'&urlfile='.urlencode($object->label);
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("File");
 	$head[$h][2] = 'card';
 	$h++;
 

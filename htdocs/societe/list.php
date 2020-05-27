@@ -386,8 +386,7 @@ if ($resql)
 		if ($level == $obj->code) $level = $langs->trans($obj->label);
 		$tab_level[$obj->code] = $level;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql .= " s.entity,";
@@ -1049,9 +1048,7 @@ while ($i < min($num, $limit))
 		if ($contextpage == 'poslist')
 		{
 		    print $obj->name;
-		}
-		else
-		{
+		} else {
 		    print $companystatic->getNomUrl(1, '', 100, 0, 1);
 		}
 		print "</td>\n";
@@ -1276,7 +1273,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation

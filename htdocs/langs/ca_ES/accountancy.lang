@@ -121,6 +121,7 @@ InvoiceLinesDone=Línies de factura comptabilitzades
 ExpenseReportLines=Línies d'informes de despeses a comptabilitzar
 ExpenseReportLinesDone=Línies comptabilitzades d'informes de despeses
 IntoAccount=Línia comptabilitzada amb el compte comptable
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Comptabilitza
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Compte comptable per registrar les donacions
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Compte comptable per a registrar les donacions
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Compte comptable per defecte per als productes comprats (utilitzat si no es defineix en el producte)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought products and imported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Compte comptable per defecte pels productes venuts (s'utilitza si no es defineix en el full de producte)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Compte comptable per defecte per als productes venuts a la CEE (utilitzat si no es defineix en el producte)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Compte comptable per defecte per als productes venuts d'exportació (utilitzat si no es defineix en el producte)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Compte comptable per defecte per als serveis adquirits (s'utilitza si no es defineix en el full de servei)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Accounting account by default for the bought services in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought services and imported out of EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable per defecte per als serveis venuts (s'utilitza si no es defineix en el full de servei)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Compte comptable per defecte per als serveis venuts a la CEE (utilitzat si no es defineix en el servei)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Compte comptable per defecte per als serveis venuts i exportats fora de la CEE (utilitzat si no es defineix en el servei)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tercer desconegut
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte de tercers no definit o tercer desconegut. Error de bloqueig.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte de tercers desconegut i compte d'espera no definit. Error de bloqueig
 PaymentsNotLinkedToProduct=Pagament no vinculat a cap producte / servei
+OpeningBalance=Opening balance
 ShowOpeningBalance=Mostra el saldo d'obertura
 HideOpeningBalance=Amagueu el balanç d'obertura
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=Grup de compte
 PcgtypeDesc=S'utilitzen grups de comptes com a criteris predefinits de "filtre" i "agrupació" per a alguns informes de comptabilitat. Per exemple, "Ingressos" o "DESPESES" s'utilitzen com a grups per a comptes de comptabilitat de productes per crear l'informe de despeses / ingressos.
+
+Reconcilable=Reconcilable
 
 TotalVente=Total turnover before tax
 TotalMarge=Marge total de vendes
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Exporta a Quadratus QuadraCompta
 Modelcsv_ebp=Exporta a EBP
 Modelcsv_cogilog=Exporta a Cogilog
 Modelcsv_agiris=Exporta a Agiris
-Modelcsv_LDCompta=Exporta per LD Compta (v9 i superior) (Prova)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Exporta per a OpenConcerto (Test)
 Modelcsv_configurable=Exporta CSV configurable
 Modelcsv_FEC=Exporta FEC
 Modelcsv_Sage50_Swiss=Exportació per Sage 50 Switzerland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Id pla comptable
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=En mode vendes
 OptionModeProductSellIntra=Les vendes de mode exportades a la CEE
 OptionModeProductSellExport=Les vendes de mode exportades a altres països
 OptionModeProductBuy=En mode compres
+OptionModeProductBuyIntra=Mode purchases imported in EEC
+OptionModeProductBuyExport=Mode purchased imported from other countries
 OptionModeProductSellDesc=Mostra tots els productes amb compte comptable per a les vendes.
 OptionModeProductSellIntraDesc=Mostra tots els productes amb compte comptable per a les vendes en CEE.
 OptionModeProductSellExportDesc=Mostra tots els productes amb compte comptable per a altres vendes a l’estranger.
 OptionModeProductBuyDesc=Mostra tots els productes amb compte comptable per a les compres.
+OptionModeProductBuyIntraDesc=Show all products with accounting account for purchases in EEC.
+OptionModeProductBuyExportDesc=Show all products with accounting account for other foreign purchases.
 CleanFixHistory=Eliminar el codi comptable de les línies que no existeixen als gràfics de compte
 CleanHistory=Reinicia tota la comptabilització per l'any seleccionat
 PredefinedGroups=Grups predefinits
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=S'ha eliminat el compte del grup
 SaleLocal=Venda local
 SaleExport=Venda d’exportació
 SaleEEC=Venda en CEE
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
 
 ## Dictionary
 Range=Rang de compte comptable

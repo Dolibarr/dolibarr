@@ -159,9 +159,7 @@ if ($massaction == 'ventil') {
             {
                 $msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
                 $ko++;
-            }
-            else
-            {
+            } else {
                 $sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
                 $sql .= " SET fk_code_ventilation = ".$monCompte;
                 $sql .= " WHERE rowid = ".$monId;
@@ -629,8 +627,7 @@ if ($result) {
 					$suggestedid = $tmpaccount->id;
 				}
 				$accountingaccount_codetotid_cache[$objp->code_sell_l] = $tmpaccount->id;
-			}
-			else {
+			} else {
 				$suggestedid = $accountingaccount_codetotid_cache[$objp->code_sell_l];
 			}
 		}

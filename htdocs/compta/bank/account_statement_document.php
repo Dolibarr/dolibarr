@@ -138,12 +138,10 @@ if ($id > 0 || !empty($ref)) {
 		$moreparam = '&num='.urlencode($num); ;
 		$relativepathwithnofile = $id."/statement/".dol_sanitizeFileName($num)."/";
 		include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
-}
-else {
+} else {
 	Header('Location: index.php');
 	exit;
 }

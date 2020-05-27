@@ -39,7 +39,10 @@ function dolSaveMasterFile($filemaster)
 
 	$mastercontent = '<?php'."\n";
 	$mastercontent .= '// File generated to link to the master file - DO NOT MODIFY - It is just an include'."\n";
-	$mastercontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
+	$mastercontent .= "    if (! defined('USEEXTERNALSERVER')) define('USEEXTERNALSERVER', 1);\n";
+	$mastercontent .= "    require_once '".DOL_DOCUMENT_ROOT."/master.inc.php';\n";
+	$mastercontent .= "}\n";
 	$mastercontent .= '?>'."\n";
 	$result = file_put_contents($filemaster, $mastercontent);
 	if (!empty($conf->global->MAIN_UMASK))
@@ -154,10 +157,15 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= '<meta name="description" content="'.dol_string_nohtmltag($objectpage->description, 0, 'UTF-8').'" />'."\n";
 	$tplcontent .= '<meta name="generator" content="'.DOL_APPLICATION_TITLE.' '.DOL_VERSION.' (https://www.dolibarr.org)" />'."\n";
 	$tplcontent .= '<meta name="dolibarr:pageid" content="'.dol_string_nohtmltag($objectpage->id).'" />'."\n";
+	// Add canonical reference
+	if ($object->virtualhost) {
+		$tplcontent .= '<link rel="canonical" href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" />'."\n";
+	}
 	// Add translation reference (main language)
 	if ($object->isMultiLang()) {
 		// Add myself
-		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php').'" />'."\n";
+		$tplcontent .= '<?php if ($_SERVER["PHP_SELF"] == "'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '')).'/'.$objectpage->pageurl.'.php") { ?>'."\n";
+		$tplcontent .= '<link rel="alternate" hreflang="'.$shortlangcode.'" href="'.(($object->fk_default_home == $objectpage->id) ? '/' : (($shortlangcode != substr($object->lang, 0, 2)) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php').'" />'."\n";
 
 		// Add page "translation of"
 		$translationof = $objectpage->fk_page;
@@ -168,7 +176,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 				$tmpshortlangcode = '';
 				if ($tmppage->lang) $tmpshortlangcode = preg_replace('/[_-].*$/', '', $tmppage->lang); // en_US or en-US -> en
 				if ($tmpshortlangcode != $shortlangcode) {
-					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2) ? '/'.$tmpshortlangcode : '')).'/'.$tmppage->pageurl.'.php').'" />'."\n";
+					$tplcontent .= '<link rel="alternate" hreflang="'.$tmpshortlangcode.'" href="'.($object->fk_default_home == $tmppage->id ? '/' : (($tmpshortlangcode != substr($object->lang, 0, 2)) ? '/'.$tmpshortlangcode : '').'/'.$tmppage->pageurl.'.php').'" />'."\n";
 				}
 			}
 		}
@@ -189,11 +197,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 					}
 				}
 			}
+		} else {
+			dol_print_error($db);
 		}
-		else dol_print_error($db);
+		$tplcontent .= '<?php } ?>'."\n";
 	}
-	// Add canonical reference
-	$tplcontent .= '<link href="'.(($objectpage->id == $object->fk_default_home) ? '/' : (($shortlangcode != substr($object->lang, 0, 2) ? '/'.$shortlangcode : '').'/'.$objectpage->pageurl.'.php')).'" rel="canonical" />'."\n";
 	// Add manifest.json on homepage
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
@@ -224,11 +232,11 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 
 
 /**
- * Save content of the index.php and wrapper.php page
+ * Save content of the index.php and/or wrapper.php page
  *
  * @param	string		$pathofwebsite			Path of website root
  * @param	string		$fileindex				Full path of file index.php
- * @param	string		$filetpl				File tpl to index.php page redirect to
+ * @param	string		$filetpl				File tpl the index.php page redirect to
  * @param	string		$filewrapper			Full path of file wrapper.php
  * @return	boolean								True if OK
  */
@@ -241,29 +249,38 @@ function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper)
 
 	dol_mkdir($pathofwebsite);
 
-	dol_delete_file($fileindex);
-	$indexcontent = '<?php'."\n";
-	$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
-	$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
-	$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
-	$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
-	$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
-	$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
-	$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
-	$indexcontent .= "}\n";
-	$indexcontent .= "include_once './".basename($filetpl)."'\n";
-	$indexcontent .= '// END PHP ?>'."\n";
-	$result1 = file_put_contents($fileindex, $indexcontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+	if ($fileindex) {
+		dol_delete_file($fileindex);
+		$indexcontent = '<?php'."\n";
+		$indexcontent .= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
+		$indexcontent .= '$websitekey=basename(__DIR__); if (empty($websitepagefile)) $websitepagefile=__FILE__;'."\n";
+		$indexcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+		$indexcontent .= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
+		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+		$indexcontent .= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+		$indexcontent .= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
+		$indexcontent .= "}\n";
+		$indexcontent .= "include_once './".basename($filetpl)."'\n";
+		$indexcontent .= '// END PHP ?>'."\n";
+
+		$result1 = file_put_contents($fileindex, $indexcontent);
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+		}
+	} else {
+		$result1 = true;
 	}
-	dol_delete_file($filewrapper);
 
-	$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
+	if ($filewrapper) {
+		dol_delete_file($filewrapper);
+		$wrappercontent = file_get_contents(DOL_DOCUMENT_ROOT.'/website/samples/wrapper.php');
 
-	$result2 = file_put_contents($filewrapper, $wrappercontent);
-	if (!empty($conf->global->MAIN_UMASK)) {
-		@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+		$result2 = file_put_contents($filewrapper, $wrappercontent);
+		if (!empty($conf->global->MAIN_UMASK)) {
+			@chmod($filewrapper, octdec($conf->global->MAIN_UMASK));
+		}
+	} else {
+		$result2 = true;
 	}
 
 	return ($result1 && $result2);
@@ -513,8 +530,7 @@ function showWebsiteTemplates(Website $website)
 				}
 			}
 		}
-	}
-	else {
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("None").'</span>';
 	}
 

@@ -244,23 +244,19 @@ abstract class ActionsCardCommon
                     $this->tpl['localtax'] .= '</td><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td>';
                     $this->tpl['localtax'] .= $form->selectyesno('localtax2assuj_value', $this->object->localtax1_assuj, 1);
                     $this->tpl['localtax'] .= '</td></tr>';
-                }
-                elseif ($mysoc->localtax1_assuj == "1")
+                } elseif ($mysoc->localtax1_assuj == "1")
                 {
                     $this->tpl['localtax'] .= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td><td colspan="3">';
                     $this->tpl['localtax'] .= $form->selectyesno('localtax1assuj_value', $this->object->localtax1_assuj, 1);
                     $this->tpl['localtax'] .= '</td><tr>';
-                }
-                elseif ($mysoc->localtax2_assuj == "1")
+                } elseif ($mysoc->localtax2_assuj == "1")
                 {
                     $this->tpl['localtax'] .= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td><td colspan="3">';
                     $this->tpl['localtax'] .= $form->selectyesno('localtax2assuj_value', $this->object->localtax1_assuj, 1);
                     $this->tpl['localtax'] .= '</td><tr>';
                 }
             }
-        }
-        else
-        {
+        } else {
             $head = societe_prepare_head($this->object);
 
             $this->tpl['showhead'] = dol_get_fiche_head($head, 'card', '', 0, 'company');
@@ -307,8 +303,7 @@ abstract class ActionsCardCommon
             if ($nbofsalesrepresentative > 3)   // We print only number
             {
             	$this->tpl['sales_representatives'] .= $nbofsalesrepresentative;
-            }
-            elseif ($nbofsalesrepresentative > 0)
+            } elseif ($nbofsalesrepresentative > 0)
             {
             	$userstatic = new User($this->db);
             	$i = 0;
@@ -321,8 +316,7 @@ abstract class ActionsCardCommon
             		$i++;
             		if ($i < $nbofsalesrepresentative) $this->tpl['sales_representatives'] .= ', ';
             	}
-            }
-            else $this->tpl['sales_representatives'] .= $langs->trans("NoSalesRepresentativeAffected");
+            } else $this->tpl['sales_representatives'] .= $langs->trans("NoSalesRepresentativeAffected");
 
             // Linked member
             if (!empty($conf->adherent->enabled))
@@ -334,9 +328,7 @@ abstract class ActionsCardCommon
                 {
                     $adh->ref = $adh->getFullName($langs);
                     $this->tpl['linked_member'] = $adh->getNomUrl(1);
-                }
-                else
-                {
+                } else {
                     $this->tpl['linked_member'] = $langs->trans("ThirdpartyNotLinkedToMember");
                 }
             }
@@ -353,13 +345,11 @@ abstract class ActionsCardCommon
                     $this->tpl['localtax'] .= '<td>'.yn($this->object->localtax1_assuj).'</td>';
                     $this->tpl['localtax'] .= '<td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
                     $this->tpl['localtax'] .= '<td>'.yn($this->object->localtax2_assuj).'</td></tr>';
-                }
-                elseif ($mysoc->localtax1_assuj == "1")
+                } elseif ($mysoc->localtax1_assuj == "1")
                 {
                     $this->tpl['localtax'] .= '<tr><td>'.$langs->trans("LocalTax1IsUsedES").'</td>';
                     $this->tpl['localtax'] .= '<td colspan="3">'.yn($this->object->localtax1_assuj).'</td></tr>';
-                }
-                elseif ($mysoc->localtax2_assuj == "1")
+                } elseif ($mysoc->localtax2_assuj == "1")
                 {
                     $this->tpl['localtax'] .= '<tr><td>'.$langs->trans("LocalTax2IsUsedES").'</td>';
                     $this->tpl['localtax'] .= '<td colspan="3">'.yn($this->object->localtax2_assuj).'</td></tr>';

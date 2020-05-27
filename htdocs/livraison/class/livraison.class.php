@@ -215,25 +215,19 @@ class Livraison extends CommonObject
 				{
 					$this->db->commit();
 					return $this->id;
-				}
-				else
-				{
+				} else {
 					$error++;
 					$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$this->error = $this->db->lasterror()." - sql=".$this->db->lastqueryerror;
 			$this->db->rollback();
@@ -344,16 +338,12 @@ class Livraison extends CommonObject
 				}
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = 'Delivery with id '.$id.' not found sql='.$sql;
 				dol_syslog(get_class($this).'::fetch Error '.$this->error, LOG_ERR);
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -399,9 +389,7 @@ class Livraison extends CommonObject
 					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		            {
 		                $numref = $objMod->livraison_get_num($soc, $this);
-		            }
-		            else
-					{
+		            } else {
 		                $numref = $this->ref;
 		            }
             		$this->newref = dol_sanitizeFileName($numref);
@@ -500,17 +488,13 @@ class Livraison extends CommonObject
 			        {
 			            $this->db->commit();
 			            return 1;
-			        }
-			        else
-					{
+			        } else {
 			            $this->db->rollback();
 			            return -1;
 			        }
 				}
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = "Non autorise";
 			dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
 			return -1;
@@ -633,9 +617,7 @@ class Livraison extends CommonObject
 				$this->update_price();
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
 		}
@@ -704,23 +686,17 @@ class Livraison extends CommonObject
                     // End call triggers
 
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror()." - sql=$sql";
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror()." - sql=$sql";
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror()." - sql=$sql";
 			$this->db->rollback();
 			return -1;
@@ -990,16 +966,13 @@ class Livraison extends CommonObject
 					if ($row[0] == $objSourceLine->rowid)
 					{
 						$array[$i]['qty'] = $objSourceLine->qty - $row[1];
-					}
-					else
-					{
+					} else {
 						$array[$i]['qty'] = $objSourceLine->qty;
 					}
 
 					$array[$i]['ref'] = $objSourceLine->ref;
 					$array[$i]['label'] = $objSourceLine->label ? $objSourceLine->label : $objSourceLine->description;
-				}
-				elseif ($objSourceLine->qty - $row[1] < 0)
+				} elseif ($objSourceLine->qty - $row[1] < 0)
 				{
 					$array[$i]['qty'] = $objSourceLine->qty - $row[1]." Erreur livraison !";
 					$array[$i]['ref'] = $objSourceLine->ref;
@@ -1009,9 +982,7 @@ class Livraison extends CommonObject
 					$i++;
 			}
 			return $array;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." - sql=$sqlSourceLine";
 			return -1;
 		}
@@ -1040,15 +1011,11 @@ class Livraison extends CommonObject
 			{
 				$this->date_delivery = $date_livraison;
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}

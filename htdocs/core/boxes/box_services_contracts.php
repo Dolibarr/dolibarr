@@ -186,9 +186,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 
 						$s = $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
-					}
-					else
-					{
+					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}
 
@@ -223,20 +221,20 @@ class box_services_contracts extends ModeleBoxes
 
 					$i++;
 				}
-				if ($num == 0) $this->info_box_contents[$i][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoContractedProducts"));
+				if ($num == 0) $this->info_box_contents[$i][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoContractedProducts")
+				);
 
 				$this->db->free($result);
-			}
-			else
-			{
+			} else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength' => 500,
                     'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

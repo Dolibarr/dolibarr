@@ -51,7 +51,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 
 
@@ -135,9 +135,7 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-    }
-  	else
-    {
+    } else {
       	dol_print_error($db);
     }
 }
@@ -220,9 +218,7 @@ if ($resql)
 
     		$i++;
     	}
-	}
-	else
-	{
+	} else {
 	    print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
@@ -238,9 +234,7 @@ if ($resql)
     print '</div>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

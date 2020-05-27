@@ -1,0 +1,19 @@
+# Dolibarr language file - Source file is en_US - receiptprinter
+TestSentToPrinter=Prueba enviada a la impresora %s
+ReceiptPrinterDesc=Configuración de impresoras de recibos
+CONNECTOR_DUMMY=Impresora ficticia
+CONNECTOR_FILE_PRINT=Impresora local
+CONNECTOR_DUMMY_HELP=Impresora falsa para la prueba, no hace nada
+CONNECTOR_NETWORK_PRINT_HELP=10.x.x.x: 9100
+CONNECTOR_FILE_PRINT_HELP=/dev/usb /lp0, /dev/ usb/lp1
+CONNECTOR_WINDOWS_PRINT_HELP=LPT1, COM1, smb://FooUser: secret@computername/grupo de trabajo/ impresoraderecibos
+DOL_ALIGN_LEFT=Alinea el texto a la izquierda
+DOL_ALIGN_CENTER=Texto del centro
+DOL_ALIGN_RIGHT=Alinea el texto a la derecha
+DOL_USE_FONT_C=Utilizar la fuente C de la impresora
+DOL_PRINT_BARCODE=Imprimir código de barras
+DOL_PRINT_BARCODE_CUSTOMER_ID=Imprimir ID de cliente de código de barras
+DOL_CUT_PAPER_FULL=Cortar ticket por completo
+DOL_CUT_PAPER_PARTIAL=Cortar el ticket parcialmente
+DOL_OPEN_DRAWER=Abrir cajón de efectivo
+DOL_ACTIVATE_BUZZER=Activar zumbador

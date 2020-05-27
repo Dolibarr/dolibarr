@@ -218,3 +218,4 @@ InventoryForASpecificWarehouse=Inventaire pour un entrepôt spécifique
 InventoryForASpecificProduct=Inventaire pour un produit spécifique
 StockIsRequiredToChooseWhichLotToUse=Le module Stock est requis pour choisir une lot
 ForceTo=Forcer à
+AlwaysShowFullArbo=Toujours afficher l'arborescence complète dans le lien vers la fiche
