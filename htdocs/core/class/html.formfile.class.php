@@ -628,10 +628,18 @@ class FormFile
 				// For normalized external modules.
 				else {
 				    $file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
-					$res = include_once $file;
+					if (file_exists($file))
+						$res = include_once $file;
+					if (!$res)
+					{
+						$file = './'.$modulepart.'/core/modules/'.$submodulepart.'/doc/pdf_'.$modelselected.'.modules.php';
+						dol_include_once($file);
+					}
 				}
 				$class = 'ModelePDF'.ucfirst($submodulepart);
-
+				if (!class_exists($class))
+					$class = 'pdf_'.$modelselected;
+				
 				if (class_exists($class))
 				{
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
