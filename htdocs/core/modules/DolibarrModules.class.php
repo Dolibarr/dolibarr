@@ -130,7 +130,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     public $rights_class;
 
     /**
-     * @var array Module menu entries
+     * @var array|int 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
      */
     public $menu = array();
 
