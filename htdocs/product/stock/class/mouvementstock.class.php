@@ -80,9 +80,14 @@ class MouvementStock extends CommonObject
 	public $fk_origin;
 
 	public $origintype;
+
 	public $inventorycode;
 	public $batch;
 
+	/**
+	 * @var Object		Object set as origin before calling livraison() or reception()
+	 */
+	public $origin;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
@@ -385,6 +390,7 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
+			// Set $origintype, fk_origin, fk_project
 			$fk_project = 0;
 			if (!empty($this->origin)) {			// This is set by caller for tracking reason
 				$origintype = empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type;

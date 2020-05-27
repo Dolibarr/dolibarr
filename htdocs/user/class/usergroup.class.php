@@ -606,7 +606,7 @@ class UserGroup extends CommonObject
 	 *	Delete a group
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@return     				<0 if KO, > 0 if OK
+	 *	@return int    				<0 if KO, > 0 if OK
 	 */
 	public function delete(User $user)
 	{
