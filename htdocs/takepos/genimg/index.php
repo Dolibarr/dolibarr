@@ -85,10 +85,7 @@ elseif ($query == "pro")
 			header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
 		}
 	}
-} else header('Location: '.$file.'&cache=1');
-}
-else
-{
+} else {
     // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
 
 	// The file
