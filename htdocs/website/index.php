@@ -3687,7 +3687,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$arrayofselected = is_array($toselect) ? $toselect : array();
 			$param = '';
 			$nbtotalofrecords = count($listofpages['list']);
-			$num = $nbtotalofrecords = $limit;
+			$num = $limit;
 			$permissiontodelete = 0;
 
 			// List of mass actions available
