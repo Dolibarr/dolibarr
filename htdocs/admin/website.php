@@ -49,8 +49,6 @@ $acts[1] = "disable";
 $actl[0] = img_picto($langs->trans("Disabled"), 'switch_off');
 $actl[1] = img_picto($langs->trans("Activated"), 'switch_on');
 
-$status = 1;
-
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -60,6 +58,9 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+if (empty($sortfield)) $sortfield = 'position, ref';
+if (empty($sortorder)) $sortorder = 'ASC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('website'));
@@ -74,7 +75,7 @@ $tablib[1] = "Websites";
 
 // Requests to extract data
 $tabsql = array();
-$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.status FROM ".MAIN_DB_PREFIX.'website as f WHERE f.entity IN ('.getEntity('website').')';
+$tabsql[1] = "SELECT f.rowid as rowid, f.entity, f.ref, f.description, f.virtualhost, f.position, f.status FROM ".MAIN_DB_PREFIX.'website as f WHERE f.entity IN ('.getEntity('website').')';
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -82,15 +83,15 @@ $tabsqlsort[1] = "ref ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield = array();
-$tabfield[1] = "ref,description,virtualhost";
+$tabfield[1] = "ref,description,virtualhost,position";
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue = array();
-$tabfieldvalue[1] = "ref,description,virtualhost";
+$tabfieldvalue[1] = "ref,description,virtualhost,position";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert = array();
-$tabfieldinsert[1] = "ref,description,virtualhost,entity";
+$tabfieldinsert[1] = "ref,description,virtualhost,position,entity";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on

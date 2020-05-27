@@ -106,7 +106,7 @@ if (empty($action)) $action = 'preview';
 $object = new Website($db);
 $objectpage = new WebsitePage($db);
 
-$object->fetchAll(); // Init $object->records with list of websites
+$object->fetchAll('ASC', 'position'); // Init $object->records with list of websites
 
 // If website not defined, we take first found
 if (!($websiteid > 0) && empty($websitekey))
@@ -2207,7 +2207,6 @@ if (!GETPOST('hide_websitemenu'))
 
 	print '<span class="websiteselection hideonsmartphoneimp">';
 	print '<a href="'.$_SERVER["PHP_SEFL"].'?action=createsite&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("AddWebsite")).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"><span></a>';
-	//print ' <input type="submit"'.$disabled.' class="button" value="'.dol_escape_htmltag($langs->trans("Add")).'" name="createsite">';
 	print '</span>';
 
 	// List of website
