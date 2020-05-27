@@ -7,7 +7,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
             --btncolorbg: #fbfbfb;
             --btncolorborderhover: none;
             --btncolorborder: #FFF;
-            --butactionbg:rgb(215, 235, 225);
+            --butactionbg:rgb(218, 235, 225);
             --butactiondeletebg: rgb(234,228,225);
 }
 

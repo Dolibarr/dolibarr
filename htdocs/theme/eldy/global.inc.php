@@ -5125,6 +5125,9 @@ span#select2-taskid-container[title^='--'] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);
     color: #<?php echo $colortextbackhmenu; ?>;
 }
+.select2-container--default .select2-results__option--highlighted[aria-selected] span {
+    color: #fff !important;
+}
 
 span.select2.select2-container.select2-container--default {
     border-left: none;

@@ -340,7 +340,9 @@ a.top-menu-dropdown-link {
     content: "\f0da";
     /* color: rgba(0,0,0,0.3); */
 }
-
+.dropdown-item.bookmark-item-external::before {
+	content: "\f35d";
+}
 
 .dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
     color: #<?php echo $colortextbackhmenu; ?> !important;
