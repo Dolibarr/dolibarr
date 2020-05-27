@@ -712,7 +712,7 @@ class Societe extends CommonObject
 
 
 	/**
-	 * @var Account Default BAN account
+	 * @var Account|string Default BAN account
 	 */
 	public $bank_account;
 
