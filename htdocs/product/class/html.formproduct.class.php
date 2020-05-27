@@ -251,7 +251,7 @@ class FormProduct
 			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1){
 				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
 			}
-			else{
+			else {
 				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
 			}
 		}
