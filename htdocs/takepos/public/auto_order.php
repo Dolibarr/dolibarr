@@ -33,4 +33,5 @@ $_SESSION["takeposterminal"] = 1;
 
 define('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE', 1);
 if (GETPOSTISSET("mobilepage")) require '../invoice.php';
+elseif (GETPOSTISSET("genimg")) require DOL_DOCUMENT_ROOT.'/takepos/genimg/index.php';
 else require '../phone.php';
