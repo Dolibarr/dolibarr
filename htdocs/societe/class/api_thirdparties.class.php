@@ -133,7 +133,7 @@ class Thirdparties extends DolibarrApi
     	}
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-		$sql .= " WHERE t.entity IN ('.getEntity('societe').')";
+		$sql .= " WHERE t.entity IN (".getEntity('societe').")";
 		$sql .= " AND t.fk_stcomm = st.id";
 
 		if ($mode == 1) $sql .= " AND t.client IN (1, 3)";
