@@ -556,8 +556,6 @@ class MultiCurrency extends CommonObject
      */
     public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
     {
-        global $db;
-
         $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
 
         if ($multicurrency_tx)
@@ -592,10 +590,11 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * With free account we can't set source then recalcul all rates to force another source
+	 * With free account we can't set source then recalcul all rates to force another source.
+	 * This modify the array &$TRate.
 	 *
 	 * @param   stdClass	$TRate	Object containing all currencies rates
-	 * @return	-1 if KO, 0 if nothing, 1 if OK
+	 * @return	int					-1 if KO, 0 if nothing, 1 if OK
 	 */
 	public static function recalculRates(&$TRate)
 	{
