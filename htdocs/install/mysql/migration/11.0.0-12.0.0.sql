@@ -298,3 +298,8 @@ ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';
+
+ALTER TABLE llx_adherent_type MODIFY subscription varchar(3) NOT NULL DEFAULT '1';
+ALTER TABLE llx_adherent_type MODIFY vote varchar(3) NOT NULL DEFAULT '1';
+  
+
