@@ -231,12 +231,12 @@ class Import
 	}
 
 	/**
-	 *  Save an export model in database
+	 *  Save an import model in database
 	 *
 	 *  @param		User	$user 	Object user that save
 	 *  @return		int				<0 if KO, >0 if OK
 	 */
-    public function create($user)
+    public function save_import_model($user)
 	{
 		global $conf;
 
@@ -274,7 +274,7 @@ class Import
 	 *  @param		int		$id		Id of profil to load
 	 *  @return		int				<0 if KO, >0 if OK
 	 */
-    public function fetch($id)
+    public function get_import_model($id)
 	{
 		$sql = 'SELECT em.rowid, em.field, em.label, em.type';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'import_model as em';
@@ -310,7 +310,7 @@ class Import
 	 *  @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
 	 *	@return		int						<0 if KO, >0 if OK
 	 */
-    public function delete($user, $notrigger = 0)
+    public function delete_import_model($user, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -323,19 +323,6 @@ class Import
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-
-		if (!$error)
-		{
-			if (!$notrigger)
-			{
-				/* Not used. This is not a business object. To convert it we must herit from CommonObject
-                // Call trigger
-                $result=$this->call_trigger('IMPORT_DELETE',$user);
-                if ($result < 0) $error++;
-                // End call triggers
-                 */
-			}
-		}
 
 		// Commit or rollback
 		if ($error)

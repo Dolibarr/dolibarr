@@ -146,12 +146,13 @@ if ($action == 'builddoc')
 	}
 }
 
+// Delete import model from the database
 if ($action == 'deleteprof')
 {
 	if ($_GET["id"])
 	{
-		$objimport->fetch($_GET["id"]);
-		$result = $objimport->delete($user);
+		$objimport->get_import_model($_GET["id"]);
+		$result = $objimport->delete_import_model($user);
 	}
 }
 
@@ -172,7 +173,7 @@ if ($action == 'add_import_model')
 		$objimport->datatoimport = $datatoimport;
 		$objimport->hexa = $hexa;
 
-		$result = $objimport->create($user);
+		$result = $objimport->save_import_model($user);
 		if ($result >= 0)
 		{
 			setEventMessages($langs->trans("ImportModelSaved", $objimport->model_name), null, 'mesgs');
@@ -234,7 +235,7 @@ if ($step == 4 && $action == 'select_model')
 
 	// Load model from $importmodelid and set $array_match_file_to_database
 	// and $_SESSION["dol_array_match_file_to_database"]
-	$result = $objimport->fetch($importmodelid);
+	$result = $objimport->get_import_model($importmodelid);
 	if ($result > 0)
 	{
 		$serialized_array_match_file_to_database = $objimport->hexa;
