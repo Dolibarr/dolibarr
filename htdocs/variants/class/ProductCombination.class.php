@@ -542,18 +542,10 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		}
 
 		//Final weight impact
-		$weight_impact = $forced_weightvar;
-
-		if ($forced_weightvar === false) {
-			$weight_impact = 0;
-		}
+		$weight_impact = (float) $forced_weightvar;	// If false, return 0
 
 		//Final price impact
-		$price_impact = $forced_pricevar;
-
-		if ($forced_pricevar === false) {
-			$price_impact = 0;
-		}
+		$price_impact = (float) $forced_pricevar;	// If false, return 0
 
 		$newcomb = new ProductCombination($db);
 		$existingCombination = $newcomb->fetchByProductCombination2ValuePairs($product->id, $combinations);

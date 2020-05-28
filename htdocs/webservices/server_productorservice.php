@@ -1003,7 +1003,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$id					Category id
- * @param	$lang		$lang				Force lang
+ * @param	Translate	$lang				Force lang
  * @return	array							Array result
  */
 function getProductsForCategory($authentication, $id, $lang = '')
