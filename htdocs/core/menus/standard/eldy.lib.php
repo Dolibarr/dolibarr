@@ -1433,7 +1433,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                     $newmenu->add("/compta/stats/cabyuser.php?leftmenu=report", $langs->trans("ByUsers"), 2, $user->rights->compta->resultat->lire);
                     $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=report", $langs->trans("ByProductsAndServices"), 2, $user->rights->compta->resultat->lire);
                     $newmenu->add("/compta/stats/byratecountry.php?leftmenu=report", $langs->trans("ByVatRate"), 2, $user->rights->compta->resultat->lire);
-
+					//Achats
+					$newmenu->add("/compta/stats/supplier_turnover.php?leftmenu=accountancy_report", $langs->trans("ReportPurchaseTurnover"), 1, $user->rights->compta->resultat->lire);
+					$newmenu->add("/compta/stats/supplier_turnover_by_thirdparty.php?leftmenu=accountancy_report", $langs->trans("ByCompanies"), 2, $user->rights->compta->resultat->lire);
+					$newmenu->add("/compta/stats/supplier_turnover_by_prodserv.php?leftmenu=accountancy_report", $langs->trans("ByProductsAndServices"), 2, $user->rights->compta->resultat->lire);
                     // Journaux
                     $newmenu->add("/compta/journal/sellsjournal.php?leftmenu=report", $langs->trans("SellsJournal"), 1, $user->rights->compta->resultat->lire, '', '', '', 50);
                     $newmenu->add("/compta/journal/purchasesjournal.php?leftmenu=report", $langs->trans("PurchasesJournal"), 1, $user->rights->compta->resultat->lire, '', '', '', 51);
