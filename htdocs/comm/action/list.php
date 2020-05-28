@@ -52,7 +52,7 @@ $year = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
 $day = GETPOST("day", 'int');
 $toselect = GETPOST('toselect', 'array');
-$confirm = GETPOST('confirm','alpha');
+$confirm = GETPOST('confirm', 'alpha');
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
@@ -157,7 +157,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  *	Actions
  */
 
-if (GETPOST('cancel','alpha'))
+if (GETPOST('cancel', 'alpha'))
 {
 	$action='list'; $massaction='';
 }
