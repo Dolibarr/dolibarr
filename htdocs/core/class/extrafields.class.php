@@ -1689,7 +1689,7 @@ class ExtraFields
 			$valstr = $param['options'][$value];
 			if (($pos = strpos($valstr, "|")) !== false)
 			{
-				$valstr = substr ($valstr, 0, $pos);
+				$valstr = substr($valstr, 0, $pos);
 			}
 			if ($langfile && $valstr) $value = $langs->trans($valstr);
 			else $value = $valstr;
