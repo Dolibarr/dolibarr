@@ -46,7 +46,7 @@ if (empty($objectclass) || empty($uploaddir))
 // For backward compatibility
 if (!empty($permtoread) && empty($permissiontoread)) $permissiontoread = $permtoread;
 if (!empty($permtocreate) && empty($permissiontoadd)) $permissiontoadd = $permtocreate;
-if (!empty($permtodelete) && empty($permissiontodelete)) $permissiontoread = $permtodelete;
+if (!empty($permtodelete) && empty($permissiontodelete)) $permissiontodelete = $permtodelete;
 
 
 // Mass actions. Controls on number of lines checked.
