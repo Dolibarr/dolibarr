@@ -2180,7 +2180,7 @@ class Adherent extends CommonObject
 		if ($mode == 'expired') {
 			$sql .= " AND a.statut = 1";
 			$sql .= " AND a.entity IN (".getEntity('adherent').")";
-			$sql .= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
+			$sql .= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = '1')";
 		} elseif ($mode == 'shift') {
 			$sql .= " AND a.statut = -1";
 			$sql .= " AND a.entity IN (".getEntity('adherent').")";

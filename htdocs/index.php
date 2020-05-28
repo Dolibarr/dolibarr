@@ -158,7 +158,7 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
 	    	'prospects' => !empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS),
 	    	'suppliers' => !empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS),
 		    'contacts' => !empty($conf->societe->enabled) && $user->rights->societe->contact->lire,
-		    'services' => !empty($conf->product->enabled) && $user->rights->produit->lire,
+		    'products' => !empty($conf->product->enabled) && $user->rights->produit->lire,
 		    'services' => !empty($conf->service->enabled) && $user->rights->service->lire,
 		    'proposals' => !empty($conf->propal->enabled) && $user->rights->propale->lire,
 		    'orders' => !empty($conf->commande->enabled) && $user->rights->commande->lire,

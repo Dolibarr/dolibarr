@@ -1594,12 +1594,15 @@ class ExtraFields
 		{
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') $value = price($value, 0, $langs, 0, 0, -1);
-		} elseif ($type == 'select')
-		{
-			if ($langfile && $param['options'][$value]) $value = $langs->trans($param['options'][$value]);
-			else $value = $param['options'][$value];
-		} elseif ($type == 'sellist')
-		{
+		} elseif ($type == 'select') {
+			$valstr = $param['options'][$value];
+			if (($pos = strpos($valstr, "|")) !== false)
+			{
+				$valstr = substr($valstr, 0, $pos);
+			}
+			if ($langfile && $valstr) $value = $langs->trans($valstr);
+			else $value = $valstr;
+		} elseif ($type == 'sellist') {
 			$param_list = array_keys($param['options']);
 			$InfoFieldList = explode(":", $param_list[0]);
 
