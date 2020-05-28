@@ -1603,7 +1603,7 @@ if ($action == 'create' || $action == 'adduserldap')
 				$warehousestatic = new Entrepot($db);
 				$warehousestatic->fetch($object->fk_warehouse);
 				print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-				print $warehousestatic->getNomUrl();
+				print $warehousestatic->getNomUrl(1);
 				print '</td></tr>';
             }
 
@@ -2595,7 +2595,7 @@ if ($action == 'create' || $action == 'adduserldap')
             {
                 print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
                 print $formproduct->selectWarehouses($object->fk_warehouse, 'fk_warehouse', 'warehouseopen', 1);
-                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddWarehouse").'</a>';
+                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
                 print '</td></tr>';
             }
 
