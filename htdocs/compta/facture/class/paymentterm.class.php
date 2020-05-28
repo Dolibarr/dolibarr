@@ -145,9 +145,7 @@ class PaymentTerm // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -202,9 +200,7 @@ class PaymentTerm // extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -239,9 +235,7 @@ class PaymentTerm // extends CommonObject
 			}
 			$this->db->free($resql);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -305,9 +299,7 @@ class PaymentTerm // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -345,9 +337,7 @@ class PaymentTerm // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -396,9 +386,7 @@ class PaymentTerm // extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}

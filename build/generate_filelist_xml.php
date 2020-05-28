@@ -110,7 +110,7 @@ print "Working on files into          : ".DOL_DOCUMENT_ROOT."\n";
 print "Include custom in signature    : ".$includecustom."\n";
 print "Include constants in signature : ";
 foreach ($includeconstants as $countrycode => $tmp) {
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         print $constname.'='.$constvalue." ";
     }
 }
@@ -130,7 +130,7 @@ fputs($fp, '<checksum_list version="'.$release.'" date="'.dol_print_date(dol_now
 
 foreach ($includeconstants as $countrycode => $tmp) {
     fputs($fp, '<dolibarr_constants country="'.$countrycode.'">'."\n");
-    foreach($tmp as $constname => $constvalue) {
+    foreach ($tmp as $constname => $constvalue) {
         $valueforchecksum=(empty($constvalue)?'0':$constvalue);
         $checksumconcat[]=$valueforchecksum;
         fputs($fp, '    <constant name="'.$constname.'">'.$valueforchecksum.'</constant>'."\n");

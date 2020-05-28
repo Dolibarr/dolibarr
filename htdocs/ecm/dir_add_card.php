@@ -56,8 +56,7 @@ if (empty($urlsection)) $urlsection = 'misc';
 if ($module == 'ecm')
 {
 	$upload_dir = $conf->ecm->dir_output.'/'.$urlsection;
-}
-else	// For example $module == 'medias'
+} else // For example $module == 'medias'
 {
 	$upload_dir = $conf->medias->multidir_output[$conf->entity];
 }
@@ -115,9 +114,7 @@ if ($action == 'add' && $permtoadd)
 		{
 			header("Location: ".$backtopage);
 			exit;
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager'.($module ? '&module='.$module : ''));
 			exit;
 		}
@@ -155,8 +152,7 @@ if ($action == 'add' && $permtoadd)
 				setEventMessages($ecmdir->error, $ecmdir->errors, 'errors');
 				$action = 'create';
 			}
-		}
-		else	// For example $module == 'medias'
+		} else // For example $module == 'medias'
 		{
 			$dirfornewdir = '';
 			if ($module == 'medias')
@@ -177,9 +173,7 @@ if ($action == 'add' && $permtoadd)
 				{
 					setEventMessages($langs->trans('ErrorFailToCreateDir', $label), null, 'errors');
 					$error++;
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->trans("ECMSectionWasCreated", $label), null, 'mesgs');
 				}
 			}
@@ -192,9 +186,7 @@ if ($action == 'add' && $permtoadd)
 		{
 			header("Location: ".$backtopage);
 			exit;
-		}
-		else
-		{
+		} else {
 			header("Location: ".DOL_URL_ROOT.'/ecm/index.php?action=file_manager');
 			exit;
 		}
@@ -301,9 +293,7 @@ if (empty($action) || $action == 'delete_section')
 	if ($user->rights->ecm->setup)
 	{
 		print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=delete_section">'.$langs->trans('Delete').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans('Delete').'</a>';
 	}
 	print '</div>';

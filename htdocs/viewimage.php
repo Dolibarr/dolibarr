@@ -52,7 +52,15 @@ if (isset($_GET["hashp"]) && !defined("NOLOGIN"))
 	if (!defined("NOIPCHECK"))		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias')
+{
+	if (!defined("NOLOGIN"))		define("NOLOGIN", 1);
+	if (!defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+	if (!defined("NOIPCHECK"))		define("NOIPCHECK", 1); // Do not check IP defined into conf $dolibarr_main_restrict_ip
+}
+
+// Used by TakePOS Auto Order
+if (isset($_GET["modulepart"]) && $_GET["modulepart"] == 'product' && isset($_GET["publictakepos"]))
 {
 	if (!defined("NOLOGIN"))		define("NOLOGIN", 1);
 	if (!defined("NOCSRFCHECK"))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
@@ -119,8 +127,7 @@ if (GETPOST("cache", 'alpha'))
     {
         header('Cache-Control: max-age=3600, public, must-revalidate');
         header('Pragma: cache'); // This is to avoid having Pragma: no-cache
-    }
-    else header('Cache-Control: no-cache');
+    } else header('Cache-Control: no-cache');
     //print $dolibarr_nocache; exit;
 }
 
@@ -147,20 +154,14 @@ if (!empty($hashp))
 				// We remove first level of directory
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
-			}
-			else
-			{
+			} else {
 				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
 			}
-		}
-		else
-		{
+		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
 	}
@@ -190,13 +191,14 @@ $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
 
-if (!empty($hashp))
-{
+if (!empty($hashp)) {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-}
-else
-{
+} elseif (isset($_GET["publictakepos"])) {
+	if (! empty($conf->global->TAKEPOS_AUTO_ORDER)) {
+		$accessallowed = 1; // Only if TakePOS Public Auto Order is enabled and received publictakepos variable
+	}
+} else {
 	// Basic protection (against external users only)
 	if ($user->socid > 0)
 	{
@@ -276,9 +278,8 @@ if ($modulepart == 'barcode')
     {
         $result = $module->buildBarCode($code, $encoding, $readable);
     }
-}
-else					// Open and return file
-{
+} else {
+    // Open and return file
     clearstatcache();
 
     $filename = basename($fullpath_original_file);
@@ -300,9 +301,7 @@ else					// Open and return file
     {
         top_httphead($type);
         header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
-    }
-    else
-    {
+    } else {
         top_httphead('image/png');
         header('Content-Disposition: inline; filename="'.basename($fullpath_original_file).'"');
     }

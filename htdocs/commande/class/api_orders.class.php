@@ -223,8 +223,7 @@ class Orders extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -569,9 +568,7 @@ class Orders extends DolibarrApi
         if ($this->commande->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
         	throw new RestException(500, $this->commande->error);
         }
     }
@@ -699,7 +696,7 @@ class Orders extends DolibarrApi
         $result = $this->commande->set_reopen(DolibarrApiAccess::$user);
         if ($result < 0) {
             throw new RestException(405, $this->commande->error);
-        }elseif ($result == 0) {
+        } elseif ($result == 0) {
             throw new RestException(304);
         }
 

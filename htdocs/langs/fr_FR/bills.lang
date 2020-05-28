@@ -385,7 +385,7 @@ GeneratedFromTemplate=Généré à partir du modèle de facture %s
 WarningInvoiceDateInFuture=Attention, la date de facturation est antérieur à la date actuelle
 WarningInvoiceDateTooFarInFuture=Attention, la date de facturation est trop éloignée de la date actuelle
 ViewAvailableGlobalDiscounts=Voir les remises disponibles
-GroupPaymentsByModOnReports=Group payments by mode on reports
+GroupPaymentsByModOnReports=Grouper les paiements par mode sur les rapports
 # PaymentConditions
 Statut=État
 PaymentConditionShortRECEP=A réception

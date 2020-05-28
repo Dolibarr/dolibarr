@@ -192,9 +192,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         	$obj = $db->fetch_object($resql);
         	if ($obj) $max = intval($obj->max);
         	else $max = 0;
-        }
-        else
-        {
+        } else {
         	return -1;
         }
 
@@ -215,12 +213,10 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
         	{
         		$obj = $db->fetch_object($resql);
         		if ($obj) $ref = $obj->ref;
-        	}
-        	else dol_print_error($db);
+        	} else dol_print_error($db);
 
         	return $ref;
-        }
-        elseif ($mode == 'next')
+        } elseif ($mode == 'next')
         {
         	$date = $object->date; // This is invoice date (not creation date)
         	$yymm = strftime("%y%m", $date);
@@ -230,8 +226,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 
         	dol_syslog(get_class($this)."::getNextValue return ".$prefix.$yymm."-".$num);
         	return $prefix.$yymm."-".$num;
-        }
-        else dol_print_error('', 'Bad parameter for getNextValue');
+        } else dol_print_error('', 'Bad parameter for getNextValue');
     }
 
 

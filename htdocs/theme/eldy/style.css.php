@@ -154,24 +154,20 @@ else $colortextbackhmenu = '000000';
 $colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbackvmenu = 'FFFFFF'; }
-else { $colortextbackvmenu = '000000'; }
+if ($tmpval <= 460) { $colortextbackvmenu = 'FFFFFF'; } else { $colortextbackvmenu = '000000'; }
 
 $colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '')
 {
     $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-    if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; }
-    else { $colortexttitle = '000000'; $colorshadowtitle = 'FFFFFF'; }
-}
-else $colorshadowtitle = '888888';
+    if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; } else { $colortexttitle = '000000'; $colorshadowtitle = 'FFFFFF'; }
+} else $colorshadowtitle = '888888';
 
 $colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktabcard1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbacktab = 'FFFFFF'; }
-else { $colortextbacktab = '000000'; }
+if ($tmpval <= 460) { $colortextbacktab = 'FFFFFF'; } else { $colortextbacktab = '000000'; }
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
@@ -203,7 +199,7 @@ $disableimages = 0;
 $maxwidthloginblock = 180;
 if (!empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = $maxwidthloginblock + 50; $minwidthtmenu = 0; }
 
-
+if (!empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
 if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
 if (!empty($conf->bookmark->enabled)) { $maxwidthloginblock = $maxwidthloginblock + 55; }
 

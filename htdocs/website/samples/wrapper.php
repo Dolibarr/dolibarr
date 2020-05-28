@@ -43,19 +43,16 @@ if (!empty($hashp))
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
 			}
-			else
-			{
+			else {
 				print 'Bad link. File is from another module part.';
 			}
 		}
-		else
-		{
+		else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
 	}
-	else
-	{
+	else {
 		print "ErrorFileNotFoundWithSharedLink";
 		exit;
 	}
@@ -161,8 +158,7 @@ if ($rss) {
 		if ($result >= 0)
 		{
 			if (dol_move($outputfiletmp, $outputfile, 0, 1)) $result = 1;
-			else
-			{
+			else {
 				$error = 'Failed to rename '.$outputfiletmp.' into '.$outputfile;
 				dol_syslog("build_exportfile ".$error, LOG_ERR);
 				dol_delete_file($outputfiletmp, 0, 1);
@@ -170,8 +166,7 @@ if ($rss) {
 				exit(-1);
 			}
 		}
-		else
-		{
+		else {
 			dol_syslog("build_exportfile build_xxxfile function fails to for format=".$format." outputfiletmp=".$outputfile, LOG_ERR);
 			dol_delete_file($outputfiletmp, 0, 1);
 			$langs->load("errors");
@@ -213,8 +208,7 @@ elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file
 {
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
 }
-else
-{
+else {
 	// Find the subdirectory name as the reference
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	$check_access = dol_check_secure_access_document($modulepart, $original_file, $entity, $refname);

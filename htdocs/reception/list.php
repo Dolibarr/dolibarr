@@ -192,8 +192,7 @@ if (empty($reshook))
 							$object->add_object_linked('reception', $value); // add supplier order linked object
 					}
 				}
-			}
-    		else {
+			} else {
     			$object->socid = $rcp->socid;
     			$object->type = FactureFournisseur::TYPE_STANDARD;
     			$object->cond_reglement_id	= $rcp->thirdparty->cond_reglement_supplier_id;
@@ -278,16 +277,12 @@ if (empty($reshook))
 	    					{
 	    						$result = $object->insert_discount($discountid);
 	    						//$result=$discount->link_to_invoice($lineid,$id);
-	    					}
-	    					else
-	    					{
+	    					} else {
 	    						setEventMessages($discount->error, $discount->errors, 'errors');
 	    						$error++;
 	    						break;
 	    					}
-	    				}
-	    				else
-	    				{
+	    				} else {
 	    					// Positive line
 	    					$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 	    					// Date start
@@ -334,9 +329,7 @@ if (empty($reshook))
 	    					if ($result > 0)
 	    					{
 	    						$lineid = $result;
-	    					}
-	    					else
-	    					{
+	    					} else {
 	    						$lineid = 0;
 	    						$error++;
 	    						break;
@@ -390,9 +383,7 @@ if (empty($reshook))
     	{
     		$db->commit();
     		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
-    	}
-    	else
-    	{
+    	} else {
     		$db->rollback();
     		$action = 'create';
     		$_GET["origin"] = $_POST["origin"];
@@ -584,9 +575,7 @@ if ($resql)
 		{
 		    print $form->selectyesno('validate_invoices', 0, 1, 1);
 		    print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
-		}
-		else
-		{
+		} else {
             print $form->selectyesno('validate_invoices', 0, 1);
 		}
 		print '</td>';
@@ -936,9 +925,7 @@ if ($resql)
 	print "</div>";
 	print '</form>';
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

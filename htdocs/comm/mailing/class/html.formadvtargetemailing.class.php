@@ -314,9 +314,7 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -400,9 +398,7 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 

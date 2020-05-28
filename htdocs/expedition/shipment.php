@@ -103,16 +103,17 @@ if (empty($reshook))
     }
 
     if ($action == 'setdatedelivery' && $user->rights->commande->creer)
-    {
-    	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
-    	$datelivraison = dol_mktime(0, 0, 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
+	{
+	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
-    	$object = new Commande($db);
-    	$object->fetch($id);
-    	$result = $object->set_date_livraison($user, $datelivraison);
-    	if ($result < 0)
-    		setEventMessages($object->error, $object->errors, 'errors');
-    }
+	    $object->fetch($id);
+	    $result = $object->set_date_livraison($user, $datedelivery);
+	    if ($result < 0)
+	    {
+	        setEventMessages($object->error, $object->errors, 'errors');
+	    }
+	}
     /*
     if ($action == 'setdeliveryaddress' && $user->rights->commande->creer)
     {
@@ -352,7 +353,7 @@ if ($id > 0 || !empty($ref))
 		// Date
 		print '<tr><td>'.$langs->trans('Date').'</td>';
 		print '<td colspan="2">';
-		print dol_print_date($object->date, 'daytext');
+		print dol_print_date($object->date, 'day');
 		if ($object->hasDelay() && empty($object->date_livraison)) {
 		    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 		}
@@ -373,13 +374,11 @@ if ($id > 0 || !empty($ref))
 			print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdatedelivery">';
-			print $form->selectDate($object->date_livraison > 0 ? $object->date_livraison : -1, 'liv_', '', '', '', "setdatedelivery");
+			print $form->selectDate($object->date_livraison ? $object->date_livraison : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
-		}
-		else
-		{
-			print dol_print_date($object->date_livraison, 'daytext');
+		} else {
+			print dol_print_date($object->date_livraison, 'dayhour');
 			if ($object->hasDelay() && !empty($object->date_livraison)) {
 			    print ' '.img_picto($langs->trans("Late").' : '.$object->showDelay(), "warning");
 			}
@@ -530,9 +529,7 @@ if ($id > 0 || !empty($ref))
 		    if ($action != 'editincoterm')
 		    {
 		        print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-		    }
-		    else
-		    {
+		    } else {
 		        print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		    }
 		    print '</td></tr>';
@@ -643,9 +640,7 @@ if ($id > 0 || !empty($ref))
 			if (!empty($conf->stock->enabled))
 			{
 				print '<td class="center">'.$langs->trans("RealStock").'</td>';
-			}
-			else
-			{
+			} else {
 				print '<td>&nbsp;</td>';
 			}
 			print "</tr>\n";
@@ -696,9 +691,7 @@ if ($id > 0 || !empty($ref))
 							}
 
 							$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
-						}
-						else
-							$label = (!empty($objp->label) ? $objp->label : $objp->product_label);
+						} else $label = (!empty($objp->label) ? $objp->label : $objp->product_label);
 
 						print '<td>';
 						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
@@ -738,9 +731,7 @@ if ($id > 0 || !empty($ref))
 						}
 
 						print '</td>';
-					}
-					else
-					{
+					} else {
 						print "<td>";
 						if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
@@ -775,9 +766,7 @@ if ($id > 0 || !empty($ref))
 						$toBeShipped[$objp->fk_product] = $objp->qty - $qtyAlreadyShipped;
 						$toBeShippedTotal += $toBeShipped[$objp->fk_product];
 						print $toBeShipped[$objp->fk_product];
-					}
-					else
-					{
+					} else {
 						print '0 ('.$langs->trans("Service").')';
 					}
 					print '</td>';
@@ -798,9 +787,7 @@ if ($id > 0 || !empty($ref))
 							print ' '.img_warning($langs->trans("StockTooLow"));
 						}
 						print '</td>';
-					}
-					else
-					{
+					} else {
 						print '<td>&nbsp;</td>';
 					}
 					print "</tr>\n";
@@ -843,9 +830,7 @@ if ($id > 0 || !empty($ref))
 			}
 
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -870,9 +855,7 @@ if ($id > 0 || !empty($ref))
 					{
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 					}
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
 				}
 			}
@@ -934,9 +917,7 @@ if ($id > 0 || !empty($ref))
 				print '</div>';
 
 				$somethingshown = 1;
-			}
-			else
-			{
+			} else {
 				print '<div class="tabsAction">';
 				print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateShipment").'</a>';
 				print '</div>';
@@ -944,9 +925,7 @@ if ($id > 0 || !empty($ref))
 		}
 
 		show_list_sending_receive('commande', $object->id);
-	}
-	else
-	{
+	} else {
 		/* Order not found */
 		setEventMessages($langs->trans("NonExistentOrder"), null, 'errors');
 	}

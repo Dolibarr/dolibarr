@@ -421,14 +421,11 @@ class Mo extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -582,8 +579,7 @@ class Mo extends CommonObject
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			setEventMessages($this->error, $this->errors, 'errors');
 			$this->db->rollback();
 			return -1;
@@ -655,8 +651,7 @@ class Mo extends CommonObject
 								$error++;
 								$this->error = "BadValueForquantityToConsume";
 								break;
-							}
-							else {
+							} else {
 								$moline->fk_product = $line->fk_product;
 								$moline->role = 'toconsume';
 								$moline->position = $line->position;
@@ -762,16 +757,12 @@ class Mo extends CommonObject
 			if ($numref != "")
 			{
 				return $numref;
-			}
-			else
-			{
+			} else {
 				$this->error = $obj->error;
 				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
+		} else {
 			print $langs->trans("Error")." ".$langs->trans("Error_MRP_MO_ADDON_NotDefined");
 			return "";
 		}
@@ -816,9 +807,7 @@ class Mo extends CommonObject
 		{
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
-		}
-		else
-		{
+		} else {
 			$num = $this->ref;
 		}
 		$this->newref = $num;
@@ -899,9 +888,7 @@ class Mo extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1028,8 +1015,7 @@ class Mo extends CommonObject
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1145,9 +1131,7 @@ class Mo extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -1180,9 +1164,7 @@ class Mo extends CommonObject
 	        $this->error = $this->error;
 	        $this->errors = $this->errors;
 	        return $result;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
@@ -1328,9 +1310,7 @@ class Mo extends CommonObject
 			$productstatic->fetch($line->fk_product);
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
-		}
-		else
-		{
+		} else {
 			// If origin MRP line is not a product, but another MRP
 			// TODO
 		}
@@ -1513,14 +1493,11 @@ class MoLine extends CommonObjectLine
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}

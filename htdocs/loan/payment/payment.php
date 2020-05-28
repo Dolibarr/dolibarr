@@ -155,8 +155,7 @@ if ($action == 'add_payment')
 				{
 					setEventMessages($payment->error, $payment->errors, 'errors');
 					$error++;
-				}
-				elseif (isset($line))
+				} elseif (isset($line))
 				{
 					$line->fk_bank = $payment->fk_bank;
 					$line->update($user);
@@ -169,9 +168,7 @@ if ($action == 'add_payment')
 				$loc = DOL_URL_ROOT.'/loan/card.php?id='.$chid;
 				header('Location: '.$loc);
 				exit;
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 			}
 		}
@@ -290,9 +287,7 @@ if ($action == 'create')
 	if ($loan->datestart > 0)
 	{
 		print '<td class="left" valign="center">'.dol_print_date($loan->datestart, 'day').'</td>';
-	}
-	else
-	{
+	} else {
 		print '<td class="center" valign="center"><b>!!!</b></td>';
 	}
 
@@ -306,27 +301,21 @@ if ($action == 'create')
 	if ($sumpaid < $loan->capital)
 	{
 	    print $langs->trans("LoanCapital").': <input type="text" size="8" name="amount_capital" value="'.$amount_capital.'">';
-	}
-	else
-	{
+	} else {
 		print '-';
 	}
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
 		print $langs->trans("Insurance").': <input type="text" size="8" name="amount_insurance" value="'.$amount_insurance.'">';
-	}
-	else
-	{
+	} else {
 		print '-';
 	}
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
 		print $langs->trans("Interest").': <input type="text" size="8" name="amount_interest" value="'.$amount_interest.'">';
-	}
-	else
-	{
+	} else {
 		print '-';
 	}
 	print "</td>";

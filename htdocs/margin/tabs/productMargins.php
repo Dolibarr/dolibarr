@@ -229,9 +229,7 @@ if ($id > 0 || !empty($ref))
                 {
                     $marginRate = ($cumul_achat != 0) ?-1 * (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ?-1 * (100 * $totalMargin / $cumul_vente) : '';
-                }
-                else
-                {
+                } else {
                     $marginRate = ($cumul_achat != 0) ? (100 * $totalMargin / $cumul_achat) : '';
                     $markRate = ($cumul_vente != 0) ? (100 * $totalMargin / $cumul_vente) : '';
                 }

@@ -41,9 +41,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$result = restrictedArea($user, 'stock', $id);
-}
-else
-{
+} else {
 	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
 }
 
@@ -80,9 +78,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 {
 	$permissiontoadd = $user->rights->stock->creer;
 	$permissiontodelete = $user->rights->stock->supprimer;
-}
-else
-{
+} else {
 	$permissiontoadd = $user->rights->stock->inventory_advance->write;
 	$permissiontodelete = $user->rights->stock->inventory_advance->write;
 }
@@ -268,8 +264,7 @@ if ($object->id > 0)
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 		print '<br>';
-	}
-	else {
+	} else {
     	print '<div class="tabsAction">'."\n";
     	$parameters = array();
     	$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -282,9 +277,7 @@ if ($object->id > 0)
     			if ($permissiontoadd)
     			{
     				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>'."\n";
-    			}
-    			else
-    			{
+    			} else {
     				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Edit').'</a>'."\n";
     			}
     		}
@@ -294,9 +287,7 @@ if ($object->id > 0)
 	        	if ($permissiontoadd)
 	    		{
 	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans("Validate").'</a>'."\n";
-	    		}
-	    		else
-	    		{
+	    		} else {
 	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').'</a>'."\n";
 	    		}
     		}

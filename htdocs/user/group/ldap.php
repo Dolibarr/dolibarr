@@ -83,9 +83,7 @@ if ($action == 'dolibarr2ldap')
 	if ($result >= 0)
 	{
 		setEventMessages($langs->trans("GroupSynchronized"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($ldap->error, $ldap->errors, 'errors');
 	}
 }
@@ -195,21 +193,15 @@ if ($result > 0)
 		if (!is_array($records))
 		{
 			print '<tr class="oddeven"><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';
-		}
-		else
-		{
+		} else {
 			$result = show_ldap_content($records, 0, $records['count'], true);
 		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 	$ldap->unbind();
 	$ldap->close();
-}
-else
-{
+} else {
 	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 

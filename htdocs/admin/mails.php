@@ -170,9 +170,7 @@ if ($action == 'edit')
                             jQuery("#MAIN_MAIL_SMTP_PORT").hide();
                             jQuery("#smtp_server_mess").show();
                             jQuery("#smtp_port_mess").show();';
-		}
-		else
-		{
+		} else {
             print '
                             jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
                             jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
@@ -287,9 +285,7 @@ if ($action == 'edit')
 	if ((empty($conf->global->MAIN_MODULE_MULTICOMPANY)) || ($user->admin && !$user->entity))
 	{
 		print $form->selectarray('MAIN_MAIL_SENDMODE', $listofmethods, $conf->global->MAIN_MAIL_SENDMODE);
-	}
-	else
-	{
+	} else {
 		$text = $listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 		if (empty($text)) $text = $langs->trans("Undefined");
 		$htmltext = $langs->trans("ContactSuperAdminForChange");
@@ -305,9 +301,7 @@ if ($action == 'edit')
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
 		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
-	}
-	else
-	{
+	} else {
 		$mainserver = (!empty($conf->global->MAIN_MAIL_SMTP_SERVER) ? $conf->global->MAIN_MAIL_SMTP_SERVER : '');
 		$smtpserver = ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined");
 		if ($linuxlike) print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
@@ -319,9 +313,7 @@ if ($action == 'edit')
 			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" size="18" value="'.$mainserver.'" autocomplete="off">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_sav" name="MAIN_MAIL_SMTP_SERVER_sav" value="'.$mainserver.'">';
 			print '<span id="smtp_server_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
-		}
-		else
-		{
+		} else {
 			$text = !empty($mainserver) ? $mainserver : $smtpserver;
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
@@ -337,9 +329,7 @@ if ($action == 'edit')
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
 		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
-	}
-	else
-	{
+	} else {
 		$mainport = (!empty($conf->global->MAIN_MAIL_SMTP_PORT) ? $conf->global->MAIN_MAIL_SMTP_PORT : '');
 		$smtpport = ini_get('smtp_port') ?ini_get('smtp_port') : $langs->transnoentities("Undefined");
 		if ($linuxlike) print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
@@ -351,9 +341,7 @@ if ($action == 'edit')
 			print '<input class="flat" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" size="3" value="'.$mainport.'">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT_sav" name="MAIN_MAIL_SMTP_PORT_sav" value="'.$mainport.'">';
 			print '<span id="smtp_port_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
-		}
-		else
-		{
+		} else {
 			$text = (!empty($mainport) ? $mainport : $smtpport);
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($text, $htmltext, 1, 'superadmin');
@@ -371,9 +359,7 @@ if ($action == 'edit')
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
 			print '<input class="flat" name="MAIN_MAIL_SMTPS_ID" size="32" value="'.$mainstmpid.'">';
-		}
-		else
-		{
+		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_ID, $htmltext, 1, 'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_ID" value="'.$mainstmpid.'">';
@@ -392,9 +378,7 @@ if ($action == 'edit')
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
 			print '<input class="flat" type="password" name="MAIN_MAIL_SMTPS_PW" size="32" value="'.$mainsmtppw.'" autocomplete="off">';
-		}
-		else
-		{
+		} else {
 			$htmltext = $langs->trans("ContactSuperAdminForChange");
 			print $form->textwithpicto($conf->global->MAIN_MAIL_SMTPS_PW, $htmltext, 1, 'superadmin');
 			print '<input type="hidden" name="MAIN_MAIL_SMTPS_PW" value="'.$mainsmtppw.'">';
@@ -409,10 +393,8 @@ if ($action == 'edit')
 		if (function_exists('openssl_open'))
 		{
 			print $form->selectyesno('MAIN_MAIL_EMAIL_TLS', (!empty($conf->global->MAIN_MAIL_EMAIL_TLS) ? $conf->global->MAIN_MAIL_EMAIL_TLS : 0), 1);
-		}
-		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-	}
-	else print yn(0).' ('.$langs->trans("NotSupported").')';
+		} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	} else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
 	// STARTTLS
@@ -422,10 +404,8 @@ if ($action == 'edit')
 		if (function_exists('openssl_open'))
 		{
 			print $form->selectyesno('MAIN_MAIL_EMAIL_STARTTLS', (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) ? $conf->global->MAIN_MAIL_EMAIL_STARTTLS : 0), 1);
-		}
-		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-	}
-	else print yn(0).' ('.$langs->trans("NotSupported").')';
+		} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	} else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
 	// DKIM
@@ -435,10 +415,8 @@ if ($action == 'edit')
 		if (function_exists('openssl_open'))
 		{
 			print $form->selectyesno('MAIN_MAIL_EMAIL_DKIM_ENABLED', (!empty($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED) ? $conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED : 0), 1);
-		}
-		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-	}
-	else print yn(0).' ('.$langs->trans("NotSupported").')';
+		} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	} else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
     // DKIM Domain
@@ -497,9 +475,7 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-}
-else
-{
+} else {
 	dol_fiche_head($head, 'common', '', -1);
 
 	print '<span class="opacitymedium">'.$langs->trans("EMailsDesc")."</span><br>\n";
@@ -539,9 +515,7 @@ else
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER", ini_get('SMTP') ?ini_get('SMTP') : $langs->transnoentities("Undefined")).'</td><td>'.(!empty($conf->global->MAIN_MAIL_SMTP_SERVER) ? $conf->global->MAIN_MAIL_SMTP_SERVER : '').'</td></tr>';
 	}
 
@@ -549,9 +523,7 @@ else
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT", ini_get('smtp_port') ?ini_get('smtp_port') : $langs->transnoentities("Undefined")).'</td><td>'.(!empty($conf->global->MAIN_MAIL_SMTP_PORT) ? $conf->global->MAIN_MAIL_SMTP_PORT : '').'</td></tr>';
 	}
 
@@ -574,10 +546,8 @@ else
 		if (function_exists('openssl_open'))
 		{
 			print yn($conf->global->MAIN_MAIL_EMAIL_TLS);
-		}
-		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-	}
-	else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+		} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	} else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 	print '</td></tr>';
 
 	// STARTTLS
@@ -587,10 +557,8 @@ else
 		if (function_exists('openssl_open'))
 		{
 			print yn($conf->global->MAIN_MAIL_EMAIL_STARTTLS);
-		}
-		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-	}
-	else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
+		} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	} else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 	print '</td></tr>';
 
 
@@ -603,10 +571,8 @@ else
 			if (function_exists('openssl_open'))
 			{
 				print yn($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED);
-			}
-			else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
-		}
-		else print yn(0).' ('.$langs->trans("NotSupported").')';
+			} else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+		} else print yn(0).' ('.$langs->trans("NotSupported").')';
 		print '</td></tr>';
 
 	    // Domain
@@ -654,24 +620,20 @@ else
 			}
 			$i++;
 		}
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
 	print '<td>';
 	if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'robot')
 	{
 		print $langs->trans('RobotEmail');
-	}
-	elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
+	} elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
 	{
 		print $langs->trans('UserEmail');
-	}
-	elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company')
+	} elseif ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company')
 	{
 		print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
-	}
-	else {
+	} else {
 		$id = preg_replace('/senderprofile_/', '', $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE);
 		if ($id > 0)
 		{
@@ -699,9 +661,7 @@ else
 	{
 		print $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		if (!isValidEmail($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print img_warning($langs->trans("ErrorBadEMail"));
-	}
-	else
-	{
+	} else {
 		print '&nbsp;';
 	}
 	print '</td></tr>';
@@ -722,9 +682,7 @@ else
 		{
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect#formmailbeforetitle">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
 
@@ -796,8 +754,7 @@ else
 		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, '', '', '', '', $trackid, $sendcontext);
 		$result = $mail->check_server_port($server, $port);
 		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", $server, $port).'</div>';
-		else
-		{
+		else {
 			$errormsg = $langs->trans("ServerNotAvailableOnIPOrPort", $server, $port);
 
 			if ($mail->error) {

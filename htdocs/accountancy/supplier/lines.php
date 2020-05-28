@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -346,38 +347,42 @@ if ($result) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	$checkpicto = $form->showCheckAddButtons();
 	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
-	$thirdpartystatic = new Societe($db);
+    $thirdpartystatic = new Societe($db);
 	$facturefournisseur_static = new FactureFournisseur($db);
-	$product_static = new ProductFournisseur($db);
+	$productstatic = new ProductFournisseur($db);
+    $accountingaccountstatic = new AccountingAccount($db);
 
-	while ($i < min($num_lines, $limit)) {
+	while ($i < min($num_lines, $limit))
+    {
 		$objp = $db->fetch_object($result);
 
-		$codecompta = length_accountg($objp->account_number).' - <span class="opacitymedium">'.$objp->label.'</span>';
+        $accountingaccountstatic->account_number = $objp->account_number;
+        $accountingaccountstatic->label = $objp->label_account;
+        $accountingaccountstatic->labelshort = $objp->labelshort_account;
 
 		$facturefournisseur_static->ref = $objp->ref;
 		$facturefournisseur_static->id = $objp->facid;
 
-		$thirdpartystatic->id = $objp->socid;
-		$thirdpartystatic->name = $objp->name;
-		$thirdpartystatic->client = $objp->client;
-		$thirdpartystatic->fournisseur = $objp->fournisseur;
-		$thirdpartystatic->code_client = $objp->code_client;
-		$thirdpartystatic->code_compta_client = $objp->code_compta_client;
-		$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-		$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-		$thirdpartystatic->email = $objp->email;
-		$thirdpartystatic->country_code = $objp->country_code;
+        $thirdpartystatic->id = $objp->socid;
+        $thirdpartystatic->name = $objp->name;
+        $thirdpartystatic->client = $objp->client;
+        $thirdpartystatic->fournisseur = $objp->fournisseur;
+        $thirdpartystatic->code_client = $objp->code_client;
+        $thirdpartystatic->code_compta_client = $objp->code_compta_client;
+        $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+        $thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+        $thirdpartystatic->email = $objp->email;
+        $thirdpartystatic->country_code = $objp->country_code;
 
-		$product_static->ref = $objp->product_ref;
-		$product_static->id = $objp->product_id;
-		$product_static->label = $objp->product_label;
-		$product_static->type = $objp->line_type;
+		$productstatic->ref = $objp->product_ref;
+		$productstatic->id = $objp->product_id;
+		$productstatic->label = $objp->product_label;
+		$productstatic->type = $objp->line_type;
 
 		print '<tr class="oddeven">';
 
@@ -425,8 +430,9 @@ if ($result) {
 
 		print '<td>'.$objp->tva_intra.'</td>';
 
-		print '<td>';
-		print $codecompta.' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print '<td class="center">';
+        print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+		print ' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';

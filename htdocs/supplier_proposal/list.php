@@ -358,9 +358,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierProposals').' - '.$soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfSupplierProposals');
 	}
 
@@ -950,9 +948,7 @@ if ($resql)
 	$delallowed = $user->rights->supplier_proposal->creer;
 
 	print $formfile->showdocuments('massfilesarea_supplier_proposal', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

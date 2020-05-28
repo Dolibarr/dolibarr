@@ -398,7 +398,7 @@ class Hook extends CommonObject
     {
         $result = $this->fetchCommon($id, $ref);
         if ($result > 0 && !empty($this->table_element_line)) {
-            $this->fetchLines();
+            //$this->fetchLines();
         }
         return $result;
     }
@@ -635,8 +635,7 @@ class Hook extends CommonObject
         // phpcs:enable
     	global $langs;
 
-    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
-    	{
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
     		global $langs;
     		//$langs->load("mymodule");
     		$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');

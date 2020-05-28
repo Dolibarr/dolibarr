@@ -160,8 +160,7 @@ class Supplierproposals extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieving supplier proposal list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {

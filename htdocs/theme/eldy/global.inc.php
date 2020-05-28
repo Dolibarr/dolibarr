@@ -552,6 +552,9 @@ textarea.centpercent {
     text-align: center;
     margin: 0px auto;
 }
+.alignstart {
+    text-align: start;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -667,10 +670,10 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash, .editfieldlang {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 .fawidth30 {
@@ -1341,7 +1344,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -2124,9 +2127,7 @@ a.tmenuimage:hover{
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }'."\n";
-            }
-            else
-            {
+            } else {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
                 print "div.mainmenu.".$val." {\n";
@@ -2134,9 +2135,7 @@ a.tmenuimage:hover{
                 print "}\n";
             }
             $generic++;
-        }
-        else
-        {
+        } else {
             print "div.mainmenu.".$val." {\n";
             print "	background-image: url(".$url.");\n";
             print "}\n";

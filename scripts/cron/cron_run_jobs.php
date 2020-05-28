@@ -106,8 +106,7 @@ if ($userlogin == 'firstadmin') {
 			$userlogin = $obj->login;
 			echo "First admin user found is login '".$userlogin."', entity ".$obj->entity."\n";
 		}
-	} else
-		dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 // Check user login
@@ -192,9 +191,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
     		        echo "\nUser Error: ".$user->error."\n";
     		        dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
     		        exit(-1);
-    		    }
-    		    else
-    		    {
+    		    } else {
     		        if ($result == 0)
     		        {
     		            echo "\nUser login: ".$userlogin." does not exists for entity ".$conf->entity."\n";
@@ -259,9 +256,7 @@ if (is_array($qualifiedjobs) && (count($qualifiedjobs) > 0)) {
 	}
 
 	$conf = $savconf;
-}
-else
-{
+} else {
 	echo "cron_run_jobs.php no qualified job found\n";
 }
 

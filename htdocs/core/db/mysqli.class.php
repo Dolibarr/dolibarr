@@ -121,18 +121,14 @@ class DoliDBMysqli extends DoliDB
 
 					if (!preg_match('/general/', $collation)) $this->db->query("SET collation_connection = ".$collation);
 				}
-            }
-            else
-            {
+            } else {
                 $this->database_selected = false;
                 $this->database_name = '';
                 $this->ok = false;
                 $this->error = $this->error();
                 dol_syslog(get_class($this)."::DoliDBMysqli : Select_db error ".$this->error, LOG_ERR);
             }
-        }
-        else
-        {
+        } else {
             // Pas de selection de base demandee, ok ou ko
             $this->database_selected = false;
 
@@ -269,9 +265,7 @@ class DoliDBMysqli extends DoliDB
         {
             // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
             $ret = $this->db->query($query);
-        }
-        else
-        {
+        } else {
             $ret = $this->db->query($query);
         }
 
@@ -341,9 +335,7 @@ class DoliDBMysqli extends DoliDB
         {
             if (!is_object($resultset)) { $resultset = $this->_results; }
             return $resultset->fetch_row();
-        }
-        else
-        {
+        } else {
             // si le curseur est un booleen on retourne la valeur 0
             return 0;
         }
@@ -470,8 +462,7 @@ class DoliDBMysqli extends DoliDB
         if (!$this->connected) {
             // Si il y a eu echec de connexion, $this->db n'est pas valide pour mysqli_error.
             return 'Not connected. Check setup parameters in conf/conf.php file and your mysql client and server versions';
-        }
-        else {
+        } else {
             return $this->db->error;
         }
     }
@@ -516,8 +507,7 @@ class DoliDBMysqli extends DoliDB
             if ($cryptType == 2)
             {
                 $return = 'AES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
-            }
-            elseif ($cryptType == 1)
+            } elseif ($cryptType == 1)
             {
                 $return = 'DES_ENCRYPT('.$return.',\''.$cryptKey.'\')';
             }
@@ -549,8 +539,7 @@ class DoliDBMysqli extends DoliDB
             if ($cryptType == 2)
             {
                 $return = 'AES_DECRYPT('.$value.',\''.$cryptKey.'\')';
-            }
-            elseif ($cryptType == 1)
+            } elseif ($cryptType == 1)
             {
                 $return = 'DES_DECRYPT('.$value.',\''.$cryptKey.'\')';
             }
@@ -574,8 +563,7 @@ class DoliDBMysqli extends DoliDB
         {
             $row = $this->fetch_row($resql);
             return $row[0];
-        }
-        else return '?';
+        } else return '?';
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -703,8 +691,7 @@ class DoliDBMysqli extends DoliDB
 			{
 				if ((preg_match("/null/i", $field_desc['default'])) || (preg_match("/CURRENT_TIMESTAMP/i", $field_desc['default']))) {
 					$sqlfields[$i]  .= " default ".$field_desc['default'];
-				}
-				else {
+				} else {
 					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
 				}
 			}
@@ -747,8 +734,7 @@ class DoliDBMysqli extends DoliDB
 
         if (!$this->query($sql))
         return -1;
-        else
-        return 1;
+        else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -765,8 +751,7 @@ class DoliDBMysqli extends DoliDB
 
 		if (!$this->query($sql))
  			return -1;
-    	else
-    		return 1;
+    	else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -823,8 +808,7 @@ class DoliDBMysqli extends DoliDB
         {
             if (preg_match("/null/i", $field_desc['default']))
             $sql .= " default ".$field_desc['default'];
-            else
-            $sql .= " default '".$field_desc['default']."'";
+            else $sql .= " default '".$field_desc['default']."'";
         }
         if (isset($field_desc['extra']) && preg_match("/^[^\s]/i", $field_desc['extra']))
         {
@@ -863,8 +847,7 @@ class DoliDBMysqli extends DoliDB
         	{
         		$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
         		$this->query($sqlbis);
-        	}
-        	elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int')
+        	} elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int')
         	{
         		$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
         		$this->query($sqlbis);
@@ -882,8 +865,7 @@ class DoliDBMysqli extends DoliDB
         dol_syslog(get_class($this)."::DDLUpdateField ".$sql, LOG_DEBUG);
         if (!$this->query($sql))
         return -1;
-        else
-        return 1;
+        else return 1;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -928,9 +910,7 @@ class DoliDBMysqli extends DoliDB
             if ($this->lasterrno != 'DB_ERROR_USER_ALREADY_EXISTS')
             {
             	return -1;
-            }
-            else
-			{
+            } else {
             	// If user already exists, we continue to set permissions
             	dol_syslog(get_class($this)."::DDLCreateUser sql=".$sql, LOG_WARNING);
             }

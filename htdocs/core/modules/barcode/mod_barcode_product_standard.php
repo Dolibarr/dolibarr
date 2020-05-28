@@ -204,33 +204,24 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		if (empty($code) && $this->code_null && empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK))
 		{
 			$result = 0;
-		}
-		elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)))
+		} elseif (empty($code) && (!$this->code_null || !empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)))
 		{
 			$result = -2;
-		}
-		else
-		{
+		} else {
 			if ($this->verif_syntax($code, $type) >= 0)
 			{
 				$is_dispo = $this->verif_dispo($db, $code, $product);
 				if ($is_dispo <> 0)
 				{
 					$result = -3;
-				}
-				else
-				{
+				} else {
 					$result = 0;
 				}
-			}
-			else
-			{
+			} else {
 				if (dol_strlen($code) == 0)
 				{
 					$result = -2;
-				}
-				else
-				{
+				} else {
 					$result = -1;
 				}
 			}
@@ -263,14 +254,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 			if ($db->num_rows($resql) == 0)
 			{
 				return 0;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}

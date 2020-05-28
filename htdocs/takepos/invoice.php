@@ -57,8 +57,7 @@ if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout ==
 	if ($_SESSION["takeposterminal"] == "")
 	{
 		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
-		else
-		{
+		else {
 			header("Location: ".DOL_URL_ROOT."/takepos/index.php");
 			exit;
 		}
@@ -119,9 +118,7 @@ $invoice = new Facture($db);
 if ($invoiceid > 0)
 {
     $ret = $invoice->fetch($invoiceid);
-}
-else
-{
+} else {
     $ret = $invoice->fetch('', '(PROV-POS'.$_SESSION["takeposterminal"].'-'.$place.')');
 }
 if ($ret > 0)
@@ -145,8 +142,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
     if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
     elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
     elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
-    else
-    {
+    else {
         $accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
     	$bankaccount = $conf->global->$accountname;
     }
@@ -191,13 +187,11 @@ if ($action == 'valid' && $user->rights->facture->creer)
 			dol_syslog("Sale already validated");
 			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
 		}
-	}
-	elseif (count($invoice->lines) == 0)
+	} elseif (count($invoice->lines) == 0)
 	{
 		dol_syslog("Sale without lines");
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
-	}
-	elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
+	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
 	{
 		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 		$conf->global->STOCK_CALCULATE_ON_BILL = 1;
@@ -212,9 +206,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$res = $invoice->validate($user, '', $conf->global->$constantforkey, 0, $batch_rule);
 
 		$conf->global->STOCK_CALCULATE_ON_BILL = $savconst;
-	}
-	else
-	{
+	} else {
 	    $res = $invoice->validate($user);
 	}
 
@@ -276,9 +268,7 @@ if (($action == "addline" || $action == "freezone") && $placeid == 0)
 	{
 		$langs->load('errors');
 		dol_htmloutput_errors($langs->trans("ErrorModuleSetupNotComplete", "TakePos"), null, 1);
-	}
-	else
-	{
+	} else {
 		$placeid = $invoice->create($user);
 		if ($placeid < 0)
 		{
@@ -382,8 +372,7 @@ if ($action == "deleteline") {
     if ($idline > 0 and $placeid > 0) { // If invoice exists and line selected. To avoid errors if deleted from another device or no line selected.
         $invoice->deleteline($idline);
         $invoice->fetch($placeid);
-    }
-    elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
+    } elseif ($placeid > 0) {             // If invoice exists but no line selected, proceed to delete last line.
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facturedet where fk_facture='".$placeid."' order by rowid DESC";
         $resql = $db->query($sql);
         $row = $db->fetch_array($resql);
@@ -422,9 +411,7 @@ if ($action == "delete") {
             if ($resql1 && $resql2 && $resql3)
             {
             	$db->commit();
-            }
-            else
-            {
+            } else {
             	$db->rollback();
             }
 
@@ -464,8 +451,7 @@ if ($action == "updateprice")
 			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($line->remise_percent) / 100) < price2num($price_min))))
 			{
 				echo $langs->trans("CantBeLessThanMinPrice");
-			}
-			else $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+			} else $result = $invoice->updateline($line->id, $line->desc, $number, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'TTC', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
         }
     }
     $invoice->fetch($placeid);
@@ -489,8 +475,7 @@ if ($action == "updatereduction")
 			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($line->multicurrency_subprice) * (1 - price2num($number) / 100) < price2num($price_min))))
 			{
 				echo $langs->trans("CantBeLessThanMinPrice");
-			}
-			else $result = $invoice->updateline($line->id, $line->desc, $line->multicurrency_subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
+			} else $result = $invoice->updateline($line->id, $line->desc, $line->multicurrency_subprice, $line->qty, $number, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit);
 		}
     }
 	$invoice->fetch($placeid);
@@ -582,9 +567,7 @@ if ($action == "valid" || $action == "history")
     if ($remaintopay > 0)
     {
         $sectionwithinvoicelink .= $langs->trans('RemainToPay').': <span class="amountremaintopay" style="font-size: unset">'.price($remaintopay, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
-    }
-    else
-    {
+    } else {
         if ($invoice->paye) $sectionwithinvoicelink .= '<span class="amountpaymentcomplete" style="font-size: unset">'.$langs->trans("Paid").'</span>';
         else $sectionwithinvoicelink .= $langs->trans('BillShortStatusValidated');
     }
@@ -627,7 +610,7 @@ $(document).ready(function() {
         else selectedline=this.id;
         selectedtext=$('#'+selectedline).find("td:first").html();
 		<?php
-		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')){
+		if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 			print '$("#phonediv1").load("auto_order.php?action=editline&placeid="+placeid+"&selectedline="+selectedline, function() {
 			});';
 		}
@@ -815,15 +798,11 @@ $( document ).ready(function() {
 				if ($adh->hasDelay()) {
 					$s .= " ".img_warning($langs->trans("Late"));
 				}
-			}
-			else
-			{
+			} else {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
 				if ($adh->statut > 0) $s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
-		}
-		else
-		{
+		} else {
 			$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
 		}
 		$s .= '</span>';
@@ -983,9 +962,7 @@ if ($placeid > 0)
 					if ($firstline != $line->desc)
 					{
 						$htmlsupplements[$line->fk_parent_line] .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
-					}
-					else
-					{
+					} else {
 						$htmlsupplements[$line->fk_parent_line] .= $line->desc;
 					}
 				}
@@ -1034,9 +1011,7 @@ if ($placeid > 0)
 	                if ($firstline != $line->desc)
 	                {
 	                    $htmlforlines .= $form->textwithpicto(dolGetFirstLineOfText($line->desc), $line->desc);
-	                }
-	                else
-	                {
+	                } else {
 	                    $htmlforlines .= $line->desc;
 	                }
 	            }
@@ -1064,13 +1039,10 @@ if ($placeid > 0)
 
             print $htmlforlines;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
     }
-}
-else {      // No invoice generated yet
+} else {      // No invoice generated yet
     print '<tr class="drag drop oddeven"><td class="left"><span class="opacitymedium">'.$langs->trans("Empty").'</span></td><td></td><td></td><td></td></tr>';
 }
 

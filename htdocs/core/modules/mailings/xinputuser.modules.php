@@ -148,16 +148,12 @@ class mailing_xinputuser extends MailingTargets
 				);
 
 				return parent::addTargetsToDatabase($mailing_id, $cibles);
-			}
-			else
-			{
+			} else {
 				$langs->load("errors");
 				$this->error = $langs->trans("ErrorBadEMail", $email);
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
             $langs->load("errors");
             $this->error = $langs->trans("ErrorBadEmail", $email);
 			return -1;

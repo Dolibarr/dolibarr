@@ -168,8 +168,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 			{
 				$mask = $conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 			}
-		}
-		elseif (is_object($object) && $object->type == 2) $mask = $conf->global->SUPPLIER_CREDIT_TULIP_MASK;
+		} elseif (is_object($object) && $object->type == 2) $mask = $conf->global->SUPPLIER_CREDIT_TULIP_MASK;
 		elseif (is_object($object) && $object->type == 3) $mask = $conf->global->SUPPLIER_DEPOSIT_TULIP_MASK;
 		else $mask = $conf->global->SUPPLIER_INVOICE_TULIP_MASK;
 		if (!$mask)

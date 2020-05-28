@@ -170,9 +170,7 @@ class LoanSchedule extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
-			}
-			else
-			{
+			} else {
                 $this->error = $this->db->lasterror();
 				$error++;
 			}
@@ -183,9 +181,7 @@ class LoanSchedule extends CommonObject
 		    $this->amount_capital = $totalamount;
 		    $this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->errors[] = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -257,9 +253,7 @@ class LoanSchedule extends CommonObject
             $this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -321,9 +315,7 @@ class LoanSchedule extends CommonObject
 		{
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -363,9 +355,7 @@ class LoanSchedule extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -450,9 +440,7 @@ class LoanSchedule extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}

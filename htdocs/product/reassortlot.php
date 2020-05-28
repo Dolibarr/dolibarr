@@ -139,9 +139,7 @@ if (dol_strlen($type))
     if ($type == 1)
     {
         $sql .= " AND p.fk_product_type = '1'";
-    }
-    else
-    {
+    } else {
         $sql .= " AND p.fk_product_type <> '1'";
     }
 }
@@ -197,8 +195,7 @@ if ($resql)
 
 	if (isset($type))
 	{
-		if ($type == 1) { $texte = $langs->trans("Services"); }
-		else { $texte = $langs->trans("Products"); }
+		if ($type == 1) { $texte = $langs->trans("Services"); } else { $texte = $langs->trans("Products"); }
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
@@ -422,9 +419,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

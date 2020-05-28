@@ -728,8 +728,7 @@ class Website extends CommonObject
 						$newidforhome = $objectpagenew->id;
 					}
 				}
-				else
-				{
+				else {
 					setEventMessages($objectpageold->error, $objectpageold->errors, 'errors');
 					$error++;
 				}
@@ -1089,8 +1088,7 @@ class Website extends CommonObject
 		{
 			return $filename;
 		}
-		else
-		{
+		else {
 			global $errormsg;
 			$this->error = $errormsg;
 			return '';
@@ -1263,8 +1261,7 @@ class Website extends CommonObject
 			$this->db->rollback();
 			return -1;
 		}
-		else
-		{
+		else {
 			$this->db->commit();
 			return $object->id;
 		}
@@ -1342,8 +1339,7 @@ class Website extends CommonObject
 		{
 			return -1;
 		}
-		else
-		{
+		else {
 			return 1;
 		}
 	}

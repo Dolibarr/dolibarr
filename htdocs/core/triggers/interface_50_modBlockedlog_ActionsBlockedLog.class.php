@@ -93,8 +93,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			elseif ($action == 'CASHCONTROL_VALIDATE')
 			{
 				$amounts = (double) $object->cash + (double) $object->cheque + (double) $object->card;
-			}
-			else $amounts = (double) $object->total_ttc;
+			} else $amounts = (double) $object->total_ttc;
 		}
 		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
 		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
@@ -112,8 +111,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 					$amounts += price2num($amount);
 				}
 			}
-		}
-		elseif (strpos($action, 'PAYMENT') !== false && !in_array($action, array('PAYMENT_ADD_TO_BANK')))
+		} elseif (strpos($action, 'PAYMENT') !== false && !in_array($action, array('PAYMENT_ADD_TO_BANK')))
 		{
 			$qualified++;
 			$amounts = (double) $object->amount;
@@ -142,9 +140,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			$this->error = $b->error;
 			$this->errors = $b->errors;
 			return -1;
-		}
-		else
-		{
+		} else {
 			return 1;
 		}
     }
