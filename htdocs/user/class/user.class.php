@@ -1174,15 +1174,7 @@ class User extends CommonObject
 						return -5;
 					}
 
-					// Update minor fields
-					$result = $this->update($user, 1, 1);
-					if ($result < 0)
-					{
-						$this->db->rollback();
-						return -4;
-					}
-
-					if (!empty($conf->global->STOCK_USERSTOCK_AUTOCREATE))
+					if (! empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && !empty($conf->global->STOCK_USERSTOCK_AUTOCREATE))
 					{
 						require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 						$langs->load("stocks");
@@ -1192,7 +1184,17 @@ class User extends CommonObject
 						$entrepot->description = $langs->trans("ThisWarehouseIsPersonalStock", $this->getFullName($langs));
 						$entrepot->statut = 1;
 						$entrepot->country_id = $mysoc->country_id;
-						$entrepot->create($user);
+						$warehouseid = $entrepot->create($user);
+
+						$this->fk_warehouse = $warehouseid;
+					}
+
+					// Update minor fields
+					$result = $this->update($user, 1, 1);
+					if ($result < 0)
+					{
+						$this->db->rollback();
+						return -4;
 					}
 
 					if (!$notrigger)
