@@ -491,13 +491,19 @@ UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
 
 
+
 UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
+
+-- Test inconsistency of data into situation invoices: If it differs, it may be the total_ht that is wrong and situation_percent that is good.
+-- select f.rowid, f.type, qty, subprice, situation_percent, total_ht, total_ttc, total_tva, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc, (situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100)))
+-- from llx_facturedet as fd, llx_facture as f where fd.fk_facture = f.rowid AND (total_ht - situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100))) > 0.01 and f.type = 5;
 
 
 -- Note to make all deposit as payed when there is already a discount generated from it.
 --drop table tmp_invoice_deposit_mark_as_available;
 --create table tmp_invoice_deposit_mark_as_available as select * from llx_facture as f where f.type = 3 and f.paye = 0 and f.rowid in (select fk_facture_source from llx_societe_remise_except);
 --update llx_facture set paye = 1, fk_statut = 2 where rowid in (select rowid from tmp_invoice_deposit_mark_as_available);
+
 
 
 

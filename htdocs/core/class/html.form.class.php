@@ -2759,7 +2759,7 @@ class Form
         }
         if (!empty($conf->barcode->enabled)) $sql .= ", pfp.barcode";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
 		if ($socid) $sql .= " AND pfp.fk_soc = ".$socid;
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
         // Units
@@ -3711,7 +3711,8 @@ class Form
 		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE entity IN ('.getEntity('invoice').')';
-		$sql .= ' AND situation_counter>=1';
+		$sql .= ' AND situation_counter >= 1';
+		$sql .= ' AND type <> 2';
 		$sql .= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {

@@ -1576,7 +1576,7 @@ class Contact extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'socpeople'
+			'socpeople', 'societe_contacts'
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);

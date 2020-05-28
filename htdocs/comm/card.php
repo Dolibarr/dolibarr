@@ -5,7 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
  * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2014 Juanjo Menent               <jmenent@2byte.es>
+ * Copyright (C) 2010-2020 Juanjo Menent               <jmenent@2byte.es>
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2019 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
@@ -581,7 +581,7 @@ if ($object->id > 0)
 	$boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="border boxtable boxtablenobottom boxtablenotop" width="100%">';
 	$boxstat .= '<tr class="impair"><td colspan="2" class="tdboxstats nohover">';
 
-	if (!empty($conf->propal->enabled))
+	if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
 		// Box proposals
 		$tmp = $object->getOutstandingProposals();
@@ -599,7 +599,7 @@ if ($object->id > 0)
 		if ($link) $boxstat .= '</a>';
 	}
 
-	if (!empty($conf->commande->enabled))
+	if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
 		// Box commandes
 		$tmp = $object->getOutstandingOrders();
@@ -617,7 +617,7 @@ if ($object->id > 0)
 		if ($link) $boxstat .= '</a>';
 	}
 
-	if (!empty($conf->facture->enabled))
+	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		// Box factures
 		$tmp = $object->getOutstandingBills();

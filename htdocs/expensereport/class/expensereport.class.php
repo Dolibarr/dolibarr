@@ -2318,7 +2318,7 @@ class ExpenseReport extends CommonObject
     public function load_state_board()
     {
         // phpcs:enable
-        global $conf;
+        global $conf, $user;
 
         $this->nb = array();
 
@@ -2326,6 +2326,12 @@ class ExpenseReport extends CommonObject
         $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         $sql .= " WHERE ex.fk_statut > 0";
         $sql .= " AND ex.entity IN (".getEntity('expensereport').")";
+		if (empty($user->rights->expensereport->readall))
+		{
+			$userchildids = $user->getAllChildIds(1);
+			$sql .= " AND (ex.fk_user_author IN (".join(',', $userchildids).")";
+			$sql .= " OR ex.fk_user_validator IN (".join(',', $userchildids)."))";
+		}
 
         $resql = $this->db->query($sql);
         if ($resql) {
@@ -2360,15 +2366,17 @@ class ExpenseReport extends CommonObject
 
         $now = dol_now();
 
-        $userchildids = $user->getAllChildIds(1);
-
         $sql = "SELECT ex.rowid, ex.date_valid";
         $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         if ($option == 'toapprove') $sql .= " WHERE ex.fk_statut = 2";
         else $sql .= " WHERE ex.fk_statut = 5";
         $sql .= " AND ex.entity IN (".getEntity('expensereport').")";
-        $sql .= " AND (ex.fk_user_author IN (".join(',', $userchildids).")";
-        $sql .= " OR ex.fk_user_validator IN (".join(',', $userchildids)."))";
+        if (empty($user->rights->expensereport->readall))
+        {
+			$userchildids = $user->getAllChildIds(1);
+			$sql .= " AND (ex.fk_user_author IN (".join(',', $userchildids).")";
+			$sql .= " OR ex.fk_user_validator IN (".join(',', $userchildids)."))";
+		}
 
         $resql = $this->db->query($sql);
         if ($resql)
