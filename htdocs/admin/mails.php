@@ -36,24 +36,25 @@ if (!$user->admin) accessforbidden();
 
 $usersignature = $user->signature;
 // For action = test or send, we ensure that content is not html, even for signature, because this we want a test with NO html.
+
 if ($action == 'test' || $action == 'send')
 {
-	$usersignature = dol_string_nohtmltag($usersignature);
+	$usersignature = dol_string_nohtmltag($usersignature, 2);
 }
 
 $substitutionarrayfortest = array(
-'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
-'__ID__' => 'RecipientIdRecord',
-//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
-'__CHECK_READ__' => (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '',
-'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
-'__LOGIN__' => 'RecipientLogin',
-'__LASTNAME__' => 'RecipientLastname',
-'__FIRSTNAME__' => 'RecipientFirstname',
-'__ADDRESS__'=> 'RecipientAddress',
-'__ZIP__'=> 'RecipientZip',
-'__TOWN_'=> 'RecipientTown',
-'__COUNTRY__'=> 'RecipientCountry'
+	'__DOL_MAIN_URL_ROOT__'=>DOL_MAIN_URL_ROOT,
+	'__ID__' => 'RecipientIdRecord',
+	//'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
+	'__CHECK_READ__' => (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '',
+	'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? $usersignature : ''), // Done into actions_sendmails
+	'__LOGIN__' => 'RecipientLogin',
+	'__LASTNAME__' => 'RecipientLastname',
+	'__FIRSTNAME__' => 'RecipientFirstname',
+	'__ADDRESS__'=> 'RecipientAddress',
+	'__ZIP__'=> 'RecipientZip',
+	'__TOWN_'=> 'RecipientTown',
+	'__COUNTRY__'=> 'RecipientCountry'
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
 
