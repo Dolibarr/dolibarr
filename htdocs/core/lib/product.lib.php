@@ -37,11 +37,14 @@ function product_prepare_head($object)
 	global $db, $langs, $conf, $user;
 	$langs->load("products");
 
+	$label = $langs->trans('Product');
+	if ($object->isService()) $label = $langs->trans('Service');
+
 	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT."/product/card.php?id=".$object->id;
-	$head[$h][1] = $langs->trans("ProductOrService");
+	$head[$h][1] = $label;
 	$head[$h][2] = 'card';
 	$h++;
 
