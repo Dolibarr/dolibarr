@@ -1199,9 +1199,7 @@ class FormFile
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
 						$editline = 1;
-					}
-					else
-					{
+					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
 						print dol_trunc($filenametoshow, 200);
 						print '</a>';

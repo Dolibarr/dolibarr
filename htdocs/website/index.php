@@ -396,7 +396,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 		$category = new Categorie($db);
 		$category->fetch($categoryid);
 
-		foreach($toselect as $tmpid) {
+		foreach ($toselect as $tmpid) {
 			$tmpwebsitepage->id = $tmpid;
 			$result = $category->add_type($tmpwebsitepage, 'website_page');
 			if ($result < 0 && $result != -3) {
