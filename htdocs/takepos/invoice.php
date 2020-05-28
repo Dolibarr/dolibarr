@@ -70,10 +70,12 @@ if (($conf->global->TAKEPOS_PHONE_BASIC_LAYOUT == 1 && $conf->browser->layout ==
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>';
+	$arrayofcss = array(
+	'/takepos/css/pos.css.php',
+	'/takepos/js/jquery.colorbox-min.js'
+	);
+	$arrayofjs = array('/takepos/js/jquery.colorbox-min.js');
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
-	print '<link rel="stylesheet" href="css/pos.css.php">
-	<link rel="stylesheet" href="css/colorbox.css" type="text/css" media="screen" />
-	<script type="text/javascript" src="js/jquery.colorbox-min.js"></script>';
 }
 
 /**
@@ -863,6 +865,9 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 		print $langs->trans('Place')." <b>".$label."</b> - ";
 		print $langs->trans('Floor')." <b>".$floor."</b> - ";
 	}
+	elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) print $mysoc->name;
+	elseif ($mobilepage == "cats") print $langs->trans('Category');
+	elseif ($mobilepage == "products") print $langs->trans('Label');
 }
 // In phone version only show when is invoice page
 if ($mobilepage == "invoice" || $mobilepage == "") {
@@ -877,6 +882,7 @@ if ($_SESSION["basiclayout"] != 1)
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	print '<td class="linecolht right nowraponall">'.$langs->trans('TotalTTCShort').'</td>';
 }
+elseif ($mobilepage == "invoice") print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 print "</tr>\n";
 
 
@@ -889,12 +895,14 @@ if ($_SESSION["basiclayout"] == 1)
         $categories = $categorie->get_full_arbo('product');
 		$htmlforlines = '';
         foreach ($categories as $row) {
-			$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '<div class="leftcat';
+			else $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
 			$htmlforlines .= '" onclick="LoadProducts('.$row['id'].');">';
-			$htmlforlines .= '<td class="left">';
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=cat&query=cat&id='.$row['id'].'"><br>';
+			else $htmlforlines .= '<td class="left">';
 			$htmlforlines .= $row['label'];
-			$htmlforlines .= '</td>';
-			$htmlforlines .= '</tr>'."\n";
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '</div>'."\n";
+			else $htmlforlines .= '</td></tr>'."\n";
 		}
 		$htmlforlines .= '</table>';
 		$htmlforlines .= '</table>';
@@ -910,12 +918,20 @@ if ($_SESSION["basiclayout"] == 1)
 		$prods = $object->getObjectsInCateg("product");
 		$htmlforlines = '';
 		foreach ($prods as $row) {
-			$htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) $htmlforlines .= '<div class="leftcat';
+			else $htmlforlines .= '<tr class="drag drop oddeven posinvoiceline';
 			$htmlforlines .= '" onclick="AddProduct(\''.$place.'\', '.$row->id.')">';
-			$htmlforlines .= '<td class="left">';
-			$htmlforlines .= $row->label;
-			$htmlforlines .= '<div class="right">'.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</div>';
-			$htmlforlines .= '</tr>'."\n";
+			if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+				$htmlforlines .= '<img class="imgwrapper" width="33%" src="'.DOL_URL_ROOT.'/takepos/public/auto_order.php?genimg=pro&query=pro&id='.$row->id.'"><br>';
+				$htmlforlines .= $row->label.''.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+				$htmlforlines .= '</div>'."\n";
+			}
+			else {
+				$htmlforlines .= '<td class="left">';
+				$htmlforlines .= $row->label;
+				$htmlforlines .= '<div class="right">'.price($row->price_ttc, 1, $langs, 1, -1, -1, $conf->currency).'</div>';
+				$htmlforlines .= '</tr>'."\n";
+			}
 		}
 		$htmlforlines .= '</table>';
 		print $htmlforlines;
@@ -991,7 +1007,7 @@ if ($placeid > 0)
             }
             $htmlforlines .= '" id="'.$line->id.'">';
             $htmlforlines .= '<td class="left">';
-			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= $line->qty." x ";
+			if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '<span class="phoneqty">'.$line->qty."</span> x ";
             //if ($line->product_label) $htmlforlines.= '<b>'.$line->product_label.'</b>';
             if (isset($line->product_type))
             {
@@ -1026,7 +1042,8 @@ if ($placeid > 0)
 	            }
             }
             if (!empty($line->array_options['options_order_notes'])) $htmlforlines .= "<br>(".$line->array_options['options_order_notes'].")";
-            if ($_SESSION["basiclayout"] != 1)
+            if ($_SESSION["basiclayout"] == 1) $htmlforlines .= '</td><td class="right phonetable"><button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty-1).');" class="publicphonebutton2 phonered">-</button>&nbsp;&nbsp;<button type="button" onclick="SetQty(place, '.$line->rowid.', '.($line->qty+1).');" class="publicphonebutton2 phonegreen">+</button>';
+			if ($_SESSION["basiclayout"] != 1)
 			{
 				$moreinfo = '';
 				$moreinfo .= $langs->transcountry("TotalHT", $mysoc->country_code).': '.price($line->total_ht);
