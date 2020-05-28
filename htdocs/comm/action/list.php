@@ -52,6 +52,7 @@ $year = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
 $day = GETPOST("day", 'int');
 $toselect = GETPOST('toselect', 'array');
+$confirm = GETPOST('confirm','alpha');
 
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
@@ -156,6 +157,11 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  *	Actions
  */
 
+if (GETPOST('cancel','alpha'))
+{
+	$action='list'; $massaction='';
+}
+
 if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
 {
 	$param = '';
@@ -224,6 +230,17 @@ if (empty($reshook) && !empty($massaction))
 	}
 }
 
+// As mass deletion happens with a confirm step, $massaction is not use for the final step (deletion).
+if (empty($reshook))
+{
+	$objectclass = 'ActionComm';
+	$objectlabel = 'Events';
+	$uploaddir = true;
+	// Only users that can delete any event can remove records.
+	$permissiontodelete = $user->rights->agenda->allactions->delete;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+}
+
 /*
  *  View
  */
@@ -280,6 +297,10 @@ $arrayofmassactions = array(
 	'set_all_events_to_in_progress' => $langs->trans("SetAllEventsToInProgress"),
 	'set_all_events_to_finished' => $langs->trans("SetAllEventsToFinished"),
 );
+if ($user->rights->agenda->allactions->delete)
+{
+	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+}
 
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
@@ -476,6 +497,8 @@ if ($resql)
     }
 
     print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1);
+
+    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
     $moreforfilter = '';
 
