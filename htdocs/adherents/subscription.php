@@ -580,7 +580,7 @@ if ($rowid > 0) {
      * List of subscriptions
      */
     if ($action != 'addsubscription' && $action != 'create_thirdparty') {
-        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
+        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, c.fk_adherent_type as type,";
         $sql .= " c.rowid as crowid, c.subscription,";
         $sql .= " c.datec, c.fk_type as cfk_type,";
         $sql .= " c.dateadh as dateh,";
