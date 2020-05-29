@@ -71,7 +71,7 @@ class ExtraLanguages
 	/**
 	 * 	Load array this->attributes with list of fields per object that need an alternate translation. The object and field must be managed with
 	 *  the widgetForTranslation() method.
-	 *  You can set variable MAIN_USE_ALTERNATE_TRANSLATION_FOR=elementA:fieldname,fieldname2;elementB:...
+	 *  You must set variable MAIN_USE_ALTERNATE_TRANSLATION_FOR=elementA:fieldname,fieldname2;elementB:...
 	 *  Example: MAIN_USE_ALTERNATE_TRANSLATION_FOR=societe:name,town;contact:firstname,lastname
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
