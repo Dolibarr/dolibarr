@@ -1930,7 +1930,7 @@ if ($module == 'initmodule')
 				}
 
 				dol_fiche_end();
-			} else {
+			} else {	// Edit text file
 				$fullpathoffile = dol_buildpath($file, 0, 1); // Description - level 2
 
 				if ($fullpathoffile)

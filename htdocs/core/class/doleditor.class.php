@@ -88,7 +88,7 @@ class DolEditor
     	// Define some properties
         if (in_array($this->tool, array('textarea', 'ckeditor', 'ace')))
         {
-        	if (! dol_textishtml($content) && $this->tool != 'textarea') {	// We force content into HTML if we are using an advanced editor if content is not HTML.
+        	if ($this->tool == 'ckeditor' && ! dol_textishtml($content)) {	// We force content to be into HTML if we are using an advanced editor if content is not HTML.
         		$this->content = dol_nl2br($content);
         	}
         	else {
