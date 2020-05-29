@@ -1091,6 +1091,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 				dol_syslog("Files.lib::dol_move_uploaded_file File ".$file_name." already exists. Return 'ErrorFileAlreadyExists'", LOG_WARNING);
 				return 'ErrorFileAlreadyExists';
 			}
+		} else {	// We are allowed to erase
+			if (is_dir($file_name_osencoded)) {	// If there is a directory with name of file to create
+				dol_syslog("Files.lib::dol_move_uploaded_file A directory with name ".$file_name." already exists. Return 'ErrorDirWithFileNameAlreadyExists'", LOG_WARNING);
+				return 'ErrorDirWithFileNameAlreadyExists';
+			}
 		}
 
 		// Move file
