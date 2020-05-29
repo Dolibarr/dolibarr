@@ -1756,7 +1756,7 @@ $head[$h][1] = $langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
 
-dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic', 0, $infomodulesfound, '', 8); // Modules
+dol_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
 
 if ($module == 'initmodule')
 {
