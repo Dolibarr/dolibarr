@@ -650,14 +650,18 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module))
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
 		$result = dol_delete_file($filetodelete);
-		if (dol_is_dir_empty($dirtodelete)) dol_delete_dir($dirtodelete);
+		if (! $result) {
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
+		} else {
+			if (dol_is_dir_empty($dirtodelete)) dol_delete_dir($dirtodelete);
 
-		// Update descriptor file to comment file
-		if (in_array($tab, array('css', 'js')))
-		{
-			$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-			$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
-			dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+			// Update descriptor file to comment file
+			if (in_array($tab, array('css', 'js')))
+			{
+				$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+				$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
+				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+			}
 		}
 	}
 }
