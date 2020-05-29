@@ -485,6 +485,7 @@ if ($dirins && $action == 'initcss' && !empty($module))
 		setEventMessages($langs->trans('ErrorFailToCreateFile', $destfile), null, 'errors');
 	}
 }
+
 if ($dirins && $action == 'initjs' && !empty($module))
 {
 	dol_mkdir($dirins.'/'.strtolower($module).'/js');
@@ -1567,14 +1568,26 @@ $infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto(
 $error = 0;
 $moduleobj = null;
 
+
+
 if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 {
 	$modulelowercase = strtolower($module);
+	$loadclasserrormessage = '';
 
 	// Load module
-	$fullpathdirtodescriptor = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
-	dol_include_once($fullpathdirtodescriptor);
-	$class = 'mod'.$module;
+	try {
+		$fullpathdirtodescriptor = $listofmodules[strtolower($module)]['moduledescriptorrelpath'];
+
+		//throw(new Exception());
+		dol_include_once($fullpathdirtodescriptor);
+
+		$class = 'mod'.$module;
+	} catch(Throwable $e) {		// This is called in PHP 7 only. Never call be keep rest of code ok with PHP 5.6
+		$loadclasserrormessage = $e->getMessage()."<br>\n";;
+		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
+		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
+	}
 
 	if (class_exists($class))
 	{
@@ -1589,6 +1602,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 		if (empty($forceddirread)) $error++;
 		$langs->load("errors");
 		print img_warning('').' '.$langs->trans("ErrorFailedToLoadModuleDescriptorForXXX", $module).'<br>';
+		print $loadclasserrormessage;
 	}
 }
 
@@ -1620,7 +1634,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 	$urltomodulesetup = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
 	if (!empty($conf->global->$const_name))	// If module is already activated
 	{
-		$linktoenabledisable .= '<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod'.$module.$param.'">';
+		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=reset&value=mod'.$module.$param.'">';
 		$linktoenabledisable .= img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', '', 1);
 		$linktoenabledisable .= '</a>';
 
@@ -1656,7 +1670,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 			$linktoenabledisable .= ' &nbsp; <a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1], 1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"), "setup", 'style="padding-right: 6px"').'</a>';
 		}
 	} else {
-		$linktoenabledisable .= '<a class="reposition asetresetmodule" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod'.$module.$param.'">';
+		$linktoenabledisable .= '<a class="reposition asetresetmodule valignmiddle" href="'.$_SERVER["PHP_SELF"].'?id='.$moduleobj->numero.'&action=set&value=mod'.$module.$param.'">';
 		$linktoenabledisable .= img_picto($langs->trans("ModuleIsNotActive", $urltomodulesetup), 'switch_off', '', false, 0, 0, '', 'classfortooltip', 1);
 		$linktoenabledisable .= "</a>\n";
 	}
