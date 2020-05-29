@@ -5758,6 +5758,7 @@ class Form
 		if (!empty($classpath))
 		{
 			dol_include_once($classpath);
+
 			if ($classname && class_exists($classname))
 			{
 				$objecttmp = new $classname($this->db);
