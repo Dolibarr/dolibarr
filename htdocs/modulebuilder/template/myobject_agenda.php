@@ -137,7 +137,7 @@ if ($object->id > 0)
 	$head = myobjectPrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, $object->picto);
+	dol_fiche_head($head, 'agenda', $langs->trans("MyObject"), -1, 'object_'.$object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
