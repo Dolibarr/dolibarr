@@ -54,6 +54,7 @@ if ($action == "update")
     }
 }
 
+$reg = array();
 if (preg_match('/set_(.*)/', $action, $reg)) {
     $code = $reg[1];
     $values = GETPOST($code);
