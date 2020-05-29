@@ -1106,12 +1106,12 @@ if (empty($reshook))
 				}
 
 				// Add link between credit note and origin
-				if(! empty($object->fk_facture_source)) {
+				if(! empty($object->fk_facture_source) && $id>0) {
 					$facture_source->fetch($object->fk_facture_source);
 					$facture_source->fetchObjectLinked();
 
-					if(! empty($facture_source->linkedObjectsIds)) {
-						foreach($facture_source->linkedObjectsIds as $sourcetype => $TIds) {
+					if (!empty($facture_source->linkedObjectsIds)) {
+						foreach ($facture_source->linkedObjectsIds as $sourcetype => $TIds) {
 							$object->add_object_linked($sourcetype, current($TIds));
 						}
 					}
@@ -4835,9 +4835,8 @@ elseif ($id > 0 || ! empty($ref))
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $usercancreate)
 			{
-				if (! $objectidnext)
-				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'' . ($object->entity > 0 ? '&amp;originentity='.$object->entity : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
+				if (! $objectidnext) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid . '&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2' . ($object->fk_project > 0 ? '&amp;projectid=' . $object->fk_project : '') . ($object->entity > 0 ? '&amp;originentity=' . $object->entity : '') . '">' . $langs->trans("CreateCreditNote") . '</a></div>';
 				}
 			}
 
