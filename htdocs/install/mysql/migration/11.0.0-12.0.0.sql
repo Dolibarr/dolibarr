@@ -67,10 +67,12 @@ ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafie
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
 
 -- This var is per entity now, so we remove const if global if exists
-delete from llx_const where name = 'PROJECT_HIDE_TASKS' and entity = 0;
-
+delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;
 
 -- For v12
+
+ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
+
 
 -- Delete an old index that is duplicated
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
@@ -295,3 +297,8 @@ ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';
+
+ALTER TABLE llx_adherent_type MODIFY subscription varchar(3) NOT NULL DEFAULT '1';
+ALTER TABLE llx_adherent_type MODIFY vote varchar(3) NOT NULL DEFAULT '1';
+  
+

@@ -180,6 +180,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 $limit = 5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " WHERE p.type = 'debit-order'";
 $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 
@@ -198,26 +199,31 @@ if ($result)
     print '<th class="right">'.$langs->trans("Status").'</th>';
     print '</tr>';
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+    if ($num > 0) {
+    	while ($i < min($num, $limit))
+	    {
+	        $obj = $db->fetch_object($result);
 
 
-        print '<tr class="oddeven">';
+	        print '<tr class="oddeven">';
 
-        print "<td>";
-        $bprev->id = $obj->rowid;
-        $bprev->ref = $obj->ref;
-        $bprev->statut = $obj->statut;
-        print $bprev->getNomUrl(1);
-        print "</td>\n";
-        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-        print '<td class="right">'.price($obj->amount)."</td>\n";
-        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
+	        print "<td>";
+	        $bprev->id = $obj->rowid;
+	        $bprev->ref = $obj->ref;
+	        $bprev->statut = $obj->statut;
+	        print $bprev->getNomUrl(1);
+	        print "</td>\n";
+	        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
+	        print '<td class="right">'.price($obj->amount)."</td>\n";
+	        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
-        print "</tr>\n";
-        $i++;
+	        print "</tr>\n";
+	        $i++;
+	    }
+    } else {
+    	print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
+
     print "</table></div><br>";
     $db->free($result);
 }

@@ -83,14 +83,12 @@ class Opensurveysondage extends CommonObject
     public $sujet;
 
     /**
-     * Allow comments on this poll
-     * @var bool
+     * @var int		Allow comments on this poll
      */
     public $allow_comments;
 
     /**
-     * Allow users see others vote
-     * @var bool
+     * @var int		Allow users see others vote
      */
     public $allow_spy;
 

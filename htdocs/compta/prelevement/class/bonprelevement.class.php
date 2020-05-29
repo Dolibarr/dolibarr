@@ -638,8 +638,7 @@ class BonPrelevement extends CommonObject
 		$arr = array();
 
 		/*
-		 * Returns all invoices presented
-		 * within a withdrawal receipt
+		 * Returns all invoices presented within same order
 		 */
 		$sql = "SELECT fk_facture";
 		if ($amounts) $sql .= ", SUM(pl.amount)";
@@ -1159,8 +1158,12 @@ class BonPrelevement extends CommonObject
 
 		if (!$notrigger)
 		{
+			$triggername = 'DIRECT_DEBIT_ORDER_DELETE';
+			if ($this->type == 'bank-transfer') {
+				$triggername = 'PAYMENTBYBANKTRANFER_DELETE';
+			}
 			// Call trigger
-			$result = $this->call_trigger('DIRECT_DEBIT_ORDER_DELETE', $user);
+			$result = $this->call_trigger($triggername, $user);
 			if ($result < 0) $error++;
 			// End call triggers
 		}
@@ -1224,7 +1227,12 @@ class BonPrelevement extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowWithdraw").'</u>';
+		$labeltoshow = 'Withdraw';
+		if ($this->type == 'bank-transfer') {
+			$labeltoshow = 'PaymentByBankTransfer';
+		}
+
+		$label = '<u>'.$langs->trans($labeltoshow).'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->statut)) {
@@ -1232,6 +1240,9 @@ class BonPrelevement extends CommonObject
 		}
 
 		$url = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$this->id;
+		if ($this->type == 'bank-transfer') {
+			$url = DOL_URL_ROOT.'/compta/paymentbybanktransfer/card.php?id='.$this->id;
+		}
 
 		if ($option != 'nolink')
 		{
@@ -1272,7 +1283,7 @@ class BonPrelevement extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('myobjectdao'));
+		$hookmanager->initHooks(array('banktransferdao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;

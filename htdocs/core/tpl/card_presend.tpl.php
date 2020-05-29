@@ -258,7 +258,6 @@ if ($action == 'presend')
 		}
 	}
 
-	$custcontact = '';
 	$contactarr = array();
 	$contactarr = $tmpobject->liste_contact(-1, 'external');
 
