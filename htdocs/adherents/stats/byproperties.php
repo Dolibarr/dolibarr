@@ -64,11 +64,11 @@ dol_mkdir($dir);
 $tab = 'byproperties';
 
 $data = array();
-$sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, d.morphy as code";
+$sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, d.morphy as code";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND d.statut = 1";
+$sql .= " AND CURDATE() BETWEEN s.dateadh AND s.datef";
 $sql .= " GROUP BY d.morphy";
 
 $foundphy = $foundmor = 0;
