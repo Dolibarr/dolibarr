@@ -446,6 +446,7 @@ LinkToTestClickToDial=Enter a phone number to call to show a link to test the Cl
 RefreshPhoneLink=Refresh link
 LinkToTest=Clickable link generated for user <strong>%s</strong> (click phone number to test)
 KeepEmptyToUseDefault=Keep empty to use default value
+KeepThisEmptyInMostCases=In most cases, you can keep this field empy. 
 DefaultLink=Default link
 SetAsDefault=Set as default
 ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)

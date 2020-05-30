@@ -159,9 +159,13 @@ $form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID
 print '</td></tr>';
 
 // ICS
-print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
+print '<tr class="oddeven"><td class="fieldrequired">';
+$htmltext = $langs->trans("AskThisIDToYourBank");
+print $form->textwithpicto($langs->trans("ICS"), $htmltext);
+print '</td>';
 print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" ></td>';
+print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" >';
+print '</td>';
 print '</td></tr>';
 
 //User
@@ -172,13 +176,19 @@ print '</td>';
 print '</tr>';
 
 //EntToEnd
-print '<tr class="oddeven"><td>'.$langs->trans("END_TO_END").'</td>';
+print '<tr class="oddeven"><td>';
+$htmltext = $langs->trans("KeepThisEmptyInMostCases");
+print $form->textwithpicto($langs->trans("END_TO_END"), $htmltext);
+print '</td>';
 print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" size="15" ></td>';
 print '</td></tr>';
 
 //USTRD
-print '<tr class="oddeven"><td>'.$langs->trans("USTRD").'</td>';
+print '<tr class="oddeven"><td>';
+$htmltext = $langs->trans("KeepThisEmptyInMostCases");
+print $form->textwithpicto($langs->trans("USTRD"), $htmltext);
+print '</td>';
 print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" size="15" ></td>';
 print '</td></tr>';
