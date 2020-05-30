@@ -36,7 +36,10 @@ $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
+$urladd = '';
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+if ($limit != $conf->liste_limit) $urladd .= '&limit=' . $limit;
+
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -102,7 +105,7 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    $urladd= "&amp;statut=".$statut;
+    $urladd .= "&amp;statut=" . $statut;
 
     $selectedfields='';
 
