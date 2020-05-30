@@ -78,13 +78,13 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToPayByBankTransfer").'</td>';
 print '<td class="right">';
 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0&type=bank-transfer">';
-print $bprev->NbFactureAPrelever();
+print $bprev->nbOfInvoiceToPay('credit-transfer');
 print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right">';
-print price($bprev->SommeAPrelever(), '', '', 1, -1, -1, 'auto');
+print price($bprev->SommeAPrelever('credit-transfer'), '', '', 1, -1, -1, 'auto');
 print '</td></tr></table></div><br>';
 
 
