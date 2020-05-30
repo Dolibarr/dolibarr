@@ -27,10 +27,10 @@
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 
 if (!empty($conf->categorie->enabled))
 {
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
@@ -182,7 +182,6 @@ if (empty($reshook))
  */
 
 $form = new Form($db);
-$formcategory = new FormCategory($db);
 $warehouse = new Entrepot($db);
 
 $totalarray = array();
@@ -374,6 +373,7 @@ $moreforfilter = '';
 
 if (!empty($conf->categorie->enabled))
 {
+	$formcategory = new FormCategory($db);
 	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_WAREHOUSE, $search_category_list);
 }
 
