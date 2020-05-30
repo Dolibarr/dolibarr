@@ -1655,9 +1655,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$langs->load('admin');
 				$appli .= '<br>'.$langs->trans("Database").': '.$db->database_name;
 			}
-			$text = '<span href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
-			$toprightmenu .= @Form::textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 		}
+
+		$text = '<span href="#" class="aversion"><span class="hideonsmartphone small">'.DOL_VERSION.'</span></span>';
+		$toprightmenu .= @Form::textwithtooltip('', $appli, 2, 1, $text, 'login_block_elem', 2);
 
 
 		// Logout link

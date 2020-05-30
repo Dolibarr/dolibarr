@@ -808,6 +808,7 @@ if ($step == 4 && $datatoimport)
 		print '<tr><td>'.$langs->trans("CsvOptions").'</td>';
 		print '<td>';
 		print '<form>';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" value="'.$step.'" name="step">';
 		print '<input type="hidden" value="'.$format.'" name="format">';
 		print '<input type="hidden" value="'.$excludefirstline.'" name="excludefirstline">';
@@ -1224,6 +1225,7 @@ if ($step == 5 && $datatoimport)
 
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?'.$param2.'" method="POST">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="step" value="5">'; // step 5
     print '<input type="hidden" name="action" value="launchsimu">'; // step 5
 

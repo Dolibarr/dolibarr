@@ -328,14 +328,18 @@ function getConfigFilePath()
  */
 function getTableColumn($name, array $list)
 {
+	global $langs;
+
 	$name = strtolower($name);
 	$html = "<td align='center'>";
 
 	if (in_array($name, $list))
 	{
-		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
+		if ($name == 'xdebug') $html .= '<img src="../../theme/eldy/img/warning.png" title="'.$langs->trans("ModuleActivated", "xdebug").'">';
+		else $html .= '<img src="../../theme/eldy/img/tick.png" title="Ok">';
 	} else {
-		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
+		if ($name == 'xdebug') $html .= yn(0);
+		else $html .= '<img src="../../theme/eldy/img/warning.png" title="Warning">';
 	}
 
 	$html .= "</td>";

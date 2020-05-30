@@ -7,7 +7,7 @@
  * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -501,7 +501,7 @@ $sql .= ' a.datep2,';
 $sql .= ' a.percent,';
 $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= ' a.transparency, a.priority, a.fulldayevent, a.location,';
-$sql .= ' a.fk_soc, a.fk_contact,';
+$sql .= ' a.fk_soc, a.fk_contact, a.fk_project,';
 $sql .= ' a.fk_element, a.elementtype,';
 $sql .= ' ca.code as type_code, ca.libelle as type_label, ca.color as type_color';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm as ca, '.MAIN_DB_PREFIX."actioncomm as a";
@@ -633,6 +633,8 @@ if ($resql)
         $event->transparency = $obj->transparency;
         $event->fk_element = $obj->fk_element;
         $event->elementtype = $obj->elementtype;
+
+        $event->fk_project = $obj->fk_project;
 
         $event->thirdparty_id = $obj->fk_soc;
         $event->contact_id = $obj->fk_contact;
@@ -1574,7 +1576,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             // Hour start
                             if ($tmpyearstart == $annee && $tmpmonthstart == $mois && $tmpdaystart == $jour)
                             {
-                                $daterange .= dol_print_date($event->date_start_in_calendar, '%H:%M'); // Il faudrait utiliser ici tzuser, mais si on ne peut pas car qd on rentre un date dans fiche action, en input la conversion local->gmt se base sur le TZ server et non user
+                                $daterange .= dol_print_date($event->date_start_in_calendar, 'hour'); // Il faudrait utiliser ici tzuser, mais si on ne peut pas car qd on rentre un date dans fiche action, en input la conversion local->gmt se base sur le TZ server et non user
                                 if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar)
                                 {
                                     if ($tmpyearstart == $tmpyearend && $tmpmonthstart == $tmpmonthend && $tmpdaystart == $tmpdayend)
@@ -1594,7 +1596,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                             if ($event->date_end_in_calendar && $event->date_start_in_calendar != $event->date_end_in_calendar)
                             {
                                 if ($tmpyearend == $annee && $tmpmonthend == $mois && $tmpdayend == $jour)
-                                $daterange .= dol_print_date($event->date_end_in_calendar, '%H:%M'); // Il faudrait utiliser ici tzuser, mais si on ne peut pas car qd on rentre un date dans fiche action, en input la conversion local->gmt se base sur le TZ server et non user
+                                $daterange .= dol_print_date($event->date_end_in_calendar, 'hour'); // Il faudrait utiliser ici tzuser, mais si on ne peut pas car qd on rentre un date dans fiche action, en input la conversion local->gmt se base sur le TZ server et non user
                             }
                         } else {
                             if ($showinfo)

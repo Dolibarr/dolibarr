@@ -626,14 +626,18 @@ if ($dirins && $action == 'confirm_removefile' && !empty($module))
 		$dirtodelete  = $dirins.'/'.$dirnametodelete;
 
 		$result = dol_delete_file($filetodelete);
-		if (dol_is_dir_empty($dirtodelete)) dol_delete_dir($dirtodelete);
+		if (! $result) {
+			setEventMessages($langs->trans("ErrorFailToDeleteFile", basename($filetodelete)), null, 'errors');
+		} else {
+			if (dol_is_dir_empty($dirtodelete)) dol_delete_dir($dirtodelete);
 
-		// Update descriptor file to comment file
-		if (in_array($tab, array('css', 'js')))
-		{
-			$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
-			$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
-			dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+			// Update descriptor file to comment file
+			if (in_array($tab, array('css', 'js')))
+			{
+				$srcfile = $dirins.'/'.strtolower($module).'/core/modules/mod'.$module.'.class.php';
+				$arrayreplacement = array('/^\s*\''.preg_quote('/'.$relativefilename, '/').'\',*/m'=>'                // \'/'.$relativefilename.'\',');
+				dolReplaceInFile($srcfile, $arrayreplacement, '', 0, 0, 1);
+			}
 		}
 	}
 }
@@ -1701,7 +1705,7 @@ $head[$h][1] = $langs->trans("DangerZone");
 $head[$h][2] = 'deletemodule';
 $h++;
 
-dol_fiche_head($head, $module, $langs->trans("Modules"), -1, 'generic', 0, $infomodulesfound, '', 8); // Modules
+dol_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8); // Modules
 
 if ($module == 'initmodule')
 {
@@ -2343,7 +2347,7 @@ if ($module == 'initmodule')
 		   					}
 						} else {
 							//print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span> ';
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&format=php&file='.urlencode($pathtoapi).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initapi&format=php&file='.urlencode($pathtoapi).'"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a>';
 						}
 						// PHPUnit
 						print '<br>';
@@ -2356,7 +2360,7 @@ if ($module == 'initmodule')
 							print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&file='.urlencode($pathtophpunit).'">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						} else {
 							//print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span> ';
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initphpunit&format=php&file='.urlencode($pathtophpunit).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initphpunit&format=php&file='.urlencode($pathtophpunit).'"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a>';
 						}
 						print '<br>';
 
@@ -2391,7 +2395,7 @@ if ($module == 'initmodule')
 							print ' &nbsp; ';
 							print '<a class="reposition editfielda" href="'.$_SERVER["PHP_SELF"].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=droptableextrafields">'.$langs->trans("DropTableIfEmpty").'</a>';
 						} else {
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initsqlextrafields&format=sql&file='.urlencode($pathtosqlextra).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
+							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initsqlextrafields&format=sql&file='.urlencode($pathtosqlextra).'"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a>';
 						}
 						//print ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("RunSql").'</a>';
 						print '<br>';
@@ -2481,15 +2485,15 @@ if ($module == 'initmodule')
 							//$propstat = $reflector->getStaticProperties();
 							//var_dump($reflectorpropdefault);
 
-							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="center">';
 							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="action" value="addproperty">';
 							print '<input type="hidden" name="tab" value="objects">';
 							print '<input type="hidden" name="module" value="'.dol_escape_htmltag($module.($forceddirread ? '@'.$dirread : '')).'">';
 							print '<input type="hidden" name="tabobj" value="'.dol_escape_htmltag($tabobj).'">';
 
-							print '<input class="button" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
-							//print '<input class="button" type="submit" name="regeneratemissing" value="'.$langs->trans("RegenerateMissingFiles").'">';
+							print '<input class="button buttongen" type="submit" name="regenerateclasssql" value="'.$langs->trans("RegenerateClassAndSql").'">';
+							//print '<input class="button buttongen" type="submit" name="regeneratemissing" value="'.$langs->trans("RegenerateMissingFiles").'">';
 							print '<br><br>';
 
 							print load_fiche_titre($langs->trans("ObjectProperties"), '', '');
@@ -3018,7 +3022,7 @@ if ($module == 'initmodule')
 					print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&format='.$format.'&file='.urlencode($pathtohook).'">'.img_picto($langs->trans("Delete"), 'delete').'</a></td>';
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
-					print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=inithook&format=php&file='.urlencode($pathtohook).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a></td>';
+					print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=inithook&format=php&file='.urlencode($pathtohook).'"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a></td>';
 					print '<td></td>';
 				}
 				print '</tr>';
@@ -3084,7 +3088,7 @@ if ($module == 'initmodule')
 				} else {
 					print '<tr><td>';
 					print '<span class="fa fa-file-o"></span> '.$langs->trans("NoTrigger");
-					print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=inittrigger&format=php"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a></td>';
+					print '<a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=inittrigger&format=php"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a></td>';
 					print '<td></td>';
 					print '</tr>';
 				}
@@ -3135,7 +3139,7 @@ if ($module == 'initmodule')
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&format='.$format.'&file='.urlencode($pathtohook).'">'.img_picto($langs->trans("Delete"), 'delete').'</a></td>';
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
-					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcss&format=php&file='.urlencode($pathtohook).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a></td>';
+					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcss&format=php&file='.urlencode($pathtohook).'"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a></td>';
 				}
 				print '</tr>';
 			} else {
@@ -3183,7 +3187,7 @@ if ($module == 'initmodule')
 					print '</td><td><a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=confirm_removefile&format='.$format.'&file='.urlencode($pathtohook).'">'.img_picto($langs->trans("Delete"), 'delete').'</a></td>';
 				} else {
 					print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
-					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initjs&format=php&file='.urlencode($pathtohook).'"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a></td>';
+					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initjs&format=php&file='.urlencode($pathtohook).'"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a></td>';
 				}
 				print '</tr>';
 			} else {
@@ -3237,7 +3241,7 @@ if ($module == 'initmodule')
 					}
 				} else {
 					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("NoWidget");
-					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initwidget&format=php"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
+					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initwidget&format=php"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a>';
 					print '</td></tr>';
 				}
 				print '</table>';
@@ -3319,7 +3323,7 @@ if ($module == 'initmodule')
 					}
 				} else {
 					print '<tr><td><span class="fa fa-file-o"></span> '.$langs->trans("NoCLIFile");
-					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcli&format=php"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a>';
+					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initcli&format=php"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a>';
 					print '</td></tr>';
 				}
 				print '</table>';
@@ -3492,7 +3496,7 @@ if ($module == 'initmodule')
 				} else {
 					print '<tr><td>';
 					print '<span class="fa fa-file-o"></span> '.$langs->trans("FileNotYetGenerated");
-					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initdoc&format=php"><input type="button" class="button" value="'.$langs->trans("Generate").'"></a></td>';
+					print '</td><td><a href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=initdoc&format=php"><input type="button" class="button buttongen" value="'.$langs->trans("Generate").'"></a></td>';
 					print '</tr>';
 				}
 				print '</table>';

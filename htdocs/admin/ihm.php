@@ -166,8 +166,8 @@ if ($action == 'update')
 
 	dolibarr_set_const($db, "MAIN_MOTD", dol_htmlcleanlastbr(GETPOST("main_motd", 'none')), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_HOME", dol_htmlcleanlastbr(GETPOST("main_home", 'none')), 'chaine', 0, '', $conf->entity);
-	dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
-	dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_BUGTRACK_ENABLELINK", GETPOST('MAIN_BUGTRACK_ENABLELINK', 'aZ09'), 'chaine', 0, '', $conf->entity);
+	//dolibarr_set_const($db, "MAIN_HELP_DISABLELINK", GETPOST("MAIN_HELP_DISABLELINK", 'aZ09'), 'chaine', 0, '', 0); // Param for all entities
 
 	$varforimage = 'imagebackground'; $dirforimage = $conf->mycompany->dir_output.'/logos/';
 	if ($_FILES[$varforimage]["tmp_name"])
@@ -349,7 +349,8 @@ print '</tr>';
 
 // Show bugtrack link
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("ShowBugTrackLink", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
-print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK', $conf->global->MAIN_BUGTRACK_ENABLELINK, 1);
+print ajax_constantonoff("MAIN_BUGTRACK_ENABLELINK", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno('MAIN_BUGTRACK_ENABLELINK', $conf->global->MAIN_BUGTRACK_ENABLELINK, 1);
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
@@ -357,7 +358,8 @@ print '</tr>';
 // Hide wiki link on login page
 $pictohelp = '<span class="fa fa-question-circle"></span>';
 print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("DisableLinkToHelp", $pictohelp).'</td><td>';
-print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
+print ajax_constantonoff("MAIN_HELP_DISABLELINK", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno('MAIN_HELP_DISABLELINK', isset($conf->global->MAIN_HELP_DISABLELINK) ? $conf->global->MAIN_HELP_DISABLELINK : 0, 1);
 print '</td>';
 print '<td width="20">&nbsp;</td>';
 print '</tr>';
