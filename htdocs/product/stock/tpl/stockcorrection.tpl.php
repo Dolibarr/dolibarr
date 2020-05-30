@@ -71,7 +71,7 @@ if ($object->element == 'product')
 	print '<td class="fieldrequired">'.$langs->trans("Warehouse").'</td>';
 	print '<td>';
 	$ident=(GETPOST("dwid") ?GETPOST("dwid", 'int') : (GETPOST('id_entrepot') ?GETPOST('id_entrepot', 'int') : ($object->element == 'product' && $object->fk_default_warehouse ? $object->fk_default_warehouse : 'ifone')));
-	if (empty($ident)&&!empty($conf->global->DEFAULT_WAREHOUSE))$ident=$conf->global->DEFAULT_WAREHOUSE;
+	if (empty($ident)&&!empty($conf->global->MAIN_DEFAULT_WAREHOUSE))$ident=$conf->global->MAIN_DEFAULT_WAREHOUSE;
 	print $formproduct->selectWarehouses($ident, 'id_entrepot', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'minwidth100');
 	print ' &nbsp; <select name="mouvement" id="mouvement">';
 	print '<option value="0">'.$langs->trans("Add").'</option>';
