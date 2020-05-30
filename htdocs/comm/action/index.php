@@ -608,7 +608,9 @@ if ($resql)
 
         // Create a new object action
         $event = new ActionComm($db);
+
         $event->id = $obj->id;
+        $event->ref = $event->id;
 
         $event->datep = $db->jdate($obj->datep); // datep and datef are GMT date. Example: 1970-01-01 01:00:00, jdate will return 0 if TZ of PHP server is Europe/Berlin
         $event->datef = $db->jdate($obj->datep2);
@@ -710,7 +712,10 @@ if ($showbirthday)
         {
             $obj = $db->fetch_object($resql);
             $event = new ActionComm($db);
+
             $event->id = $obj->rowid; // We put contact id in action id for birthdays events
+            $event->ref = $event->id;
+
             $datebirth = dol_stringtotime($obj->birthday, 1);
             //print 'ee'.$obj->birthday.'-'.$datebirth;
             $datearray = dol_getdate($datebirth, true);
@@ -782,6 +787,7 @@ if ($conf->global->AGENDA_SHOW_HOLIDAYS)
 
             // Need the id of the leave object for link to it
             $event->id                      = $obj->rowid;
+            $event->ref                     = $event->id;
 
             $event->type_code               = 'HOLIDAY';
             $event->datep                   = dol_mktime(0, 0, 0, $dateStartArray['mon'], $dateStartArray['mday'], $dateStartArray['year'], true);
@@ -1006,6 +1012,8 @@ if (count($listofextcals))
                 if ($addevent)
                 {
                     $event->id = $icalevent['UID'];
+                    $event->ref = $event->id;
+
                     $event->icalname = $namecal;
                     $event->icalcolor = $colorcal;
                     $usertime = 0; // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
