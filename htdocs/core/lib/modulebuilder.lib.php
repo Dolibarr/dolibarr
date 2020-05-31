@@ -126,12 +126,12 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 			{
 				$i++;
 				$texttoinsert .= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
-				$texttoinsert .= " 'enabled'=>".($val['enabled'] !== '' ? $val['enabled'] : 1).",";
+				$texttoinsert .= " 'enabled'=>'".($val['enabled'] !== '' ? $val['enabled'] : 1)."',";
 				$texttoinsert .= " 'position'=>".($val['position'] !== '' ? $val['position'] : 50).",";
 				$texttoinsert .= " 'notnull'=>".(empty($val['notnull']) ? 0 : $val['notnull']).",";
 				$texttoinsert .= " 'visible'=>".($val['visible'] !== '' ? $val['visible'] : -1).",";
 				if ($val['noteditable'])    $texttoinsert .= " 'noteditable'=>'".$val['noteditable']."',";
-				if ($val['default'])        $texttoinsert .= " 'default'=>'".$val['default']."',";
+				if ($val['default'] || $val['default'] === '0')        $texttoinsert .= " 'default'=>'".$val['default']."',";
 				if ($val['index'])          $texttoinsert .= " 'index'=>".$val['index'].",";
 				if ($val['foreignkey'])     $texttoinsert .= " 'foreignkey'=>'".$val['foreignkey']."',";
 				if ($val['searchall'])      $texttoinsert .= " 'searchall'=>".$val['searchall'].",";
