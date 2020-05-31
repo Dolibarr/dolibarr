@@ -109,7 +109,7 @@ if ($search_status == '') $search_status = -1; // -1 or 1
 
 if (!empty($conf->categorie->enabled))
 {
-	$search_category_list = GETPOST("search_category_".Categorie::TYPE_PROJECT."_list", "array");
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_array", "array");
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -207,7 +207,7 @@ if (empty($reshook))
 		$search_usage_bill_time = '';
 		$toselect = '';
 		$search_array_options = array();
-		$search_category_list = array();
+		$search_category_array = array();
 	}
 
 
@@ -326,7 +326,7 @@ if ($search_project_user > 0)
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
 if (!empty($conf->categorie->enabled))
 {
-	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_list);
+	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_array);
 }
 if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
@@ -493,7 +493,7 @@ $moreforfilter = '';
 if (!empty($conf->categorie->enabled))
 {
 	$formcategory = new FormCategory($db);
-	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_list);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
 }
 
 // If the user can view user other than himself
