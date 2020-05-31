@@ -612,7 +612,7 @@ class FormFile
 			} else {
 			    $submodulepart = $modulepart;
 
-			    // modulepart = 'nameofmodule' or 'nameofmodule:nameofsubmodule'
+			    // modulepart = 'nameofmodule' or 'nameofmodule:nameofobject'
 			    $tmp = explode(':', $modulepart);
 			    if (!empty($tmp[1])) {
 			    	$modulepart = $tmp[0];
