@@ -1587,7 +1587,7 @@ if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
 		dol_include_once($fullpathdirtodescriptor);
 
 		$class = 'mod'.$module;
-	} catch(Throwable $e) {		// This is called in PHP 7 only. Never call be keep rest of code ok with PHP 5.6
+	} catch (Throwable $e) {		// This is called in PHP 7 only. Never called with PHP 5.6
 		$loadclasserrormessage = $e->getMessage()."<br>\n";;
 		$loadclasserrormessage .= 'File: '.$e->getFile()."<br>\n";
 		$loadclasserrormessage .= 'Line: '.$e->getLine()."<br>\n";
