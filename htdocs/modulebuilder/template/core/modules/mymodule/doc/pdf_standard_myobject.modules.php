@@ -226,7 +226,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	    	$outputlangsbis->loadLangs(array("main", "bills", "products", "dict", "companies"));
 	    }
 
-	    $nblines = count($object->lines);
+	    $nblines = (is_array($object->lines) ? count($object->lines) : 0);
 
 	    $hidetop = 0;
 	    if (!empty($conf->global->MAIN_PDF_DISABLE_COL_HEAD_TITLE)) {
@@ -328,7 +328,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	            $reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
 	            // Set nblines with the new facture lines content after hook
-	            $nblines = count($object->lines);
+	            $nblines = (is_array($object->lines) ? count($object->lines) : 0);
 
 	            // Create pdf instance
 	            $pdf = pdf_getInstance($this->format);
@@ -1161,15 +1161,16 @@ class pdf_standard_myobject extends ModelePDFMyObject
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}
 
-			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// Recipient name
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
 				$thirdparty = $object->thirdparty;
 			}
 
-			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			if (is_object($thirdparty)) {
+				$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			}
 
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), $usecontact, 'target', $object);
 
