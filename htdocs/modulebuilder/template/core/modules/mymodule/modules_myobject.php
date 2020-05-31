@@ -122,11 +122,10 @@ abstract class ModeleNumRefMyObject
 	/**
 	 *	Returns next assigned value
 	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	public function getNextValue($objsoc, $object)
+	public function getNextValue($object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

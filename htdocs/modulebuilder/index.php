@@ -845,7 +845,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			dol_mkdir($destdir.'/core/modules/'.strtolower($module).'/doc');
 
 			$filetogenerate += array(
-				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php'
+				'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
+				'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 			);
 		}
 
@@ -1247,13 +1248,15 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 			'core/modules/mymodule/mod_myobject_advanced.php'=>'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_advanced.php',
 			'core/modules/mymodule/mod_myobject_standard.php'=>'core/modules/'.strtolower($module).'/mod_'.strtolower($objectname).'_standard.php',
 			'core/modules/mymodule/modules_myobject.php'=>'core/modules/'.strtolower($module).'/modules_'.strtolower($objectname).'.php',
-			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php'
+			'core/modules/mymodule/doc/doc_generic_myobject_odt.modules.php'=>'core/modules/'.strtolower($module).'/doc/doc_generic_'.strtolower($objectname).'_odt.modules.php',
+			'core/modules/mymodule/doc/pdf_standard_myobject.modules.php'=>'core/modules/'.strtolower($module).'/doc/pdf_standard_'.strtolower($objectname).'.modules.php'
 		);
 
 		$resultko = 0;
 		foreach ($filetodelete as $filetodelete)
 		{
 			$resulttmp = dol_delete_file($dir.'/'.$filetodelete, 0, 0, 1);
+			$resulttmp = dol_delete_file($dir.'/'.$filetodelete.'.back', 0, 0, 1);
 			if (!$resulttmp) $resultko++;
 		}
 
@@ -2485,7 +2488,7 @@ if ($module == 'initmodule')
 							//$propstat = $reflector->getStaticProperties();
 							//var_dump($reflectorpropdefault);
 
-							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" class="center">';
+							print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="action" value="addproperty">';
 							print '<input type="hidden" name="tab" value="objects">';

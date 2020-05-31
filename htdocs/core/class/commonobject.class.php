@@ -4555,7 +4555,7 @@ abstract class CommonObject
 		    // Search template files
 			$file = '';
 			$classname = '';
-			$filefound = 0;
+			$filefound = '';
 		    $dirmodels = array('/');
 		    if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
 		    foreach ($dirmodels as $reldir)
@@ -4569,7 +4569,7 @@ abstract class CommonObject
 				    $file = dol_buildpath($reldir.$modelspath.$file, 0);
 				    if (file_exists($file))
 				    {
-					    $filefound = 1;
+					    $filefound = $file;
 					    $classname = $prefix.'_'.$modele;
 					    break;
 				    }
@@ -4766,8 +4766,13 @@ abstract class CommonObject
 				    return -1;
 			    }
 		    } else {
-			    $this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
-			    dol_print_error('', $this->error);
+		    	if (! $filefound) {
+			    	$this->error = $langs->trans("Error").' Failed to load doc generator with modelpaths='.$modelspath.' - modele='.$modele;
+			    	dol_print_error('', $this->error);
+		    	} else {
+		    		$this->error = $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $filefound);
+		    		dol_print_error('', $this->error);
+		    	}
 			    return -1;
 		    }
 		} else return $reshook;
