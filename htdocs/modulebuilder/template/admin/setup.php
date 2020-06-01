@@ -61,6 +61,7 @@ $arrayofparameters = array(
 );
 
 $error = 0;
+$setupnotempty = 0;
 
 
 /*
@@ -168,8 +169,8 @@ elseif ($action == 'setdoc')
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
 	$tmpobjectkey = GETPOST('object');
-
-	dolibarr_set_const($db, strtoupper($tmpobjectkey)."_ADDON", $value, 'chaine', 0, '', $conf->entity);
+	$constforval = 'MYMODULE_'.strtoupper($tmpobjectkey)."_ADDON";
+	dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity);
 }
 
 
@@ -222,9 +223,7 @@ if ($action == 'edit')
 
 	print '</form>';
 	print '<br>';
-}
-else
-{
+} else {
 	if (!empty($arrayofparameters))
 	{
 		print '<table class="noborder centpercent">';
@@ -232,6 +231,8 @@ else
 
 		foreach ($arrayofparameters as $key => $val)
 		{
+			$setupnotempty++;
+
 			print '<tr class="oddeven"><td>';
 			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
@@ -256,15 +257,15 @@ $myTmpObjects = array();
 $myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
 
-
 foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Orders Numbering model
 		 */
-		
+		$setupnotempty++;
+
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectKey), '', '');
-		
+
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Name").'</td>';
@@ -273,13 +274,13 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
 		print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
 		print '</tr>'."\n";
-		
+
 		clearstatcache();
-		
+
 		foreach ($dirmodels as $reldir)
 		{
 			$dir = dol_buildpath($reldir."core/modules/".$moduledir);
-			
+
 			if (is_dir($dir))
 			{
 				$handle = opendir($dir);
@@ -290,23 +291,23 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 						if (strpos($file, 'mod_'.strtolower($myTmpObjectKey).'_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php')
 						{
 							$file = substr($file, 0, dol_strlen($file) - 4);
-							
+
 							require_once $dir.'/'.$file.'.php';
-							
+
 							$module = new $file($db);
-							
+
 							// Show modules according to features level
 							if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 							if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-							
+
 							if ($module->isEnabled())
 							{
 								dol_include_once('/'.$moduledir.'/class/'.strtolower($myTmpObjectKey).'.class.php');
-								
+
 								print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 								print $module->info();
 								print '</td>';
-								
+
 								// Show example of numbering model
 								print '<td class="nowrap">';
 								$tmp = $module->getExample();
@@ -314,26 +315,26 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 								else print $tmp;
 								print '</td>'."\n";
-								
+
 								print '<td class="center">';
 								$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
 								if ($conf->global->$constforvar == $file)
 								{
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
-									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&object='.strtolower($myTmpObjectKey).'&value='.$file.'">';
 									print img_picto($langs->trans("Disabled"), 'switch_off');
 									print '</a>';
 								}
 								print '</td>';
-								
+
 								$mytmpinstance = new $myTmpObjectKey($db);
 								$mytmpinstance->initAsSpecimen();
-								
+
 								// Info
 								$htmltooltip = '';
 								$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-								
+
 								$nextval = $module->getNextValue($mytmpinstance);
 								if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
 									$htmltooltip .= ''.$langs->trans("NextValue").': ';
@@ -345,11 +346,11 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										$htmltooltip .= $langs->trans($module->error).'<br>';
 									}
 								}
-								
+
 								print '<td class="center">';
 								print $form->textwithpicto('', $htmltooltip, 1, 0);
 								print '</td>';
-								
+
 								print "</tr>\n";
 							}
 						}
@@ -360,16 +361,16 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		}
 		print "</table><br>\n";
 	}
-	
-	
+
 	if ($myTmpObjectArray['includedocgeneration']) {
 		/*
 		 * Document templates generators
 		 */
+		$setupnotempty++;
 		$type = strtolower($myTmpObjectKey);
-		
+
 		print load_fiche_titre($langs->trans("DocumentModules", $myTmpObjectKey), '', '');
-		
+
 		// Load array def with activated templates
 		$def = array();
 		$sql = "SELECT nom";
@@ -390,8 +391,7 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		} else {
 			dol_print_error($db);
 		}
-		
-		
+
 		print "<table class=\"noborder\" width=\"100%\">\n";
 		print "<tr class=\"liste_titre\">\n";
 		print '<td>'.$langs->trans("Name").'</td>';
@@ -401,16 +401,16 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		print '<td class="center" width="38">'.$langs->trans("ShortInfo").'</td>';
 		print '<td class="center" width="38">'.$langs->trans("Preview").'</td>';
 		print "</tr>\n";
-		
+
 		clearstatcache();
-		
+
 		foreach ($dirmodels as $reldir)
 		{
 			foreach (array('', '/doc') as $valdir)
 			{
 				$realpath = $reldir."core/modules/".$moduledir.$valdir;
 				$dir = dol_buildpath($realpath);
-				
+
 				if (is_dir($dir))
 				{
 					$handle = opendir($dir);
@@ -422,7 +422,7 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 						}
 						closedir($handle);
 						arsort($filelist);
-						
+
 						foreach ($filelist as $file)
 						{
 							if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
@@ -431,14 +431,14 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								{
 									$name = substr($file, 4, dol_strlen($file) - 16);
 									$classname = substr($file, 0, dol_strlen($file) - 12);
-									
+
 									require_once $dir.'/'.$file;
 									$module = new $classname($db);
-									
+
 									$modulequalified = 1;
 									if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
 									if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
-									
+
 									if ($modulequalified)
 									{
 										print '<tr class="oddeven"><td width="100">';
@@ -447,7 +447,7 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if (method_exists($module, 'info')) print $module->info($langs);
 										else print $module->description;
 										print '</td>';
-										
+
 										// Active
 										if (in_array($name, $def))
 										{
@@ -461,7 +461,7 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 											print "</td>";
 										}
-										
+
 										// Default
 										print '<td class="center">';
 										$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
@@ -472,7 +472,7 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 										}
 										print '</td>';
-										
+
 										// Info
 										$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
 										$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
@@ -481,15 +481,15 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 											$htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 										}
 										$htmltooltip .= '<br>'.$langs->trans("Path").': '.preg_replace('/^\//', '', $realpath).'/'.$file;
-										
+
 										$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
 										$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-										
+
 										print '<td class="center">';
 										print $form->textwithpicto('', $htmltooltip, 1, 0);
 										print '</td>';
-										
+
 										// Preview
 										print '<td class="center">';
 										if ($module->type == 'pdf')
@@ -499,7 +499,7 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 										}
 										print '</td>';
-										
+
 										print "</tr>\n";
 									}
 								}
@@ -509,11 +509,14 @@ foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 				}
 			}
 		}
-		
+
 		print '</table>';
 	}
 }
 
+if (empty($setupnotempty)) {
+	print '<br>'.$langs->trans("NothingToSetup");
+}
 
 // Page end
 dol_fiche_end();

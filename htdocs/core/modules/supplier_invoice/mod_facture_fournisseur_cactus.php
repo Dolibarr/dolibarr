@@ -101,7 +101,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		// Check invoice num
 		$siyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefixinvoice) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
@@ -122,7 +122,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		// Check credit note num
 		$siyymm = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefixcreditnote) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
@@ -143,7 +143,7 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
 		// Check deposit num
 		$siyymm = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefixdeposit) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixdeposit)."____-%'";
@@ -174,12 +174,12 @@ class mod_facture_fournisseur_cactus extends ModeleNumRefSuppliersInvoices
     {
         global $db, $conf;
 
+        $prefix = $this->prefixinvoice;
         if ($object->type == 2) $prefix = $this->prefixcreditnote;
-        elseif ($facture->type == 3) $prefix = $this->prefixdeposit;
-        else $prefix = $this->prefixinvoice;
+        elseif ($object->type == 3) $prefix = $this->prefixdeposit;
 
-        // D'abord on recupere la valeur max
-        $posindice = 8;
+        // First, we get the max value
+        $posindice = strlen($prefix) + 6;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
         $sql .= " WHERE ref LIKE '".$prefix."____-%'";
