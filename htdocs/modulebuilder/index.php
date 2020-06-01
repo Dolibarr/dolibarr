@@ -899,6 +899,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 
+		// TODO Update entries '$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);'
+
+
 		// Scan for object class files
 		$listofobject = dol_dir_list($destdir.'/class', 'files', 0, '\.class\.php$');
 
@@ -1030,7 +1033,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	$objectname = $tabobj;
 
 	$arrayoftables = array();
-	if ($action == 'droptable') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj);
+	if ($action == 'droptable') $arrayoftables[] = MAIN_DB_PREFIX.strtoslower($module).'_'.strtolower($tabobj);
 	if ($action == 'droptableextrafields') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj).'_extrafields';
 
 	foreach ($arrayoftables as $tabletodrop)

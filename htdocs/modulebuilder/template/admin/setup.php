@@ -256,6 +256,7 @@ $myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+	if ($myTmpObjectKey == 'MyObject') continue;
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Orders Numbering model

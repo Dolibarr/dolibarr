@@ -612,7 +612,7 @@ class FormFile
 			} else {
 			    $submodulepart = $modulepart;
 
-			    // modulepart = 'nameofmodule' or 'nameofmodule:nameofobject'
+			    // modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
 			    $tmp = explode(':', $modulepart);
 			    if (!empty($tmp[1])) {
 			    	$modulepart = $tmp[0];
@@ -620,17 +620,18 @@ class FormFile
 			    }
 
 			    // For normalized standard modules
-				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
+				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 				if (file_exists($file))
 				{
 					$res = include_once $file;
 				}
 				// For normalized external modules.
 				else {
-				    $file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
+				    $file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 					$res = include_once $file;
 				}
-				$class = 'ModelePDF'.ucfirst($submodulepart);
+
+				$class = 'ModelePDF'.$submodulepart;
 
 				if (class_exists($class))
 				{

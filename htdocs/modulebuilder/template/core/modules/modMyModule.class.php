@@ -407,30 +407,39 @@ class modMyModule extends DolibarrModules
 
 		$sql = array();
 
-		// ODT template
-		/*
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/mymodule';
-		$dest=$dirodt.'/template_myobjects.odt';
+		// Document templates
+		$moduledir = 'mymodule';
+		$myTmpObjects = array();
+		$myTmpObjects['MyObject']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
 
-		if (file_exists($src) && ! file_exists($dest))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			dol_mkdir($dirodt);
-			$result=dol_copy($src, $dest, 0, 0);
-			if ($result < 0)
-			{
-				$langs->load("errors");
-				$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
-				return 0;
+		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+			if ($myTmpObjectKey == 'MyObject') continue;
+			if ($myTmpObjectArray['includerefgeneration']) {
+				$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/mymodule/template_myobjects.odt';
+				$dirodt=DOL_DATA_ROOT.'/doctemplates/mymodule';
+				$dest=$dirodt.'/template_myobjects.odt';
+
+				if (file_exists($src) && ! file_exists($dest))
+				{
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					dol_mkdir($dirodt);
+					$result=dol_copy($src, $dest, 0, 0);
+					if ($result < 0)
+					{
+						$langs->load("errors");
+						$this->error=$langs->trans('ErrorFailToCopyFile', $src, $dest);
+						return 0;
+					}
+				}
+
+				$sql = array_merge($sql, array(
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_".strtolower($myTmpObjectKey)."' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_".strtolower($myTmpObjectKey)."','".strtolower($myTmpObjectKey)."',".$conf->entity.")",
+					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
+					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
+				));
 			}
 		}
-
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'mymodule' AND entity = ".$conf->entity,
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','mymodule',".$conf->entity.")"
-		);
-		*/
 
 		return $this->_init($sql, $options);
 	}
