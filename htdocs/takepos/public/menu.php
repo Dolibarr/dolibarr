@@ -83,7 +83,7 @@ foreach ($maincategories as $cat){
             <a id="'.$cat['id'].'"></a><h3>'.$cat['label'].'</h3>
           </div>
 		  <div class="grid-x grid-padding-x">';
-		  
+
 	$object = new Categorie($db);
 	$result = $object->fetch($cat['id']);
 	$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
@@ -93,12 +93,12 @@ foreach ($maincategories as $cat){
 			<div class="item">
                 <h4>'.$pro->label.'</h4>
                 <span class="dots"></span>
-                <span class="price">'.price($pro->price_ttc,1).'</span>
+                <span class="price">'.price($pro->price_ttc, 1).'</span>
             </div>
         </div>';
 	}
 	print '</div>';
-} 
+}
 ?>		  
 			</div>
 		</div>
