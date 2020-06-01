@@ -91,7 +91,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 
 		$fayymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -124,8 +124,8 @@ class mod_pacific extends ModeleNumRefFicheinter
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";

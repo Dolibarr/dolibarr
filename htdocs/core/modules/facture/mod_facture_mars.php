@@ -98,7 +98,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		// Check invoice num
 		$fayymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefixinvoice) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixinvoice)."____-%'";
@@ -120,7 +120,7 @@ class mod_facture_mars extends ModeleNumRefFactures
 		// Check credit note num
 		$fayymm = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefixcreditnote) + 6;
 		$sql = "SELECT MAX(SUBSTRING(ref FROM ".$posindice.")) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefixcreditnote)."____-%'";
@@ -152,15 +152,14 @@ class mod_facture_mars extends ModeleNumRefFactures
 	public function getNextValue($objsoc, $invoice, $mode = 'next')
 	{
 		global $db;
-		$prefix = $this->prefixinvoice;
 
+		$prefix = $this->prefixinvoice;
 		if ($invoice->type == 1) $prefix = $this->prefixreplacement;
 		elseif ($invoice->type == 2) $prefix = $this->prefixcreditnote;
 		elseif ($invoice->type == 3) $prefix = $this->prefixdeposit;
-		else $prefix = $this->prefixinvoice;
 
 		// First we get the max value
-		$posindice = 8;
+		$posindice = strlen($prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql .= " WHERE ref LIKE '".$prefix."____-%'";

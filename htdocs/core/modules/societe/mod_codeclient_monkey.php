@@ -129,8 +129,8 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
             return -1;
         }
 
-        // D'abord on recupere la valeur max (reponse immediate car champ indexe)
-		$posindice = 8;
+        // First, we get the max value (reponse immediate car champ indexe)
+        $posindice = strlen($prefix) + 6;
         $sql = "SELECT MAX(CAST(SUBSTRING(".$field." FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
 		$sql .= " WHERE ".$field." LIKE '".$prefix."____-%'";

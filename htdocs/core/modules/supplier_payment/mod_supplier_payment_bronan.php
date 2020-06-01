@@ -90,7 +90,7 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 
 		$payyymm = ''; $max = '';
 
-		$posindice = 9;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -123,8 +123,8 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 10;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";

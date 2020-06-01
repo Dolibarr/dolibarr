@@ -41,7 +41,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 * Prefix
 	 * @var string
 	 */
-	public $prefix = 'TK';
+	public $prefix = 'TC';
 
 	/**
 	 * @var string Error code (or message)
@@ -89,7 +89,11 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
         $pryymm = '';
         $max = '';
 
-        $posindice = 8;
+        $pos_source = 0;
+
+        // First, we get the max value
+        $posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
+
         $sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture";
         $sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -127,7 +131,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 
         $pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
 
-        // D'abord on recupere la valeur max
+        // First, we get the max value
         $posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
         $sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
         $sql .= " FROM ".MAIN_DB_PREFIX."facture";

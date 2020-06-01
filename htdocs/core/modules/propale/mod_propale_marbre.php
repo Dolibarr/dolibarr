@@ -92,7 +92,7 @@ class mod_propale_marbre extends ModeleNumRefPropales
 
 		$pryymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -126,8 +126,8 @@ class mod_propale_marbre extends ModeleNumRefPropales
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
 		$sql .= " FROM ".MAIN_DB_PREFIX."propal";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
