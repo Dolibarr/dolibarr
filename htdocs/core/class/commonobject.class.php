@@ -3281,7 +3281,7 @@ abstract class CommonObject
 				{
 					// Parse element/subelement (ex: project_task, cabinetmed_consultation, ...)
                     list($module,$element) = explode(':', $objecttype);
-                    if (empty($element)) $element =$subelement = $objecttype;
+                    if (empty($element)) $element = $subelement = $objecttype;
                     else $subelement = $element;
 					if ($objecttype != 'supplier_proposal' && $objecttype != 'order_supplier' && $objecttype != 'invoice_supplier'
 						&& preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
