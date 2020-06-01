@@ -1269,7 +1269,8 @@ class FormFile
 					}
 					else
 					{
-						print dol_trunc($file['name'], 200);
+						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
+						print dol_trunc($filenametoshow, 200);
 						print '</a>';
 					}
 					// Preview link

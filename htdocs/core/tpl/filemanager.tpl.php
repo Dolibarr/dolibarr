@@ -178,7 +178,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 
 	    print '</td></tr>';
     }
-    else	// Show filtree when ajax is disabled (rare)
+    else	// Show file tree when ajax is disabled (rare)
     {
         print '<tr><td style="padding-left: 20px">';
 
@@ -212,7 +212,7 @@ if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg
 <div class="pane-in ecm-in-layout-center">
 <div id="ecmfileview" class="ecmfileview">
 <?php
-// Start right panel
+// Start right panel - List of content of a directory
 
 
 $mode='noajax';
