@@ -6687,8 +6687,8 @@ class Form
 				} elseif ($objecttype == 'subscription') {
 					$tplpath = 'adherents';
 				} else {
-				    list($module,$element)=explode(':',$objecttype);
-                    if(!empty($element)){
+				    list($module,$element)=explode(':', $objecttype);
+                    if (!empty($element)) {
                         $tplname="linked{$element}block";
                         $tplpath=$module;
                     }
