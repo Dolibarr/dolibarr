@@ -1081,7 +1081,7 @@ class Contact extends CommonObject
 			$sql .= " WHERE ec.fk_socpeople=".$this->id;
 			$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql .= " AND tc.source='external'";
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1094,7 +1094,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel .= " WHERE rowid = ".$obj->rowid;
-					dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+					dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 					$result = $this->db->query($sqldel);
 					if (!$result)
 					{
@@ -1116,7 +1116,7 @@ class Contact extends CommonObject
 		{
 			// Remove Roles
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1130,7 +1130,7 @@ class Contact extends CommonObject
 		{
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1144,7 +1144,7 @@ class Contact extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result)
 			{
@@ -1730,5 +1730,58 @@ class Contact extends CommonObject
 			$this->db->rollback();
 			return $error * -1;
 		}
+	}
+
+	/**
+	 * Delete all contact from a thirdparty
+	 * @param		int		$socId      Thirdparty Id
+	 * @param       int     $notrigger  Disable all trigger
+	 * @return		int						<0 if KO, >0 if OK
+	 * @throws Exception
+	 */
+	public function deleteBySoc($socId = 0, $notrigger = 0)
+	{
+		$error = 0;
+		$deleted = 0;
+
+		if (!empty($socId)) {
+			$this->db->begin();
+
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
+			$sql .= " WHERE fk_soc = " . $socId;
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->lasterror() . ' sql=' . $sql;
+				$error++;
+			} else {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$result = $this->fetch($obj->rowid);
+					if ($result < 0) {
+						$error++;
+						$this->errors = $this->error;
+					} else {
+						$result = $this->delete($notrigger);
+						if ($result < 0) {
+							$error++;
+							$this->errors = $this->error;
+						} else {
+							$deleted++;
+						}
+					}
+				}
+			}
+
+			if (empty($error)) {
+				$this->db->commit();
+				return $deleted;
+			} else {
+				$this->error = implode(' ', $this->errors);
+				$this->db->rollback();
+				return $error * -1;
+			}
+		}
+
+		return $deleted;
 	}
 }

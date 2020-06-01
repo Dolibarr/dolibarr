@@ -7891,15 +7891,32 @@ abstract class CommonObject
 		if (!empty($this->childtablesoncascade)) {
             foreach ($this->childtablesoncascade as $table)
             {
-                $sql = 'DELETE FROM '.MAIN_DB_PREFIX.$table.' WHERE '.$this->fk_element.' = '.$this->id;
-                $resql = $this->db->query($sql);
-                if (!$resql)
-                {
-                    $this->error = $this->db->lasterror();
-                    $this->errors[] = $this->error;
-                    $this->db->rollback();
-                    return -1;
-                }
+	            $deleteFromObject=explode(':', $table);
+	            if (count($deleteFromObject)>1) {
+		            $className=str_replace('@', '', $deleteFromObject[0]);
+		            $filePath=$deleteFromObject[1];
+		            $deleteMethod=$deleteFromObject[2];
+		            if (dol_include_once($filePath)) {
+			            $childObject = new $className($this->db);
+			            $result= $childObject->{$deleteMethod}($this->id);
+			            if ($result<0) {
+				            $this->errors[] = $childObject->error;
+				            return -1;
+			            }
+		            } else {
+			            $this->errors[] = 'Cannot find child class file ' .$filePath;
+			            return -1;
+		            }
+	            } else {
+		            $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
+		            $resql = $this->db->query($sql);
+		            if (!$resql) {
+			            $this->error = $this->db->lasterror();
+			            $this->errors[] = $this->error;
+			            $this->db->rollback();
+			            return -1;
+		            }
+	            }
             }
         }
 
