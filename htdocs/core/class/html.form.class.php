@@ -6686,7 +6686,7 @@ class Form
 					$tplpath = 'expensereport';
 				} elseif ($objecttype == 'subscription') {
 					$tplpath = 'adherents';
-				}else{
+				} else {
 				    list($module,$element)=explode(':',$objecttype);
                     if(!empty($element)){
                         $tplname="linked{$element}block";
