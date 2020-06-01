@@ -207,7 +207,7 @@ ModulesMarketPlaces=Find external app/modules
 ModulesDevelopYourModule=Develop your own app/modules
 ModulesDevelopDesc=You may also develop your own module or find a partner to develop one for you.
 DOLISTOREdescriptionLong=Instead of switching on <a href="https://www.dolistore.com">www.dolistore.com</a> web site to find an external module, you can use this embedded tool that will perform the search on the external market place for you (may be slow, need an internet access)...
-NewModule=New
+NewModule=New module
 FreeModule=Free
 CompatibleUpTo=Compatible with version %s
 NotCompatible=This module does not seem compatible with your Dolibarr %s (Min %s - Max %s).
@@ -446,6 +446,7 @@ LinkToTestClickToDial=Enter a phone number to call to show a link to test the Cl
 RefreshPhoneLink=Refresh link
 LinkToTest=Clickable link generated for user <strong>%s</strong> (click phone number to test)
 KeepEmptyToUseDefault=Keep empty to use default value
+KeepThisEmptyInMostCases=In most cases, you can keep this field empy. 
 DefaultLink=Default link
 SetAsDefault=Set as default
 ValueOverwrittenByUserSetup=Warning, this value may be overwritten by user specific setup (each user can set his own clicktodial url)
@@ -1263,6 +1264,7 @@ FieldEdition=Edition of field %s
 FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)
 GetBarCode=Get barcode
 NumberingModules=Numbering models
+DocumentModules=Document models
 ##### Module password generation
 PasswordGenerationStandard=Return a password generated according to internal Dolibarr algorithm: 8 characters containing shared numbers and characters in lowercase.
 PasswordGenerationNone=Do not suggest a generated password. Password must be typed in manually.

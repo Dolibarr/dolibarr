@@ -1027,7 +1027,7 @@ class MyObject extends CommonObject
 		$langs->load("mymodule@mymodule");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+			$modele = 'standard_myobject';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;

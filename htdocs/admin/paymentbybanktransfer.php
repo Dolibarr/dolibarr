@@ -20,9 +20,9 @@
  */
 
 /**
- *	\file       htdocs/admin/prelevement.php
- *	\ingroup    prelevement
- *	\brief      Page to setup Withdrawals
+ *	\file       htdocs/admin/credtitransfer.php
+ *	\ingroup    paymentbybanktransfer
+ *	\brief      Page to setup payments by credit transfer
  */
 
 require '../main.inc.php';
@@ -48,11 +48,11 @@ if ($action == "set")
 {
 	$db->begin();
 
-	$id = GETPOST('PRELEVEMENT_ID_BANKACCOUNT', 'int');
+	$id = GETPOST('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 'int');
 	$account = new Account($db);
 	if ($account->fetch($id) > 0)
 	{
-		$res = dolibarr_set_const($db, "PRELEVEMENT_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT", $id, 'chaine', 0, '', $conf->entity);
 		if (!$res > 0) $error++;
 		/*
         $res = dolibarr_set_const($db, "PRELEVEMENT_CODE_BANQUE", $account->code_banque,'chaine',0,'',$conf->entity);
@@ -70,39 +70,37 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_RAISON_SOCIALE", $account->proprio,'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
         */
-	}
-	else $error++;
+	} else $error++;
 
-	$res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ICS", GETPOST("PAYMENTBYBANKTRANSFER_ICS"), 'chaine', 0, '', $conf->entity);
 	if (!$res > 0) $error++;
 
-	if (GETPOST("PRELEVEMENT_USER") > 0)
+	if (GETPOST("PAYMENTBYBANKTRANSFER_USER") > 0)
 	{
-		$res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_USER", GETPOST("PAYMENTBYBANKTRANSFER_USER"), 'chaine', 0, '', $conf->entity);
 		if (!$res > 0) $error++;
 	}
-	if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END") == "")
+	/*
+	if (GETPOST("PAYMENTBYBANKTRANSFER_END_TO_END") || GETPOST("PAYMENTBYBANKTRANSFER_END_TO_END") == "")
 	{
-		$res = dolibarr_set_const($db, "PRELEVEMENT_END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_END_TO_END", GETPOST("PAYMENTBYBANKTRANSFER_END_TO_END"), 'chaine', 0, '', $conf->entity);
 		if (!$res > 0) $error++;
 	}
-	if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD") == "")
+	if (GETPOST("PAYMENTBYBANKTRANSFER_USTRD") || GETPOST("PAYMENTBYBANKTRANSFER_USTRD") == "")
 	{
-		$res = dolibarr_set_const($db, "PRELEVEMENT_USTRD", GETPOST("PRELEVEMENT_USTRD"), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_USTRD", GETPOST("PAYMENTBYBANKTRANSFER_USTRD"), 'chaine', 0, '', $conf->entity);
 		if (!$res > 0) $error++;
 	}
-
-	if (GETPOST("PRELEVEMENT_ADDDAYS") || GETPOST("PRELEVEMENT_ADDDAYS") == "")
+	*/
+	if (GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") || GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS") == "")
 	{
-		$res = dolibarr_set_const($db, "PRELEVEMENT_ADDDAYS", GETPOST("PRELEVEMENT_ADDDAYS"), 'chaine', 0, '', $conf->entity);
+		$res = dolibarr_set_const($db, "PAYMENTBYBANKTRANSFER_ADDDAYS", GETPOST("PAYMENTBYBANKTRANSFER_ADDDAYS"), 'chaine', 0, '', $conf->entity);
 		if (!$res > 0) $error++;
 	} elseif (!$error)
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
@@ -135,11 +133,11 @@ $form = new Form($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("WithdrawalsSetup"));
+llxHeader('', $langs->trans("CreditTransferSetup"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
-print load_fiche_titre($langs->trans("WithdrawalsSetup"), $linkback, 'title_setup');
+print load_fiche_titre($langs->trans("CreditTransferSetup"), $linkback, 'title_setup');
 print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=set">';
@@ -153,51 +151,43 @@ print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>";
 
 // Bank account (from Banks module)
-print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToReceiveWithdraw").'</td>';
+print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("BankToPayCreditTransfer").'</td>';
 print '<td class="left">';
-$form->select_comptes($conf->global->PRELEVEMENT_ID_BANKACCOUNT, 'PRELEVEMENT_ID_BANKACCOUNT', 0, "courant=1", 1);
+$form->select_comptes($conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT, 'PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT', 0, "courant=1", 1);
 print '</td></tr>';
 
 // ICS
-print '<tr class="oddeven"><td class="fieldrequired">';
-$htmltext = $langs->trans("AskThisIDToYourBank");
-print $form->textwithpicto($langs->trans("ICS"), $htmltext);
-print '</td>';
+print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ICS").'</td>';
 print '<td class="left">';
-print '<input type="text" name="PRELEVEMENT_ICS" value="'.$conf->global->PRELEVEMENT_ICS.'" size="15" >';
-print '</td>';
+print '<input type="text" name="PAYMENTBYBANKTRANSFER_ICS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ICS.'" size="15" ></td>';
 print '</td></tr>';
 
 //User
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
 print '<td class="left">';
-print $form->select_dolusers($conf->global->PRELEVEMENT_USER, 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print $form->select_dolusers($conf->global->PAYMENTBYBANKTRANSFER_USER, 'PAYMENTBYBANKTRANSFER_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 print '</td>';
 print '</tr>';
 
+/*
 //EntToEnd
-print '<tr class="oddeven"><td>';
-$htmltext = $langs->trans("KeepThisEmptyInMostCases");
-print $form->textwithpicto($langs->trans("END_TO_END"), $htmltext);
-print '</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("END_TO_END").'</td>';
 print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_END_TO_END" value="'.$conf->global->PRELEVEMENT_END_TO_END.'" size="15" ></td>';
 print '</td></tr>';
 
 //USTRD
-print '<tr class="oddeven"><td>';
-$htmltext = $langs->trans("KeepThisEmptyInMostCases");
-print $form->textwithpicto($langs->trans("USTRD"), $htmltext);
-print '</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("USTRD").'</td>';
 print '<td class="left">';
 print '<input type="text" name="PRELEVEMENT_USTRD" value="'.$conf->global->PRELEVEMENT_USTRD.'" size="15" ></td>';
 print '</td></tr>';
+*/
 
 //ADDDAYS
 print '<tr class="oddeven"><td>'.$langs->trans("ADDDAYS").'</td>';
 print '<td class="left">';
-if (!$conf->global->PRELEVEMENT_ADDDAYS) $conf->global->PRELEVEMENT_ADDDAYS = 0;
-print '<input type="text" name="PRELEVEMENT_ADDDAYS" value="'.$conf->global->PRELEVEMENT_ADDDAYS.'" size="5" ></td>';
+if (!$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS) $conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS = 0;
+print '<input type="text" name="PAYMENTBYBANKTRANSFER_ADDDAYS" value="'.$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS.'" size="15" ></td>';
 print '</td></tr>';
 print '</table>';
 print '<br>';

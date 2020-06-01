@@ -142,10 +142,8 @@ print load_fiche_titre($title);
 dol_fiche_head();
 
 $nb = $bprev->NbFactureAPrelever();
-$nb1 = $bprev->NbFactureAPrelever(1);
-$nb11 = $bprev->NbFactureAPrelever(1, 1);
 $pricetowithdraw = $bprev->SommeAPrelever();
-if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
+if ($nb < 0)
 {
 	dol_print_error($bprev->error);
 }

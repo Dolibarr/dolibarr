@@ -89,7 +89,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -174,7 +174,7 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 		}
 
 		// First we get the max value
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."expensereport";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
