@@ -837,6 +837,7 @@ Sincerely=Sincerely
 ConfirmDeleteObject=Are you sure you want to delete this object?
 DeleteLine=Delete line
 ConfirmDeleteLine=Are you sure you want to delete this line?
+ErrorPDFTkOutputFileNotFound=Error: the file was not generated. Please check that the 'pdftk' command is installed in a directory included in the $PATH environment variable (linux/unix only) or contact your system administrator.
 NoPDFAvailableForDocGenAmongChecked=No PDF were available for the document generation among checked record
 TooManyRecordForMassAction=Too many records selected for mass action. The action is restricted to a list of %s records.
 NoRecordSelected=No record selected
