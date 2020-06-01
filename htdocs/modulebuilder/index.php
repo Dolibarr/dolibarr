@@ -890,10 +890,12 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 				'/\$includedocgeneration = 0;/' => '$includedocgeneration = 1;'
 			);
 			dolReplaceInFile($destdir.'/class/'.strtolower($objectname).'.class.php', $arrayreplacement, '', 0, 0, 1);
+			dolReplaceInFile($destdir.'/'.strtolower($objectname).'_card.php', $arrayreplacement, '', 0, 0, 1);
 
 			$arrayreplacement = array(
 				'/\'models\' => 0,/' => '\'models\' => 1,'
 			);
+
 			dolReplaceInFile($destdir.'/core/modules/mod'.$module.'.class.php', $arrayreplacement, '', 0, 0, 1);
 		}
 

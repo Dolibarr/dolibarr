@@ -140,6 +140,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				if ($val['help'])           $texttoinsert .= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
 				if ($val['showoncombobox']) $texttoinsert .= " 'showoncombobox'=>'".$val['showoncombobox']."',";
 				if ($val['disabled'])       $texttoinsert .= " 'disabled'=>'".$val['disabled']."',";
+				if ($val['autofocusoncreate']) $texttoinsert .= " 'autofocusoncreate'=>'".$val['autofocusoncreate']."',";
 				if ($val['arrayofkeyval'])
 				{
 					$texttoinsert .= " 'arrayofkeyval'=>array(";
