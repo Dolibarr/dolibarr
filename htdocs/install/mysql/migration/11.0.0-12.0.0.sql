@@ -75,6 +75,8 @@ ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-orde
 
 ALTER TABLE llx_ecm_files MODIFY COLUMN src_object_type varchar(64);
 
+ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
+
 
 -- Delete an old index that is duplicated
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;

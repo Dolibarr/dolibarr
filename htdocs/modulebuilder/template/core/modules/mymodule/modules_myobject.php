@@ -51,7 +51,7 @@ abstract class ModelePDFMyObject extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type = 'mymodule_myobject';
+		$type = 'myobject';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
