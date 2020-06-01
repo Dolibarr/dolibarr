@@ -6037,7 +6037,7 @@ abstract class CommonObject
 						// Several field into label (eq table:code|libelle:rowid)
 						$notrans = false;
 						$fields_label = explode('|', $InfoFieldList[1]);
-						if (count($fields_label)>1)
+						if (count($fields_label) > 1)
 						{
 							$notrans = true;
 							foreach ($fields_label as $field_toshow)
@@ -6199,7 +6199,7 @@ abstract class CommonObject
 						$notrans = false;
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
-						if (count($fields_label)>1) {
+						if (count($fields_label) > 1) {
 							$notrans = true;
 							foreach ($fields_label as $field_toshow) {
 								$labeltoshow .= $obj->$field_toshow.' ';
