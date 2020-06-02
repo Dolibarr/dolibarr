@@ -3989,16 +3989,19 @@ div.titre {
 	padding-top: 5px;
     padding-bottom: 5px;
 }
-.secondary, div.titre {
+div.fiche > table.table-fiche-title:first-of-type div {
+    color: var(--colortexttitlenotab);
+    /* font-weight: 600; */
+}
+div.titre {
+    color: var(--colortexttitlenotab);
+}
+
+.secondary {
     color: var(--colortexttitlenotab);
 }
 .tertiary {
 	color: var(--colortexttitlenotab2);
-}
-div.fiche > table.table-fiche-title:first-of-type div {
-    /* color: var(--colortexttitlenotab); */
-    color: #606060;
-    font-weight: 600;
 }
 
 table.table-fiche-title .col-title div.titre{
