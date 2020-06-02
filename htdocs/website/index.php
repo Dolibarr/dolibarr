@@ -293,7 +293,7 @@ if ($action == 'replacesiteconfirm') {
 }
 
 $usercanedit = $user->rights->website->write;
-
+$permissiontodelete = $user->rights->website->delete;
 
 
 /*
@@ -386,12 +386,12 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searc
 if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $usercanedit)
 {
 	$error = 0;
+	$nbupdate = 0;
 
 	$db->begin();
 
 	$categoryid = GETPOST('setcategory', 'none');
 	if ($categoryid > 0) {
-		$nbupdate = 0;
 		$tmpwebsitepage = new WebsitePage($db);
 		$category = new Categorie($db);
 		$category->fetch($categoryid);
@@ -1153,9 +1153,8 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes')
 	}
 }
 
-// Delete page
-if ($action == 'delete')
-{
+// Delete page (from website page menu)
+if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
 	$error = 0;
 
 	$db->begin();
@@ -1186,6 +1185,62 @@ if ($action == 'delete')
 	else {
 		$db->rollback();
 		dol_print_error($db);
+	}
+}
+// Delete page (from menu search)
+if (! GETPOSTISSET('pageid')) {
+	$objectclass = 'WebsitePage';
+
+	// Add part of code from actions_massactions.inc.php
+	// Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
+	if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)
+	{
+		$db->begin();
+
+		$objecttmp = new $objectclass($db);
+		$nbok = 0;
+		foreach ($toselect as $toselectid)
+		{
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0)
+			{
+				$result = $objecttmp->delete($user);
+
+				if ($result <= 0)
+				{
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else $nbok++;
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (!$error)
+		{
+			if ($nbok > 1) setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+			else setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+		//var_dump($listofobjectthirdparties);exit;
+	}
+
+	if ($action == 'delete') {
+		$action = 'replacesiteconfirm';
+
+		$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
+		$langcode = GETPOST('optionlanguage', 'aZ09');
+		$otherfilters = array();
+		if (GETPOST('optioncategory', 'int') > 0) {
+			$otherfilters['category'] = GETPOST('optioncategory', 'int');
+		}
+
+		$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
 	}
 }
 
@@ -2391,7 +2446,7 @@ if (!GETPOST('hide_websitemenu'))
 
 	// Toolbar for pages
 
-	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite')))
+	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')))
 	{
 		print '</div>'; // Close current websitebar to open a new one
 
@@ -2931,7 +2986,10 @@ if ($action == 'editcss')
 
 	// JS file
 	print '<tr><td class="tdtop">';
-	print $langs->trans('WEBSITE_JS_INLINE');
+	$textwithhelp = $langs->trans('WEBSITE_JS_INLINE');
+	$htmlhelp2 = $langs->trans("LinkAndScriptsHereAreNotLoadedInEditor").'<br>';
+	print $form->textwithpicto($textwithhelp, $htmlhelp2, 1, 'warning', '', 0, 2, 'htmljstooltip2');
+
 	print '</td><td>';
 
 	$doleditor = new DolEditor('WEBSITE_JS_INLINE', $jscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
@@ -3688,7 +3746,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$param = '';
 			$nbtotalofrecords = count($listofpages['list']);
 			$num = $limit;
-			$permissiontodelete = 0;
+			$permissiontodelete = $user->rights->website->delete;
 
 			// List of mass actions available
 			$arrayofmassactions = array();
@@ -3714,6 +3772,12 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 			print_barre_liste($langs->trans("Results"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1, 1, 1);
+
+			$topicmail = "WebsitePageRef";
+			$modelmail = "websitepage_send";
+			$objecttmp = new WebsitePage($db);
+			$trackid = 'wsp'.$object->id;
+			include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);

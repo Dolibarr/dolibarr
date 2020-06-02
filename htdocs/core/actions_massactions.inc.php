@@ -878,7 +878,10 @@ if (!$error && $massaction == 'cancelorders')
 			setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidToBeCanceled", $cmd->ref), null, 'errors');
 			$error++;
 			break;
-		} else $result = $cmd->cancel();
+		} else {
+			// TODO We do not provide warehouse so no stock change here for the moment.
+			$result = $cmd->cancel();
+		}
 
 		if ($result < 0)
 		{
