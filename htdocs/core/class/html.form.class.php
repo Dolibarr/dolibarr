@@ -2431,6 +2431,8 @@ class Form
 		$outdurationvalue = $outtype == Product::TYPE_SERVICE ?substr($objp->duration, 0, dol_strlen($objp->duration) - 1) : '';
 		$outdurationunit = $outtype == Product::TYPE_SERVICE ?substr($objp->duration, -1) : '';
 
+		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO))  require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
         // Units
         $outvalUnits = '';
         if (!empty($conf->global->PRODUCT_USE_UNITS)) {

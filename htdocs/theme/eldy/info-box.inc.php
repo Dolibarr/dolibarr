@@ -188,8 +188,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .info-box-title{
 	text-transform: uppercase;
 	font-weight: bold;
-	margin-bottom: 6px;
-	/* padding-bottom: 4px; */
+	margin-bottom: 3px;	/* not too much space so we can add another lines */
 }
 .info-box-text{
 	font-size: 0.92em;
