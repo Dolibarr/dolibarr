@@ -50,8 +50,8 @@ create table llx_c_shipment_package_type
     rowid        integer  AUTO_INCREMENT PRIMARY KEY,
     label        varchar(50) NOT NULL,  -- Short name
     description	 varchar(255), -- Description
-    active       integer DEFAULT 1 NOT NULL, -- Active or not	
-    entity       integer DEFAULT 1 NOT NULL -- Multi company id 
+    active       integer DEFAULT 1 NOT NULL, -- Active or not
+    entity       integer DEFAULT 1 NOT NULL -- Multi company id
 )ENGINE=innodb;
 
 create table llx_facturedet_rec_extrafields
@@ -100,7 +100,7 @@ UPDATE llx_website_page SET lang = 'it' WHERE lang like 'it_%';
 UPDATE llx_website_page SET lang = 'pt' WHERE lang like 'pt_%';
 
 ALTER TABLE llx_website ADD COLUMN lang varchar(8);
-ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
+ALTER TABLE llx_website ADD COLUMN otherlang varchar(255);
 
 ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
 
@@ -283,7 +283,7 @@ ALTER TABLE llx_categorie_website_page ADD INDEX idx_categorie_website_page_fk_w
 ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_website_page_rowid FOREIGN KEY (fk_website_page) REFERENCES llx_website_page (rowid);
 
-ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime; 
+ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime;
 ALTER TABLE llx_categorie ADD COLUMN tms     		timestamp;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_creat	integer;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
@@ -301,11 +301,12 @@ ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 
-UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
+UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG';
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';
 
 ALTER TABLE llx_adherent_type MODIFY subscription varchar(3) NOT NULL DEFAULT '1';
 ALTER TABLE llx_adherent_type MODIFY vote varchar(3) NOT NULL DEFAULT '1';
-  
 
+
+ALTER TABLE llx_loan_schedule ADD column fk_payment_loan INTEGER;
