@@ -32,6 +32,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'products', 'stocks'));
@@ -50,6 +51,9 @@ $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('productcompositioncard'));
+
 $object = new Product($db);
 $objectid = 0;
 if ($id > 0 || !empty($ref))
@@ -66,6 +70,8 @@ if ($id > 0 || !empty($ref))
 
 if ($cancel) $action = '';
 
+$parameters=array('id'=>$id, 'ref'=>$ref);
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 // Action association d'un sousproduit
 if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
@@ -120,7 +126,15 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	}
 	$action = '';
 }
+elseif($action === 'confirm_makeproduct')
+{
 
+    if (! $error)
+    {
+        header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
+        exit;
+    }
+}
 
 /*
  * View
@@ -129,6 +143,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 $product_fourn = new ProductFournisseur($db);
 $productstatic = new Product($db);
 $form = new Form($db);
+$formProduct = new FormProduct($db);
 
 // action recherche des produits par mot-cle et/ou par categorie
 if ($action == 'search')
@@ -257,6 +272,32 @@ if ($id > 0 || !empty($ref))
 		$prodschild = $object->getChildsArbo($id, 1);
 		$nbofsubproducts = count($prodschild); // This include only first level of childs
 
+        if($action === 'makeproduct') {
+            $TConfirmParams = array();
+            $TConfirmParams['id']['name'] = "id";
+            $TConfirmParams['id']['type'] = "hidden";
+            $TConfirmParams['id']['value'] = $id;
+
+            $TConfirmParams['tomake']['label'] = $langs->trans('QtyToMake').' :';
+            $TConfirmParams['tomake']['type'] = "other";
+            $TConfirmParams['tomake']['name'] = "qty_to_make";
+            $TConfirmParams['tomake']['value'] = '<input type="number" name="qty_to_make" min="0" value="0"/>';
+
+            $TConfirmParams['target']['label'] = $langs->trans('WarehouseTarget').' :';
+            $TConfirmParams['target']['type'] = "other";
+            $TConfirmParams['tomake']['name'] = "entrywarehouse";
+            $TConfirmParams['target']['value'] = $formProduct->selectWarehouses('', 'entrywarehouse');
+
+            foreach($prods_arbo as $child) {
+                $fk_child = $child['id'];
+                $TConfirmParams['source'.$fk_child]['label'] = $langs->trans('WarehouseSource').' '.$child['ref'].' :';
+                $TConfirmParams['source'.$fk_child]['name'] = 'outletwarehouse'.$fk_child;
+                $TConfirmParams['source'.$fk_child]['type'] = "other";
+                $TConfirmParams['source'.$fk_child]['value'] = $formProduct->selectWarehouses('', 'outletwarehouse'.$fk_child);
+            }
+            print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakeProduct'), '', 'confirm_makeproduct', $TConfirmParams, '', 1, 'auto');
+            $action = '';
+        }
 
 		print '<div class="fichecenter">';
 
@@ -496,6 +537,13 @@ if ($id > 0 || !empty($ref))
 			print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';
 			print '</div>';
 			print '</form>';
+            print "\n".'<div class="tabsAction">'."\n";
+            $parameters = array();
+            $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
+            if(empty($reshook)) {
+                if(!empty($conf->stock->enabled)) print '<div class="inline-block divButAction" id="btMkProduct"><a href="'.$_SERVER["PHP_SELF"].'?action=makeproduct&id='.$id.'" class="butAction" >'.$langs->trans("MakeProduct").'</a></div>';
+            }
+            print '</div>';
 		}
 
 
