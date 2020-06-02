@@ -1806,7 +1806,7 @@ abstract class CommonObject
 		} elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
 		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
 		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid)  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
-		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		$sql .= " WHERE te.".$fieldid." < '".$this->db->escape($fieldid=='rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
 		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
 		if (!empty($filter))
@@ -1858,7 +1858,7 @@ abstract class CommonObject
 		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
 		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
 		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
-		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
+		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($fieldid=='rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
 		if ($this->restrictiononfksoc == 1 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND sc.fk_user = ".$user->id;
 		if ($this->restrictiononfksoc == 2 && !$user->rights->societe->client->voir && !$socid) $sql .= " AND (sc.fk_user = ".$user->id.' OR te.fk_soc IS NULL)';
 		if (!empty($filter))
@@ -6042,7 +6042,7 @@ abstract class CommonObject
 						// Several field into label (eq table:code|libelle:rowid)
 						$notrans = false;
 						$fields_label = explode('|', $InfoFieldList[1]);
-						if (is_array($fields_label))
+						if (count($fields_label) > 1)
 						{
 							$notrans = true;
 							foreach ($fields_label as $field_toshow)
@@ -6204,7 +6204,7 @@ abstract class CommonObject
 						$notrans = false;
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
-						if (is_array($fields_label)) {
+						if (count($fields_label) > 1) {
 							$notrans = true;
 							foreach ($fields_label as $field_toshow) {
 								$labeltoshow .= $obj->$field_toshow.' ';
@@ -7556,6 +7556,10 @@ abstract class CommonObject
 	{
 		if (is_null($value)) return 'NULL';
 		elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) return $this->db->escape("$value");
+		elseif ($fieldsentry['type'] == 'boolean') {
+		    if ($value) return 'true';
+		    else return 'false';
+        }
 		else return "'".$this->db->escape($value)."'";
 	}
 
