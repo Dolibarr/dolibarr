@@ -2,6 +2,7 @@
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans('LoanDeleted'), null, 'mesgs');
-			header("Location: index.php");
+			header("Location: list.php");
 			exit;
 		} else {
 			setEventMessages($loan->error, null, 'errors');
@@ -687,7 +688,7 @@ if ($id > 0)
 
 			$totalpaid = $total_capital;
 
-			if ($object->paid == 0)
+			if ($object->paid == 0 || $object->paid == 2)
 			{
 				print '<tr><td colspan="5" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="nowrap right">'.price($totalpaid, 0, $langs, 0, -1, -1, $conf->currency).'</td></tr>';
 				print '<tr><td colspan="5" class="right">'.$langs->trans("AmountExpected").' :</td><td class="nowrap right">'.price($object->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
@@ -737,25 +738,25 @@ if ($id > 0)
 				print '<div class="tabsAction">';
 
 				// Edit
-				if ($object->paid == 0 && $user->rights->loan->write)
+				if (($object->paid == 0 || $object->paid == 2) && $user->rights->loan->write)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
 				}
 
 				// Emit payment
-				if ($object->paid == 0 && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
+				if (($object->paid == 0 || $object->paid == 2) && ((price2num($object->capital) > 0 && round($staytopay) < 0) || (price2num($object->capital) > 0 && round($staytopay) > 0)) && $user->rights->loan->write)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create&last=true">'.$langs->trans("DoPayment").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/payment/payment.php?id='.$object->id.'&amp;action=create">'.$langs->trans("DoPayment").'</a></div>';
 				}
 
 				// Classify 'paid'
-				if ($object->paid == 0 && round($staytopay) <= 0 && $user->rights->loan->write)
+				if (($object->paid == 0 || $object->paid == 2) && round($staytopay) <= 0 && $user->rights->loan->write)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=paid">'.$langs->trans("ClassifyPaid").'</a></div>';
 				}
 
 				// Delete
-				if ($object->paid == 0 && $user->rights->loan->delete)
+				if (($object->paid == 0 || $object->paid == 2) && $user->rights->loan->delete)
 				{
 					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a></div>';
 				}
