@@ -202,7 +202,7 @@ if ($conf->societe->enabled)
 {
 	$nbno = $nbtotal = 0;
 
-	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'title_companies');
+	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"), '', 'company');
 
 	print '<br>'."\n";
 	$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
