@@ -382,7 +382,7 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searc
 	$massaction = '';
 }
 
-// Set categoery
+// Set category
 if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $usercanedit)
 {
 	$error = 0;
