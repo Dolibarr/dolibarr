@@ -474,7 +474,9 @@ if (!empty($mysoc->logo_mini)) {
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } else {
+	print '<div class="inline-block valignmiddle">';
 	print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	print '</div>';
 }
 print '</div>';
 print '</td></tr>';
@@ -492,7 +494,9 @@ if (!empty($mysoc->logo_squarred_mini)) {
 	}
 	print '<div class="inline-block valignmiddle marginrightonly"><a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=removelogosquarred">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a></div>';
 } else {
+	print '<div class="inline-block valignmiddle">';
 	print '<img height="60" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png">';
+	print '</div>';
 }
 print '</div>';
 print '</td></tr>';
