@@ -303,6 +303,7 @@ class FormProduct
 
         $reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
         if ($reshook > 0) $out = $hookmanager->resPrint;
+		elseif ($reshook == 0) $out .= $hookmanager->resPrint;
 
 		return $out;
 	}
