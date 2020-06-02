@@ -1030,14 +1030,18 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 				$input_files .= ' '.escapeshellarg($f);
 			}
 
-			$cmd = 'pdftk '.escapeshellarg($input_files).' cat output '.escapeshellarg($file);
+			$cmd = 'pdftk ' . $input_files . ' cat output '.escapeshellarg($file);
 			exec($cmd);
 
-			if (!empty($conf->global->MAIN_UMASK))
-				@chmod($file, octdec($conf->global->MAIN_UMASK));
-
-			$langs->load("exports");
-			setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
+			// check if pdftk is installed
+			if (file_exists($file)) {
+				if (!empty($conf->global->MAIN_UMASK))
+					@chmod($file, octdec($conf->global->MAIN_UMASK));
+				$langs->load("exports");
+				setEventMessages($langs->trans('FileSuccessfullyBuilt', $filename.'_'.dol_print_date($now, 'dayhourlog')), null, 'mesgs');
+			} else {
+				setEventMessages($langs->trans('ErrorPDFTkOutputFileNotFound'), null, 'errors');
+			}
 		}
 		else
 		{

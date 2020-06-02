@@ -637,6 +637,12 @@ class Societe extends CommonObject
 	public $multicurrency_code;
 
 	/**
+	 * @var Account Default BAN account
+	 */
+	public $bank_account;
+
+
+	/**
 	 *    Constructor
 	 *
 	 *    @param	DoliDB		$db		Database handler
@@ -4152,6 +4158,17 @@ class Societe extends CommonObject
 				{
 					print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
 					return 0;
+				}
+			}
+
+			if (! isset($this->bank_account)) {
+				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+				$bac = new CompanyBankAccount($this->db);
+				$result = $bac->fetch(0, $this->id);
+				if ($result > 0) {
+					$this->bank_account = $bac;
+				} else {
+					$this->bank_account = '';
 				}
 			}
 

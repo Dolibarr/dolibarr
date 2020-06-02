@@ -3711,7 +3711,8 @@ class Form
 		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE entity IN ('.getEntity('invoice').')';
-		$sql .= ' AND situation_counter>=1';
+		$sql .= ' AND situation_counter >= 1';
+		$sql .= ' AND type <> 2';
 		$sql .= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
