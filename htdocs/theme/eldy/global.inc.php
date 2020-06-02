@@ -3995,8 +3995,10 @@ div.titre {
 .tertiary {
 	color: var(--colortexttitlenotab2);
 }
-table.table-fiche-title:first-of-type div {
-    color: var(--colortexttitlenotab);
+div.fiche > table.table-fiche-title:first-of-type div {
+    /* color: var(--colortexttitlenotab); */
+    color: #606060;
+    font-weight: 600;
 }
 
 table.table-fiche-title .col-title div.titre{
