@@ -345,7 +345,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
             // Dynamic max line heigh calculation
             $dynamic_line_height = array();
             $dynamic_line_height[] = $pdf->getStringHeight(60, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq));
-            $dynamic_line_height[] = $pdf->getStringHeight(80, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq));
+            $dynamic_line_height[] = $pdf->getStringHeight(80, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq));
             $max_line_height = max($dynamic_line_height);
             // Calculate number of line used function of estimated line size
             if ($max_line_height > $this->line_height) $nb_lines = floor($max_line_height / $this->line_height) + 1;
