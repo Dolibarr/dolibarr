@@ -1060,7 +1060,7 @@ if ($dirins && ($action == 'droptable' || $action == 'droptableextrafields') && 
 	$objectname = $tabobj;
 
 	$arrayoftables = array();
-	if ($action == 'droptable') $arrayoftables[] = MAIN_DB_PREFIX.strtoslower($module).'_'.strtolower($tabobj);
+	if ($action == 'droptable') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj);
 	if ($action == 'droptableextrafields') $arrayoftables[] = MAIN_DB_PREFIX.strtolower($module).'_'.strtolower($tabobj).'_extrafields';
 
 	foreach ($arrayoftables as $tabletodrop)
