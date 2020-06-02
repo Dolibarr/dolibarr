@@ -7898,11 +7898,13 @@ abstract class CommonObject
 		            $deleteMethod=$deleteFromObject[2];
 		            if (dol_include_once($filePath)) {
 			            $childObject = new $className($this->db);
-			            $result= $childObject->{$deleteMethod}($this->id);
-			            if ($result<0) {
-				            $this->errors[] = $childObject->error;
-				            return -1;
-			            }
+						if (method_exists($childObject, $deleteMethod)) {
+							$result= $childObject->{$deleteMethod}($this->id);
+							if ($result<0) {
+								$this->errors[] = $childObject->error;
+								return -1;
+							}
+						}
 		            } else {
 			            $this->errors[] = 'Cannot find child class file ' .$filePath;
 			            return -1;
