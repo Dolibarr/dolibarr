@@ -37,7 +37,7 @@ $quality = 80;
  */
 function image_format_supported($file)
 {
-    $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg'; // See also into product.class.php
+    $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm|\.svg'; // See also into product.class.php
 
     // Case filename is not a format image
     $reg = array();
@@ -46,10 +46,11 @@ function image_format_supported($file)
     // Case filename is a format image but not supported by this PHP
     $imgfonction = '';
     if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
-    if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
     if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
     if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
+    if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
     if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
+    if (strtolower($reg[1]) == '.webp')  $imgfonction = 'imagecreatefromwebp';
     if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
     if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
     if (strtolower($reg[1]) == '.svg')  $imgfonction = 'imagecreatefromsvg'; // Never available
@@ -60,10 +61,12 @@ function image_format_supported($file)
             // Fonctions of conversion not available in this PHP
             return 0;
         }
+
+        // Filename is a format image and supported for conversion by this PHP
+        return 1;
     }
 
-    // Filename is a format image and supported for conversion by this PHP
-    return 1;
+    return 0;
 }
 
 
@@ -175,6 +178,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 4:	// IMG_WBMP
 			$imgfonction = 'imagecreatefromwbmp';
 			break;
+		case 17:	// IMG_WBMP
+			$imgfonction = 'imagecreatefromwebp';
+			break;
 	}
 	if ($imgfonction)
 	{
@@ -207,6 +213,11 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
 			$newquality = 'NU'; // Quality is not used for this format
+			break;
+		case 18: // Webp
+			$img = imagecreatefromwebp($filetoread);
+			$extImg = '.webp';
+			$newquality = '100'; // % quality maximum
 			break;
 	}
 
@@ -248,6 +259,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 		case 4:	// Bmp
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
 			break;
+		case 18: // Webp
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);
+			break;
 	}
 	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
 
@@ -275,6 +289,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 			break;
 		case 4:	// Bmp
 			imagewbmp($imgThumb, $imgThumbName);
+			break;
+		case 18: // Webp
+			imagewebp($imgThumb, $imgThumbName, $newquality);
 			break;
 	}
 
