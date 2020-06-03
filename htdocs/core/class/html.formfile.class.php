@@ -672,7 +672,7 @@ class FormFile
 			{
 			    $submodulepart = $modulepart;
 
-			    // modulepart = 'nameofmodule' or 'nameofmodule:nameofsubmodule'
+			    // modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
 			    $tmp = explode(':', $modulepart);
 			    if (!empty($tmp[1])) {
 			    	$modulepart = $tmp[0];
@@ -680,18 +680,18 @@ class FormFile
 			    }
 
 			    // For normalized standard modules
-				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
+				$file = dol_buildpath('/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 				if (file_exists($file))
 				{
 					$res = include_once $file;
 				}
 				// For normalized external modules.
-				else
-				{
-				    $file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$submodulepart.'.php', 0);
+				else {
+				    $file = dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.strtolower($submodulepart).'.php', 0);
 					$res = include_once $file;
 				}
-				$class = 'ModelePDF'.ucfirst($submodulepart);
+
+				$class = 'ModelePDF'.$submodulepart;
 
 				if (class_exists($class))
 				{
@@ -1107,7 +1107,7 @@ class FormFile
 		if ($disablecrop == -1)
 		{
 			$disablecrop = 1;
-			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
+			if (in_array($modulepart, array('bank', 'bom', 'expensereport', 'holiday', 'medias', 'member', 'mrp', 'project', 'product', 'produit', 'propal', 'service', 'societe', 'tax', 'tax-vat', 'ticket', 'user'))) $disablecrop = 0;
 		}
 
 		// Define relative path used to store the file
@@ -1270,6 +1270,7 @@ class FormFile
 					{
 						print '</a>';
 						$section_dir = dirname(GETPOST('urlfile', 'alpha'));
+						if (! preg_match('/\/$/', $section_dir)) $section_dir.='/';
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
@@ -1375,11 +1376,11 @@ class FormFile
 						// Delete or view link
 						// ($param must start with &)
 						print '<td class="valignmiddle right actionbuttons nowraponall"><!-- action on files -->';
-						if ($useinecm == 1 || $useinecm == 5)
+						if ($useinecm == 1 || $useinecm == 5)	// ECM manual tree
 						{
-							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
+							print '<a class="editfielda" href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
-						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6)
+						if (empty($useinecm) || $useinecm == 2 || $useinecm == 6)	// 6=Media file manager
 						{
 							$newmodulepart = $modulepart;
 							if (in_array($modulepart, array('product', 'produit', 'service'))) $newmodulepart = 'produit|service';
@@ -1389,7 +1390,13 @@ class FormFile
 								if ($permtoeditline)
 								{
 	   								// Link to resize
-	   						   		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"), 'resize', 'class="paddingrightonly"').'</a>';
+	   								$moreparaminurl = '';
+									if ($object->id > 0) {
+										$moreparaminurl = '&id='.$object->id;
+									} elseif (GETPOST('website', 'alpha')) {
+										$moreparaminurl = '&website='.GETPOST('website', 'alpha');
+									}
+									print '<a class="editfielda" href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).$moreparaminurl.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"), 'resize', 'class="paddingrightonly"').'</a>';
 								}
 							}
 

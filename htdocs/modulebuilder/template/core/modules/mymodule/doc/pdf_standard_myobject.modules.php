@@ -358,10 +358,10 @@ class pdf_standard_myobject extends ModelePDFMyObject
 	            $pdf->SetDrawColor(128, 128, 128);
 
 	            $pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-	            $pdf->SetSubject($outputlangs->transnoentities("PdfInvoiceTitle"));
+	            $pdf->SetSubject($outputlangs->transnoentities("PdfTitle"));
 	            $pdf->SetCreator("Dolibarr ".DOL_VERSION);
 	            $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-	            $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfInvoiceTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+	            $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 	            if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 	            // Set certificate
@@ -633,60 +633,12 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	                $pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
 
-	                // VAT Rate
-	                if ($this->getColumnStatus('vat'))
-	                {
-	                    $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
-	                    $this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
-	                    $nexY = max($pdf->GetY(), $nexY);
-	                }
-
-	                // Unit price before discount
-	                if ($this->getColumnStatus('subprice'))
-	                {
-	                    $up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
-	                    $this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
-	                    $nexY = max($pdf->GetY(), $nexY);
-	                }
-
 	                // Quantity
 	                // Enough for 6 chars
 	                if ($this->getColumnStatus('qty'))
 	                {
 	                    $qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'qty', $qty);
-	                    $nexY = max($pdf->GetY(), $nexY);
-	                }
-
-	                // Situation progress
-	                if ($this->getColumnStatus('progress'))
-	                {
-	                    $progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
-	                    $this->printStdColumnContent($pdf, $curY, 'progress', $progress);
-	                    $nexY = max($pdf->GetY(), $nexY);
-	                }
-
-	                // Unit
-	                if ($this->getColumnStatus('unit'))
-	                {
-	                    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
-	                    $this->printStdColumnContent($pdf, $curY, 'unit', $unit);
-	                    $nexY = max($pdf->GetY(), $nexY);
-	                }
-
-	                // Discount on line
-	                if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent)
-	                {
-	                    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-	                    $this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
-	                    $nexY = max($pdf->GetY(), $nexY);
-	                }
-
-	                // Total HT line
-	                if ($this->getColumnStatus('totalexcltax'))
-	                {
-	                    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
-	                    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
 	                    $nexY = max($pdf->GetY(), $nexY);
 	                }
 
@@ -716,7 +668,6 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 
 	                $sign = 1;
-	                if (isset($object->type) && $object->type == 2 && !empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign = -1;
 	                // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 	                $prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 	                if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) // Compute progress from previous situation
@@ -1006,21 +957,10 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("PdfInvoiceTitle");
-		if ($object->type == 1) $title = $outputlangs->transnoentities("InvoiceReplacement");
-		if ($object->type == 2) $title = $outputlangs->transnoentities("InvoiceAvoir");
-		if ($object->type == 3) $title = $outputlangs->transnoentities("InvoiceDeposit");
-		if ($object->type == 4) $title = $outputlangs->transnoentities("InvoiceProForma");
-		if ($this->situationinvoice) $title = $outputlangs->transnoentities("InvoiceSituation");
+		$title = $outputlangs->transnoentities("PdfTitle");
 		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - ';
-			if ($object->type == 0) {
-				if ($this->situationinvoice) $title .= $outputlangsbis->transnoentities("InvoiceSituation");
-				$title .= $outputlangsbis->transnoentities("PdfInvoiceTitle");
-			} elseif ($object->type == 1) $title .= $outputlangsbis->transnoentities("InvoiceReplacement");
-			elseif ($object->type == 2) $title .= $outputlangsbis->transnoentities("InvoiceAvoir");
-			elseif ($object->type == 3) $title .= $outputlangsbis->transnoentities("InvoiceDeposit");
-			elseif ($object->type == 4) $title .= $outputlangsbis->transnoentities("InvoiceProForma");
+			$title .= $outputlangsbis->transnoentities("PdfTitle");
 		}
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 

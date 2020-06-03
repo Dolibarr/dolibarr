@@ -40,7 +40,7 @@ $cancel = GETPOST('cancel', 'alpha');
 
 $file = GETPOST('file', 'alpha');
 $num = GETPOST('num', 'alpha'); // Used for document on bank statement
-
+$website = GETPOST('website', 'alpha');
 
 // Security check
 if (empty($modulepart)) accessforbidden('Bad value for modulepart');
@@ -86,8 +86,12 @@ elseif ($modulepart == 'bank')
 	$result = restrictedArea($user, 'banque', $id, 'bank_account');
 	if (!$user->rights->banque->lire) accessforbidden();
 	$accessallowed = 1;
-}
-else	// ticket, holiday, expensereport, societe...
+} elseif ($modulepart == 'medias')
+{
+	$permtoadd = ($user->rights->mailing->creer || $user->rights->website->write);
+	if (!$permtoadd) accessforbidden();
+	$accessallowed = 1;
+} else // ticket, holiday, expensereport, societe...
 {
 	$result = restrictedArea($user, $modulepart, $id, $modulepart);
 	if (empty($user->rights->$modulepart->read) && empty($user->rights->$modulepart->lire)) accessforbidden();
@@ -224,9 +228,7 @@ elseif ($modulepart == 'bom')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'mrp')
-{
+} elseif ($modulepart == 'mrp') {
 	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 	$object = new MO($db);
 	if ($id > 0)
@@ -235,9 +237,7 @@ elseif ($modulepart == 'mrp')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
-}
-elseif ($modulepart == 'bank')
-{
+} elseif ($modulepart == 'bank') {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 	$object = new Account($db);
 	if ($id > 0)
@@ -246,8 +246,9 @@ elseif ($modulepart == 'bank')
 		if ($result <= 0) dol_print_error($db, 'Failed to load object');
 		$dir = $conf->bank->dir_output; // By default
 	}
-}
-else {
+} elseif ($modulepart == 'medias') {
+	$dir = $dolibarr_main_data_root.'/'.$modulepart;
+} else {
 	print 'Action crop for modulepart = '.$modulepart.' is not supported yet by photos_resize.php.';
 }
 
@@ -271,6 +272,12 @@ if (empty($backtourl))
     }
     elseif (in_array($modulepart, array('bank')))          $backtourl = DOL_URL_ROOT."/compta/bank/document.php?id=".$id.'&file='.urldecode($file);
     elseif (in_array($modulepart, array('mrp')))           $backtourl = DOL_URL_ROOT."/mrp/mo_document.php?id=".$id.'&file='.urldecode($file);
+    elseif (in_array($modulepart, array('medias'))) {
+    	$section_dir = dirname($file);
+    	if (! preg_match('/\/$/', $section_dir)) $section_dir.='/';
+    	$backtourl = DOL_URL_ROOT."/website/index.php?action=file_manager&website=".$website.'&section_dir='.urlencode($section_dir);
+    }
+    // Generic case that should work for everybody else
     else $backtourl = DOL_URL_ROOT."/".$modulepart."/".$modulepart."_document.php?id=".$id.'&file='.urldecode($file);
 }
 
@@ -301,7 +308,10 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 
 	if ($result == $fullpath)
 	{
-		$object->addThumbs($fullpath);
+		// If image is related to a given object, we create also thumbs.
+		if (is_object($object)) {
+			$object->addThumbs($fullpath);
+		}
 
 		// Update/create database for file $fullpath
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $fullpath);
@@ -371,7 +381,9 @@ if ($action == 'confirm_crop')
 
 	if ($result == $fullpath)
 	{
-		$object->addThumbs($fullpath);
+		if (is_object($object)) {
+			$object->addThumbs($fullpath);
+		}
 
 		// Update/create database for file $fullpath
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $fullpath);

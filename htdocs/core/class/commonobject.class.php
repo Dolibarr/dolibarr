@@ -6316,7 +6316,7 @@ abstract class CommonObject
 						// Several field into label (eq table:code|libelle:rowid)
 						$notrans = false;
 						$fields_label = explode('|', $InfoFieldList[1]);
-						if (is_array($fields_label))
+						if (count($fields_label) > 1)
 						{
 							$notrans = true;
 							foreach ($fields_label as $field_toshow)
@@ -6488,7 +6488,7 @@ abstract class CommonObject
 						$notrans = false;
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
-						if (is_array($fields_label)) {
+						if (count($fields_label) > 1) {
 							$notrans = true;
 							foreach ($fields_label as $field_toshow) {
 								$labeltoshow .= $obj->$field_toshow.' ';
@@ -7915,6 +7915,10 @@ abstract class CommonObject
 	{
 		if (is_null($value)) return 'NULL';
 		elseif (preg_match('/^(int|double|real|price)/i', $fieldsentry['type'])) return $this->db->escape("$value");
+		elseif ($fieldsentry['type'] == 'boolean') {
+		    if ($value) return 'true';
+		    else return 'false';
+        }
 		else return "'".$this->db->escape($value)."'";
 	}
 

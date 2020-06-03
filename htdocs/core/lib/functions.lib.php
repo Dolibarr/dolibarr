@@ -8055,7 +8055,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 	$dirName = dirname($file);
 	if ($dirName == '.') $dirName = '';
 
-	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i', '', $file); // We remove extension, whatever is its case
+	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp|\.webp)$/i', '', $file); // We remove extension, whatever is its case
 	$fileName = basename($fileName);
 
 	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.jpg$/i', $file) ? '.jpg' : '');
@@ -8063,6 +8063,7 @@ function getImageFileNameForSize($file, $extName, $extImgTarget = '')
 	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.gif$/i', $file) ? '.gif' : '');
 	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.png$/i', $file) ? '.png' : '');
 	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.bmp$/i', $file) ? '.bmp' : '');
+	if (empty($extImgTarget)) $extImgTarget = (preg_match('/\.webp$/i', $file) ? '.webp' : '');
 
 	if (!$extImgTarget) return $file;
 
@@ -8088,7 +8089,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata = 0, $param 
 
 	if (empty($conf->use_javascript_ajax)) return '';
 
-	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'svg+xml');
+	$mime_preview = array('bmp', 'jpeg', 'png', 'gif', 'tiff', 'pdf', 'plain', 'css', 'svg+xml', 'webp');
 	//$mime_preview[]='vnd.oasis.opendocument.presentation';
 	//$mime_preview[]='archive';
 	$num_mime = array_search(dol_mimetype($relativepath, '', 1), $mime_preview);
@@ -8199,6 +8200,7 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 	if (preg_match('/\.bmp$/i', $tmpfile)) { $mime = 'image/bmp'; $imgmime = 'image.png'; $famime = 'file-image-o'; }
 	if (preg_match('/\.(tif|tiff)$/i', $tmpfile)) { $mime = 'image/tiff'; $imgmime = 'image.png'; $famime = 'file-image-o'; }
 	if (preg_match('/\.svg$/i', $tmpfile)) { $mime = 'image/svg+xml'; $imgmime = 'image.png'; $famime = 'file-image-o'; }
+	if (preg_match('/\.webp$/i', $tmpfile)) { $mime = 'image/webp'; $imgmime = 'image.png'; $famime = 'file-image-o'; }
 	// Calendar
 	if (preg_match('/\.vcs$/i', $tmpfile)) { $mime = 'text/calendar'; $imgmime = 'other.png'; $famime = 'file-text-o'; }
 	if (preg_match('/\.ics$/i', $tmpfile)) { $mime = 'text/calendar'; $imgmime = 'other.png'; $famime = 'file-text-o'; }

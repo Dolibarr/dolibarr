@@ -667,10 +667,12 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash, .editfieldlang {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover,
+.editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 .fawidth30 {
@@ -3989,14 +3991,19 @@ div.titre {
 	padding-top: 5px;
     padding-bottom: 5px;
 }
-.secondary, div.titre {
+div.fiche > table.table-fiche-title:first-of-type div {
+    color: var(--colortexttitlenotab);
+    /* font-weight: 600; */
+}
+div.titre {
+    color: var(--colortexttitlenotab);
+}
+
+.secondary {
     color: var(--colortexttitlenotab);
 }
 .tertiary {
 	color: var(--colortexttitlenotab2);
-}
-table.table-fiche-title:first-of-type div {
-    color: var(--colortexttitlenotab);
 }
 
 table.table-fiche-title .col-title div.titre{

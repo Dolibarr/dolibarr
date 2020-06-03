@@ -205,6 +205,8 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage)
 	$tplcontent .= '<?php if ($website->use_manifest) { print \'<link rel="manifest" href="/manifest.json.php" />\'."\n"; } ?>'."\n";
 	$tplcontent .= '<!-- Include link to CSS file -->'."\n";
 	$tplcontent .= '<link rel="stylesheet" href="/styles.css.php?website=<?php echo $websitekey; ?>" type="text/css" />'."\n";
+	$tplcontent .= '<!-- Include link to JS file -->'."\n";
+	$tplcontent .= '<script src="/javascript.js.php"></script>'."\n";
 	$tplcontent .= '<!-- Include HTML header from common file -->'."\n";
 	$tplcontent .= '<?php print preg_replace(\'/<\/?html>/ims\', \'\', file_get_contents(DOL_DATA_ROOT."/website/".$websitekey."/htmlheader.html")); ?>'."\n";
 	$tplcontent .= '<!-- Include HTML header from page header block -->'."\n";
@@ -330,7 +332,7 @@ function dolSaveCssFile($filecss, $csscontent)
 }
 
 /**
- * Save content of a page on disk
+ * Save content of a page on disk. For example into documents/website/mywebsite/javascript.js.php file.
  *
  * @param	string		$filejs				Full path of filename to generate
  * @param	string		$jscontent			Content of file

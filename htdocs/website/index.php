@@ -285,6 +285,8 @@ if ($action == 'replacesiteconfirm') {
 	$listofpages = getPagesFromSearchCriterias('', $algo, $searchkey, 1000, $sortfield, $sortorder);
 }
 
+$usercanedit = $user->rights->website->write;
+$permissiontodelete = $user->rights->website->delete;
 
 
 /*
@@ -319,6 +321,10 @@ if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETP
 }
 if (GETPOST('refreshpage', 'alpha') && !in_array($action, array('updatecss'))) $action = 'preview';
 
+if ($cancel && $action == 'renamefile') {
+	$cancel = '';
+}
+
 // Cancel
 if ($cancel)
 {
@@ -337,7 +343,9 @@ if ($sortorder) $backtopage .= '&sortorder='.$sortorder;
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
 
-if ($action == 'renamefile') $action = 'file_manager'; // After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
+if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
+	$action = 'file_manager';
+}
 
 if ($action == 'seteditinline')
 {
@@ -367,9 +375,10 @@ if ($action == 'unsetshowsubcontainers')
 	exit;
 }
 
-if (($action == 'replacesite' || $action == 'replacesiteconfirm') && !$searchkey)
+if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && !$searchkey)
 {
 	$action = 'replacesite';
+	$massaction = '';
 }
 
 // Replacement of string into pages
@@ -1105,9 +1114,8 @@ if ($action == 'confirm_deletesite' && $confirm == 'yes')
 	}
 }
 
-// Delete page
-if ($action == 'delete')
-{
+// Delete page (from website page menu)
+if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
 	$error = 0;
 
 	$db->begin();
@@ -1139,6 +1147,62 @@ if ($action == 'delete')
 	{
 		$db->rollback();
 		dol_print_error($db);
+	}
+}
+// Delete page (from menu search)
+if (! GETPOSTISSET('pageid')) {
+	$objectclass = 'WebsitePage';
+
+	// Add part of code from actions_massactions.inc.php
+	// Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
+	if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)
+	{
+		$db->begin();
+
+		$objecttmp = new $objectclass($db);
+		$nbok = 0;
+		foreach ($toselect as $toselectid)
+		{
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0)
+			{
+				$result = $objecttmp->delete($user);
+
+				if ($result <= 0)
+				{
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else $nbok++;
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (!$error)
+		{
+			if ($nbok > 1) setEventMessages($langs->trans("RecordsDeleted", $nbok), null, 'mesgs');
+			else setEventMessages($langs->trans("RecordDeleted", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+		//var_dump($listofobjectthirdparties);exit;
+	}
+
+	if ($action == 'delete') {
+		$action = 'replacesiteconfirm';
+
+		$containertype = GETPOST('optioncontainertype', 'aZ09') != '-1' ? GETPOST('optioncontainertype', 'aZ09') : '';
+		$langcode = GETPOST('optionlanguage', 'aZ09');
+		$otherfilters = array();
+		if (GETPOST('optioncategory', 'int') > 0) {
+			$otherfilters['category'] = GETPOST('optioncategory', 'int');
+		}
+
+		$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
 	}
 }
 
@@ -2360,8 +2424,7 @@ if (!GETPOST('hide_websitemenu'))
 
 
 	// Toolbar for pages
-
-	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite')))
+	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')) && !$file_manager)
 	{
 		print '</div>'; // Close current websitebar to open a new one
 
@@ -2915,7 +2978,10 @@ if ($action == 'editcss')
 
 	// JS file
 	print '<tr><td class="tdtop">';
-	print $langs->trans('WEBSITE_JS_INLINE');
+	$textwithhelp = $langs->trans('WEBSITE_JS_INLINE');
+	$htmlhelp2 = $langs->trans("LinkAndScriptsHereAreNotLoadedInEditor").'<br>';
+	print $form->textwithpicto($textwithhelp, $htmlhelp2, 1, 'warning', '', 0, 2, 'htmljstooltip2');
+
 	print '</td><td>';
 
 	$doleditor = new DolEditor('WEBSITE_JS_INLINE', $jscontent, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
@@ -3210,6 +3276,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthorid = $objectpage->fk_user_creat;
 		$pageusermodifid = $objectpage->fk_user_modif;
 		$pageauthoralias = $objectpage->author_alias;
+		$pagestatus = $objectpage->status;
 	}
 	else
 	{
@@ -3218,6 +3285,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthorid = $user->id;
 		$pageusermodifid = 0;
 		$pageauthoralias = '';
+		$pagestatus = 1;
 	}
 	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = GETPOST('WEBSITE_TITLE', 'alpha');
 	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
@@ -3227,20 +3295,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
 	if (GETPOST('htmlheader', 'none'))			$pagehtmlheader = GETPOST('htmlheader', 'none');
-
-	// Title
-	print '<tr><td class="fieldrequired">';
-	print $langs->trans('WEBSITE_TITLE');
-	print '</td><td>';
-	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'" autofocus>';
-	print '</td></tr>';
-
-	// Alias
-	print '<tr><td class="titlefieldcreate fieldrequired">';
-	print $langs->trans('WEBSITE_PAGENAME');
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
-	print '</td></tr>';
 
 	// Type of container
 	print '<tr><td class="titlefield fieldrequired">';
@@ -3257,6 +3311,20 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print $formwebsite->selectSampleOfContainer('sample', (GETPOSTISSET('sample') ?GETPOST('sample', 'alpha') : 'empty'));
 		print '</td></tr>';
 	}
+
+	// Title
+	print '<tr><td class="fieldrequired">';
+	print $langs->trans('WEBSITE_TITLE');
+	print '</td><td>';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'" autofocus>';
+	print '</td></tr>';
+
+	// Alias
+	print '<tr><td class="titlefieldcreate fieldrequired">';
+	print $langs->trans('WEBSITE_PAGENAME');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '</td></tr>';
 
 	print '<tr><td>';
 	print $langs->trans('WEBSITE_DESCRIPTION');
@@ -3548,7 +3616,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '<input type="hidden" name="website" value="'.$website->ref.'">';
 
 
-	print '<!-- Replace string -->'."\n";
+	print '<!-- Search page and replace string -->'."\n";
 	print '<div class="fiche"><br>';
 
 	print load_fiche_titre($langs->trans("ReplaceWebsiteContent"), '', 'search');
@@ -3556,7 +3624,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 	print '<div class="tagtable">';
 
 	print '<div class="tagtr">';
-	print '<div class="tagtd paddingrightonly">';
+	print '<div class="tagtd paddingrightonly opacitymedium">';
 	print $langs->trans("SearchReplaceInto");
 	print '</div>';
 	print '<div class="tagtd">';
@@ -3593,15 +3661,15 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			$param = '';
 			$nbtotalofrecords = count($listofpages['list']);
 			$num = $limit;
-			$permissiontodelete = 0;
+			$permissiontodelete = $user->rights->website->delete;
 
 			// List of mass actions available
 			$arrayofmassactions = array();
-			if ($user->rights->website->writephp) $arrayofmassactions['replace'] = $langs->trans("Replace");
-			if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+			if ($user->rights->website->writephp && $searchkey) $arrayofmassactions['replace'] = $langs->trans("Replace");
+			//if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 			if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 			$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
-			$massactionbutton .= '<div class="massactionother hidden">';
+			$massactionbutton .= '<div class="massactionother massactionreplace hidden">';
 			$massactionbutton .= $langs->trans("ReplaceString");
 			$massactionbutton .= '<input type="text" name="replacestring" value="'.dol_escape_htmltag(GETPOST('replacestring', 'none')).'">';
 			$massactionbutton .= '</div>';
@@ -3610,10 +3678,16 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			//$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 			$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
-			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit, 1, 1, 1);
+			print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 1, 1, 1);
 
 			print '<!-- List of search result -->'."\n";
 			print '<div class="rowsearchresult">';
+
+			$topicmail = "WebsitePageRef";
+			$modelmail = "websitepage_send";
+			$objecttmp = new WebsitePage($db);
+			$trackid = 'wsp'.$object->id;
+			include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 			$param = 'action=replacesiteconfirm&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);
