@@ -328,6 +328,13 @@ if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETP
 }
 if (GETPOST('refreshpage', 'alpha') && !in_array($action, array('updatecss'))) $action = 'preview';
 
+if ($action == 'renamefile') {
+	$action = 'file_manager'; // After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
+}
+if ($cancel && $action == 'file_manager') {
+	$cancel = '';
+}
+
 // Cancel
 if ($cancel)
 {
@@ -345,8 +352,6 @@ if ($sortfield) $backtopage .= '&sortfield='.$sortfield;
 if ($sortorder) $backtopage .= '&sortorder='.$sortorder;
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
-
-if ($action == 'renamefile') $action = 'file_manager'; // After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
 
 if ($action == 'seteditinline')
 {
