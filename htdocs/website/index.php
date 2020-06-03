@@ -321,10 +321,7 @@ if (GETPOST('refreshsite', 'alpha') || GETPOST('refreshsite.x', 'alpha') || GETP
 }
 if (GETPOST('refreshpage', 'alpha') && !in_array($action, array('updatecss'))) $action = 'preview';
 
-if ($action == 'renamefile') {
-	$action = 'file_manager'; // After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
-}
-if ($cancel && $action == 'file_manager') {
+if ($cancel && $action == 'renamefile') {
 	$cancel = '';
 }
 
@@ -345,6 +342,10 @@ if ($sortfield) $backtopage .= '&sortfield='.$sortfield;
 if ($sortorder) $backtopage .= '&sortorder='.$sortorder;
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 $backtopage = $savbacktopage;
+
+if ($action == 'renamefile') {	// Must be after include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php'; If action were renamefile, we set it to 'file_manager'
+	$action = 'file_manager';
+}
 
 if ($action == 'seteditinline')
 {
@@ -2423,8 +2424,7 @@ if (!GETPOST('hide_websitemenu'))
 
 
 	// Toolbar for pages
-
-	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')))
+	if ($websitekey && $websitekey != '-1' && !in_array($action, array('editcss', 'editmenu', 'importsite', 'file_manager', 'replacesite', 'replacesiteconfirm')) && !$file_manager)
 	{
 		print '</div>'; // Close current websitebar to open a new one
 
