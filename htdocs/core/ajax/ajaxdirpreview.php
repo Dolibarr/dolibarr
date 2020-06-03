@@ -61,15 +61,16 @@ if (!isset($mode) || $mode != 'noajax')    // For ajax call
 
 	$upload_dir = dirname(str_replace("../", "/", $rootdirfordoc.'/'.$file));
 
-    $ecmdir = new EcmDirectory($db);
-    $result = $ecmdir->fetch($section);
-    if (!$result > 0)
-    {
-        //dol_print_error($db,$ecmdir->error);
-        //exit;
-    }
-}
-else    // For no ajax call
+	$ecmdir = new EcmDirectory($db);
+	if ($section > 0) {
+	    $result = $ecmdir->fetch($section);
+	    if (!$result > 0)
+	    {
+	        //dol_print_error($db,$ecmdir->error);
+	        //exit;
+	    }
+	}
+} else // For no ajax call
 {
 	$rootdirfordoc = $conf->ecm->dir_output;
 
