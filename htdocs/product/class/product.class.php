@@ -79,7 +79,7 @@ class Product extends CommonObject
      */
     protected $table_ref_field = 'ref';
 
-    public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm'; // See also into images.lib.php
+    public $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into images.lib.php
 
     /*
     * @deprecated
