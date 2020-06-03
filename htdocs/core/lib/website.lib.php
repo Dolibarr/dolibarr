@@ -546,7 +546,7 @@ function getStructuredData($type, $data = array())
 
 	if ($type == 'software')
 	{
-		$ret = '<!-- Add structured data for software post -->'."\n";
+		$ret = '<!-- Add structured data for entry in a software annuary -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
@@ -708,7 +708,7 @@ function getStructuredData($type, $data = array())
 		$ret .= '</script>'."\n";
 	} elseif ($type == 'qa')
 	{
-		$ret = '<!-- Add structured data for product -->'."\n";
+		$ret = '<!-- Add structured data for QA -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 				"@context": "https://schema.org/",
