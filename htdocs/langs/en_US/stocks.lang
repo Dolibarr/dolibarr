@@ -226,3 +226,5 @@ InventoryForASpecificProduct=Inventory for a specific product
 StockIsRequiredToChooseWhichLotToUse=Stock is required to choose which lot to use
 ForceTo=Force to
 AlwaysShowFullArbo=Display full tree of warehouse on popup of warehouse links (Warning: This may decrease dramatically performances)
+MakingProduct=Making product for %s
+ErrorDuringStockMovement=Error during stock movement

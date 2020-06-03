@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'products', 'stocks'));
@@ -44,6 +45,9 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $key = GETPOST('key');
 $parent = GETPOST('parent');
+$entryWarehouse=GETPOST('entrywarehouse', 'int');
+$qtyToMake=GETPOST('qty_to_make');
+$TOutletWarehouse = array();
 
 // Security check
 if (!empty($user->socid)) $socid = $user->socid;
@@ -128,11 +132,47 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 }
 elseif($action === 'confirm_makeproduct')
 {
-
+    $error = 0;
+    foreach($_REQUEST as $key => $val) {
+        if(strpos($key,'outletwarehouse') !== false || strpos($key,'qtyneeded') !== false) {
+            $tmpArr = explode('_',$key);
+            if(strpos($key,'outletwarehouse') !== false) $TOutletWarehouse[$tmpArr[1]]['fk_warehouse'] = $val;
+            if(strpos($key,'qtyneeded') !== false) $TOutletWarehouse[$tmpArr[1]]['qty'] = $val;
+        }
+    }
+    if(strpos($qtyToMake,',') !== false) $qtyToMake = price2num($qtyToMake);
+    if(!empty($id) && !empty($entryWarehouse) && !empty($TOutletWarehouse) && (is_numeric($qtyToMake) && $qtyToMake > 0)) {
+        $db->begin();
+        $mvtStock = new MouvementStock($db);
+        $mvtStock->origin = $object;
+        $res = $mvtStock->reception($user,$id,$entryWarehouse, $qtyToMake, 0, $langs->trans('MakingProduct',$object->ref)); //TO MAKE
+        var_dump($res, $id);
+        if($res > 0) {
+            foreach($TOutletWarehouse as $fk_product_needed => $TInfoWarehouse) {
+                $qtyNeeded = $TInfoWarehouse['qty'] * $qtyToMake;
+                $res = $mvtStock->livraison($user, $fk_product_needed, $TInfoWarehouse['fk_warehouse'], $qtyNeeded,0 ,$langs->trans('MakingProduct',$object->ref)); //NEEDED
+                if($res <= 0) {
+                    setEventMessage($langs->trans('ErrorDuringStockMovement'),'errors');
+                    $error++;
+                }
+            }
+        } else {
+            setEventMessage($langs->trans('ErrorDuringStockMovement'),'errors');
+            $error++;
+        }
+    }
+    else {
+        setEventMessage($langs->trans('DolibarrHasDetectedError'), 'errors');
+        $error++;
+    }
     if (! $error)
     {
+        $db->commit();
+        setEventMessage($langs->trans('StockMovementRecorded'), 'mesgs');
         header("Location: ".$_SERVER["PHP_SELF"].'?id='.$object->id);
         exit;
+    } else {
+        $db->rollback();
     }
 }
 
@@ -279,21 +319,25 @@ if ($id > 0 || !empty($ref))
             $TConfirmParams['id']['value'] = $id;
 
             $TConfirmParams['tomake']['label'] = $langs->trans('QtyToMake').' :';
-            $TConfirmParams['tomake']['type'] = "other";
+            $TConfirmParams['tomake']['type'] = "text";
             $TConfirmParams['tomake']['name'] = "qty_to_make";
             $TConfirmParams['tomake']['value'] = '<input type="number" name="qty_to_make" min="0" value="0"/>';
 
             $TConfirmParams['target']['label'] = $langs->trans('WarehouseTarget').' :';
             $TConfirmParams['target']['type'] = "other";
-            $TConfirmParams['tomake']['name'] = "entrywarehouse";
+            $TConfirmParams['target']['name'] = "entrywarehouse";
             $TConfirmParams['target']['value'] = $formProduct->selectWarehouses('', 'entrywarehouse');
 
             foreach($prods_arbo as $child) {
                 $fk_child = $child['id'];
                 $TConfirmParams['source'.$fk_child]['label'] = $langs->trans('WarehouseSource').' '.$child['ref'].' :';
-                $TConfirmParams['source'.$fk_child]['name'] = 'outletwarehouse'.$fk_child;
+                $TConfirmParams['source'.$fk_child]['name'] = 'outletwarehouse_'.$fk_child; //Select2 doesnt handle array
                 $TConfirmParams['source'.$fk_child]['type'] = "other";
-                $TConfirmParams['source'.$fk_child]['value'] = $formProduct->selectWarehouses('', 'outletwarehouse'.$fk_child);
+                $TConfirmParams['source'.$fk_child]['value'] = $formProduct->selectWarehouses('', 'outletwarehouse_'.$fk_child);
+
+                $TConfirmParams['qtyneeded'.$fk_child]['name'] = 'qtyneeded_'.$fk_child;
+                $TConfirmParams['qtyneeded'.$fk_child]['type'] = "hidden";
+                $TConfirmParams['qtyneeded'.$fk_child]['value'] = $child['nb'];
             }
             print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakeProduct'), '', 'confirm_makeproduct', $TConfirmParams, '', 1, 'auto');
             $action = '';
