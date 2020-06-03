@@ -127,6 +127,9 @@ if ($action == 'other')
 	$value = GETPOST('PRODUIT_SOUSPRODUITS', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value, 'chaine', 0, '', $conf->entity);
 
+	$value = GETPOST('PRODUIT_SOUSPRODUITS_MAKINGPRODUCT', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS_MAKINGPRODUCT", $value, 'chaine', 0, '', $conf->entity);
+
 	$value = GETPOST('activate_viewProdDescInForm', 'alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $value, 'chaine', 0, '', $conf->entity);
 
@@ -581,6 +584,14 @@ print '<td width="60" class="right">';
 print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
 print '</td>';
 print '</tr>';
+if(!empty($conf->stock->enabled)) {
+    print '<tr class="oddeven">';
+    print '<td>'.$form->textwithpicto($langs->trans('MakingProductFromAssociatedProducts'), $langs->trans('FeatureDoesntHandleLotBatch')).'</td>';
+    print '<td width="60" class="right">';
+    print $form->selectyesno("PRODUIT_SOUSPRODUITS_MAKINGPRODUCT", $conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT, 1);
+    print '</td>';
+    print '</tr>';
+}
 
 // Utilisation formulaire Ajax sur choix produit
 

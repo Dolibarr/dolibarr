@@ -385,3 +385,5 @@ ProductSupplierExtraFields=Attributs supplémentaires (Prix fournisseur)
 DeleteLinkedProduct=Supprimer le produit enfant lié à la combinaison
 MakeProduct=Fabriquer produit
 QtyToMake=Quantité à produire
+FeatureDoesntHandleLotBatch=Cette fonctionnalité ne prend pas en compte les numéros de lots et séries
+MakingProductFromAssociatedProducts=Permettre la fabrication d'un produit à partir des produits virtuels

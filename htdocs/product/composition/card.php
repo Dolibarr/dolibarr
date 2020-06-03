@@ -130,7 +130,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	}
 	$action = '';
 }
-elseif($action === 'confirm_makeproduct')
+elseif($action === 'confirm_makeproduct' && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT))
 {
     $error = 0;
     foreach($_REQUEST as $key => $val) {
@@ -145,12 +145,12 @@ elseif($action === 'confirm_makeproduct')
         $db->begin();
         $mvtStock = new MouvementStock($db);
         $mvtStock->origin = $object;
-        $res = $mvtStock->reception($user,$id,$entryWarehouse, $qtyToMake, 0, $langs->trans('MakingProduct',$object->ref)); //TO MAKE
+        $res = $mvtStock->reception($user,$id,$entryWarehouse, $qtyToMake, 0, $langs->trans('MakingProductFromVirtualProduct',$object->ref)); //TO MAKE
         var_dump($res, $id);
         if($res > 0) {
             foreach($TOutletWarehouse as $fk_product_needed => $TInfoWarehouse) {
                 $qtyNeeded = $TInfoWarehouse['qty'] * $qtyToMake;
-                $res = $mvtStock->livraison($user, $fk_product_needed, $TInfoWarehouse['fk_warehouse'], $qtyNeeded,0 ,$langs->trans('MakingProduct',$object->ref)); //NEEDED
+                $res = $mvtStock->livraison($user, $fk_product_needed, $TInfoWarehouse['fk_warehouse'], $qtyNeeded,0 ,$langs->trans('MakingProductFromVirtualProduct',$object->ref)); //NEEDED
                 if($res <= 0) {
                     setEventMessage($langs->trans('ErrorDuringStockMovement'),'errors');
                     $error++;
@@ -312,7 +312,7 @@ if ($id > 0 || !empty($ref))
 		$prodschild = $object->getChildsArbo($id, 1);
 		$nbofsubproducts = count($prodschild); // This include only first level of childs
 
-        if($action === 'makeproduct') {
+        if($action === 'makeproduct' && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT)) {
             $TConfirmParams = array();
             $TConfirmParams['id']['name'] = "id";
             $TConfirmParams['id']['type'] = "hidden";
@@ -585,7 +585,7 @@ if ($id > 0 || !empty($ref))
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
             if(empty($reshook)) {
-                if(!empty($conf->stock->enabled)) print '<div class="inline-block divButAction" id="btMkProduct"><a href="'.$_SERVER["PHP_SELF"].'?action=makeproduct&id='.$id.'" class="butAction" >'.$langs->trans("MakeProduct").'</a></div>';
+                if(!empty($conf->stock->enabled) && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) print '<div class="inline-block divButAction" id="btMkProduct"><a href="'.$_SERVER["PHP_SELF"].'?action=makeproduct&id='.$id.'" class="butAction" >'.$langs->trans("MakeProduct").'</a></div>';
             }
             print '</div>';
 		}

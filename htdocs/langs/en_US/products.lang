@@ -385,3 +385,5 @@ ProductSupplierExtraFields=Additional Attributes (Supplier Prices)
 DeleteLinkedProduct=Delete the child product linked to the combination
 MakeProduct=Make product
 QtyToMake=Quantity to make
+FeatureDoesntHandleLotBatch=Feature doesn't handle lot/batch/serial number
+MakingProductFromAssociatedProducts=Allow production from associated products
