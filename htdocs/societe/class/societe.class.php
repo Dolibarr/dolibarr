@@ -84,7 +84,7 @@ class Societe extends CommonObject
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               if name like with @ClassNAme:FilePathClass:MethodDetele' it will call method to delete object rather tahn SQL delete
+	 *               if name like with @ClassNAme:FilePathClass;ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
 		"societe_prices",
@@ -93,7 +93,7 @@ class Societe extends CommonObject
 		"product_fournisseur_price",
 		"product_customer_price_log",
 		"product_customer_price",
-		"@Contact:/contact/class/contact.class.php:deleteBySoc",
+		"@Contact:/contact/class/contact.class.php:fk_soc",
 		"adherent",
 		"societe_account",
 		"societe_rib",
@@ -1682,17 +1682,19 @@ class Societe extends CommonObject
 			{
 				if (!$error)
 				{
-					$delete_from_object=explode(':', $tabletodelete);
-					if (count($delete_from_object)>1) {
-						$class_name=str_replace('@', '', $delete_from_object[0]);
-						$filepath=$delete_from_object[1];
-						$delete_method=$delete_from_object[2];
+					$deleteFromObject=explode(':', $tabletodelete);
+					if (count($deleteFromObject)>=2) {
+						$className=str_replace('@', '', $deleteFromObject[0]);
+						$filepath=$deleteFromObject[1];
+						$columnName=$deleteFromObject[2];
 						if (dol_include_once($filepath)) {
-							$child_object = new $class_name($this->db);
-							$result= $child_object->{$delete_method}($id);
-							if ($result<0) {
-								$error++;
-								$this->errors[] = $child_object->error;
+							if (class_exists($className)) {
+								$child_object = new $className($this->db);
+								$result = $child_object->deleteByParentField($id, $columnName);
+								if ($result < 0) {
+									$error++;
+									$this->errors[] = $child_object->error;
+								}
 							}
 						} else {
 							$error++;
@@ -1706,6 +1708,7 @@ class Societe extends CommonObject
 							$this->errors[] = $this->db->lasterror();
 						}
 					}
+
 				}
 			}
 

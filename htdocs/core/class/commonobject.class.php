@@ -438,10 +438,14 @@ abstract class CommonObject
 
 	public $next_prev_filter;
 
-
+	/**
+	 * @var array    List of child tables. To know object to delete on cascade.
+	 *               if name like with @ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               call method deleteByParentField(parentId,ParentFkFieldName) to fetch and delete child object
+	 */
+	protected $childtablesoncascade = array();
 
 	// No constructor as it is an abstract class
-
 	/**
 	 * Check an object id/ref exists
 	 * If you don't need/want to instantiate object and just need to know if object exists, use this method instead of fetch
@@ -7892,16 +7896,18 @@ abstract class CommonObject
             foreach ($this->childtablesoncascade as $table)
             {
 	            $deleteFromObject=explode(':', $table);
-	            if (count($deleteFromObject)>1) {
+	            if (count($deleteFromObject)>=2) {
 		            $className=str_replace('@', '', $deleteFromObject[0]);
 		            $filePath=$deleteFromObject[1];
-		            $deleteMethod=$deleteFromObject[2];
+		            $columnName=$deleteFromObject[2];
 		            if (dol_include_once($filePath)) {
 			            $childObject = new $className($this->db);
-			            $result= $childObject->{$deleteMethod}($this->id);
-			            if ($result<0) {
-				            $this->errors[] = $childObject->error;
-				            return -1;
+			            if (is_callable($childObject, 'deleteByParentField')) {
+				            $result = $childObject->deleteByParentField($this->id, $columnName);
+				            if ($result < 0) {
+					            $this->errors[] = $childObject->error;
+					            return -1;
+				            }
 			            }
 		            } else {
 			            $this->errors[] = 'Cannot find child class file ' .$filePath;
@@ -7961,6 +7967,75 @@ abstract class CommonObject
 			$this->db->commit();
 			return 1;
 		}
+	}
+
+	/**
+	 * Delete all child object
+	 * @param		int		$parentId      Parent Id
+	 * @param		string	$parentField Name of parent FIled
+	 * @return		int						<0 if KO, >0 if OK
+	 * @throws Exception
+	 */
+	public function deleteByParentField($parentId = 0, $parentField='')
+	{
+		global $user;
+
+		$error = 0;
+		$deleted = 0;
+
+		if (!empty($parentId) && !empty($parentField)) {
+			$this->db->begin();
+
+			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
+			$sql .= ' WHERE '.$parentField.' = ' . $parentId;
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->errors[] = $this->db->lasterror();
+				$error++;
+			} else {
+				while ($obj = $this->db->fetch_object($resql)) {
+					$result = $this->fetch($obj->rowid);
+					if ($result < 0) {
+						$error++;
+						$this->errors = $this->error;
+					} else {
+						$needUserParam = false;
+						if (class_exists('ReflectionMethod')) {
+							$method = new ReflectionMethod($this, 'delete');
+							$argsMethod=$method->getParameters();
+							if (is_array($argsMethod) && count($argsMethod)>0) {
+								if ($argsMethod[0]->name == 'user') {
+									$needUserParam = true;
+								}
+							}
+						}
+						if ($needUserParam) {
+							$result = $this->delete($user);
+						} else {
+							$result = $this->delete();
+						}
+						if ($result < 0) {
+							$error++;
+							$this->errors = $this->error;
+						} else {
+							$deleted++;
+						}
+					}
+				}
+			}
+
+			if (empty($error)) {
+				$this->db->commit();
+				return $deleted;
+			} else {
+				$this->error = implode(' ', $this->errors);
+				$this->db->rollback();
+				return $error * -1;
+			}
+		}
+
+		return $deleted;
 	}
 
 	/**

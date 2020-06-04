@@ -1067,9 +1067,6 @@ class Contact extends CommonObject
 
 		$error = 0;
 
-		//$this->old_lastname = $obj->lastname;
-		//$this->old_firstname = $obj->firstname;
-
 		$this->db->begin();
 
 		if (!$error)
@@ -1730,58 +1727,5 @@ class Contact extends CommonObject
 			$this->db->rollback();
 			return $error * -1;
 		}
-	}
-
-	/**
-	 * Delete all contact from a thirdparty
-	 * @param		int		$socId      Thirdparty Id
-	 * @param       int     $notrigger  Disable all trigger
-	 * @return		int						<0 if KO, >0 if OK
-	 * @throws Exception
-	 */
-	public function deleteBySoc($socId = 0, $notrigger = 0)
-	{
-		$error = 0;
-		$deleted = 0;
-
-		if (!empty($socId)) {
-			$this->db->begin();
-
-			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= " WHERE fk_soc = " . $socId;
-			dol_syslog(__METHOD__, LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->errors[] = $this->db->lasterror() . ' sql=' . $sql;
-				$error++;
-			} else {
-				while ($obj = $this->db->fetch_object($resql)) {
-					$result = $this->fetch($obj->rowid);
-					if ($result < 0) {
-						$error++;
-						$this->errors = $this->error;
-					} else {
-						$result = $this->delete($notrigger);
-						if ($result < 0) {
-							$error++;
-							$this->errors = $this->error;
-						} else {
-							$deleted++;
-						}
-					}
-				}
-			}
-
-			if (empty($error)) {
-				$this->db->commit();
-				return $deleted;
-			} else {
-				$this->error = implode(' ', $this->errors);
-				$this->db->rollback();
-				return $error * -1;
-			}
-		}
-
-		return $deleted;
 	}
 }
