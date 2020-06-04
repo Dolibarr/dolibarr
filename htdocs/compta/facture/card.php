@@ -4241,8 +4241,7 @@ if ($action == 'create')
 		{
 			print $form->textwithpicto($incoterms->getText($object), $incoterms->getDescription($object), 1);
 		}
-		else
-		{
+		else {
 			print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 		}
 		print '</td></tr>';
