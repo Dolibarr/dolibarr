@@ -237,13 +237,14 @@ class FormProduct
 	 */
 	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
 	{
-		global $conf,$langs,$user;
+		global $conf,$langs,$user, $hookmanager;
 
 		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
 		$out='';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
         if (!empty($fk_product))  $this->cache_warehouses = array();
+
 		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
 		$nbofwarehouses=count($this->cache_warehouses);
 
@@ -281,6 +282,28 @@ class FormProduct
 		}
 		$out.='</select>';
 		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.(($selected>0)?$selected:'').'">';
+
+        $parameters = array(
+            'selected' => $selected,
+            'htmlname' => $htmlname,
+            'filterstatus' => $filterstatus,
+            'empty' => $empty,
+            'disabled ' => $disabled,
+            'fk_product' => $fk_product,
+            'empty_label' => $empty_label,
+            'showstock' => $showstock,
+            'forcecombo' => $forcecombo,
+            'events' => $events,
+            'morecss' => $morecss,
+            'exclude' => $exclude,
+            'showfullpath' => $showfullpath,
+            'stockMin' => $stockMin,
+            'orderBy' => $orderBy
+        );
+
+        $reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
+        if ($reshook > 0) $out = $hookmanager->resPrint;
+		elseif ($reshook == 0) $out .= $hookmanager->resPrint;
 
 		return $out;
 	}
