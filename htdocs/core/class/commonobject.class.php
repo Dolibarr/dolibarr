@@ -7998,7 +7998,7 @@ abstract class CommonObject
 					$result = $this->fetch($obj->rowid);
 					if ($result < 0) {
 						$error++;
-						$this->errors = $this->error;
+						$this->errors[] = $this->error;
 					} else {
 						$needUserParam = false;
 						if (class_exists('ReflectionMethod')) {
