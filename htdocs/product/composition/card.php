@@ -311,8 +311,7 @@ if ($id > 0 || !empty($ref))
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
 		$nbofsubproducts = count($prodschild); // This include only first level of childs
-
-
+        if(!empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) {
             $TConfirmParams = array();
             $TConfirmParams['id']['name'] = "id";
             $TConfirmParams['id']['type'] = "hidden";
@@ -344,8 +343,8 @@ if ($id > 0 || !empty($ref))
                 $TConfirmParams['qtyneeded'.$fk_child]['type'] = "hidden";
                 $TConfirmParams['qtyneeded'.$fk_child]['value'] = $child['nb'];
             }
-            print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakeProduct'), '', 'confirm_makeproduct', $TConfirmParams, '', 1, 'auto');
-            $action = '';
+            print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakeProduct'), '', 'confirm_makeproduct', $TConfirmParams, '', 'action-makeproduct', 'auto');
+        }
 
 
 		print '<div class="fichecenter">';
