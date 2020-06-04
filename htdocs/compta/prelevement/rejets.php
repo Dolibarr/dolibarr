@@ -38,6 +38,8 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
+$type = GETPOST('type', 'aZ09');
+
 // Get supervariables
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
@@ -47,6 +49,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+
 /*
  * View
  */
@@ -117,9 +121,7 @@ if ($result)
 
 	print "</table>";
 	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

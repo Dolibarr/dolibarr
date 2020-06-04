@@ -221,8 +221,7 @@ class Products extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -303,8 +302,7 @@ class Products extends DolibarrApi
             // We update price only if it was changed
             $pricemodified = false;
             if ($this->product->price_base_type != $oldproduct->price_base_type) { $pricemodified = true;
-            } else
-            {
+            } else {
                 if ($this->product->tva_tx != $oldproduct->tva_tx) { $pricemodified = true;
                 }
                 if ($this->product->tva_npr != $oldproduct->tva_npr) { $pricemodified = true;
@@ -317,9 +315,7 @@ class Products extends DolibarrApi
                     }
                     if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) { $pricemodified = true;
                     }
-                }
-                else
-                {
+                } else {
                     if ($this->product->price != $oldproduct->price) { $pricemodified = true;
                     }
                     if ($this->product->price_min != $oldproduct->price_min) { $pricemodified = true;
@@ -805,7 +801,7 @@ class Products extends DolibarrApi
 
     			$product_fourn = new ProductFournisseur($this->db);
     			$product_fourn_list = $product_fourn->list_product_fournisseur_price($obj->rowid, '', '', 0, 0);
-    			foreach($product_fourn_list as $tmpobj) {
+    			foreach ($product_fourn_list as $tmpobj) {
     				$this->_cleanObjectDatas($tmpobj);
     			}
     				//var_dump($product_fourn_list->db);exit;
@@ -813,8 +809,7 @@ class Products extends DolibarrApi
 
     			$i++;
     		}
-    	}
-    	else {
+    	} else {
     		throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
     	}
     	if (!count($obj_ret)) {

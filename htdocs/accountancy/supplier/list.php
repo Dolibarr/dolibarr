@@ -163,9 +163,7 @@ if ($massaction == 'ventil') {
             {
                 $msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
                 $ko++;
-            }
-            else
-            {
+            } else {
                 $sql = " UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
                 $sql .= " SET fk_code_ventilation = ".$monCompte;
                 $sql .= " WHERE rowid = ".$monId;
@@ -320,7 +318,7 @@ if ($result) {
 	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
+	if ($search_societe)     $param .= '&search_societe='.urlencode($search_societe);
 	if ($search_lineid)      $param .= '&search_lineid='.urlencode($search_lineid);
 	if ($search_day)         $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)       $param .= '&search_month='.urlencode($search_month);
@@ -609,8 +607,7 @@ if ($result) {
 					$suggestedid = $tmpaccount->id;
 				}
 				$accountingaccount_codetotid_cache[$objp->code_buy_l] = $tmpaccount->id;
-			}
-			else {
+			} else {
 				$suggestedid = $accountingaccount_codetotid_cache[$objp->code_buy_l];
 			}
 		}

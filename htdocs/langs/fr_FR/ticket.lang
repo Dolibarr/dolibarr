@@ -130,6 +130,10 @@ TicketNumberingModules=Module de numérotation des tickets
 TicketNotifyTiersAtCreation=Notifier le tiers à la création
 TicketGroup=Groupe
 TicketsDisableCustomerEmail=Toujours désactiver les courriels lorsqu'un ticket est créé depuis l'interface publique
+TicketsPublicNotificationNewMessage=Envoi d'e-mails lorsqu'un nouveau message est ajouté
+TicketsPublicNotificationNewMessageHelp=Envoi d'e-mails lorsqu'un nouveau message est ajouté depuis l'interface public (à l'utilisateur assigné ou à l'e-mail de notification à (nouveaux message) et/ou l'e-mail de notification à)
+TicketPublicNotificationNewMessageDefaultEmail=E-mail de notification à (nouveaux message)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envoyer des notifications de nouveaux message par e-mail à cette adresse si aucun utilisateur n'a été affecté au ticket ou qu'il n'a pas d'e-mail.
 #
 # Index & list page
 #

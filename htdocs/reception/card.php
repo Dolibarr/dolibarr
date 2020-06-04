@@ -85,7 +85,7 @@ else {
 	$result = restrictedArea($user, 'reception');
 	if ($origin == 'supplierorder') {
 		if (empty($user->rights->fournisseur->commande->lire) && empty($user->rights->fournisseur->commande->read)) accessforbidden();
-	}elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) accessforbidden();
+	} elseif (empty($user->rights->{$origin}->lire) && empty($user->rights->{$origin}->read)) accessforbidden();
 }
 
 $action		= GETPOST('action', 'alpha');
@@ -239,8 +239,7 @@ if (empty($reshook))
 
 		if ($object->origin == "supplierorder")
 			$classname = 'CommandeFournisseur';
-		else
-			$classname = ucfirst($object->origin);
+		else $classname = ucfirst($object->origin);
 		$objectsrc = new $classname($db);
 		$objectsrc->fetch($object->origin_id);
 
@@ -359,9 +358,7 @@ if (empty($reshook))
 	                $error++;
 	            }
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("QtyToReceive").'/'.$langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 	        $error++;
 	    }
@@ -371,16 +368,12 @@ if (empty($reshook))
 	        $db->commit();
 	        header("Location: card.php?id=".$object->id);
 	        exit;
-	    }
-	    else
-	    {
+	    } else {
 	        $db->rollback();
 	        $_GET["commande_id"] = GETPOST('commande_id', 'int');
 	        $action = 'create';
 	    }
-	}
-
-	elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
+	} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
         ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->creer))
        	|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)))
 	)
@@ -393,9 +386,7 @@ if (empty($reshook))
 	    {
 			$langs->load("errors");
 	        setEventMessages($langs->trans($object->error), null, 'errors');
-	    }
-	    else
-	    {
+	    } else {
 	    	// Define output language
 	    	if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 	    	{
@@ -414,18 +405,14 @@ if (empty($reshook))
 	    		if ($result < 0) dol_print_error($db, $result);
 	    	}
 	    }
-	}
-
-	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->reception->supprimer)
+	} elseif ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->reception->supprimer)
 	{
 	    $result = $object->delete($user);
 	    if ($result > 0)
 	    {
 	        header("Location: ".DOL_URL_ROOT.'/reception/index.php');
 	        exit;
-	    }
-	    else
-		{
+	    } else {
 			setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
@@ -523,9 +510,7 @@ if (empty($reshook))
 		$ret = dol_delete_file($file, 0, 0, 0, $object);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	}
-
-	elseif ($action == 'classifybilled')
+	} elseif ($action == 'classifybilled')
 	{
 	    $object->fetch($id);
 	    $result = $object->set_billed();
@@ -533,9 +518,7 @@ if (empty($reshook))
 	    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	    	exit();
 	    }
-	}
-
-	elseif ($action == 'classifyclosed')
+	} elseif ($action == 'classifyclosed')
 	{
 	    $object->fetch($id);
 	    $result = $object->setClosed();
@@ -572,9 +555,7 @@ if (empty($reshook))
 		if (!$error) {
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit();
-		}
-		else
-		{
+		} else {
 			setEventMessages($line->error, $line->errors, 'errors');
 		}
 	}
@@ -636,8 +617,7 @@ if (empty($reshook))
 						setEventMessages($line->error, $line->errors, 'errors');
 						$error++;
 					}
-				}
-				else // Product no predefined
+				} else // Product no predefined
 				{
 					$qty = "qtyl".$line_id;
 					$line->id = $line_id;
@@ -672,9 +652,7 @@ if (empty($reshook))
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
-		}
-		else
-		{
+		} else {
 			header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 			exit();
 		}
@@ -1054,9 +1032,7 @@ if ($action == 'create')
                     }
 
                     print '</td>';
-                }
-                else
-				{
+                } else {
 				    print "<td>";
                     if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
                     else $text = img_object($langs->trans('Product'), 'product');
@@ -1094,9 +1070,7 @@ if ($action == 'create')
 				if ($line->product_type == 1 && empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
 					$quantityToBeDelivered = 0;
-				}
-				else
-				{
+				} else {
 					$quantityToBeDelivered = $dispatchLines[$indiceAsked]['qty'];
 				}
                 $warehouse_id = $dispatchLines[$indiceAsked]['ent'];
@@ -1117,8 +1091,7 @@ if ($action == 'create')
                         if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty = GETPOST('qtyl'.$indiceAsked, 'int');
                         print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 						print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
-					}
-					else print $langs->trans("NA");
+					} else print $langs->trans("NA");
 					print '</td>';
 
 					// Stock
@@ -1136,9 +1109,7 @@ if ($action == 'create')
 								print '<!-- Show warehouse selection -->';
 								print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 0, 0, $line->fk_product, '', 1);
 							}
-						}
-						else
-						{
+						} else {
 							print $langs->trans("Service");
 						}
 						print '</td>';
@@ -1155,8 +1126,7 @@ if ($action == 'create')
 							print '<td>';
 							print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
 							print '</td>';
-						}
-						else {
+						} else {
 							print '<td colspan="3"></td>';
 						}
 					}
@@ -1200,14 +1170,11 @@ if ($action == 'create')
             print '</form>';
 
             print '<br>';
-        }
-        else
-		{
+        } else {
             dol_print_error($db);
         }
     }
-}
-elseif ($id || $ref)
+} elseif ($id || $ref)
 /* *************************************************************************** */
 /*                                                                             */
 /* Edit and view mode                                                          */
@@ -1252,9 +1219,7 @@ elseif ($id || $ref)
 			if ($objectref == 'PROV')
 			{
 				$numref = $object->getNextNumRef($soc);
-			}
-			else
-			{
+			} else {
 				$numref = $object->ref;
 			}
 
@@ -1418,9 +1383,7 @@ elseif ($id || $ref)
 			print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 0);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
-		}
-		else
-		{
+		} else {
 			print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
 		}
 		print '</td>';
@@ -1442,9 +1405,7 @@ elseif ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-		}
-		else
-		{
+		} else {
 			print $object->trueWeight;
 			print ($object->trueWeight && $object->weight_units != '') ? ' '.measuringUnitString(0, "weight", $object->weight_units) : '';
 		}
@@ -1477,9 +1438,7 @@ elseif ($id || $ref)
 			print ' <input class="button" name="modify" value="'.$langs->trans("Modify").'" type="submit">';
 			print ' <input class="button" name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
 			print '</form>';
-		}
-		else
-		{
+		} else {
 			print $object->trueHeight;
 			print ($object->trueHeight && $object->height_units != '') ? ' '.measuringUnitString(0, "size", $object->height_units) : '';
 		}
@@ -1510,8 +1469,7 @@ elseif ($id || $ref)
 			if ($volumeUnit < 50)
 			{
 			    print showDimensionInBestUnit($calculatedVolume, $volumeUnit, "volume", $langs, isset($conf->global->MAIN_VOLUME_DEFAULT_ROUND) ? $conf->global->MAIN_VOLUME_DEFAULT_ROUND : -1, isset($conf->global->MAIN_VOLUME_DEFAULT_UNIT) ? $conf->global->MAIN_VOLUME_DEFAULT_UNIT : 'no');
-			}
-			else print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
+			} else print $calculatedVolume.' '.measuringUnitString(0, "volume", $volumeUnit);
 		}
 		if ($totalVolume > 0)
 		{
@@ -1556,9 +1514,7 @@ elseif ($id || $ref)
 			if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 			print '</form>';
-		}
-		else
-		{
+		} else {
 			if ($object->shipping_method_id > 0)
 			{
 				// Get code using getLabelFromKey
@@ -1645,9 +1601,7 @@ elseif ($id || $ref)
 			if ($object->statut <= 1)
 			{
 				print $langs->trans("QtyToReceive").' - ';
-			}
-			else
-			{
+			} else {
 				print $langs->trans("QtyReceived").' - ';
 			}
 			if (!empty($conf->stock->enabled))
@@ -1659,15 +1613,11 @@ elseif ($id || $ref)
 				print $langs->trans("Batch");
 			}
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			if ($object->statut <= 1)
 			{
 				print '<td class="center">'.$langs->trans("QtyToReceive").'</td>';
-			}
-			else
-			{
+			} else {
 				print '<td class="center">'.$langs->trans("QtyReceived").'</td>';
 			}
 			if (!empty($conf->stock->enabled))
@@ -1774,9 +1724,7 @@ elseif ($id || $ref)
 					$prod = new Product($db);
 					$prod->fetch($lines[$i]->fk_product);
 					$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $lines[$i]->product->label;
-				}
-				else
-					$label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
+				} else $label = (!empty($lines[$i]->product->label) ? $lines[$i]->product->label : $lines[$i]->product->product_label);
 
 				print '<td>';
 
@@ -1790,9 +1738,7 @@ elseif ($id || $ref)
 					print (!empty($lines[$i]->product->description) && $lines[$i]->description != $lines[$i]->product->description) ? '<br>'.dol_htmlentitiesbr($lines[$i]->description) : '';
 				}
 				print "</td>\n";
-			}
-			else
-			{
+			} else {
 				print "<td>";
 				if ($lines[$i]->product_type == Product::TYPE_SERVICE) $text = img_object($langs->trans('Service'), 'service');
 				else $text = img_object($langs->trans('Product'), 'product');
@@ -1811,9 +1757,7 @@ elseif ($id || $ref)
 			if ($action == 'editline' && $lines[$i]->id == $line_id)
 			{
 				print '<td ><textarea name="comment'.$line_id.'" id="comment'.$line_id.'" /> '.$lines[$i]->comment.'</textarea></td>';
-			}
-			else
-			{
+			} else {
 				print '<td style="white-space: pre-wrap;max-width: 200px;" >'.$lines[$i]->comment.'</td>';
 			}
 
@@ -1878,9 +1822,7 @@ elseif ($id || $ref)
 							print '</td>';
 						}
 						print '</tr>';
-					}
-					else
-					{
+					} else {
 						print '<!-- case edit 2 -->';
 						print '<tr>';
 						// Qty to receive or received
@@ -1893,9 +1835,7 @@ elseif ($id || $ref)
 					}
 				}
 				print '</table></td>';
-			}
-			else
-			{
+			} else {
 				// Qty to receive or received
 				print '<td class="center">'.$lines[$i]->qty.'</td>';
 
@@ -1931,9 +1871,7 @@ elseif ($id || $ref)
 								$detail .= '<br>';
 
 							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
-						}
-						else
-						{
+						} else {
 							print $langs->trans("NA");
 						}
 						print '</td>';
@@ -1961,8 +1899,7 @@ elseif ($id || $ref)
 				print '<td class="center" colspan="2" valign="middle">';
 				print '<input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'"><br>';
 				print '<input type="submit" class="button" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
-			}
-			elseif ($object->statut == Reception::STATUS_DRAFT)
+			} elseif ($object->statut == Reception::STATUS_DRAFT)
 			{
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
@@ -1993,9 +1930,7 @@ elseif ($id || $ref)
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
 					print $line->showOptionals($extrafields, 'edit', array('colspan'=>$colspan), $indiceAsked);
-				}
-				else
-				{
+				} else {
 					print $line->showOptionals($extrafields, 'view', array('colspan'=>$colspan), $indiceAsked);
 				}
 			}
@@ -2032,9 +1967,7 @@ elseif ($id || $ref)
 	  		     || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->reception->reception_advance->validate)))
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("Validate").'</a>';
 				}
 			}
@@ -2050,9 +1983,7 @@ elseif ($id || $ref)
 				if (!empty($conf->facture->enabled) && !empty($conf->global->WORKFLOW_BILL_ON_RECEPTION))  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
 				{
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ClassifyUnbilled").'</a>';
-				}
-				else
-				{
+				} else {
 			    	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 				}
 			}
@@ -2064,8 +1995,7 @@ elseif ($id || $ref)
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->reception->reception_advance->send)
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
-					}
-					else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+					} else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
 				}
 			}
 

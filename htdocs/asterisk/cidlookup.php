@@ -67,9 +67,7 @@ if ($resql)
 		$found = $notfound;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db, 'Error');
 	$found = 'Error';
 }

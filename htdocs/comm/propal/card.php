@@ -168,9 +168,7 @@ if (empty($reshook))
 		if (!GETPOST('socid', 3))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			if ($object->id > 0) {
 				if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY)) {
 					//Get difference between old and new delivery date and change lines according to difference
@@ -211,9 +209,7 @@ if (empty($reshook))
 				}
 			}
 		}
-	}
-
-	// Delete proposal
+	} // Delete proposal
 	elseif ($action == 'confirm_delete' && $confirm == 'yes' && $usercandelete)
 	{
 		$result = $object->delete($user);
@@ -224,9 +220,7 @@ if (empty($reshook))
 			$langs->load("errors");
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	// Remove line
+	} // Remove line
 	elseif ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
 	{
 		$result = $object->deleteline($lineid);
@@ -248,9 +242,7 @@ if (empty($reshook))
 
 		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		exit();
-	}
-
-	// Validation
+	} // Validation
 	elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
 	{
 		$result = $object->valid($user);
@@ -276,9 +268,7 @@ if (empty($reshook))
 			if (count($object->errors) > 0) setEventMessages($object->error, $object->errors, 'errors');
 			else setEventMessages($langs->trans($object->error), null, 'errors');
 		}
-	}
-
-	elseif ($action == 'setdate' && $usercancreate)
+	} elseif ($action == 'setdate' && $usercancreate)
 	{
 		$datep = dol_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
@@ -292,21 +282,17 @@ if (empty($reshook))
 			if ($result < 0)
 				dol_print_error($db, $object->error);
 		}
-	}
-	elseif ($action == 'setecheance' && $usercancreate)
+	} elseif ($action == 'setecheance' && $usercancreate)
 	{
 		$result = $object->set_echeance($user, dol_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
-	}
-	elseif ($action == 'setdate_livraison' && $usercancreate)
+	} elseif ($action == 'setdate_livraison' && $usercancreate)
 	{
 		$result = $object->set_date_livraison($user, dol_mktime(12, 0, 0, $_POST['date_livraisonmonth'], $_POST['date_livraisonday'], $_POST['date_livraisonyear']));
 		if ($result < 0)
 			dol_print_error($db, $object->error);
-	}
-
-	// Positionne ref client
+	} // Positionne ref client
 	elseif ($action == 'setref_client' && $usercancreate)
 	{
 		$result = $object->set_ref_client($user, GETPOST('ref_client'));
@@ -314,15 +300,11 @@ if (empty($reshook))
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	// Set incoterm
+	} // Set incoterm
 	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled) && $usercancreate)
 	{
 		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
-	}
-
-	// Create proposal
+	} // Create proposal
 	elseif ($action == 'add' && $usercancreate)
 	{
 		$object->socid = $socid;
@@ -556,9 +538,8 @@ if (empty($reshook))
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
 					}
-				} 			// Standard creation
-				else
-				{
+				} // Standard creation
+				else {
 					$id = $object->create($user);
 				}
 
@@ -609,24 +590,18 @@ if (empty($reshook))
 
 						header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
 						exit();
-					}
-					else
-					{
+					} else {
 						$db->rollback();
 						$action = 'create';
 					}
-				}
-				else
-				{
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$db->rollback();
 					$action = 'create';
 				}
 			}
 		}
-	}
-
-	// Classify billed
+	} // Classify billed
 	elseif ($action == 'classifybilled' && $usercanclose)
 	{
 		$db->begin();
@@ -641,14 +616,10 @@ if (empty($reshook))
 		if (!$error)
 		{
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
-	}
-
-	// Close proposal
+	} // Close proposal
 	elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		if (!(GETPOST('statut', 'int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
@@ -669,16 +640,12 @@ if (empty($reshook))
 				if (!$error)
 				{
 					$db->commit();
-				}
-				else
-				{
+				} else {
 					$db->rollback();
 				}
 			}
 		}
-	}
-
-	// Reopen proposal
+	} // Reopen proposal
 	elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		// prevent browser refresh from reopening proposal several times
 		if ($object->statut == Propal::STATUS_SIGNED || $object->statut == Propal::STATUS_NOTSIGNED || $object->statut == Propal::STATUS_BILLED)
@@ -695,15 +662,11 @@ if (empty($reshook))
 			if (!$error)
 			{
 				$db->commit();
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 			}
 		}
-	}
-
-	// add lines from objectlinked
+	} // add lines from objectlinked
 	elseif ($action == 'import_lines_from_object'
 	    && $user->rights->propal->creer
 	    && $object->statut == Propal::STATUS_DRAFT
@@ -719,8 +682,7 @@ if (empty($reshook))
 	        {
 	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'OrderLine';
-	        }
-	        elseif ($fromElement == 'propal')
+	        } elseif ($fromElement == 'propal')
 	        {
 	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'PropaleLigne';
@@ -772,8 +734,7 @@ if (empty($reshook))
 	                } else {
 	                    $error++;
 	                }
-	            }
-	            else {
+	            } else {
 	                $error++;
 	            }
 	        }
@@ -812,9 +773,7 @@ if (empty($reshook))
 			$ret = $object->fetch($id); // Reload to get new records
 			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
-	}
-
-	elseif ($action == "setabsolutediscount" && $usercancreate) {
+	} elseif ($action == "setabsolutediscount" && $usercancreate) {
 		if ($_POST["remise_id"]) {
 			if ($object->id > 0) {
 				$result = $object->insert_discount($_POST["remise_id"]);
@@ -823,9 +782,7 @@ if (empty($reshook))
 				}
 			}
 		}
-	}
-
-	// Add line
+	} // Add line
 	elseif ($action == 'addline' && $usercancreate) {
 		// Set if we used free entry or predefined product
 		$predef = '';
@@ -837,9 +794,7 @@ if (empty($reshook))
 		{
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
-		}
-		else
-		{
+		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -931,8 +886,7 @@ if (empty($reshook))
 					    if (isset($prod->multiprices_tva_tx[$object->thirdparty->price_level])) $tva_tx = $prod->multiprices_tva_tx[$object->thirdparty->price_level];
 					    if (isset($prod->multiprices_recuperableonly[$object->thirdparty->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$object->thirdparty->price_level];
 					}
-				}
-				// If price per customer
+				} // If price per customer
 				elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 				{
 					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
@@ -954,8 +908,7 @@ if (empty($reshook))
 							if (empty($tva_tx)) $tva_npr = 0;
 						}
 					}
-				}
-				// If price per quantity
+				} // If price per quantity
 				elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
 				{
 					if ($prod->prices_by_qty[0])	// yes, this product has some prices per quantity
@@ -971,17 +924,14 @@ if (empty($reshook))
 							if ($priceforthequantityarray['price_base_type'] == 'HT')
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
+							} else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
 							break;
 						}
 					}
-				}
-				// If price per quantity and customer
+				} // If price per quantity and customer
 				elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 				{
 					if ($prod->prices_by_qty[$object->thirdparty->price_level]) // yes, this product has some prices per quantity
@@ -997,9 +947,7 @@ if (empty($reshook))
 							if ($priceforthequantityarray['price_base_type'] == 'HT')
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
+							} else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -1015,8 +963,7 @@ if (empty($reshook))
 				if (!empty($price_ht)) {
 					$pu_ht = price2num($price_ht, 'MU');
 					$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
-				}
-				// On reevalue prix selon taux tva car taux tva transaction peut etre different
+				} // On reevalue prix selon taux tva car taux tva transaction peut etre different
 				// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
 				elseif ($tmpvat != $tmpprodvat) {
 					if ($price_base_type != 'HT') {
@@ -1187,9 +1134,7 @@ if (empty($reshook))
 				}
 			}
 		}
-	}
-
-	// Update a line within proposal
+	} // Update a line within proposal
 	elseif ($action == 'updateline' && $usercancreate && GETPOST('save'))
 	{
 		// Define info_bits
@@ -1326,62 +1271,38 @@ if (empty($reshook))
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha')) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
-	}
-
-	elseif ($action == 'classin' && $usercancreate) {
+	} elseif ($action == 'classin' && $usercancreate) {
         // Set project
         $object->setProject(GETPOST('projectid', 'int'));
-	}
-
-	// Delivery time
+	} // Delivery time
 	elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->set_availability($user, GETPOST('availability_id', 'int'));
-	}
-
-	// Origin of the commercial proposal
+	} // Origin of the commercial proposal
 	elseif ($action == 'setdemandreason' && $usercancreate) {
 		$result = $object->set_demand_reason($user, GETPOST('demand_reason_id', 'int'));
-	}
-
-	// Terms of payment
+	} // Terms of payment
 	elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
-	}
-
-	elseif ($action == 'setremisepercent' && $usercancreate) {
+	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$result = $object->set_remise_percent($user, $_POST['remise_percent']);
-	}
-
-	elseif ($action == 'setremiseabsolue' && $usercancreate) {
+	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		$result = $object->set_remise_absolue($user, $_POST['remise_absolue']);
-	}
-
-	// Payment choice
+	} // Payment choice
 	elseif ($action == 'setmode' && $usercancreate) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
-	}
-
-	// Multicurrency Code
+	} // Multicurrency Code
 	elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
-	}
-
-	// Multicurrency rate
+	} // Multicurrency rate
 	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
-	}
-
-	// bank account
+	} // bank account
 	elseif ($action == 'setbankaccount' && $usercancreate) {
 		$result = $object->setBankAccount(GETPOST('fk_account', 'int'));
-	}
-
-	// shipping method
+	} // shipping method
 	elseif ($action == 'setshippingmethod' && $usercancreate) {
 		$result = $object->setShippingMethod(GETPOST('shipping_method_id', 'int'));
-	}
-
-	elseif ($action == 'update_extras') {
+	} elseif ($action == 'update_extras') {
 		$object->oldcopy = dol_clone($object);
 
 		// Fill array 'array_options' with data from update form
@@ -1419,18 +1340,14 @@ if (empty($reshook))
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
 			}
-		}
-
-		// Toggle the status of a contact
+		} // Toggle the status of a contact
 		elseif ($action == 'swapstatut') {
 			if ($object->fetch($id) > 0) {
 				$result = $object->swapContactStatus(GETPOST('ligne'));
 			} else {
 				dol_print_error($db);
 			}
-		}
-
-		// Delete a contact
+		} // Delete a contact
 		elseif ($action == 'deletecontact') {
 			$object->fetch($id);
 			$result = $object->delete_contact($lineid);
@@ -1540,9 +1457,7 @@ if ($action == 'create')
 				if (!empty($conf->global->MULTICURRENCY_USE_ORIGIN_TX) && !empty($objectsrc->multicurrency_tx))	$currency_tx = $objectsrc->multicurrency_tx;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 	}
 
@@ -1915,24 +1830,16 @@ if ($action == 'create')
 		}
 
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, '', 1, 250);
-	}
-
-	// Confirm delete
+	} // Confirm delete
 	elseif ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
-	}
-
-	// Confirm reopen
+	} // Confirm reopen
 	elseif ($action == 'reopen') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('ConfirmReOpenProp', $object->ref), 'confirm_reopen', '', 0, 1);
-	}
-
-	// Confirmation delete product/service line
+	} // Confirmation delete product/service line
 	elseif ($action == 'ask_deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
-	}
-
-	// Confirm validate proposal
+	} // Confirm validate proposal
 	elseif ($action == 'validate') {
 		$error = 0;
 
@@ -2485,9 +2392,7 @@ if ($action == 'create')
 					if ($usercanvalidate)
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
-					}
-					else
-						print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
+					} else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('Validate').'</a>';
 				}
 				// Create event
 				/*if ($conf->agenda->enabled && ! empty($conf->global->MAIN_ADD_EVENT_ON_ELEMENT_CARD)) 	// Add hidden condition because this is not a "workflow" action so should appears somewhere else on page.
@@ -2510,8 +2415,7 @@ if ($action == 'create')
 					if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED || !empty($conf->global->PROPOSAL_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						if ($usercansend) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-						} else
-							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
+						} else print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('SendMail').'</a>';
 					}
 				}
 
@@ -2563,9 +2467,7 @@ if ($action == 'create')
 						if ($usercanclose)
 						{
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=classifybilled&amp;socid='.$object->socid.'">'.$langs->trans("ClassifyBilled").'</a>';
-						}
-						else
-						{
+						} else {
 							print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("ClassifyBilled").'</a>';
 						}
 					}
@@ -2603,13 +2505,13 @@ if ($action == 'create')
 		/*
 		 * Documents generes
 		 */
-		$filename = dol_sanitizeFileName($object->ref);
+		$objref = dol_sanitizeFileName($object->ref);
 		$filedir = $conf->propal->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $usercanread;
 		$delallowed = $usercancreate;
 
-		print $formfile->showdocuments('propal', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
+		print $formfile->showdocuments('propal', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang, '', $object);
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('propal'));

@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -342,37 +343,41 @@ if ($result) {
 	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("VATIntra", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Account", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+	print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 	$clickpicto = $form->showCheckAddButtons();
 	print_liste_field_titre($clickpicto, '', '', '', '', '', '', '', 'center ');
 	print "</tr>\n";
 
-	$thirdpartystatic=new Societe($db);
-	$facture_static = new Facture($db);
-	$product_static = new Product($db);
+    $thirdpartystatic=new Societe($db);
+    $facturestatic = new Facture($db);
+	$productstatic = new Product($db);
+    $accountingaccountstatic = new AccountingAccount($db);
 
-	while ($objp = $db->fetch_object($result)) {
-		$codecompta = length_accountg($objp->account_number).' - <span class="opacitymedium">'.$objp->label_compte.'</span>';
+	while ($objp = $db->fetch_object($result))
+    {
+        $accountingaccountstatic->account_number = $objp->account_number;
+        $accountingaccountstatic->label = $objp->label_account;
+        $accountingaccountstatic->labelshort = $objp->labelshort_account;
 
-		$facture_static->ref = $objp->ref;
-		$facture_static->id = $objp->facid;
-		$facture_static->type = $objp->ftype;
+		$facturestatic->ref = $objp->ref;
+		$facturestatic->id = $objp->facid;
+		$facturestatic->type = $objp->ftype;
 
-		$thirdpartystatic->id = $objp->socid;
-		$thirdpartystatic->name = $objp->name;
-		$thirdpartystatic->client = $objp->client;
-		$thirdpartystatic->fournisseur = $objp->fournisseur;
-		$thirdpartystatic->code_client = $objp->code_client;
-		$thirdpartystatic->code_compta_client = $objp->code_compta_client;
-		$thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
-		$thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
-		$thirdpartystatic->email = $objp->email;
-		$thirdpartystatic->country_code = $objp->country_code;
+        $thirdpartystatic->id = $objp->socid;
+        $thirdpartystatic->name = $objp->name;
+        $thirdpartystatic->client = $objp->client;
+        $thirdpartystatic->fournisseur = $objp->fournisseur;
+        $thirdpartystatic->code_client = $objp->code_client;
+        $thirdpartystatic->code_compta_client = $objp->code_compta_client;
+        $thirdpartystatic->code_fournisseur = $objp->code_fournisseur;
+        $thirdpartystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
+        $thirdpartystatic->email = $objp->email;
+        $thirdpartystatic->country_code = $objp->country_code;
 
-		$product_static->ref = $objp->product_ref;
-		$product_static->id = $objp->product_id;
-		$product_static->label = $objp->product_label;
-		$product_static->type = $objp->line_type;
+		$productstatic->ref = $objp->product_ref;
+		$productstatic->id = $objp->product_id;
+		$productstatic->label = $objp->product_label;
+		$productstatic->type = $objp->line_type;
 
 		print '<tr class="oddeven">';
 
@@ -380,15 +385,15 @@ if ($result) {
 		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Invoice
-		print '<td class="nowraponall">'.$facture_static->getNomUrl(1).'</td>';
+		print '<td class="nowraponall">'.$facturestatic->getNomUrl(1).'</td>';
 
 		// Date invoice
 		print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
 
 		// Ref Product
 		print '<td>';
-		if ($product_static->id > 0) print $product_static->getNomUrl(1);
-		if ($product_static->id > 0 && $objp->product_label) print '<br>';
+		if ($productstatic->id > 0) print $productstatic->getNomUrl(1);
+		if ($productstatic->id > 0 && $objp->product_label) print '<br>';
 		if ($objp->product_label) print '<span class="opacitymedium">'.$objp->product_label.'</span>';
 		print '</td>';
 
@@ -415,8 +420,9 @@ if ($result) {
 
 		print '<td>'.$objp->tva_intra.'</td>';
 
-		print '<td>';
-		print $codecompta.' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+		print '<td class="center">';
+        print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+		print ' <a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a>';
 		print '</td>';

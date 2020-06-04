@@ -48,7 +48,6 @@ QtyAlreadyProduced=Cant. producida
 ConsumeOrProduce=Consumir o Producir
 ConsumeAndProduceAll=Consumir y Producir Todo
 TheProductXIsAlreadyTheProductToProduce=El producto a agregar es el producto a producir
-ForAQuantityOf1=Para una cantidad a producir de 1 BOM
 ConfirmValidateMo=Está seguro de validar esta Orden de Fabricación?
 AddNewConsumeLines=Agregar nueva linea para consumir
 ProductsToConsume=Productos para consumir

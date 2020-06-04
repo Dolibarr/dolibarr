@@ -45,6 +45,8 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 
+$type = GETPOST('type', 'aZ09');
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -272,10 +274,6 @@ if ($id > 0 || $ref)
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-        /*print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
-		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-		print '<input class="flat" type="file" name="userfile"><br>';
-		print '</td></tr>';*/
 		print '</table><br>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
@@ -412,9 +410,7 @@ if ($id > 0 || $ref)
 			if ($obj->statut == 3)
 			{
 		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
-			}
-			else
-			{
+			} else {
 		  		print "&nbsp;";
 			}
 
@@ -446,9 +442,7 @@ if ($id > 0 || $ref)
 		print '</form>';
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

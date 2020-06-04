@@ -89,7 +89,6 @@ PriceUHTCurrency=U.P (moneda)
 PriceUTTC=ARRIBA. (inc. impuestos)
 MulticurrencyAlreadyPaid=Ya pagado, moneda original.
 MulticurrencyRemainderToPay=Quedan por pagar, moneda original.
-MulticurrencyPaymentAmount=Importe del pago, moneda original
 MulticurrencyAmountTTC=Importe (inc. De impuestos), moneda original
 MulticurrencyAmountVAT=Importe impuesto, moneda original
 Totalforthispage=Total para esta página

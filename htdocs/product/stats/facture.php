@@ -143,8 +143,7 @@ if ($id > 0 || !empty($ref))
 		if ($showmessage && $nboflines > 1)
 		{
 			print '<span class="opacitymedium">'.$langs->trans("ClinkOnALinkOfColumn", $langs->transnoentitiesnoconv("Referers")).'</span>';
-		}
-        elseif ($user->rights->facture->lire)
+		} elseif ($user->rights->facture->lire)
         {
             $sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
             $sql .= " f.ref, f.datef, f.paye, f.type, f.fk_statut as statut, f.rowid as facid,";

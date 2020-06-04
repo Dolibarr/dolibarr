@@ -294,13 +294,10 @@ class Facturation
         if (!$aId)
         {
             return $this->id;
-        }
-        elseif ($aId == 'RESET')
+        } elseif ($aId == 'RESET')
         {
             $this->id = null;
-        }
-        else
-        {
+        } else {
             $this->id = $aId;
         }
     }
@@ -317,13 +314,10 @@ class Facturation
         if (is_null($aRef))
         {
             return $this->ref;
-        }
-        elseif ($aRef == 'RESET')
+        } elseif ($aRef == 'RESET')
         {
             $this->ref = null;
-        }
-        else
-        {
+        } else {
             $this->ref = $aRef;
         }
     }
@@ -339,13 +333,10 @@ class Facturation
         if (is_null($aQte))
         {
             return $this->qte;
-        }
-        elseif ($aQte == 'RESET')
+        } elseif ($aQte == 'RESET')
         {
             $this->qte = null;
-        }
-        else
-        {
+        } else {
             $this->qte = $aQte;
         }
     }
@@ -362,13 +353,10 @@ class Facturation
         if (is_null($aStock))
         {
             return $this->stock;
-        }
-        elseif ($aStock == 'RESET')
+        } elseif ($aStock == 'RESET')
         {
             $this->stock = null;
-        }
-        else
-        {
+        } else {
             $this->stock = $aStock;
         }
     }
@@ -385,13 +373,10 @@ class Facturation
         if (is_null($aRemisePercent))
         {
             return $this->remise_percent;
-        }
-        elseif ($aRemisePercent == 'RESET')
+        } elseif ($aRemisePercent == 'RESET')
         {
             $this->remise_percent = null;
-        }
-        else
-        {
+        } else {
             $this->remise_percent = $aRemisePercent;
         }
     }
@@ -582,13 +567,10 @@ class Facturation
         if (is_null($aTotalTtc))
         {
             return $this->prix_total_ttc;
-        }
-        elseif ($aTotalTtc == 'RESET')
+        } elseif ($aTotalTtc == 'RESET')
         {
             $this->prix_total_ttc = null;
-        }
-        else
-        {
+        } else {
             $this->prix_total_ttc = $aTotalTtc;
         }
     }

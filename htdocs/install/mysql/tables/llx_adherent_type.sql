@@ -31,8 +31,8 @@ create table llx_adherent_type
   libelle          varchar(50) NOT NULL,
   morphy           varchar(3) NOT NULL,
   duration         varchar(6) DEFAULT NULL,
-  subscription     varchar(3) NOT NULL DEFAULT 'yes',
-  vote             varchar(3) NOT NULL DEFAULT 'yes',
+  subscription     varchar(3) NOT NULL DEFAULT '1',
+  vote             varchar(3) NOT NULL DEFAULT '1',
   note             text,
   mail_valid       text
 )ENGINE=innodb;

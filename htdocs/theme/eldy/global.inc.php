@@ -20,6 +20,7 @@
 	--colorbacklinebreak: rgb(<?php print $colorbacklinebreak; ?>);
 	--colorbackbody: rgb(<?php print $colorbackbody; ?>);
 	--colortexttitlenotab: rgb(<?php print $colortexttitlenotab; ?>);
+	--colortexttitlenotab2: rgb(<?php print $colortexttitlenotab2; ?>);
 	--colortexttitle: rgb(<?php print $colortexttitle; ?>);
 	--colortext: rgb(<?php print $colortext; ?>);
 	--colortextlink: rgb(<?php print $colortextlink; ?>);
@@ -31,7 +32,7 @@
 	--tooltipbgcolor: <?php print $toolTipBgColor; ?>;
 	--tooltipfontcolor : <?php print $toolTipFontColor; ?>;
 	--oddevencolor: #202020;
-	--colorboxstatsborder: #ddd;
+	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
 	--fieldrequiredcolor: #000055;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
@@ -62,6 +63,7 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	            --colorbackbody: #1d1e20;
 	            --tooltipbgcolor: #2b2d2f;
 	            --colortexttitlenotab: rgb(220,220,220);
+	            --colortexttitlenotab2: rgb(220,220,220);
 	            --colortexttitle: rgb(220,220,220);
 	            --colortext: rgb(220,220,220);
 	            --colortextlink: #4390dc;
@@ -550,6 +552,9 @@ textarea.centpercent {
     text-align: center;
     margin: 0px auto;
 }
+.alignstart {
+    text-align: start;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -665,10 +670,12 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-trash, .editfieldlang {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover,
+.editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 .fawidth30 {
@@ -1339,7 +1346,7 @@ td.showDragHandle {
 #id-left {
 	padding-top: 20px;
 	padding-bottom: 5px;
-	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN)) { ?>
+	<?php if (!empty($conf->global->MAIN_USE_TOP_MENU_SEARCH_DROPDOWN) && ! empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) { ?>
 	padding-top: 8px;
 	<?php } ?>
 }
@@ -1638,10 +1645,14 @@ td.nobordernopadding.widthpictotitle.col-picto {
 }
 
 span.widthpictotitle.pictotitle {
-/*    background: var(--colortexttitlenotab);
-    color: #fff;
-    padding: 10px;
-    border-radius: 2px;*/
+	/* background: rgba(70, 3, 62, 0.5); */
+    background: var(--colortexttitlenotab);
+    opacity: 0.8;
+    color: #fff !important;
+    padding: 7px;
+    border-radius: 2px;
+    min-width: 30px;
+    text-align: center;
 }
 .pictotitle {
 	margin-<?php echo $right; ?>: 8px;
@@ -1957,6 +1968,9 @@ div.mainmenu {
 	margin-left: 0px;
 	min-width: 40px;
 }
+a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
+    outline: none;
+}
 
 /* For mainmenu, we always load the img */
 
@@ -2115,9 +2129,7 @@ a.tmenuimage:hover{
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }'."\n";
-            }
-            else
-            {
+            } else {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
                 print "div.mainmenu.".$val." {\n";
@@ -2125,9 +2137,7 @@ a.tmenuimage:hover{
                 print "}\n";
             }
             $generic++;
-        }
-        else
-        {
+        } else {
             print "div.mainmenu.".$val." {\n";
             print "	background-image: url(".$url.");\n";
             print "}\n";
@@ -2642,8 +2652,8 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 div.tabs {
     text-align: <?php print $left; ?>;
     padding-top: 10px;
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 6px;
+    padding-right: 6px;
 	clear:both;
 	height:100%;
 }
@@ -2684,7 +2694,7 @@ div.tabBar.tabBarNoTop {
 /* tabBar used for creation/update/send forms */
 div.tabBarWithBottom {
 	padding-bottom: 18px;
-	border-bottom: 1px solid #aaa;
+	border-bottom: 1px solid #bbb;
 }
 div.tabBarWithBottom tr {
 	background: unset !important;
@@ -2859,6 +2869,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 	color: unset !important;
 }
 .nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
+div.tabs.nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
 .nopaddingright {
@@ -3315,7 +3328,7 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 .trforbreak td {
 	font-weight: 500;
     border-bottom: 1pt solid black !important;
-	background-color: var(--colorbacklinebreak) !important; !important;
+	background-color: var(--colorbacklinebreak) !important;
 }
 .trforbreak.nobold td a, .trforbreak.nobold span.secondary {
     font-weight: normal !important;
@@ -3584,7 +3597,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     background: var(--colorbackbody);
     border: 1px solid var(--colorboxstatsborder);
     border-left: 6px solid var(--colorboxstatsborder);
-    box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+    /* box-shadow: 1px 1px 8px var(--colorboxstatsborder); */
     border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
@@ -3837,7 +3850,7 @@ div.info {
     padding-bottom: 8px;
     margin: 1em 0em 1em 0em;
     background: #eff8fc;
-    color: #668;
+    color: #558;
 }
 
 /* Warning message */
@@ -3913,7 +3926,7 @@ div.boximport {
 
 .fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
 
-.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
+td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.7em; };
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
@@ -3977,9 +3990,19 @@ div.titre {
 	padding-top: 5px;
     padding-bottom: 5px;
 }
-div.titre, .secondary {
-	font-family: <?php print $fontlist ?>;
-	color: var(--colortexttitlenotab);
+div.fiche > table.table-fiche-title:first-of-type div {
+    color: var(--colortexttitlenotab);
+    /* font-weight: 600; */
+}
+div.titre {
+    color: var(--colortexttitlenotab);
+}
+
+.secondary {
+    color: var(--colortexttitlenotab);
+}
+.tertiary {
+	color: var(--colortexttitlenotab2);
 }
 
 table.table-fiche-title .col-title div.titre{
@@ -5107,6 +5130,9 @@ span#select2-taskid-container[title^='--'] {
 .select2-container--default .select2-results__option--highlighted[aria-selected] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);
     color: #<?php echo $colortextbackhmenu; ?>;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] span {
+    color: #fff !important;
 }
 
 span.select2.select2-container.select2-container--default {

@@ -54,9 +54,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -68,9 +66,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -80,8 +76,7 @@ if ($action == 'set')
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
-}
-elseif ($action == 'specimen')  // For orders
+} elseif ($action == 'specimen')  // For orders
 {
     $modele = GETPOST('module', 'alpha');
 
@@ -113,15 +108,11 @@ elseif ($action == 'specimen')  // For orders
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
     		return;
-    	}
-    	else
-    	{
+    	} else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
-    }
-    else
-    {
+    } else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -132,9 +123,7 @@ elseif ($action == 'setmodel')
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)

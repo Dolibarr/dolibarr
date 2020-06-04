@@ -47,6 +47,8 @@ $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
+$type = GETPOST('type', 'aZ09');
+
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
@@ -235,9 +237,7 @@ if ($result)
     print '</form>';
 
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

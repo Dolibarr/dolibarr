@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2020  Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@ class PaymentLoan extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'payment_loan';
+
+    /**
+     * @var string String with name of icon for PaymentLoan
+     */
+    public $picto = 'money-bill-alt';
 
     /**
      * @var int Loan ID
@@ -165,9 +170,7 @@ class PaymentLoan extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
@@ -178,9 +181,7 @@ class PaymentLoan extends CommonObject
 			$this->amount_capital = $totalamount;
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -254,9 +255,7 @@ class PaymentLoan extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -326,9 +325,7 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -379,9 +376,7 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -459,9 +454,7 @@ class PaymentLoan extends CommonObject
 					$result = $acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label ? $this->label : ''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $acc->error;
 				$error++;
 			}
@@ -470,9 +463,7 @@ class PaymentLoan extends CommonObject
 		if (!$error)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -496,9 +487,7 @@ class PaymentLoan extends CommonObject
 		{
 		    $this->fk_bank = $id_bank;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}

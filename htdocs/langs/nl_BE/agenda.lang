@@ -25,7 +25,6 @@ ProposalDeleted=Offerte verwijderd
 HOLIDAY_CREATEInDolibarr=Verzoek om verlof %s gemaakt
 HOLIDAY_MODIFYInDolibarr=Verzoek om verlof %s gewijzigd
 HOLIDAY_APPROVEInDolibarr=Verzoek om verlof %s goedgekeurd
-HOLIDAY_VALIDATEDInDolibarr=Verzoek om verlof %s gevalideerd
 HOLIDAY_DELETEInDolibarr=Verzoek om verlof %s verwijderd
 EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd

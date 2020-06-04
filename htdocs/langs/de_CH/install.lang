@@ -5,7 +5,6 @@ ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
 IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, gehen Sie bitte zurück und deaktivieren Sie das Kontrollkästchen "Datenbank erstellen".
 AdminLoginCreatedSuccessfuly=Das dolibarr-Administratorkonto '<b>%s</b>' wurde erfolgreich erstellt.
 GoToDolibarr=Zu dolibarr wechseln
-DirectoryRecommendation=<span class="warning">IMPORTANT</span>: You must use a directory that is outside of the web pages (so do not use a subdirectory of previous parameter).
 ChoosedMigrateScript=Migrationsskript auswählen
 ChooseYourSetupMode=Wählen Sie Ihre Installationsart und klicken Sie anschliessend auf "Start"...
 UpgradeDesc=Verwenden Sie diesen Modus zum Ersetzen Ihrer bisherigen Dateien durch eine neuere Version. Dieser Vorgang beinhaltet eine Aktualisierung Ihrer Datenbank und -daten.

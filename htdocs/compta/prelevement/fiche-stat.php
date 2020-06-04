@@ -39,6 +39,8 @@ if ($user->socid > 0) accessforbidden();
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+$type = GETPOST('type', 'aZ09');
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -132,9 +134,7 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		print $langs->trans("Error");
 	}
@@ -185,9 +185,7 @@ if ($prev_id > 0 || $ref)
 
 		print "</table>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		print $db->error().' '.$sql;
 	}
 }

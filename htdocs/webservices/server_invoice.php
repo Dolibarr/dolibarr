@@ -370,14 +370,12 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 			        	'lines' => $linesresp
 			        ));
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -511,8 +509,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 
 			);
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = $db->lasterrno(); $errorlabel = $db->lasterror();
 		}
@@ -627,8 +624,7 @@ function createInvoice($authentication, $invoice)
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$new_invoice->id,
             		'ref'=>$new_invoice->ref, 'ref_ext'=>$new_invoice->ref_ext);
         }
-        else
-        {
+        else {
             $db->rollback();
             $error++;
             $errorcode = 'KO';
@@ -707,14 +703,12 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 					}
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id_order.' nor ref='.$ref_order.' nor ref_ext='.$ref_ext_order;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -724,8 +718,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 	{
 		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
-	else
-	{
+	else {
 		$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref, 'ref_ext'=>$newobject->ref_ext);
 	}
 

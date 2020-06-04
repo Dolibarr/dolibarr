@@ -55,18 +55,15 @@ if ($query == "cat")
 		if ($obj['photo_vignette'])
 		{
 			$filename = $obj['photo_vignette'];
-		}
-		else
-		{
+		} else {
 			$filename = $obj['photo'];
 		}
-		$file = DOL_URL_ROOT.'/viewimage.php?cache=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
+		$file = DOL_URL_ROOT.'/viewimage.php?cache=1&publictakepos=1&modulepart=category&entity='.$object->entity.'&file='.urlencode($pdir.$filename);
 		header('Location: '.$file);
 		exit;
 	}
 	header('Location: ../../public/theme/common/nophoto.png');
-}
-elseif ($query == "pro")
+} elseif ($query == "pro")
 {
 	require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
@@ -76,11 +73,16 @@ elseif ($query == "pro")
 
 	preg_match('@src="([^"]+)"@', $image, $match);
 	$file = array_pop($match);
-	if ($file == "") header('Location: ../../public/theme/common/nophoto.png');
-	else header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
-}
-else
-{
+	if ($file == "") {
+		header('Location: ../../public/theme/common/nophoto.png');
+	} else {
+		if (!defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+			header('Location: '.$file.'&cache=1');
+		} else {
+			header('Location: '.$file.'&cache=1&publictakepos=1&modulepart=product');
+		}
+	}
+} else {
     // TODO We don't need this. Size of image must be defined on HTML page, image must NOT be resize when downloaded.
 
 	// The file

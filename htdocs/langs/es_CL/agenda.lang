@@ -60,7 +60,6 @@ InvoiceDeleted=Factura borrada
 HOLIDAY_CREATEInDolibarr=Solicitud de licencia %s creada
 HOLIDAY_MODIFYInDolibarr=Solicitud de licencia %s modificada
 HOLIDAY_APPROVEInDolibarr=Requerimiento de ausencia %s aprovada
-HOLIDAY_VALIDATEDInDolibarr=Solicitud de licencia %s validada
 HOLIDAY_DELETEInDolibarr=Solicitud de licencia %s eliminada
 TICKET_MODIFYInDolibarr=Boleto %s modificado
 TICKET_ASSIGNEDInDolibarr=Boleto %s asignado

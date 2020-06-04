@@ -255,7 +255,6 @@ class CommActionRapport
 				$eventstatic->id = $obj->id;
 				$eventstatic->percentage = $obj->percent;
 				$eventstatic->fulldayevent = $obj->fulldayevent;
-				$eventstatic->punctual = $obj->punctual;
 
 				$y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3);
 
@@ -296,8 +295,7 @@ class CommActionRapport
 				if ($obj->dp2) {
 					if (dol_print_date($this->db->jdate($obj->dp), "day") != dol_print_date($this->db->jdate($obj->dp2), "day"))
 						$textdate .= " -> ".dol_print_date($this->db->jdate($obj->dp2), "day")." - ".dol_print_date($this->db->jdate($obj->dp2), "hour");
-					else
-						$textdate .= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
+					else $textdate .= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
 				}
 				$textdate = $outputlangs->trans("ID").' '.$obj->id.' - '.$textdate;
 				$pdf->MultiCell(45 - $this->marge_gauche, $height, $textdate, 0, 'L', 0);

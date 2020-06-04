@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2018       Nicolas ZABOURI     <info@inovea-conseil.com>
- * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -482,7 +482,7 @@ class DataPolicyCron
 
                     while ($i < $num && !$error)
                     {
-                        $obj = $db->fetch_object($resql);
+                        $obj = $this->db->fetch_object($resql);
 
                         $object->fetch($obj->rowid);
                         $object->id = $obj->rowid;
@@ -505,9 +505,7 @@ class DataPolicyCron
 	                                	$error++;
 	                                }
 	                            }
-                            }
-                            else
-                            {
+                            } else {
                             	$errormsg = $object->error;
                             	$error++;
                             }
@@ -538,9 +536,7 @@ class DataPolicyCron
         if (!$error)
         {
         	$this->output = $nbupdated.' record updated, '.$nbdeleted.' record deleted';
-        }
-        else
-        {
+        } else {
         	$this->error = $errormsg;
         }
 

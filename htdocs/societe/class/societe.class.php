@@ -712,6 +712,12 @@ class Societe extends CommonObject
 
 
 	/**
+	 * @var Account|string Default BAN account
+	 */
+	public $bank_account;
+
+
+	/**
 	 *    Constructor
 	 *
 	 *    @param	DoliDB		$db		Database handler
@@ -818,40 +824,31 @@ class Societe extends CommonObject
 					$result = $this->call_trigger('COMPANY_CREATE', $user);
 					if ($result < 0) $error++;
 					// End call triggers
-				}
-				else $error++;
+				} else $error++;
 
 				if (!$error)
 				{
 					dol_syslog(get_class($this)."::Create success id=".$this->id);
 					$this->db->commit();
 					return $this->id;
-				}
-				else
-				{
+				} else {
 					dol_syslog(get_class($this)."::Create echec update ".$this->error." ".join(',', $this->errors), LOG_ERR);
 					$this->db->rollback();
 					return -4;
 				}
-			}
-			else
-			{
+			} else {
 				if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name); // duplicate on a field (code or profid or ...)
 					$result = -1;
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror();
 					$result = -2;
 				}
 				$this->db->rollback();
 				return $result;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::Create fails verify ".join(',', $this->errors), LOG_WARNING);
 			return -3;
@@ -929,16 +926,13 @@ class Societe extends CommonObject
 				if ($rescode == -1)
 				{
 					$this->errors[] = 'ErrorBadCustomerCodeSyntax';
-				}
-				elseif ($rescode == -2)
+				} elseif ($rescode == -2)
 				{
 					$this->errors[] = 'ErrorCustomerCodeRequired';
-				}
-				elseif ($rescode == -3)
+				} elseif ($rescode == -3)
 				{
 					$this->errors[] = 'ErrorCustomerCodeAlreadyUsed';
-				}
-				elseif ($rescode == -4)
+				} elseif ($rescode == -4)
 				{
 					$this->errors[] = 'ErrorPrefixRequired';
 				}
@@ -954,16 +948,13 @@ class Societe extends CommonObject
 				if ($rescode == -1)
 				{
 					$this->errors[] = 'ErrorBadSupplierCodeSyntax';
-				}
-				elseif ($rescode == -2)
+				} elseif ($rescode == -2)
 				{
 					$this->errors[] = 'ErrorSupplierCodeRequired';
-				}
-				elseif ($rescode == -3)
+				} elseif ($rescode == -3)
 				{
 					$this->errors[] = 'ErrorSupplierCodeAlreadyUsed';
-				}
-				elseif ($rescode == -5)
+				} elseif ($rescode == -5)
 				{
 					$this->errors[] = 'ErrorPrefixRequired';
 				}
@@ -1006,9 +997,7 @@ class Societe extends CommonObject
 						$this->errors[] = $langs->transcountry('ProfId'.$i, $this->country_code)." ".$langs->trans("ErrorProdIdAlreadyExist", $vallabel).' ('.$langs->trans("ForbiddenBySetupRules").')';
 					}
 				}
-			}
-			else
-			{
+			} else {
 				//var_dump($conf->global->SOCIETE_EMAIL_UNIQUE);
 				//var_dump($conf->global->SOCIETE_EMAIL_MANDATORY);
 				if ($key == 'EMAIL')
@@ -1253,20 +1242,16 @@ class Societe extends CommonObject
 				if ($this->localtax1_value != '')
 				{
 					$sql .= ",localtax1_value =".$this->localtax1_value;
-				}
-				else $sql .= ",localtax1_value =0.000";
-			}
-			else $sql .= ",localtax1_value =0.000";
+				} else $sql .= ",localtax1_value =0.000";
+			} else $sql .= ",localtax1_value =0.000";
 
 			if ($this->localtax2_assuj == 1)
 			{
 				if ($this->localtax2_value != '')
 				{
 					$sql .= ",localtax2_value =".$this->localtax2_value;
-				}
-				else $sql .= ",localtax2_value =0.000";
-			}
-			else $sql .= ",localtax2_value =0.000";
+				} else $sql .= ",localtax2_value =0.000";
+			} else $sql .= ",localtax2_value =0.000";
 
 			$sql .= ",capital = ".($this->capital == '' ? "null" : $this->capital);
 
@@ -1336,9 +1321,7 @@ class Societe extends CommonObject
 						unset($this->state_code);
 						unset($this->state);
 					}
-				}
-				else
-				{
+				} else {
 					unset($this->country_code); // We clean this, in the doubt, because it may have been changed after an update of country_id
 					unset($this->country);
 					unset($this->state_code);
@@ -1381,8 +1364,7 @@ class Societe extends CommonObject
 								dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 								$error++;
 							}
-						}
-						elseif ($result < 0)
+						} elseif ($result < 0)
 						{
 							$this->error = $lmember->error;
 							$error++;
@@ -1424,32 +1406,24 @@ class Societe extends CommonObject
 					dol_syslog(get_class($this)."::Update success");
 					$this->db->commit();
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					// Doublon
 					$this->error = $langs->trans("ErrorDuplicateField");
 					$result = -1;
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror();
 					$result = -2;
 				}
 				$this->db->rollback();
 				return $result;
 			}
-		}
-		else
-	    {
+		} else {
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::Update fails verify ".join(',', $this->errors), LOG_WARNING);
 			return -3;
@@ -1541,8 +1515,7 @@ class Societe extends CommonObject
 				$this->error = 'Fetch found several records. Rename one of thirdparties to avoid duplicate.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
-			}
-			elseif ($num)   // $num = 1
+			} elseif ($num)   // $num = 1
 			{
 				$obj = $this->db->fetch_object($resql);
 
@@ -1674,16 +1647,12 @@ class Societe extends CommonObject
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
-			}
-			else
-			{
+			} else {
 				$result = 0;
 			}
 
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$result = -3;
 		}
@@ -1821,15 +1790,12 @@ class Societe extends CommonObject
 				}
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				dol_syslog($this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
+		} else dol_syslog("Can't remove thirdparty with id ".$id.". There is ".$objectisused." childs", LOG_WARNING);
 		return 0;
 	}
 
@@ -1855,8 +1821,7 @@ class Societe extends CommonObject
 			{
 				$this->client = $newclient;
 				return 1;
-			}
-			else return -1;
+			} else return -1;
 		}
 		return 0;
 	}
@@ -2050,14 +2015,11 @@ class Societe extends CommonObject
 			if ($result > 0)
 			{
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->error = $discount->error;
 				return -3;
 			}
-		}
-		else return 0;
+		} else return 0;
 	}
 
 	/**
@@ -2078,9 +2040,7 @@ class Societe extends CommonObject
 		if ($result >= 0)
 		{
 			return $result;
-		}
-		else
-		{
+		} else {
 			$this->error = $discountstatic->error;
 			return -1;
 		}
@@ -2107,9 +2067,7 @@ class Societe extends CommonObject
 			$sql .= " WHERE ((ug.fk_user = sc.fk_user";
 			$sql .= " AND ug.entity = ".$conf->entity.")";
 			$sql .= " OR u.admin = 1)";
-		}
-		else
-			$sql .= " WHERE entity in (0, ".$conf->entity.")";
+		} else $sql .= " WHERE entity in (0, ".$conf->entity.")";
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".$this->id;
 
@@ -2135,16 +2093,13 @@ class Societe extends CommonObject
 					$reparray[$i]['entity'] = $obj->entity;
 					$reparray[$i]['login'] = $obj->login;
 					$reparray[$i]['photo'] = $obj->photo;
-				}
-				else
-				{
+				} else {
 					$reparray[] = $obj->rowid;
 				}
 				$i++;
 			}
 			return $reparray;
-		}
-		else {
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -2248,9 +2203,7 @@ class Societe extends CommonObject
 			{
                 $this->db->commit();
                 return 1;
-			}
-			else
-			{
+			} else {
 			    $this->db->rollback();
 			    return -1;
 			}
@@ -2334,9 +2287,7 @@ class Societe extends CommonObject
 			if ($conf->global->SOCIETE_ADD_REF_IN_LIST == 1)
 			{
 				$name = $code.' '.$name;
-			}
-			else
-			{
+			} else {
 				$name = $code;
 			}
 		}
@@ -2351,8 +2302,7 @@ class Societe extends CommonObject
 			$label .= '<div class="photointooltip">';
 			$label .= Form::showphoto('societe', $this, 0, 40, 0, '', 'mini', 0); // Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
 			$label .= '</div><div style="clear: both;"></div>';
-		}
-		elseif (!empty($this->logo_squarred) && class_exists('Form'))
+		} elseif (!empty($this->logo_squarred) && class_exists('Form'))
 		{
 			/*$label.= '<div class="photointooltip">';
 			$label.= Form::showphoto('societe', $this, 0, 40, 0, 'photowithmargin', 'mini', 0);	// Important, we must force height so image will have height tags and if image is inside a tooltip, the tooltip manager can calculate height and position correctly the tooltip.
@@ -2365,38 +2315,31 @@ class Societe extends CommonObject
 		{
 		    $label .= '<u>'.$langs->trans("ShowCustomer").'</u>';
 		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
-		}
-		elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
 			$label .= '<u>'.$langs->trans("ShowProspect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
-		}
-		elseif ($option == 'supplier')
+		} elseif ($option == 'supplier')
 		{
 			$label .= '<u>'.$langs->trans("ShowSupplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
-		}
-		elseif ($option == 'agenda')
+		} elseif ($option == 'agenda')
 		{
 			$label .= '<u>'.$langs->trans("ShowAgenda").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
-		}
-		elseif ($option == 'project')
+		} elseif ($option == 'project')
 		{
 			$label .= '<u>'.$langs->trans("ShowProject").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
-		}
-		elseif ($option == 'margin')
+		} elseif ($option == 'margin')
 		{
 			$label .= '<u>'.$langs->trans("ShowMargin").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
-		}
-		elseif ($option == 'contact')
+		} elseif ($option == 'contact')
 		{
 			$label .= '<u>'.$langs->trans("ShowContacts").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
-		}
-		elseif ($option == 'ban')
+		} elseif ($option == 'ban')
 		{
 			$label .= '<u>'.$langs->trans("ShowBan").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
@@ -2628,18 +2571,14 @@ class Societe extends CommonObject
 						if (!empty($obj->poste))
 						{
 							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)).($obj->poste ? " - ".$obj->poste : "").(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
-						}
-						else
-						{
+						} else {
 							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)).(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
 						}
 					}
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 		return $contact_property;
@@ -2672,9 +2611,7 @@ class Societe extends CommonObject
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 		return $contacts;
@@ -2709,9 +2646,7 @@ class Societe extends CommonObject
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 		return $contacts;
@@ -2749,9 +2684,7 @@ class Societe extends CommonObject
 				elseif ($mode == 'mobile') $contact_property = $obj->phone_mobile;
 			}
 			return $contact_property;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -2775,8 +2708,7 @@ class Societe extends CommonObject
 		if ($mode == 'label')
 		{
 			return $bac->getRibLabel(true);
-		}
-		elseif ($mode == 'rum')
+		} elseif ($mode == 'rum')
 		{
 			if (empty($bac->rum))
 			{
@@ -2786,8 +2718,7 @@ class Societe extends CommonObject
 				$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
 			}
 			return $bac->rum;
-		}
-		elseif ($mode == 'format')
+		} elseif ($mode == 'format')
 		{
 			return $bac->frstrecur;
 		}
@@ -2917,9 +2848,7 @@ class Societe extends CommonObject
 			if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
 			if ($mod->code_modifiable) return 1; // A mettre en dernier
 			return 0;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -2953,9 +2882,7 @@ class Societe extends CommonObject
 			if ($mod->code_modifiable_invalide && $this->check_codefournisseur() < 0) return 1;
 			if ($mod->code_modifiable) return 1; // A mettre en dernier
 			return 0;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -2991,9 +2918,7 @@ class Societe extends CommonObject
 		   	dol_syslog(get_class($this)."::check_codeclient code_client=".$this->code_client." module=".$module);
 		   	$result = $mod->verif($this->db, $this->code_client, $this, 0);
 			return $result;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -3028,9 +2953,7 @@ class Societe extends CommonObject
 			dol_syslog(get_class($this)."::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$module);
 			$result = $mod->verif($this->db, $this->code_fournisseur, $this, 1);
 			return $result;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -3071,15 +2994,11 @@ class Societe extends CommonObject
 				elseif ($type == 'supplier') $this->code_compta_fournisseur = $mod->code;
 
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->error = 'ErrorAccountancyCodeNotDefined';
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			if ($type == 'customer') $this->code_compta = '';
 			elseif ($type == 'supplier') $this->code_compta_fournisseur = '';
 
@@ -3108,13 +3027,10 @@ class Societe extends CommonObject
 			{
 				$this->parent = $id;
 				return 1;
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
-		}
-		else return -1;
+		} else return -1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3204,9 +3120,7 @@ class Societe extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			$count = $obj->idprof;
-		}
-		else
-		{
+		} else {
 			$count = 0;
 			print $this->db->error();
 		}
@@ -3306,8 +3220,7 @@ class Societe extends CommonObject
 			if (preg_match('/(^[0-9]{8}[A-Z]{1}$)/', $string))
 				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 0, 8) % 23, 1))
 					return 1;
-			else
-				return -1;
+			else return -1;
 
 			//algorithm checking type code CIF
 			$sum = $num[2] + $num[4] + $num[6];
@@ -3319,29 +3232,25 @@ class Societe extends CommonObject
 			if (preg_match('/^[KLM]{1}/', $string))
 				if ($num[8] == chr(64 + $n) || $num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($string, 1, 8) % 23, 1))
 					return 1;
-			else
-				return -1;
+			else return -1;
 
 			//Check CIF
 			if (preg_match('/^[ABCDEFGHJNPQRSUVW]{1}/', $string))
 				if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1))
 					return 2;
-			else
-				return -2;
+			else return -2;
 
 			//Check NIE T
 			if (preg_match('/^[T]{1}/', $string))
 				if ($num[8] == preg_match('/^[T]{1}[A-Z0-9]{8}$/', $string))
 					return 3;
-			else
-				return -3;
+			else return -3;
 
 			//Check NIE XYZ
 			if (preg_match('/^[XYZ]{1}/', $string))
 				if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X', 'Y', 'Z'), array('0', '1', '2'), $string), 0, 8) % 23, 1))
 					return 3;
-			else
-				return -3;
+			else return -3;
 
 			//Can not be verified
 			return -4;
@@ -3361,8 +3270,7 @@ class Societe extends CommonObject
 			//Check NIF
 			if (preg_match('/(^[0-9]{9}$)/', $string)) {
 				return 1;
-			}
-			else {
+			} else {
 				return -1;
 			}
 		}
@@ -3416,8 +3324,7 @@ class Societe extends CommonObject
 			if ($url) {
 				return '<a target="_blank" href="'.$url.'">'.$langs->trans("Check").'</a>';
 			}
-		}
-		else {
+		} else {
 			return $hookmanager->resPrint;
 		}
 
@@ -3439,9 +3346,7 @@ class Societe extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 			$count = $obj->numproj;
-		}
-		else
-		{
+		} else {
 			$count = 0;
 			print $this->db->error();
 		}
@@ -3490,9 +3395,7 @@ class Societe extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -3510,11 +3413,9 @@ class Societe extends CommonObject
 		$isacompany = empty($conf->global->MAIN_UNKNOWN_CUSTOMERS_ARE_COMPANIES) ? 0 : 1; // 0 by default
 		if (!empty($this->tva_intra)) {
 			$isacompany = 1;
-		}
-		elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
+		} elseif (!empty($this->idprof1) || !empty($this->idprof2) || !empty($this->idprof3) || !empty($this->idprof4) || !empty($this->idprof5) || !empty($this->idprof6)) {
 			$isacompany = 1;
-		}
-		elseif (!empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
+		} elseif (!empty($this->typent_code) && $this->typent_code != 'TE_UNKNOWN')
 		{
 			// TODO Add a field is_a_company into dictionary
 			if (preg_match('/^TE_PRIVATE/', $this->typent_code)) $isacompany = 0;
@@ -3557,9 +3458,7 @@ class Societe extends CommonObject
 				$this->SupplierCategories[$obj->rowid] = $obj->label;
 			}
 			return 0;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -3580,9 +3479,7 @@ class Societe extends CommonObject
 			$sql .= " VALUES (".$categorie_id.", ".$this->id.")";
 
 			if ($resql = $this->db->query($sql)) return 0;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 		return -1;
@@ -3644,17 +3541,13 @@ class Societe extends CommonObject
 			{
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			// $this->error deja positionne
 			dol_syslog(get_class($this)."::create_from_member - 2 - ".$this->error." - ".join(',', $this->errors), LOG_ERR);
 
@@ -3695,8 +3588,7 @@ class Societe extends CommonObject
 			{
 				$country_code = $tmp[1];
 				$country_label = $tmp[2];
-			}
-			else                    // For backward compatibility
+			} else // For backward compatibility
 			{
 				dol_syslog("Your country setup use an old syntax. Reedit it using setup area.", LOG_WARNING);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -3720,8 +3612,7 @@ class Societe extends CommonObject
 			{
 				$state_code = $tmp[1];
 				$state_label = $tmp[2];
-			}
-			else                    // For backward compatibility
+			} else // For backward compatibility
 			{
 				dol_syslog("Your state setup use an old syntax. Reedit it using setup area.", LOG_ERR);
 				include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
@@ -3859,8 +3750,7 @@ class Societe extends CommonObject
 		if ($resql)
 		{
    			return ($this->db->num_rows($resql) > 0);
-		}
-		else return false;
+		} else return false;
 	}
 
 	/**
@@ -3880,8 +3770,7 @@ class Societe extends CommonObject
 		if ($resql)
 		{
 			return ($this->db->num_rows($resql) > 0);
-		}
-		else return false;
+		} else return false;
 	}
 
 	/**
@@ -3903,9 +3792,7 @@ class Societe extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
    			return (($obj->nb > 0) ?true:false);
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return false;
 		}
@@ -3991,8 +3878,7 @@ class Societe extends CommonObject
 			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
 			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
 			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
-			else
-			{
+			else {
 				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
 		}
@@ -4003,8 +3889,7 @@ class Societe extends CommonObject
 			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1);
 			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2);
 			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3);
-			else
-			{
+			else {
 				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0);
 			}
 		}
@@ -4015,8 +3900,7 @@ class Societe extends CommonObject
 			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
 			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
 			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
-			else
-			{
+			else {
 				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
 		}
@@ -4073,9 +3957,7 @@ class Societe extends CommonObject
 				}
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax); // 'opened' is 'incl taxes'
-		}
-		else
-			return array();
+		} else return array();
 	}
 
 	/**
@@ -4113,9 +3995,7 @@ class Societe extends CommonObject
 				}
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax); // 'opened' is 'incl taxes'
-		}
-		else
-			return array();
+		} else return array();
 	}
 
 	/**
@@ -4156,9 +4036,7 @@ class Societe extends CommonObject
 			{
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$tmpobject = new FactureFournisseur($this->db);
-			}
-			else
-			{
+			} else {
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$tmpobject = new Facture($this->db);
 			}
@@ -4193,9 +4071,7 @@ class Societe extends CommonObject
                 }
 			}
 			return array('opened'=>$outstandingOpened, 'total_ht'=>$outstandingTotal, 'total_ttc'=>$outstandingTotalIncTax); // 'opened' is 'incl taxes'
-		}
-		else
-		{
+		} else {
 			return array();
 		}
 	}
@@ -4254,20 +4130,27 @@ class Societe extends CommonObject
 			$result = $companybankaccount->fetch($moreparams['use_companybankid']);
 			if (!$result) dol_print_error($this->db, $companybankaccount->error, $companybankaccount->errors);
 			$result = $companybankaccount->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-		}
-		else
-		{
+		} else {
 			// Positionne le modele sur le nom du modele a utiliser
 			if (!dol_strlen($modele))
 			{
 				if (!empty($conf->global->COMPANY_ADDON_PDF))
 				{
 					$modele = $conf->global->COMPANY_ADDON_PDF;
-				}
-				else
-				{
+				} else {
 					print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
 					return 0;
+				}
+			}
+
+			if (! isset($this->bank_account)) {
+				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+				$bac = new CompanyBankAccount($this->db);
+				$result = $bac->fetch(0, $this->id);
+				if ($result > 0) {
+					$this->bank_account = $bac;
+				} else {
+					$this->bank_account = '';
 				}
 			}
 

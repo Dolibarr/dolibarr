@@ -63,14 +63,10 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     {
         header("Location: ../admin/admin_establishment.php");
         exit;
-    }
-    else
-    {
+    } else {
         setEventMessages($object->error, $object->errors, 'errors');
     }
-}
-
-elseif ($action == 'add')
+} elseif ($action == 'add')
 {
     if (!$cancel)
     {
@@ -100,19 +96,13 @@ elseif ($action == 'add')
             {
                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
                 exit;
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-        }
-        else
-        {
+        } else {
             $action = 'create';
         }
-    }
-    else
-    {
+    } else {
         header("Location: ../admin/admin_establishment.php");
         exit;
     }
@@ -147,9 +137,7 @@ elseif ($action == 'update')
             {
                 header("Location: ".$_SERVER["PHP_SELF"]."?id=".$_POST['id']);
                 exit;
-            }
-			else
-			{
+            } else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -189,13 +177,16 @@ if ($action == 'create')
 	print '<td><input name="name" id="name" size="32" value="'.GETPOST("name", "alpha").'"></td>';
 	print '</tr>';
 
-	// Parent
-	print '<tr>';
-	print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
-	print '<td class="maxwidthonsmartphone">';
-	print $form->selectEstablishments(GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity, 'entity', 1);
-	print '</td>';
-	print '</tr>';
+	// Entity
+	/*
+	if (! empty($conf->multicompany->enabled)) {
+		print '<tr>';
+		print '<td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+		print '<td class="maxwidthonsmartphone">';
+		print $form->selectEstablishments(GETPOST('entity', 'int') > 0 ?GETPOST('entity', 'int') : $conf->entity, 'entity', 1);
+		print '</td>';
+		print '</tr>';
+	} */
 
 	// Address
 	print '<tr>';
@@ -291,11 +282,14 @@ if (($id || $ref) && $action == 'edit')
             print '<input name="name" id="name" class="flat" size="32" value="'.$object->name.'">';
             print '</td></tr>';
 
-			// Parent
-            print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
-			print '<td class="maxwidthonsmartphone">';
-			print $form->selectEstablishments($object->entity > 0 ? $object->entity : $conf->entity, 'entity', 1);
-            print '</td></tr>';
+			// Entity
+			/*
+            if (! empty($conf->multicompany->enabled)) {
+	            print '<tr><td>'.$form->editfieldkey('Parent', 'entity', '', $object, 0, 'string', '', 1).'</td>';
+				print '<td class="maxwidthonsmartphone">';
+				print $object->entity > 0 ? $object->entity : $conf->entity;
+	            print '</td></tr>';
+            }*/
 
 			// Address
 			print '<tr><td>'.$form->editfieldkey('Address', 'address', '', $object, 0).'</td>';
@@ -340,8 +334,7 @@ if (($id || $ref) && $action == 'edit')
 
             print '</form>';
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
 }
 
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
@@ -380,11 +373,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<td>'.$object->name.'</td>';
 	print '</tr>';
 
-	// Parent
-	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans("Parent").'</td>';
-	print '<td>'.$object->getNomUrlParent($object->entity).'</td>';
-	print '</tr>';
+	// Entity
+	/*
+	if ($conf->multicompany->enabled) {
+		print '<tr>';
+		print '<td class="titlefield">'.$langs->trans("Entity").'</td>';
+		print '<td>'.$object->entity.'</td>';
+		print '</tr>';
+	}*/
 
 	// Address
 	print '<tr>';

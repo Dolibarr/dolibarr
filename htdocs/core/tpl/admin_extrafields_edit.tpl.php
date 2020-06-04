@@ -177,8 +177,7 @@ if ((($type == 'select') || ($type == 'checkbox') || ($type == 'radio')) && is_a
 			$param_chain .= $key.','.$value."\n";
 		}
 	}
-}
-elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
+} elseif (($type == 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($type == 'password') || ($type == 'separate'))
 {
 	$paramlist = array_keys($param['options']);
 	$param_chain = $paramlist[0];
@@ -217,9 +216,7 @@ if (in_array($type, array_keys($typewecanchangeinto)))
         else print '<option value="'.$key.'" disabled="disabled"'.$selected.'>'.$val.'</option>';
     }
     print '</select>';
-}
-else
-{
+} else {
 	print $type2label[$type];
     print '<input type="hidden" name="type" id="type" value="'.$type.'">';
 }

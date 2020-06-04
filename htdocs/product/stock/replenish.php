@@ -177,13 +177,10 @@ if ($action == 'order' && isset($_POST['valid']))
 						$line->fk_unit = $productsupplier->fk_unit;
 	                    $suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
                 	}
-                }
-				elseif ($idprod == -1)
+                } elseif ($idprod == -1)
 				{
 					$errorQty++;
-				}
-                else
-				{
+				} else {
                     $error = $db->lasterror();
                     dol_print_error($db);
                 }
@@ -272,9 +269,7 @@ if ($action == 'order' && isset($_POST['valid']))
             setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
             header('Location: replenishorders.php');
             exit;
-        }
-        else
-        {
+        } else {
         	$db->rollback();
         }
     }
@@ -420,8 +415,7 @@ if ($usevirtualstock)
 		$sqlProductionToProduce .= " AND mp5.fk_product = p.rowid";
 		$sqlProductionToProduce .= " AND mp5.role IN ('toproduce', 'produced')";
 		$sqlProductionToProduce .= " AND mm5.status IN (1,2))";
-	} else
-	{
+	} else {
 		$sqlProductionToConsume = '0';
 		$sqlProductionToProduce = '0';
 	}
@@ -672,9 +666,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$stock = $prod->stock_theorique;
-		}
-		else
-		{
+		} else {
 			$stock = $prod->stock_reel;
 		}
 
@@ -714,8 +706,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			{
 				$picto = img_picto('', './img/yes', '', 1);
 				$disabled = 'disabled';
-			}
-			else {
+			} else {
 				$picto = img_picto('', './img/no', '', 1);
 			}
 		} else {

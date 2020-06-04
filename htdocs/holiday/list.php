@@ -429,9 +429,7 @@ if ($resql)
 		}
 
 		print '</div>';
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans("ListeCP");
 
 		$newcardbutton = '';
@@ -523,9 +521,7 @@ if ($resql)
 		    foreach ($valideurobjects as $val) $valideurarray[$val->id] = $val->id;
 		    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
 		    print '</td>';
-		}
-		else
-		{
+		} else {
 		    print '<td class="liste_titre">&nbsp;</td>';
 		}
 	}
@@ -643,8 +639,7 @@ if ($resql)
 		$langs->load("errors");
 		print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
 		$result = 0;
-	}
-	elseif ($num > 0 && !empty($mysoc->country_id))
+	} elseif ($num > 0 && !empty($mysoc->country_id))
 	{
 	    // Lines
 	    $userstatic = new User($db);
@@ -793,9 +788,7 @@ if ($resql)
 	print '</div>';
 
 	print '</form>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

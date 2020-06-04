@@ -35,7 +35,6 @@ PRODUCT_MODIFYInDolibarr=Produkt %s bearbeitet
 HOLIDAY_CREATEInDolibarr=Ferienantrag %s erzeugt
 HOLIDAY_MODIFYInDolibarr=Ferienantrag %s geändert
 HOLIDAY_APPROVEInDolibarr=Ferienantrag %s frei gegeben
-HOLIDAY_VALIDATEDInDolibarr=Ferienantrag %s bestätigt
 HOLIDAY_DELETEInDolibarr=Ferienantrag %s gelöscht
 EXPENSE_REPORT_CREATEInDolibarr=Spesenabrechnung %s erzeugt
 EXPENSE_REPORT_VALIDATEInDolibarr=Spesenabrechnung %s geprüft

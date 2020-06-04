@@ -175,7 +175,7 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		// Si origin du ticket
+		// If ticket created from another object
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
@@ -225,7 +225,7 @@ class FormTicket
 				if ($this->withthreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
 				}
-				print '<input class="text minwidth300" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" autofocus />';
 				print '</td></tr>';
 			}
 		}
