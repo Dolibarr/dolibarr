@@ -7972,7 +7972,7 @@ abstract class CommonObject
 	/**
 	 * Delete all child object
 	 * @param		int		$parentId      Parent Id
-	 * @param		string	$parentField Name of parent FIled
+	 * @param		string	$parentField   Name of Foreign key parent column
 	 * @return		int						<0 if KO, >0 if OK
 	 * @throws Exception
 	 */
