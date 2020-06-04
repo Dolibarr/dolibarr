@@ -7976,7 +7976,7 @@ abstract class CommonObject
 	 * @return		int						<0 if KO, >0 if OK
 	 * @throws Exception
 	 */
-	public function deleteByParentField($parentId = 0, $parentField='')
+	public function deleteByParentField($parentId = 0, $parentField = '')
 	{
 		global $user;
 
