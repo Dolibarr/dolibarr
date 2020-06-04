@@ -158,7 +158,10 @@ class box_shipments extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedShipments"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                	'td' => 'class="center opacitymedium"',
+                	'text'=>$langs->trans("NoRecordedShipments")
+                );
 
                 $this->db->free($result);
             } else {

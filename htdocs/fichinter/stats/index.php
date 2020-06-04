@@ -65,7 +65,7 @@ $dir = $conf->ficheinter->dir_temp;
 
 llxHeader('', $title);
 
-print load_fiche_titre($title, '', 'commercial');
+print load_fiche_titre($title, '', 'intervention');
 
 dol_mkdir($dir);
 

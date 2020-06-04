@@ -588,16 +588,16 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 {
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">'.
-	'<input type="hidden" name="token" value="'.newToken().'">'.
-	'<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">'.
-	'<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">'.
-	'<input type="hidden" name="sortfield" value="'.$sortfield.'">'.
-	'<input type="hidden" name="sortorder" value="'.$sortorder.'">'.
-	'<input type="hidden" name="type" value="'.$type.'">'.
-	'<input type="hidden" name="linecount" value="'.$num.'">'.
-	'<input type="hidden" name="action" value="order">'.
-	'<input type="hidden" name="mode" value="'.$mode.'">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="fk_supplier" value="'.$fk_supplier.'">';
+print '<input type="hidden" name="fk_entrepot" value="'.$fk_entrepot.'">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
+print '<input type="hidden" name="linecount" value="'.$num.'">';
+print '<input type="hidden" name="action" value="order">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Fields title search
 print '<tr class="liste_titre_filter">';

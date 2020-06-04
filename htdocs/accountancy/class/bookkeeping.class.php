@@ -704,7 +704,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' WHERE 1 = 1';
 		$sql .= " AND entity IN (".getEntity('accountancy').")";
 		if (null !== $ref) {
-			$sql .= ' AND t.ref = '.'\''.$ref.'\'';
+			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
 		} else {
 			$sql .= ' AND t.rowid = '.$id;
 		}

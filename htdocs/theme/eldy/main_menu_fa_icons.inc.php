@@ -8,7 +8,7 @@
     font-style: normal;
     font-variant: normal;
     text-rendering: auto;
-    line-height: 26px;
+    line-height: 23px;
 	font-size: <?php echo $topMenuFontSize; ?>;
     -webkit-font-smoothing: antialiased;
     text-align:center;
@@ -145,7 +145,7 @@ div.mainmenu.generic4::before {
 
 /* Define color of some picto */
 
-.fa-phone, .fa-fax {
+.fa-phone, .fa-mobile-alt, .fa-fax {
 	opacity: 0.5;
 	color: #440;
 }

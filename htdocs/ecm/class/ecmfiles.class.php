@@ -772,7 +772,6 @@ class EcmFiles extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-		$companylink = '';
 
 		$label = '<u>'.$langs->trans("MyModule").'</u>';
 		$label .= '<br>';
@@ -867,6 +866,9 @@ class EcmFiles extends CommonObject
 }
 
 
+/**
+ * Class of an index line of a document
+ */
 class EcmfilesLine
 {
 	/**

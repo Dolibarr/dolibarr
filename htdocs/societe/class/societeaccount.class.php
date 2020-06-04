@@ -79,15 +79,15 @@ class SocieteAccount extends CommonObject
 	public $fields = array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
 		'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'default'=>1),
-		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>'Key account',),
-		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>10),
+		'login' => array('type'=>'varchar(64)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
 		'pass_encoding' => array('type'=>'varchar(24)', 'label'=>'PassEncoding', 'visible'=>0, 'enabled'=>1, 'position'=>30),
 		'pass_crypted' => array('type'=>'varchar(128)', 'label'=>'Password', 'visible'=>1, 'enabled'=>1, 'position'=>31, 'notnull'=>1),
 		'pass_temp'    => array('type'=>'varchar(128)', 'label'=>'Temp', 'visible'=>0, 'enabled'=>0, 'position'=>32, 'notnull'=>-1,),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'index'=>1),
-		'site' => array('type'=>'varchar(128)', 'label'=>'Site', 'visible'=>-1, 'enabled'=>1, 'position'=>41),
-		'site_account' => array('type'=>'varchar(128)', 'label'=>'SiteAccount', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'help'=>'A key to identify the account on external web site'),
-		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>43, 'notnull'=>-1, 'index'=>1),
+		'fk_website' => array('type'=>'integer:Website:website/class/website.class.php', 'label'=>'WebSite', 'visible'=>1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'index'=>1),
+		'site' => array('type'=>'varchar(128)', 'label'=>'ExternalSite', 'visible'=>0, 'enabled'=>1, 'position'=>43, 'help'=>'Name of the website or service if this is account on an external website or service'),
+		'site_account' => array('type'=>'varchar(128)', 'label'=>'ExternalSiteAccount', 'visible'=>0, 'enabled'=>1, 'position'=>44, 'help'=>'A key to identify the account on external web site if this is an account on an external website'),
+		'key_account' => array('type'=>'varchar(128)', 'label'=>'KeyAccount', 'visible'=>0, 'enabled'=>1, 'position'=>48, 'notnull'=>0, 'index'=>1, 'searchall'=>1, 'comment'=>'The id of third party in the external web site (for site_account if site_account defined)',),
 		'date_last_login' => array('type'=>'datetime', 'label'=>'LastConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>50, 'notnull'=>0,),
 		'date_previous_login' => array('type'=>'datetime', 'label'=>'PreviousConnexion', 'visible'=>2, 'enabled'=>1, 'position'=>51, 'notnull'=>0,),
 		//'note_public' => array('type'=>'text', 'label'=>'NotePublic', 'visible'=>-1, 'enabled'=>1, 'position'=>45, 'notnull'=>-1,),
@@ -405,11 +405,10 @@ class SocieteAccount extends CommonObject
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
-        $companylink = '';
 
         $this->ref = $this->login;
 
-        $label = '<u>'.$langs->trans("SocieteAccount").'</u>';
+        $label = '<u>'.$langs->trans("WebsiteAccount").'</u>';
         $label .= '<br>';
         $label .= '<b>'.$langs->trans('Login').':</b> '.$this->ref;
         //$label.= '<b>' . $langs->trans('WebSite') . ':</b> ' . $this->ref;
@@ -429,7 +428,7 @@ class SocieteAccount extends CommonObject
         {
             if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
             {
-                $label = $langs->trans("ShowsocieteAccount");
+                $label = $langs->trans("WebsiteAccount");
                 $linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';

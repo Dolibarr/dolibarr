@@ -68,7 +68,7 @@ class Project extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'projectpub';
+    public $picto = 'project';
 
     /**
      * {@inheritdoc}
@@ -316,7 +316,7 @@ class Project extends CommonObject
 
         // Update extrafield
         if (!$error) {
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (!$error)
         	{
         		$result = $this->insertExtraFields();
         		if ($result < 0)
@@ -405,7 +405,7 @@ class Project extends CommonObject
                 // Update extrafield
                 if (!$error)
                 {
-                	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                	if (!$error)
                 	{
                 		$result = $this->insertExtraFields();
                 		if ($result < 0)
@@ -1026,24 +1026,28 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Return clicable name (with picto eventually)
+     * 	Return clickable name (with picto eventually)
      *
      * 	@param	int		$withpicto		          0=No picto, 1=Include picto into link, 2=Only picto
-     * 	@param	string	$option			          Variant ('', 'nolink')
+     * 	@param	string	$option			          Variant where the link point to ('', 'nolink')
      * 	@param	int		$addlabel		          0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$moreinpopup	          Text to add into popup
      *  @param	string	$sep			          Separator between ref and label if option addlabel is set
      *  @param	int   	$notooltip		          1=Disable tooltip
      *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *  @param	string	$morecss				  More css on a link
      * 	@return	string					          String with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1)
+    public function getNomUrl($withpicto = 0, $option = '', $addlabel = 0, $moreinpopup = '', $sep = ' - ', $notooltip = 0, $save_lastsearch_value = -1, $morecss = '')
     {
         global $conf, $langs, $user, $hookmanager;
 
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
         $result = '';
+        if (! empty($conf->global->PROJECT_OPEN_ALWAYS_ON_TAB)) {
+        	$option = $conf->global->PROJECT_OPEN_ALWAYS_ON_TAB;
+        }
 
         $label = '';
         if ($option != 'nolink') $label = '<u>'.$langs->trans("Project").'</u>';
@@ -1072,6 +1076,10 @@ class Project extends CommonObject
             elseif ($option == 'task')
             {
                 $url = DOL_URL_ROOT.'/projet/tasks.php?id='.$this->id;
+            }
+            elseif ($option == 'preview')
+            {
+            	$url = DOL_URL_ROOT.'/projet/element.php?id='.$this->id;
             }
             else
             {
@@ -1108,6 +1116,7 @@ class Project extends CommonObject
         if (!$this->public) $picto = 'project';
 
         $linkstart = '<a href="'.$url.'"';
+        $linkstart .= ($morecss ? ' class="'.$morecss.'"' : '');
         $linkstart .= $linkclose.'>';
         $linkend = '</a>';
 

@@ -12,6 +12,7 @@
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -464,6 +465,20 @@ if (empty($reshook))
 	    		$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	    		if ($result < 0) dol_print_error($db, $result);
 	    	}
+	    }
+	}
+
+	elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $user->rights->expedition->supprimer)
+	{
+		$also_update_stock = (GETPOST('alsoUpdateStock', 'alpha') ? 1 : 0);
+	    $result = $object->cancel(0, $also_update_stock);
+	    if ($result > 0)
+	    {
+	        $result = $object->setStatut(-1);
+	    }
+	    else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
 	    }
 	}
 
@@ -966,8 +981,9 @@ if ($action == 'create')
                 $langs->load("projects");
                 print '<tr>';
                 print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
+                print img_picto('', 'project');
                 $numprojet = $formproject->select_projects($soc->id, $projectid, 'projectid', 0);
-                print ' &nbsp; <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("AddProject").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
+                print ' <a class="paddingleft" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
                 print '</td>';
                 print '</tr>';
             }
@@ -1695,7 +1711,7 @@ elseif ($id || $ref)
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('ValidateSending'), $text, 'confirm_valid', '', 0, 1);
 		}
 		// Confirm cancelation
-		if ($action == 'annuler')
+		if ($action == 'cancel')
 		{
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'].'?id='.$object->id, $langs->trans('CancelSending'), $langs->trans("ConfirmCancelSending", $object->ref), 'confirm_cancel', '', 0, 1);
 		}
@@ -2284,7 +2300,7 @@ elseif ($id || $ref)
 						{
 							print '<tr>';
 							// Qty to ship or shipped
-							print '<td>'.'<input name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->qty.'">'.'</td>';
+							print '<td><input name="qtyl'.$detail_batch->fk_expeditiondet.'_'.$detail_batch->id.'" id="qtyl'.$line_id.'_'.$detail_batch->id.'" type="text" size="4" value="'.$detail_batch->qty.'"></td>';
 							// Batch number managment
 							if ($lines[$i]->entrepot_id == 0)
 							{
@@ -2297,7 +2313,7 @@ elseif ($id || $ref)
 						// add a 0 qty lot row to be able to add a lot
 						print '<tr>';
 						// Qty to ship or shipped
-						print '<td>'.'<input name="qtyl'.$line_id.'_0" id="qtyl'.$line_id.'_0" type="text" size="4" value="0">'.'</td>';
+						print '<td><input name="qtyl'.$line_id.'_0" id="qtyl'.$line_id.'_0" type="text" size="4" value="0"></td>';
 						// Batch number managment
 						print '<td>'.$formproduct->selectLotStock('', 'batchl'.$line_id.'_0', '', 1, 0, $lines[$i]->fk_product).'</td>';
 						print '</tr>';
@@ -2311,7 +2327,7 @@ elseif ($id || $ref)
 								print '<!-- case edit 2 -->';
 								print '<tr>';
 								// Qty to ship or shipped
-								print '<td>'.'<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.'</td>';
+								print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
 								// Warehouse source
 								print '<td>'.$formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 								// Batch number managment
@@ -2325,7 +2341,7 @@ elseif ($id || $ref)
 								{
 									print '<tr>';
 									// Qty to ship or shipped
-									print '<td>'.'<input name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'">'.'</td>';
+									print '<td><input name="qtyl'.$detail_entrepot->line_id.'" id="qtyl'.$detail_entrepot->line_id.'" type="text" size="4" value="'.$detail_entrepot->qty_shipped.'"></td>';
 									// Warehouse source
 									print '<td>'.$formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 									// Batch number managment
@@ -2344,11 +2360,11 @@ elseif ($id || $ref)
 							print '<!-- case edit 5 -->';
 							print '<tr>';
 							// Qty to ship or shipped
-							print '<td>'.'<input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'">'.'</td>';
+							print '<td><input name="qtyl'.$line_id.'" id="qtyl'.$line_id.'" type="text" size="4" value="'.$lines[$i]->qty_shipped.'"></td>';
 							// Warehouse source
-							print '<td>'.'</td>';
+							print '<td></td>';
 							// Batch number managment
-							print '<td>'.'</td>';
+							print '<td></td>';
 							print '</tr>';
 						}
 					}
@@ -2581,6 +2597,16 @@ elseif ($id || $ref)
 				}
 			}
 
+			// Cancel
+			if ($object->statut == Expedition::STATUS_VALIDATED)
+			{
+    			if ($user->rights->expedition->supprimer)
+    			{
+    				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=cancel">'.$langs->trans("Cancel").'</a>';
+    			}
+			}
+
+			// Delete
 			if ($user->rights->expedition->supprimer)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';

@@ -691,6 +691,7 @@ else
 
             // Country
             print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
+            print img_picto('', 'globe-americas', 'class="paddingrightonly"');
             print $form->select_country((GETPOST("country_id", 'alpha') ? GETPOST("country_id", 'alpha') : $object->country_id), 'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             print '</td></tr>';
@@ -722,24 +723,34 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->fax)) == 0) $object->fax = $objsoc->fax; // Predefined with third party
 
             // Phone / Fax
-            print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
-            print '<td><input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" value="'.(GETPOSTISSET('phone_pro') ? GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+            print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', '', $object, 0).'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning');
+            print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" value="'.(GETPOSTISSET('phone_pro') ? GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
             if ($conf->browser->layout == 'phone') print '</tr><tr>';
-            print '<td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePerso', 'phone_perso', '', $object, 0).'</td>';
-            print '<td><input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+            print '<td>'.$form->editfieldkey('PhonePerso', 'phone_perso', '', $object, 0).'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning');
+            print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" value="'.(GETPOSTISSET('phone_perso') ? GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
-            print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
-            print '<td><input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+            print '<tr><td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', '', $object, 0).'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning_mobile');
+            print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" value="'.(GETPOSTISSET('phone_mobile') ? GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
             if ($conf->browser->layout == 'phone') print '</tr><tr>';
-            print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
-            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
+            print '<td>'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning_fax');
+            print '<input type="text" name="fax" id="fax" class="maxwidth200" value="'.(GETPOSTISSET('fax') ? GETPOST('fax', 'alpha') : $object->fax).'"></td>';
             print '</tr>';
 
             if (($objsoc->typent_code == 'TE_PRIVATE' || !empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email; // Predefined with third party
 
             // Email
-            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
-            print '<td><input type="text" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
+            print '<tr><td>'.$form->editfieldkey('EMail', 'email', '', $object, 0, 'string', '').'</td>';
+            print '<td>';
+            print img_picto('', 'object_email');
+            print '<input type="text" name="email" id="email" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
 			print '</tr>';
 
             if (!empty($conf->mailing->enabled))
@@ -964,12 +975,12 @@ else
 
             // Lastname
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-            print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["lastname"]) ?GETPOST("lastname") : $object->lastname).'" autofocus="autofocus"></td>';
+            print '<td colspan="3"><input name="lastname" id="lastname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("lastname") ? GETPOST("lastname") : $object->lastname).'" autofocus="autofocus"></td>';
             print '</tr>';
             print '<tr>';
             // Firstname
             print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-	        print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="minwidth200" maxlength="80" value="'.(isset($_POST["firstname"]) ?GETPOST("firstname") : $object->firstname).'"></td>';
+	        print '<td colspan="3"><input name="firstname" id="firstname" type="text" class="minwidth200" maxlength="80" value="'.(GETPOSTISSET("firstname") ? GETPOST("firstname") : $object->firstname).'"></td>';
 	        print '</tr>';
 
             // Company
@@ -988,13 +999,13 @@ else
             print '</td></tr>';
 
             print '<tr><td><label for="title">'.$langs->trans("PostOrFunction").'</label></td>';
-	        print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="80" value="'.(isset($_POST["poste"]) ?GETPOST("poste") : $object->poste).'"></td></tr>';
+	        print '<td colspan="3"><input name="poste" id="title" type="text" class="minwidth100" maxlength="80" value="'.(GETPOSTISSET("poste") ? GETPOST("poste") : $object->poste).'"></td></tr>';
 
             // Address
             print '<tr><td><label for="address">'.$langs->trans("Address").'</label></td>';
             print '<td colspan="3">';
-            print '<div class="paddingrightonly valignmiddle inline-block">';
-            print '<textarea class="flat minwidth200" name="address" id="address">'.(isset($_POST["address"]) ?GETPOST("address") : $object->address).'</textarea>';
+            print '<div class="paddingrightonly valignmiddle inline-block quatrevingtpercent">';
+            print '<textarea class="flat minwidth200 centpercent" name="address" id="address">'.(GETPOSTISSET("address") ? GETPOST("address", 'nohtml') : $object->address).'</textarea>';
             print '</div><div class="paddingrightonly valignmiddle inline-block">';
             if ($conf->use_javascript_ajax) print '<a href="#" id="copyaddressfromsoc">'.$langs->trans('CopyAddressFromSoc').'</a><br>';
             print '</div>';
@@ -1002,13 +1013,14 @@ else
 
             // Zip / Town
             print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-            print $formcompany->select_ziptown((isset($_POST["zipcode"]) ?GETPOST("zipcode") : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
-            print $formcompany->select_ziptown((isset($_POST["town"]) ?GETPOST("town") : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+            print $formcompany->select_ziptown((GETPOSTISSET("zipcode") ? GETPOST("zipcode") : $object->zip), 'zipcode', array('town', 'selectcountry_id', 'state_id'), 6).'&nbsp;';
+            print $formcompany->select_ziptown((GETPOSTISSET("town") ? GETPOST("town") : $object->town), 'town', array('zipcode', 'selectcountry_id', 'state_id'));
             print '</td></tr>';
 
             // Country
             print '<tr><td><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-            print $form->select_country(isset($_POST["country_id"]) ?GETPOST("country_id") : $object->country_id, 'country_id');
+            print img_picto('', 'globe-americas', 'class="paddingrightonly"');
+            print $form->select_country(GETPOSTISSET("country_id") ? GETPOST("country_id") : $object->country_id, 'country_id');
             if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             print '</td></tr>';
 
@@ -1029,19 +1041,29 @@ else
             }
 
             // Phone
-            print '<tr><td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePro', 'phone_pro', GETPOST('phone_pro', 'alpha'), $object, 0).'</td>';
-            print '<td><input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro') ?GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
-            print '<td>'.img_picto('', 'object_phoning').' '.$form->editfieldkey('PhonePerso', 'fax', GETPOST('phone_perso', 'alpha'), $object, 0).'</td>';
-            print '<td><input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso') ?GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
+            print '<tr><td>'.$form->editfieldkey('PhonePro', 'phone_pro', GETPOST('phone_pro', 'alpha'), $object, 0).'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning');
+            print '<input type="text" name="phone_pro" id="phone_pro" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_pro') ?GETPOST('phone_pro', 'alpha') : $object->phone_pro).'"></td>';
+            print '<td>'.$form->editfieldkey('PhonePerso', 'fax', GETPOST('phone_perso', 'alpha'), $object, 0).'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning');
+            print '<input type="text" name="phone_perso" id="phone_perso" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_perso') ?GETPOST('phone_perso', 'alpha') : $object->phone_perso).'"></td></tr>';
 
-            print '<tr><td>'.img_picto('', 'object_phoning_mobile').' '.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0, 'string', '').'</td>';
-            print '<td><input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ?GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
-            print '<td>'.img_picto('', 'object_phoning_fax').' '.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
-            print '<td><input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ?GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
+            print '<tr><td>'.$form->editfieldkey('PhoneMobile', 'phone_mobile', GETPOST('phone_mobile', 'alpha'), $object, 0, 'string', '').'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning_mobile');
+            print '<input type="text" name="phone_mobile" id="phone_mobile" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_mobile') ?GETPOST('phone_mobile', 'alpha') : $object->phone_mobile).'"></td>';
+            print '<td>'.$form->editfieldkey('Fax', 'fax', GETPOST('fax', 'alpha'), $object, 0).'</td>';
+            print '<td>';
+            print img_picto('', 'object_phoning_fax');
+            print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ?GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
 
             // EMail
-            print '<tr><td>'.img_picto('', 'object_email').' '.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
-            print '<td><input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
+            print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (!empty($conf->global->SOCIETE_EMAIL_MANDATORY))).'</td>';
+            print '<td>';
+            print img_picto('', 'object_email');
+            print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ?GETPOST('email', 'alpha') : $object->email).'"></td>';
             if (!empty($conf->mailing->enabled))
             {
                 $langs->load("mails");
@@ -1432,7 +1454,7 @@ else
         print '<tr><td>';
         print $langs->trans("VCard").'</td><td colspan="3">';
 		print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$object->id.'">';
-		print img_picto($langs->trans("Download"), 'vcard.png').' ';
+		print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
 		print $langs->trans("Download");
 		print '</a>';
         print '</td></tr>';

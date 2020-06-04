@@ -192,6 +192,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	if ($features == 'mo') $features = 'mrp';
 	if ($features == 'member') $features = 'adherent';
 	if ($features == 'subscription') { $features = 'adherent'; $feature2 = 'cotisation'; };
+	if ($features == 'websitepage') $features = 'website';
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);

@@ -518,7 +518,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+								if (method_exists($lines[$i], 'fetch_optionals')) {
 									$lines[$i]->fetch_optionals();
 									$array_options = $lines[$i]->array_options;
 								}
@@ -1455,8 +1455,6 @@ if (empty($reshook))
  * View
  */
 
-llxHeader('', $langs->trans('Proposal'), 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos');
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -1465,6 +1463,9 @@ $formmargin = new FormMargin($db);
 $companystatic = new Societe($db);
 if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+llxHeader('', $langs->trans('Proposal'), $help_url);
+
 $now = dol_now();
 
 // Add new proposal
@@ -1472,7 +1473,7 @@ if ($action == 'create')
 {
 	$currency_code = $conf->currency;
 
-	print load_fiche_titre($langs->trans("NewProp"));
+	print load_fiche_titre($langs->trans("NewProp"), '', 'propal');
 
 	$soc = new Societe($db);
 	if ($socid > 0)

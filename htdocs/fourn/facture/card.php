@@ -956,7 +956,7 @@ if (empty($reshook))
 								$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+								if (method_exists($lines[$i], 'fetch_optionals')) {
 									$lines[$i]->fetch_optionals();
 								}
 
@@ -1602,7 +1602,7 @@ if (empty($reshook))
 		if (!$error)
 		{
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
 				if ($result < 0)
@@ -1700,7 +1700,7 @@ if ($action == 'create')
 {
 	$facturestatic = new FactureFournisseur($db);
 
-	print load_fiche_titre($langs->trans('NewBill'));
+	print load_fiche_titre($langs->trans('NewBill'), '', 'supplier_invoice');
 
 	dol_htmloutput_events();
 

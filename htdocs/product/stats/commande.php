@@ -164,26 +164,22 @@ if ($id > 0 || !empty($ref))
 			{
 				$num = $db->num_rows($result);
 
-				if (!empty($id))
-	            	$option .= '&amp;id='.$product->id;
-	            if (!empty($search_month))
-	            	$option .= '&amp;search_month='.$search_month;
-	            if (!empty($search_year))
-	            	$option .= '&amp;search_year='.$search_year;
-	            if ($limit > 0 && $limit != $conf->liste_limit) $option .= '&limit='.urlencode($limit);
+				if ($limit > 0 && $limit != $conf->liste_limit) $option .= '&limit='.urlencode($limit);
+				if (!empty($id)) $option .= '&id='.$product->id;
+				if (!empty($search_month)) $option .= '&search_month='.urlencode($search_month);
+				if (!empty($search_year)) $option .= '&search_year='.urlencode($search_year);
 
 	            print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$product->id.'" name="search_form">'."\n";
 	            if (!empty($sortfield))
 	            	print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
 	            if (!empty($sortorder))
 	            	print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
-	            if (!empty($page)) {
-	            	print '<input type="hidden" name="page" value="'.$page.'"/>';
-	            	$option .= '&amp;page='.$page;
-	            }
 
-	            print_barre_liste($langs->trans("CustomersOrders"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$product->id, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit);
-                print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	            print_barre_liste($langs->trans("CustomersOrders"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);
+
+	            if (!empty($page)) $option .= '&page='.urlencode($page);
+
+	            print '<div class="liste_titre liste_titre_bydiv centpercent">';
                 print '<div class="divsearchfield">';
 			    print $langs->trans('Period').' ('.$langs->trans("OrderDate").') - ';
 				print $langs->trans('Month').':<input class="flat" type="text" size="4" name="search_month" value="'.$search_month.'"> ';

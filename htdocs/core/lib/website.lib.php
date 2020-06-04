@@ -352,7 +352,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = '')
 
 	$content = str_replace(' contenteditable="true"', ' contenteditable="false"', $content);
 
-	if (! empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
+	if (!empty($conf->global->WEBSITE_ADD_CSS_TO_BODY)) {
 		$content = str_replace('<body id="bodywebsite" class="bodywebsite', '<body id="bodywebsite" class="bodywebsite '.$conf->global->WEBSITE_ADD_CSS_TO_BODY, $content);
 	}
 
@@ -520,7 +520,7 @@ function includeContainer($containerref)
 	$tmpoutput = ob_get_contents();
 	ob_end_clean();
 
-	print "\n".'<!-- include '.$fullpathfile.' level = '.$includehtmlcontentopened.' -->'."\n";
+	print "\n".'<!-- include '.$websitekey.'/'.$containerref.' level = '.$includehtmlcontentopened.' -->'."\n";
 	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
 
 	if (!$res)
@@ -533,14 +533,15 @@ function includeContainer($containerref)
 
 /**
  * Return HTML content to add structured data for an article, news or Blog Post.
+ * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software'...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
 function getStructuredData($type, $data = array())
 {
-	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
+	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
 
 	if ($type == 'software')
 	{
@@ -551,7 +552,7 @@ function getStructuredData($type, $data = array())
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/GameApplication",
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
 			"aggregateRating": {
 				"@type": "AggregateRating",
 				"ratingValue": "'.$data['ratingvalue'].'",
@@ -563,6 +564,44 @@ function getStructuredData($type, $data = array())
 				"priceCurrency": "'.($data['currency'] ? $data['currency'] : $conf->currency).'"
 			}
 		}'."\n";
+		$ret .= '</script>'."\n";
+	}
+	elseif ($type == 'organization')
+	{
+		$companyname = $mysoc->name;
+		$url = $mysoc->url;
+
+		$ret = '<!-- Add structured data for blog post -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+			"@context": "https://schema.org",
+			"@type": "Organization",
+			"name": "'.dol_escape_json($data['name'] ? $data['name'] : $companyname).'",
+			"url": "'.dol_escape_json($data['url'] ? $data['url'] : $url).'",
+			"logo": "'.($data['logo'] ? dol_escape_json($data['logo']) : '/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo)).'",
+			"contactPoint": {
+				"@type": "ContactPoint",
+				"contactType": "Contact",
+				"email": "'.dol_escape_json($data['email'] ? $data['email'] : $mysoc->email).'"
+			},'."\n";
+		if (is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
+			$ret .= '"sameAs": [';
+			$i = 0;
+			foreach($mysoc->socialnetworks as $key => $value) {
+				if ($key == 'linkedin') {
+					$ret.= '"https://www.'.$key.'.com/company/'.dol_escape_json($value).'"';
+				} elseif ($key == 'youtube') {
+					$ret.= '"https://www.'.$key.'.com/user/'.dol_escape_json($value).'"';
+				}
+				else {
+					$ret.= '"https://www.'.$key.'.com/'.dol_escape_json($value).'"';
+				}
+				$i++;
+				if ($i < count($mysoc->socialnetworks)) $ret .= ', ';
+			}
+			$ret .= '],'."\n";
+		}
+		$ret .= "\n".'}'."\n";
 		$ret .= '</script>'."\n";
 	}
 	elseif ($type == 'blogpost')
@@ -581,7 +620,7 @@ function getStructuredData($type, $data = array())
 
 			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
 			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-			$image = str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$image = 'medias/'.str_replace('__WEBSITE_KEY__', $website->ref, $image);
 			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
@@ -598,6 +637,7 @@ function getStructuredData($type, $data = array())
 				  "image": [
 				    "'.dol_escape_json($image).'"
 				   ],
+				  "dateCreated": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
 				  "author": {
@@ -609,11 +649,22 @@ function getStructuredData($type, $data = array())
 				     "name": "'.dol_escape_json($companyname).'",
 				     "logo": {
 				        "@type": "ImageObject",
-				        "url": "/viewimage.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				        "url": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
 				     }
-				   },
-				  "description": "'.dol_escape_json($description).'"
-				}'."\n";
+				   },'."\n";
+			if ($websitepage->keywords) {
+				$ret .= '"keywords": [';
+				$i = 0;
+				$arrayofkeywords = explode(',', $websitepage->keywords);
+				foreach($arrayofkeywords as $keyword) {
+					$ret.= '"'.dol_escape_json($keyword).'"';
+					$i++;
+					if ($i < count($arrayofkeywords)) $ret .= ', ';
+				}
+				$ret .= '],'."\n";
+			}
+			$ret .= '"description": "'.dol_escape_json($description).'"';
+			$ret .= "\n".'}'."\n";
 			$ret .= '</script>'."\n";
 		}
 	}
@@ -720,9 +771,10 @@ function getSocialNetworkSharingLinks()
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -764,6 +816,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	{
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'website_page';
 		$sql .= " WHERE fk_website = ".$website->id;
+		if ($langcode) {
+			$sql .= " AND lang ='".$db->escape($langcode)."'";
+		}
 		if ($type) {
 			$tmparrayoftype = explode(',', $type);
 			$typestring = '';

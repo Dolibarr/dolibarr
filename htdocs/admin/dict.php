@@ -503,7 +503,7 @@ $tabhelp[33] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[34] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[35] = array();
 $tabhelp[36] = array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
-$tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"), 'unit_type' => $langs->trans('MeasuringUnitTypeDesc'), 'scale' => $langs->trans('MeasuringScaleDesc'));
 $tabhelp[38] = array('code'=>$langs->trans("EnterAnyCode"), 'url' => $langs->trans('UrlSocialNetworksDesc'), 'icon' => $langs->trans('FafaIconSocialNetworksDesc'));
 
 // List of check for fields (NOT USED YET)
@@ -644,6 +644,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
         if ($value == 'localtax2' && empty($_POST['localtax2_type'])) continue;
         if ($value == 'color' && empty($_POST['color'])) continue;
 		if ($value == 'formula' && empty($_POST['formula'])) continue;
+		if ($value == 'dayrule' && empty($_POST['dayrule'])) continue;
 		if ($value == 'sortorder') continue; // For a column name 'sortorder', we use the field name 'position'
 		if ((!isset($_POST[$value]) || $_POST[$value] == '')
         	&& (!in_array($listfield[$f], array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking'))  // Fields that are not mandatory
@@ -1718,7 +1719,7 @@ if ($id)
                     print "</td>";
 
                     // Modify link
-                    if ($canbemodified) print '<td align="center"><a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a></td>';
+                    if ($canbemodified) print '<td align="center"><a class="reposition editfielda" href="'.$url.'action=edit">'.img_edit().'</a></td>';
                     else print '<td>&nbsp;</td>';
 
                     // Delete link

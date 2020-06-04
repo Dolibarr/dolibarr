@@ -825,7 +825,7 @@ if ($action == 'create')
 
 	$soc = new Societe($db);
 
-	print load_fiche_titre($langs->trans("AddIntervention"), '', 'commercial');
+	print load_fiche_titre($langs->trans("AddIntervention"), '', 'intervention');
 
 	dol_htmloutput_mesg($mesg);
 

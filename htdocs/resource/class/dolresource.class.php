@@ -136,7 +136,7 @@ class Dolresource extends CommonObject
     		$action = 'create';
 
     		// Actions on extra fields
-   			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+   			if (!$error)
    			{
    				$result = $this->insertExtraFields();
    				if ($result < 0)
@@ -309,7 +309,7 @@ class Dolresource extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -871,10 +871,12 @@ class Dolresource extends CommonObject
 	    return $resources;
     }
 
-    /*
+    /**
      *  Return an int number of resources linked to the element
      *
-     *  @return     int
+     *  @param		string	$element		Element type
+     *  @param		int		$element_id		Element id
+     *  @return     int						Nb of resources loaded
      */
     public function fetchElementResources($element, $element_id)
     {

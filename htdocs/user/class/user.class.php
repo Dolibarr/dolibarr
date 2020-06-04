@@ -64,6 +64,8 @@ class User extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $picto = 'user';
+
 	public $id = 0;
 	public $statut;
 	public $ldap_sid;
@@ -1094,7 +1096,7 @@ class User extends CommonObject
 		}
 
 		// Remove extrafields
-		if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 		    $result = $this->deleteExtraFields();
 		    if ($result < 0)
@@ -1762,7 +1764,7 @@ class User extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -1836,7 +1838,7 @@ class User extends CommonObject
 	/**
 	 *  Change password of a user
 	 *
-	 *  @param	User	$user             		Object user of user making change
+	 *  @param	User	$user             		Object user of user requesting the change (not the user for who we change the password). May be unknown.
 	 *  @param  string	$password         		New password in clear text (to generate if not provided)
 	 *	@param	int		$changelater			1=Change password only after clicking on confirm email
 	 *	@param	int		$notrigger				1=Does not launch triggers
@@ -1970,7 +1972,7 @@ class User extends CommonObject
 	/**
 	 *  Send new password by email
 	 *
-	 *  @param	User	$user           Object user that send email
+	 *  @param	User	$user           Object user that send the email (not the user we send too)
 	 *  @param	string	$password       New password
 	 *	@param	int		$changelater	0=Send clear passwod into email, 1=Change password only after clicking on confirm email. @todo Add method 2 = Send link to reset password
 	 *  @return int 		            < 0 si erreur, > 0 si ok
@@ -1995,8 +1997,9 @@ class User extends CommonObject
 		{	// If user has defined its own language (rare because in most cases, auto is used)
 			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
 		}
-		if ($user->conf->MAIN_LANG_DEFAULT) {
-            $outputlangs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+
+		if ($this->conf->MAIN_LANG_DEFAULT) {
+            $outputlangs->setDefaultLang($this->conf->MAIN_LANG_DEFAULT);
         }
 		else
 		{	// If user has not defined its own language, we used current language
@@ -2026,7 +2029,7 @@ class User extends CommonObject
 
 			$mesg .= $outputlangs->transnoentitiesnoconv("ClickHereToGoTo", $appli).': '.$url."\n\n";
 			$mesg .= "--\n";
-			$mesg .= $user->getFullName($outputlangs); // Username that make then sending
+			$mesg .= $user->getFullName($outputlangs); // Username that send the email (not the user for who we want to reset password)
 
 			dol_syslog(get_class($this)."::send_password changelater is off, url=".$url);
 		}
@@ -2046,6 +2049,8 @@ class User extends CommonObject
 			dol_syslog(get_class($this)."::send_password changelater is on, url=".$url);
 		}
 
+		$trackid = 'use'.$this->id;
+
         $mailfile = new CMailFile(
             $subject,
 			$this->email,
@@ -2057,7 +2062,10 @@ class User extends CommonObject
 			'',
 			'',
 			0,
-            $msgishtml
+            $msgishtml,
+        	'',
+        	'',
+        	$trackid
         );
 
 		if ($mailfile->sendfile())

@@ -305,24 +305,12 @@ class Reception extends CommonObject
 					}
 				}
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$action = 'add';
-				$hookmanager->initHooks(array('receptiondao'));
-				$parameters = array('socid'=>$this->id);
-				$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Create extrafields
+				if (!$error)
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-					{
-						$result = $this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
-					}
+					$result = $this->insertExtraFields();
+					if ($result < 0) $error++;
 				}
-				elseif ($reshook < 0) $error++;
 
 				if (!$error && !$notrigger)
 				{
@@ -330,29 +318,22 @@ class Reception extends CommonObject
                     $result = $this->call_trigger('RECEPTION_CREATE', $user);
                     if ($result < 0) { $error++; }
                     // End call triggers
+				}
 
-					if (!$error)
-					{
-						$this->db->commit();
-						return $this->id;
-					}
-					else
-					{
-						foreach ($this->errors as $errmsg)
-						{
-							dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-							$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-						}
-						$this->db->rollback();
-						return -1 * $error;
-					}
+				if (!$error)
+				{
+					$this->db->commit();
+					return $this->id;
 				}
 				else
 				{
-					$error++;
-					$this->error = $this->db->lasterror()." - sql=$sql";
+					foreach ($this->errors as $errmsg)
+					{
+						dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
+						$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+					}
 					$this->db->rollback();
-					return -3;
+					return -1 * $error;
 				}
 			}
 			else
@@ -769,8 +750,13 @@ class Reception extends CommonObject
 		}
 
 		// extrafields
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
-			$line->array_options = $array_options;
+		$line->array_options = $supplierorderline->array_options;
+		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0)
+		{
+			foreach ($array_options as $key => $value) {
+				$line->array_options[$key] = $value;
+			}
+		}
 
 		$line->fk_product = $fk_product;
 		$line->fk_commande = $supplierorderline->fk_commande;
@@ -944,10 +930,14 @@ class Reception extends CommonObject
 
 		if (!$error)
 		{
+                    $main = MAIN_DB_PREFIX.'commande_fournisseur_dispatch';
+                    $ef = $main."_extrafields";
+                    $sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_reception = ".$this->id.")";
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur_dispatch";
 			$sql .= " WHERE fk_reception = ".$this->id;
 
-			if ($this->db->query($sql))
+			if ($this->db->query($sqlef) && $this->db->query($sql))
 			{
 				// Delete linked object
 				$res = $this->deleteObjectLinked();

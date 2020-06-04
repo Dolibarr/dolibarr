@@ -1409,7 +1409,7 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all (form is output by caller, recommanded)
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all (form is output by caller, recommended)
  *  @param  string  $helptext       Help
  *	@return	void
  */
@@ -1420,6 +1420,9 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 
     $form = new Form($db);
 
+    if (empty($strictw3c)) {
+    	dol_syslog("Warning: Function form_constantes is calle with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_DEBUG);
+    }
     if (!empty($strictw3c) && $strictw3c == 1)
     {
         print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -1584,12 +1587,13 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 	                		//var_dump($modelmail);
 	                		$moreonlabel = '';
 	                		if (!empty($arrayofmessagename[$modelmail->label])) $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
-	                		$arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	                		// The 'label' is the key that is unique if we exclude the language
+	                		$arrayofmessagename[$modelmail->label.':'.$tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
 	                	}
                 	}
                 	//var_dump($arraydefaultmessage);
                 	//var_dump($arrayofmessagename);
-                	print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
+                	print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
                 }
                 else	// type = 'string' ou 'chaine'
                 {

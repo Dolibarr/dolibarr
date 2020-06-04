@@ -55,11 +55,17 @@ class PaymentDonation extends CommonObject
 	public $fk_donation;
 
 	public $datec = '';
+
 	public $tms = '';
+
 	public $datep = '';
-    public $amount; // Total amount of payment
-    public $amounts = array(); // Array of amounts
+
+	public $amount; // Total amount of payment
+
+	public $amounts = array(); // Array of amounts
+
 	public $typepayment;
+
 	public $num_payment;
 
 	/**
@@ -121,14 +127,14 @@ class PaymentDonation extends CommonObject
 		}
 
 		// Clean parameters
-		if (isset($this->fk_donation)) 		$this->fk_donation = (int) $this->fk_donation;
-		if (isset($this->amount))			$this->amount = trim($this->amount);
+		if (isset($this->fk_donation)) 		$this->fk_donation    = (int) $this->fk_donation;
+		if (isset($this->amount))			$this->amount         = trim($this->amount);
 		if (isset($this->fk_typepayment))   $this->fk_typepayment = trim($this->fk_typepayment);
-		if (isset($this->num_payment))      $this->num_payment = trim($this->num_payment);
-		if (isset($this->note_public))		$this->note_public = trim($this->note_public);
-		if (isset($this->fk_bank))			$this->fk_bank = (int) $this->fk_bank;
-		if (isset($this->fk_user_creat))	$this->fk_user_creat = (int) $this->fk_user_creat;
-		if (isset($this->fk_user_modif))	$this->fk_user_modif = (int) $this->fk_user_modif;
+		if (isset($this->num_payment))      $this->num_payment    = trim($this->num_payment);
+		if (isset($this->note_public))		$this->note_public    = trim($this->note_public);
+		if (isset($this->fk_bank))			$this->fk_bank        = (int) $this->fk_bank;
+		if (isset($this->fk_user_creat))	$this->fk_user_creat  = (int) $this->fk_user_creat;
+		if (isset($this->fk_user_modif))	$this->fk_user_modif  = (int) $this->fk_user_modif;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -228,26 +234,26 @@ class PaymentDonation extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id    = $obj->rowid;
-				$this->ref   = $obj->rowid;
+				$this->id  = $obj->rowid;
+				$this->ref = $obj->rowid;
 
-				$this->fk_donation = $obj->fk_donation;
-				$this->datec			= $this->db->jdate($obj->datec);
-				$this->tms = $this->db->jdate($obj->tms);
-				$this->datep			= $this->db->jdate($obj->datep);
-				$this->amount = $obj->amount;
+				$this->fk_donation    = $obj->fk_donation;
+				$this->datec		  = $this->db->jdate($obj->datec);
+				$this->tms            = $this->db->jdate($obj->tms);
+				$this->datep		  = $this->db->jdate($obj->datep);
+				$this->amount         = $obj->amount;
 				$this->fk_typepayment = $obj->fk_typepayment;
-				$this->num_payment = $obj->num_payment;
-				$this->note_public = $obj->note_public;
-				$this->fk_bank = $obj->fk_bank;
-				$this->fk_user_creat	= $obj->fk_user_creat;
-				$this->fk_user_modif	= $obj->fk_user_modif;
+				$this->num_payment    = $obj->num_payment;
+				$this->note_public    = $obj->note_public;
+				$this->fk_bank        = $obj->fk_bank;
+				$this->fk_user_creat  = $obj->fk_user_creat;
+				$this->fk_user_modif  = $obj->fk_user_modif;
 
-				$this->type_code = $obj->type_code;
+				$this->type_code  = $obj->type_code;
 				$this->type_label = $obj->type_label;
 
 				$this->bank_account = $obj->fk_account;
-				$this->bank_line = $obj->fk_bank;
+				$this->bank_line    = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 

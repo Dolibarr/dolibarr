@@ -713,7 +713,7 @@ while ($i < min($num, $limit))
 	$object->public = $obj->public;
 	$object->ref = $obj->ref;
 	$object->datee = $db->jdate($obj->date_end);
-	$object->statut = $obj->status;		// deprecated
+	$object->statut = $obj->status; // deprecated
 	$object->status = $obj->status;
 	$object->public = $obj->public;
 	$object->opp_status = $obj->fk_opp_status;
@@ -919,7 +919,7 @@ while ($i < min($num, $limit))
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation

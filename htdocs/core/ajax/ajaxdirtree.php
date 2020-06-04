@@ -428,11 +428,11 @@ function treeOutputForAbsoluteDir($sqltree, $selecteddir, $fullpathselecteddir, 
 						print (isset($val['cachenbofdoc']) && $val['cachenbofdoc'] >= 0) ? $val['cachenbofdoc'] : '&nbsp;';
 						print '</td>';
 						print '<td class="left">';
-						if ($nbofsubdir > 0 && $nboffilesinsubdir > 0) print '<font color="#AAAAAA">+'.$nboffilesinsubdir.'</font> ';
+						if ($nbofsubdir > 0 && $nboffilesinsubdir > 0) print '<font class="opacitymedium">+'.$nboffilesinsubdir.'</font> ';
 						print '</td>';
 
 						// Edit link
-						print '<td class="right" width="18"><a href="';
+						print '<td class="right" width="18"><a class="editfielda" href="';
 						print DOL_URL_ROOT.'/ecm/dir_card.php?module='.urlencode($modulepart).'&section='.$val['id'].'&relativedir='.urlencode($val['fullrelativename']);
 						print '&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 						print '">'.img_edit($langs->trans("Edit").' - '.$langs->trans("View"), 0, 'class="valignmiddle opacitymedium"').'</a></td>';

@@ -77,7 +77,11 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     {
         if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
-            $newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
+        	// Clear session
+        	unset($_SESSION['dol_login']);
+        	$_SESSION['dol_loginmesg'] = $langs->trans('NewPasswordValidated');	// Save message for the session page
+
+        	$newpassword = $edituser->setPassword($user, $edituser->pass_temp, 0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
             header("Location: ".DOL_URL_ROOT.'/');
             exit;
@@ -131,9 +135,9 @@ if ($action == 'buildnewpassword' && $username)
                 else
                 {
                     // Success
-                    if ($edituser->send_password($edituser, $newpassword, 1) > 0)
+                    if ($edituser->send_password($user, $newpassword, 1) > 0)
                     {
-                        $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email)).'</div>';
+                    	$message = '<div class="ok'.(empty($conf->global->MAIN_LOGIN_BACKGROUND) ? '' : ' backgroundsemitransparent').'">'.$langs->trans("PasswordChangeRequestSent", $edituser->login, dolObfuscateEmail($edituser->email)).'</div>';
                         $username = '';
                     }
                     else
@@ -188,13 +192,13 @@ elseif (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
 	$width = 128;
 }
-elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png'))
+elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.svg'))
 {
-	$urllogo = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.png';
+	$urllogo = DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/dolibarr_logo.svg';
 }
-elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.png'))
+elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
 {
-	$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.png';
+	$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
 }
 
 // Security graphical code

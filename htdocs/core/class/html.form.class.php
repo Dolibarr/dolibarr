@@ -665,16 +665,18 @@ class Form
 	 * @param	string	$selected		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
 	 * @param	array		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
 	 * @param   int     $alwaysvisible  1=select button always visible
+         * @param       string  $name     Name for massaction
+         * @param       string  $cssclass CSS class used to check for select
 	 * @return	string|void					Select list
 	 */
-	public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0)
+	public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0, $name = 'massaction', $cssclass = 'checkforselect')
 	{
 		global $conf, $langs, $hookmanager;
 
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
-		$ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' massaction massactionselect valignmiddle" name="massaction"'.($disabled ? ' disabled="disabled"' : '').'>';
+                $ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' ' . $name . ' ' . $name . 'select valignmiddle" name="' . $name . '"'.($disabled ? ' disabled="disabled"' : '').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters = array();
@@ -693,46 +695,46 @@ class Form
 
 		$ret .= '</select>';
 
-		if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.massactionselect');
+                if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.' . $name . 'select');
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-		$ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+                $ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' ' . $name . ' ' . $name . 'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax))
 		{
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
     		<script>
-        		function initCheckForSelect(mode)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkbox */
+                        function initCheckForSelect(mode, name, cssclass)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
         		{
         			atleastoneselected=0;
-    	    		jQuery(".checkforselect").each(function( index ) {
+                                jQuery("."+cssclass).each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
 
-					console.log("initCheckForSelect mode="+mode+" atleastoneselected="+atleastoneselected);
+					console.log("initCheckForSelect mode="+mode+" name="+name+" cssclass="+cssclass+" atleastoneselected="+atleastoneselected);
 
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
-    	  				jQuery(".massaction").show();
-        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
-        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
+                                    jQuery("."+name).show();
+        			    '.($selected ? 'if (atleastoneselected) { jQuery("."+name+"select").val("'.$selected.'").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', false); }' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) { jQuery("."+name+"select").val("0").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', true); } ' : '').'
     	  			}
     	  			else
     	  			{
-    	  				jQuery(".massaction").hide();
-						jQuery(".massactionother").hide();
+                                    jQuery("."+name).hide();
+                                    jQuery("."+name+"other").hide();
     	            }
         		}
 
         	jQuery(document).ready(function () {
-        		initCheckForSelect(0);
-        		jQuery(".checkforselect").click(function() {
-        			initCheckForSelect(1);
-    	  		});
-    	  		jQuery(".massactionselect").change(function() {
+                    initCheckForSelect(0, "' . $name . '", "' . $cssclass . '");
+                    jQuery(".' . $cssclass . '").click(function() {
+                        initCheckForSelect(1, "'.$name.'", "' . $cssclass . '");
+                    });
+                        jQuery(".' . $name . 'select").change(function() {
         			var massaction = $( this ).val();
         			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
         			if (massaction == "builddoc")
@@ -744,13 +746,13 @@ class Form
         	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
         			if ($(this).val() != \'0\')
     	  			{
-    	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
-						jQuery(".massactionother").show();
+                                        jQuery(".' . $name . 'confirmed").prop(\'disabled\', false);
+                                        jQuery(".' . $name . 'other").show();
     	  			}
     	  			else
     	  			{
-    	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
-						jQuery(".massactionother").hide();
+                                        jQuery(".' . $name . 'confirmed").prop(\'disabled\', true);
+                                        jQuery(".' . $name . 'other").hide();
     	  			}
     	        });
         	});
@@ -1272,11 +1274,11 @@ class Form
 			// Construct $out and $outarray
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'"'.($moreparam ? ' '.$moreparam : '').' name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').'>'."\n";
 
-			$textifempty = '';
-			// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
-			//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
+			$textifempty = (($showempty && !is_numeric($showempty)) ? $langs->trans($showempty) : '');
 			if (!empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT))
 			{
+				// Do not use textifempty = ' ' or '&nbsp;' here, or search on key will search on ' key'.
+				//if (! empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
 				if ($showempty && !is_numeric($showempty)) $textifempty = $langs->trans($showempty);
 				else $textifempty .= $langs->trans("All");
 			}
@@ -1528,7 +1530,7 @@ class Form
 
 			if ($htmlname != 'none' && !$options_only) $out .= '<select class="flat'.($moreclass ? ' '.$moreclass : '').'" id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
 			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>&nbsp;</option>';
-			if ($showempty == 2) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>'.$langs->trans("Internal").'</option>';
+			if ($showempty == 2) $out .= '<option value="0"'.(in_array(0, $selected) ? ' selected' : '').'>-- '.$langs->trans("Internal").' --</option>';
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1619,16 +1621,16 @@ class Form
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return select list of users
+	 *	Return the HTML select list of users
 	 *
-	 *  @param	string	$selected       Id user preselected
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
-	 *  @param  array	$exclude        Array list of users id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  array	$include        Array list of users id to include
-	 * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
-	 *  @param	string	$force_entity	'0' or Ids of environment to force
+	 *  @param	string			$selected       Id user preselected
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=liste sans valeur nulle, 1=ajoute valeur inconnue
+	 *  @param  array			$exclude        Array list of users id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  array|string	$include        Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * 	@param	int				$enableonly		Array list of users id to be enabled. All other must be disabled
+	 *  @param	string			$force_entity	'0' or Ids of environment to force
 	 * 	@return	void
 	 *  @deprecated		Use select_dolusers instead
 	 *  @see select_dolusers()
@@ -1643,24 +1645,24 @@ class Form
 	/**
 	 *	Return select list of users
 	 *
-	 *  @param	string	$selected       User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
-	 *  @param  string	$htmlname       Field name in form
-	 *  @param  int		$show_empty     0=list with no empty value, 1=add also an empty value into list
-	 *  @param  array	$exclude        Array list of users id to exclude
-	 * 	@param	int		$disabled		If select list must be disabled
-	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
-	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
-	 *  @param	string	$force_entity	'0' or Ids of environment to force
-	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
-	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
-	 *  @param	string	$morefilter		Add more filters into sql request (Example: 'employee = 1')
-	 *  @param	integer	$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
-	 *  @param	string	$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
-	 *  @param	string	$morecss		More css
-	 *  @param  int     $noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
-	 *  @param  int		$outputmode     0=HTML select string, 1=Array
-	 *  @param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
-	 * 	@return	string					HTML select string
+	 *  @param	string			$selected       User id or user object of user preselected. If 0 or < -2, we use id of current user. If -1, keep unselected (if empty is allowed)
+	 *  @param  string			$htmlname       Field name in form
+	 *  @param  int				$show_empty     0=list with no empty value, 1=add also an empty value into list
+	 *  @param  array			$exclude        Array list of users id to exclude
+	 * 	@param	int				$disabled		If select list must be disabled
+	 *  @param  array|string	$include        Array list of users id to include. User '' for all users or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
+	 * 	@param	array			$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
+	 *  @param	string			$force_entity	'0' or Ids of environment to force
+	 *  @param	int				$maxlength		Maximum length of string into list (0=no limit)
+	 *  @param	int				$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
+	 *  @param	string			$morefilter		Add more filters into sql request (Example: 'employee = 1')
+	 *  @param	integer			$show_every		0=default list, 1=add also a value "Everybody" at beginning of list
+	 *  @param	string			$enableonlytext	If option $enableonlytext is set, we use this text to explain into label why record is disabled. Not used if enableonly is empty.
+	 *  @param	string			$morecss		More css
+	 *  @param  int     		$noactive       Show only active users (this will also happened whatever is this option if USER_HIDE_INACTIVE_IN_COMBOBOX is on).
+	 *  @param  int				$outputmode     0=HTML select string, 1=Array
+	 *  @param  bool			$multiple       add [] in the name of element and add 'multiple' attribut
+	 * 	@return	string							HTML select string
 	 *  @see select_dolgroups()
 	 */
 	public function select_dolusers($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $maxlength = 0, $showstatus = 0, $morefilter = '', $show_every = 0, $enableonlytext = '', $morecss = '', $noactive = 0, $outputmode = 0, $multiple = false)
@@ -2481,7 +2483,7 @@ class Form
 
 		$label = $objp->label;
 		if (!empty($objp->label_translated)) $label = $objp->label_translated;
-		if (!empty($filterkey) && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $label, 1);
+		if (!empty($filterkey) && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $label, 1);
 
 		$outkey = $objp->rowid;
 		$outref = $objp->ref;
@@ -2553,7 +2555,7 @@ class Form
 		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO)) $opt .= ' ('.getCountry($outorigin, 1).')';
 
 		$objRef = $objp->ref;
-		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
+		if (!empty($filterkey) && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
 		$outval .= $objRef;
 		if ($outbarcode) $outval .= ' ('.$outbarcode.')';
 		$outval .= ' - '.dol_trunc($label, $maxlengtharticle);
@@ -2816,7 +2818,7 @@ class Form
         }
         if (!empty($conf->barcode->enabled)) $sql .= ", pfp.barcode";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON ( p.rowid = pfp.fk_product AND pfp.entity IN (".getEntity('product').") )";
 		if ($socid) $sql .= " AND pfp.fk_soc = ".$socid;
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
         // Units
@@ -2922,11 +2924,11 @@ class Form
                 }
 
 				$objRef = $objp->ref;
-				if ($filterkey && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRef, 1);
+				if ($filterkey && $filterkey != '') $objRef = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRef, 1);
 				$objRefFourn = $objp->ref_fourn;
-				if ($filterkey && $filterkey != '') $objRefFourn = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $objRefFourn, 1);
+				if ($filterkey && $filterkey != '') $objRefFourn = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $objRefFourn, 1);
 				$label = $objp->label;
-				if ($filterkey && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey).')/i', '<strong>$1</strong>', $label, 1);
+				if ($filterkey && $filterkey != '') $label = preg_replace('/('.preg_quote($filterkey, '/').')/i', '<strong>$1</strong>', $label, 1);
 
 				$optlabel = $objp->ref;
 				if (!empty($objp->idprodfournprice) && ($objp->ref != $objp->ref_fourn)) {
@@ -6608,16 +6610,15 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
-						<script>'."\n";
 			if ($addjscombo == 1)
 			{
 				$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
+				$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->'."\n";
+				$out .= '<script>'."\n";
 				$out .= 'function formatResult(record) {'."\n";
 				if ($elemtype == 'category')
 				{
-					$out .= '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
 				}
 				else
 				{
@@ -6627,8 +6628,7 @@ class Form
 				$out .= 'function formatSelection(record) {'."\n";
 				if ($elemtype == 'category')
 				{
-					$out .= '	//return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> <a href="'.DOL_URL_ROOT.'/categories/viewcat.php?type=0&id=\'+record.id+\'">\'+record.text+\'</a></span>\';
-									  	return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png'.'"> \'+record.text+\'</span>\';';
+					$out .= 'return \'<span><img src="'.DOL_URL_ROOT.'/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
 				}
 				else
 				{
@@ -6652,6 +6652,8 @@ class Form
 				// Add other js lib
 				// TODO external lib multiselect/jquery.multi-select.js must have been loaded to use this multiselect plugin
 				// ...
+				$out .= "\n".'<!-- JS CODE TO ENABLE external lib for id '.$htmlname.' -->'."\n";
+				$out .= '<script>'."\n";
 				$out .= '$(document).ready(function () {
 							$(\'#'.$htmlname.'\').multiSelect({
 								containerHTML: \'<div class="multi-select-container">\',
@@ -7650,10 +7652,11 @@ class Form
 	 * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
 	 * 	@param	string	$force_entity	'0' or Ids of environment to force
 	 * 	@param	bool	$multiple		add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
+	 *  @param  string	$morecss		More css to add to html component
 	 *  @return	string
 	 *  @see select_dolusers()
 	 */
-    public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false)
+    public function select_dolgroups($selected = '', $htmlname = 'groupid', $show_empty = 0, $exclude = '', $disabled = 0, $include = '', $enableonly = '', $force_entity = '0', $multiple = false, $morecss = '')
 	{
         // phpcs:enable
 		global $conf, $user, $langs;
@@ -7696,7 +7699,7 @@ class Form
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		   	$out .= ajax_combobox($htmlname);
 
-			$out .= '<select class="flat minwidth200" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
+			$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.($disabled ? ' disabled' : '').'>';
 
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -7764,18 +7767,19 @@ class Form
 	 *
 	 *  @param  string  $cssclass                  CSS class
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
+         *  @param  string  $massactionname            Mass action button name that will launch an action on the selected items
 	 *  @return	string
 	 */
-    public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0)
+    public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
 	{
 		global $conf, $langs;
 
 		$out = '';
 		$id = uniqid();
-		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions'.$id.'" name="checkallactions" class="checkallactions"></div>';
+                if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="' . $cssclass . 's" name="' . $cssclass . 's" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {
-            	$("#checkallactions'.$id.'").click(function() {
+                $("#' . $cssclass . 's").click(function() {
                     if($(this).is(\':checked\')){
                         console.log("We check all '.$cssclass.'");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
@@ -7785,10 +7789,10 @@ class Form
                         console.log("We uncheck all");
                 		$(".'.$cssclass.'").prop(\'checked\', false).trigger(\'change\');
                     }'."\n";
-		if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
+                if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "' . $massactionname . '", "' . $cssclass . '"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out .= '         });
 
-        	$(".checkforselect").change(function() {
+                $(".' . $cssclass . '").change(function() {
 				$(this).closest("tr").toggleClass("highlight", this.checked);
 			});
 
@@ -7804,14 +7808,15 @@ class Form
 	 *  @param	int  	$addcheckuncheckall        Add the check all/uncheck all checkbox (use javascript) and code to manage this
 	 *  @param  string  $cssclass                  CSS class
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
+         *  @param  string  $massactionname            Mass action name
 	 *  @return	string
 	 */
-    public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
+    public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
 	{
 		$out = $this->showFilterButtons();
 		if ($addcheckuncheckall)
 		{
-			$out .= $this->showCheckAddButtons($cssclass, $calljsfunction);
+			$out .= $this->showCheckAddButtons($cssclass, $calljsfunction, $massactionname);
 		}
 		return $out;
 	}

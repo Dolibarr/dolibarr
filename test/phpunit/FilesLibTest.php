@@ -75,7 +75,11 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -84,7 +88,11 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -336,7 +344,7 @@ class FilesLibTest extends PHPUnit\Framework\TestCase
 
         $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv', 0, 1);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(1, $result, 'copy file ('.$file.') into a dir that exists ('.$conf->admin->dir_temp.'/file.csv'.')');    // Should be 1
+        $this->assertGreaterThanOrEqual(1, $result, 'copy file ('.$file.') into a dir that exists ('.$conf->admin->dir_temp.'/file.csv)');    // Should be 1
 
         // Again to test with overwriting=0
         $result=dol_copy($file, $conf->admin->dir_temp.'/file.csv', 0, 0);

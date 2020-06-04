@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2020  Lenin Rivas		   <lenin@leninrivas.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -590,7 +591,7 @@ class Mo extends CommonObject
 	}
 
 	/**
-	 * Erase and update the line to produce.
+	 * Erase and update the line to consume and to produce.
 	 *
 	 * @param  User $user      User that modifies
 	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
@@ -648,7 +649,7 @@ class Mo extends CommonObject
 							if ($line->qty_frozen) {
 								$moline->qty = $line->qty; // Qty to consume does not depends on quantity to produce
 							} else {
-								$moline->qty = round($line->qty * $this->qty / $line->efficiency, 2);
+								$moline->qty = price2num(($line->qty / $bom->qty) * $this->qty / $line->efficiency, 'MS'); // Calculate with Qty to produce and  more presition
 							}
 							if ($moline->qty <= 0) {
 								$error++;
@@ -1007,7 +1008,7 @@ class Mo extends CommonObject
         }
 
         $url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
-        if ($option = 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
+        if ($option == 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
@@ -1225,10 +1226,10 @@ class Mo extends CommonObject
 	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
+	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
@@ -1268,7 +1269,7 @@ class Mo extends CommonObject
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans('Ref').'</td>';
-		print '<td class="right">'.$langs->trans('Qty').' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf1").')</span></td>';
+		print '<td class="right">'.$langs->trans('Qty').' <span class="opacitymedium">('.$langs->trans("ForAQuantityOf", $this->bom->qty).')</span></td>';
 		print '<td class="center">'.$langs->trans('QtyFrozen').'</td>';
 		print '<td class="center">'.$langs->trans('DisableStockChange').'</td>';
 		//print '<td class="right">'.$langs->trans('Efficiency').'</td>';
@@ -1332,6 +1333,11 @@ class Mo extends CommonObject
 		{
 			// If origin MRP line is not a product, but another MRP
 			// TODO
+		}
+
+		$this->tpl['qty_bom'] = 1;
+		if (is_object($this->bom) && $this->bom->qty > 1) {
+			$this->tpl['qty_bom'] = $this->bom->qty;
 		}
 
 		$this->tpl['qty'] = $line->qty;

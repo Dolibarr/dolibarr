@@ -1393,7 +1393,7 @@ class Societe extends CommonObject
 				$action = 'update';
 
 				// Actions on extra fields
-				if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$result = $this->insertExtraFields();
 					if ($result < 0)
@@ -1771,7 +1771,7 @@ class Societe extends CommonObject
 			}
 
 			// Removed extrafields
-			if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->deleteExtraFields();
 				if ($result < 0)
@@ -3623,7 +3623,7 @@ class Societe extends CommonObject
 		$this->phone = $member->phone; // Prof phone
 		$this->email = $member->email;
         $this->socialnetworks = $member->socialnetworks;
-		$this->entity=$member->entity;
+		$this->entity = $member->entity;
 
 		$this->client = 1; // A member is a customer by default
 		$this->code_client = ($customercode ? $customercode : -1);
@@ -3745,6 +3745,13 @@ class Societe extends CommonObject
 		$this->instagram_url = empty($conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_INSTAGRAM_URL;
 		$this->youtube_url = empty($conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_YOUTUBE_URL;
 		$this->github_url = empty($conf->global->MAIN_INFO_SOCIETE_GITHUB_URL) ? '' : $conf->global->MAIN_INFO_SOCIETE_GITHUB_URL;
+		$this->socialnetworks = array();
+		if (! empty($this->facebook_url)) $this->socialnetworks['facebook'] = $this->facebook_url;
+		if (! empty($this->twitter_url)) $this->socialnetworks['twitter'] = $this->twitter_url;
+		if (! empty($this->linkedin_url)) $this->socialnetworks['linkedin'] = $this->linkedin_url;
+		if (! empty($this->instagram_url)) $this->socialnetworks['instagram'] = $this->instagram_url;
+		if (! empty($this->youtube_url)) $this->socialnetworks['youtube'] = $this->youtube_url;
+		if (! empty($this->github_url)) $this->socialnetworks['github'] = $this->github_url;
 
 		// Id prof generiques
 		$this->idprof1 = empty($conf->global->MAIN_INFO_SIREN) ? '' : $conf->global->MAIN_INFO_SIREN;

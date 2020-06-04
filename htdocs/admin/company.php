@@ -429,7 +429,7 @@ print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth100" id="MAIN_INFO_SO
 
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td class="maxwidthonsmartphone">';
-//if (empty($country_selected)) $country_selected=substr($langs->defaultlang,-2);    // By default, country of localization
+print img_picto('', 'globe-americas', 'class="paddingrightonly"');
 print $form->select_country($mysoc->country_id, 'country_id');
 if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>'."\n";
@@ -693,7 +693,7 @@ print '<br>';
 
 
 // Sales taxes (VAT, IRPF, ...)
-print load_fiche_titre($langs->trans("TypeOfSaleTaxes"));
+print load_fiche_titre($langs->trans("TypeOfSaleTaxes"), '', 'object_payment');
 
 print '<table class="noborder centpercent editmode">';
 print '<tr class="liste_titre">';

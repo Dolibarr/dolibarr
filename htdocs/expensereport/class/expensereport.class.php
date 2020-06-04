@@ -704,8 +704,8 @@ class ExpenseReport extends CommonObject
     	// phpcs:enable
     	global $langs;
 
-    	$labelStatus = $langs->trans($this->statuts[$status]);
-    	$labelStatusShort = $langs->trans($this->statuts_short[$status]);
+    	$labelStatus = $langs->transnoentitiesnoconv($this->statuts[$status]);
+    	$labelStatusShort = $langs->transnoentitiesnoconv($this->statuts_short[$status]);
 
     	$statusType = $this->statuts_logo[$status];
 
@@ -1049,7 +1049,7 @@ class ExpenseReport extends CommonObject
                 $deplig = new ExpenseReportLine($this->db);
 
                 $deplig->rowid          = $objp->rowid;
-                $deplig->id             = $objp->id;
+                $deplig->id             = $objp->rowid;
                 $deplig->comments       = $objp->comments;
                 $deplig->qty            = $objp->qty;
                 $deplig->value_unit     = $objp->value_unit;

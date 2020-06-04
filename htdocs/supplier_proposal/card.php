@@ -353,7 +353,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+								if (method_exists($lines[$i], 'fetch_optionals')) {
 									$lines[$i]->fetch_optionals();
 									$array_options = $lines[$i]->array_options;
 								}
@@ -1098,7 +1098,7 @@ if ($action == 'create')
 {
 	$currency_code = $conf->currency;
 
-	print load_fiche_titre($langs->trans("NewAskPrice"));
+	print load_fiche_titre($langs->trans("NewAskPrice"), '', 'supplier_proposal');
 
 	$soc = new Societe($db);
 	if ($socid > 0)
