@@ -130,34 +130,34 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 	}
 	$action = '';
 }
-elseif($action === 'confirm_makeproduct' && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT))
+elseif ($action === 'confirm_makeproduct' && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT))
 {
     $error = 0;
-    foreach($_REQUEST as $key => $val) {
-        if(strpos($key,'outletwarehouse') !== false || strpos($key,'qtyneeded') !== false) {
-            $tmpArr = explode('_',$key);
-            if(strpos($key,'outletwarehouse') !== false) $TOutletWarehouse[$tmpArr[1]]['fk_warehouse'] = $val;
-            if(strpos($key,'qtyneeded') !== false) $TOutletWarehouse[$tmpArr[1]]['qty'] = $val;
+    foreach ($_REQUEST as $key => $val) {
+        if (strpos($key, 'outletwarehouse') !== false || strpos($key, 'qtyneeded') !== false) {
+            $tmpArr = explode('_', $key);
+            if (strpos($key, 'outletwarehouse') !== false) $TOutletWarehouse[$tmpArr[1]]['fk_warehouse'] = $val;
+            if (strpos($key, 'qtyneeded') !== false) $TOutletWarehouse[$tmpArr[1]]['qty'] = $val;
         }
     }
-    if(strpos($qtyToMake,',') !== false) $qtyToMake = price2num($qtyToMake);
-    if(!empty($id) && !empty($entryWarehouse) && !empty($TOutletWarehouse) && (is_numeric($qtyToMake) && $qtyToMake > 0)) {
+    if (strpos($qtyToMake, ',') !== false) $qtyToMake = price2num($qtyToMake);
+    if (!empty($id) && !empty($entryWarehouse) && !empty($TOutletWarehouse) && (is_numeric($qtyToMake) && $qtyToMake > 0)) {
         $db->begin();
         $mvtStock = new MouvementStock($db);
         $mvtStock->origin = $object;
-        $res = $mvtStock->reception($user,$id,$entryWarehouse, $qtyToMake, 0, $langs->trans('MakingProductFromVirtualProduct',$object->ref)); //TO MAKE
+        $res = $mvtStock->reception($user, $id, $entryWarehouse, $qtyToMake, 0, $langs->trans('MakingProductFromVirtualProduct', $object->ref)); //TO MAKE
         var_dump($res, $id);
-        if($res > 0) {
-            foreach($TOutletWarehouse as $fk_product_needed => $TInfoWarehouse) {
+        if ($res > 0) {
+            foreach ($TOutletWarehouse as $fk_product_needed => $TInfoWarehouse) {
                 $qtyNeeded = $TInfoWarehouse['qty'] * $qtyToMake;
-                $res = $mvtStock->livraison($user, $fk_product_needed, $TInfoWarehouse['fk_warehouse'], $qtyNeeded,0 ,$langs->trans('MakingProductFromVirtualProduct',$object->ref)); //NEEDED
-                if($res <= 0) {
-                    setEventMessage($langs->trans('ErrorDuringStockMovement'),'errors');
+                $res = $mvtStock->livraison($user, $fk_product_needed, $TInfoWarehouse['fk_warehouse'], $qtyNeeded, 0, $langs->trans('MakingProductFromVirtualProduct', $object->ref)); //NEEDED
+                if ($res <= 0) {
+                    setEventMessage($langs->trans('ErrorDuringStockMovement'), 'errors');
                     $error++;
                 }
             }
         } else {
-            setEventMessage($langs->trans('ErrorDuringStockMovement'),'errors');
+            setEventMessage($langs->trans('ErrorDuringStockMovement'), 'errors');
             $error++;
         }
     }
@@ -311,7 +311,7 @@ if ($id > 0 || !empty($ref))
 		$nbofsubsubproducts = count($prods_arbo); // This include sub sub product into nb
 		$prodschild = $object->getChildsArbo($id, 1);
 		$nbofsubproducts = count($prodschild); // This include only first level of childs
-        if(!empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) {
+        if (!empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) {
             $TConfirmParams = array();
             $TConfirmParams['id']['name'] = "id";
             $TConfirmParams['id']['type'] = "hidden";
@@ -332,7 +332,7 @@ if ($id > 0 || !empty($ref))
 		    $TConfirmParams['componenttitle']['type'] = 'onecolumn';
 		    $TConfirmParams['componenttitle']['value'] = '<div align="center" width="100%"><b>'.$langs->trans('ComponentWarehouses').'</b></div>';
 
-            foreach($prods_arbo as $child) {
+            foreach ($prods_arbo as $child) {
                 $fk_child = $child['id'];
                 $TConfirmParams['source'.$fk_child]['label'] = $langs->trans('WarehouseSource').' '.$child['ref'].' :';
                 $TConfirmParams['source'.$fk_child]['name'] = 'outletwarehouse_'.$fk_child; //Select2 doesnt handle array
@@ -588,7 +588,7 @@ if ($id > 0 || !empty($ref))
             print "\n".'<div class="tabsAction">'."\n";
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
-            if(empty($reshook)) {
+            if (empty($reshook)) {
                 if (!empty($conf->stock->enabled) && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) print '<div class="inline-block divButAction" id="btMkProduct"><span id="action-makeproduct" class="butAction">'.$langs->trans("MakeProduct").'</span></div>';
             }
             print '</div>';
