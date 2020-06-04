@@ -584,7 +584,7 @@ print '<td width="60" class="right">';
 print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
 print '</td>';
 print '</tr>';
-if(!empty($conf->stock->enabled)) {
+if (!empty($conf->stock->enabled)) {
     print '<tr class="oddeven">';
     print '<td>'.$form->textwithpicto($langs->trans('MakingProductFromAssociatedProducts'), $langs->trans('FeatureDoesntHandleLotBatch')).'</td>';
     print '<td width="60" class="right">';

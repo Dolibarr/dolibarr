@@ -321,16 +321,16 @@ if ($id > 0 || !empty($ref))
             $TConfirmParams['tomake']['type'] = "text";
             $TConfirmParams['tomake']['name'] = "qty_to_make";
 
-        $TConfirmParams['finishedtitle']['type'] = 'onecolumn';
-        $TConfirmParams['finishedtitle']['value'] = '<div align="center" width="100%"><b>'.$langs->trans('ManufacturedProductWarehouse').'</b></div>';
+			$TConfirmParams['finishedtitle']['type'] = 'onecolumn';
+			$TConfirmParams['finishedtitle']['value'] = '<div align="center" width="100%"><b>'.$langs->trans('ManufacturedProductWarehouse').'</b></div>';
 
             $TConfirmParams['target']['label'] = $langs->trans('WarehouseTarget').' :';
             $TConfirmParams['target']['type'] = "other";
             $TConfirmParams['target']['name'] = "entrywarehouse";
             $TConfirmParams['target']['value'] = $formProduct->selectWarehouses('', 'entrywarehouse');
 
-        $TConfirmParams['componenttitle']['type'] = 'onecolumn';
-        $TConfirmParams['componenttitle']['value'] = '<div align="center" width="100%"><b>'.$langs->trans('ComponentWarehouses').'</b></div>';
+		    $TConfirmParams['componenttitle']['type'] = 'onecolumn';
+		    $TConfirmParams['componenttitle']['value'] = '<div align="center" width="100%"><b>'.$langs->trans('ComponentWarehouses').'</b></div>';
 
             foreach($prods_arbo as $child) {
                 $fk_child = $child['id'];
@@ -589,7 +589,7 @@ if ($id > 0 || !empty($ref))
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
             if(empty($reshook)) {
-                if(!empty($conf->stock->enabled) && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) print '<div class="inline-block divButAction" id="btMkProduct"><span id="action-makeproduct" class="butAction">'.$langs->trans("MakeProduct").'</span></div>';
+                if (!empty($conf->stock->enabled) && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) print '<div class="inline-block divButAction" id="btMkProduct"><span id="action-makeproduct" class="butAction">'.$langs->trans("MakeProduct").'</span></div>';
             }
             print '</div>';
 		}
