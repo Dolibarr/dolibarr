@@ -8017,7 +8017,7 @@ abstract class CommonObject
 						}
 						if ($result < 0) {
 							$error++;
-							$this->errors = $this->error;
+							$this->errors[] = $this->error;
 						} else {
 							$deleted++;
 						}
