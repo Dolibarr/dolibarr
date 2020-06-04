@@ -228,3 +228,5 @@ ForceTo=Force to
 AlwaysShowFullArbo=Display full tree of warehouse on popup of warehouse links (Warning: This may decrease dramatically performances)
 MakingProductFromVirtualProduct=Making product %s from virtual product
 ErrorDuringStockMovement=Error during stock movement
+ComponentWarehouses=Component Warehouses
+ManufacturedProductWarehouse=Manufactured product warehouse

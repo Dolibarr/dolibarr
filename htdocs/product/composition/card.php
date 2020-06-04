@@ -312,7 +312,7 @@ if ($id > 0 || !empty($ref))
 		$prodschild = $object->getChildsArbo($id, 1);
 		$nbofsubproducts = count($prodschild); // This include only first level of childs
 
-        if($action === 'makeproduct' && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT)) {
+
             $TConfirmParams = array();
             $TConfirmParams['id']['name'] = "id";
             $TConfirmParams['id']['type'] = "hidden";
@@ -321,12 +321,17 @@ if ($id > 0 || !empty($ref))
             $TConfirmParams['tomake']['label'] = $langs->trans('QtyToMake').' :';
             $TConfirmParams['tomake']['type'] = "text";
             $TConfirmParams['tomake']['name'] = "qty_to_make";
-            $TConfirmParams['tomake']['value'] = '<input type="number" name="qty_to_make" min="0" value="0"/>';
+
+        $TConfirmParams['finishedtitle']['type'] = 'onecolumn';
+        $TConfirmParams['finishedtitle']['value'] = '<div align="center" width="100%"><b>'.$langs->trans('ManufacturedProductWarehouse').'</b></div>';
 
             $TConfirmParams['target']['label'] = $langs->trans('WarehouseTarget').' :';
             $TConfirmParams['target']['type'] = "other";
             $TConfirmParams['target']['name'] = "entrywarehouse";
             $TConfirmParams['target']['value'] = $formProduct->selectWarehouses('', 'entrywarehouse');
+
+        $TConfirmParams['componenttitle']['type'] = 'onecolumn';
+        $TConfirmParams['componenttitle']['value'] = '<div align="center" width="100%"><b>'.$langs->trans('ComponentWarehouses').'</b></div>';
 
             foreach($prods_arbo as $child) {
                 $fk_child = $child['id'];
@@ -341,7 +346,7 @@ if ($id > 0 || !empty($ref))
             }
             print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans('MakeProduct'), '', 'confirm_makeproduct', $TConfirmParams, '', 1, 'auto');
             $action = '';
-        }
+
 
 		print '<div class="fichecenter">';
 
@@ -585,7 +590,7 @@ if ($id > 0 || !empty($ref))
             $parameters = array();
             $reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action);    // Note that $action and $object may have been modified by hook
             if(empty($reshook)) {
-                if(!empty($conf->stock->enabled) && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) print '<div class="inline-block divButAction" id="btMkProduct"><a href="'.$_SERVER["PHP_SELF"].'?action=makeproduct&id='.$id.'" class="butAction" >'.$langs->trans("MakeProduct").'</a></div>';
+                if(!empty($conf->stock->enabled) && !empty($conf->global->PRODUIT_SOUSPRODUITS_MAKINGPRODUCT) && !empty($prods_arbo)) print '<div class="inline-block divButAction" id="btMkProduct"><span id="action-makeproduct" class="butAction">'.$langs->trans("MakeProduct").'</span></div>';
             }
             print '</div>';
 		}

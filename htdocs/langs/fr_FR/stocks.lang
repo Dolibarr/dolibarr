@@ -228,3 +228,5 @@ ForceTo=Forcer à
 AlwaysShowFullArbo=Toujours afficher l'arborescence complète dans le lien vers la fiche
 MakingProductFromVirtualProduct=Fabrication du produit %s depuis les produits virtuels
 ErrorDuringStockMovement=Erreur pendant le mouvement de stock
+ComponentWarehouses=Entrepôt des composants
+ManufacturedProductWarehouse=Entrepôt où le produit fabriqué sera stocké
