@@ -94,6 +94,10 @@ if (GETPOST('action', 'alpha') == 'set')
 
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON".$terminaltouse, GETPOST('TAKEPOS_ADDON'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 
+	// add free text on each terminal of cash desk
+	$res = dolibarr_set_const($db, 'TAKEPOS_HEADER'.$terminaltouse, GETPOST('TAKEPOS_HEADER'.$terminaltouse, 'none'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TAKEPOS_FOOTER'.$terminaltouse, GETPOST('TAKEPOS_FOOTER'.$terminaltouse, 'none'), 'chaine', 0, '', $conf->entity);
+
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
 	if (!$res > 0) $error++;
@@ -322,6 +326,58 @@ if ($conf->global->TAKEPOS_ADDON == "terminal") {
 }
 
 print '</table>';
+
+// add free text on each terminal of cash desk
+$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans('Translation');
+$htmltext = '<i>' . $langs->trans('AvailableVariables') . ':<br>';
+foreach ($substitutionarray as $key => $val)	$htmltext .= $key . '<br>';
+$htmltext .= '</i>';
+
+print '<br>';
+print load_fiche_titre($langs->trans('FreeLegalTextOnInvoices'), '', '');
+
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans("Parameters") . '</td><td>' . $langs->trans('Value') . '</td>';
+print '</tr>';
+
+// free text on header
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans('Header'), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+print '</td>';
+print '<td>';
+$variablename = 'TAKEPOS_HEADER' . $terminaltouse;
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	print '<textarea name="' . $variablename . '" class="flat" cols="120">' . $conf->global->{$variablename} . '</textarea>';
+} else {
+	include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+	$doleditor = new DolEditor($variablename, $conf->global->{$variablename}, '', 80, 'dolibarr_notes');
+	print $doleditor->Create();
+}
+print '</td></tr>';
+
+// free text on footer
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans('Footer'), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+print '</td>';
+print '<td>';
+$variablename = 'TAKEPOS_FOOTER' . $terminaltouse;
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	print '<textarea name="' . $variablename . '" class="flat" cols="120">' . $conf->global->{$variablename} . '</textarea>';
+} else {
+	include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+	$doleditor = new DolEditor($variablename, $conf->global->{$variablename}, '', 80, 'dolibarr_notes');
+	print $doleditor->Create();
+}
+print '</td></tr>';
+
+print '</table>';
+print '</div>';
+
 print '</div>';
 
 if ($atleastonefound == 0 && !empty($conf->banque->enabled))
