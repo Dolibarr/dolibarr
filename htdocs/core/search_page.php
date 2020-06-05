@@ -79,6 +79,7 @@ else
 {
 	$usedbyinclude = 1; // Used into next include
 	$showtitlebefore = GETPOST('showtitlebefore', 'int');
+	$arrayresult = array();
 	include DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
 
 	$i = 0;
@@ -95,7 +96,8 @@ else
 			$accesskey = $val['label'][0];
 			$accesskeyalreadyassigned[$accesskey] = $accesskey;
 		}
-		$searchform .= printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, img_picto('', $val['img'], '', 0, 1), $showtitlebefore, ($i > 0 ? 0 : 1));
+
+		$searchform .= printSearchForm($urlaction, $urlaction, $val['label'], 'minwidth200', $keysearch, $accesskey, $key, $val['img'], $showtitlebefore, ($i > 0 ? 0 : 1));
 
 		$i++;
 	}

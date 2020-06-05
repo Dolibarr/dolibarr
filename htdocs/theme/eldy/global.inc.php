@@ -419,8 +419,8 @@ hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
 .button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
-	margin-bottom: 0;
-	margin-top: 0;
+	margin-bottom: 3px;
+	margin-top: 3px;
 	margin-left: 5px;
 	margin-right: 5px;
 	font-family: <?php print $fontlist ?>;
@@ -1158,6 +1158,10 @@ table[summary="list_of_modules"] .fa-cog {
 		width: calc(100% - 30px) !important;
 		display: inline-block;
 	}
+
+	/*img.photoref, div.photoref {
+		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+	}*/
 }
 
 /* Force values for small screen 570 */
@@ -1270,9 +1274,9 @@ table[summary="list_of_modules"] .fa-cog {
 	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
-    	border: none;
+    	border: 1px solid rgba(0, 0, 0, 0.2);
+    	box-shadow: none;
         -webkit-box-shadow: none;
-        box-shadow: none;
         padding: 4px;
     	height: 20px;
     	width: 20px;
