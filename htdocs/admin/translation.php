@@ -358,9 +358,9 @@ if ($mode == 'overwrite')
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
     		{
     			print '<input type="hidden" class="button" name="rowid" value="'.$obj->rowid.'">';
-    			print '<input type="submit" class="button" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
+    			print '<input type="submit" class="button buttongen" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
     			print ' &nbsp; ';
-    			print '<input type="submit" class="button" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
+    			print '<input type="submit" class="button buttongen" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
     		}
     		else
     		{
