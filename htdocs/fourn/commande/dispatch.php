@@ -1073,8 +1073,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<table id="dispatch_received_products" class="noborder centpercent">';
 
 			print '<tr class="liste_titre">';
-			if ($conf->reception->enabled)print '<td>'.$langs->trans("Reception").'</td>';
-
+			print '<td>'.$langs->trans("Reception").'</td>';
 			print '<td>'.$langs->trans("Product").'</td>';
 			print '<td>'.$langs->trans("DateCreation").'</td>';
 			print '<td>'.$langs->trans("DateDeliveryPlanned").'</td>';
@@ -1112,16 +1111,16 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<tr ' . $bc[$var] . ' id="line_'.$objp->dispatchlineid.'" >';
 
+                print '<td>';
 				if (!empty($conf->reception->enabled)) {
-					print '<td>';
 					if (!empty($objp->fk_reception)) {
 						$reception = new Reception($db);
 						$reception->fetch($objp->fk_reception);
 						print $reception->getNomUrl(1);
 					}
 
-					print "</td>";
-				}
+				}else print $objp->dispatchlineid;
+                print "</td>";
 
 				print '<td>';
 				print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"), 'product').' '.$objp->ref.'</a>';
