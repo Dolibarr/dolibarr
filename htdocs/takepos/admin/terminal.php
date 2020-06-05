@@ -326,6 +326,7 @@ if ($conf->global->TAKEPOS_ADDON == "terminal") {
 }
 
 print '</table>';
+print '</div>';
 
 // add free text on each terminal of cash desk
 $substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
@@ -376,8 +377,6 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
 print '</td></tr>';
 
 print '</table>';
-print '</div>';
-
 print '</div>';
 
 if ($atleastonefound == 0 && !empty($conf->banque->enabled))
