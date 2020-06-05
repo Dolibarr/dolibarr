@@ -99,7 +99,7 @@ if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 if ($action == 'other')
 {
 	$princingrules = GETPOST('princingrule', 'alpha');
-	foreach ($select_pricing_rules as $rule=>$label) // Loop on each possible mode
+	foreach ($select_pricing_rules as $rule => $label) // Loop on each possible mode
 	{
 		if ($rule == $princingrules) // We are on selected rule, we enable it
 		{
@@ -530,7 +530,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-print '<td width="80">&nbsp;</td></tr>'."\n";
+print '</tr>'."\n";
 
 
 /*
@@ -551,15 +551,13 @@ if (empty($conf->multicompany->enabled))
 } else {
 	print '<td>'.$form->textwithpicto($langs->trans("PricingRule"), $langs->trans("SamePriceAlsoForSharedCompanies"), 1).'</td>';
 }
-print '<td width="60" class="right">';
+print '<td class="right">';
 $current_rule = 'PRODUCT_PRICE_UNIQ';
 if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule = 'PRODUIT_MULTIPRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
-print '</td><td rowspan="'.$rowspan.'" class="nohover right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
 
@@ -577,7 +575,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
 print '</td>';
 print '</tr>';
@@ -588,11 +586,11 @@ print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"), $langs->trans('UseSearchToSelectProductTooltip'), 1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
-	print '<td class="nowrap right" colspan="2">';
+	print '<td class="nowrap right">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
 } else {
-	print '<td width="60" class="right">';
+	print '<td class="right">';
 	$arrval = array(
 		'0'=>$langs->trans("No"),
 		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
@@ -615,7 +613,7 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 // Visualiser description produit dans les formulaires activation/desactivation
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
 print '</td>';
 print '</tr>';
@@ -625,7 +623,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
 print '</td>';
 print '</tr>';
@@ -636,7 +634,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseUnits").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
 print '</td>';
 print '</tr>';
@@ -647,7 +645,7 @@ if (!empty($conf->global->MAIN_MULTILANGS))
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
-	print '<td width="60" class="right">';
+	print '<td class="right">';
 	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) ? $conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE : 0), 1);
 	print '</td>';
 	print '</tr>';
@@ -657,14 +655,14 @@ if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUP
 {
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
-    print '<td width="60" class="right">';
+    print '<td class="right">';
     print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
     print '</td>';
     print '</tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
-	print '<td width="60" align="right">';
+	print '<td align="right">';
 	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
@@ -678,8 +676,8 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
-	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-	print '<td width="80">&nbsp;</td></tr>'."\n";
+	print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+	print '</tr>'."\n";
 
 	if (is_dir($dir))
 	{
@@ -732,6 +730,8 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
 }
 
 print '</table>';
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 
