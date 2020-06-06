@@ -991,7 +991,9 @@ class FormTicket
 
         // MESSAGE
         $defaultmessage="";
-	if ($arraydefaultmessage && $arraydefaultmessage->content) $defaultmessage = $arraydefaultmessage->content;
+		if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage->content) {
+            $defaultmessage=$arraydefaultmessage->content;
+        }
         $defaultmessage=str_replace('\n', "\n", $defaultmessage);
 
         // Deal with format differences between message and signature (text / HTML)
