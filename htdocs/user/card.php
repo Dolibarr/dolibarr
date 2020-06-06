@@ -1798,6 +1798,15 @@ if ($action == 'create' || $action == 'adduserldap')
 			print dol_htmlentitiesbr($object->signature);
 			print "</td></tr>\n";
 
+			//VCard
+			print '<tr><td class="tdtop">'.$langs->trans("VCard").'</td>';
+			print '<td>';
+			print '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'">';
+			print img_picto($langs->trans("Download"), 'vcard.png', 'class="paddingrightonly"');
+			print $langs->trans("Download");
+			print '</a>';
+			print "</td></tr>\n";
+
 			print "</table>\n";
 			print '</div>';
 
