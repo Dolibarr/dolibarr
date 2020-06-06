@@ -196,7 +196,9 @@ class MyObject extends CommonObject
 	//protected $childtables = array();
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var array    List of child tables. To know object to delete on cascade.
+	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
 	//protected $childtablesoncascade = array('mymodule_myobjectdet');
 

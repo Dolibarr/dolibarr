@@ -444,11 +444,17 @@ abstract class CommonObject
 	public $next_prev_filter;
 
 	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	protected $childtables = array();
+
+	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
-	 *               if name like with @ClassNAme:FilePathClass;ParentFkFieldName' it will
-	 *               call method deleteByParentField(parentId,ParentFkFieldName) to fetch and delete child object
+	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array();
+
 
 	// No constructor as it is an abstract class
 	/**
