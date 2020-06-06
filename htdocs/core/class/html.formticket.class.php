@@ -991,7 +991,7 @@ class FormTicket
 
         // MESSAGE
         $defaultmessage="";
-        if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage->content) {
+		if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage->content) {
             $defaultmessage=$arraydefaultmessage->content;
         }
         $defaultmessage=str_replace('\n', "\n", $defaultmessage);
