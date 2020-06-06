@@ -1678,9 +1678,9 @@ class Societe extends CommonObject
 				}
 			}
 
-			foreach ($this->childtablesoncascade as $tabletodelete)
+			if (!$error)
 			{
-				if (!$error)
+				foreach ($this->childtablesoncascade as $tabletodelete)
 				{
 					$deleteFromObject=explode(':', $tabletodelete);
 					if (count($deleteFromObject)>=2) {
@@ -1693,10 +1693,12 @@ class Societe extends CommonObject
 							if ($result < 0) {
 								$error++;
 								$this->errors[] = $child_object->error;
+								break;
 							}
 						} else {
 							$error++;
-							$this->errors[] = 'Cannot find child class file ' .$filepath;
+							$this->errors[] = 'Cannot include child class file ' .$filepath;
+							break;
 						}
 					} else {
 						$sql = "DELETE FROM " . MAIN_DB_PREFIX . $tabletodelete;
@@ -1704,6 +1706,7 @@ class Societe extends CommonObject
 						if (!$this->db->query($sql)) {
 							$error++;
 							$this->errors[] = $this->db->lasterror();
+							break;
 						}
 					}
 				}
