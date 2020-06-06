@@ -1688,13 +1688,11 @@ class Societe extends CommonObject
 						$filepath=$deleteFromObject[1];
 						$columnName=$deleteFromObject[2];
 						if (dol_include_once($filepath)) {
-							if (class_exists($className)) {
-								$child_object = new $className($this->db);
-								$result = $child_object->deleteByParentField($id, $columnName);
-								if ($result < 0) {
-									$error++;
-									$this->errors[] = $child_object->error;
-								}
+							$child_object = new $className($this->db);
+							$result = $child_object->deleteByParentField($id, $columnName);
+							if ($result < 0) {
+								$error++;
+								$this->errors[] = $child_object->error;
 							}
 						} else {
 							$error++;
