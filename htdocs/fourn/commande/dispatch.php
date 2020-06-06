@@ -1045,7 +1045,7 @@ if ($id > 0 || !empty($ref)) {
 		</script>';
 
 	// List of lines already dispatched
-	$sql = "SELECT p.ref, p.label,";
+	$sql = "SELECT p.rowid as pid,p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.datec";
 	$sql.=" ,cd.rowid, cd.subprice";
@@ -1131,8 +1131,29 @@ if ($id > 0 || !empty($ref)) {
 				print '<td>'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
 				if (!empty($conf->productbatch->enabled)) {
-					print '<td class="dispatch_batch_number">'.$objp->batch.'</td>';
-					print '<td class="dispatch_dluo">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+                    $sql2 = "select pl.rowid from ".MAIN_DB_PREFIX."product_lot pl";
+                    $sql2 .= " join ".MAIN_DB_PREFIX."product_batch pb on pl.batch=pb.batch";
+                    $sql2 .= " join ".MAIN_DB_PREFIX."product_stock ps on pb.fk_product_stock=ps.rowid";
+                    $sql2 .= " where ps.fk_product=$objp->pid and ps.fk_entrepot=$objp->warehouse_id";
+                    $resql2 = $db->query($sql2);
+                    if ($resql2) {
+                        $num = $db->num_rows($resql2);
+                        if ($num > 0) {
+                            $objp2 = $db->fetch_object($resql2);
+
+                        }
+                    }
+					print '<td class="dispatch_batch_number">';
+                    if(!empty($objp2)){
+                        include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+                        $lot=new Productlot($db);
+                        $lot->fetch($objp2->rowid);
+                        print $lot->getNomUrl(1);
+                    }
+                    else print $objp->batch;
+                    print '</td>';
+
+                    print '<td class="dispatch_dluo">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
 					print '<td class="dispatch_dlc">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
 				}
 
