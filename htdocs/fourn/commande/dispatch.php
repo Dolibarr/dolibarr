@@ -1140,11 +1140,10 @@ if ($id > 0 || !empty($ref)) {
                         $num = $db->num_rows($resql2);
                         if ($num > 0) {
                             $objp2 = $db->fetch_object($resql2);
-
                         }
                     }
 					print '<td class="dispatch_batch_number">';
-                    if(!empty($objp2)){
+                    if (!empty($objp2)){
                         include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
                         $lot=new Productlot($db);
                         $lot->fetch($objp2->rowid);
