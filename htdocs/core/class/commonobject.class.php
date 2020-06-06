@@ -7990,7 +7990,7 @@ abstract class CommonObject
 			$this->db->begin();
 
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= ' WHERE '.$parentField.' = ' . $parentId;
+			$sql .= ' WHERE '.$parentField.' = ' . (int) $parentId;
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
