@@ -181,7 +181,7 @@ class MyObject extends CommonObject
 	//public $table_element_line = 'mymodule_myobjectline';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var int    Field with ID of parent key if this object has a parent
 	 */
 	//public $fk_element = 'fk_myobject';
 
@@ -193,12 +193,12 @@ class MyObject extends CommonObject
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array();
+	//protected $childtables = array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	//protected $childtablesoncascade=array('mymodule_myobjectdet');
+	//protected $childtablesoncascade = array('mymodule_myobjectdet');
 
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
