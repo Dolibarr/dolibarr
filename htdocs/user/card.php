@@ -1631,32 +1631,36 @@ else
 			print "</tr>\n";
 
 			// Expense report validator
-			print '<tr><td>';
-			$text = $langs->trans("ForceUserExpenseValidator");
-			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-			print '</td>';
-			print '<td>';
-			if (!empty($object->fk_user_expense_validator)) {
-				$evuser = new User($db);
-				$evuser->fetch($object->fk_user_expense_validator);
-				print $evuser->getNomUrl(1);
+			if (!empty($conf->expensereport->enabled)) {
+				print '<tr><td>';
+				$text = $langs->trans("ForceUserExpenseValidator");
+				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+				print '</td>';
+				print '<td>';
+				if (!empty($object->fk_user_expense_validator)) {
+					$evuser = new User($db);
+					$evuser->fetch($object->fk_user_expense_validator);
+					print $evuser->getNomUrl(1);
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
-			print '</td>';
-			print "</tr>\n";
 
 			// Holiday request validator
-			print '<tr><td>';
-			$text = $langs->trans("ForceUserHolidayValidator");
-			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-			print '</td>';
-			print '<td>';
-			if (!empty($object->fk_user_holiday_validator)) {
-				$hvuser = new User($db);
-				$hvuser->fetch($object->fk_user_holiday_validator);
-				print $hvuser->getNomUrl(1);
+			if (!empty($conf->holiday->enabled)) {
+				print '<tr><td>';
+				$text = $langs->trans("ForceUserHolidayValidator");
+				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+				print '</td>';
+				print '<td>';
+				if (!empty($object->fk_user_holiday_validator)) {
+					$hvuser = new User($db);
+					$hvuser->fetch($object->fk_user_holiday_validator);
+					print $hvuser->getNomUrl(1);
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
-			print '</td>';
-			print "</tr>\n";
 
 			// Default warehouse
 			if (!empty($conf->stock->enabled) && !empty($conf->global->USER_DEFAULT_WAREHOUSE))	// TODO What is goal of this. How it is used ?
@@ -2345,44 +2349,42 @@ else
 		   	print "</tr>\n";
 
 			// Expense report validator
-			print '<tr><td class="titlefield">';
-			$text = $langs->trans("ForceUserExpenseValidator");
-			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-			print '</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			if (!empty($conf->expensereport->enabled)) {
+				print '<tr><td class="titlefield">';
+				$text = $langs->trans("ForceUserExpenseValidator");
+				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+				print '</td>';
+				print '<td>';
+				if ($caneditfield) {
+					print $form->select_dolusers($object->fk_user_expense_validator, 'fk_user_expense_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+				} else {
+					print '<input type="hidden" name="fk_user_expense_validator" value="' . $object->fk_user_expense_validator . '">';
+					$evuser = new User($db);
+					$evuser->fetch($object->fk_user_expense_validator);
+					print $evuser->getNomUrl(1);
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
-			else
-			{
-				print '<input type="hidden" name="fk_user_expense_validator" value="'.$object->fk_user_expense_validator.'">';
-				$evuser = new User($db);
-				$evuser->fetch($object->fk_user_expense_validator);
-				print $evuser->getNomUrl(1);
-			}
-			print '</td>';
-			print "</tr>\n";
 
 			// Holiday request validator
-			print '<tr><td class="titlefield">';
-			$text = $langs->trans("ForceUserHolidayValidator");
-			print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
-			print '</td>';
-			print '<td>';
-			if ($caneditfield)
-			{
-				print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+			if (!empty($conf->holiday->enabled)) {
+				print '<tr><td class="titlefield">';
+				$text = $langs->trans("ForceUserHolidayValidator");
+				print $form->textwithpicto($text, $langs->trans("ValidatorIsSupervisorByDefault"), 1, 'help');
+				print '</td>';
+				print '<td>';
+				if ($caneditfield) {
+					print $form->select_dolusers($object->fk_user_holiday_validator, 'fk_user_holiday_validator', 1, array($object->id), 0, '', 0, $object->entity, 0, 0, '', 0, '', 'maxwidth300');
+				} else {
+					print '<input type="hidden" name="fk_user_holiday_validator" value="' . $object->fk_user_holiday_validator . '">';
+					$hvuser = new User($db);
+					$hvuser->fetch($object->fk_user_holiday_validator);
+					print $hvuser->getNomUrl(1);
+				}
+				print '</td>';
+				print "</tr>\n";
 			}
-			else
-			{
-				print '<input type="hidden" name="fk_user_holiday_validator" value="'.$object->fk_user_holiday_validator.'">';
-				$hvuser = new User($db);
-				$hvuser->fetch($object->fk_user_holiday_validator);
-				print $hvuser->getNomUrl(1);
-			}
-			print '</td>';
-			print "</tr>\n";
 
 
 		   	print '</table><hr><table class="border centpercent">';
