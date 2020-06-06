@@ -1459,6 +1459,7 @@ class Website extends CommonObject
 		$url = preg_replace('/(\?|&)l=([a-zA-Z_]*)/', '', $url); // We remove param l from url
 		//$url = preg_replace('/(\?|&)lang=([a-zA-Z_]*)/', '', $url);	// We remove param lang from url
 		$url .= (preg_match('/\?/', $url) ? '&' : '?').'l=';
+		if (! preg_match('/^\//', $url)) $url = '/'.$url;
 
 		$HEIGHTOPTION = 40;
 		$MAXHEIGHT = 4 * $HEIGHTOPTION;
