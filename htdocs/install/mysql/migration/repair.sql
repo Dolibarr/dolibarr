@@ -519,3 +519,7 @@ UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NUL
 -- update llx_societe set code_compta_fournisseur =  concat('401', substr(code_fournisseur, 3, 2),substr(code_fournisseur, 8, 5)) where fournisseur in (1,2,3) and code_fournisseur is not null;
 
 
+-- To fix a table with error 'ERROR 1118 (42000): Row size too large. The maximum row size for the used table type, not counting BLOBs, is 8126. This includes storage overhead, check the manual. You have to change some columns to TEXT or BLOBs'
+--ALTER TABLE llx_tablename ROW_FORMAT=DYNAMIC;
+
+

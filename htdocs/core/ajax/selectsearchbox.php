@@ -146,15 +146,6 @@ if (!empty($conf->holiday->enabled) && empty($conf->global->MAIN_SEARCHFORM_HOLI
 	$arrayresult['searchintoleaves'] = array('position'=>220, 'img'=>'object_holiday', 'label'=>$langs->trans("SearchIntoLeaves", $search_boxvalue), 'text'=>img_picto('', 'object_holiday').' '.$langs->trans("SearchIntoLeaves", $search_boxvalue), 'url'=>DOL_URL_ROOT.'/holiday/list.php?mainmenu=hrm'.($search_boxvalue ? '&sall='.urlencode($search_boxvalue) : ''));
 }
 
-
-/* Do we really need this. We already have a select for users, and we should be able to filter into user list on employee flag
-if (! empty($conf->hrm->enabled) && ! empty($conf->global->MAIN_SEARCHFORM_EMPLOYEE) && $user->rights->hrm->employee->read)
-{
-    $langs->load("hrm");
-    $searchform.=printSearchForm(DOL_URL_ROOT.'/hrm/employee/list.php', DOL_URL_ROOT.'/hrm/employee/list.php', $langs->trans("Employees"), 'employee', 'search_all', 'M', 'searchleftemployee', img_object('','user'));
-}
-*/
-
 // Execute hook addSearchEntry
 $parameters = array('search_boxvalue'=>$search_boxvalue, 'arrayresult'=>$arrayresult);
 $reshook = $hookmanager->executeHooks('addSearchEntry', $parameters);

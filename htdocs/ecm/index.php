@@ -57,7 +57,7 @@ if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "fullname";
 
 $ecmdir = new EcmDirectory($db);
-if ($section)
+if ($section > 0)
 {
 	$result = $ecmdir->fetch($section);
 	if (!$result > 0)
@@ -165,7 +165,7 @@ if ($action == 'add' && $user->rights->ecm->setup)
 }
 
 // Remove directory
-if ($action == 'confirm_deletesection' && GETPOST('confirm') == 'yes')
+if ($action == 'confirm_deletesection' && GETPOST('confirm', 'alpha') == 'yes')
 {
 	$result = $ecmdir->delete($user);
 	setEventMessages($langs->trans("ECMSectionWasRemoved", $ecmdir->label), null, 'mesgs');

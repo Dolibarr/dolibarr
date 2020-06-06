@@ -666,6 +666,7 @@ Owner=Owner
 FollowingConstantsWillBeSubstituted=The following constants will be replaced with the corresponding value.
 Refresh=Refresh
 BackToList=Back to list
+BackToTree=Back to tree
 GoBack=Go back
 CanBeModifiedIfOk=Can be modified if valid
 CanBeModifiedIfKo=Can be modified if not valid
