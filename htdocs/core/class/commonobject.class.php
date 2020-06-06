@@ -7892,35 +7892,37 @@ abstract class CommonObject
 		}
 
 		// Delete cascade first
-		if (!empty($this->childtablesoncascade)) {
+		if (is_array($this->childtablesoncascade)) {
             foreach ($this->childtablesoncascade as $table)
             {
-	            $deleteFromObject=explode(':', $table);
+	            $deleteFromObject = explode(':', $table);
 	            if (count($deleteFromObject)>=2) {
-		            $className=str_replace('@', '', $deleteFromObject[0]);
-		            $filePath=$deleteFromObject[1];
-		            $columnName=$deleteFromObject[2];
+		            $className = str_replace('@', '', $deleteFromObject[0]);
+		            $filePath = $deleteFromObject[1];
+		            $columnName = $deleteFromObject[2];
 		            if (dol_include_once($filePath)) {
 			            $childObject = new $className($this->db);
-			            if (is_callable($childObject, 'deleteByParentField')) {
+			            if (method_exists($childObject, 'deleteByParentField')) {
 				            $result = $childObject->deleteByParentField($this->id, $columnName);
 				            if ($result < 0) {
+								$error++;
 					            $this->errors[] = $childObject->error;
-					            return -1;
+					            break;
 				            }
 			            }
 		            } else {
-			            $this->errors[] = 'Cannot find child class file ' .$filePath;
-			            return -1;
+			            $error++;
+						$this->errors[] = 'Cannot include child class file ' .$filePath;
+			            break;
 		            }
 	            } else {
 		            $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
 		            $resql = $this->db->query($sql);
 		            if (!$resql) {
+						$error++;
 			            $this->error = $this->db->lasterror();
 			            $this->errors[] = $this->error;
-			            $this->db->rollback();
-			            return -1;
+						break;
 		            }
 	            }
             }
