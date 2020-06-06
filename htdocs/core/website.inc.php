@@ -121,7 +121,7 @@ if ($_SERVER['PHP_SELF'] != DOL_URL_ROOT.'/website/index.php')	// If we browsing
 					else
 					{
 						$newpageref = $obj->pageurl;
-						header("Location: ".$newpageref.'.php?l='.GETPOST('l', 'aZ09'));
+						header("Location: ".(($obj->lang && $obj->lang != $website->lang) ? '/'.$obj->lang.'/' : '/').$newpageref.'.php?l='.GETPOST('l', 'aZ09'));
 						exit;
 					}
 				}
