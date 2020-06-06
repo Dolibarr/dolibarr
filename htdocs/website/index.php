@@ -2558,9 +2558,12 @@ if (!GETPOST('hide_websitemenu'))
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
-					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
+					$preselectedlanguage = GETPOST('newlang', 'aZ09') ? GETPOST('newlang', 'aZ09') : '';	// Dy default, we do not force any language on pages
 					$onlylang = array();
 					if ($website->otherlang) {
+						if (! empty($website->lang)) {
+							$onlylang[$website->lang] = $website->lang;
+						}
 						foreach (explode(',', $website->otherlang) as $langkey) {
 							$onlylang[$langkey] = $langkey;
 						}
