@@ -7892,7 +7892,7 @@ abstract class CommonObject
 		}
 
 		// Delete cascade first
-		if (is_array($this->childtablesoncascade)) {
+		if (is_array($this->childtablesoncascade) && !empty($this->childtablesoncascade)) {
             foreach ($this->childtablesoncascade as $table)
             {
 	            $deleteFromObject = explode(':', $table);
