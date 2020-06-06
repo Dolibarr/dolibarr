@@ -7970,7 +7970,8 @@ abstract class CommonObject
 	}
 
 	/**
-	 * Delete all child object
+	 * Delete all child object from a parent ID
+	 *
 	 * @param		int		$parentId      Parent Id
 	 * @param		string	$parentField   Name of Foreign key parent column
 	 * @return		int						<0 if KO, >0 if OK
@@ -7988,7 +7989,7 @@ abstract class CommonObject
 
 			$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' WHERE '.$parentField.' = ' . $parentId;
-			dol_syslog(__METHOD__, LOG_DEBUG);
+
 			$resql = $this->db->query($sql);
 			if (!$resql) {
 				$this->errors[] = $this->db->lasterror();
@@ -8000,21 +8001,7 @@ abstract class CommonObject
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
-						$needUserParam = false;
-						if (class_exists('ReflectionMethod')) {
-							$method = new ReflectionMethod($this, 'delete');
-							$argsMethod=$method->getParameters();
-							if (is_array($argsMethod) && count($argsMethod)>0) {
-								if ($argsMethod[0]->name == 'user') {
-									$needUserParam = true;
-								}
-							}
-						}
-						if ($needUserParam) {
-							$result = $this->delete($user);
-						} else {
-							$result = $this->delete();
-						}
+						$result = $this->delete($user);
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $this->error;
@@ -8029,7 +8016,7 @@ abstract class CommonObject
 				$this->db->commit();
 				return $deleted;
 			} else {
-				$this->error = implode(' ', $this->errors);
+				$this->error = implode(', ', $this->errors);
 				$this->db->rollback();
 				return $error * -1;
 			}
