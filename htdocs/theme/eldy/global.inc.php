@@ -1373,7 +1373,7 @@ td.showDragHandle {
 
 .side-nav {
 	display: table-cell;
-	border-<?php echo $right; ?>: 1px solid #d0d0d0;
+	border-<?php echo $right; ?>: 1px solid #E0E0E0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
