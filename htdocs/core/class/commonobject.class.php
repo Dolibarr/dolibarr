@@ -7909,7 +7909,11 @@ abstract class CommonObject
 					            $this->errors[] = $childObject->error;
 					            break;
 				            }
-			            }
+			            } else {
+							$error++;
+							$this->errors[] = "You defined a cascade delete on an object $childObject but there is no method deleteByParentField for it";
+							break;
+						}
 		            } else {
 			            $error++;
 						$this->errors[] = 'Cannot include child class file ' .$filePath;
