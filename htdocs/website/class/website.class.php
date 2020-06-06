@@ -1517,7 +1517,7 @@ class Website extends CommonObject
                 $countrycode = strtolower(substr($languagecode, -2));
                 $label = $weblangs->trans("Language_".$languagecode);
                 if ($countrycode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-                $out .= '<a href="'.$url.substr($languagecode, 0, 2).'"><li><img height="12px" src="medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+                $out .= '<a href="'.$url.substr($languagecode, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
                 if (empty($i) && empty($languagecodeselected)) $out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
                 $out .= '</li></a>';
                 $i++;
