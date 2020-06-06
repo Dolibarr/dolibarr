@@ -159,7 +159,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
-			$sql .= " fk_typepaiement, num_paiement as num_payment, note, fk_user_creat, fk_bank)";
+			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".$totalamount.",";
@@ -503,6 +503,9 @@ class PaymentSocialContribution extends CommonObject
     {
         global $conf;
 
+		// Clean data
+        $this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
+
         $error = 0;
 
         if (!empty($conf->banque->enabled))
@@ -521,7 +524,7 @@ class PaymentSocialContribution extends CommonObject
                 $this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $total,
-                $this->num_paiement,
+                $this->num_payment,
                 '',
                 $user,
                 $emetteur_nom,
