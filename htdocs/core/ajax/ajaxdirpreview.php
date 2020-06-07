@@ -321,7 +321,7 @@ if ($type == 'directory')
 
         // When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
         // When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-        //var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
+        //var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
         $formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
     }
 }

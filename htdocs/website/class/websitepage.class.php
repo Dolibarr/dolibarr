@@ -49,6 +49,7 @@ class WebsitePage extends CommonObject
 	 */
 	public $picto = 'file-code';
 
+
 	/**
      * @var int ID
      */
@@ -162,6 +163,35 @@ class WebsitePage extends CommonObject
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
 	);
 	// END MODULEBUILDER PROPERTIES
+
+
+	// If this object has a subtable with lines
+
+	/**
+	 * @var int    Name of subtable line
+	 */
+	//public $table_element_line = 'mymodule_myobjectline';
+
+	/**
+	 * @var int    Field with ID of parent key if this object has a parent
+	 */
+	public $fk_element = 'fk_website';
+
+	/**
+	 * @var int    Name of subtable class that manage subtable lines
+	 */
+	//public $class_element_line = 'MyObjectline';
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	//protected $childtables=array();
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('categorie_website_page');
+
 
 
 	/**
@@ -522,9 +552,33 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		$result = $this->deleteCommon($user, $trigger);
+		$error = 0;
 
-		if ($result > 0)
+		// Delete all child tables
+		if (!$error) {
+			foreach ($this->childtablesoncascade as $table)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+				$sql .= " WHERE fk_website_page = ".(int) $this->id;
+
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+					break;
+				}
+			}
+		}
+
+		if (!$error) {
+			$result = $this->deleteCommon($user, $trigger);
+			if ($result > 0)
+			{
+				$error++;
+			}
+		}
+
+		if (!$error)
 		{
 			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);

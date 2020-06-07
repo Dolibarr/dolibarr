@@ -165,6 +165,8 @@ ALTER TABLE llx_bookmark MODIFY COLUMN url TEXT;
 
 ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, entity, title);
 
+ALTER TABLE llx_societe_rib MODIFY COLUMN owner_address  varchar(255);
+ALTER TABLE llx_societe_rib MODIFY COLUMN default_rib smallint NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_societe_rib ADD COLUMN stripe_account varchar(128);
 

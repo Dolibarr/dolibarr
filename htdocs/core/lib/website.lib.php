@@ -534,7 +534,7 @@ function includeContainer($containerref)
  * Return HTML content to add structured data for an article, news or Blog Post.
  * Use the json-ld format.
  *
- * @param 	string		$type				'blogpost', 'product', 'software', 'organization', ...
+ * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
  * @param	array		$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
@@ -542,21 +542,27 @@ function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running inluded containers.
 
+	$type = strtolower($type);
+
 	if ($type == 'software')
 	{
-		$ret = '<!-- Add structured data for software post -->'."\n";
+		$ret = '<!-- Add structured data for entry in a software annuary -->'."\n";
 		$ret .= '<script type="application/ld+json">'."\n";
 		$ret .= '{
 			"@context": "https://schema.org",
 			"@type": "SoftwareApplication",
 			"name": "'.dol_escape_json($data['name']).'",
 			"operatingSystem": "'.dol_escape_json($data['os']).'",
-			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",
-			"aggregateRating": {
-				"@type": "AggregateRating",
-				"ratingValue": "'.$data['ratingvalue'].'",
-				"ratingCount": "'.$data['ratingcount'].'"
-			},
+			"applicationCategory": "https://schema.org/'.$data['applicationCategory'].'",';
+		if (! empty($data['ratingcount'])) {
+			$ret .= '
+				"aggregateRating": {
+					"@type": "AggregateRating",
+					"ratingValue": "'.$data['ratingvalue'].'",
+					"ratingCount": "'.$data['ratingcount'].'"
+				},';
+		}
+		$ret .= '
 			"offers": {
 				"@type": "Offer",
 				"price": "'.$data['price'].'",
@@ -696,6 +702,33 @@ function getStructuredData($type, $data = array())
 					"seller": {
 						"@type": "Organization",
 						"name": "'.dol_escape_json($mysoc->name).'"
+					}
+				}
+			}'."\n";
+		$ret .= '</script>'."\n";
+	} elseif ($type == 'qa')
+	{
+		$ret = '<!-- Add structured data for QA -->'."\n";
+		$ret .= '<script type="application/ld+json">'."\n";
+		$ret .= '{
+				"@context": "https://schema.org/",
+				"@type": "QAPage",
+				"mainEntity": {
+					"@type": "Question",
+					"name": "'.dol_escape_json($data['name']).'",
+					"text": "'.dol_escape_json($data['name']).'",
+					"answerCount": 1,
+					"author": {
+						"@type": "Person",
+						"name": "'.dol_escape_json($data['author']).'"
+					}
+					"acceptedAnswer": {
+						"@type": "Answer",
+						"text": "'.dol_escape_json(dol_string_nohtmltag(dolStripPhpCode($data['description']))).'",
+						"author": {
+							"@type": "Person",
+							"name": "'.dol_escape_json($data['author']).'"
+						}
 					}
 				}
 			}'."\n";

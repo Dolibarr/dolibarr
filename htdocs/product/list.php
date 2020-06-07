@@ -129,7 +129,12 @@ else $result = restrictedArea($user, 'produit|service', '', '', '', '', '', $obj
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
+if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+	|| !empty($conf->mrp->enabled))
 {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }

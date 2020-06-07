@@ -33,6 +33,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 if (!$user->rights->ecm->setup) accessforbidden();
 
@@ -272,10 +273,13 @@ $s = img_picto('', 'object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$l
 if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfiletoshow.'">';
 else $s .= $urlfiletoshow;
 
-$morehtml = '';
+$linkback = '';
+if ($backtopage) {
+	$linkback = '<a href="'.$backtopage.'">'.$langs->trans("BackToTree").'</a>';
+}
 
 $object->ref = ''; // Force to hide ref
-dol_banner_tab($object, '', $morehtml, 0, '', '', $s);
+dol_banner_tab($object, '', $linkback, 0, '', '', $s);
 
 print '<div class="fichecenter">';
 

@@ -1052,9 +1052,6 @@ class Contact extends CommonObject
 
 		$error = 0;
 
-		//$this->old_lastname = $obj->lastname;
-		//$this->old_firstname = $obj->firstname;
-
 		$this->db->begin();
 
 		if (!$error)
@@ -1066,7 +1063,7 @@ class Contact extends CommonObject
 			$sql .= " WHERE ec.fk_socpeople=".$this->id;
 			$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql .= " AND tc.source='external'";
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1079,7 +1076,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel .= " WHERE rowid = ".$obj->rowid;
-					dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+					dol_syslog(__METHOD__, LOG_DEBUG);
 					$result = $this->db->query($sqldel);
 					if (!$result)
 					{
@@ -1099,7 +1096,7 @@ class Contact extends CommonObject
 		{
 			// Remove Roles
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1113,7 +1110,7 @@ class Contact extends CommonObject
 		{
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1127,7 +1124,7 @@ class Contact extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result)
 			{

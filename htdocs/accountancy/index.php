@@ -243,7 +243,7 @@ if ($conf->accounting->enabled)
 } else {
     print load_fiche_titre($langs->trans("AccountancyArea"), '', 'accountancy');
 
-	print $langs->trans("Module10Desc")."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("Module10Desc")."</span><br>\n";
 }
 
 // End of page
