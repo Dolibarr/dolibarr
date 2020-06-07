@@ -181,7 +181,7 @@ if ($action == 'delete')
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-$wikihelp = 'EN:Setup|FR:Paramétrage|ES:Configuración';
+$wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 $param = '&mode='.$mode;
