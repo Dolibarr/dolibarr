@@ -4312,7 +4312,7 @@ span[phptag] {
 }
 .websitebar .button, .websitebar .buttonDelete
 {
-	padding: 2px 5px 3px 5px !important;
+	padding: 4px 5px 4px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
     line-height: normal;
     background: #f5f5f5 !important;
