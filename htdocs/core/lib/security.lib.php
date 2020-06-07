@@ -168,7 +168,7 @@ function dol_verifyHash($chain, $hash, $type = '0')
  *	@param	User	$user      	  	User to check
  *	@param  string	$features	    Features to check (it must be module $object->element. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *	@param  int		$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
+ *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany module. Param not used if objectid is null (optional).
  *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'sublevela|sublevelb'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
@@ -186,11 +186,13 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	//print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
 	//print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
+	$parentfortableentity = '';
+
 	if ($features == 'facturerec') $features = 'facture';
 	if ($features == 'mo') $features = 'mrp';
 	if ($features == 'member') $features = 'adherent';
 	if ($features == 'subscription') { $features = 'adherent'; $feature2 = 'cotisation'; };
-	if ($features == 'websitepage') $features = 'website';
+	if ($features == 'websitepage') { $features = 'website'; $tableandshare = 'website_page'; $parentfortableentity = 'fk_website@website'; }
 
 	// Get more permissions checks from hooks
 	$parameters = array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
@@ -408,7 +410,7 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	// is linked to a company allowed to $user.
 	if (!empty($objectid) && $objectid > 0)
 	{
-		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
+		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select, $parentfortableentity);
 		$params = array('objectid' => $objectid, 'features' => join(',', $featuresarray), 'features2' => $feature2);
 		return $ok ? 1 : accessforbidden('', 1, 1, 0, $params);
 	}
@@ -420,17 +422,18 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
  * Check access by user to object.
  * This function is also called by restrictedArea
  *
- * @param User			$user			User to check
- * @param array			$featuresarray	Features/modules to check. Example: ('user','service','member','project','task',...)
- * @param int|string	$objectid		Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
- * @param string		$tableandshare	'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- * @param string		$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
- * @param string		$dbt_keyfield	Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
- * @param string		$dbt_select		Field name for select if not rowid. Not used if objectid is null (optional)
- * @return	bool						True if user has access, False otherwise
+ * @param User			$user					User to check
+ * @param array			$featuresarray			Features/modules to check. Example: ('user','service','member','project','task',...)
+ * @param int|string	$objectid				Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
+ * @param string		$tableandshare			'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
+ * @param string		$feature2				Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ * @param string		$dbt_keyfield			Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
+ * @param string		$dbt_select				Field name for select if not rowid. Not used if objectid is null (optional)
+ * @param string		$parenttableforentity  	Parent table for entity. Example 'fk_website@website'
+ * @return	bool								True if user has access, False otherwise
  * @see restrictedArea()
  */
-function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid')
+function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableandshare = '', $feature2 = '', $dbt_keyfield = '', $dbt_select = 'rowid', $parenttableforentity = '')
 {
 	global $db, $conf;
 
@@ -448,7 +451,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 		if ($feature == 'project') $feature = 'projet';
 		if ($feature == 'task')    $feature = 'projet_task';
 
-		$check = array('adherent', 'banque', 'bom', 'don', 'user', 'usergroup', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent', 'banque', 'bom', 'don', 'mrp', 'user', 'usergroup', 'product', 'produit', 'service', 'produit|service', 'categorie', 'resource', 'expensereport', 'holiday', 'website'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe'); // Test for societe object
 		$checkother = array('contact', 'agenda'); // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet', 'project'); // Test for project object
@@ -488,8 +491,15 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 				}
 			} else {
-				$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
-				$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				$reg = array();
+				if ($parenttableforentity && preg_match('/(.*)@(.*)/', $parenttableforentity, $reg)) {
+					$sql .= ", ".MAIN_DB_PREFIX.$reg[2]." as dbtp";
+					$sql .= " WHERE dbt.".$reg[1]." = dbtp.rowid AND dbt.".$dbt_select." IN (".$objectid.")";
+					$sql .= " AND dbtp.entity IN (".getEntity($sharedelement, 1).")";
+				} else {
+					$sql .= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
+					$sql .= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				}
 			}
 		} elseif (in_array($feature, $checksoc))	// We check feature = checksoc
 		{
@@ -619,6 +629,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 			}
 		}
 	}
+
 	return true;
 }
 
