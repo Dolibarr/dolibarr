@@ -896,10 +896,10 @@ if (empty($user->socid) && empty($conf->global->MAIN_DISABLE_GLOBAL_BOXSTATS))
     	$boxstat .= '<!-- Database statistics -->'."\n";
         $boxstat .= '<div class="box">';
         $boxstat .= '<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable boxtablenobottom nohover" width="100%">';
-        $boxstat .= '<tr class="liste_titre">';
-        $boxstat .= '<th class="liste_titre">';
+        $boxstat .= '<tr class="liste_titre box_titre">';
+        $boxstat .= '<td class="liste_titre">';
         $boxstat .= '<div class="inline-block valignmiddle">'.$langs->trans("DolibarrStateBoard").'</div>';
-        $boxstat .= '</th>';
+        $boxstat .= '</td>';
         $boxstat .= '</tr>';
         $boxstat .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer">';
 
