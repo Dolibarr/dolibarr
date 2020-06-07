@@ -2799,20 +2799,20 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				exit;
 			}
 
-			/*$perm = GETPOST('perm', 'aZ09');
-			 $subperm = GETPOST('subperm', 'aZ09');
-			 if ($perm || $subperm)
-			 {
-			 if (($perm && !$subperm && $fuser->rights->$modulepart->$perm) || ($perm && $subperm && $fuser->rights->$modulepart->$perm->$subperm)) $accessallowed = 1;
-			 }
-			 else
-			 {*/
-			// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
-			$partsofdirinoriginalfile = explode('/', $original_file);
-			$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
-			if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
-			if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
-			//}
+			$perm = GETPOST('perm', 'aZ09');
+			$subperm = GETPOST('subperm', 'aZ09');
+			if ($perm)
+			{
+				if (($perm && !$subperm && $fuser->rights->$modulepart->$perm) || ($perm && $subperm && $fuser->rights->$modulepart->$perm->$subperm)) $accessallowed = 1;
+			}
+			else
+			{
+				// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
+				$partsofdirinoriginalfile = explode('/', $original_file);
+				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
+				if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
+				if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
+			}
 			$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
 		}
 
