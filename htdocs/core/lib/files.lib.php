@@ -2805,7 +2805,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			{
 				if (($perm && !$subperm && $fuser->rights->$modulepart->$perm) || ($perm && $subperm && $fuser->rights->$modulepart->$perm->$subperm)) $accessallowed = 1;
 			}
-			else {
+			else
+			{
 				// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
 				$partsofdirinoriginalfile = explode('/', $original_file);
 				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
