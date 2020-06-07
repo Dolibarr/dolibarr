@@ -725,6 +725,7 @@ class Menubase
                     $tabMenu[$b]['mainmenu']    = $menu['mainmenu'];
                     $tabMenu[$b]['leftmenu']    = $menu['leftmenu'];
                     $tabMenu[$b]['perms']       = $perms;
+                    $tabMenu[$b]['langs']       = $menu['langs'];
                     $tabMenu[$b]['enabled']     = $enabled;
                     $tabMenu[$b]['type']        = $menu['type'];
                     //$tabMenu[$b]['langs']       = $menu['langs'];
