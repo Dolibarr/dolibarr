@@ -112,6 +112,11 @@ class Website extends CommonObject
 	public $use_manifest;
 
 	/**
+	 * @var int
+	 */
+	public $position;
+
+	/**
 	 * List of containers
 	 *
 	 * @var array
@@ -201,6 +206,7 @@ class Website extends CommonObject
 		$sql .= 'virtualhost,';
 		$sql .= 'fk_user_creat,';
 		$sql .= 'date_creation,';
+		$sql .= 'position,';
 		$sql .= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : $this->entity).',';
@@ -213,6 +219,7 @@ class Website extends CommonObject
 		$sql .= ' '.(!isset($this->virtualhost) ? 'NULL' : "'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(!isset($this->fk_user_creat) ? $user->id : $this->fk_user_creat).',';
 		$sql .= ' '.(!isset($this->date_creation) || dol_strlen($this->date_creation) == 0 ? 'NULL' : "'".$this->db->idate($this->date_creation)."'").",";
+		$sql .= ' '.((int) $this->position).",";
 		$sql .= ' '.(!isset($this->date_modification) || dol_strlen($this->date_modification) == 0 ? 'NULL' : "'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
