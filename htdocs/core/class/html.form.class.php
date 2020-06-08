@@ -5251,13 +5251,15 @@ class Form
      *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
      *  @param  integer     $set_time_end       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
      *  @param	string		$prefix			Prefix for fields name
+     *  @param	string		$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
      * 	@return string                      Html for selectDate
      *  @see    form_date(), select_month(), select_year(), select_dayofweek()
      */
-    public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0) {
-        $ret = $this->selectDate($set_time, $prefix.'_start',0 ,0, $empty);
-        $ret .='<br/>';
-        $ret .=$this->selectDate($set_time_end, $prefix.'_end', 0 ,0, $empty);
+    public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0)
+    {
+        $ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty);
+        $ret .= '<br/>';
+        $ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty);
         return $ret;
     }
 

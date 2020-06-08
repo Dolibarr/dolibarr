@@ -1279,11 +1279,11 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
     $end_year = GETPOST('dateevent_endyear');
     $end_month = GETPOST('dateevent_endmonth');
     $end_day = GETPOST('dateevent_endday');
-    if(!empty($start_year) && !empty($start_month) && !empty($start_day)) {
+    if (!empty($start_year) && !empty($start_month) && !empty($start_day)) {
         $search_start = $start_year.'-'.$start_month.'-'.$start_day;
         $tms_start = strtotime($search_start);
     }
-    if(!empty($end_year) && !empty($end_month) && !empty($end_day)) {
+    if (!empty($end_year) && !empty($end_month) && !empty($end_day)) {
         $search_end = $end_year.'-'.$end_month.'-'.$end_day.' 23:59:59';
         $tms_end = strtotime($search_end);
     }
@@ -1399,13 +1399,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             }
         }
 
- if(! empty($search_start) && ! empty($search_end)) {
+        if(! empty($search_start) && ! empty($search_end)) {
             $sql .= " AND ((a.datep BETWEEN '$search_start' AND '$search_end') OR (a.datep2 BETWEEN '$search_start' AND '$search_end'))";
         }
-        else if(empty($search_start) && ! empty($search_end)) {
+        elseif (empty($search_start) && ! empty($search_end)) {
             $sql .= " AND ((a.datep <= '$search_end') OR (a.datep2 <= '$search_end'))";
         }
-        else if(! empty($search_start) && empty($search_end)) {
+        elseif (! empty($search_start) && empty($search_end)) {
             $sql .= " AND ((a.datep >= '$search_start') OR (a.datep2 >= '$search_start'))";
         }
 
@@ -1418,25 +1418,25 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             }
             $sql .= ')';
         }
-        else if(! empty($actioncode)) addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
+        elseif (! empty($actioncode)) addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
 
         if(is_array($actioncode)) {
 
             foreach($actioncode as $code) {
                 $sql2 = addMailingEventTypeSQL($code, $objcon, $filterobj);
-                if(! empty($sql2)) {
-                    if(! empty($sql)) $sql = $sql." UNION ".$sql2;
-                    else if(empty($sql)) $sql = $sql2;
+                if (! empty($sql2)) {
+                    if (! empty($sql)) $sql = $sql." UNION ".$sql2;
+                    elseif (empty($sql)) $sql = $sql2;
                     break;
                 }
             }
         }
         else {
             $sql2 = addMailingEventTypeSQL($actioncode, $objcon, $filterobj);
-            if(! empty($sql) && ! empty($sql2)) {
+            if (! empty($sql) && ! empty($sql2)) {
                 $sql = $sql." UNION ".$sql2;
             }
-            else if(empty($sql) && ! empty($sql2)) {
+            elseif (empty($sql) && ! empty($sql2)) {
                 $sql = $sql2;
             }
         }
@@ -1843,7 +1843,18 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	return $i;
 }
-
+/**
+ * 		Add Event Type SQL
+ *
+ *		@param	string		$sql		    $sql modified
+ * 		@param	string	    $actioncode		Action code
+ * 		@param	string		$donetodo		donetodo
+ * 		@param	string		$now		    now
+ * 		@param	string		$filters		array
+ * 		@param	string		$donetodo		donetodo
+ * 		@param	string		$sqlANDOR		"AND", "OR" or ""
+ * 		@return	void
+ */
 function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDOR = "AND") {
     global $conf, $db;
     // Condition on actioncode
@@ -1870,6 +1881,14 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
     if (is_array($filters) && $filters['search_agenda_label']) $sql .= natural_search('a.label', $filters['search_agenda_label']);
 }
 
+/**
+ * 		Add Mailing Event Type SQL
+ *
+ * 		@param	string	    $actioncode		Action code
+ * 		@param	string		$objcon		    objcon
+ * 		@param	Object		$filterobj
+ * 		@return	string
+ */
 function addMailingEventTypeSQL($actioncode, $objcon, $filterobj) {
     global $conf, $langs, $db;
     // Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
