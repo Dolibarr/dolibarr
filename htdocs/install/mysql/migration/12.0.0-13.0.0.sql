@@ -30,6 +30,9 @@
 
 -- Missing in v12
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
+
+
 
 -- For v13
 
