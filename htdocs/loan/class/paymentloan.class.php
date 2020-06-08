@@ -520,8 +520,7 @@ class PaymentLoan extends CommonObject
             $this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
             $this->db->rollback();
 			return -1;
 		}
