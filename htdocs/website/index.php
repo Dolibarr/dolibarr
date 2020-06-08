@@ -3362,8 +3362,10 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
 	print '</td></tr>';
 
+	// Keywords
 	print '<tr><td>';
-	print $langs->trans('WEBSITE_KEYWORDS');
+	$htmlhelp = $langs->trans("WEBSITE_KEYWORDSDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_KEYWORDS'), $htmlhelp, 1, 'help', '', 0, 2, 'keywordtooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_KEYWORDS" value="'.dol_escape_htmltag($pagekeywords).'">';
 	print '</td></tr>';

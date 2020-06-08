@@ -209,10 +209,8 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-    background: rgb(<?php echo $colorbackhmenu1 ?>);
+    background: var(--colorbackhmenu1);
 }
-
-
 
 .dropdown-menu .dropdown-header{
     padding: 8px 8px 8px 8px;

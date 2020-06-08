@@ -174,35 +174,40 @@ if ($result)
 
     $directdebitorder = new BonPrelevement($db);
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+    if ($num) {
+	    while ($i < min($num, $limit))
+	    {
+	        $obj = $db->fetch_object($result);
 
-        $directdebitorder->id = $obj->rowid;
-        $directdebitorder->ref = $obj->ref;
-        $directdebitorder->datec = $obj->datec;
-        $directdebitorder->amount = $obj->amount;
-        $directdebitorder->statut = $obj->statut;
+	        $directdebitorder->id = $obj->rowid;
+	        $directdebitorder->ref = $obj->ref;
+	        $directdebitorder->datec = $obj->datec;
+	        $directdebitorder->amount = $obj->amount;
+	        $directdebitorder->statut = $obj->statut;
 
-        print '<tr class="oddeven">';
+	        print '<tr class="oddeven">';
 
-        print '<td>';
-        print $directdebitorder->getNomUrl(1);
-        print "</td>\n";
+	        print '<td>';
+	        print $directdebitorder->getNomUrl(1);
+	        print "</td>\n";
 
-        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+	        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-        print '<td class="right">'.price($obj->amount)."</td>\n";
+	        print '<td class="right">'.price($obj->amount)."</td>\n";
 
-        print '<td class="right">';
-        print $bon->LibStatut($obj->statut, 3);
-        print '</td>';
+	        print '<td class="right">';
+	        print $bon->LibStatut($obj->statut, 3);
+	        print '</td>';
 
-        print '<td class="right"></td>'."\n";
+	        print '<td class="right"></td>'."\n";
 
-        print "</tr>\n";
-        $i++;
+	        print "</tr>\n";
+	        $i++;
+	    }
+    } else {
+    	print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
     }
+
     print "</table>";
     print '</div>';
 
