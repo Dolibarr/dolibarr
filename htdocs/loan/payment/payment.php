@@ -41,8 +41,7 @@ $datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'in
 $socid = 0;
 if ($user->socid > 0)
 	$socid = $user->socid;
-else
-    if (GETPOSTISSET('socid')) $socid = GETPOST('socid', 'int');
+elseif (GETPOSTISSET('socid')) $socid = GETPOST('socid', 'int');
 if (empty($user->rights->loan->write)) accessforbidden();
 
 $loan = new Loan($db);
@@ -210,7 +209,6 @@ if ($action == 'add_payment')
                             $error++;
                             break;
                         }
-
                     }
                 }
                 else // Only add fk_bank bank to schedule line (mark as paid)
@@ -308,7 +306,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
     if (empty($datepaid))
         if (empty($ts_temppaid)) $datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:dol_now();
-        else $datepayment = $ts_temppaid;
+	else $datepayment = $ts_temppaid;
     else $datepayment = $datepaid;
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
@@ -375,8 +373,7 @@ if ($action == 'create')
 	{
         print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital" value="'.(GETPOSTISSET('amount_capital')?GETPOST('amount_capital'):$amount_capital).'">';
 	}
-	else
-	{
+	else {
 		print '-';
 	}
 	print '<br>';
@@ -384,8 +381,7 @@ if ($action == 'create')
 	{
 		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance" value="'.(GETPOSTISSET('amount_insurance')?GETPOST('amount_insurance'):$amount_insurance).'">';
 	}
-	else
-	{
+	else {
 		print '-';
 	}
 	print '<br>';
@@ -393,8 +389,7 @@ if ($action == 'create')
 	{
 		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest" value="'.(GETPOSTISSET('amount_interest')?GETPOST('amount_interest'):$amount_interest).'" '.(!empty($line)?'disabled title="'.$langs->trans('CantModifyInterestIfScheduleIsUsed').'"':'').'>';
 	}
-	else
-	{
+	else {
 		print '-';
 	}
 	print "</td>";
