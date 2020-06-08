@@ -222,7 +222,13 @@ if ($nb) {
 }
 else
 {
-    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+	$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
+	$title = $langs->trans("CreateAll");
+	if ($type == 'bank-transfer') {
+		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
+		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+	}
+	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">'.$title."</a>\n";
 }
 
 print "</form>\n";
