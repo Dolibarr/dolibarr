@@ -99,6 +99,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+
 /*
  * Actions
  */
@@ -107,7 +108,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 {
     $sref = '';
     $snom = '';
-    $sal = '';
+    $sall = '';
     $salert = '';
 	$draftorder = '';
 }
@@ -304,7 +305,6 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 	$sqlalertstock = 'p.seuil_stock_alerte';
 }
 
-
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
 $sql .= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
 $sql .= ' p.tms as datem, p.duration, p.tobuy,';
@@ -495,6 +495,9 @@ print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 dol_fiche_head($head, 'replenish', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
+if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."<br>\n";
+}
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
