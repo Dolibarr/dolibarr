@@ -1774,6 +1774,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 		$objectnew = new Website($db);
 		$result = $objectnew->createFromClone($user, GETPOST('id', 'int'), GETPOST('siteref', 'aZ09'), (GETPOST('newlang', 'aZ09') ?GETPOST('newlang', 'aZ09') : ''));
+
 		if ($result < 0)
 		{
 			$error++;

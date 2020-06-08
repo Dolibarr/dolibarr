@@ -621,7 +621,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $conf;
+        global $conf, $langs;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
@@ -663,12 +663,15 @@ class Website extends CommonObject
 		$object->virtualhost = '';
 		$object->date_creation = $now;
 		$object->fk_user_creat = $user->id;
+		$object->position = $object->position + 1;
+		if (empty($object->lang)) $object->lang = substr($langs->defaultlang, 0, 2); // Should not happen. Protection for corrupted site with no languages
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
+			$this->error = $object->error;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
