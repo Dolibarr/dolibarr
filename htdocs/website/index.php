@@ -3297,7 +3297,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_IMAGE', 'alpha'))       $pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
 	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
-	if (GETPOST('htmlheader', 'none'))			$pagehtmlheader = GETPOST('htmlheader', 'none');
+	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
 
 	// Type of container
 	print '<tr><td class="titlefield fieldrequired">';
@@ -3342,8 +3342,10 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
 	print '</td></tr>';
 
+	// Keywords
 	print '<tr><td>';
-	print $langs->trans('WEBSITE_KEYWORDS');
+	$htmlhelp = $langs->trans("WEBSITE_KEYWORDSDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_KEYWORDS'), $htmlhelp, 1, 'help', '', 0, 2, 'keywordtooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_KEYWORDS" value="'.dol_escape_htmltag($pagekeywords).'">';
 	print '</td></tr>';
