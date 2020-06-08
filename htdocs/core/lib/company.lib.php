@@ -1399,7 +1399,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             }
         }
 
-        if(! empty($search_start) && ! empty($search_end)) {
+        if (! empty($search_start) && ! empty($search_end)) {
             $sql .= " AND ((a.datep BETWEEN '$search_start' AND '$search_end') OR (a.datep2 BETWEEN '$search_start' AND '$search_end'))";
         }
         elseif (empty($search_start) && ! empty($search_end)) {
@@ -1409,20 +1409,19 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
             $sql .= " AND ((a.datep >= '$search_start') OR (a.datep2 >= '$search_start'))";
         }
 
-        if(is_array($actioncode) && ! empty($actioncode)) {
+        if (is_array($actioncode) && ! empty($actioncode)) {
             $sql .= ' AND (';
-            foreach($actioncode as $key => $code) {
-                if($key != 0) $sql .= "OR (";
-                if(! empty($code)) addEventTypeSQL($sql, $code, $donetodo, $now, $filters, "");
-                if($key != 0) $sql .= ")";
+            foreach ($actioncode as $key => $code) {
+                if ($key != 0) $sql .= "OR (";
+                if (! empty($code)) addEventTypeSQL($sql, $code, $donetodo, $now, $filters, "");
+                if ($key != 0) $sql .= ")";
             }
             $sql .= ')';
         }
         elseif (! empty($actioncode)) addEventTypeSQL($sql, $actioncode, $donetodo, $now, $filters);
 
-        if(is_array($actioncode)) {
-
-            foreach($actioncode as $code) {
+        if (is_array($actioncode)) {
+            foreach ($actioncode as $code) {
                 $sql2 = addMailingEventTypeSQL($code, $objcon, $filterobj);
                 if (! empty($sql2)) {
                     if (! empty($sql)) $sql = $sql." UNION ".$sql2;
@@ -1855,26 +1854,25 @@ function show_subsidiaries($conf, $langs, $db, $object)
  * 		@param	string		$sqlANDOR		"AND", "OR" or ""
  * 		@return	void
  */
-function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDOR = "AND") {
+function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDOR = "AND")
+{
     global $conf, $db;
     // Condition on actioncode
 
-        if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
+	if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
         {
-            if ($actioncode == 'AC_NON_AUTO') $sql .= " $sqlANDOR c.type != 'systemauto'";
-            elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " $sqlANDOR c.type = 'systemauto'";
-            else
-            {
-                if ($actioncode == 'AC_OTH') $sql .= " $sqlANDOR c.type != 'systemauto'";
-                elseif ($actioncode == 'AC_OTH_AUTO') $sql .= " $sqlANDOR c.type = 'systemauto'";
-            }
-        }
-        else
-        {
-            if ($actioncode == 'AC_NON_AUTO') $sql .= " $sqlANDOR c.type != 'systemauto'";
-            elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " $sqlANDOR c.type = 'systemauto'";
-            else $sql .= " $sqlANDOR c.code = '".$db->escape($actioncode)."'";
-        }
+		if ($actioncode == 'AC_NON_AUTO') $sql .= " $sqlANDOR c.type != 'systemauto'";
+		elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " $sqlANDOR c.type = 'systemauto'";
+		else {
+			if ($actioncode == 'AC_OTH') $sql .= " $sqlANDOR c.type != 'systemauto'";
+			elseif ($actioncode == 'AC_OTH_AUTO') $sql .= " $sqlANDOR c.type = 'systemauto'";
+		}
+	}
+	else {
+		if ($actioncode == 'AC_NON_AUTO') $sql .= " $sqlANDOR c.type != 'systemauto'";
+		elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " $sqlANDOR c.type = 'systemauto'";
+		else $sql .= " $sqlANDOR c.code = '".$db->escape($actioncode)."'";
+	}
 
     if ($donetodo == 'todo') $sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
     elseif ($donetodo == 'done') $sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
@@ -1889,7 +1887,8 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
  * 		@param	Object		$filterobj
  * 		@return	string
  */
-function addMailingEventTypeSQL($actioncode, $objcon, $filterobj) {
+function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
+{
     global $conf, $langs, $db;
     // Add also event from emailings. TODO This should be replaced by an automatic event ? May be it's too much for very large emailing.
     if (!empty($conf->mailing->enabled) && !empty($objcon->email)
@@ -1900,11 +1899,11 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj) {
         $sql2 .= ", '' as fk_element, '' as elementtype, '' as contact_id";
         $sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
         $sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
-        if(is_object($filterobj) && get_class($filterobj) == 'Societe') $sql2 .= ", '' as lastname, '' as firstname";
-        else if(is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql2 .= ", '' as lastname, '' as firstname";
-        else if(is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql2 .= ", '' as ref";
-        else if(is_object($filterobj) && get_class($filterobj) == 'Product') $sql2 .= ", '' as ref";
-        else if(is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql2 .= ", '' as ref";
+        if (is_object($filterobj) && get_class($filterobj) == 'Societe') $sql2 .= ", '' as lastname, '' as firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Adherent') $sql2 .= ", '' as lastname, '' as firstname";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'CommandeFournisseur') $sql2 .= ", '' as ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Product') $sql2 .= ", '' as ref";
+        elseif (is_object($filterobj) && get_class($filterobj) == 'Ticket') $sql2 .= ", '' as ref";
         $sql2 .= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u";
         $sql2 .= " WHERE mc.email = '".$db->escape($objcon->email)."'"; // Search is done on email.
         $sql2 .= " AND mc.statut = 1";
@@ -1912,5 +1911,4 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj) {
         $sql2 .= " AND mc.fk_mailing=m.rowid";
         return $sql2;
     }
-
 }
