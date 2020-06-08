@@ -526,7 +526,7 @@ $listofreferent = array(
 */
 );
 
-// Change rules for benefit calculation
+// Change rules for profit/benefit calculation
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
 	foreach($listofreferent as $key => $element) {
 		if ($listofreferent[$key]['margin'] == 'add') {
@@ -624,7 +624,28 @@ print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="left" width="200">'.$langs->trans("Element").'</td>';
+print '<td class="left" width="200">';
+$tooltiponprofit = $langs->trans("ProfitIsCalculatedWith")."<br>\n";
+$tooltiponprofitplus = $tooltiponprofitminus = '';
+foreach($listofreferent as $key => $value)
+{
+	$name = $langs->trans($value['name']);
+	$qualified = $value['test'];
+	$margin = $value['margin'];
+	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	{
+		if ($margin == 'add') {
+			$tooltiponprofitplus.=' + '.$name."<br>\n";
+		}
+		if ($margin == 'minus') {
+			$tooltiponprofitminus.=' - '.$name."<br>\n";
+		}
+	}
+}
+$tooltiponprofit .= $tooltiponprofitplus;
+$tooltiponprofit .= $tooltiponprofitminus;
+print $form->textwithpicto($langs->trans("Element"), $tooltiponprofit);
+print '</td>';
 print '<td class="right" width="100">'.$langs->trans("Number").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
@@ -640,7 +661,7 @@ foreach ($listofreferent as $key => $value)
 	$qualified = $value['test'];
 	$margin = $value['margin'];
 	$project_field = $value['project_field'];
-	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
+	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 	{
 		$element = new $classname($db);
 
