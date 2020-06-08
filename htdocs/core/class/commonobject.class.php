@@ -3050,8 +3050,9 @@ abstract class CommonObject
 					if ($diff)
 					{
 						if (abs($diff) > 0.1) {
-							dol_syslog('A rounding difference was detected into TOTAL but is too high to be corrected', LOG_WARNING);
-							dol_print_error('', 'A rounding difference was detected into TOTAL but is too high to be corrected');
+							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your line may be corrupted. Try to edit each line manually.';
+							dol_syslog($errmsg, LOG_WARNING);
+							dol_print_error('', $errmsg);
 							exit;
 						}
 						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".($obj->total_tva - $diff).", total_ttc = ".($obj->total_ttc - $diff)." WHERE rowid = ".$obj->rowid;
