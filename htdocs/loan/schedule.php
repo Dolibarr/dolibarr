@@ -301,7 +301,7 @@ if ($object->nbterm > 0 && count($echeances->lines) == 0)
         {
             print $langs->trans('Paid');
             if (!empty($line->fk_payment_loan))
-                print '&nbsp;<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$line->fk_payment_loan.'">'.'('.img_object($langs->trans("Payment"), "payment").' '.$line->fk_payment_loan.')'.'</a>';
+                print '&nbsp;<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$line->fk_payment_loan.'">('.img_object($langs->trans("Payment"), "payment").' '.$line->fk_payment_loan.')</a>';
         }
 		elseif (!$printed)
 		{
