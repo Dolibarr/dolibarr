@@ -403,6 +403,7 @@ if (empty($reshook))
             //$object->twitter		= GETPOST("twitter", 'alpha');
             //$object->facebook		= GETPOST("facebook", 'alpha');
             //$object->linkedin		= GETPOST("linkedin", 'alpha');
+			$object->socialnetworks = array();
             if (!empty($conf->socialnetworks->enabled)) {
                 foreach ($socialnetworks as $key => $value) {
                     if (GETPOSTISSET($key) && GETPOST($key, 'alphanohtml') != '') {

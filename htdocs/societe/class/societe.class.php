@@ -83,7 +83,8 @@ class Societe extends CommonObject
 	);
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var array    List of child tables. To know object to delete on cascade.
+	 *               if name like with @ClassNAme:FilePathClass;ParentFkFieldName' it will call method deleteByParentField (with parentId as parameters) and FieldName to fetch and delete child object
 	 */
 	protected $childtablesoncascade = array(
 		"societe_prices",
@@ -92,7 +93,7 @@ class Societe extends CommonObject
 		"product_fournisseur_price",
 		"product_customer_price_log",
 		"product_customer_price",
-		"socpeople",
+		"@Contact:/contact/class/contact.class.php:fk_soc",
 		"adherent",
 		"societe_account",
 		"societe_rib",
@@ -635,6 +636,12 @@ class Societe extends CommonObject
      * @var string Multicurrency code
      */
 	public $multicurrency_code;
+
+	/**
+	 * @var Account Default BAN account
+	 */
+	public $bank_account;
+
 
 	/**
 	 *    Constructor
@@ -1671,16 +1678,36 @@ class Societe extends CommonObject
 				}
 			}
 
-			foreach ($this->childtablesoncascade as $tabletodelete)
+			if (!$error)
 			{
-				if (!$error)
+				foreach ($this->childtablesoncascade as $tabletodelete)
 				{
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX.$tabletodelete;
-					$sql .= " WHERE fk_soc = ".$id;
-					if (!$this->db->query($sql))
-					{
-						$error++;
-						$this->errors[] = $this->db->lasterror();
+					$deleteFromObject=explode(':', $tabletodelete);
+					if (count($deleteFromObject)>=2) {
+						$className=str_replace('@', '', $deleteFromObject[0]);
+						$filepath=$deleteFromObject[1];
+						$columnName=$deleteFromObject[2];
+						if (dol_include_once($filepath)) {
+							$child_object = new $className($this->db);
+							$result = $child_object->deleteByParentField($id, $columnName);
+							if ($result < 0) {
+								$error++;
+								$this->errors[] = $child_object->error;
+								break;
+							}
+						} else {
+							$error++;
+							$this->errors[] = 'Cannot include child class file ' .$filepath;
+							break;
+						}
+					} else {
+						$sql = "DELETE FROM " . MAIN_DB_PREFIX . $tabletodelete;
+						$sql .= " WHERE fk_soc = " . $id;
+						if (!$this->db->query($sql)) {
+							$error++;
+							$this->errors[] = $this->db->lasterror();
+							break;
+						}
 					}
 				}
 			}
@@ -4152,6 +4179,17 @@ class Societe extends CommonObject
 				{
 					print $langs->trans("Error")." ".$langs->trans("Error_COMPANY_ADDON_PDF_NotDefined");
 					return 0;
+				}
+			}
+
+			if (! isset($this->bank_account)) {
+				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+				$bac = new CompanyBankAccount($this->db);
+				$result = $bac->fetch(0, $this->id);
+				if ($result > 0) {
+					$this->bank_account = $bac;
+				} else {
+					$this->bank_account = '';
 				}
 			}
 

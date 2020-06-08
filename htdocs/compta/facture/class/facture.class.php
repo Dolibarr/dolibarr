@@ -1740,7 +1740,8 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Fetch previous and next situations invoices
+	 * Fetch previous and next situations invoices.
+	 * Return all previous and next invoices (both standard and credit notes).
 	 *
 	 * @return	void
 	 */
@@ -1751,7 +1752,7 @@ class Facture extends CommonInvoice
 		$this->tab_previous_situation_invoice = array();
 		$this->tab_next_situation_invoice = array();
 
-		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture';
+		$sql = 'SELECT rowid, type, situation_cycle_ref, situation_counter FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE rowid <> '.$this->id;
 		$sql .= ' AND entity = '.$this->entity;
 		$sql .= ' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
