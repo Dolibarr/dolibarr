@@ -333,7 +333,6 @@ class Account extends CommonObject
 	public function __toString()
 	{
 		$string = '';
-
 		foreach ($this->getFieldsToShow() as $val) {
 			if ($val == 'BankCode') {
 				$string .= $this->code_banque.' ';

@@ -288,7 +288,7 @@ class BonPrelevement extends CommonObject
 		$sql .= ", p.method_trans, p.fk_user_trans";
 		$sql .= ", p.date_credit as date_credit";
 		$sql .= ", p.fk_user_credit";
-		$sql .= ", p.statut";
+		$sql .= ", p.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 		if ($rowid > 0) $sql .= " AND p.rowid = ".$rowid;
@@ -315,7 +315,8 @@ class BonPrelevement extends CommonObject
 				$this->date_credit    = $this->db->jdate($obj->date_credit);
 				$this->user_credit    = $obj->fk_user_credit;
 
-				$this->statut         = $obj->statut;
+				$this->status         = $obj->status;
+				$this->statut         = $obj->status;	// For backward compatibility
 
 				$this->fetched = 1;
 

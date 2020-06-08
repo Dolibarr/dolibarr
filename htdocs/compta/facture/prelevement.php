@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 if (!$user->rights->facture->lire) accessforbidden();
 
@@ -43,6 +44,8 @@ $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); //
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
+
+$type = GETPOST('type', 'aZ09');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
@@ -397,7 +400,13 @@ if ($object->id > 0)
 	print '</tr>';
 
 	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="3">';
-	print $object->thirdparty->display_rib();
+
+	$bac = new CompanyBankAccount($db);
+	$bac->fetch(0, $object->thirdparty->id);
+
+	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+	if ($bac->verif() <= 0) print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
+
 	print '</td></tr>';
 
 	print '</table>';
@@ -493,7 +502,11 @@ if ($object->id > 0)
 	$sql .= " , pfd.date_traite as date_traite";
 	$sql .= " , pfd.amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
@@ -508,11 +521,15 @@ if ($object->id > 0)
 		dol_print_error($db);
 	}
 
-	// For wich amount ?
+	// For which amount ?
 
 	$sql = "SELECT SUM(pfd.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 0";
 
 	$result_sql = $db->query($sql);
@@ -543,10 +560,11 @@ if ($object->id > 0)
     			$remaintopaylesspendingdebit = $resteapayer - $pending;
 
     			print '<form method="POST" action="">';
+    			print '<input type="hidden" name="token" value="'.newToken().'" />';
     			print '<input type="hidden" name="id" value="'.$object->id.'" />';
     			print '<input type="hidden" name="action" value="new" />';
     			print '<label for="withdraw_request_amount">'.$langs->trans('WithdrawRequestAmount').' </label>';
-    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="10" />';
+    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
     			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
     			print '</form>';
     		}
@@ -593,13 +611,17 @@ if ($object->id > 0)
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-	$sql .= " , pfd.date_traite as date_traite, pfd.amount,";
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
+	$sql .= " pfd.date_traite as date_traite, pfd.amount,";
 	$sql .= " u.rowid as user_id, u.lastname, u.firstname, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
@@ -649,7 +671,11 @@ if ($object->id > 0)
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 1";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
