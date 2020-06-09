@@ -746,45 +746,51 @@ function getSocialNetworkSharingLinks()
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
-	$fullurl = $website->alias.'/'.$websitepage->pageurl.'.php';
-	$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
-
 	$out = '<!-- section for social network sharing of page -->'."\n";
-	$out .= '<div class="dol-social-share">'."\n";
 
-	// Twitter
-	$out .= '<div class="dol-social-share-tw">'."\n";
-	$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
-	$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
-	$out .= '</div>'."\n";
+	if ($website->virtualhost) {
+		$fullurl = $website->virtualhost.'/'.$websitepage->pageurl.'.php';
+		$hashtags = trim(join(' #', array_map('trim', explode(',', $websitepage->keywords))));
 
-	// Reddit
-	$out .= '<div class="dol-social-share-reddit">'."\n";
-	$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-	$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
-	$out .= '</div>'."\n";
+		$out .= '<div class="dol-social-share">'."\n";
 
-	// Facebook
-	$out .= '<div class="dol-social-share-fbl">'."\n";
-	$out .= '<div id="fb-root"></div>'."\n";
-	$out .= '<script>(function(d, s, id) {
-			  var js, fjs = d.getElementsByTagName(s)[0];
-			  if (d.getElementById(id)) return;
-			  js = d.createElement(s); js.id = id;
-			  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
-			  fjs.parentNode.insertBefore(js, fjs);
-			}(document, \'script\', \'facebook-jssdk\'));</script>
-			        <fb:like
-			        href="'.$fullurl.'"
-			        layout="button_count"
-			        show_faces="false"
-			        width="90"
-			        colorscheme="light"
-			        share="1"
-			        action="like" ></fb:like>'."\n";
-	$out .= '</div>'."\n";
+		// Twitter
+		$out .= '<div class="dol-social-share-tw">'."\n";
+		$out .= '<a href="https://twitter.com/share" class="twitter-share-button" data-url="'.$fullurl.'" data-text="'.dol_escape_htmltag($websitepage->description).'" data-lang="'.$websitepage->lang.'" data-size="small" data-related="" data-hashtags="'.preg_replace('/^#/', '', $hashtags).'" data-count="horizontal">Tweet</a>';
+		$out .= '<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?\'http\':\'https\';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+\'://platform.twitter.com/widgets.js\';fjs.parentNode.insertBefore(js,fjs);}}(document, \'script\', \'twitter-wjs\');</script>';
+		$out .= '</div>'."\n";
 
-	$out .= "\n</div>\n";
+		// Reddit
+		$out .= '<div class="dol-social-share-reddit">'."\n";
+		$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
+		$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+		$out .= '</div>'."\n";
+
+		// Facebook
+		$out .= '<div class="dol-social-share-fbl">'."\n";
+		$out .= '<div id="fb-root"></div>'."\n";
+		$out .= '<script>(function(d, s, id) {
+				  var js, fjs = d.getElementsByTagName(s)[0];
+				  if (d.getElementById(id)) return;
+				  js = d.createElement(s); js.id = id;
+				  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0&amp;appId=dolibarr.org";
+				  fjs.parentNode.insertBefore(js, fjs);
+				}(document, \'script\', \'facebook-jssdk\'));</script>
+				        <fb:like
+				        href="'.$fullurl.'"
+				        layout="button_count"
+				        show_faces="false"
+				        width="90"
+				        colorscheme="light"
+				        share="1"
+				        action="like" ></fb:like>'."\n";
+		$out .= '</div>'."\n";
+
+		$out .= "\n</div>\n";
+	}
+	else {
+		$out .= '<!-- virtual host not defined in CMS. No way to add sharing buttons -->'."\n";
+	}
 	$out .= '<!-- section end for social network sharing of page -->'."\n";
 
 	return $out;
