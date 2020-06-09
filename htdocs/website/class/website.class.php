@@ -1274,7 +1274,7 @@ class Website extends CommonObject
 	 * Rebuild all files of a containers of a website. TODO Add other files too.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
-	 * @return 	int						<0 if KO, >0 if OK
+	 * @return 	int						<0 if KO, >=0 if OK
 	 */
 	public function rebuildWebSiteFiles()
 	{
@@ -1344,7 +1344,7 @@ class Website extends CommonObject
 		}
 		else
 		{
-			return 1;
+			return $num;
 		}
 	}
 
