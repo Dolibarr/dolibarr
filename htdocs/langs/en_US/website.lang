@@ -121,7 +121,7 @@ ShowSubContainersOnOff=Mode to execute 'dynamic content' is %s
 GlobalCSSorJS=Global CSS/JS/Header file of web site
 BackToHomePage=Back to home page...
 TranslationLinks=Translation links
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page (ref=%s, type=%s, status=%s) that is not available.
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=For good SEO practices, use a text between 5 and 70 characters
 MainLanguage=Main language
 OtherLanguages=Other languages
