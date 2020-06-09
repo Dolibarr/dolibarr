@@ -130,4 +130,5 @@ PublicAuthorAlias=Public author alias
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
 ReplacementDoneInXPages=Replacement done in %s pages or containers
 RSSFeed=RSS Feed
-RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL  
+RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+PagesRegenerated=%s page(s)/container(s) regenerated

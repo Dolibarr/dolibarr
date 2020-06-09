@@ -930,17 +930,16 @@ if ($action == 'addcontainer')
 				$objectpage->grabbed_from = $urltograb;
 			}
 		}
-	}
-	else {
-		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alphanohtml');
+	} else {
+		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alphanohtml');
-		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
+		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
-		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
+		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
 		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 
@@ -1602,22 +1601,31 @@ if ($action == 'updatemeta')
 		$websitepagetemp = new WebsitePage($db);
 		foreach ($arrayofaliastotest as $aliastotest)
 		{
-			$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
-			if ($result < 0)
-			{
+			// Disallow alias name pageX (already used to save the page with id)
+			if (preg_match('/^page\d+/i', $aliastotest)) {
 				$error++;
 				$langs->load("errors");
-				setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+				setEventMessages("Alias 'pageX' is not allowed", null, 'errors');
 				$action = 'editmeta';
 				break;
-			}
-			if ($result > 0)
-			{
-				$error++;
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
-				$action = 'editmeta';
-				break;
+			} else {
+				$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
+				if ($result < 0)
+				{
+					$error++;
+					$langs->load("errors");
+					setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+					$action = 'editmeta';
+					break;
+				}
+				if ($result > 0)
+				{
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+					$action = 'editmeta';
+					break;
+				}
 			}
 		}
 	}
@@ -1626,15 +1634,15 @@ if ($action == 'updatemeta')
 	{
 		$objectpage->old_object = clone $objectpage;
 
-		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alphanohtml');
-		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alphanohtml');
+		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
+		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
+		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
-		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
+		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
-		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
+		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
@@ -2054,7 +2062,7 @@ if ($action == 'regeneratesite')
 	$result = $object->rebuildWebSiteFiles();
 	if ($result > 0)
 	{
-		setEventMessages($langs->trans("PagesRegenerated"), null, 'mesgs');
+		setEventMessages($langs->trans("PagesRegenerated", $result), null, 'mesgs');
 		$action = 'preview';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -3303,12 +3311,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthoralias = '';
 		$pagestatus = 1;
 	}
-	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = GETPOST('WEBSITE_TITLE', 'alpha');
+	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-	if (GETPOST('WEBSITE_ALIASALT', 'alpha'))    $pagealiasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
-	if (GETPOST('WEBSITE_DESCRIPTION', 'alpha')) $pagedescription = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
+	if (GETPOST('WEBSITE_ALIASALT', 'alpha'))    $pagealiasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+	if (GETPOST('WEBSITE_DESCRIPTION', 'alpha')) $pagedescription = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 	if (GETPOST('WEBSITE_IMAGE', 'alpha'))       $pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
-	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
+	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
 	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
 
