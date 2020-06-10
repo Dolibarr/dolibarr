@@ -3881,7 +3881,6 @@ class Societe extends CommonObject
 		elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
 		elseif ($localTaxNum == 2) $sql .= " AND t.localtax2_type <> '0'";
 
-		dol_syslog("useLocalTax", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
