@@ -1198,7 +1198,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	{
 		$limittitle = 30;
 		$out .= '<a class="tabTitle">';
-		if ($picto) $out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
+		if ($picto && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $out .= img_picto($title, ($pictoisfullpath ? '' : 'object_').$picto, '', $pictoisfullpath, 0, 0, '', 'imgTabTitle').' ';
 		$out .= '<span class="tabTitleText">'.dol_trunc($title, $limittitle).'</span>';
 		$out .= '</a>';
 	}
@@ -2175,6 +2175,8 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 
 	$newemail = $email;
 
+	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto = 0;
+
 	if (empty($email)) return '&nbsp;';
 
 	if (!empty($addlink))
@@ -2206,7 +2208,7 @@ function dol_print_email($email, $cid = 0, $socid = 0, $addlink = 0, $max = 64, 
 	}
 
 	//$rep = '<div class="nospan" style="margin-right: 10px">';
-	$rep = ($withpicto ?img_picto($langs->trans("EMail").' : '.$email, 'object_email.png').' ' : '').$newemail;
+	$rep = ($withpicto ? img_picto($langs->trans("EMail").' : '.$email, 'object_email.png').' ' : '').$newemail;
 	//$rep .= '</div>';
 	if ($hookmanager) {
 		$parameters = array('cid' => $cid, 'socid' => $socid, 'addlink' => $addlink, 'picto' => $withpicto);

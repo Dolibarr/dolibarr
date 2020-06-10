@@ -54,6 +54,7 @@ $titleofloginpage = $langs->trans('Login').' @ '.$titletruedolibarrversion; // $
 
 $disablenofollow = 1;
 if (!preg_match('/'.constant('DOL_APPLICATION_TITLE').'/', $title)) $disablenofollow = 0;
+if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $disablenofollow = 0;
 
 print top_htmlhead('', $titleofloginpage, 0, 0, $arrayofjs, array(), 0, $disablenofollow);
 
