@@ -35,7 +35,7 @@ $langs->loadLangs(array("companies", "projects"));
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid = $user->socid;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -46,8 +46,8 @@ $hookmanager->initHooks(array('projectthirdparty'));
  *	Actions
  */
 
-$parameters = array('id'=>$socid);
-$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 
@@ -71,25 +71,25 @@ if ($socid)
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
-	$title = $langs->trans("Projects");
-	if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->name." - ".$title;
+	$title=$langs->trans("Projects");
+	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	llxHeader('', $title);
 
-	if (!empty($conf->notification->enabled)) $langs->load("mails");
+	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
 	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom');
+    dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-    if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
         print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
     }
@@ -126,7 +126,59 @@ if ($socid)
 
 
 	// Projects list
-    $result = show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $newcardbutton);
+	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
+	print '<br><br><br>';
+	if(!empty($user->rights->projet->lire)) {
+	$draft =	"Brouillon <img src=\"/htdocs/theme/eldy/img/statut0.png\" alt=\"\" title=\"Brouillon\" class=\"inline-block\">";
+	$current ="Ouvert <img src=\"/htdocs/theme/eldy/img/statut4.png\" alt=\"\" title=\"Ouvert\" class=\"inline-block\"></td>";
+	$closed ="Clôturé <img src=\"/htdocs/theme/eldy/img/statut6.png\" alt=\"\" title=\"Clôturé\" class=\"inline-block\"></td>";
+	$arr= $object->GetOnContactProjects();
+		print "<table summary=\"\" class=\"centpercent notopnoleftnoright\" style=\"margin-bottom: 2px;\">
+    <tbody>
+        <tr>
+            <td class=\"nobordernopadding\" valign=\"middle\">
+                <div class=\"titre\">
+                En contact sur les projets des 12 derniers mois :
+                </div>
+            </td>
+        </tr>
+    </tbody>
+	</table><br>
+	<div class=\"div-table-responsive\">
+	<table class=\"noborder\" width=\"100%\">
+		<tbody>
+			<tr class=\"liste_titre\">
+				<td>Réf. et date du Projet</td>
+				<td class=\"left\">Nom du Projet</td>
+				<td class=\"left\">Contact</td>
+				<td class=\"center\">Type du contact</td>
+				<td class=\"center\">État</td>
+			</tr>";
+	foreach ($arr as $proj) {
+		print "<tr class=\"oddeven\">
+			<td><a href=\"/htdocs/projet/card.php?id=".$proj->prowid."\"><img src=\"/htdocs/theme/eldy/img/object_projectpub.png\" alt=\"\" title=\"Afficher chantier\" class=\"inline-block\">".$proj->ref."</a> créé le ".date('d/m/Y',strtotime($proj->pdate))."</td>
+			<td class=\"left\">".$proj->title."</td>
+			<td class=\"left\"><a href=\"/htdocs/contact/card.php?id=".$proj->crowid."\"><img height=\"50%\" src=\"/htdocs/public/theme/common/user_man.png\" alt=\"\" title=\"Afficher contact\" class=\"inline-block\">".$proj->cname."</a></td>
+			<td class=\"center\">".$proj->ctype."</td>";
+			switch ($proj->pstatut) {
+				case 0:
+					print "<td class=\"center\">".$draft."</td>";
+					break;
+				case 1:
+					print "<td class=\"center\">".$current."</td>";
+					break;
+				case 2:
+				print "<td class=\"center\">".$closed."</td>";
+					break;
+			}
+		print	"</tr>
+			";
+	
+}
+print "</tbody>
+</table>
+</div>";
+}
 }
 
 // End of page
