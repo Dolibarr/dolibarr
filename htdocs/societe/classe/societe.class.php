@@ -654,7 +654,6 @@ class Societe extends CommonObject
 		$this->tva_assuj = 1;
 		$this->status = 1;
 	}
-	
 	function GetOnContactProjects() 
 	{
         global $conf;
