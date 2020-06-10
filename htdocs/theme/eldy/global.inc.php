@@ -155,6 +155,9 @@ input[name=duration_value]
 input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
+input[type=checkbox], input[type=radio] {
+    margin: 0 3px 0 3px;
+}
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
 }
