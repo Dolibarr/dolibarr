@@ -257,6 +257,12 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 	if ($conf->browser->layout == 'phone') $conf->dol_no_mouse_hover = 1;
 }
 
+// Set global MAIN_OPTIMIZEFORTEXTBROWSER (must be before login part)
+if (GETPOST('textbrowser', 'int') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks'))   // If we must enable text browser
+{
+	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 1;
+}
+
 // Force HTTPS if required ($conf->file->main_force_https is 0/1 or 'https dolibarr root url')
 // $_SERVER["HTTPS"] is 'on' when link is https, otherwise $_SERVER["HTTPS"] is empty or 'off'
 if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on'))
@@ -342,7 +348,6 @@ if ((!empty($conf->global->MAIN_VERSION_LAST_UPGRADE) && ($conf->global->MAIN_VE
 		exit;
 	}
 }
-
 
 // Creation of a token against CSRF vulnerabilities
 if (!defined('NOTOKENRENEWAL'))
@@ -868,7 +873,6 @@ if (GETPOST('theme', 'alpha'))
 	$conf->css = "/theme/".$conf->theme."/style.css.php";
 }
 
-
 // Set javascript option
 if (!GETPOST('nojs', 'int'))   // If javascript was not disabled on URL
 {
@@ -876,19 +880,14 @@ if (!GETPOST('nojs', 'int'))   // If javascript was not disabled on URL
 	{
 		$conf->use_javascript_ajax = !$user->conf->MAIN_DISABLE_JAVASCRIPT;
 	}
-}
-else $conf->use_javascript_ajax = 0;
-// Set MAIN_OPTIMIZEFORTEXTBROWSER
-if (GETPOST('textbrowser', 'int') || (!empty($conf->browser->name) && $conf->browser->name == 'lynxlinks') || !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))   // If we must enable text browser
-{
-	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = 1;
-}
-elseif (!empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER))
-{
+} else $conf->use_javascript_ajax = 0;
+
+// Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
+if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	$conf->global->MAIN_OPTIMIZEFORTEXTBROWSER = $user->conf->MAIN_OPTIMIZEFORTEXTBROWSER;
 }
 
-// set MAIN_OPTIMIZEFORCOLORBLIND
+// set MAIN_OPTIMIZEFORCOLORBLIND for user
 $conf->global->MAIN_OPTIMIZEFORCOLORBLIND = $user->conf->MAIN_OPTIMIZEFORCOLORBLIND;
 
 // Set terminal output option according to conf->browser.
