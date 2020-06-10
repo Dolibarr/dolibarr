@@ -2599,7 +2599,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 			if (empty($reshook))
 			{
 				$at_least_one_email_contact = false;
-				$TContact = $object->contact_array_objects();
+				$TContact = $object->contact_array_objects(1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES));
 				foreach ($TContact as &$contact)
 				{
 					if (!empty($contact->email))

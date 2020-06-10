@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014       Charles-Fr Benke	<charles.fr@benke.fr>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,6 @@ $langs->loadLangs(array("orders", "companies"));
 $id = GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
-$massaction = GETPOST('massaction', 'alpha');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -64,64 +64,63 @@ $hookmanager->initHooks(array('contactthirdparty', 'globalcard'));
  * Actions
  */
 
-if ($action == 'addcontact' && $user->rights->societe->creer)
+if ($action == 'addcontact' && $user->rights->societe->contact->creer)
 {
 	$result = $object->fetch($id);
-
-    if ($result > 0 && $id > 0)
+    if ($result > 0)
     {
-    	$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$result = $object->add_contact($contactid, $_POST["type"], $_POST["source"]);
+        $error = 0;
+        if (GETPOSTISSET('contactid'))
+        {
+            $contactid = GETPOST('contactid', 'int');
+            // Check if the contact not belongs third-party (else contact can be added twice first in societe_contacts, second in element_contact)
+            $arr_soc_contact = $object->contact_array();
+            if (!empty($arr_soc_contact[$contactid]))
+            {
+                setEventMessage($langs->trans('ErrorThisContactBelongsToThisThirdParty'), 'errors');
+                $error++;
+            }
+        }
+        else
+        {
+            $contactid = GETPOST('userid', 'int');
+        }
+
+        if (empty($error))
+        {
+            $result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+        }
+
+        if ($result > 1)
+        {
+        }
+        elseif ($result == 0)
+        {
+            setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+        }
+        elseif ($result < 1)
+        {
+            var_dump($object->error);
+            if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+            {
+                $langs->load("errors");
+                setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
+            } else {
+                setEventMessage($object->error, 'errors');
+            }
+        }
     }
-
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$langs->load("errors");
-			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
-		} else {
-			$mesg = '<div class="error">'.$object->error.'</div>';
-		}
-	}
-}
-
-// bascule du statut d'un contact
-elseif ($action == 'swapstatut' && $user->rights->societe->creer)
-{
-	if ($object->fetch($id))
-	{
-	    $result = $object->swapContactStatus(GETPOST('ligne'));
-	} else {
-		dol_print_error($db);
-	}
 }
 
 // Efface un contact
-elseif ($action == 'deletecontact' && $user->rights->societe->creer)
+elseif ($action == 'deletecontact' && $user->rights->societe->contact->creer)
 {
 	$object->fetch($id);
 	$result = $object->delete_contact($_GET["lineid"]);
 
-	if ($result >= 0)
-	{
-		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
-		exit;
-	} else {
+	if ($result < 1)
 		dol_print_error($db);
-	}
 }
-/*
-elseif ($action == 'setaddress' && $user->rights->societe->creer)
-{
-	$object->fetch($id);
-	$result=$object->setDeliveryAddress($_POST['fk_address']);
-	if ($result < 0) dol_print_error($db,$object->error);
-}*/
-
 
 /*
  * View
@@ -151,11 +150,10 @@ if ($id > 0 || !empty($ref))
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
+        $backtopage = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+
 		$head = societe_prepare_head($object);
 		dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
-
-		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-		print '<input type="hidden" name="token" value="'.newToken().'">';
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -165,16 +163,6 @@ if ($id > 0 || !empty($ref))
 
         print '<div class="underbanner clearboth"></div>';
 		print '<table class="border centpercent">';
-
-    	// Prospect/Customer
-    	/*print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
-    	print $object->getLibCustProspStatut();
-    	print '</td></tr>';
-
-    	// Supplier
-    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
-    	print yn($object->fournisseur);
-    	print '</td></tr>';*/
 
 		if (!empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
@@ -202,8 +190,13 @@ if ($id > 0 || !empty($ref))
 
 		print '</div>';
 
-		print '</form>';
-		print '<br>';
+        if ($user->rights->societe->contact->creer)
+        {
+            $buttitle = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+            $buttitle.= '</br>'.$langs->trans('ToThisThirdParty');
+            $newcardbutton .= dolGetButtonTitle($buttitle, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+        }
+        print load_fiche_titre($langs->trans('AddSharedContactToThirdParty'), $newcardbutton, 'address');
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
 		$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
@@ -214,6 +207,7 @@ if ($id > 0 || !empty($ref))
 		}
 
 		// additionnal list with adherents of company
+        // TODO Merge this in contats.tpl.php and CommonObject::liste_contact()
 		if (!empty($conf->adherent->enabled) && $user->rights->adherent->lire)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';

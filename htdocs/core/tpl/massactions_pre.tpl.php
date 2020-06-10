@@ -101,7 +101,7 @@ if ($massaction == 'presend')
 		} else {
 			$soc = new Societe($db);
 			$soc->fetch($thirdpartyid);
-			foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
+			foreach ($soc->thirdparty_and_contact_email_array(1, 1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) as $key => $value) {
 				$liste[$key] = $value;
 			}
 		}

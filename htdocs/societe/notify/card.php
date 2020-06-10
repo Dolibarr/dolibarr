@@ -233,7 +233,7 @@ if ($result > 0)
 	print "</tr>\n";
 
     $var = false;
-    $listofemails = $object->thirdparty_and_contact_email_array();
+    $listofemails = $object->thirdparty_and_contact_email_array(0, 1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES));
     if (count($listofemails) > 0)
     {
         $actions = array();

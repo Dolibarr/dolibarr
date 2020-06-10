@@ -75,9 +75,11 @@ function societe_prepare_head(Societe $object)
 		}
     } else {
 		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
-		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$nbContactOwned = count($object->liste_contact(-1, 'self'));
+		$nbContactAdded = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
 		$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContactOwned > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort" title="'.$langs->trans("ThisThirdPartyContact").'">'.$nbContactOwned.'</span>';
+		if ($nbContactAdded > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort" title="'.$langs->trans("OtherThirdPartyContact").'">'.$nbContactAdded.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}

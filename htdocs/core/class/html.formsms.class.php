@@ -266,7 +266,7 @@ function limitChars(textarea, limit, infodiv)
                 if (!empty($this->withtosocid) && $this->withtosocid > 0)
                 {
                     $liste = array();
-                    foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value)
+                    foreach ($soc->thirdparty_and_contact_phone_array(1) as $key => $value)
                     {
                         $liste[$key] = $value;
                     }

@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2016 Charlie BENKE 	<charlie@patas-monkey.com>
+ * Copyright (C) 2020      Maxime DEMAREST <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,8 @@ if ($module == 'propal') {
 	$permission = $user->rights->reception->creer;
 } elseif ($module == 'project_task') {
 	$permission = $user->rights->projet->creer;
+} elseif ($module == 'societe') {
+	  $permission = $user->rights->societe->contact->creer;
 } elseif (!isset($permission) && isset($user->rights->$module->creer)) {
 	$permission = $user->rights->$module->creer;
 } elseif (!isset($permission) && isset($user->rights->$module->write)) {
@@ -177,8 +180,12 @@ if ($permission)
 // Prepare list
 
 // TODO: replace this with direct SQL string to use $db->sort($sortfield, $sortorder)
+// NOTE TODO : If we do this, won't this code be more redudant and more complicated to maintain ?  : The CommonObjet::liste_contact() concentrate logic to get contact list.
 $list = array();
-foreach (array('internal', 'external') as $source)
+$source_list = array('internal', 'external');
+// If this is called form societe object and shared contact is enabled
+if ($object->element == 'societe' && !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $source_list[] = 'self';
+foreach ($source_list as $source)
 {
 	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc))
 	{
@@ -198,20 +205,33 @@ foreach (array('internal', 'external') as $source)
 		$entry->contact_html = "";
 		$entry->contact_name = "";
 		$entry->status = "";
+    $entry->source = $contact['source'];
 
-		if ($contact['source'] == 'internal')
-		{
-			$entry->nature = $langs->trans("User");
-		} elseif ($contact['source'] == 'external') {
-			$entry->nature = $langs->trans("ThirdPartyContact");
-		}
+    if ($contact['source'] == 'internal')
+    {
+        $entry->nature = $langs->trans("User");
+    }
+    elseif ($contact['source'] == 'external' && $object->element != 'societe')
+    {
+        $entry->nature = $langs->trans("ThirdPartyContact");
+    }
+    elseif ($contact['source'] == 'external' && $object->element == 'societe')
+    {
+        $entry->nature = $langs->trans("OtherThirdPartyContact");
+    }
+    elseif ($contact['source'] == 'self')
+    {
+        $entry->nature = $langs->trans("ThisThirdPartyContact");
+    }
 
-		if ($contact['socid'] > 0)
+    if ($contact['source'] == 'external')
 		{
 			$companystatic->fetch($contact['socid']);
 			$entry->thirdparty_html = $companystatic->getNomUrl(1);
 			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
-		} elseif ($contact['socid'] < 0) {
+		}
+    if ($contact['source'] == 'internal')
+    {
 			$entry->thirdparty_html = $conf->global->MAIN_INFO_SOCIETE_NOM;
 			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
 		}
@@ -221,7 +241,9 @@ foreach (array('internal', 'external') as $source)
 			$userstatic->fetch($contact['id']);
 			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
 			$entry->contact_name = strtolower($userstatic->getFullName($langs));
-		} elseif ($contact['source'] == 'external') {
+		}
+    elseif ($contact['source'] == 'external' || $contact['source'] == 'self')
+    {
 			$contactstatic->fetch($contact['id']);
 			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
 			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
@@ -230,14 +252,15 @@ foreach (array('internal', 'external') as $source)
 		if ($contact['source'] == 'internal')
 		{
 			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
-		} elseif ($contact['source'] == 'external') {
+    }
+    elseif ($contact['source'] == 'external' || $contact['source'] == 'self')
+    {
 			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
 		}
 
 		$list[] = $entry;
 	}
 }
-
 
 $sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder", 'alpha');
@@ -282,7 +305,7 @@ print_liste_field_titre($arrayfields['thirdparty']['label'], $_SERVER["PHP_SELF"
 print_liste_field_titre($arrayfields['contact']['label'], $_SERVER["PHP_SELF"], "contact_name", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], "type", "", $param, "", $sortfield, $sortorder);
 print_liste_field_titre($arrayfields['status']['label'], $_SERVER["PHP_SELF"], "statut", "", $param, "", $sortfield, $sortorder, 'center ');
-print_liste_field_titre($arrayfields['link']['label'], $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
+if ($permission) print_liste_field_titre($arrayfields['link']['label'], $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder, 'center maxwidthsearch ');
 print "</tr>";
 
 foreach ($list as $entry)
@@ -297,16 +320,24 @@ foreach ($list as $entry)
 
 	if ($permission)
 	{
-		$href = $_SERVER["PHP_SELF"];
-		$href .= "?id=".$object->id;
-		$href .= "&action=deletecontact";
-		$href .= "&lineid=".$entry->id;
+    // We don't unlink contact if it come from this thirdparty (contact owned by this thirdparty)
+    if ($entry->source == 'self')
+    {
+        print '<td></td>';
+    }
+    else
+    {
+        $href = $_SERVER["PHP_SELF"];
+        $href .= "?id=".$object->id;
+        $href .= "&action=deletecontact";
+        $href .= "&lineid=".$entry->id;
 
-		print "<td class='center'>";
-		print "<a href='$href'>";
-		print img_picto($langs->trans("Unlink"), "unlink");
-		print "</a>";
-		print "</td>";
+        print "<td class='center'>";
+        print "<a href='$href'>";
+        print img_picto($langs->trans("Unlink"), "unlink");
+        print "</a>";
+        print "</td>";
+    }
 	}
 
 	print "</tr>";

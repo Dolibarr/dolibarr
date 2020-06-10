@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -285,6 +286,19 @@ if ($action == 'sethideinactivethirdparty')
 if ($action == 'setonsearchandlistgooncustomerorsuppliercard') {
     $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value', 'int');
     $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard, 'yesno', 0, '', $conf->entity);
+    if (!$res > 0) $error++;
+    if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+//Activate "share of contact between third-parties"
+if ($action == "setdisablesharedcontactbetweenthirdparties") {
+    $setdisablesharedcontactbetweenthirdparties = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES", $setdisablesharedcontactbetweenthirdparties, 'yesno', 0, '', $conf->entity);
     if (!$res > 0) $error++;
     if (!$error)
     {
@@ -842,6 +856,22 @@ print '</td>';
 print '<td class="center">';
 print '<input type="submit" class="button" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';
 print '</td>';
+print '</tr>';
+
+// Enable shared contact between thirdparties
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans('EnableSharedContactBetweenThirdparties').'</td>';
+print '<td>&nbsp</td>';
+print '<td class="center">';
+if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
+{
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablesharedcontactbetweenthirdparties&value=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablesharedcontactbetweenthirdparties&value=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
 print '</tr>';
 
 print '</table>';

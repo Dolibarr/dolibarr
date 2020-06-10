@@ -14,6 +14,7 @@
  * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018-2019 Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1129,8 +1130,8 @@ abstract class CommonObject
 	/**
 	 *    Get array of all contacts for an object
 	 *
-	 *    @param	int			$status		Status of links to get (-1=all)
-	 *    @param	string		$source		Source of contact: 'external' or 'thirdparty' (llx_socpeople) or 'internal' (llx_user)
+	 *    @param	int			$status		Status of links to get (-1=all) (no effect if $source = 'self')
+	 *    @param	string		$source		Source of contact: 'external' (llx_socpeople linked to llx_element_contact), 'self' (llx_socpeople linked to llx_societe_contacts) ' or 'internal' (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
@@ -1142,26 +1143,47 @@ abstract class CommonObject
 
 		$tab = array();
 
-		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
-		if ($source == 'internal') $sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo";
-		if ($source == 'external' || $source == 'thirdparty') $sql .= ", t.fk_soc as socid, t.statut as statuscontact";
-		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
-		$sql .= ", tc.source, tc.element, tc.code, tc.libelle";
-		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
-		$sql .= ", ".MAIN_DB_PREFIX."element_contact ec";
-		if ($source == 'internal') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
-		if ($source == 'external' || $source == 'thirdparty') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
-		$sql .= " WHERE ec.element_id =".$this->id;
-		$sql .= " AND ec.fk_c_type_contact=tc.rowid";
-		$sql .= " AND tc.element='".$this->db->escape($this->element)."'";
-		if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
-		if ($source == 'internal') $sql .= " AND tc.source = 'internal'";
-		if ($source == 'external' || $source == 'thirdparty') $sql .= " AND tc.source = 'external'";
-		$sql .= " AND tc.active=1";
-		if ($status >= 0) $sql .= " AND ec.statut = ".$status;
-		$sql .= " ORDER BY t.lastname ASC";
+        // If $source is ''self', don't get list of contact for this element but for the third party linked to this element (used when contact is sherd between thirdparty)
+        if ($source == 'self')
+        {
+            $sql = "SELECT s.rowid AS rowid, s.rowid AS id, s.fk_soc AS socid, s.statut AS statuscontact, s.civility AS civility, s.lastname AS lastname, s.firstname AS firstname, s.email AS email, s.phone_mobile AS phone_mobile, s.poste AS poste";
+            $sql .= ", sc.fk_c_type_contact AS fk_c_type_contact";
+            $sql .= ", 'self' AS source, tc.element AS element, tc.code AS code, tc.libelle AS libelle"; // force source to be self
+            $sql .= " FROM ".MAIN_DB_PREFIX."socpeople AS s";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_contacts AS sc ON sc.fk_socpeople = s.rowid";
+            $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact AS tc ON tc.rowid = sc.fk_c_type_contact";
+            // If this is called form Societe object use id property
+            if ($this->element = 'societe') $sql .= " WHERE s.fk_soc =".$this->id;
+            // Is useful to call this by other element than societe ?
+            else $sql .= " WHERE s.fk_soc =".$this->fk_soc;
+            if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
+            $sql .= " ORDER BY s.lastname ASC";
+        }
+        else // internal or external case
+        {
+            $sql = "SELECT ec.rowid AS rowid, ec.statut AS statuslink, ec.fk_socpeople AS id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
+            if ($source == 'internal') $sql .= ", '-1' AS socid, t.statut AS statuscontact, t.login AS login, t.photo AS photo, t.user_mobile AS phone_mobile, t.job AS poste";
+            if ($source == 'external') $sql .= ", t.fk_soc AS socid, t.statut AS statuscontact, t.phone_mobile AS phone_mobile, t.poste AS poste";
+            $sql .= ", t.civility AS civility, t.lastname AS lastname, t.firstname AS firstname, t.email AS email";
+            $sql .= ", tc.source AS source, tc.element AS element, tc.code AS code, tc.libelle AS libelle";
+            $sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
+            $sql .= ", ".MAIN_DB_PREFIX."element_contact ec";
+            if ($source == 'internal') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
+            if ($source == 'external') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
+            $sql .= " WHERE ec.element_id =".$this->id;
+            $sql .= " AND ec.fk_c_type_contact=tc.rowid";
+            // Societe can set contact for all element type
+            if ($this->element != 'societe') $sql .= " AND tc.element='".$this->db->escape($this->element)."'";
+            if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
+            if ($source == 'internal') $sql .= " AND tc.source = 'internal'";
+            if ($source == 'external') $sql .= " AND tc.source = 'external'";
+            $sql .= " AND tc.active=1";
+            if ($status >= 0) $sql .= " AND ec.statut = ".$status;
+            $sql .= " ORDER BY t.lastname ASC";
+        }
 
-		dol_syslog(get_class($this)."::liste_contact", LOG_DEBUG);
+
+		dol_syslog(__METHOD__.' for '.$source, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1173,13 +1195,33 @@ abstract class CommonObject
 
 				if (!$list)
 				{
+                    $libelle_element = '';
+                    // On list contact for societe page, append element for contact type in libelle (permit to differentiate to other)
+                    if ($this->element == 'societe' && !empty($obj->element))
+                        $libelle_element = $langs->trans('ContactDefault_'.$obj->element).' - ';
 					$transkey = "TypeContact_".$obj->element."_".$obj->source."_".$obj->code;
-					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $obj->libelle);
-					$tab[$i] = array('source'=>$obj->source, 'socid'=>$obj->socid, 'id'=>$obj->id,
-								   'nom'=>$obj->lastname, // For backward compatibility
-								   'civility'=>$obj->civility, 'lastname'=>$obj->lastname, 'firstname'=>$obj->firstname, 'email'=>$obj->email, 'login'=>$obj->login, 'photo'=>$obj->photo, 'statuscontact'=>$obj->statuscontact,
-								   'rowid'=>$obj->rowid, 'code'=>$obj->code, 'libelle'=>$libelle_type, 'status'=>$obj->statuslink, 'fk_c_type_contact'=>$obj->fk_c_type_contact);
-				} else {
+					$libelle_type = ($langs->trans($transkey) != $transkey ? $langs->trans($transkey) : $libelle_element.$obj->libelle);
+					$tab[$i] = array('source'=>$obj->source,
+                                     'socid'=>$obj->socid,
+                                     'id'=>$obj->id,
+                                     'nom'=>$obj->lastname, // For backward compatibility
+                                     'civility'=>$obj->civility,
+                                     'lastname'=>$obj->lastname,
+                                     'firstname'=>$obj->firstname,
+                                     'email'=>$obj->email,
+                                     'phone_mobile'=>$obj->phone_mobile,
+                                     'login'=>$obj->login,
+                                     'photo'=>$obj->photo,
+                                     'statuscontact'=>$obj->statuscontact,
+								     'rowid'=>$obj->rowid,
+                                     'code'=>$obj->code,
+                                     'libelle'=>$libelle_type,
+                                     'status'=>$obj->statuslink,
+                                     'poste'=>$obj->poste,
+                                     'fk_c_type_contact'=>$obj->fk_c_type_contact);
+				}
+                else
+                {
 					$tab[$i] = $obj->id;
 				}
 
@@ -1187,7 +1229,9 @@ abstract class CommonObject
 			}
 
 			return $tab;
-		} else {
+		}
+        else
+        {
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
@@ -1244,13 +1288,15 @@ abstract class CommonObject
         // phpcs:enable
 		global $langs;
 
+        dol_syslog(__METHOD__.' for '.$source, LOG_DEBUG);
+
 		if (empty($order)) $order = 'position';
 		if ($order == 'position') $order .= ',code';
 
 		$tab = array();
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
-		$sql .= " WHERE tc.element='".$this->db->escape($this->element)."'";
+        $sql .= " WHERE tc.element='".$this->db->escape($this->element)."'";
 		if ($activeonly == 1) $sql .= " AND tc.active=1"; // only the active types
 		if (!empty($source) && $source != 'all') $sql .= " AND tc.source='".$this->db->escape($source)."'";
 		if (!empty($code)) $sql .= " AND tc.code='".$this->db->escape($code)."'";
@@ -1389,12 +1435,16 @@ abstract class CommonObject
 			$element = $this->element;
 		}
 
-		$sql = "SELECT ec.fk_socpeople";
+		$sql = "SELECT ec.element_id AS element_id, ec.fk_socpeople AS fk_socpeople";
 		$sql .= " FROM ".MAIN_DB_PREFIX."element_contact as ec,";
 		if ($source == 'internal') $sql .= " ".MAIN_DB_PREFIX."user as c,";
 		if ($source == 'external') $sql .= " ".MAIN_DB_PREFIX."socpeople as c,";
 		$sql .= " ".MAIN_DB_PREFIX."c_type_contact as tc";
-		$sql .= " WHERE ec.element_id = ".$id;
+		$sql .= " WHERE (ec.element_id = ".$id;
+        // If shared contact betwin third party is enbaled, alos search in contact linked to the thirdparty
+        if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES) && !empty($this->socid))
+            $sql .= " OR ec.element_id = ".$this->socid;
+        $sql .=  ')';
 		$sql .= " AND ec.fk_socpeople = c.rowid";
 		if ($source == 'internal') $sql .= " AND c.entity IN (".getEntity('user').")";
 		if ($source == 'external') $sql .= " AND c.entity IN (".getEntity('societe').")";
@@ -1405,21 +1455,37 @@ abstract class CommonObject
 		$sql .= " AND tc.active = 1";
 		if ($status) $sql .= " AND ec.statut = ".$status;
 
-		dol_syslog(get_class($this)."::getIdContact", LOG_DEBUG);
+		dol_syslog(__METHOD__.'for source = '.$source.' and code '.$code, LOG_DEBUG);
+        if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES) && !empty($this->socid))
+            dol_syslog(__METHOD___.' MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES, also serarch in contact owned by the third party', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				$result[$i] = $obj->fk_socpeople;
-				$i++;
-			}
-		} else {
+            $result = array();
+            $result[$id] = array();
+            // Separate result for contact linked to the elment or contact linked to the thirdparty
+            if (!empty($this->socid)) $result[$this->socid] = array();
+            while ($obj = $this->db->fetch_object($resql))
+            {
+                $result[$obj->element_id][$i] = $obj->fk_socpeople;
+                $i++;
+            }
+		}
+        else
+        {
 			$this->error = $this->db->error();
 			return null;
 		}
 
-		return $result;
+        $returned_result = $result[$id];
+        // If shared contact is enabled and this element has not linked contact, get the contact linked to the thirdparty for the $code
+        if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES) && !empty($this->socid) && !empty($result[$this->socid]))
+        {
+            dol_syslog(__METHOD__.':: return the thidrparty contact');
+            $returned_result = array_merge($returned_result, $result[$this->socid]);
+        }
+
+		return $returned_result;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
