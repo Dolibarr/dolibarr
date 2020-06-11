@@ -2802,6 +2802,7 @@ class Form
 		if ($result)
 		{
 			require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
 			$num = $this->db->num_rows($result);
 
