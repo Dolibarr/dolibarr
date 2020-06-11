@@ -7721,17 +7721,22 @@ function printCommonFooter($zone = 'private')
 			// TODO Add a hook here
 			if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 			{
-				print "\n";
-				print "/* JS CODE TO ENABLE for google analtics tag */\n";
-				print '  var _gaq = _gaq || [];'."\n";
-				print '  _gaq.push([\'_setAccount\', \''.$conf->global->MAIN_GOOGLE_AN_ID.'\']);'."\n";
-				print '  _gaq.push([\'_trackPageview\']);'."\n";
-				print ''."\n";
-				print '  (function() {'."\n";
-				print '    var ga = document.createElement(\'script\'); ga.type = \'text/javascript\'; ga.async = true;'."\n";
-				print '    ga.src = (\'https:\' == document.location.protocol ? \'https://ssl\' : \'http://www\') + \'.google-analytics.com/ga.js\';'."\n";
-				print '    var s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(ga, s);'."\n";
-				print '  })();'."\n";
+				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+				foreach($tmptagarray as $tmptag) {
+					print "\n";
+					print "/* JS CODE TO ENABLE for google analtics tag */\n";
+					print "
+					<!-- Global site tag (gtag.js) - Google Analytics -->
+					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
+					<script>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+
+					gtag('config', '".trim($tmptag)."');
+					</script>";
+					print "\n";
+				}
 			}
 
 			// End of tuning
