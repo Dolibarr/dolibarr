@@ -1274,7 +1274,7 @@ class Website extends CommonObject
 	 * Rebuild all files of a containers of a website. TODO Add other files too.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
-	 * @return 	int						<0 if KO, >0 if OK
+	 * @return 	int						<0 if KO, >=0 if OK
 	 */
 	public function rebuildWebSiteFiles()
 	{
@@ -1344,7 +1344,7 @@ class Website extends CommonObject
 		}
 		else
 		{
-			return 1;
+			return $num;
 		}
 	}
 
@@ -1459,6 +1459,7 @@ class Website extends CommonObject
 		$url = preg_replace('/(\?|&)l=([a-zA-Z_]*)/', '', $url); // We remove param l from url
 		//$url = preg_replace('/(\?|&)lang=([a-zA-Z_]*)/', '', $url);	// We remove param lang from url
 		$url .= (preg_match('/\?/', $url) ? '&' : '?').'l=';
+		if (! preg_match('/^\//', $url)) $url = '/'.$url;
 
 		$HEIGHTOPTION = 40;
 		$MAXHEIGHT = 4 * $HEIGHTOPTION;
@@ -1498,7 +1499,7 @@ class Website extends CommonObject
 			$countrycode = strtolower(substr($languagecodeselected, -2));
 			$label = $weblangs->trans("Language_".$languagecodeselected);
 			if ($countrycode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-			$out .= '<a href="'.$url.substr($languagecodeselected, 0, 2).'"><li><img height="12px" src="medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+			$out .= '<a href="'.$url.substr($languagecodeselected, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
 			$out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
 			$out .= '</li></a>';
 		}
@@ -1517,7 +1518,7 @@ class Website extends CommonObject
                 $countrycode = strtolower(substr($languagecode, -2));
                 $label = $weblangs->trans("Language_".$languagecode);
                 if ($countrycode == 'us') $label = preg_replace('/\s*\(.*\)/', '', $label);
-                $out .= '<a href="'.$url.substr($languagecode, 0, 2).'"><li><img height="12px" src="medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
+                $out .= '<a href="'.$url.substr($languagecode, 0, 2).'"><li><img height="12px" src="/medias/image/common/flags/'.$countrycode.'.png" style="margin-right: 5px;"/><span class="websitecomponentlilang">'.$label.'</span>';
                 if (empty($i) && empty($languagecodeselected)) $out .= '<span class="fa fa-caret-down" style="padding-left: 5px;" />';
                 $out .= '</li></a>';
                 $i++;

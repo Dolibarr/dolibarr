@@ -275,7 +275,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
-	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
+	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label, cc.code ";
+	$sql .= " ORDER BY country, product_type, vatrate";
+
 
 	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -356,7 +358,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND ff.type IN (0,1,2,3,5)";
 	}
 	$sql2 .= " AND ff.entity IN (".getEntity("facture_fourn", 0).")";
-	$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label";
+	$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label, cc.code ";
+	$sql2 .= " ORDER BY country, product_type, vatrate";
 
 	//print $sql2;
 	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);

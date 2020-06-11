@@ -19,6 +19,7 @@ NEW: Accountancy - Add possibility to manage a short alternative label for accou
 NEW: Accountancy - General ledger - Add an option to search not reconciled lines
 NEW: Add accountancy code of thirdparty in contact and supplier export
 NEW: support webp image format
+NEW: Add checkbox "overwrite if exists" into ECM/DMS module
 NEW: add a link to notes in members list
 NEW: add a parameter to group same products in TakePOS
 NEW: add a parameter to sort product by label in TakePOS

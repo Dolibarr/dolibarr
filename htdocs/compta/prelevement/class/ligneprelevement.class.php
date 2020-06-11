@@ -66,14 +66,14 @@ class LignePrelevement
 	/**
 	 *  Recupere l'objet prelevement
 	 *
-	 *  @param	int		$rowid       id de la facture a recuperer
-	 *  @return	integer
+	 *  @param	int		$rowid      Id de la facture a recuperer
+	 *  @return	integer				<0 if KO, >=0 if OK
 	 */
 	public function fetch($rowid)
 	{
 		global $conf;
 
-		$result = 0;
+		$error = 0;
 
 		$sql = "SELECT pl.rowid, pl.amount, p.ref, p.rowid as bon_rowid";
 		$sql .= ", pl.statut, pl.fk_soc";
@@ -99,7 +99,7 @@ class LignePrelevement
 			}
 			else
 			{
-				$result++;
+				$error++;
 				dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
 			}
 
@@ -107,12 +107,12 @@ class LignePrelevement
 		}
 		else
 		{
-			$result++;
+			$error++;
 			dol_syslog("LignePrelevement::Fetch rowid=$rowid");
 			dol_syslog($this->db->error());
 		}
 
-		return $result;
+		return $error;
 	}
 
     /**
