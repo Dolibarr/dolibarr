@@ -272,13 +272,19 @@ if ($line->special_code == 3) { ?>
 		$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
 		$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
 		if (!$senderissupplier && is_object($object->thirdparty)) {
-			if ($object->thirdparty->useLocalTax(1)) {
-				if (price2num($line->total_localtax1)) $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
-				else $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+			if ($mysoc->useLocalTax(1)) {
+				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(1)) {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
+				} else {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+				}
 			}
-			if ($object->thirdparty->useLocalTax(1)) {
-				if (price2num($line->total_localtax2)) $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
-				else $tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+			if ($mysoc->useLocalTax(2)) {
+				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(2)) {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
+				} else {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+				}
 			}
 		}
 		$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);

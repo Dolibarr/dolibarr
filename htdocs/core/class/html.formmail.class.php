@@ -319,6 +319,10 @@ class FormMail extends Form
         // phpcs:enable
 		global $conf, $langs, $user, $hookmanager, $form;
 
+        // Required to show preview of mail attachments
+        require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+        $formfile = new Formfile($this->db);
+
 		if (!is_object($form)) $form = new Form($this->db);
 
 		// Load translation files required by the page
@@ -845,7 +849,10 @@ class FormMail extends Form
 						foreach ($listofpaths as $key => $val)
 						{
 							$out .= '<div id="attachfile_'.$key.'">';
+                            // Preview of attachment
+                            preg_match('#^(/)(\w+)(/)(.+)$#', substr($val, (strlen(DOL_DATA_ROOT)-strlen($val))), $formfile_params);
 							$out .= img_mime($listofnames[$key]).' '.$listofnames[$key];
+                            $out .= $formfile->showPreview(array(), $formfile_params[2], $formfile_params[4]);
 							if (!$this->withfilereadonly)
 							{
 								$out .= ' <input type="image" style="border: 0px;" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" value="'.($key + 1).'" class="removedfile" id="removedfile_'.$key.'" name="removedfile_'.$key.'" />';

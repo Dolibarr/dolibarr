@@ -124,7 +124,7 @@ div.mainmenu.tools::before {
 }
 
 div.mainmenu.website::before {
-    content: "\f542";
+    content: "\f57d";
 }
 
 div.mainmenu.generic1::before {
