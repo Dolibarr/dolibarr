@@ -7717,28 +7717,6 @@ function printCommonFooter($zone = 'private')
 
 			print '});'."\n";
 
-			// Google Analytics
-			// TODO Add a hook here
-			if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
-			{
-				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
-				foreach($tmptagarray as $tmptag) {
-					print "\n";
-					print "/* JS CODE TO ENABLE for google analtics tag */\n";
-					print "
-					<!-- Global site tag (gtag.js) - Google Analytics -->
-					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
-					<script>
-					window.dataLayer = window.dataLayer || [];
-					function gtag(){dataLayer.push(arguments);}
-					gtag('js', new Date());
-
-					gtag('config', '".trim($tmptag)."');
-					</script>";
-					print "\n";
-				}
-			}
-
 			// End of tuning
 			if (!empty($_SERVER['MAIN_SHOW_TUNING_INFO']) || !empty($conf->global->MAIN_SHOW_TUNING_INFO))
 			{
@@ -7767,6 +7745,28 @@ function printCommonFooter($zone = 'private')
 			}
 
 			print "\n".'</script>'."\n";
+
+			// Google Analytics
+			// TODO Add a hook here
+			if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
+			{
+				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+				foreach($tmptagarray as $tmptag) {
+					print "\n";
+					print "/* JS CODE TO ENABLE for google analtics tag */\n";
+					print "
+					<!-- Global site tag (gtag.js) - Google Analytics -->
+					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
+					<script>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+
+					gtag('config', '".trim($tmptag)."');
+					</script>";
+					print "\n";
+				}
+			}
 		}
 
 		// Add Xdebug coverage of code
