@@ -7753,7 +7753,7 @@ function printCommonFooter($zone = 'private')
 				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
 				foreach($tmptagarray as $tmptag) {
 					print "\n";
-					print "/* JS CODE TO ENABLE for google analtics tag */\n";
+					print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
 					print "
 					<!-- Global site tag (gtag.js) - Google Analytics -->
 					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
