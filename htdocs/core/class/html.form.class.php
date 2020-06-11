@@ -368,6 +368,8 @@ class Form
 
 				$s = picto_from_langcode($langcode, 'class="pictoforlang paddingright"');
 				$resultforextrlang .= $s;
+
+				// TODO Use the showInputField() method of ExtraLanguages object
 				if ($typeofdata == 'textarea') {
 					$resultforextrlang .= '<textarea name="field-'.$object->element."-".$fieldname."-".$langcode.'" id="'.$fieldname."-".$langcode.'" class="'.$morecss.'" rows="'.ROWS_2.'" wrap="soft">';
 					$resultforextrlang .= $valuetoshow;
@@ -665,18 +667,16 @@ class Form
 	 * @param	string	$selected		Value auto selected when at least one record is selected. Not a preselected value. Use '0' by default.
 	 * @param	array		$arrayofaction	array('code'=>'label', ...). The code is the key stored into the GETPOST('massaction') when submitting action.
 	 * @param   int     $alwaysvisible  1=select button always visible
-         * @param       string  $name     Name for massaction
-         * @param       string  $cssclass CSS class used to check for select
 	 * @return	string|void					Select list
 	 */
-	public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0, $name = 'massaction', $cssclass = 'checkforselect')
+	public function selectMassAction($selected, $arrayofaction, $alwaysvisible = 0)
 	{
 		global $conf, $langs, $hookmanager;
 
 
 		$disabled = 0;
 		$ret = '<div class="centpercent center">';
-                $ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' ' . $name . ' ' . $name . 'select valignmiddle" name="' . $name . '"'.($disabled ? ' disabled="disabled"' : '').'>';
+		$ret .= '<select class="flat'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' massaction massactionselect valignmiddle" name="massaction"'.($disabled ? ' disabled="disabled"' : '').'>';
 
 		// Complete list with data from external modules. THe module can use $_SERVER['PHP_SELF'] to know on which page we are, or use the $parameters['currentcontext'] completed by executeHooks.
 		$parameters = array();
@@ -695,46 +695,46 @@ class Form
 
 		$ret .= '</select>';
 
-                if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.' . $name . 'select');
+		if (empty($conf->dol_optimize_smallscreen)) $ret .= ajax_combobox('.massactionselect');
 
 		// Warning: if you set submit button to disabled, post using 'Enter' will no more work if there is no another input submit. So we add a hidden button
 		$ret .= '<input type="submit" name="confirmmassactioninvisible" style="display: none" tabindex="-1">'; // Hidden button BEFORE so it is the one used when we submit with ENTER.
-                $ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' ' . $name . ' ' . $name . 'confirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
+		$ret .= '<input type="submit" disabled name="confirmmassaction" class="button'.(empty($conf->use_javascript_ajax) ? '' : ' hideobject').' massaction massactionconfirmed" value="'.dol_escape_htmltag($langs->trans("Confirm")).'">';
 		$ret .= '</div>';
 
 		if (!empty($conf->use_javascript_ajax))
 		{
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
     		<script>
-                        function initCheckForSelect(mode, name, cssclass)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
+        		function initCheckForSelect(mode)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkbox */
         		{
         			atleastoneselected=0;
-                                jQuery("."+cssclass).each(function( index ) {
+    	    		jQuery(".checkforselect").each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
 
-					console.log("initCheckForSelect mode="+mode+" name="+name+" cssclass="+cssclass+" atleastoneselected="+atleastoneselected);
+					console.log("initCheckForSelect mode="+mode+" atleastoneselected="+atleastoneselected);
 
     	  			if (atleastoneselected || '.$alwaysvisible.')
     	  			{
-                                    jQuery("."+name).show();
-        			    '.($selected ? 'if (atleastoneselected) { jQuery("."+name+"select").val("'.$selected.'").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', false); }' : '').'
-        			    '.($selected ? 'if (! atleastoneselected) { jQuery("."+name+"select").val("0").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', true); } ' : '').'
+    	  				jQuery(".massaction").show();
+        			    '.($selected ? 'if (atleastoneselected) { jQuery(".massactionselect").val("'.$selected.'").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', false); }' : '').'
+        			    '.($selected ? 'if (! atleastoneselected) { jQuery(".massactionselect").val("0").trigger(\'change\'); jQuery(".massactionconfirmed").prop(\'disabled\', true); } ' : '').'
     	  			}
     	  			else
     	  			{
-                                    jQuery("."+name).hide();
-                                    jQuery("."+name+"other").hide();
+    	  				jQuery(".massaction").hide();
+						jQuery(".massactionother").hide();
     	            }
         		}
 
         	jQuery(document).ready(function () {
-                    initCheckForSelect(0, "' . $name . '", "' . $cssclass . '");
-                    jQuery(".' . $cssclass . '").click(function() {
-                        initCheckForSelect(1, "'.$name.'", "' . $cssclass . '");
-                    });
-                        jQuery(".' . $name . 'select").change(function() {
+        		initCheckForSelect(0);
+        		jQuery(".checkforselect").click(function() {
+        			initCheckForSelect(1);
+    	  		});
+    	  		jQuery(".massactionselect").change(function() {
         			var massaction = $( this ).val();
         			var urlform = $( this ).closest("form").attr("action").replace("#show_files","");
         			if (massaction == "builddoc")
@@ -746,13 +746,13 @@ class Form
         	        /* Warning: if you set submit button to disabled, post using Enter will no more work if there is no other button */
         			if ($(this).val() != \'0\')
     	  			{
-                                        jQuery(".' . $name . 'confirmed").prop(\'disabled\', false);
-                                        jQuery(".' . $name . 'other").show();
+    	  				jQuery(".massactionconfirmed").prop(\'disabled\', false);
+						jQuery(".massactionother").show();
     	  			}
     	  			else
     	  			{
-                                        jQuery(".' . $name . 'confirmed").prop(\'disabled\', true);
-                                        jQuery(".' . $name . 'other").hide();
+    	  				jQuery(".massactionconfirmed").prop(\'disabled\', true);
+						jQuery(".massactionother").hide();
     	  			}
     	        });
         	});
@@ -2523,6 +2523,8 @@ class Form
 		$outdurationvalue = $outtype == Product::TYPE_SERVICE ?substr($objp->duration, 0, dol_strlen($objp->duration) - 1) : '';
 		$outdurationunit = $outtype == Product::TYPE_SERVICE ?substr($objp->duration, -1) : '';
 
+		if ($outorigin && !empty($conf->global->PRODUCT_SHOW_ORIGIN_IN_COMBO))  require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
         // Units
         $outvalUnits = '';
         if (!empty($conf->global->PRODUCT_USE_UNITS)) {
@@ -2612,61 +2614,21 @@ class Form
 				$objp2 = $this->db->fetch_object($result2);
 				if ($objp2)
 				{
-					if ($price_level != 1 && $objp2->price == 0 && !empty($conf->global->PRODUIT_MULTIPRICES_USELEVEL1_IFLEVELVALISNUL)){
-						$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
-						$sql .= " FROM ".MAIN_DB_PREFIX."product_price";
-						$sql .= " WHERE fk_product='".$objp->rowid."'";
-						$sql .= " AND entity IN (".getEntity('productprice').")";
-						$sql .= " AND price_level=1";
-						$sql .= " ORDER BY date_price DESC, rowid DESC"; // Warning DESC must be both on date_price and rowid.
-						$sql .= " LIMIT 1";
-						dol_syslog(get_class($this).'::constructProductListOption search price for product '.$objp->rowid.' AND level '.$price_level.'', LOG_DEBUG);
-						$result2 = $this->db->query($sql);
-						if ($result2)
-						{
-							$objp2 = $this->db->fetch_object($result2);
-							if ($objp2)
-							{
-								$found = 1;
-								if ($objp2->price_base_type == 'HT')
-								{
-									//$opt .= ' - '.price($objp2->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
-									//$outval .= ' - '.price($objp2->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
-								}
-								else
-								{
-									$opt .= ' - '.price($objp2->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
-									$outval .= ' - '.price($objp2->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
-								}
-								$outprice_ht = price($objp2->price);
-								$outprice_ttc = price($objp2->price_ttc);
-								$outpricebasetype = $objp2->price_base_type;
-								$outtva_tx = $objp2->tva_tx;
-							}
-						}
-						else
-						{
-							dol_print_error($this->db);
-						}
+					$found = 1;
+					if ($objp2->price_base_type == 'HT')
+					{
+						$opt .= ' - '.price($objp2->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
+						$outval .= ' - '.price($objp2->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
 					}
 					else
 					{
-						$found = 1;
-						if ($objp2->price_base_type == 'HT')
-						{
-							$opt .= ' - '.price($objp2->price, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("HT");
-							$outval .= ' - '.price($objp2->price, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("HT");
-						}
-						else
-						{
-							$opt .= ' - '.price($objp2->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
-							$outval .= ' - '.price($objp2->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
-						}
-						$outprice_ht = price($objp2->price);
-						$outprice_ttc = price($objp2->price_ttc);
-						$outpricebasetype = $objp2->price_base_type;
-						$outtva_tx = $objp2->tva_tx;
+						$opt .= ' - '.price($objp2->price_ttc, 1, $langs, 0, 0, -1, $conf->currency).' '.$langs->trans("TTC");
+						$outval .= ' - '.price($objp2->price_ttc, 0, $langs, 0, 0, -1, $conf->currency).' '.$langs->transnoentities("TTC");
 					}
+					$outprice_ht = price($objp2->price);
+					$outprice_ttc = price($objp2->price_ttc);
+					$outpricebasetype = $objp2->price_base_type;
+					$outtva_tx = $objp2->tva_tx;
 				}
 			}
 			else
@@ -3841,7 +3803,8 @@ class Form
 		$sql = 'SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE entity IN ('.getEntity('invoice').')';
-		$sql .= ' AND situation_counter>=1';
+		$sql .= ' AND situation_counter >= 1';
+		$sql .= ' AND type <> 2';
 		$sql .= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0) {
@@ -4231,23 +4194,22 @@ class Form
 	 *       print '});'."\n";
 	 *       print '</script>'."\n";
 	 *
-	 *     @param  	string		$page        	   	Url of page to call if confirmation is OK. Can contains parameters (param 'action' and 'confirm' will be reformated)
-	 *     @param	string		$title       	   	Title
-	 *     @param	string		$question    	   	Question
-	 *     @param 	string		$action      	   	Action
-	 *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
-	 *												type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
-	 * 	   @param  	string		$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
-	 * 	   @param  	int|string	$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
-	 *     @param  	int			$height          	Force height of box (0 = auto)
-	 *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
-	 *     @param	int			$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
-	 *     @return 	string      	    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
+	 *     @param  	string			$page        	   	Url of page to call if confirmation is OK. Can contains parameters (param 'action' and 'confirm' will be reformated)
+	 *     @param	string			$title       	   	Title
+	 *     @param	string			$question    	   	Question
+	 *     @param 	string			$action      	   	Action
+	 *	   @param  	array|string	$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
+	 *													type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
+	 * 	   @param  	string			$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
+	 * 	   @param  	int|string		$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
+	 *     @param  	int				$height          	Force height of box (0 = auto)
+	 *     @param	int				$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
+	 *     @param	int				$disableformtag		1=Disable form tag. Can be used if we are already inside a <form> section.
+	 *     @return 	string      		    			HTML ajax code if a confirm ajax popup is required, Pure HTML code if it's an html form
 	 */
     public function formconfirm($page, $title, $question, $action, $formquestion = '', $selectedchoice = '', $useajax = 0, $height = 0, $width = 500, $disableformtag = 0)
 	{
 		global $langs, $conf;
-		global $useglobalvars;
 
 		$more = '<!-- formconfirm -->';
 		$formconfirm = '';
@@ -4395,9 +4357,9 @@ class Form
 					if (isset($input['inputko']) && $input['inputko'] == 1) array_push($inputko, $input['name']);
 				}
 			}
-			// Show JQuery confirm box. Note that global var $useglobalvars is used inside this template
+			// Show JQuery confirm box.
 			$formconfirm .= '<div id="'.$dialogconfirm.'" title="'.dol_escape_htmltag($title).'" style="display: none;">';
-			if (!empty($formquestion['text'])) {
+			if (is_array($formquestion) && !empty($formquestion['text'])) {
 				$formconfirm .= '<div class="confirmtext">'.$formquestion['text'].'</div>'."\n";
 			}
 			if (!empty($more)) {
@@ -4494,7 +4456,7 @@ class Form
 			$formconfirm .= '<tr class="validtitre"><td class="validtitre" colspan="3">'.img_picto('', 'recent').' '.$title.'</td></tr>'."\n";
 
 			// Line text
-			if (!empty($formquestion['text'])) {
+			if (is_array($formquestion) && !empty($formquestion['text'])) {
 				$formconfirm .= '<tr class="valid"><td class="valid" colspan="3">'.$formquestion['text'].'</td></tr>'."\n";
 			}
 
@@ -7088,7 +7050,8 @@ class Form
 				'order'=>array('enabled'=>$conf->commande->enabled, 'perms'=>1, 'label'=>'LinkToOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande').')'),
 				'invoice'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('invoice').')'),
 				'invoice_template'=>array('enabled'=>$conf->facture->enabled, 'perms'=>1, 'label'=>'LinkToTemplateInvoice', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('invoice').')'),
-				'contrat'=>array('enabled'=>$conf->contrat->enabled, 'perms'=>1, 'label'=>'LinkToContract', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('contract').')'),
+				'contrat'=>array('enabled'=>$conf->contrat->enabled, 'perms'=>1, 'label'=>'LinkToContract',
+								'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_customer as ref_client, t.ref_supplier, '' as total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('contract').')'),
 				'fichinter'=>array('enabled'=>$conf->ficheinter->enabled, 'perms'=>1, 'label'=>'LinkToIntervention', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('intervention').')'),
 				'supplier_proposal'=>array('enabled'=>$conf->supplier_proposal->enabled, 'perms'=>1, 'label'=>'LinkToSupplierProposal', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, '' as ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."supplier_proposal as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('supplier_proposal').')'),
 				'order_supplier'=>array('enabled'=>$conf->supplier_order->enabled, 'perms'=>1, 'label'=>'LinkToSupplierOrder', 'sql'=>"SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_supplier, t.total_ht FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande_fournisseur as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (".$listofidcompanytoscan.') AND t.entity IN ('.getEntity('commande_fournisseur').')'),
@@ -7833,19 +7796,18 @@ class Form
 	 *
 	 *  @param  string  $cssclass                  CSS class
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
-         *  @param  string  $massactionname            Mass action button name that will launch an action on the selected items
 	 *  @return	string
 	 */
-    public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
+    public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0)
 	{
 		global $conf, $langs;
 
 		$out = '';
 		$id = uniqid();
-                if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="' . $cssclass . 's" name="' . $cssclass . 's" class="checkallactions"></div>';
+		if (!empty($conf->use_javascript_ajax)) $out .= '<div class="inline-block checkallactions"><input type="checkbox" id="checkallactions'.$id.'" name="checkallactions" class="checkallactions"></div>';
 		$out .= '<script>
             $(document).ready(function() {
-                $("#' . $cssclass . 's").click(function() {
+            	$("#checkallactions'.$id.'").click(function() {
                     if($(this).is(\':checked\')){
                         console.log("We check all '.$cssclass.'");
                 		$(".'.$cssclass.'").prop(\'checked\', true).trigger(\'change\');
@@ -7855,10 +7817,10 @@ class Form
                         console.log("We uncheck all");
                 		$(".'.$cssclass.'").prop(\'checked\', false).trigger(\'change\');
                     }'."\n";
-                if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0, "' . $massactionname . '", "' . $cssclass . '"); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
+		if ($calljsfunction) $out .= 'if (typeof initCheckForSelect == \'function\') { initCheckForSelect(0); } else { console.log("No function initCheckForSelect found. Call won\'t be done."); }';
 		$out .= '         });
 
-                $(".' . $cssclass . '").change(function() {
+        	$(".checkforselect").change(function() {
 				$(this).closest("tr").toggleClass("highlight", this.checked);
 			});
 
@@ -7874,15 +7836,14 @@ class Form
 	 *  @param	int  	$addcheckuncheckall        Add the check all/uncheck all checkbox (use javascript) and code to manage this
 	 *  @param  string  $cssclass                  CSS class
 	 *  @param  int     $calljsfunction            0=default. 1=call function initCheckForSelect() after changing status of checkboxes
-         *  @param  string  $massactionname            Mass action name
 	 *  @return	string
 	 */
-    public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
+    public function showFilterAndCheckAddButtons($addcheckuncheckall = 0, $cssclass = 'checkforaction', $calljsfunction = 0)
 	{
 		$out = $this->showFilterButtons();
 		if ($addcheckuncheckall)
 		{
-			$out .= $this->showCheckAddButtons($cssclass, $calljsfunction, $massactionname);
+			$out .= $this->showCheckAddButtons($cssclass, $calljsfunction);
 		}
 		return $out;
 	}
