@@ -763,7 +763,7 @@ function getSocialNetworkSharingLinks()
 		// Reddit
 		$out .= '<div class="dol-social-share-reddit">'."\n";
 		$out .= '<a href="https://www.reddit.com/submit" target="_blank" onclick="window.location = \'https://www.reddit.com/submit?url='.$fullurl.'\'; return false">';
-		$out .= '<img src="https://www.reddit.com/static/spreddit7.gif" alt="Submit to reddit" border="0" /> </a>';
+		$out .= '<span class="dol-social-share-reddit-span">Reddit</a>';
 		$out .= '</div>'."\n";
 
 		// Facebook
