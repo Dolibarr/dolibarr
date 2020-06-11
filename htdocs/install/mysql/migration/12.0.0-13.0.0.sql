@@ -46,7 +46,7 @@ UPDATE llx_establishment SET ref = rowid WHERE ref IS NULL;
 ALTER TABLE llx_establishment MODIFY COLUMN ref varchar(30) NOT NULL;
 ALTER TABLE llx_establishment MODIFY COLUMN name varchar(128);
 
-INSERT INTO llx_const (name, entity, value, type, visible, note) VALUES ('PRODUCT_PRICE_BASE_TYPE', '0', 'HT', 'string', '0', NULL);
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRICE_BASE_TYPE', 0, 'HT', 'string', 0);
 
 ALTER TABLE llx_subscription MODIFY COLUMN datef DATETIME;
 
