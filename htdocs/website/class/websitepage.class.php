@@ -173,9 +173,9 @@ class WebsitePage extends CommonObject
 	//public $table_element_line = 'mymodule_myobjectline';
 
 	/**
-	 * @var int    Field with ID of parent key if this object has a parent
+	 * @var int 	Field with ID of parent key if this field has a parent or for child tables
 	 */
-	public $fk_element = 'fk_website';
+	public $fk_element = 'fk_website_page';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
@@ -573,7 +573,7 @@ class WebsitePage extends CommonObject
 
 		if (!$error) {
 			$result = $this->deleteCommon($user, $trigger);
-			if ($result > 0)
+			if ($result <= 0)
 			{
 				$error++;
 			}
@@ -594,10 +594,17 @@ class WebsitePage extends CommonObject
 
 				dol_delete_file($filealias);
 				dol_delete_file($filetpl);
+			} else {
+				$this->error = $websiteobj->error;
+				$this->errors = $websiteobj->errors;
 			}
 		}
 
-		return $result;
+		if (! $error) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	/**
