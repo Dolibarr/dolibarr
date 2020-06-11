@@ -101,5 +101,5 @@ insert into llx_const (name, value, type, visible, entity) VALUES ('USER_ADDON_P
 --
 -- PRODUCTS
 --
-INSERT INTO llx_const (rowid, name, entity, value, type, visible, note, tms) VALUES (NULL, 'PRODUCT_PRICE_BASE_TYPE', '1', 'HT', 'string', '0', NULL, CURRENT_TIMESTAMP);
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRICE_BASE_TYPE', 0, 'HT', 'string', 0);
 
