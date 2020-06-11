@@ -626,7 +626,7 @@ print '<tr class="liste_titre">';
 print '<td class="left" width="200">';
 $tooltiponprofit = $langs->trans("ProfitIsCalculatedWith")."<br>\n";
 $tooltiponprofitplus = $tooltiponprofitminus = '';
-foreach($listofreferent as $key => $value)
+foreach ($listofreferent as $key => $value)
 {
 	$name = $langs->trans($value['name']);
 	$qualified = $value['test'];
