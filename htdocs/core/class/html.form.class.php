@@ -5241,6 +5241,7 @@ class Form
         print $retstring;
         return;
     }
+	
     /**
      *  Show 2 HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
      *  Fields are preselected with :
