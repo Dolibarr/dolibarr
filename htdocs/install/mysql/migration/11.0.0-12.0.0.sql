@@ -67,7 +67,6 @@ ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafie
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
 
 -- This var is per entity now, so we remove const if global if exists
-
 delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;
 
 -- For v12
