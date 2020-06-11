@@ -86,7 +86,6 @@ if (GETPOST('createfromclone', 'alpha')) { $action = 'createfromclone'; }
 if (GETPOST('createpagefromclone', 'alpha')) { $action = 'createpagefromclone'; }
 if (empty($action) && $file_manager) $action = 'file_manager';
 if (empty($action) && $replacesite) $action = 'replacesite';
-
 if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) $pageid = 0;
 
 // Load variable for pagination

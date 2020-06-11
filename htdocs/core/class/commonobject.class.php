@@ -7977,7 +7977,9 @@ abstract class CommonObject
 			            break;
 		            }
 	            } else {
-		            $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
+	            	// Delete record in child table
+	            	$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
+
 		            $resql = $this->db->query($sql);
 		            if (!$resql) {
 						$error++;
