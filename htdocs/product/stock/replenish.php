@@ -82,10 +82,11 @@ if (!$sortorder) {
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
 if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
-|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
-|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
-|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
-|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE))
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+	|| !empty($conf->mrp->enabled))
 {
     $virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -98,6 +99,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+
 /*
  * Actions
  */
@@ -106,7 +108,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 {
     $sref = '';
     $snom = '';
-    $sal = '';
+    $sall = '';
     $salert = '';
 	$draftorder = '';
 }
@@ -177,13 +179,10 @@ if ($action == 'order' && isset($_POST['valid']))
 						$line->fk_unit = $productsupplier->fk_unit;
 	                    $suppliers[$productsupplier->fourn_socid]['lines'][] = $line;
                 	}
-                }
-				elseif ($idprod == -1)
+                } elseif ($idprod == -1)
 				{
 					$errorQty++;
-				}
-                else
-				{
+				} else {
                     $error = $db->lasterror();
                     dol_print_error($db);
                 }
@@ -272,9 +271,7 @@ if ($action == 'order' && isset($_POST['valid']))
             setEventMessages($langs->trans('OrderCreated'), null, 'mesgs');
             header('Location: replenishorders.php');
             exit;
-        }
-        else
-        {
+        } else {
         	$db->rollback();
         }
     }
@@ -302,7 +299,6 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 	$sqldesiredtock = 'p.desiredstock';
 	$sqlalertstock = 'p.seuil_stock_alerte';
 }
-
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
 $sql .= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
@@ -376,8 +372,11 @@ if ($usevirtualstock)
 		$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed2.qty) IS NULL", "0", "SUM(ed2.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
 		$sqlExpeditionsCli .= " FROM ".MAIN_DB_PREFIX."expedition as e2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
+                $sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commande as c2,";
 		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commandedet as cd2";
 		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity('expedition').")";
+                $sqlExpeditionsCli .= " AND cd2.fk_commande = c2.rowid";
+                $sqlExpeditionsCli .= " AND c2.fk_statut IN (1,2)";
 		$sqlExpeditionsCli .= " AND cd2.fk_product = p.rowid";
 		$sqlExpeditionsCli .= " AND e2.fk_statut IN (1,2))";
 	} else {
@@ -420,8 +419,7 @@ if ($usevirtualstock)
 		$sqlProductionToProduce .= " AND mp5.fk_product = p.rowid";
 		$sqlProductionToProduce .= " AND mp5.role IN ('toproduce', 'produced')";
 		$sqlProductionToProduce .= " AND mm5.status IN (1,2))";
-	} else
-	{
+	} else {
 		$sqlProductionToConsume = '0';
 		$sqlProductionToProduce = '0';
 	}
@@ -491,6 +489,9 @@ print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 dol_fiche_head($head, 'replenish', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
+if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."<br>\n";
+}
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
@@ -672,9 +673,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		{
 			// If option to increase/decrease is not on an object validation, virtual stock may differs from physical stock.
 			$stock = $prod->stock_theorique;
-		}
-		else
-		{
+		} else {
 			$stock = $prod->stock_reel;
 		}
 
@@ -714,8 +713,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 			{
 				$picto = img_picto('', './img/yes', '', 1);
 				$disabled = 'disabled';
-			}
-			else {
+			} else {
 				$picto = img_picto('', './img/no', '', 1);
 			}
 		} else {

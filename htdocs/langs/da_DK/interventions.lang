@@ -41,9 +41,7 @@ InterventionsArea=Ingrebsområde
 DraftFichinter=Udkast til indgreb
 LastModifiedInterventions=Latest %s modified interventions
 FichinterToProcess=Indgreb til behandling
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Opfølgning kunde kontakt
-# Modele numérotation
 PrintProductsOnFichinter=Udskriv også linjer af typen "produkt" (ikke kun tjenester) på ingreb kortet
 PrintProductsOnFichinterDetails=Et indgreb genereret af ordrer
 UseServicesDurationOnFichinter=Brug servicevarighed for indgreb genereret fra ordrer
@@ -53,14 +51,16 @@ InterventionStatistics=Statistikker af indgreb
 NbOfinterventions=Antal interventionskort
 NumberOfInterventionsByMonth=Antal interventionskort efter måned (dato for bekræftelse)
 AmountOfInteventionNotIncludedByDefault=Indgreb beløb er ikke medtaget som standard i overskud (i de fleste tilfælde benyttes tidsskemaer til at tælle tid). Tilføj valgmulighed PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT til 1 i home setup-andre for at inkludere dem.
-##### Exports #####
 InterId=Indgrebs id
 InterRef=Indgreb ref.
 InterDateCreation=Dato oprettelse for indgreb
 InterDuration=Varighed af indgreb
 InterStatus=Status
 InterNote=Bemærk indgreb
+InterLine=Line of intervention
 InterLineId=Line id indgreb
 InterLineDate=Linje dato indgreb
 InterLineDuration=Linje varighed indgreb
 InterLineDesc=Line beskrivelse af ingreb
+RepeatableIntervention=Template of intervention
+ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template

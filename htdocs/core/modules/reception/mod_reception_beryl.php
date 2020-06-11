@@ -68,7 +68,7 @@ class mod_reception_beryl extends ModelNumRefReception
 
 		$coyymm = ''; $max = '';
 
-		$posindice = 8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
@@ -101,7 +101,7 @@ class mod_reception_beryl extends ModelNumRefReception
 	{
 		global $db, $conf;
 
-		$posindice = 9;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."reception";
 		$sql .= " WHERE ref like '".$db->escape($this->prefix)."____-%'";
@@ -113,9 +113,7 @@ class mod_reception_beryl extends ModelNumRefReception
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			dol_syslog("mod_reception_beryl::getNextValue", LOG_DEBUG);
 			return -1;
 		}

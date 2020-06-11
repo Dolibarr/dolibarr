@@ -43,6 +43,8 @@ $joomlaserverinfo = empty($argv[3]) ? '' : $argv[3];
 $image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
 
 $max = (!isset($argv[4]) || (empty($argv[4]) && $argv[4] !== '0')) ? '10' : $argv[4];
+$excludeid = (empty($argv[5]) ? '' : $argv[5]);
+$forcelang = (empty($argv[6]) ? '' : $argv[6]);
 
 if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print '***** '.$script_file.' *****'."\n";
@@ -87,6 +89,7 @@ if ($dbjoomla->error)
 $sql = 'SELECT c.id, c.title, c.alias, c.created, c.introtext, `fulltext`, c.metadesc, c.metakey, c.language, c.created, c.publish_up, u.username FROM '.$joomlaprefix.'_content as c';
 $sql .= ' LEFT JOIN '.$joomlaprefix.'_users as u ON u.id = c.created_by';
 $sql .= ' WHERE featured = 1';
+$sql .= ' AND c.id NOT IN ('.$excludeid.')';
 $sql .= ' ORDER BY publish_up ASC';
 $resql = $dbjoomla->query($sql);
 
@@ -134,7 +137,7 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		}
 		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
 
-		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
+		$language = ($forcelang ? $forcelang : ($obj->language && $obj->language != '*' ? $obj->language : 'en'));
 		$keywords = $obj->metakey;
 		$author_alias = $obj->username;
 

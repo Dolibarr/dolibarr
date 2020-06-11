@@ -98,9 +98,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    print "</div>";
 
 	    print "<br>";
-	}
-	else
-	{
+	} else {
 	    dol_print_error($db);
 	}
 }

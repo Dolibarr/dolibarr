@@ -81,9 +81,7 @@ if ($action == 'setcodeproduct')
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -101,7 +99,7 @@ if ($action == 'other' && GETPOST('value_PRODUIT_MULTIPRICES_LIMIT') > 0)
 if ($action == 'other')
 {
 	$princingrules = GETPOST('princingrule', 'alpha');
-	foreach ($select_pricing_rules as $rule=>$label) // Loop on each possible mode
+	foreach ($select_pricing_rules as $rule => $label) // Loop on each possible mode
 	{
 		if ($rule == $princingrules) // We are on selected rule, we enable it
 		{
@@ -111,17 +109,14 @@ if ($action == 'other')
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0, 'chaine', 0, '', $conf->entity);
 				dolibarr_set_const($db, 'PRODUCT_PRICE_UNIQ', 1, 'chaine', 0, '', $conf->entity);
-			}
-			else
-			{
+			} else {
 				$multirule = explode('&', $princingrules);
 				foreach ($multirule as $rulesselected)
 				{
 					$res = dolibarr_set_const($db, $rulesselected, 1, 'chaine', 0, '', $conf->entity);
 				}
 			}
-		}
-		else	// We clear this mode
+		} else // We clear this mode
 		{
 			if (strpos($rule, '&') === false) {
 				$res = dolibarr_set_const($db, $rule, 0, 'chaine', 0, '', $conf->entity);
@@ -204,15 +199,11 @@ if ($action == 'specimen') // For products
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=product&file=SPECIMEN.pdf");
 			return;
-		}
-		else
-		{
+		} else {
 			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -273,9 +264,7 @@ if ($action)
     if (!$error)
     {
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
 	    setEventMessages($langs->trans("SetupNotError"), null, 'errors');
     }
 }
@@ -292,8 +281,7 @@ if (empty($conf->product->enabled))
 {
 	$title = $langs->trans('ServiceSetup');
 	$tab = $langs->trans('Services');
-}
-elseif (empty($conf->service->enabled))
+} elseif (empty($conf->service->enabled))
 {
 	$title = $langs->trans('ProductSetup');
 	$tab = $langs->trans('Products');
@@ -341,8 +329,7 @@ foreach ($dirproduct as $dirroot)
 
     			try {
         			dol_include_once($dirroot.$file.'.php');
-    			}
-    			catch (Exception $e)
+    			} catch (Exception $e)
     			{
     			    dol_syslog($e->getMessage(), LOG_ERR);
     			}
@@ -364,9 +351,7 @@ foreach ($dirproduct as $dirroot)
     				print '<td class="center">'."\n";
     				print img_picto($langs->trans("Activated"), 'switch_on');
     				print "</td>\n";
-    			}
-    			else
-    			{
+    			} else {
     				$disabled = false;
     				if (!empty($conf->multicompany->enabled) && (is_object($mc) && !empty($mc->sharings['referent']) && $mc->sharings['referent'] == $conf->entity) ? false : true);
     				print '<td class="center">';
@@ -406,9 +391,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -478,9 +461,7 @@ foreach ($dirmodels as $reldir)
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
@@ -491,9 +472,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($conf->global->PRODUCT_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
@@ -519,9 +498,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';
@@ -556,7 +533,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-print '<td width="80">&nbsp;</td></tr>'."\n";
+print '</tr>'."\n";
 
 
 /*
@@ -574,20 +551,16 @@ print '<tr class="oddeven">';
 if (empty($conf->multicompany->enabled))
 {
 	print '<td>'.$langs->trans("PricingRule").'</td>';
-}
-else
-{
+} else {
 	print '<td>'.$form->textwithpicto($langs->trans("PricingRule"), $langs->trans("SamePriceAlsoForSharedCompanies"), 1).'</td>';
 }
-print '<td width="60" class="right">';
+print '<td class="right">';
 $current_rule = 'PRODUCT_PRICE_UNIQ';
 if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule = 'PRODUIT_MULTIPRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
-print '</td><td rowspan="'.$rowspan.'" class="nohover right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
 
@@ -613,7 +586,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("PRODUIT_SOUSPRODUITS", $conf->global->PRODUIT_SOUSPRODUITS, 1);
 print '</td>';
 print '</tr>';
@@ -624,13 +597,11 @@ print '<tr class="oddeven">';
 print '<td>'.$form->textwithpicto($langs->trans("UseSearchToSelectProduct"), $langs->trans('UseSearchToSelectProductTooltip'), 1).'</td>';
 if (empty($conf->use_javascript_ajax))
 {
-	print '<td class="nowrap right" colspan="2">';
+	print '<td class="nowrap right">';
 	print $langs->trans("NotAvailableWhenAjaxDisabled");
 	print '</td>';
-}
-else
-{
-	print '<td width="60" class="right">';
+} else {
+	print '<td class="right">';
 	$arrval = array(
 		'0'=>$langs->trans("No"),
 		'1'=>$langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
@@ -653,7 +624,7 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 // Visualiser description produit dans les formulaires activation/desactivation
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("activate_viewProdDescInForm", $conf->global->PRODUIT_DESC_IN_FORM, 1);
 print '</td>';
 print '</tr>';
@@ -663,7 +634,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MergePropalProductCard").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("activate_mergePropalProductCard",$conf->global->PRODUIT_PDF_MERGE_PROPAL,1);
 print '</td>';
 print '</tr>';
@@ -674,7 +645,7 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UseUnits").'</td>';
-print '<td width="60" class="right">';
+print '<td class="right">';
 print $form->selectyesno("activate_units",$conf->global->PRODUCT_USE_UNITS,1);
 print '</td>';
 print '</tr>';
@@ -685,7 +656,7 @@ if (!empty($conf->global->MAIN_MULTILANGS))
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
-	print '<td width="60" class="right">';
+	print '<td class="right">';
 	print $form->selectyesno("activate_viewProdTextsInThirdpartyLanguage", (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) ? $conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE : 0), 1);
 	print '</td>';
 	print '</tr>';
@@ -695,14 +666,14 @@ if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUP
 {
     print '<tr class="oddeven">';
     print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
-    print '<td width="60" class="right">';
+    print '<td class="right">';
     print $form->selectyesno("activate_useProdFournDesc", (!empty($conf->global->PRODUIT_FOURN_TEXTS) ? $conf->global->PRODUIT_FOURN_TEXTS : 0), 1);
     print '</td>';
     print '</tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseProductSupplierPackaging").'</td>';
-	print '<td width="60" align="right">';
+	print '<td align="right">';
 	print $form->selectyesno("activate_useProdSupplierPackaging", (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING) ? $conf->global->PRODUCT_USE_SUPPLIER_PACKAGING : 0), 1);
 	print '</td>';
 	print '</tr>';
@@ -716,8 +687,8 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
-	print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-	print '<td width="80">&nbsp;</td></tr>'."\n";
+	print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+	print '</tr>'."\n";
 
 	if (is_dir($dir))
 	{
@@ -753,9 +724,7 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
     						print img_picto($langs->trans("Active"), 'tick');
     						print '</td><td class="right">';
     						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=0">'.$langs->trans("Disable").'</a>';
-    					}
-    					else
-    					{
+    					} else {
     						print '&nbsp;</td><td class="right">';
     						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$file.'&amp;value=1">'.$langs->trans("Activate").'</a>';
     					}
@@ -766,14 +735,14 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
     		}
 		    closedir($handle);
         }
-	}
-	else
-	{
+	} else {
 		setEventMessages($dir.' '.$langs->trans("IsNotADir"), null, 'errors');
 	}
 }
 
 print '</table>';
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
 print '</form>';
 

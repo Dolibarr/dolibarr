@@ -51,7 +51,7 @@ abstract class ModelePDFMyObject extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type = 'mymodule_myobject';
+		$type = 'myobject';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -122,11 +122,10 @@ abstract class ModeleNumRefMyObject
 	/**
 	 *	Returns next assigned value
 	 *
-	 *	@param	Societe		$objsoc     Object thirdparty
 	 *	@param	Object		$object		Object we need next value for
 	 *	@return	string      Valeur
 	 */
-	public function getNextValue($objsoc, $object)
+	public function getNextValue($object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");

@@ -96,9 +96,7 @@ switch ($action)
 			$encaisse = $obj_facturation->montantEncaisse();
 
 			$obj_facturation->montantRendu($encaisse - $total);
-		}
-		else
-		{
+		} else {
 		    //$txtDatePaiement=$_POST['txtDatePaiement'];
 		    $datePaiement = dol_mktime(0, 0, 0, $_POST['txtDatePaiementmonth'], $_POST['txtDatePaiementday'], $_POST['txtDatePaiementyear']);
 		    $txtDatePaiement = dol_print_date($datePaiement, 'dayrfc');
@@ -252,17 +250,13 @@ switch ($action)
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
 			    $error++;
 			}
 
 			$id = $invoice->id;
-		}
-		else
-		{
+		} else {
 		    $resultcreate = $invoice->create($user, 0, 0);
 			if ($resultcreate > 0)
 			{
@@ -330,15 +324,11 @@ switch ($action)
                   			//print 'set paid';exit;
                     	}
                     }
-				}
-				else
-				{
+				} else {
 				    setEventMessages($invoice->error, $invoice->errors, 'errors');
 				    $error++;
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($invoice->error, $invoice->errors, 'errors');
 			    $error++;
 			}
@@ -349,9 +339,7 @@ switch ($action)
 		{
 			$db->commit();
 			$redirection = 'affIndex.php?menutpl=validation_ok&facid='.$id; // Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			$redirection = 'affIndex.php?facid='.$id.'&error=1&mesg=ErrorFailedToCreateInvoice'; // Ajout de l'id de la facture, pour l'inclure dans un lien pointant directement vers celle-ci dans Dolibarr
 		}

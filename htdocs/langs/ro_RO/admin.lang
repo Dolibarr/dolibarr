@@ -40,6 +40,7 @@ WebUserGroup=Web Server utilizator / grup
 NoSessionFound=Configurația dvs. PHP pare să nu permită listarea sesiunilor active. Directorul utilizat pentru salvarea sesiunilor (<b> %s </b>) ar putea fi protejat (de exemplu prin permisiuni ale sistemului de operare sau prin directiva PHP open_basedir).
 DBStoringCharset=Set caractere  al bazei de date pentru  stocarea datelor
 DBSortingCharset=Set caractereal bazei de date pentru sortarea datelor
+HostCharset=Host charset
 ClientCharset=Set de caractere client
 ClientSortingCharset=Compararea clienților
 WarningModuleNotActive=<b>Modulul %s</b> trebuie să fie activat
@@ -427,7 +428,7 @@ ExtrafieldCheckBox=Casetele de selectare
 ExtrafieldCheckBoxFromList=Căsuțele de selectare din tabel
 ExtrafieldLink=Link către un obiect
 ComputedFormula=Câmp calculat
-ComputedFormulaDesc=Puteți introduce aici o formulă care utilizează alte proprietăți ale obiectului sau orice codare PHP pentru a obține o valoare dinamică calculată. Puteți utiliza orice formule compatibile PHP, inclusiv operatorul de stare "?" și următorul obiect global:<strong>$db, $conf, $langs, $mysoc, $user, $object </strong>. <br><strong>AVERTISMENT </strong> Doar unele proprietăţi ale $obiect pot fi disponibile. Dacă aveți nevoie de proprietăți care nu sunt încărcate, trebuie doar să vă aduceți obiectul în formula dvs. ca în cel de-al doilea exemplu.<br> Utilizarea unui câmp calculat înseamnă că nu vă puteți introduce nici o valoare din interfață. De asemenea, dacă există o eroare de sintaxă, formula poate să nu redea nimic. <br><br> Exemplul formulei: <br>$object->id < 10? round($object-> id / 2, 2): ($object->id + 2 * $user-> id) * (int) substr($mysoc->zip, 1, 2) <br><br> Exemplu de reîncărcare a obiectului <br> (($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ?$reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br> Alt exemplu de formula pentru forțarea încărcării obiectului și a obiectului său părinte:<br> (($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: "Proiectul părinte nu a fost găsit"
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=Stocați câmpul calculat
 ComputedpersistentDesc=Câmpurile suplimentare computerizate vor fi stocate în baza de date, cu toate acestea, valoarea va fi recalculată numai atunci când obiectul acestui câmp este modificat. Dacă câmpul calculat depinde de alte obiecte sau date globale, această valoare ar putea fi greșită !!
 ExtrafieldParamHelpPassword=Lăsând acest câmp necompletat înseamnă că această valoare va fi stocată fără criptare (câmpul trebuie ascuns numai cu stea pe ecran). <br> Setarea "auto" pentru utilizarea regulii de criptare implicită pentru a salva parola în baza de date (atunci valoarea citită va fi hash numai, nici o şansă de a recupera valoarea inițială)
@@ -1015,7 +1016,7 @@ LocalTax2IsUsedDescES=Rata IRPF în mod implicit când se creează perspective, 
 LocalTax2IsNotUsedDescES=În mod implicit propus IRPF este 0. Sfârşitul regulă.
 LocalTax2IsUsedExampleES=În Spania, liber profesionişti şi specialişti independenţi, care presta servicii şi companiile care au ales sistemul de impozitare de module.
 LocalTax2IsNotUsedExampleES=În Spania, sunt întreprinderi care nu sunt supuse sistemului de taxare pe module.
-RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps des not provide any reporting. Only few countries uses this type of tax.
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps does not provide any reporting. Only few countries uses this type of tax.
 UseRevenueStamp=Use a tax stamp
 UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=Rapoarte pe taxe locale
@@ -1272,6 +1273,7 @@ RuleForGeneratedPasswords=Reguli pentru generarea și validarea parolelor
 DisableForgetPasswordLinkOnLogonPage=Nu afișați link-ul "Parola uitată" pe pagina de autentificare
 UsersSetup=Utilizatorii modul de configurare
 UserMailRequired=E-mailul necesar pentru a crea un utilizator nou
+UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
 UsersDocModules=Document templates for documents generated from user record
 GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
@@ -1731,7 +1733,7 @@ MultiCompanySetup=Multi-societate modul setup
 ##### Suppliers #####
 SuppliersSetup=Configurarea modulului furnizor
 SuppliersCommandModel=Complete template of Purchase Order
-SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersCommandModelMuscadet=Complete template of Purchase Order (old implementation of cornas template)
 SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=Modele de numerotare a facturilor furnizorilor
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
@@ -1803,6 +1805,7 @@ TopMenuDisableImages=Ascundeți imaginile în meniul de deasupra
 LeftMenuBackgroundColor=Culoare Background pentru Left menu
 BackgroundTableTitleColor=Culoarea de fundal pentru linia de titlul a tabelului
 BackgroundTableTitleTextColor=Culoarea textului pentru linia de titlul a tabelului
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=Culoarea de fundal pentru liniile impare ale tabelului
 BackgroundTableLineEvenColor=Culoarea de fundal pentru liniile pare ale tabelului
 MinimumNoticePeriod=Perioada minimă de preaviz (cererea dvs. de concediu trebuie făcută înainte de această întârziere)
@@ -1936,7 +1939,7 @@ WithoutDolTrackingID=Dolibarr Reference not found in Message ID
 FormatZip=Zip
 MainMenuCode=Codul de introducere a meniului (meniu principal)
 ECMAutoTree=Afișați arborele ECM automat
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=Ore de program
 OpeningHoursDesc=Introduceți aici orele de program normale ale companiei dvs.
 ResourceSetup=Configurarea modulului Resurse 
@@ -1995,3 +1998,5 @@ PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
+MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
+MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.

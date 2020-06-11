@@ -119,9 +119,7 @@ abstract class ActionsContactCardCommon
         	{
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
         		$this->tpl['company_id'] = $objsoc->id;
-        	}
-        	else
-        	{
+        	} else {
         		$this->tpl['company'] = $form->select_company($this->object->socid, 'socid', '', 1);
         	}
 
@@ -208,8 +206,7 @@ abstract class ActionsContactCardCommon
 				$dolibarr_user = new User($this->db);
 				$result = $dolibarr_user->fetch($this->object->user_id);
 				$this->tpl['dolibarr_user'] = $dolibarr_user->getLoginUrl(1);
-			}
-			else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
+			} else $this->tpl['dolibarr_user'] = $langs->trans("NoDolibarrAccess");
         }
 
         if ($action == 'view' || $action == 'delete')
@@ -222,9 +219,7 @@ abstract class ActionsContactCardCommon
 
         		$objsoc->fetch($this->object->socid);
         		$this->tpl['company'] = $objsoc->getNomUrl(1);
-        	}
-        	else
-        	{
+        	} else {
         		$this->tpl['company'] = $langs->trans("ContactNotLinkedToCompany");
         	}
 
@@ -309,9 +304,7 @@ abstract class ActionsContactCardCommon
             if ($resql)
             {
                 $obj = $this->db->fetch_object($resql);
-            }
-            else
-            {
+            } else {
                 dol_print_error($this->db);
             }
             $this->object->country_id = $langs->trans("Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label;

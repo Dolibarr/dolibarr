@@ -73,9 +73,7 @@ $arraylist = array('listofvars', 'listofstatus');
 if (!count($listofvars) && !count($listofstatus))
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
-}
-else
-{
+} else {
 	foreach ($arraylist as $listname)
 	{
 		print '<br>';

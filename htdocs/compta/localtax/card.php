@@ -80,9 +80,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
         $db->commit();
         header("Location: list.php?localTaxType=".$lttype);
         exit;
-    }
-    else
-    {
+    } else {
         $db->rollback();
         setEventMessages($object->error, $object->errors, 'errors');
         $_GET["action"] = "create";
@@ -113,22 +111,16 @@ if ($action == 'delete')
 				$db->commit();
 				header("Location: ".DOL_URL_ROOT.'/compta/localtax/list.php?localTaxType='.$object->ltt);
 				exit;
-			}
-			else
-			{
+			} else {
 				$object->error = $accountline->error;
 				$db->rollback();
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
-	    }
-	    else
-	    {
+	    } else {
 	        $db->rollback();
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
-	}
-	else
-	{
+	} else {
         $mesg = 'Error try do delete a line linked to a conciliated bank transaction';
         setEventMessages($mesg, null, 'errors');
 	}
@@ -289,9 +281,7 @@ if ($id)
 	if ($object->rappro == 0)
 	{
 		print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";

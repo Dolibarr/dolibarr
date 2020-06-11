@@ -30,8 +30,20 @@
 
 -- Missing in v12
 
+ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
+
+
 
 -- For v13
 
+ALTER TABLE llx_commande MODIFY COLUMN date_livraison DATETIME;
+
 ALTER TABLE llx_website ADD COLUMN position integer DEFAULT 0;
+
+ALTER TABLE llx_establishment ADD COLUMN ref varchar(30);
+ALTER TABLE llx_establishment ADD COLUMN name varchar(128);
+UPDATE llx_establishment SET ref = rowid WHERE ref IS NULL;
+ALTER TABLE llx_establishment MODIFY COLUMN ref varchar(30) NOT NULL;
+ALTER TABLE llx_establishment MODIFY COLUMN name varchar(128);
+
 INSERT INTO llx_const (rowid, name, entity, value, type, visible, note, tms) VALUES (NULL, 'PRODUCT_PRICE_BASE_TYPE', '1', 'HT', 'string', '0', NULL, CURRENT_TIMESTAMP);

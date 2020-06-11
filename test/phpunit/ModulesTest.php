@@ -144,7 +144,7 @@ class ModulesTest extends PHPUnit\Framework\TestCase
 		'Mailing','MailmanSpip','Margin','ModuleBuilder','MultiCurrency',
 		'Notification','Oauth','OpenSurvey','Paybox','Paypal','Prelevement','Printing','Product','ProductBatch','Projet','Propale','ReceiptPrinter','Resource',
 		'Salaries','Service','SocialNetworks','Societe','Stock','Stripe','SupplierProposal','Syslog','TakePos','Tax','Ticket','User','Variants','WebServices','WebServicesClient','Website','Workflow');
-		foreach($modulelist as $modlabel)
+		foreach ($modulelist as $modlabel)
 		{
     		require_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php';
             $class='mod'.$modlabel;

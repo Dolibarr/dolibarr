@@ -185,9 +185,7 @@ class ExpenseReportRule extends CoreObject
 				if ($rule->fetch($obj->rowid) > 0) $rules[$rule->id] = $rule;
 				else dol_print_error($db);
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
@@ -209,9 +207,7 @@ class ExpenseReportRule extends CoreObject
 			if ($group->fetch($this->fk_usergroup) > 0)
 			{
 				return $group->nom;
-			}
-			else
-			{
+			} else {
 				$this->error = $group->error;
 				$this->errors[] = $this->error;
 			}
@@ -235,9 +231,7 @@ class ExpenseReportRule extends CoreObject
 			if ($u->fetch($this->fk_user) > 0)
 			{
 				return dolGetFirstLastname($u->firstname, $u->lastname);
-			}
-			else
-			{
+			} else {
 				$this->error = $u->error;
 				$this->errors[] = $this->error;
 			}

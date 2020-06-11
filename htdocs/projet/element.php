@@ -526,26 +526,26 @@ $listofreferent = array(
 */
 );
 
-// Change rules for benefit calculation
+// Change rules for profit/benefit calculation
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
-	foreach($listofreferent as $key => $element) {
+	foreach ($listofreferent as $key => $element) {
 		if ($listofreferent[$key]['margin'] == 'add') {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
 	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
-	foreach($newelementforplusmargin as $value) {
+	foreach ($newelementforplusmargin as $value) {
 		$listofreferent[$value]['margin']='add';
 	}
 }
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
-	foreach($listofreferent as $key => $element) {
+	foreach ($listofreferent as $key => $element) {
 		if ($listofreferent[$key]['margin'] == 'add') {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
 	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
-	foreach($newelementforplusmargin as $value) {
+	foreach ($newelementforplusmargin as $value) {
 		$listofreferent[$value]['margin']='minus';
 	}
 }
@@ -568,8 +568,7 @@ if ($action == "addelement")
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
-}
-elseif ($action == "unlink")
+} elseif ($action == "unlink")
 {
 	$tablename = GETPOST("tablename", "aZ09");
     $projectField = GETPOSTISSET('projectfield') ? GETPOST('projectfield', 'aZ09') : 'fk_projet';
@@ -624,7 +623,28 @@ print load_fiche_titre($langs->trans("Profit"), '', 'title_accountancy');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="left" width="200">'.$langs->trans("Element").'</td>';
+print '<td class="left" width="200">';
+$tooltiponprofit = $langs->trans("ProfitIsCalculatedWith")."<br>\n";
+$tooltiponprofitplus = $tooltiponprofitminus = '';
+foreach ($listofreferent as $key => $value)
+{
+	$name = $langs->trans($value['name']);
+	$qualified = $value['test'];
+	$margin = $value['margin'];
+	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
+	{
+		if ($margin == 'add') {
+			$tooltiponprofitplus.=' + '.$name."<br>\n";
+		}
+		if ($margin == 'minus') {
+			$tooltiponprofitminus.=' - '.$name."<br>\n";
+		}
+	}
+}
+$tooltiponprofit .= $tooltiponprofitplus;
+$tooltiponprofit .= $tooltiponprofitminus;
+print $form->textwithpicto($langs->trans("Element"), $tooltiponprofit);
+print '</td>';
 print '<td class="right" width="100">'.$langs->trans("Number").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
@@ -640,7 +660,7 @@ foreach ($listofreferent as $key => $value)
 	$qualified = $value['test'];
 	$margin = $value['margin'];
 	$project_field = $value['project_field'];
-	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
+	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 	{
 		$element = new $classname($db);
 
@@ -685,19 +705,15 @@ foreach ($listofreferent as $key => $value)
 					{
 						$tmp = $element->getSumOfAmount($elementuser, $dates, $datee);
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
-					}
-					else
-					{
+					} else {
 						$tmp = $element->getSumOfAmount('', $dates, $datee);
 						$total_ht_by_line = price2num($tmp['amount'], 'MT');
 					}
-				}
-                elseif ($key == 'loan') {
+				} elseif ($key == 'loan') {
                     if ((empty($dates) && empty($datee)) || (intval($dates) <= $element->datestart && intval($datee) >= $element->dateend)) {
                         // Get total loan
                         $total_ht_by_line = -$element->capital;
-                    }
-				    else {
+                    } else {
                         // Get loan schedule according to date filter
                         $total_ht_by_line = 0;
                         $loanScheduleStatic = new LoanSchedule($element->db);
@@ -716,8 +732,7 @@ foreach ($listofreferent as $key => $value)
                             }
                         }
                     }
-                }
-				else $total_ht_by_line = $element->total_ht;
+                } else $total_ht_by_line = $element->total_ht;
 
 				// Define $total_ttc_by_line
 				if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line = $element->amount;
@@ -727,11 +742,9 @@ foreach ($listofreferent as $key => $value)
 				{
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
-				}
-                elseif ($key == 'loan') {
+				} elseif ($key == 'loan') {
                         $total_ttc_by_line = $total_ht_by_line; // For loan there is actually no taxe managed in Dolibarr
-                }
-				else $total_ttc_by_line = $element->total_ttc;
+                } else $total_ttc_by_line = $element->total_ttc;
 
 				// Change sign of $total_ht_by_line and $total_ttc_by_line for some cases
 				if ($tablename == 'payment_various')
@@ -845,8 +858,7 @@ foreach ($listofreferent as $key => $value)
 			if ($selectList < 0)
 			{
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
-			}
-			elseif ($selectList)
+			} elseif ($selectList)
 			{
 				// Define form with the combo list of elements to link
 			    $addform .= '<div class="inline-block valignmiddle">';
@@ -952,9 +964,7 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename != 'expensereport_det')
 				{
 					if (method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
-				}
-				else
-				{
+				} else {
 					$expensereport = new ExpenseReport($db);
 					$expensereport->fetch($element->fk_expensereport);
 				}
@@ -999,20 +1009,16 @@ foreach ($listofreferent as $key => $value)
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getNomUrl(1);
-				}
-				else
-				{
+				} else {
 					// Show ref with link
 					if ($element instanceof Task)
 					{
 						print $element->getNomUrl(1, 'withproject', 'time');
 						print ' - '.dol_trunc($element->label, 48);
-					}
-					elseif ($key == 'loan') {
+					} elseif ($key == 'loan') {
                         print $element->getNomUrl(1);
                         print ' - '.dol_trunc($element->label, 48);
-                    }
-					else print $element->getNomUrl(1);
+                    } else print $element->getNomUrl(1);
 
 					$element_doc = $element->element;
 					$filename = dol_sanitizeFileName($element->ref);
@@ -1021,8 +1027,7 @@ foreach ($listofreferent as $key => $value)
 					if ($element_doc === 'order_supplier') {
 						$element_doc = 'commande_fournisseur';
 						$filedir = $conf->fournisseur->commande->multidir_output[$element->entity].'/'.dol_sanitizeFileName($element->ref);
-					}
-					elseif ($element_doc === 'invoice_supplier') {
+					} elseif ($element_doc === 'invoice_supplier') {
 						$element_doc = 'facture_fournisseur';
 						$filename = get_exdir($element->id, 2, 0, 0, $element, 'product').dol_sanitizeFileName($element->ref);
 						$filedir = $conf->fournisseur->facture->multidir_output[$element->entity].'/'.get_exdir($element->id, 2, 0, 0, $element, 'invoice_supplier').dol_sanitizeFileName($element->ref);
@@ -1050,12 +1055,10 @@ foreach ($listofreferent as $key => $value)
 				    if ($tablename == 'commande_fournisseur' || $tablename == 'supplier_order')
     				{
     				    $date = ($element->date_commande ? $element->date_commande : $element->date_valid);
-    				}
-    				elseif ($tablename == 'supplier_proposal') $date = $element->date_validation; // There is no other date for this
+    				} elseif ($tablename == 'supplier_proposal') $date = $element->date_validation; // There is no other date for this
     				elseif ($tablename == 'fichinter') $date = $element->datev; // There is no other date for this
     				elseif ($tablename == 'projet_task') $date = ''; // We show no date. Showing date of beginning of task make user think it is date of time consumed
-					else
-					{
+					else {
     					$date = $element->date; // invoice, ...
     					if (empty($date)) $date = $element->date_contrat;
     					if (empty($date)) $date = $element->datev;
@@ -1063,8 +1066,7 @@ foreach ($listofreferent as $key => $value)
     						$date = $element->$datefieldname;
     					}
     				}
-				}
-                elseif ($key == 'loan') {
+				} elseif ($key == 'loan') {
                     $date = $element->datestart;
                 }
 
@@ -1073,16 +1075,14 @@ foreach ($listofreferent as $key => $value)
 				{
 				    print dol_print_date($element->datep, 'dayhour');
 				    if ($element->datef && $element->datef > $element->datep) print " - ".dol_print_date($element->datef, 'dayhour');
-				}
-				elseif (in_array($tablename, array('projet_task')))
+				} elseif (in_array($tablename, array('projet_task')))
 				{
 				    $tmpprojtime = $element->getSumOfAmount($elementuser, $dates, $datee); // $element is a task. $elementuser may be empty
                     print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$idofelement.'&withproject=1">';
 				    print convertSecondToTime($tmpprojtime['nbseconds'], 'allhourmin');
                 	print '</a>';
 				    $total_time_by_line = $tmpprojtime['nbseconds'];
-				}
-				else print dol_print_date($date, 'day');
+				} else print dol_print_date($date, 'day');
 				print '</td>';
 
 				// Third party or user
@@ -1093,14 +1093,12 @@ foreach ($listofreferent as $key => $value)
                 	$tmpuser = new User($db);
                 	$tmpuser->fetch($expensereport->fk_user_author);
                 	print $tmpuser->getNomUrl(1, '', 48);
-                }
-				elseif ($tablename == 'payment_salary')
+                } elseif ($tablename == 'payment_salary')
 				{
 					$tmpuser = new User($db);
 					$tmpuser->fetch($element->fk_user);
 					print $tmpuser->getNomUrl(1, '', 48);
-				}
-				elseif ($tablename == 'don' || $tablename == 'stock_mouvement')
+				} elseif ($tablename == 'don' || $tablename == 'stock_mouvement')
                 {
                 	if ($element->fk_user_author > 0)
                 	{
@@ -1108,8 +1106,7 @@ foreach ($listofreferent as $key => $value)
 	                	$tmpuser2->fetch($element->fk_user_author);
 	                	print $tmpuser2->getNomUrl(1, '', 48);
                 	}
-                }
-                elseif ($tablename == 'projet_task' && $key == 'project_task_time')	// if $key == 'project_task', we don't want details per user
+                } elseif ($tablename == 'projet_task' && $key == 'project_task_time')	// if $key == 'project_task', we don't want details per user
                 {
                     print $elementuser->getNomUrl(1);
                 }
@@ -1144,15 +1141,11 @@ foreach ($listofreferent as $key => $value)
     							$langs->load("errors");
     							$warning = $langs->trans("WarningSomeLinesWithNullHourlyRate", $conf->currency);
     						}
-					    }
-					    else
-					    {
+					    } else {
 					        $othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
-					}
-                    elseif ($key == 'loan') $total_ht_by_line = $element->capital;
-					else
-					{
+					} elseif ($key == 'loan') $total_ht_by_line = $element->capital;
+					else {
 						$total_ht_by_line = $element->total_ht;
 					}
 
@@ -1175,8 +1168,7 @@ foreach ($listofreferent as $key => $value)
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
-				}
-				else print '<td></td>';
+				} else print '<td></td>';
 
                 // Amount inc tax
 				if (empty($value['disableamount']))
@@ -1192,15 +1184,11 @@ foreach ($listofreferent as $key => $value)
 					        // TODO Permission to read daily rate
     						$defaultvat = get_default_tva($mysoc, $mysoc);
     						$total_ttc_by_line = price2num($total_ht_by_line * (1 + ($defaultvat / 100)), 'MT');
-					    }
-					    else
-					    {
+					    } else {
 					        $othermessage = $form->textwithpicto($langs->trans("NotAvailable"), $langs->trans("ModuleSalaryToDefineHourlyRateMustBeEnabled"));
 					    }
-					}
-                    elseif ($key == 'loan') $total_ttc_by_line = $element->capital - $element->getSumPayment();
-					else
-					{
+					} elseif ($key == 'loan') $total_ttc_by_line = $element->capital - $element->getSumPayment();
+					else {
 						$total_ttc_by_line = $element->total_ttc;
 					}
 
@@ -1223,33 +1211,27 @@ foreach ($listofreferent as $key => $value)
 					}
 					if ($warning) print ' '.img_warning($warning);
 					print '</td>';
-				}
-				else print '<td></td>';
+				} else print '<td></td>';
 
 				// Status
 				print '<td class="right">';
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getLibStatut(5);
-				}
-				elseif ($element instanceof CommonInvoice)
+				} elseif ($element instanceof CommonInvoice)
 				{
 					//This applies for Facture and FactureFournisseur
 					print $element->getLibStatut(5, $element->getSommePaiement());
-				}
-				elseif ($element instanceof Task)
+				} elseif ($element instanceof Task)
 				{
 					if ($element->progress != '')
 					{
 						print $element->progress.' %';
 					}
-				}
-				elseif ($tablename == 'stock_mouvement')
+				} elseif ($tablename == 'stock_mouvement')
 				{
 					print $element->getLibStatut(3);
-				}
-				else
-				{
+				} else {
 					print $element->getLibStatut(5);
 				}
 				print '</td>';
@@ -1323,9 +1305,7 @@ foreach ($listofreferent as $key => $value)
 			print '</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			if (!is_array($elementarray))	// error
 			{
 				print $elementarray;

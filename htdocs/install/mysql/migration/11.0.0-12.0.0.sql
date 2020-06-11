@@ -67,10 +67,17 @@ ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafie
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
 
 -- This var is per entity now, so we remove const if global if exists
-delete from llx_const where name = 'PROJECT_HIDE_TASKS' and entity = 0;
 
+delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;
 
 -- For v12
+
+ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
+
+ALTER TABLE llx_ecm_files MODIFY COLUMN src_object_type varchar(64);
+
+ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
+
 
 -- Delete an old index that is duplicated
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
@@ -159,6 +166,8 @@ ALTER TABLE llx_bookmark MODIFY COLUMN url TEXT;
 
 ALTER TABLE llx_bookmark ADD UNIQUE uk_bookmark_title (fk_user, entity, title);
 
+ALTER TABLE llx_societe_rib MODIFY COLUMN owner_address  varchar(255);
+ALTER TABLE llx_societe_rib MODIFY COLUMN default_rib smallint NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_societe_rib ADD COLUMN stripe_account varchar(128);
 
@@ -259,6 +268,7 @@ ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY qty real NOT NULL DEFAULT 1;
+ALTER TABLE llx_expeditiondet_batch MODIFY COLUMN batch varchar(128);
 
 create table llx_categorie_website_page
 (
@@ -295,3 +305,8 @@ ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';
+
+ALTER TABLE llx_adherent_type MODIFY subscription varchar(3) NOT NULL DEFAULT '1';
+ALTER TABLE llx_adherent_type MODIFY vote varchar(3) NOT NULL DEFAULT '1';
+  
+

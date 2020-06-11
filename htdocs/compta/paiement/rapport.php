@@ -70,9 +70,7 @@ if ($action == 'builddoc')
     if ($rap->write_file($dir, $_POST["remonth"], $_POST["reyear"], $outputlangs) > 0)
     {
         $outputlangs->charset_output = $sav_charset_output;
-    }
-    else
-    {
+    } else {
         $outputlangs->charset_output = $sav_charset_output;
         dol_print_error($db, $obj->error);
     }

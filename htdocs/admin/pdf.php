@@ -92,8 +92,7 @@ if ($action == 'activate_pdfsecurity')
 	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1", 'chaine', 0, '', $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
-}
-elseif ($action == 'disable_pdfsecurity')
+} elseif ($action == 'disable_pdfsecurity')
 {
 	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION", $conf->entity);
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -189,9 +188,7 @@ for ($i = 1; $i <= 6; $i++)
 	{
 		$pid = $langs->transcountry("ProfId".$i, $mysoc->country_code);
 		if ($pid == '-') $pid = false;
-	}
-	else
-	{
+	} else {
 		$pid = img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
 	}
 	if ($pid)

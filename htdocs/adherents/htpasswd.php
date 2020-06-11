@@ -40,13 +40,11 @@ $now = dol_now();
 
 if (empty($sortorder)) {  $sortorder = "ASC"; }
 if (empty($sortfield)) {  $sortfield = "d.login"; }
-if (!isset($statut))
-{
+if (!isset($statut)) {
 	$statut = 1;
 }
 
-if (!isset($cotis))
-{
+if (!isset($cotis)) {
 	// by default, members must be up to date of subscription
 	$cotis = 1;
 }
@@ -55,33 +53,28 @@ if (!isset($cotis))
 $sql = "SELECT d.login, d.pass, d.datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = ".$statut;
-if ($cotis == 1)
-{
+if ($cotis == 1) {
 	$sql .= " AND datefin > '".$db->idate($now)."'";
 }
 $sql .= $db->order($sortfield, $sortorder);
 //$sql.=$db->plimit($conf->liste_limit, $offset);
 
 $resql = $db->query($sql);
-if ($resql)
-{
+if ($resql) {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
 	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', 0);
 
 	print "<hr>\n";
-	while ($i < $num)
-	{
+	while ($i < $num) {
 		$objp = $db->fetch_object($result);
 		$htpass = crypt($objp->pass, makesalt());
 		print $objp->login.":".$htpass."<br>\n";
 		$i++;
 	}
 	print "<hr>\n";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

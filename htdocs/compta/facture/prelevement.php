@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
 if (!$user->rights->facture->lire) accessforbidden();
 
@@ -43,6 +44,8 @@ $id = (GETPOST('id', 'int') ?GETPOST('id', 'int') : GETPOST('facid', 'int')); //
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
+
+$type = GETPOST('type', 'aZ09');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
@@ -86,9 +89,7 @@ if (empty($reshook))
                 $db->commit();
 
                 setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
-            }
-            else
-            {
+            } else {
                 $db->rollback();
                 setEventMessages($object->error, $object->errors, 'errors');
             }
@@ -292,14 +293,10 @@ if ($object->id > 0)
 		if ($action == 'editinvoicedate')
 		{
 			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date, 'invoicedate');
-		}
-		else
-		{
+		} else {
 			print dol_print_date($object->date, 'daytext');
 		}
-	}
-	else
-	{
+	} else {
 		print dol_print_date($object->date, 'daytext');
 	}
 	print '</td>';
@@ -318,14 +315,10 @@ if ($object->id > 0)
 		if ($action == 'editconditions')
 		{
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
-		}
-		else
-		{
+		} else {
 			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
 		}
-	}
-	else
-	{
+	} else {
 		print '&nbsp;';
 	}
 	print '</td></tr>';
@@ -343,17 +336,13 @@ if ($object->id > 0)
 		if ($action == 'editpaymentterm')
 		{
 			$form->form_date($_SERVER['PHP_SELF'].'?id='.$object->id, $object->date_lim_reglement, 'paymentterm');
-		}
-		else
-		{
+		} else {
 			print dol_print_date($object->date_lim_reglement, 'daytext');
 			if ($object->hasDelay()) {
 				print img_warning($langs->trans('Late'));
 			}
 		}
-	}
-	else
-	{
+	} else {
 		print '&nbsp;';
 	}
 	print '</td></tr>';
@@ -369,9 +358,7 @@ if ($object->id > 0)
 	if ($action == 'editmode')
 	{
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id');
-	}
-	else
-	{
+	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
@@ -388,16 +375,20 @@ if ($object->id > 0)
 	if ($action == 'editbankaccount')
 	{
 	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-	}
-	else
-	{
+	} else {
 	    $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
 	}
 	print "</td>";
 	print '</tr>';
 
 	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="3">';
-	print $object->thirdparty->display_rib();
+
+	$bac = new CompanyBankAccount($db);
+	$bac->fetch(0, $object->thirdparty->id);
+
+	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
+	if ($bac->verif() <= 0) print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
+
 	print '</td></tr>';
 
 	print '</table>';
@@ -493,7 +484,11 @@ if ($object->id > 0)
 	$sql .= " , pfd.date_traite as date_traite";
 	$sql .= " , pfd.amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
@@ -502,17 +497,19 @@ if ($object->id > 0)
 	{
 		$num = $db->num_rows($result_sql);
 		$numopen = $num;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
-	// For wich amount ?
+	// For which amount ?
 
 	$sql = "SELECT SUM(pfd.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 0";
 
 	$result_sql = $db->query($sql);
@@ -520,9 +517,7 @@ if ($object->id > 0)
 	{
 		$obj = $db->fetch_object($result_sql);
 		if ($obj) $pending = $obj->amount;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -543,31 +538,25 @@ if ($object->id > 0)
     			$remaintopaylesspendingdebit = $resteapayer - $pending;
 
     			print '<form method="POST" action="">';
+    			print '<input type="hidden" name="token" value="'.newToken().'" />';
     			print '<input type="hidden" name="id" value="'.$object->id.'" />';
     			print '<input type="hidden" name="action" value="new" />';
     			print '<label for="withdraw_request_amount">'.$langs->trans('WithdrawRequestAmount').' </label>';
-    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="10" />';
+    			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
     			print '<input type="submit" class="butAction" value="'.$langs->trans("MakeWithdrawRequest").'" />';
     			print '</form>';
-    		}
-    		else
-    		{
+    		} else {
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
     		}
-	    }
-	    else
-        {
+	    } else {
             print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AmountMustBePositive")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
         }
-	}
-	else
-	{
+	} else {
 		if ($num == 0)
 		{
 			if ($object->statut > Facture::STATUS_DRAFT) print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 			else print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
-		}
-		else print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
+		} else print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("RequestAlreadyDone")).'">'.$langs->trans("MakeWithdrawRequest").'</a>';
 	}
 
 	print "</div><br>\n";
@@ -593,13 +582,17 @@ if ($object->id > 0)
 	print '<td>&nbsp;</td>';
 	print '</tr>';
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-	$sql .= " , pfd.date_traite as date_traite, pfd.amount,";
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
+	$sql .= " pfd.date_traite as date_traite, pfd.amount,";
 	$sql .= " u.rowid as user_id, u.lastname, u.firstname, u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 0";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
@@ -634,9 +627,7 @@ if ($object->id > 0)
 		}
 
 		$db->free($result_sql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -649,7 +640,11 @@ if ($object->id > 0)
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
-	$sql .= " WHERE fk_facture = ".$object->id;
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE fk_facture_fourn = ".$object->id;
+	} else {
+		$sql .= " WHERE fk_facture = ".$object->id;
+	}
 	$sql .= " AND pfd.traite = 1";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
@@ -696,9 +691,7 @@ if ($object->id > 0)
 			print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
