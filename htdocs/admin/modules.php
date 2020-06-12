@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
-$mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : 'commonkanban';
+$mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : 'common';
 if (empty($mode)) $mode = 'common';
 $action = GETPOST('action', 'alpha');
 //var_dump($_POST);exit;
