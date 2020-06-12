@@ -1057,6 +1057,8 @@ class Societe extends CommonObject
 
 		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords(strtolower($this->name));
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name_alias = ucwords(strtolower($this->name_alias));
+		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name_alias = strtoupper($this->name_alias);
 		// Clean parameters
 		$this->id = $id;
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
