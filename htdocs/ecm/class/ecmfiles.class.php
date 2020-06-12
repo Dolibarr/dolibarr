@@ -67,7 +67,7 @@ class EcmFiles extends CommonObject
 	 */
 	public $entity;
 
-	public $filename;
+	public $filename;			// Note: Into ecm database record, the entry $filename never ends with .noexe
 	public $filepath;
 	public $fullpath_orig;
 
