@@ -94,7 +94,7 @@ function loan_prepare_head($object)
  * @param   int   	$nbterm  	Total number of term for this loan
  * @return  array				Array with remaining capital, interest, and mensuality for each remaining terms
  */
-function loan_calcmens($mens, $capital, $rate, $echance, $nbterm)
+function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
 {
     global $conf;
     require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
