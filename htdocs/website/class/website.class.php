@@ -1013,7 +1013,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias)';
 
 			$line .= " VALUES(";
 			$line .= $objectpageold->newid."__+MAX_llx_website_page__, ";
@@ -1057,7 +1057,8 @@ class Website extends CommonObject
 			// When we have a link src="image/websiteref/file.png" into html content
 			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
 
-			$line .= "'".$this->db->escape($stringtoexport)."'"; // Replace \r \n to have record on 1 line
+			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
+			$line .= "'".$this->db->escape($objectpageold->author_alias)."'";
 			$line .= ");";
 			$line .= "\n";
 			fputs($fp, $line);
