@@ -106,6 +106,7 @@ NoteNotVisibleOnBill=Note (non visible sur les factures, propals...)
 ServiceLimitedDuration=Si produit de type service à durée limitée :
 MultiPricesAbility=Plusieurs niveaux de prix par produit/service (chaque client est dans un et un seul niveau)
 MultiPricesNumPrices=Nombre de prix
+DefaultPriceType=Type de prix par default
 AssociatedProductsAbility=Pris en charge des produits virtuels (kits)
 AssociatedProducts=Produits virtuels
 AssociatedProductsNumber=Nbre de sous-produits constituant ce produit virtuel
