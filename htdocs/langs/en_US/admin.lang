@@ -374,9 +374,12 @@ ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<
 FollowingSubstitutionKeysCanBeUsed=<br>To know how to create your odt document templates, before storing them in those directories, read wiki documentation:
 FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Position of Name/Lastname
-FirstToUpper
-AllToUpper
-PhoneSepar
+FirstToUpper=First letter in uppercase
+HelpFirstToUpper=First and last name with the first letter in capital letters (Third parties, Contacts, Members, Users)
+AllToUpper=Name in capital letters
+HelpAllToUpper=Name (Third Party, Contacts, Members, Users)
+PhoneSepar=Phone separation
+HelpPhoneSepar=Séparateur afficher pour les numéros de téléphone par default "espace".
 DescWeather=The following images will be shown on the dashboard when the number of late actions reach the following values:
 KeyForWebServicesAccess=Key to use Web Services (parameter "dolibarrkey" in webservices)
 TestSubmitForm=Input test form

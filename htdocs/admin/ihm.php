@@ -333,7 +333,7 @@ print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Premiere letre en majuscule
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("FirstToUpper", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+print '<tr class="oddeven"><td class="titlefield">'.$form->textwithpicto($langs->trans("FirstToUpper"),$langs->trans("HelpFirstToUpper"),1, 'help').'</td><td>';
 print ajax_constantonoff("MAIN_FIRST_TO_UPPER", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno('MAIN_FIRST_TO_UPPER', $conf->global->MAIN_FIRST_TO_UPPER, 1);
 print '</td>';
@@ -341,7 +341,7 @@ print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Nom en majuscule
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("AllToUpper", $langs->transnoentitiesnoconv("FindBug")).'</td><td>';
+print '<tr class="oddeven"><td class="titlefield">'.$form->textwithpicto($langs->trans("AllToUpper"), $langs->trans("HelpAllToUpper"),1, 'help').'</td><td>';
 print ajax_constantonoff("MAIN_ALL_TO_UPPER", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno('MAIN_ALL_TO_UPPER', $conf->global->MAIN_ALL_TO_UPPER, 1);
 print '</td>';
@@ -349,7 +349,8 @@ print '<td width="20">&nbsp;</td>';
 print '</tr>';
 
 // Sépar phone number
-print '<tr class="oddeven"><td class="titlefield">'.$langs->trans("PhoneSepar").'</td><td>';
+print '<tr class="oddeven"><td class="titlefield">'.$form->textwithpicto($langs->trans("PhoneSepar"),$langs->trans("HelpPhoneSepar"),1, 'help').'</td><td>';
+//print $form->textwithpicto($langs->trans("MessageLogin"), "test", 1, 'help', '', 0, 2, 'tooltipmessagelogin');
 print '<input type="text" name="MAIN_PHONE_SEPAR" size="1" value="'.(isset($conf->global->MAIN_PHONE_SEPAR) ? $conf->global->MAIN_PHONE_SEPAR : '').'">';
 print '</td>';
 print '<td width="20">&nbsp;</td>';

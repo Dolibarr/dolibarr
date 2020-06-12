@@ -1055,7 +1055,7 @@ class Societe extends CommonObject
 
 		$now = dol_now();
 
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords($this->name);
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->name = ucwords(strtolower($this->name));
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->name = strtoupper($this->name);
 		// Clean parameters
 		$this->id = $id;
