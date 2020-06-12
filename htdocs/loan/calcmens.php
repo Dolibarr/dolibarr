@@ -41,6 +41,6 @@ top_httphead();
 
 $output = array();
 
-$output = loan_calcmens($mens, $capital, $rate, $echance, $nbterm);
+$output = loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm);
 
 echo json_encode($output);
