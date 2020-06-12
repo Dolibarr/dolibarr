@@ -190,7 +190,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 	        	$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
 	        	if (! preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash.='/';
 
-	        	if ($upload_dir != $publicmediasdirwithslash) {	// We never add .noexe on files into media directory
+	        	if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
 		            $filenameto .= '.noexe';
 	        	}
 	        }
