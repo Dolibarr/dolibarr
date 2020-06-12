@@ -374,6 +374,9 @@ ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<
 FollowingSubstitutionKeysCanBeUsed=<br>To know how to create your odt document templates, before storing them in those directories, read wiki documentation:
 FullListOnOnlineDocumentation=http://wiki.dolibarr.org/index.php/Create_an_ODT_document_template
 FirstnameNamePosition=Position of Name/Lastname
+FirstToUpper
+AllToUpper
+PhoneSepar
 DescWeather=The following images will be shown on the dashboard when the number of late actions reach the following values:
 KeyForWebServicesAccess=Key to use Web Services (parameter "dolibarrkey" in webservices)
 TestSubmitForm=Input test form
