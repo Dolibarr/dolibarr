@@ -208,7 +208,7 @@ $permtouploadfile = $user->rights->website->write;
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
-$upload_dir = $diroutput.'/'.$relativepath;
+$upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', '', $relativepath);
 
 $htmlheadercontentdefault = '';
 $htmlheadercontentdefault .= '<link rel="stylesheet" id="google-fonts-css"  href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />'."\n";

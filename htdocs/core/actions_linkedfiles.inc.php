@@ -197,7 +197,13 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
 	        if (isAFileWithExecutableContent($filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 	        {
-	            $filenameto .= '.noexe';
+	        	// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
+	        	$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
+	        	if (! preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash.='/';
+
+	        	if ($upload_dir != $publicmediasdirwithslash) {	// We never add .noexe on files into media directory
+		            $filenameto .= '.noexe';
+	        	}
 	        }
 
 	        if ($filenamefrom && $filenameto)
