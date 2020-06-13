@@ -106,8 +106,7 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm)
         $int = 0;
         $cap_rest = $capital;
     }
-    else
-    {
+    else {
         $int = ($capital * ($rate / 12));
         $int = round($int, 2, PHP_ROUND_HALF_UP);
         $cap_rest = round($capital - ($mens - $int), 2, PHP_ROUND_HALF_UP);
