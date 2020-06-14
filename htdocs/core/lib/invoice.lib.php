@@ -62,6 +62,7 @@ function facture_prepare_head($object)
 	    $sql = "SELECT COUNT(pfd.rowid) as nb";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	    $sql .= " WHERE pfd.fk_facture = ".$object->id;
+	    $sql .= " AND pfd.ext_payment_id IS NULL";
         $resql = $db->query($sql);
         if ($resql)
         {

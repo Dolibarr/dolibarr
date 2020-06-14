@@ -84,12 +84,12 @@ if (empty($reshook))
             $db->begin();
 
             $newtype = $type;
-            $source_type = 'facture';
+            $sourcetype = 'facture';
             if ($type == 'bank-transfer') {
-            	$source_type = 'supplier_invoice';
+            	$sourcetype = 'supplier_invoice';
             }
 
-            $result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $source_type);
+            $result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
             if ($result > 0)
             {
                 $db->commit();
@@ -497,6 +497,7 @@ if ($object->id > 0)
 		$sql .= " WHERE fk_facture = ".$object->id;
 	}
 	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$result_sql = $db->query($sql);
@@ -518,6 +519,7 @@ if ($object->id > 0)
 		$sql .= " WHERE fk_facture = ".$object->id;
 	}
 	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
 
 	$result_sql = $db->query($sql);
 	if ($result_sql)
@@ -601,6 +603,7 @@ if ($object->id > 0)
 		$sql .= " WHERE fk_facture = ".$object->id;
 	}
 	$sql .= " AND pfd.traite = 0";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$result_sql = $db->query($sql);
@@ -653,6 +656,7 @@ if ($object->id > 0)
 		$sql .= " WHERE fk_facture = ".$object->id;
 	}
 	$sql .= " AND pfd.traite = 1";
+	$sql .= " AND pfd.ext_payment_id IS NULL";
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$result = $db->query($sql);

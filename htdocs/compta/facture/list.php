@@ -376,7 +376,7 @@ if ($massaction == 'makepayment'){
 			foreach ($listofbills as $aBill)
 			{
 				$db->begin();
-				$result = $aBill->demande_prelevement($user, $aBill->resteapayer);
+				$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'direct-debit', 'facture');
 				if ($result > 0)
 				{
 					$db->commit();
