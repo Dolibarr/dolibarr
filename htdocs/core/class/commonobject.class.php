@@ -1228,8 +1228,7 @@ abstract class CommonObject
 
 			return $tab;
 		}
-        else
-        {
+        else {
 			$this->error = $this->db->lasterror();
 			dol_print_error($this->db);
 			return -1;
