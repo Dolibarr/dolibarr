@@ -1454,7 +1454,7 @@ abstract class CommonObject
 
 		dol_syslog(__METHOD__.'for source = '.$source.' and code '.$code, LOG_DEBUG);
         if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES) && !empty($this->socid))
-            dol_syslog(__METHOD___.' MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES, also serarch in contact owned by the third party', LOG_DEBUG);
+            dol_syslog(__METHOD__.' MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES, also serarch in contact owned by the third party', LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
