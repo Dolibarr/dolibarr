@@ -4086,10 +4086,10 @@ class Facture extends CommonInvoice
 	 *	@param      User	$fuser      	User asking the direct debit transfer
 	 *  @param		float	$amount			Amount we request direct debit for
 	 *  @param		string	$type			'direct-debit' or 'bank-transfer'
-	 *  @param		string	$source_type	Source ('facture' or 'supplier_invoice')
+	 *  @param		string	$sourcetype		Source ('facture' or 'supplier_invoice')
 	 *	@return     int         			<0 if KO, >0 if OK
 	 */
-    public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $source_type = 'facture')
+    public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture')
 	{
         // phpcs:enable
 
@@ -4140,16 +4140,16 @@ class Facture extends CommonInvoice
 						} else {
 							$sql .= 'fk_facture, ';
 						}
-						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, source_type)';
+						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype)';
 						$sql .= ' VALUES ('.$this->id;
 						$sql .= ",'".price2num($amount)."'";
 						$sql .= ",'".$this->db->idate($now)."'";
 						$sql .= ",".$fuser->id;
-						$sql .= ",'".$bac->code_banque."'";
-						$sql .= ",'".$bac->code_guichet."'";
-						$sql .= ",'".$bac->number."'";
-						$sql .= ",'".$bac->cle_rib."'";
-						$sql .= ",'".$source_type."'";
+						$sql .= ",'".$this->db->escape($bac->code_banque)."'";
+						$sql .= ",'".$this->db->escape($bac->code_guichet)."'";
+						$sql .= ",'".$this->db->escape($bac->number)."'";
+						$sql .= ",'".$this->db->escape($bac->cle_rib)."'";
+						$sql .= ",'".$this->db->escape($sourcetype)."'";
 						$sql .= ")";
 
 						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
