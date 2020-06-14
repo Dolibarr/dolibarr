@@ -28,8 +28,8 @@
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
-  print "Error, template page can't be called as URL";
-  exit;
+	print "Error, template page can't be called as URL";
+	exit;
 }
 
 
@@ -52,7 +52,7 @@ if ($action == 'presend')
 		{
 			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 		} else {
-	    $fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 		}
 
 		$file = $fileparams['fullname'];
@@ -100,9 +100,9 @@ if ($action == 'presend')
 			}
 			if ($object->element == 'invoice_supplier')
 			{
-		    $fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
+				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
 			} else {
-			  $fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
+				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
 			$file = $fileparams['fullname'];
@@ -142,7 +142,7 @@ if ($action == 'presend')
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
 	} elseif ($object->element == 'societe') {
-    foreach ($object->thirdparty_and_contact_email_array(1, 1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) as $key => $value) {
+		foreach ($object->thirdparty_and_contact_email_array(1, 1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) as $key => $value) {
 			$liste[$key] = $value;
 		}
 	} elseif ($object->element == 'contact') {
@@ -152,9 +152,9 @@ if ($action == 'presend')
 	} else {
 		if (is_object($object->thirdparty))
 		{
-      foreach ($object->thirdparty->thirdparty_and_contact_email_array(1, 1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) as $key => $value) {
-        $liste[$key] = $value;
-      }
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1, 1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) as $key => $value) {
+				$liste[$key] = $value;
+			}
 		}
 	}
 	if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
@@ -163,8 +163,8 @@ if ($action == 'presend')
 
 		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''), 'AND', true);
 		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
-		  foreach ($fuserdest->users as $uuserdest) {
-        $listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
+			foreach ($fuserdest->users as $uuserdest) {
+				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
 			}
 		} elseif ($result < 0) {
 			setEventMessages(null, $fuserdest->errors, 'errors');
@@ -201,48 +201,48 @@ if ($action == 'presend')
 	// Find the good contact address
     $tmpobject = $object;
     if (($object->element == 'shipping'|| $object->element == 'reception')) {
-      $origin = $object->origin;
-      $origin_id = $object->origin_id;
+		$origin = $object->origin;
+		$origin_id = $object->origin_id;
 
-      if (!empty($origin) && !empty($origin_id)) {
-        $element = $subelement = $origin;
-        $regs = array();
-        if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
-          $element = $regs[1];
-          $subelement = $regs[2];
-        }
-        // For compatibility
-        if ($element == 'order')    {
-          $element = $subelement = 'commande';
-        }
-        if ($element == 'propal')   {
-          $element = 'comm/propal';
-          $subelement = 'propal';
-        }
-        if ($element == 'contract') {
-          $element = $subelement = 'contrat';
-        }
-        if ($element == 'inter') {
-          $element = $subelement = 'ficheinter';
-        }
-        if ($element == 'shipping') {
-          $element = $subelement = 'expedition';
-        }
-        if ($element == 'order_supplier') {
-          $element = 'fourn';
-          $subelement = 'fournisseur.commande';
-        }
-        if ($element == 'project') {
-          $element = 'projet';
-        }
+		if (!empty($origin) && !empty($origin_id)) {
+			$element = $subelement = $origin;
+			$regs = array();
+			if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+				$element = $regs[1];
+				$subelement = $regs[2];
+			}
+			// For compatibility
+			if ($element == 'order')    {
+				$element = $subelement = 'commande';
+			}
+			if ($element == 'propal')   {
+				$element = 'comm/propal';
+				$subelement = 'propal';
+			}
+			if ($element == 'contract') {
+				$element = $subelement = 'contrat';
+			}
+			if ($element == 'inter') {
+				$element = $subelement = 'ficheinter';
+			}
+			if ($element == 'shipping') {
+				$element = $subelement = 'expedition';
+			}
+			if ($element == 'order_supplier') {
+				$element = 'fourn';
+				$subelement = 'fournisseur.commande';
+			}
+			if ($element == 'project') {
+				$element = 'projet';
+			}
 
-        dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
-        $classname = ucfirst($origin);
-        $objectsrc = new $classname($db);
-        $objectsrc->fetch($origin_id);
+			dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
+			$classname = ucfirst($origin);
+			$objectsrc = new $classname($db);
+			$objectsrc->fetch($origin_id);
 
-        $tmpobject = $objectsrc;
-      }
+			$tmpobject = $objectsrc;
+		}
     }
 
 	$custcontact = '';
@@ -251,11 +251,11 @@ if ($action == 'presend')
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-    $contactstatic = new Contact($db);
+		$contactstatic = new Contact($db);
 
 		foreach ($contactarr as $contact) {
-      $contactstatic->fetch($contact['id']);
-      $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
+			$contactstatic->fetch($contact['id']);
+			$substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($outputlangs, 1);
 		}
 	}
 

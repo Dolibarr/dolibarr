@@ -187,77 +187,77 @@ $source_list = array('internal', 'external');
 if ($object->element == 'societe' && !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $source_list[] = 'self';
 foreach ($source_list as $source)
 {
-  if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
-    $contactlist = $objectsrc->liste_contact(-1, $source);
-  } else {
-    $contactlist = $object->liste_contact(-1, $source);
-  }
+	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+		$contactlist = $objectsrc->liste_contact(-1, $source);
+	} else {
+		$contactlist = $object->liste_contact(-1, $source);
+	}
 
-  foreach ($contactlist as $contact) {
-    $entry = new stdClass();
-    $entry->id   = $contact['rowid'];
-    $entry->type = $contact['libelle'];
-    $entry->nature = "";
-    $entry->thirdparty_html = "";
-    $entry->thirdparty_name = "";
-    $entry->contact_html = "";
-    $entry->contact_name = "";
-    $entry->status = "";
-    $entry->source = $contact['source'];
+	foreach ($contactlist as $contact) {
+		$entry = new stdClass();
+		$entry->id   = $contact['rowid'];
+		$entry->type = $contact['libelle'];
+		$entry->nature = "";
+		$entry->thirdparty_html = "";
+		$entry->thirdparty_name = "";
+		$entry->contact_html = "";
+		$entry->contact_name = "";
+		$entry->status = "";
+		$entry->source = $contact['source'];
 
-    if ($contact['source'] == 'internal')
-    {
-      $entry->nature = $langs->trans("User");
-    }
-    elseif ($contact['source'] == 'external' && $object->element != 'societe')
-    {
-      $entry->nature = $langs->trans("ThirdPartyContact");
-    }
-    elseif ($contact['source'] == 'external' && $object->element == 'societe')
-    {
-      $entry->nature = $langs->trans("OtherThirdPartyContact");
-    }
-    elseif ($contact['source'] == 'self')
-    {
-      $entry->nature = $langs->trans("ThisThirdPartyContact");
-    }
+		if ($contact['source'] == 'internal')
+		{
+			$entry->nature = $langs->trans("User");
+		}
+		elseif ($contact['source'] == 'external' && $object->element != 'societe')
+		{
+			$entry->nature = $langs->trans("ThirdPartyContact");
+		}
+		elseif ($contact['source'] == 'external' && $object->element == 'societe')
+		{
+			$entry->nature = $langs->trans("OtherThirdPartyContact");
+		}
+		elseif ($contact['source'] == 'self')
+		{
+			$entry->nature = $langs->trans("ThisThirdPartyContact");
+		}
 
-    if ($contact['source'] == 'external')
-    {
-      $companystatic->fetch($contact['socid']);
-      $entry->thirdparty_html = $companystatic->getNomUrl(1);
-      $entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
-    }
-    if ($contact['source'] == 'internal')
-    {
-      $entry->thirdparty_html = $conf->global->MAIN_INFO_SOCIETE_NOM;
-      $entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
-    }
+		if ($contact['source'] == 'external')
+		{
+			$companystatic->fetch($contact['socid']);
+			$entry->thirdparty_html = $companystatic->getNomUrl(1);
+			$entry->thirdparty_name = strtolower($companystatic->getFullName($langs));
+		}
+		if ($contact['source'] == 'internal')
+		{
+			$entry->thirdparty_html = $conf->global->MAIN_INFO_SOCIETE_NOM;
+			$entry->thirdparty_name = strtolower($conf->global->MAIN_INFO_SOCIETE_NOM);
+		}
 
-    if ($contact['source'] == 'internal')
-    {
-      $userstatic->fetch($contact['id']);
-      $entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
-      $entry->contact_name = strtolower($userstatic->getFullName($langs));
-    }
-    elseif ($contact['source'] == 'external' || $contact['source'] == 'self')
-    {
-      $contactstatic->fetch($contact['id']);
-      $entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
-      $entry->contact_name = strtolower($contactstatic->getFullName($langs));
-    }
+		if ($contact['source'] == 'internal')
+		{
+			$userstatic->fetch($contact['id']);
+			$entry->contact_html = $userstatic->getNomUrl(-1, '', 0, 0, 0, 0, '', 'valignmiddle');
+			$entry->contact_name = strtolower($userstatic->getFullName($langs));
+		}
+		elseif ($contact['source'] == 'external' || $contact['source'] == 'self')
+		{
+			$contactstatic->fetch($contact['id']);
+			$entry->contact_html = $contactstatic->getNomUrl(1, '', 0, '', 0, 0);
+			$entry->contact_name = strtolower($contactstatic->getFullName($langs));
+		}
 
-    if ($contact['source'] == 'internal')
-    {
-      $entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
-    }
-    elseif ($contact['source'] == 'external' || $contact['source'] == 'self')
-    {
-      $entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
-    }
+		if ($contact['source'] == 'internal')
+		{
+			$entry->status = $userstatic->LibStatut($contact['statuscontact'], 3);
+		}
+		elseif ($contact['source'] == 'external' || $contact['source'] == 'self')
+		{
+			$entry->status = $contactstatic->LibStatut($contact['statuscontact'], 3);
+		}
 
-    $list[] = $entry;
-  }
+		$list[] = $entry;
+	}
 }
 
 $sortfield = GETPOST("sortfield", "alpha");
@@ -308,34 +308,34 @@ print "</tr>";
 
 foreach ($list as $entry)
 {
-  print '<tr class="oddeven">';
+	print '<tr class="oddeven">';
 
-  print '<td class="nowrap">'.$entry->nature.'</td>';
-  print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
-  print '<td class="tdoverflowmax200">'.$entry->contact_html.'</td>';
-  print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
-  print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
+	print '<td class="nowrap">'.$entry->nature.'</td>';
+	print '<td class="tdoverflowmax200">'.$entry->thirdparty_html.'</td>';
+	print '<td class="tdoverflowmax200">'.$entry->contact_html.'</td>';
+	print '<td class="tdoverflowmax200">'.$entry->type.'</td>';
+	print '<td class="tdoverflowmax200 center">'.$entry->status.'</td>';
 
-  if ($permission)
-  {
-    // We don't unlink contact if it come from this thirdparty (contact owned by this thirdparty)
-    if ($entry->source == 'self') {
-      print '<td></td>';
-    } else {
-      $href = $_SERVER["PHP_SELF"];
-      $href .= "?id=".$object->id;
-      $href .= "&action=deletecontact";
-      $href .= "&lineid=".$entry->id;
+	if ($permission)
+	{
+		// We don't unlink contact if it come from this thirdparty (contact owned by this thirdparty)
+		if ($entry->source == 'self') {
+			print '<td></td>';
+		} else {
+			$href = $_SERVER["PHP_SELF"];
+			$href .= "?id=".$object->id;
+			$href .= "&action=deletecontact";
+			$href .= "&lineid=".$entry->id;
 
-      print "<td class='center'>";
-      print "<a href='$href'>";
-      print img_picto($langs->trans("Unlink"), "unlink");
-      print "</a>";
-      print "</td>";
-    }
-  }
+			print "<td class='center'>";
+			print "<a href='$href'>";
+			print img_picto($langs->trans("Unlink"), "unlink");
+			print "</a>";
+			print "</td>";
+		}
+	}
 
-  print "</tr>";
+	print "</tr>";
 }
 
 print "</table>";
