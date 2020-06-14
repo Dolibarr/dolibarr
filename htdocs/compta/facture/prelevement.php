@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/compta/facture/prelevement.php
  *	\ingroup    facture
- *	\brief      Management of direct debit order of invoices
+ *	\brief      Management of direct debit order or credit tranfer of invoices
  */
 
 require '../../main.inc.php';
@@ -83,7 +83,13 @@ if (empty($reshook))
         {
             $db->begin();
 
-            $result = $object->demande_prelevement($user, GETPOST('withdraw_request_amount'));
+            $newtype = $type;
+            $source_type = 'facture';
+            if ($type == 'bank-transfer') {
+            	$source_type = 'supplier_invoice';
+            }
+
+            $result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount'), 'alpha'), $newtype, $source_type);
             if ($result > 0)
             {
                 $db->commit();
@@ -101,7 +107,7 @@ if (empty($reshook))
     {
         if ($object->id > 0)
         {
-            $result = $object->demande_prelevement_delete($user, GETPOST('did'));
+            $result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
             if ($result == 0)
             {
                 header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
@@ -197,6 +203,7 @@ if ($object->id > 0)
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
                 $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+                $morehtmlref .= '<input type="hidden" name="type" value="'.$type.'">';
                 $morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
