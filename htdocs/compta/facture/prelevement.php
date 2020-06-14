@@ -89,7 +89,7 @@ if (empty($reshook))
             	$source_type = 'supplier_invoice';
             }
 
-            $result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount'), 'alpha'), $newtype, $source_type);
+            $result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $source_type);
             if ($result > 0)
             {
                 $db->commit();
