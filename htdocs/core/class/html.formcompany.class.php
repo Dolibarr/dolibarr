@@ -705,10 +705,8 @@ class FormCompany extends Form
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
             // If is called from societe get all type of contact (can determine what can be used by default for other elements)
-            if ($object->element != 'societe')
-                $lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
-            else
-                $lesTypes = $object->listeTypeContacts($source, '', 1, '', '', 'agenda');
+            if ($object->element != 'societe') $lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
+            else $lesTypes = $object->listeTypeContacts($source, '', 1, '', '', 'agenda');
 
 			print '<select class="flat valignmiddle'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';

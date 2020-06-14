@@ -2567,37 +2567,28 @@ class Societe extends CommonObject
         // If shared contact are enabled, append external contact linked to thirdparty
         if ($getexternal == 1)
             $contact_list = array_merge($contact_list, $this->liste_contact('-1', 'external'));
-        if ($mode == 'email')
-        {
+        if ($mode == 'email') {
             //$sepa="&lt;"; $sepb="&gt;";
             $sepa = "<"; $sepb = ">";
-        }
-        else
-        {
+        } else {
             $sepa = "("; $sepb = ")";
         }
-        foreach($contact_list as $contact)
-        {
+        foreach ($contact_list as $contact) {
             // Property must exist in array returned by CommonObject::list_contact()
             if ($mode == 'mobile') $property = $contact['phone_mobile'];
             else $property = $contact[$mode];
 
             // Show all contact. If hidedisabled is 1, showonly contacts with status = 1
-            if ($contact['statuscontact'] == 1 || empty($hidedisabled))
-            {
-                if (empty($property))
-                {
+            if ($contact['statuscontact'] == 1 || empty($hidedisabled)) {
+                if (empty($property)) {
                     if ($mode == 'email') $property = $langs->transnoentitiesnoconv("NoEMail");
                     elseif ($mode == 'mobile') $property = $langs->transnoentitiesnoconv("NoMobilePhone");
                     else $property = $langs->transnoentitiesnoconv('No'.ucfirst($mode));
                 }
 
-                if (!empty($contact['poste']))
-                {
+                if (!empty($contact['poste'])) {
                     $contact_property[$contact['id']] = trim(dolGetFirstLastname($contact['firstname'], $contact['lastname'])).($contact['poste'] ? " - ".$contact['poste'] : "").(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
-                }
-                else
-                {
+                } else {
                     $contact_property[$contact['id']] = trim(dolGetFirstLastname($contact['firstname'], $contact['lastname'])).(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
                 }
             }
@@ -2680,7 +2671,7 @@ class Societe extends CommonObject
         // If shared contact are enabled, append external contact linked to thirdparty
         if ($getexternal == 1)
             $contact_list = array_merge($contact_list, $this->liste_contact('-1', 'external'));
-        foreach($contact_list as $contact)
+        foreach ($contact_list as $contact)
             if (empty($hidedisabled) || $contact['statuscontact'] == 1)
                 $contacts[$contact['id']] = dolGetFirstLastname($contact['firstname'], $contact['lastname']);
 
@@ -2729,7 +2720,7 @@ class Societe extends CommonObject
         // If shared contact are enabled, append external contact linked to thirdparty
         if ($getexternal == 1)
             $contact_list = array_merge($contact_list, $this->liste_contact('-1', 'external'));
-        foreach($contact_list as $contact)
+        foreach ($contact_list as $contact)
         {
             if (empty($hidedisabled) || $contact['statuscontact'] == 1)
             {

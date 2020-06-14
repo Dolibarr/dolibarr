@@ -70,8 +70,7 @@ if ($action == 'addcontact' && $user->rights->societe->contact->creer)
     if ($result > 0)
     {
         $error = 0;
-        if (GETPOSTISSET('contactid'))
-        {
+        if (GETPOSTISSET('contactid')) {
             $contactid = GETPOST('contactid', 'int');
             // Check if the contact not belongs third-party (else contact can be added twice first in societe_contacts, second in element_contact)
             $arr_soc_contact = $object->contact_array();
@@ -80,29 +79,18 @@ if ($action == 'addcontact' && $user->rights->societe->contact->creer)
                 setEventMessage($langs->trans('ErrorThisContactBelongsToThisThirdParty'), 'errors');
                 $error++;
             }
-        }
-        else
-        {
+        } else {
             $contactid = GETPOST('userid', 'int');
         }
 
         if (empty($error))
-        {
             $result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
-        }
 
-        if ($result > 1)
-        {
-        }
-        elseif ($result == 0)
-        {
+        if ($result == 0) {
             setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
-        }
-        elseif ($result < 1)
-        {
+        } elseif ($result < 1) {
             var_dump($object->error);
-            if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-            {
+            if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                 $langs->load("errors");
                 setEventMessage($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), 'errors');
             } else {

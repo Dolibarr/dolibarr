@@ -1219,9 +1219,7 @@ abstract class CommonObject
                                      'status'=>$obj->statuslink,
                                      'poste'=>$obj->poste,
                                      'fk_c_type_contact'=>$obj->fk_c_type_contact);
-				}
-                else
-                {
+				} else {
 					$tab[$i] = $obj->id;
 				}
 
@@ -1470,9 +1468,7 @@ abstract class CommonObject
                 $result[$obj->element_id][$i] = $obj->fk_socpeople;
                 $i++;
             }
-		}
-        else
-        {
+		} else {
 			$this->error = $this->db->error();
 			return null;
 		}
