@@ -1163,20 +1163,20 @@ abstract class CommonObject
         {
             $sql = "SELECT ec.rowid AS rowid, ec.statut AS statuslink, ec.fk_socpeople AS id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
             if ($source == 'internal') $sql .= ", '-1' AS socid, t.statut AS statuscontact, t.login AS login, t.photo AS photo, t.user_mobile AS phone_mobile, t.job AS poste";
-            if ($source == 'external') $sql .= ", t.fk_soc AS socid, t.statut AS statuscontact, t.phone_mobile AS phone_mobile, t.poste AS poste";
-            $sql .= ", t.civility AS civility, t.lastname AS lastname, t.firstname AS firstname, t.email AS email";
+            if ($source == 'external' || $source == 'thirdparty') $sql .= ", t.fk_soc AS socid, t.statut AS statuscontact, t.phone_mobile AS phone_mobile, t.poste AS poste";
+            $sql .= ", t.lastname AS lastname, t.firstname AS firstname, t.email AS email";
             $sql .= ", tc.source AS source, tc.element AS element, tc.code AS code, tc.libelle AS libelle";
             $sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact tc";
             $sql .= ", ".MAIN_DB_PREFIX."element_contact ec";
             if ($source == 'internal') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
-            if ($source == 'external') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
+            if ($source == 'external' || $source == 'thirdparty') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
             $sql .= " WHERE ec.element_id =".$this->id;
             $sql .= " AND ec.fk_c_type_contact=tc.rowid";
             // Societe can set contact for all element type
             if ($this->element != 'societe') $sql .= " AND tc.element='".$this->db->escape($this->element)."'";
             if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
             if ($source == 'internal') $sql .= " AND tc.source = 'internal'";
-            if ($source == 'external') $sql .= " AND tc.source = 'external'";
+            if ($source == 'external' || $source == 'thirdparty') $sql .= " AND tc.source = 'external'";
             $sql .= " AND tc.active=1";
             if ($status >= 0) $sql .= " AND ec.statut = ".$status;
             $sql .= " ORDER BY t.lastname ASC";
