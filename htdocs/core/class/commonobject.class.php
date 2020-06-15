@@ -1131,7 +1131,7 @@ abstract class CommonObject
 	 *    Get array of all contacts for an object
 	 *
 	 *    @param	int			$status		Status of links to get (-1=all) (no effect if $source = 'self')
-	 *    @param	string		$source		Source of contact: 'external' (llx_socpeople linked to llx_element_contact), 'self' (llx_socpeople linked to llx_societe_contacts) ' or 'internal' (llx_user)
+	 *    @param	string		$source		Source of contact: 'external' or 'thirdparty' (see getListContactId()) (llx_socpeople linked to llx_element_contact), 'self' (llx_socpeople linked to llx_societe_contacts) ' or 'internal' (llx_user)
 	 *    @param	int         $list       0:Return array contains all properties, 1:Return array contains just id
 	 *    @param    string      $code       Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @return	array|int		        Array of contacts, -1 if error
