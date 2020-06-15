@@ -7508,7 +7508,7 @@ function printCommonFooter($zone = 'private')
 			if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 			{
 				$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
-				foreach($tmptagarray as $tmptag) {
+				foreach ($tmptagarray as $tmptag) {
 					print "\n";
 					print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
 					print "
