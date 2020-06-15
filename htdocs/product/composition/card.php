@@ -345,6 +345,11 @@ if ($id > 0 || !empty($ref))
 					}
 					print '</td>';
 
+
+					print '<td class="right">';
+					print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise, '', '', 0, 0, -1, $conf->currency));
+					print '</td>';
+
 					// For avoid a non-numeric value
 					$fourn_unitprice = (!empty($product_fourn->fourn_unitprice) ? $product_fourn->fourn_unitprice : 0);
 					$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent) ? $product_fourn->fourn_remise_percent : 0);
