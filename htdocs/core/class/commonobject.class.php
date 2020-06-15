@@ -8422,7 +8422,11 @@ abstract class CommonObject
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
-						$result = $this->delete($user);
+						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
+							$result = $this->delete();
+						} else {
+							$result = $this->delete($user);
+						}
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $this->error;

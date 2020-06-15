@@ -38,8 +38,8 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$codeventil = GETPOST('codeventil');
-$id = GETPOST('id');
+$codeventil = GETPOST('codeventil', 'int');
+$id = GETPOST('id', 'int');
 
 // Security check
 if ($user->socid > 0)
