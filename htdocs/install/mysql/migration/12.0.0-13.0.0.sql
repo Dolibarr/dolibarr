@@ -52,3 +52,5 @@ INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRIC
 
 ALTER TABLE llx_subscription MODIFY COLUMN datef DATETIME;
 
+ALTER TABLE llx_loan_schedule ADD column fk_payment_loan INTEGER;
+
