@@ -1347,7 +1347,7 @@ class Categorie extends CommonObject
 	 * separated by $sep (" >> " by default)
 	 *
 	 * @param	string	$sep	     Separator
-	 * @param	string	$url	     Url
+	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
 	 * @param   int     $nocolor     0
 	 * @param	string	$addpicto	 Add picto into link
 	 * @return	array
@@ -1386,6 +1386,10 @@ class Categorie extends CommonObject
 			        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color.'">';
 			        $linkend = '</a>';
 			        $w[] = $link.($addpicto ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+				} elseif ($url == 'none') {
+					$link = '';
+					$linkend = '';
+					$w[] = $link.($addpicto ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} else {
 					$w[] = "<a href='".DOL_URL_ROOT."/".$url."?catid=".$cat->id."'>".($addpicto ? img_object('', 'category') : '').$cat->label."</a>";
 				}
