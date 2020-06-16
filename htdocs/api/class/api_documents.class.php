@@ -608,9 +608,9 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
 			}
-			else if ($modulepart == 'adherent' || $modulepart == 'member')
+			elseif ($modulepart == 'adherent' || $modulepart == 'member')
 			{
-				$modulepart='adherent';
+				$modulepart = 'adherent';
 				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 				$object = new Adherent($this->db);
 			}
@@ -658,6 +658,7 @@ class Documents extends DolibarrApi
 		else
 		{
 			if ($modulepart == 'invoice') $modulepart = 'facture';
+			if ($modulepart == 'member') $modulepart = 'adherent';
 
 			$relativefile = $subdir;
 
