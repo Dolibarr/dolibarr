@@ -2088,7 +2088,7 @@ if ($action == 'create')
 				}
                 if (! empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT) && $object->nbofservicesclosed > 0)
                 {
-                    if($action == 'showclosedlines') print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
+                    if ($action == 'showclosedlines') print '<div class="inline-block divButAction"><a class="butAction" id="btnhideclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=hideclosedlines">'.$langs->trans("HideClosedServices").'</a></div>';
                     else print '<div class="inline-block divButAction"><a class="butAction" id="btnshowclosedlines" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=showclosedlines">'.$langs->trans("ShowClosedServices").'</a></div>';
                 }
 				// On peut supprimer entite si
