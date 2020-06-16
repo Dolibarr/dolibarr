@@ -2977,22 +2977,22 @@ td.border, div.tagtable div div.border {
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
-
 	border-collapse: separate !important;
 	border-spacing: 0px;
-
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
-	/* border-top-width: 2px;
-	border-top-color: var(--colorbackhmenu1);
-	border-top-style: solid; */
-
-	/*border-bottom-width: 1px;
-	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
-	border-bottom-style: solid;*/
-
 	margin: 0px 0px 5px 0px;
+
+	/*width: calc(100% - 7px);
+    border-collapse: separate !important;
+    border-spacing: 0px;
+    border-top-width: 0px;
+    border-top-color: rgb(215,215,215);
+    border-top-style: solid;
+    margin: 0px 0px 5px 2px;
+    box-shadow: 1px 1px 5px #ddd;
+    */
 }
 #tablelines {
 	border-bottom-width: 1px;
