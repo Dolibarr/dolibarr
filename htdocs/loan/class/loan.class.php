@@ -107,6 +107,7 @@ class Loan extends CommonObject
 
 	const STATUS_UNPAID = 0;
 	const STATUS_PAID = 1;
+    const STATUS_STARTED = 2;
 
 
 	/**
@@ -385,7 +386,51 @@ class Loan extends CommonObject
 	{
         // phpcs:enable
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
-		$sql .= " paid = 1";
+		$sql .= " paid = ".$this::STATUS_PAID;
+		$sql .= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
+		if ($return) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Tag loan as payement started
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	public function set_started($user)
+	{
+        // phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
+		$sql .= " paid = ".$this::STATUS_STARTED;
+		$sql .= " WHERE rowid = ".$this->id;
+		$return = $this->db->query($sql);
+		if ($return) {
+			return 1;
+		} else {
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Tag loan as payement as unpaid
+	 *
+	 *  @param	User	$user	Object user making change
+	 *  @return	int				<0 if KO, >0 if OK
+	 */
+	public function set_unpaid($user)
+	{
+        // phpcs:enable
+		$sql = "UPDATE ".MAIN_DB_PREFIX."loan SET";
+		$sql .= " paid = ".$this::STATUS_UNPAID;
 		$sql .= " WHERE rowid = ".$this->id;
 		$return = $this->db->query($sql);
 		if ($return) {
@@ -429,17 +474,18 @@ class Loan extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
-			//$langs->load("mymodule");
 			$this->labelStatus[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatus[self::STATUS_PAID] = $langs->trans('Paid');
+            $this->labelStatus[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) $this->labelStatus[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 			$this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans('Unpaid');
 			$this->labelStatusShort[self::STATUS_PAID] = $langs->trans('Enabled');
+            $this->labelStatusShort[self::STATUS_STARTED] = $langs->trans("BillStatusStarted");
 			if ($status == 0 && $alreadypaid > 0) $this->labelStatusShort[self::STATUS_UNPAID] = $langs->trans("BillStatusStarted");
 		}
 
 		$statusType = 'status1';
-		if ($status == 0 && $alreadypaid > 0) $statusType = 'status3';
+		if (($status == 0 && $alreadypaid > 0) || $status == self::STATUS_STARTED) $statusType = 'status3';
 		if ($status == 1) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
