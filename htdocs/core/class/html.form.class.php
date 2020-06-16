@@ -6554,9 +6554,10 @@ class Form
 	 * 	@param		int		$id				Id of object
 	 * 	@param		string	$type			Type of category ('member', 'customer', 'supplier', 'product', 'contact'). Old mode (0, 1, 2, ...) is deprecated.
 	 *  @param		int		$rendermode		0=Default, use multiselect. 1=Emulate multiselect (recommended)
+	 *  @param		int		$nolink			1=Do not add html links
 	 * 	@return		string					String with categories
 	 */
-    public function showCategories($id, $type, $rendermode = 0)
+    public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
 	{
 		global $db;
 
@@ -6570,7 +6571,7 @@ class Form
 			$toprint = array();
 			foreach ($categories as $c)
 			{
-				$ways = $c->print_all_ways(' &gt;&gt; ', '', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
+				$ways = $c->print_all_ways(' &gt;&gt; ', ($nolink ? 'none' : ''), 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formated text
 				foreach ($ways as $way)
 				{
 					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"'.($c->color ? ' style="background: #'.$c->color.';"' : ' style="background: #aaa"').'>'.$way.'</li>';
