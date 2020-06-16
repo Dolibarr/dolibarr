@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttributeValue.class.php'
 
 header('Content-Type: application/json');
 
-$id = GETPOST('id');
+$id = GETPOST('id', 'int');
 
 if (!$id) {
     print json_encode(array(
