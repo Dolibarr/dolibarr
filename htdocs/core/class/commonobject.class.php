@@ -963,12 +963,15 @@ abstract class CommonObject
 		if (!$already_added) {
 			$this->db->begin();
 
+            // If contact is added to societe element we must use this flag to diferentiate it from other element because contact added to societe can have all types
+            $contact_shared = ($this->element == 'societe' ? 1 : 0);
+
 			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
-			$sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
+            $sql .= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact, shared) ";
 			$sql .= " VALUES (".$this->id.", ".$fk_socpeople." , ";
 			$sql .= "'".$this->db->idate($datecreate)."'";
-			$sql .= ", 4, ".$id_type_contact;
+            $sql .= ", 4, ".$id_type_contact.", ".$contact_shared;
 			$sql .= ")";
 
 			$resql = $this->db->query($sql);
@@ -1152,10 +1155,7 @@ abstract class CommonObject
             $sql .= " FROM ".MAIN_DB_PREFIX."socpeople AS s";
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_contacts AS sc ON sc.fk_socpeople = s.rowid";
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_contact AS tc ON tc.rowid = sc.fk_c_type_contact";
-            // If this is called form Societe object use id property
-            if ($this->element = 'societe') $sql .= " WHERE s.fk_soc =".$this->id;
-            // Is useful to call this by other element than societe ?
-            else $sql .= " WHERE s.fk_soc =".$this->fk_soc;
+            $sql .= " WHERE s.fk_soc =".$this->id;
             if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
             $sql .= " ORDER BY s.lastname ASC";
         }
@@ -1172,8 +1172,9 @@ abstract class CommonObject
             if ($source == 'external' || $source == 'thirdparty') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
             $sql .= " WHERE ec.element_id =".$this->id;
             $sql .= " AND ec.fk_c_type_contact=tc.rowid";
-            // Societe can set contact for all element type
-            if ($this->element != 'societe') $sql .= " AND tc.element='".$this->db->escape($this->element)."'";
+            // Societe can get contacts for all type, use "shared" flag for diferentiate it from other elements
+            if ($this->element == 'societe') $sql .= " AND ec.shared=1";
+            else $sql .= " AND tc.element='".$this->db->escape($this->element)."' AND ec.shared <> 1";
             if ($code) $sql .= " AND tc.code = '".$this->db->escape($code)."'";
             if ($source == 'internal') $sql .= " AND tc.source = 'internal'";
             if ($source == 'external' || $source == 'thirdparty') $sql .= " AND tc.source = 'external'";
@@ -1181,7 +1182,6 @@ abstract class CommonObject
             if ($status >= 0) $sql .= " AND ec.statut = ".$status;
             $sql .= " ORDER BY t.lastname ASC";
         }
-
 
 		dol_syslog(__METHOD__.' for '.$source, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -1235,6 +1235,184 @@ abstract class CommonObject
 		}
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of contacts emails or mobile existing for third party
+	 *
+	 *  @param	string	$mode       		'email' or 'mobile'
+	 * 	@param	int		$hidedisabled		1=Hide contact if disabled
+     *  @param  int     $getexternal        1=Also get external contact linked to this thirdparty
+	 *  @return array       				Array of contacts emails or mobile. Example: array(id=>'Name <email>')
+	 */
+    public function contact_property_array($mode = 'email', $hidedisabled = 0, $getexternal = 0)
+	{
+        // phpcs:enable
+		global $langs, $conf;
+
+		$contact_property = array();
+
+        dol_syslog(__METHOD__.' mode='.$mode.' hidedisabled='.$hidedisabled.' getexternal='.$getexternal, LOG_DEBUG);
+
+        if ($this->element == 'societe')
+        {
+            $contact_list = $this->liste_contact('-1', 'self');
+            // If shared contact are enabled, append external contact linked to thirdparty
+            if ($getexternal == 1)
+                $contact_list = array_merge($contact_list, $this->liste_contact('-1', 'external'));
+        }
+        else
+        {
+            $contact_list = $this->liste_contact('-1', 'external');
+        }
+        if ($mode == 'email') {
+            //$sepa="&lt;"; $sepb="&gt;";
+            $sepa = "<"; $sepb = ">";
+        } else {
+            $sepa = "("; $sepb = ")";
+        }
+        $append_linked = ($this->element == 'societe' ? '' : $langs->transnoentitiesnoconv('External'). ' : ');
+        foreach ($contact_list as $contact) {
+            // Property must exist in array returned by CommonObject::list_contact()
+            if ($mode == 'mobile') $property = $contact['phone_mobile'];
+            else $property = $contact[$mode];
+
+            // Show all contact. If hidedisabled is 1, showonly contacts with status = 1
+            if ($contact['statuscontact'] == 1 || empty($hidedisabled)) {
+                if (empty($property)) {
+                    if ($mode == 'email') $property = $langs->transnoentitiesnoconv("NoEMail");
+                    elseif ($mode == 'mobile') $property = $langs->transnoentitiesnoconv("NoMobilePhone");
+                    else $property = $langs->transnoentitiesnoconv('No'.ucfirst($mode));
+                }
+
+                if (!empty($contact['poste'])) {
+                    $contact_property[$contact['id']] = $append_linked.trim(dolGetFirstLastname($contact['firstname'], $contact['lastname'])).($contact['poste'] ? " - ".$contact['poste'] : "").(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
+                } else {
+                    $contact_property[$contact['id']] = $append_linked.trim(dolGetFirstLastname($contact['firstname'], $contact['lastname'])).(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
+                }
+            }
+        }
+
+        return $contact_property;
+
+        /*
+         * Replaced by code above to try to concentrate logic to get list of contact in CommonObject::list_contact() (which can get contact from other source than this societe);
+		$contact_property = array();
+
+		$sql = "SELECT rowid, email, statut as status, phone_mobile, lastname, poste, firstname";
+		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
+		$sql .= " WHERE fk_soc = ".$this->id;
+		$sql .= " ORDER BY lastname, firstname";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+			if ($nump)
+			{
+				$sepa = "("; $sepb = ")";
+				if ($mode == 'email')
+				{
+					//$sepa="&lt;"; $sepb="&gt;";
+					$sepa = "<"; $sepb = ">";
+				}
+				$i = 0;
+				while ($i < $nump)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($mode == 'email') $property = $obj->email;
+					elseif ($mode == 'mobile') $property = $obj->phone_mobile;
+					else $property = $obj->$mode;
+
+					// Show all contact. If hidedisabled is 1, showonly contacts with status = 1
+					if ($obj->status == 1 || empty($hidedisabled))
+					{
+						if (empty($property))
+						{
+							if ($mode == 'email') $property = $langs->transnoentitiesnoconv("NoEMail");
+							elseif ($mode == 'mobile') $property = $langs->transnoentitiesnoconv("NoMobilePhone");
+						}
+
+						if (!empty($obj->poste))
+						{
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)).($obj->poste ? " - ".$obj->poste : "").(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
+						} else {
+							$contact_property[$obj->rowid] = trim(dolGetFirstLastname($obj->firstname, $obj->lastname)).(($mode != 'poste' && $property) ? " ".$sepa.$property.$sepb : '');
+						}
+					}
+					$i++;
+				}
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+		return $contact_property;
+        */
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Returns the contact list of this company
+	 *
+	 *    @param	  int		 $hidedisabled		1=Hide contact if disabled
+     *    @param      int        $getexternal       1=Also get external contact linked to this thirdparty
+	 *    @return    array       $contacts          array of contacts
+	 */
+    public function contact_array_objects($hidedisabled = 0, $getexternal = 0)
+	{
+        // phpcs:enable
+		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+		$contacts = array();
+
+        dol_syslog(__METHOD__.' hidedisabled='.$hidedisabled.' getexternal='.$getexternal, LOG_DEBUG);
+
+        if ($this->element == 'societe')
+        {
+            $contact_list = $this->liste_contact('-1', 'self');
+            // If shared contact are enabled, append external contact linked to thirdparty
+            if ($getexternal == 1)
+                $contact_list = array_merge($contact_list, $this->liste_contact('-1', 'external'));
+        }
+        else
+        {
+            $contact_list = $this->liste_contact('-1', 'external');
+        }
+        foreach ($contact_list as $contact)
+        {
+            if (empty($hidedisabled) || $contact['statuscontact'] == 1)
+            {
+                $obj_contact = new Contact($this->db);
+                $obj_contact->fetch($contact['id']);
+                $contacts[] = $obj_contact;
+            }
+        }
+
+        return $contacts;
+
+        /*
+         * Replaced by code above to try to concentrate logic to get list of contact in CommonObject::list_contact() (which can get contact from other source than this societe);
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+			if ($nump)
+			{
+				$i = 0;
+				while ($i < $nump)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$contact = new Contact($this->db);
+					$contact->fetch($obj->rowid);
+					$contacts[] = $contact;
+					$i++;
+				}
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+		return $contacts;
+        */
+	}
 
 	/**
 	 * 		Update status of a contact linked to object
@@ -1244,7 +1422,7 @@ abstract class CommonObject
 	 */
 	public function swapContactStatus($rowid)
 	{
-		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
+		$sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact, ec.shared";
 		$sql .= " tc.code, tc.libelle";
 		//$sql.= ", s.fk_soc";
 		$sql .= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
@@ -1437,10 +1615,10 @@ abstract class CommonObject
 		if ($source == 'internal') $sql .= " ".MAIN_DB_PREFIX."user as c,";
 		if ($source == 'external') $sql .= " ".MAIN_DB_PREFIX."socpeople as c,";
 		$sql .= " ".MAIN_DB_PREFIX."c_type_contact as tc";
-		$sql .= " WHERE (ec.element_id = ".$id;
+        $sql .= " WHERE ((ec.element_id = ".$id." AND ec.shared <> 1)";
         // If shared contact betwin third party is enbaled, alos search in contact linked to the thirdparty
         if (!empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES) && !empty($this->socid))
-            $sql .= " OR ec.element_id = ".$this->socid;
+            $sql .= " OR (ec.element_id = ".$this->socid." AND ec.shared = 1)";
         $sql .=  ')';
 		$sql .= " AND ec.fk_socpeople = c.rowid";
 		if ($source == 'internal') $sql .= " AND c.entity IN (".getEntity('user').")";

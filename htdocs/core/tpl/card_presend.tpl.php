@@ -36,7 +36,6 @@ if (empty($conf) || !is_object($conf)) {
 if ($action == 'presend')
 {
 	$langs->load("mails");
-
 	$titreform = 'SendMail';
 
 	$object->fetch_projet();
@@ -154,6 +153,10 @@ if ($action == 'presend')
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1, 1, !empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) as $key => $value) {
 				$liste[$key] = $value;
+			}
+      // Also append contact linked to the element itself
+			foreach ($object->contact_property_array('email', 1) as $key => $value) {
+        if (empty($list[$key])) $liste[$key] = $value;
 			}
 		}
 	}

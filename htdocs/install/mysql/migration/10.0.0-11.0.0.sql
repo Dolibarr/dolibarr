@@ -593,3 +593,5 @@ create table llx_facturedet_rec_extrafields
 
 ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
 
+-- Required for share contact between thirdpart
+ALTER TABLE llx_element_contact ADD COLUMN shared BOOLEAN DEFAULT 0;
