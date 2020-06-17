@@ -324,11 +324,13 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 	// Complete filearray with properties found into $filearrayindatabase
 	foreach ($filearray as $key => $val)
 	{
+		$tmpfilename = preg_replace('/\.noexe$/', '', $filearray[$key]['name']);
+
 		$found = 0;
 		// Search if it exists into $filearrayindatabase
 		foreach ($filearrayindatabase as $key2 => $val2)
 		{
-			if ($filearrayindatabase[$key2]['name'] == $filearray[$key]['name'])
+			if ($filearrayindatabase[$key2]['name'] == $tmpfilename)
 			{
 				$filearray[$key]['position_name'] = ($filearrayindatabase[$key2]['position'] ? $filearrayindatabase[$key2]['position'] : '0').'_'.$filearrayindatabase[$key2]['name'];
 				$filearray[$key]['position'] = $filearrayindatabase[$key2]['position'];
@@ -349,7 +351,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 			$filearray[$key]['acl'] = '';
 
 			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['fullname']);
-			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filetorenameafter))     // If not a tmp file
+			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename))     // If not a tmp file
 			{
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -1529,6 +1531,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 	if (!empty($_FILES[$varfiles])) // For view $_FILES[$varfiles]['error']
 	{
 		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' donotupdatesession='.$donotupdatesession.' savingdocmask='.$savingdocmask, LOG_DEBUG);
+
 		if (dol_mkdir($upload_dir) >= 0)
 		{
 			$TFile = $_FILES[$varfiles];
@@ -1552,6 +1555,13 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $donotupdatesess
 				{
 					$destfull=$upload_dir . "/" . preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
 					$destfile=preg_replace('/__file__/', $TFile['name'][$i], $savingdocmask);
+				}
+
+				$filenameto = basename($destfile);
+				if (preg_match('/^\./', $filenameto)) {
+					$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+					setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
+					break;
 				}
 
 				// dol_sanitizeFileName the file name and lowercase extension

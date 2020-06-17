@@ -8571,9 +8571,7 @@ function isAFileWithExecutableContent($filename)
     {
         return true;
     }
-    if (preg_match('/^\./', $filename)) {	// We consider file starting with a . as dangerous as executable files. For example .htaccess, .xxx
-		return true;
-    }
+
     return false;
 }
 

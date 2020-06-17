@@ -182,6 +182,7 @@ ErrorBadDefinitionOfMenuArrayInModuleDescriptor=Bad Definition Of Menu Array In 
 ErrorSavingChanges=An error has occurred when saving the changes
 ErrorWarehouseRequiredIntoShipmentLine=Warehouse is required on the line to ship
 ErrorFileMustHaveFormat=File must have format %s
+ErrorFilenameCantStartWithDot=Filename can't start with a '.'
 ErrorSupplierCountryIsNotDefined=Country for this vendor is not defined. Correct this first.
 ErrorsThirdpartyMerge=Failed to merge the two records. Request canceled.
 ErrorStockIsNotEnoughToAddProductOnOrder=Stock is not enough for product %s to add it into a new order.
