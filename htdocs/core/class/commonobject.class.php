@@ -8340,7 +8340,9 @@ abstract class CommonObject
 			            break;
 		            }
 	            } else {
-		            $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
+	            	// Delete record in child table
+	            	$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
+
 		            $resql = $this->db->query($sql);
 		            if (!$resql) {
 						$error++;
@@ -8420,7 +8422,11 @@ abstract class CommonObject
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
-						$result = $this->delete($user);
+						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
+							$result = $this->delete();
+						} else {
+							$result = $this->delete($user);
+						}
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $this->error;

@@ -28,9 +28,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .info-box-more {
     float: right;
-    top: 6px;
+    top: 5px;
     position: absolute;
-    right: 10px;
+    right: 8px;
 }
 
 .info-box small {
@@ -385,6 +385,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+.info-box-title {
+	width: calc(100% - 20px);
+}
+@media only screen and (max-width: 767px) {
+	.info-box-module {
+		min-width: 260px;
+	}
+}
+
+
 .info-box-module .info-box-content {
 	height: 6.4em;
 }

@@ -85,7 +85,6 @@ if (GETPOST('createfromclone', 'alpha')) { $action = 'createfromclone'; }
 if (GETPOST('createpagefromclone', 'alpha')) { $action = 'createpagefromclone'; }
 if (empty($action) && $file_manager) $action = 'file_manager';
 if (empty($action) && $replacesite) $action = 'replacesite';
-
 if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) $pageid = 0;
 
 // Load variable for pagination
@@ -209,7 +208,7 @@ $permtouploadfile = $user->rights->website->write;
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
-$upload_dir = $diroutput.'/'.$relativepath;
+$upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', '', $relativepath);
 
 $htmlheadercontentdefault = '';
 $htmlheadercontentdefault .= '<link rel="stylesheet" id="google-fonts-css"  href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />'."\n";
