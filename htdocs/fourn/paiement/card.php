@@ -189,7 +189,7 @@ if ($result > 0)
 	// Payment mode
 	$labeltype = $langs->trans("PaymentType".$object->type_code) != ("PaymentType".$object->type_code) ? $langs->trans("PaymentType".$object->type_code) : $object->type_label;
 	print '<tr><td colspan="2">'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype;
-	print $object->num_paiement ? ' - '.$object->num_paiement : '';
+	print $object->num_payment ? ' - '.$object->num_payment : '';
 	print '</td></tr>';
 
 	// Payment numero
@@ -200,7 +200,7 @@ if ($result > 0)
     */
 
 	// Amount
-	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
+	print '<tr><td colspan="2">'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, '', $langs, 0, 0, -1, $conf->currency).'</td></tr>';
 
 	if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 	{

@@ -45,7 +45,7 @@ if (isset($_SESSION['serObjFacturation']))
 
 $obj_facturation->calculTotaux(); // Redefine prix_total_ttc, prix_total_ht et montant_tva from $_SESSION['poscart']
 
-$total_ttc = $obj_facturation->prixTotalTtc();
+$total_ttc = $obj_facturation->amountWithTax();
 
 /*var_dump($obj_facturation);
 var_dump($_SESSION['poscart']);

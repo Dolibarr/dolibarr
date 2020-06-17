@@ -223,7 +223,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				}
 			}
 
-			$total = $object->montant;
+			$total = $object->amount;
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -534,12 +534,12 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Total payments
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 50, $posy);
-		$pdf->MultiCell(50, 4, price($object->montant), 0, 'R', 1);
+		$pdf->MultiCell(50, 4, price($object->amount), 0, 'R', 1);
 		$posy += 20;
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord($object->montant, $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord($object->amount, $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
 		$posy += 8;
@@ -549,7 +549,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
 
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(35, 4, str_pad(price($object->montant).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
+		$pdf->MultiCell(35, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
 
 

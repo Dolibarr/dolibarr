@@ -123,7 +123,7 @@ class PaiementFourn extends Paiement
 				$this->bank_account   = $obj->fk_account;
 				$this->fk_account     = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
-				$this->montant        = $obj->amount;
+				$this->montant        = $obj->amount;		// deprecated
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
 				$this->note_private   = $obj->note;

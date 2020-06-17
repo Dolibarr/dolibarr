@@ -145,8 +145,8 @@ $i = 0;
 
 // Reinitialisation du mode de paiement, en cas de retour aux achats apres validation
 $obj_facturation->getSetPaymentMode('RESET');
-$obj_facturation->montantEncaisse('RESET');
-$obj_facturation->montantRendu('RESET');
+$obj_facturation->amountCollected('RESET');
+$obj_facturation->amountReturned('RESET');
 $obj_facturation->paiementLe('RESET');
 
 
