@@ -985,7 +985,7 @@ class AccountancyExport
 
 			print $racine_subledger_account . $separator; // deprecated CPTG & CPTA use instead
 			// MONT
-			print price(abs($line->montant), 0, '', 1, 2).$separator;
+			print price(abs($line->montant), 0, '', 1, 2, 2).$separator;
 			// CODC
 			print $line->sens.$separator;
 			// CPTG
