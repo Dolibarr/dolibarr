@@ -959,18 +959,18 @@ function dol_unescapefile($filename)
  */
 function dolCheckVirus($src_file)
 {
-	global $conf, $db;
+	global $conf;
 
 	if (! empty($conf->global->MAIN_ANTIVIRUS_COMMAND))
 	{
 		if (! class_exists('AntiVir')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
 		}
-		$antivir = new AntiVir($db);
+		$antivir=new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0)	// If virus or error, we stop here
 		{
-			$reterrors = $antivir->errors;
+			$reterrors=$antivir->errors;
 			return $reterrors;
 		}
 	}
@@ -1853,15 +1853,16 @@ function dol_convert_file($fileinput, $ext = 'png', $fileoutput = '', $page = ''
 				if (empty($fileoutput)) $fileoutput=$fileinput.".".$ext;
 
 				$count = $image->getNumberImages();
+
 				if (! dol_is_file($fileoutput) || is_writeable($fileoutput))
 				{
-				    try {
-					   $ret = $image->writeImages($fileoutput, true);
-				    }
-				    catch(Exception $e)
-				    {
-				        dol_syslog($e->getMessage(), LOG_WARNING);
-				    }
+					try {
+						$ret = $image->writeImages($fileoutput, true);
+					}
+					catch(Exception $e)
+					{
+						dol_syslog($e->getMessage(), LOG_WARNING);
+					}
 				}
 				else
 				{

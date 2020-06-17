@@ -2,6 +2,77 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 10.0.7 compared to 10.0.6 *****
+FIX: 10.0 - missing translations for "orders" homepage "orders" box
+FIX: 10.0 - status missing from last customer invoices box when using MAIN_STATUS_USES_CSS
+FIX: 10.0 - translations for "orders" not loaded in the homepage box
+FIX: #10309
+FIX: #12875
+FIX: #12932
+FIX: #12966
+FIX: #12973
+FIX: #13304
+FIX: advanced target emailing sql and ergonomy
+FIX: an external user can not approved
+FIX: Bad translation for productlot EatBy and SellBy
+FIX: better check
+FIX: better method to check user rights AND usergroup rights !
+FIX: CA by prod list filter
+FIX: can be a string or integer
+FIX: Check on unicity on prof id was not triggered sometimes
+FIX: clone of purchase order
+FIX: compatibility with multicompany (avoid duplicate data)
+FIX: complex export model loading
+FIX: date filter not used if no operator
+FIX: date order was -1D and desc with label repetition
+FIX: default lang selection when filter
+FIX: dom and missing param
+FIX: drafts are now implemented for stats
+FIX: Error in log for email sending with smtps was not complete
+FIX: Extrafield position in export field list must respect "pos" field
+FIX: FEC export format
+FIX: FEC export have specific name
+FIX: fetching account on current entity
+FIX: Filenames must not contains non ascii char or we will get non ascii
+FIX: fk_type subscription list via api REST
+FIX: Force FEC export to txt format
+FIX: get remain to pay with rounding decimals
+FIX: Invert isSellerInEEC and isBuyerInEEC
+FIX: keep assigned users in session when loading projects and tasks
+FIX: length, width and height units coherence in product table
+FIX: links in products/services index
+FIX: Mail smtps truncated if content has a line with single .
+FIX: missing array option
+FIX: missing global $conf
+FIX: missing hook parameter
+FIX: Missing Linked objects Fichinter Ref. in PDF formats
+FIX: missing "statut" for getNomUrl() function
+FIX: multicompany for discount
+FIX: must be == and not =
+FIX: Problem with column label in subscription list
+FIX: regex for include or exclude categories in full arbo
+FIX: Remove unexisting link
+FIX: remove unused var, $usercancreate can be change by Multicompany
+FIX: require category class in extrafield
+FIX: round MT in accountancy books
+FIX: search with '0'
+FIX: send expense report mail in HTML format
+FIX: SQL request and phpunit
+FIX: substitute lines dates values on doc generator (ODT, ...)
+FIX: test on 0 better than isset
+FIX: The "automatic bind" was linked EEC to export accountancy code
+FIX: thirdparty alias name desappeared if we change country with THIRDPARTY_SUGGEST_ALSO_ADDRESS_CREATION conf
+FIX: timezone must be tzserver and not tzuser as well as on contract card
+FIX: typo on ckeck method
+FIX: use "usergroup" instead "user"
+FIX: Visualization rights correction on last modified contacts box
+FIX: Warning on admin/export_files
+FIX: We want to be able to import data for extrafields of entity 0 too
+FIX: when we filter a list on a view status, we want this filter to be on bookmark that we create
+FIX: wrong test
+FIX: XSS vulnerability in description of list of audit events.
+FIX: z-index for moretabsList with constant MAIN_MAXTABS_IN_CARD
+
 ***** ChangeLog for 10.0.6 compared to 10.0.5 *****
 FIX Regression of 10.0.5 to create/edit proposals and orders.
 FIX: #12760 #12763 #12755 #12765 #12751

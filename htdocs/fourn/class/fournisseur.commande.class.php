@@ -1316,7 +1316,7 @@ class CommandeFournisseur extends CommonOrder
                         false,
 	                    $this->lines[$i]->date_start,
                         $this->lines[$i]->date_end,
-                        0,
+                        $this->lines[$i]->array_options,
                         $this->lines[$i]->fk_unit
 	                );
 	                if ($result < 0)
@@ -1424,6 +1424,10 @@ class CommandeFournisseur extends CommonOrder
         $error=0;
 
 		$this->db->begin();
+
+        // get extrafields so they will be clone
+        foreach($this->lines as $line)
+            $line->fetch_optionals($line->rowid);
 
 		// Load source object
 		$objFrom = clone $this;
@@ -1811,7 +1815,6 @@ class CommandeFournisseur extends CommonOrder
 					if ($result < 0)
                     {
                         $error++;
-                        return -1;
                     }
 					// End call triggers
                 }
@@ -1919,6 +1922,7 @@ class CommandeFournisseur extends CommonOrder
             {
             	$this->errors[]='ErrorWhenRunningTrigger';
             	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            	$this->db->rollback();
             	return -1;
             }
             // End call triggers

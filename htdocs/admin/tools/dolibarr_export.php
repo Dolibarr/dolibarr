@@ -221,6 +221,7 @@ print '<tr '.$bc[false].'><td style="padding-left: 8px">';
 			<div class="formelementrow"><input type="checkbox"
 				name="use_transaction" value="yes" id="checkbox_use_transaction" /> <label
 				for="checkbox_use_transaction"> <?php echo $langs->trans("UseTransactionnalMode"); ?></label>
+
 			</div>
 
 			<?php if (! empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) { ?>

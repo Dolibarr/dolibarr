@@ -666,7 +666,7 @@ if (! $error && $action == 'writebookkeeping') {
 						} elseif ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = $k;
                             $bookkeeping->subledger_label = $tabcompany[$key]['name'];
-							$bookkeeping->numero_compte = $tabpay[$obj->rowid]["account_various"];
+							$bookkeeping->numero_compte = $tabpay[$key]["account_various"];
 
 							$accountingaccount->fetch(null, $bookkeeping->numero_compte, true);
 							$bookkeeping->label_compte = $accountingaccount->label;
@@ -1174,7 +1174,12 @@ if (empty($action) || $action == 'view') {
 								//print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
 								if (! empty($tabcompany[$key]['code_compta']))
 								{
-									print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									if (in_array($tabtype[$key], array('payment_various'))) {
+										// For such case, if subledger is not defined, we won't use subledger accounts.
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+									} else {
+										print '<span class="warning">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+									}
 								}
 								else
 								{

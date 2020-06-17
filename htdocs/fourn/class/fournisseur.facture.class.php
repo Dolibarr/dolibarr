@@ -1967,7 +1967,7 @@ class FactureFournisseur extends CommonInvoice
 		    $this->errors[] = $line->error;
 	    } else {
 		    // Update total price into invoice record
-		    $res = $this->update_price('', 'auto');
+		    $res = $this->update_price('', 'auto', 0, $this->thirdparty);
 	    }
 
 	    return $res;

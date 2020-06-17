@@ -166,6 +166,7 @@ if ($conf->societe->enabled)           $elementList['thirdparty']=$langs->trans(
 if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('MailToMember');
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
 if ($conf->projet->enabled)            $elementList['project']=$langs->trans('MailToProject');
+if ($conf->ticket->enabled)            $elementList['ticket_send']=$langs->trans('MailToTicket');
 $elementList['user']=$langs->trans('MailToUser');
 
 $parameters=array('elementList'=>$elementList);

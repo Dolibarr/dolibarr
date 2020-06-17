@@ -388,7 +388,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					//var_dump($expedition->linkedObjects);
 
 					$receiving='';
-					if (count($expedition->linkedObjects['delivery']) > 0) $receiving=reset($expedition->linkedObjects['delivery']);   // Take first link
+					if (!empty($expedition->linkedObjects['delivery'])) $receiving=reset($expedition->linkedObjects['delivery']);   // Take first link
 
 					if (! empty($receiving))
 					{
