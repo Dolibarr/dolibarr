@@ -70,7 +70,7 @@ if ($cancel) $action ='';
 if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$error=0;
-	var_dump(GETPOST("max_prod", 'int'));
+
 	for ($i=0; $i < GETPOST("max_prod", 'int'); $i++)
 	{
 		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
