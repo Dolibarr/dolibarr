@@ -213,13 +213,6 @@ session_name($sessionname);
 if (!defined('NOSESSION'))
 {
 	session_start();
-	/*if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
-	{
-		foreach ($_SESSION as $key=>$value)
-		{
-			if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
-		}
-	}*/
 }
 
 // Init the 5 global objects, this include will make the 'new Xxx()' and set properties for: $conf, $db, $langs, $user, $mysoc

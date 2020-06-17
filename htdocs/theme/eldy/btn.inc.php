@@ -222,6 +222,11 @@ TITLE BUTTON
 	border: 1px solid var(--btncolorborder);
 }
 
+a.btnTitle.btnTitleSelected {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
 .btnTitle > .btnTitle-icon{
 
 }
