@@ -149,7 +149,10 @@ elseif ($action == 'setdoc')
 	$draft = GETPOST('CONTRACT_DRAFT_WATERMARK', 'alpha');
 	$res2 = dolibarr_set_const($db, "CONTRACT_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
 
-	if (!$res1 > 0 || !$res2 > 0) $error++;
+    $value = GETPOST('activate_hideClosedServiceByDefault', 'alpha');
+    $res3 = dolibarr_set_const($db, "CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT", $value, 'chaine', 0, '', $conf->entity);
+
+	if (!$res1 > 0 || !$res2 > 0 || !$res3 > 0) $error++;
 
  	if (!$error)
     {
@@ -469,6 +472,13 @@ print $form->textwithpicto($langs->trans("WatermarkOnDraftContractCards"), $html
 print '</td><td>';
 print '<input size="50" class="flat" type="text" name="CONTRACT_DRAFT_WATERMARK" value="'.$conf->global->CONTRACT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("HideClosedServiceByDefault").'</td>';
+print '<td width="60" class="right">';
+print $form->selectyesno("activate_hideClosedServiceByDefault", (! empty($conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT)?$conf->global->CONTRACT_HIDE_CLOSED_SERVICES_BY_DEFAULT:0), 1);
+print '</td>';
+print '</tr>';
 
 print '</table>';
 
