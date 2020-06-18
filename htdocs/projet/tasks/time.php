@@ -203,11 +203,11 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 	}
 }
 
-if (($action == 'updateline' || $action == 'updatesplitline') && !$_POST["cancel"] && $user->rights->projet->lire)
+if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $user->rights->projet->lire)
 {
 	$error = 0;
 
-	if (empty($_POST["new_durationhour"]) && empty($_POST["new_durationmin"]))
+	if (!GETPOST("new_durationhour") && !GETPOST("new_durationmin"))
 	{
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Duration")), null, 'errors');
 		$error++;
@@ -215,9 +215,9 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$_POST["cancel
 
 	if (!$error)
 	{
-		if ($_POST['taskid'] != $id)
+		if (GETPOST('taskid', 'int') != $id)		// GETPOST('taskid') is id of new task
 		{
-			$id = $_POST['taskid'];
+			$id = GETPOST('taskid', 'int');
 
 			$object->fetchTimeSpent(GETPOST('lineid', 'int'));
 			// TODO Check that ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids))
@@ -1305,6 +1305,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
         			print '</td>';
         			if (!$i) $totalarray['nbfield']++;
     			}
+            } else {
+            	print '<input type="hidden" name="taskid" value="'.$id.'">';
             }
 
 			// Task label

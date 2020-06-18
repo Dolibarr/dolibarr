@@ -43,7 +43,7 @@ ServicesOnSaleOnly=خدمات فقط برای فروش
 ServicesOnPurchaseOnly=خدمات فقط برای خرید
 ServicesNotOnSell=خدمات نه برای خرید و نه برای فروش
 ServicesOnSellAndOnBuy=خدمات هم برای خرید و هم برای فروش
-LastModifiedProductsAndServices=آخرین %s محصولات/خدمات تغییریافته
+LastModifiedProductsAndServices=Latest %s modified products/services
 LastRecordedProducts=آخرین %s محصول ثبت شده
 LastRecordedServices=آخرین %s خدمات ثبت شده
 CardProduct0=محصول
@@ -106,6 +106,7 @@ NoteNotVisibleOnBill=یادداشت (در صورت‌حساب‌ها، پیشن�
 ServiceLimitedDuration=در صورتی که محصول، خدماتی با مدت‌زمان محدود است:
 MultiPricesAbility=چند قسمت قیمتی در هر محصول/خدمات (هر مشتری در یک قسمت قیمتی است)
 MultiPricesNumPrices=تعداد قیمت‌ها
+DefaultPriceType=Base of prices per default (with versus without tax) when adding new sale prices
 AssociatedProductsAbility=فعال‌کردن محصولات مجازی (بسته‌ها)
 AssociatedProducts=محصولات مجازی
 AssociatedProductsNumber=تعداد محصولاتی که این محصول مجازی را درست می‌کنند

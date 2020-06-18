@@ -235,19 +235,19 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
 $regbis = array();
 if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root')))
 {
-    $module = $reg[1];
-    if ($module == 'explorer')  // If we call page to explore details of a service
+    $moduleobject = $reg[1];
+    if ($moduleobject == 'explorer')  // If we call page to explore details of a service
     {
-        $module = $regbis[2];
+    	$moduleobject = $regbis[2];
     }
 
-    $module = strtolower($module);
-    $moduledirforclass = getModuleDirForApiClass($module);
+    $moduleobject = strtolower($moduleobject);
+    $moduledirforclass = getModuleDirForApiClass($moduleobject);
 
     // Load a dedicated API file
-    dol_syslog("Load a dedicated API file module=".$module." moduledirforclass=".$moduledirforclass);
+    dol_syslog("Load a dedicated API file moduleobject=".$moduleobject." moduledirforclass=".$moduledirforclass);
 
-	$tmpmodule = $module;
+    $tmpmodule = $moduleobject;
 	if ($tmpmodule != 'api')
 		$tmpmodule = preg_replace('/api$/i', '', $tmpmodule);
 	$classfile = str_replace('_', '', $tmpmodule);
@@ -264,7 +264,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);
 
-	$classname = ucwords($module);
+	$classname = ucwords($moduleobject);
 
 	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.' classname='.$classname);
 

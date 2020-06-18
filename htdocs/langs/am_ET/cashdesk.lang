@@ -108,3 +108,5 @@ MainTemplateToUse=Main template to use
 OrderTemplateToUse=Order template to use
 BarRestaurant=Bar Restaurant
 AutoOrder=Customer auto order
+RestaurantMenu=Menu
+CustomerMenu=Customer menu

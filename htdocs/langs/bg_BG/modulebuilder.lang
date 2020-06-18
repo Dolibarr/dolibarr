@@ -27,7 +27,7 @@ DangerZone=Опасна зона
 BuildPackage=Създаване на пакет
 BuildPackageDesc=Може да генерирате zip пакет, така че да сте готови да го разпространите към всеки Dolibarr. Може също така да го разпространите или да го продадете в онлайн магазина <a href="https://www.dolistore.com">DoliStore.com</a>.
 BuildDocumentation=Създаване на документация
-ModuleIsNotActive=Този модул все още не е активиран. Отидете в %s, за да го направите или кликнете тук:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=Този модул е активиран. Всяка промяна може да прекъсне текуща функция.
 DescriptionLong=Дълго описание
 EditorName=Име на редактор
@@ -139,3 +139,4 @@ ForeignKey=Външен ключ
 TypeOfFieldsHelp=Тип на полета:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] (например '1' означава, че добавяме бутон + след комбинирания списък, за да създадем записа, 'filter' може да бъде 'status=1 AND fk_user=__USER_ID AND entity IN (__SHARED_ENTITIES__)')
 AsciiToHtmlConverter=Ascii към HTML конвертор
 AsciiToPdfConverter=Ascii към PDF конвертор
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

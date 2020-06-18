@@ -91,7 +91,7 @@ TicketParamMail=E-Mail Einrichtung
 TicketEmailNotificationFrom=Absenderadresse für Ticketbenachrichtigungen
 TicketEmailNotificationFromHelp=In Beispielantwort eines Tickets verwendet
 TicketEmailNotificationTo=E-Mailbenachrichtigungen senden an
-TicketEmailNotificationToHelp=Sende Benachrichtigungsemails an diese Adresse.
+TicketEmailNotificationToHelp=Sende E-Mail-Benachrichtigungen an diese Adresse.
 TicketNewEmailBodyLabel=Text Mitteilung die gesendet wird, wenn ein Ticket erstellt wurde
 TicketNewEmailBodyHelp=Dieser Text wird in die E-Mail eingefügt, welche nach dem erstellen eines Tickets via öffentlichem Interface gesendet wird. Informationen für den Zugriff auf das Ticket werden automatisch hinzugefügt.
 TicketParamPublicInterface=Einstellungen öffentliche Schnitstelle
@@ -130,10 +130,14 @@ TicketNumberingModules=Ticketnummerierungsmodul
 TicketNotifyTiersAtCreation=Partner über Ticketerstellung Informieren
 TicketGroup=Gruppe
 TicketsDisableCustomerEmail=E-Mails immer deaktivieren, wenn ein Ticket über die öffentliche Oberfläche erstellt wird
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Ticket - Home
+TicketsIndex=Ticketübersicht
 TicketList=Liste der Tickets
 TicketAssignedToMeInfos=Diese Seite zeigt Tickets, welche vom aktuellen Benutzer erstellt wurden oder diesem zugeordnet sind
 NoTicketsFound=Keine Tickets gefunden

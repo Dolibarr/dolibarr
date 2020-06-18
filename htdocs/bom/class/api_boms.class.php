@@ -24,11 +24,11 @@ require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 /**
  * \file    bom/class/api_boms.class.php
  * \ingroup bom
- * \brief   File for API management of bom.
+ * \brief   File for API management of BOM.
  */
 
 /**
- * API class for bom
+ * API class for BOM
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -120,7 +120,7 @@ class Boms extends DolibarrApi
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity('bom').')';
+        if ($tmpobject->ismultientitymanaged) $sql .= ' AND t.entity IN ('.getEntity($tmpobject->element).')';
         if ($restrictonsocid && (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
         if ($restrictonsocid && $socid) $sql .= " AND t.fk_soc = ".$socid;
         if ($restrictonsocid && $search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale

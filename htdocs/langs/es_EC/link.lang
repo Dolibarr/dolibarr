@@ -6,4 +6,3 @@ ErrorFileNotLinked=No se pudo vincular el archivo.
 LinkRemoved=Se ha eliminado el enlace %s
 ErrorFailedToDeleteLink=No se pudo eliminar el vínculo '<b>%s</b>'
 URLToLink=URL para vincular
-OverwriteIfExists=Sobrescribir archivo si existe

@@ -130,10 +130,14 @@ TicketNumberingModules=Biljettnummermodul
 TicketNotifyTiersAtCreation=Meddela tredje part vid skapandet
 TicketGroup=Grupp
 TicketsDisableCustomerEmail=Avaktivera alltid e-postmeddelanden när en biljett skapas från det offentliga gränssnittet
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Biljett - hem
+TicketsIndex=Tickets area
 TicketList=Lista över biljetter
 TicketAssignedToMeInfos=Denna sidvisningsbiljettlista skapad av eller tilldelad den nuvarande användaren
 NoTicketsFound=Ingen biljett finns

@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Kad ateityje sutaupytumėte laiko, turėtumėte
 AccountancyAreaDescActionFreq=The following actions are usually executed every month, week or day for very large companies...
 
 AccountancyAreaDescJournalSetup=ŽINGSNIS %s: Sukurkite arba patikrinkite savo žurnalo turinį iš meniu %s
-AccountancyAreaDescChartModel=ŽINGSNIS %s: sukurkite sąskaitų plano modelį iš meniu %s
-AccountancyAreaDescChart=ŽINGSNIS %s: sukurkite arba patikrinkite savo sąskaitų planą iš meniu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=ŽINGSNIS %s: nustatykite kiekvieno PVM tarifo apskaitos sąskaitas. Tam naudokite meniu punktą %s.
 AccountancyAreaDescDefault=ŽINGSNIS %s: nustatykite numatytąsias apskaitos sąskaitas. Tam naudokite meniu punktą %s.

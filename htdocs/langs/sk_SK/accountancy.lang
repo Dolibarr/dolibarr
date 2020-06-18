@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in f
 AccountancyAreaDescActionFreq=Nasledujúce akcie sa zvyčajne vykonávajú každý mesiac, týždeň alebo deň pre veľmi veľké spoločnosti ...
 
 AccountancyAreaDescJournalSetup=STEP %s: Create or check content of your journal list from menu %s
-AccountancyAreaDescChartModel=KROK %s: Vytvorte si model schémy účtu z menu %s
-AccountancyAreaDescChart=KROK %s: Vytvorenie alebo kontrola obsahu schémy účtu z menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=KROK %s: Definujte účty účtov pre každú sadzbu DPH. Na to použite položku ponuky %s.
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.

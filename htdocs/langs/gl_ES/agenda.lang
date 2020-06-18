@@ -112,8 +112,10 @@ BOM_CLOSEInDolibarr=BOM disabled
 BOM_REOPENInDolibarr=BOM reopen
 BOM_DELETEInDolibarr=BOM deleted
 MRP_MO_VALIDATEInDolibarr=MO validated
+MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
 MRP_MO_PRODUCEDInDolibarr=MO produced
 MRP_MO_DELETEInDolibarr=MO deleted
+MRP_MO_CANCELInDolibarr=MO canceled
 ##### End agenda events #####
 AgendaModelModule=Prantillas de documentos para eventos
 DateActionStart=Data de inicio
@@ -152,3 +154,6 @@ EveryMonth=Cada mes
 DayOfMonth=Día do mes
 DayOfWeek=Día da semana
 DateStartPlusOne=Data inicio +1 hora
+SetAllEventsToTodo=Set all events to todo
+SetAllEventsToInProgress=Set all events to in progress
+SetAllEventsToFinished=Set all events to finished

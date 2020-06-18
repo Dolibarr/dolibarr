@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Nästa steg bör göras för att spara dig tid 
 AccountancyAreaDescActionFreq=Följande åtgärder utförs vanligtvis varje månad, vecka eller dag för mycket stora företag ...
 
 AccountancyAreaDescJournalSetup=STEG %s: Skapa eller kolla innehållet i din loggboklista från menyn %s
-AccountancyAreaDescChartModel=STEG %s: Skapa en modell av kontoöversikt från menyn %s
-AccountancyAreaDescChart=STEG %s: Skapa eller kolla innehållet i ditt kontokonto från menyn %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=STEG %s: Definiera redovisningskonton för varje moms. För detta, använd menyinmatningen %s.
 AccountancyAreaDescDefault=STEG %s: Definiera standardbokföringskonton. För detta, använd menyinmatningen %s.

@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Veicot nākamo darbību, lai nākotnē ietaupī
 AccountancyAreaDescActionFreq=Šīs darbības parasti tiek veiktas katru mēnesi, nedēļu vai dienu ļoti lieliem uzņēmumiem ...
 
 AccountancyAreaDescJournalSetup=Solis %s: izveidojiet vai pārbaudiet žurnāla satura saturu no izvēlnes %s
-AccountancyAreaDescChartModel=Silis %s: izveidojiet konta diagrammas modeli no izvēlnes %s
-AccountancyAreaDescChart=Solis %s: izveidojiet vai pārbaudiet sava konta diagrammas saturu no izvēlnes %s
+AccountancyAreaDescChartModel=Solis %s: pārbaudiet, vai pastāv konta diagrammas modelis, vai izveidojiet to no izvēlnes %s
+AccountancyAreaDescChart=Solis %s: izvēlnē %s atlasiet un vai aizpildiet kontu no izvēlnes.
 
 AccountancyAreaDescVat=Solis %s: definējiet katras PVN likmes grāmatvedības kontus. Izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescDefault=Solis %s: definējiet noklusējuma grāmatvedības kontus. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
@@ -121,7 +121,7 @@ InvoiceLinesDone=Iesaistīto rēķinu līnijas
 ExpenseReportLines=Izdevumu atskaites līnijas, kas saistītas
 ExpenseReportLinesDone=Saistītās izdevumu pārskatu līnijas
 IntoAccount=Bind line ar grāmatvedības kontu
-TotalForAccount=Total for accounting account
+TotalForAccount=Kopā grāmatvedības kontā
 
 
 Ventilate=Saistīt
@@ -234,10 +234,10 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Trešā puse nav 
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nav noteikts nezināms trešās puses konts un gaidīšanas konts. Bloķēšanas kļūda
 PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpojumu
-OpeningBalance=Opening balance
+OpeningBalance=Sākuma bilance
 ShowOpeningBalance=Rādīt sākuma atlikumu
 HideOpeningBalance=Slēpt sākuma atlikumu
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Rādīt starpsummu pa grupām
 
 Pcgtype=Kontu grupa
 PcgtypeDesc=Kontu grupa tiek izmantota kā iepriekš definēti “filtra” un “grupēšanas” kritēriji dažiem grāmatvedības pārskatiem. Piemēram, “IENĀKUMS” vai “IZDEVUMI” tiek izmantoti kā produktu uzskaites kontu grupas, lai izveidotu izdevumu / ienākumu pārskatu.
@@ -317,13 +317,13 @@ Modelcsv_quadratus=Eksportēt Quadratus QuadraCompta
 Modelcsv_ebp=Eksportēt uz EBP
 Modelcsv_cogilog=Eksportēt uz Cogilog
 Modelcsv_agiris=Eksports uz Agiris
-Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta=Eksports LD Compta (v9) (pārbaude)
 Modelcsv_LDCompta10=Eksports LD Compta (v10 un jaunākiem)
 Modelcsv_openconcerto=Eksportēt OpenConcerto (tests)
 Modelcsv_configurable=Eksportēt CSV konfigurējamu
 Modelcsv_FEC=Eksporta FEC
 Modelcsv_Sage50_Swiss=Eksports uz Sage 50 Šveici
-Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
+Modelcsv_winfic=Eksportēt Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Kontu konts. Id
 
 ## Tools - Init accounting account on product / service
