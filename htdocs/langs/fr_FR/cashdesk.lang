@@ -108,3 +108,5 @@ MainTemplateToUse=Modèle principal à utiliser
 OrderTemplateToUse=Modèle de commande à utiliser
 BarRestaurant=Bar Restaurant
 AutoOrder=Commande automatique du client
+RestaurantMenu=Menu
+CustomerMenu=Menu client

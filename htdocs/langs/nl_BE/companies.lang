@@ -90,7 +90,6 @@ ListSuppliersShort=Lijst met leveranciers
 ListProspectsShort=Lijst met Prospecten
 ListCustomersShort=Lijst met klanten
 ThirdPartiesArea=Derden / contacten
-LastModifiedThirdParties=Laatste %s gemodificeerde derde partijen
 ThirdPartyIsClosed=Derde partij is gesloten
 ProductsIntoElements=Lijst van producten/diensten in %s
 OutstandingBillReached=Maximum bereikt voor openstaande rekening

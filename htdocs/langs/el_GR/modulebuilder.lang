@@ -27,7 +27,7 @@ DangerZone=Επικίνδυνη ζώνη
 BuildPackage=Δημιουργία πακέτου
 BuildPackageDesc=Μπορείτε να δημιουργήσετε ένα πακέτο zip της αίτησής σας έτσι ώστε να είστε έτοιμοι να το διανείμετε σε οποιοδήποτε Dolibarr. Μπορείτε επίσης να το διανείμετε ή να το πουλήσετε στην αγορά όπως το <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Δημιουργία εγγράφων
-ModuleIsNotActive=Αυτή η ενότητα δεν έχει ενεργοποιηθεί ακόμα. Μεταβείτε στο %s για να το κάνετε ζωντανό ή κάντε κλικ εδώ:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=Αυτή η ενότητα έχει ενεργοποιηθεί. Οποιαδήποτε αλλαγή μπορεί να σπάσει ένα τρέχον ζωντανό χαρακτηριστικό.
 DescriptionLong=Μεγάλη περιγραφή
 EditorName=Όνομα του συντάκτη
@@ -139,3 +139,4 @@ ForeignKey=Ξένο κλειδί
 TypeOfFieldsHelp=Τύπος πεδίων: <br> varchar (99), διπλό (24,8), πραγματικό, κείμενο, html, datetime, timestamp, ακέραιος, ακέραιος: ClassName: relativepath / to / classfile.class.php [: 1 [: filter] προσθέτουμε ένα κουμπί + μετά το σύνθετο για να δημιουργήσουμε την εγγραφή, το &#39;φίλτρο&#39; μπορεί να είναι &#39;status = 1 AND fk_user = __USER_ID ΚΑΙ η οντότητα IN (__SHARED_ENTITIES__)&#39; για παράδειγμα)
 AsciiToHtmlConverter=Μεταροπέας από Ascii σε HTML
 AsciiToPdfConverter=Μεταροπέας από Ascii σε PDF
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

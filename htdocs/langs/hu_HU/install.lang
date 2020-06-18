@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Hibá(k) fordulhattak elő a migrálási folyamat sor�
 YouTryInstallDisabledByDirLock=Az alkalmazás megpróbált frissítést végrehajtani, de a telepítés / frissítés oldalait a biztonság miatt letiltottuk (.lock utótaggal átnevezett könyvtár). <br>
 YouTryInstallDisabledByFileLock=Az alkalmazás megpróbált frissítést végrehajtani, de a biztonságot szem előtt tartva  letiltottuk a telepítési / frissítési oldalakat (az <strong>install.lock zárolási fájl létrehozásával a dolibarr dokumentumok könyvtárában</strong>). <br>
 ClickHereToGoToApp=Kattintson ide az alkalmazás eléréséhez
-ClickOnLinkOrRemoveManualy=Kattintson a következő linkre. Ha mindig ugyanazt az oldalt látja, el kell távolítania / át kell neveznie az install.lock fájlt a dokumentumok könyvtárban.
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
 Loaded=Loaded
 FunctionTest=Function test

@@ -108,3 +108,5 @@ MainTemplateToUse=要使用的主要模板
 OrderTemplateToUse=要使用的訂單模板
 BarRestaurant=酒吧餐廳
 AutoOrder=客戶自動下單
+RestaurantMenu=Menu
+CustomerMenu=Customer menu

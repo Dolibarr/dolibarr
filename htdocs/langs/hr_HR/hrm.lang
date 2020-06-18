@@ -5,12 +5,13 @@ Establishments=Ustanove
 Establishment=Ustanova
 NewEstablishment=Nova ustanova
 DeleteEstablishment=Obriši ustanovu
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
+ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=Otvori ustanovu
 CloseEtablishment=Zatvori ustanovu
 # Dictionary
+DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=HRM - popis odjela
-DictionaryFunction=HRM - popis funkcija
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Zaposlenici
 Employee=Zaposlenik

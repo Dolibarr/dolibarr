@@ -5,12 +5,13 @@ Establishments=Kierujących
 Establishment=Kierownictwo
 NewEstablishment=Nowe kierownictwo
 DeleteEstablishment=Usuń kierownictwo
-ConfirmDeleteEstablishment=Czy na pewno chcesz usunąć to przedsiębiorstwo?
+ConfirmDeleteEstablishment=Jesteś pewien, że chcesz usunąć to przedsiębiorstwo?
 OpenEtablishment=Otwórz kierownictwo
 CloseEtablishment=Zakończ kierownictwo
 # Dictionary
+DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=HR - Lisa departamentów
-DictionaryFunction=HR - Lista funkcji
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Zatrudnionych
 Employee=Pracownik

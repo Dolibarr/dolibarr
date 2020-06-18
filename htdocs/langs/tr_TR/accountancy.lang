@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Günlükleme yaparken (Günlüklere ve Genel de
 AccountancyAreaDescActionFreq=Aşağıdaki eylemler çok büyük şirketler için genellikle her ay, her hafta veya her gün gerçekleştirilir...
 
 AccountancyAreaDescJournalSetup=ADIM %s: "%s" menüsünü kullanarak günlük listenizin içeriğini oluşturun veya kontrol edin.
-AccountancyAreaDescChartModel=ADIM %s: "%s" menüsünü kullanarak hesap planı için bir model oluşturun.
-AccountancyAreaDescChart=ADIM %s: "%s" menüsünü kullanarak hesap planınızın içeriğini oluşturun veya kontrol edin.
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=ADIM %s: "%s" menüsünü kullanarak her bir KDV Oranı için muhasebe hesaplarını tanımlayın.
 AccountancyAreaDescDefault=ADIM %s: "%s" menüsünü kullanarak varsayılan muhasebe hesaplarını tanımlayın.

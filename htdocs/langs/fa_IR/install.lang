@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=خطا(ها)ئی که در طول انجام انتق�
 YouTryInstallDisabledByDirLock=برنامه تلاش کرده است که خود را ارتقا دهد، اما صفحات نصب/ارتقا به دلایل امنیتی غیرفعال شده (پوشه با یک پسوند .lock پس‌وند گرفته است).<br>
 YouTryInstallDisabledByFileLock=برنامه تلاش کرده است خود را ارتقا دهد، اما صفحات نصب/ارتقا به دلایل امنیتی غیر فعال شده است ( چون فایل قفل <strong>install.lock</strong> در پوشۀ documents دلیبار وجود دارد).<br>
 ClickHereToGoToApp=برای مراجعه به برنامه این‌جا کلیک کنید
-ClickOnLinkOrRemoveManualy=روی پیوند مقابل کلیک کنید. اگر همیشه شما همین صفحه را می‌بینید شما باید فایل install.lock را از پوشۀ document حذف کرده یا تغییر نام دهید.
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
 Loaded=Loaded
 FunctionTest=Function test

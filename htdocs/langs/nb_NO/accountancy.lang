@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=De neste skrittene bør gjøres for å spare ti
 AccountancyAreaDescActionFreq=Følgende tiltak blir vanligvis utført hver måned, uke eller dag for svært store selskaper ...
 
 AccountancyAreaDescJournalSetup=TRINN %s: Lag eller kontroller innholdet i din journalliste fra menyen %s
-AccountancyAreaDescChartModel=TRINN %s: Lag en kontomodell fra menyen %s
-AccountancyAreaDescChart=TRINN %s: Opprett eller kontroller innhold i din kontoplan fra meny %s
+AccountancyAreaDescChartModel=TRINN %s: Sjekk at det finnes en modell av kontoplan eller lag en fra menyen %s
+AccountancyAreaDescChart=TRINN %s: Velg og|eller fullfør kontoplanen din fra meny %s
 
 AccountancyAreaDescVat=TRINN %s: Definer regnskapskonto for hver MVA-sats. Bruk menyoppføringen %s.
 AccountancyAreaDescDefault=TRINN %s: Definer standard regnskapskontoer. For dette, bruk menyoppføringen %s.
@@ -121,7 +121,7 @@ InvoiceLinesDone=Bundne fakturalinjer
 ExpenseReportLines=Utgiftsrapport-linjer som skal bindes
 ExpenseReportLinesDone=Bundne utgiftsrapport-linjer
 IntoAccount=Bind linje med regnskapskonto
-TotalForAccount=Total for accounting account
+TotalForAccount=Totalt for regnskapskonto
 
 
 Ventilate=Bind
@@ -234,10 +234,10 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tredjepart ukjent
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
 PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
-OpeningBalance=Opening balance
+OpeningBalance=Inngående balanse
 ShowOpeningBalance=Vis åpningsbalanse
 HideOpeningBalance=Skjul åpningsbalansen
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Vis subtotal etter gruppe
 
 Pcgtype=Kontogruppe
 PcgtypeDesc=Kontogruppe brukes som forhåndsdefinerte 'filter' og 'gruppering' kriterier for noen regnskapsrapporter. For eksempel blir 'INNTEKT' eller 'UTGIFT' brukt som grupper for regnskapsføring av varer for å lage utgifts-/inntektsrapporten.
