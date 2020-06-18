@@ -2249,15 +2249,13 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					}
 
 					print '<td class="right">';
-					if ($objp->opp_amount) print price($objp->opp_amount, 0, '', 1, -1, -1, $conf->currency);
-					print '</td>';
-					print '<td class="right">';
                     if ($objp->opp_percent && $objp->opp_amount) {
                         $opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
-                        print price($opp_weighted_amount, 0, '', 1, -1, -1, $conf->currency);
+                        $alttext = price($opp_weighted_amount, 0, '', 1, -1, -1, $conf->currency);
                         $ponderated_opp_amount += price2num($opp_weighted_amount);
                     }
-					print '</td>';
+                    if ($objp->opp_amount) print '<span title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, -1, $conf->currency).'</span>';
+                    print '</td>';
 				}
 
 				if (empty($conf->global->PROJECT_HIDE_TASKS))
