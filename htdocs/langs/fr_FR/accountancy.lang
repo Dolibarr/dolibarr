@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Les prochaines étapes doivent être faites pou
 AccountancyAreaDescActionFreq=Les actions suivantes sont habituellement exécutées chaque mois, semaine, ou jour pour les très grandes entreprises ...
 
 AccountancyAreaDescJournalSetup=Étape %s : Créer ou vérifier le contenu de la liste des journaux depuis le menu %s
-AccountancyAreaDescChartModel=Étape %s : Créer un modèle de plan de compte depuis le menu %s
-AccountancyAreaDescChart=Étape %s : Créer ou vérifier le contenu de votre plan de compte depuis le menu %s
+AccountancyAreaDescChartModel=ÉTAPE %s: Vérifiez qu'il existe un modèle de plan comptable ou créez-en un à partir du menu %s
+AccountancyAreaDescChart=ÉTAPE %s: Sélectionnez et | ou complétez votre plan de compte dans le menu %s
 
 AccountancyAreaDescVat=Étape %s : Définissez les comptes comptables de chaque taux de TVA utilisé. Pour cela, suivez le menu suivant %s.
 AccountancyAreaDescDefault=Étape %s: Définir les comptes de comptabilité par défaut. Pour cela, utilisez l'entrée de menu %s.
@@ -121,7 +121,7 @@ InvoiceLinesDone=Lignes de factures liées
 ExpenseReportLines=Lignes de notes de frais à lier
 ExpenseReportLinesDone=Lignes de notes de frais liées
 IntoAccount=Lier ligne avec le compte comptable
-TotalForAccount=Total for accounting account
+TotalForAccount=Total pour le compte comptable
 
 
 Ventilate=Lier
@@ -234,10 +234,10 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tiers inconnu et 
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Compte tiers non défini ou inconnu. Erreur bloquante.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Compte tiers inconnu et compte d'attente non défini. Erreur blocante.
 PaymentsNotLinkedToProduct=Paiement non lié à un produit / service
-OpeningBalance=Opening balance
+OpeningBalance=Solde d'ouverture
 ShowOpeningBalance=Afficher balance d'ouverture
 HideOpeningBalance=Cacher balance d'ouverture
-ShowSubtotalByGroup=Show subtotal by group
+ShowSubtotalByGroup=Afficher le sous-total par groupe
 
 Pcgtype=Groupe de comptes comptables
 PcgtypeDesc=Les groupes de comptes sont utilisés comme critères de filtre et de regroupement prédéfinis pour certains rapports de comptabilité. Par exemple, «INCOME» ou «EXPENSE» sont utilisés en tant que groupes pour la comptabilité afin de générer le rapport dépenses / revenus.

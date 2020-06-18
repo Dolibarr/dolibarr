@@ -5,12 +5,13 @@ Establishments=Firmaer
 Establishment=Firma
 NewEstablishment=Nytt firma
 DeleteEstablishment=Slett firma
-ConfirmDeleteEstablishment=Er du sikker på at du vil slette denne etableringen?
+ConfirmDeleteEstablishment=Er du sikker på at du vil slette dette etablissementet?
 OpenEtablishment=Åpne firma
 CloseEtablishment=Lukk firma
 # Dictionary
+DictionaryPublicHolidays=HRM - Helligdager
 DictionaryDepartment=HRM - Departementliste
-DictionaryFunction=HRM - Funksjonsliste
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Ansatte
 Employee=Ansatt

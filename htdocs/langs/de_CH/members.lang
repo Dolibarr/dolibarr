@@ -18,7 +18,6 @@ MemberId=Mitgliedernummer
 MemberType=Mitgliederart
 MembersTypes=Mitgliederarten
 MemberStatusDraft=Entwürfe (benötigen Bestätigung)
-MemberStatusDraftShort=Entwurf
 NewSubscriptionDesc=Mit diesem Formular können Sie Ihr Abonnement als neues Mitglied der Stiftung registrieren. Wenn Sie Ihr Abonnement verlängern möchten (falls Sie bereits Mitglied sind), wenden Sie sich stattdessen per E-Mail an den Stiftungsrat. %s.
 Subscriptions=Abonnemente
 ListOfSubscriptions=Liste der Abonnemente

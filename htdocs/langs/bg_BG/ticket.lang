@@ -48,8 +48,8 @@ TicketSeverityShortBLOCKING=Критичен
 
 ErrorBadEmailAddress=Полето "%s" е неправилно
 MenuTicketMyAssign=Мои тикети
-MenuTicketMyAssignNonClosed=Мои отворени тикети
-MenuListNonClosed=Отворени тикети
+MenuTicketMyAssignNonClosed=Мои активни тикети
+MenuListNonClosed=Активни тикети
 
 TypeContact_ticket_internal_CONTRIBUTOR=Сътрудник
 TypeContact_ticket_internal_SUPPORTTEC=Отговорен служител
@@ -105,7 +105,7 @@ TicketPublicInterfaceTextHome=Може да създадете тикет в с�
 TicketPublicInterfaceTextHomeHelpAdmin=Текстът определен тук ще се появи на началната страница на публичния интерфейс.
 TicketPublicInterfaceTopicLabelAdmin=Заглавие на интерфейса
 TicketPublicInterfaceTopicHelp=Този текст ще се появи като заглавие на публичния интерфейс.
-TicketPublicInterfaceTextHelpMessageLabelAdmin=Помощен текст към съобщението
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Помощен текст към съобщение
 TicketPublicInterfaceTextHelpMessageHelpAdmin=Този текст ще се появи над мястото с въведено съобщение от потребителя.
 ExtraFieldsTicket=Допълнителни атрибути
 TicketCkEditorEmailNotActivated=HTML редакторът не е активиран. Моля, посочете стойност 1 за константа FCKEDITOR_ENABLE_MAIL, за да го активирате.
@@ -130,16 +130,20 @@ TicketNumberingModules=Модул за номериране на тикети
 TicketNotifyTiersAtCreation=Уведомяване на контрагента при създаване
 TicketGroup=Група
 TicketsDisableCustomerEmail=Деактивиране на имейлите, когато тикетът е създаден от публичния интерфейс
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Секция за тикети
+TicketsIndex=Секция с тикети
 TicketList=Списък с тикети
 TicketAssignedToMeInfos=Тази страница показва списък с тикети, които са създадени от вас или са ви били възложени
 NoTicketsFound=Няма намерени тикети
 NoUnreadTicketsFound=Не са открити непрочетени тикети
 TicketViewAllTickets=Преглед на всички тикети
-TicketViewNonClosedOnly=Преглед на отворени тикети
+TicketViewNonClosedOnly=Преглед на активни тикети
 TicketStatByStatus=Тикети по статус
 OrderByDateAsc=Сортиране по възходяща дата
 OrderByDateDesc=Сортиране по низходяща дата
@@ -242,7 +246,7 @@ NoLogForThisTicket=Все още няма запис за този тикет
 TicketLogAssignedTo=Тикет %s е възложен на %s
 TicketLogPropertyChanged=Тикет %s е класифициран от %s на %s
 TicketLogClosedBy=Тикет %s е приключен от %s
-TicketLogReopen=Тикет %s е повторно отворен
+TicketLogReopen=Тикет %s е активен отново
 
 #
 # Public pages

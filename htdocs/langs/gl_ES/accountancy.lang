@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Os seguintes pasos deben facerse para aforrar t
 AccountancyAreaDescActionFreq=As seguintes accións execútanse normalmente cada mes, semana ou día en empresas moi grandes...
 
 AccountancyAreaDescJournalSetup=PASO %s: Cree ou mire o contido da sua listaxe de diarios dende o menú %s
-AccountancyAreaDescChartModel=PASO %s: Crea un modelo do plan xeral contable dende o menú %s
-AccountancyAreaDescChart=PASO %s: Crear ou mirar o contido do seu plan xeral contable dende o menú %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=PASO %s: Defina as contas contables para cada tasa de IVE. Para iso, use a entrada do menú %s.
 AccountancyAreaDescDefault=PASO %s: Defina as contas contables por defecto. Para iso, use a entrada do menú %s.

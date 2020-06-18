@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Наступні кроки потрібні щ
 AccountancyAreaDescActionFreq=Наступні кроки зазвичай виконуються раз на місяць, раз на тиждень або раз на день для дуже великих компаній...
 
 AccountancyAreaDescJournalSetup=КРОК %s: Створіть або виберіть вміст з списку ваших журналів з меню %s
-AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
-AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.

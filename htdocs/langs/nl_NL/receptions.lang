@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Hoeveelheid producten van openstaa
 ValidateOrderFirstBeforeReception=Je moet eerst de bestelling valideren voordat je ontvangsten kunt verwerken.
 ReceptionsNumberingModules=Nummeringsmodule voor ontvangsten
 ReceptionsReceiptModel=Documentsjablonen voor ontvangsten
+NoMorePredefinedProductToDispatch=Geen voorgedefinieerde producten meer om te verzenden
+

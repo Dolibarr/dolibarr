@@ -52,7 +52,6 @@ TicketsActivatePublicInterfaceHelp=La interfaz pública permite a los visitantes
 TicketsAutoAssignTicket=Asigna automáticamente al usuario que creó el ticket
 TicketNotifyTiersAtCreation=Notificar a un tercero en la creación
 TicketsDisableCustomerEmail=Deshabilite siempre los correos electrónicos cuando se crea un ticket desde la interfaz pública
-TicketsIndex=Ticket - hogar
 TicketList=Lista de entradas
 TicketAssignedToMeInfos=Esta página muestra la lista de tickets creada por o asignada al usuario actual
 NoTicketsFound=No se encontró Ticket

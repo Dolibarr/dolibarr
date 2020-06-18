@@ -108,3 +108,5 @@ MainTemplateToUse=Hoofdsjabloon om te gebruiken
 OrderTemplateToUse=Bestelsjabloon te gebruiken
 BarRestaurant=Bar Restaurant
 AutoOrder=Automatische bestelling van klant
+RestaurantMenu=Menu
+CustomerMenu=Klantmenu

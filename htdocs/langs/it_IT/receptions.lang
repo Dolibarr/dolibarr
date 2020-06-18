@@ -38,8 +38,10 @@ SendReceptionRef=Submission of reception %s
 ActionsOnReception=Events on reception
 ReceptionCreationIsDoneFromOrder=For the moment, creation of a new reception is done from the order card.
 ReceptionLine=Reception line
-ProductQtyInReceptionAlreadySent=Product quantity from open sales order already sent
+ProductQtyInReceptionAlreadySent=Quantità del prodotto dall'ordine cliente aperto già inviato
 ProductQtyInSuppliersReceptionAlreadyRecevied=Quantità prodotto dall'ordine fornitore aperto già ricevuto
 ValidateOrderFirstBeforeReception=You must first validate the order before being able to make receptions.
 ReceptionsNumberingModules=Numbering module for receptions
 ReceptionsReceiptModel=Document templates for receptions
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

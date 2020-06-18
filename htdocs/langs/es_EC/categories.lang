@@ -44,6 +44,7 @@ AccountsCategoriesShort=Etiquetas/categorías de cuentas
 ProjectsCategoriesShort=Proyectos etiquetas/categorías
 UsersCategoriesShort=Etiquetas/categorías de usuarios
 StockCategoriesShort=Etiquetas / categorías de almacén
+ThisCategoryHasNoItems=Esta categoría no contiene ningún artículo.
 CategId=ID de etiqueta/categoría
 CatSupList=Lista de etiquetas / categorías de proveedores
 CatCusList=Lista de etiquetas/categorías de cliente/prospecto

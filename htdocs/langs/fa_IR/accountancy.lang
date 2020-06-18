@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=برای صرفه‌جوئی در زمان در
 AccountancyAreaDescActionFreq=عملیات زیر معمولا هر ماه یا هر هفته یا بار یا حتی هر روز یک بار برای شرکت‌های بسیار بزرگ انجام می‌پذیرد....
 
 AccountancyAreaDescJournalSetup=گام %s: ایجاد یا بررسی فهرست محتوای دفتر از گزینۀ %s
-AccountancyAreaDescChartModel=گام %s: ساخت یا شکل‌دهی نمودار حساب از گزینۀ %s 
-AccountancyAreaDescChart=گام %s: ساخت یا بررسی نمودار حساب از گزینۀ %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=گام %s: تعریف حساب‌های حساب‌داری برای هر یک از انواع ضریب‌های مالیات بر ارزش افزوده. برای این کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescDefault=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض. برای این، از گزینۀ %s استفاده نمائید.

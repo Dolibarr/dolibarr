@@ -19,7 +19,7 @@ ModuleBuilderDescmenus=此標籤專用於定義您模組提供的選單輸入。
 ModuleBuilderDescpermissions=此標籤專用於定義您要隨模組提供的新權限。
 ModuleBuilderDesctriggers=這是您模組提供的觸發器檢視。當觸發了業務事件時要包含代碼的執行，只需編輯此檔案。
 ModuleBuilderDeschooks=此標籤專用於掛載。
-ModuleBuilderDescwidgets=This tab is dedicated to manage/build widgets.
+ModuleBuilderDescwidgets=此頁籤是專門用於管理/建立小工具。
 ModuleBuilderDescbuildpackage=You can generate here a "ready to distribute" package file (a normalized .zip file) of your module and a "ready to distribute" documentation file. Just click on button to build the package or documentation file.
 EnterNameOfModuleToDeleteDesc=You can delete your module. WARNING: All coding files of module (generated or created manually) AND structured data and documentation will be deleted!
 EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to object will be deleted!
@@ -27,7 +27,7 @@ DangerZone=危險區域
 BuildPackage=建立軟體包
 BuildPackageDesc=You can generate a zip package of your application so your are ready to distribute it on any Dolibarr. You can also distribute it or sell it on marketplace like <a href="https://www.dolistore.com">DoliStore.com</a>.
 BuildDocumentation=建立文件
-ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=This module has been activated. Any change may break a current live feature.
 DescriptionLong=詳細描述
 EditorName=編輯器名稱
@@ -139,3 +139,4 @@ ForeignKey=外部金鑰
 TypeOfFieldsHelp=Type of fields:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' means we add a + button after the combo to create the record, 'filter' can be 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTITIES__)' for example)
 AsciiToHtmlConverter=ASCII到HTML轉換器
 AsciiToPdfConverter=ASCII到PDF轉換器
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

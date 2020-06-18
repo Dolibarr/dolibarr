@@ -125,5 +125,4 @@ NoContactWithCategoryFound=No hay contacto/dirección con una categoría encontr
 NoContactLinkedToThirdpartieWithCategoryFound=No hay contacto/dirección con una categoría encontrada
 OutGoingEmailSetup=Configuración de correo saliente
 InGoingEmailSetup=Configuración de correo entrante
-OutGoingEmailSetupForEmailing=Configuración del correo electrónico saliente (para el módulo %s)
 ContactsWithThirdpartyFilter=Contactos con filtro de terceros

@@ -18,3 +18,5 @@ MulticurrencyReceived=erhaltener Betrag (Originalwährung)
 MulticurrencyRemainderToTake=verbleibender Betrag  (Originalwährung)
 MulticurrencyPaymentAmount=Zahlungsbetrag  (Originalwährung)
 AmountToOthercurrency=Betrag  (in der Währung des Empfängers)
+CurrencyRateSyncSucceed=Synchronisation des  Währungskurses erfolgreich abgeschlossen
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Benutze die Währung des Dokumentes für Online-Zahlungen
