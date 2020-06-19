@@ -71,6 +71,7 @@ if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->se
 {
 	$error = 0;
 	$maxprod = GETPOST("max_prod", 'int');
+
 	for ($i = 0; $i < $maxprod; $i++)
 	{
 		$qty = price2num(GETPOST("prod_qty_".$i, 'alpha'), 'MS');
