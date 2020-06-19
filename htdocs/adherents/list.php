@@ -544,7 +544,9 @@ if (!empty($arrayfields['d.email']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '<input class="flat maxwidth75imp" type="text" name="search_email" value="'.$search_email.'"></td>';
 }
-
+// Filter UptoDate
+print '<input type="hidden" name="filter" value="'.$filter.'">';
+// Date end membership
 if (!empty($arrayfields['d.datefin']['checked'])) {
 	print '<td class="liste_titre left">';
 	print '</td>';
