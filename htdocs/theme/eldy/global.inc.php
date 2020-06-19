@@ -196,6 +196,7 @@ input, select {
 input.button:focus {
 	border-bottom: 0;
 }
+
 input.button.massactionconfirmed {
     margin: 4px;
 }
@@ -1972,7 +1973,11 @@ div.mainmenu {
 	margin-left: 0px;
 	min-width: 40px;
 }
+
 a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
+    outline: none;
+}
+button.ui-button.ui-corner-all.ui-widget:focus {
     outline: none;
 }
 
