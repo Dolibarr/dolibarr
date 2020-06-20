@@ -148,9 +148,9 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
-input[name=duration_value]
+input[name=duration_value], input[name=durationhour]
 {
-	margin-right: 4px;
+	margin-right: 4px !important;
 }
 input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
@@ -196,6 +196,7 @@ input, select {
 input.button:focus {
 	border-bottom: 0;
 }
+
 input.button.massactionconfirmed {
     margin: 4px;
 }
@@ -1161,7 +1162,7 @@ table[summary="list_of_modules"] .fa-cog {
 	}
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
-		width: calc(100% - 30px) !important;
+		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}
 
@@ -1975,7 +1976,11 @@ div.mainmenu {
 	margin-left: 0px;
 	min-width: 40px;
 }
+
 a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
+    outline: none;
+}
+button.ui-button.ui-corner-all.ui-widget:focus {
     outline: none;
 }
 

@@ -161,7 +161,7 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
 		print '<td>';
 		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
 		print '<td>';
-		print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'>";
+		print "<a target='_blank' href='printqr.php?id=".$row['rowid']."'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'></a>";
 		print '</td></tr>';
     }
 
@@ -180,7 +180,7 @@ if ($conf->global->TAKEPOS_QR_MENU)
 	print '<tr class="oddeven value"><td>';
 	print "<a target='_blank' href='".$urlwithroot."/takepos/public/menu.php'>".$urlwithroot."/takepos/public/menu.php</a>";
 	print '<td>';
-	print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' height='42' width='42'>";
+	print "<a target='_blank' href='printqr.php'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' height='42' width='42'></a>";
 	print '</td></tr>';
 	print '</table>';
 }

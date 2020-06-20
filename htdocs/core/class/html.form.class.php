@@ -5676,8 +5676,7 @@ class Form
 			$minSelected = convertSecondToTime($iSecond, 'min');
 		}
 
-		if ($typehour == 'select')
-		{
+		if ($typehour == 'select') {
 			$retstring .= '<select class="flat" id="select_'.$prefix.'hour" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').'>';
 			for ($hour = 0; $hour < 25; $hour++)	// For a duration, we allow 24 hours
 			{
@@ -5689,10 +5688,11 @@ class Form
 				$retstring .= ">".$hour."</option>";
 			}
 			$retstring .= "</select>";
-		} elseif ($typehour == 'text' || $typehour == 'textselect')
-		{
-			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
-		} else return 'BadValueForParameterTypeHour';
+		} elseif ($typehour == 'text' || $typehour == 'textselect') {
+			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
+		} else {
+			return 'BadValueForParameterTypeHour';
+		}
 
 		if ($typehour != 'text') $retstring .= ' '.$langs->trans('HourShort');
 		else $retstring .= '<span class="hideonsmartphone">:</span>';
@@ -5713,7 +5713,7 @@ class Form
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text')
 		{
-			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
 		}
 
 		if ($typehour != 'text') $retstring .= ' '.$langs->trans('MinuteShort');

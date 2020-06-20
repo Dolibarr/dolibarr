@@ -707,7 +707,7 @@ function TakeposConnector(id){
 	?>';
     $.ajax({
         type: "POST",
-        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/print.php',
+        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print.php',
         data: 'invoice='+invoice
     });
 }

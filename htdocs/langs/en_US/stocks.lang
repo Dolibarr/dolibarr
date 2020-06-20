@@ -59,7 +59,6 @@ AllowAddLimitStockByWarehouse=Manage also value for minimum and desired stock pe
 RuleForWarehouse=Rule for warehouses
 WarehouseAskWarehouseDuringOrder=Set a warehouse on Sale orders
 UserDefaultWarehouse=Set a warehouse on Users
-DefaultWarehouseActive=Default warehouse active
 MainDefaultWarehouse=Default warehouse
 MainDefaultWarehouseUser=Use a default warehouse for each user
 MainDefaultWarehouseUserDesc=By activating this option, during creation of a product, the warehouse assigned to the product will be defined on this one. If no warehouse is defined on the user, the default warehouse is defined.
