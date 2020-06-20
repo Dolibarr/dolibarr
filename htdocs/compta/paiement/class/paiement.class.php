@@ -532,9 +532,8 @@ class Paiement extends CommonObject
 			$accline = new AccountLine($this->db);
 
 			$result=$accline->fetch($bank_line_id);
-			if ($result == 0)
-			{
-				$accline->id=$accline->rowid=$bank_line_id;    // If not found, we set artificially rowid to allow delete of llx_bank_url
+			if ($result == 0) {
+				$accline->id = $accline->rowid = $bank_line_id;    // If not found, we set artificially rowid to allow delete of llx_bank_url
 			}
 
             // Delete bank account url lines linked to payment
