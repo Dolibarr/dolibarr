@@ -23,6 +23,9 @@
 
 require '../../main.inc.php';
 
+// Security check
+if (!$user->admin) accessforbidden();
+
 $langs->load("cashdesk");
 
 $id = GETPOST('id', 'int');
