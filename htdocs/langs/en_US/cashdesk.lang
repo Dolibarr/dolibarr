@@ -110,3 +110,5 @@ BarRestaurant=Bar Restaurant
 AutoOrder=Customer auto order
 RestaurantMenu=Menu
 CustomerMenu=Customer menu
+ScanToMenu=Scan QR code to see the menu
+ScanToOrder=Scan QR code to order
