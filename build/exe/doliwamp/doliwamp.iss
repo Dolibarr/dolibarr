@@ -41,7 +41,7 @@ Compression=lzma
 SolidCompression=yes
 WizardImageFile=build\exe\doliwamp\doliwamp.bmp
 WizardSmallImageFile=build\exe\doliwamp\doliwampsmall.bmp
-SetupIconFile=doc\images\dolibarr.ico
+SetupIconFile=doc\images\dolibarr_favicon.ico
 ;To say the installer must be ran as admin
 PrivilegesRequired=admin
 DisableProgramGroupPage=yes
