@@ -112,7 +112,7 @@ else
 print "</td></tr>\n";
 
 // Receipt printer module
-if ($conf->receiptprinter->enabled) {
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('DolibarrReceiptPrinter');
 	print '<td>';
