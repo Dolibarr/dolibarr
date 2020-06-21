@@ -55,6 +55,10 @@ class Ldap
 	/**
 	 * Version du protocole ldap
 	 */
+    public $ldapProtocolVersion;
+    /**
+     * Server DN
+     */
     public $domain;
 	/**
 	 * User administrateur Ldap
@@ -466,8 +470,6 @@ class Ldap
 	 */
     public function modify($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::modify dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -492,7 +494,11 @@ class Ldap
 		$this->dump($dn, $info);
 
 		//print_r($info);
-		$result = @ldap_modify($this->connection, $dn, $info);
+		// For better compatibility with Samba4 AD
+		if ($this->serverType == "activedirectory") {
+			unset($info['cn']); // For avoid error : Operation not allowed on RDN (Code 67)
+		}
+		$result=@ldap_modify($this->connection, $dn, $info);
 
 		if ($result)
 		{
@@ -520,9 +526,7 @@ class Ldap
 	 */
     public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
-		global $conf;
-
-		dol_syslog(get_class($this)."::modify dn=".$dn." newrdn=".$newrdn." newparent=".$newparent." deleteoldrdn=".($deleteoldrdn ? 1 : 0));
+		dol_syslog(get_class($this)."::modify dn=".$dn." newrdn=".$newrdn." newparent=".$newparent." deleteoldrdn=".($deleteoldrdn?1:0));
 
 		// Check parameters
 		if (!$this->connection)
@@ -571,8 +575,6 @@ class Ldap
 	 */
     public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::update dn=".$dn." olddn=".$olddn);
 
 		// Check parameters
@@ -589,7 +591,7 @@ class Ldap
 
 		if (!$olddn || $olddn != $dn)
 		{
-			if (!empty($olddn) && !empty($newrdn) && !empty($newparent) && $conf->global->LDAP_SERVER_PROTOCOLVERSION === '3')
+			if (! empty($olddn) && ! empty($newrdn) && ! empty($newparent) && $this->ldapProtocolVersion === '3')
 			{
 				// This function currently only works with LDAPv3
 				$result = $this->rename($olddn, $newrdn, $newparent, $user, true);
@@ -631,8 +633,6 @@ class Ldap
 	 */
     public function delete($dn)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::delete Delete LDAP entry dn=".$dn);
 
 		// Check parameters
