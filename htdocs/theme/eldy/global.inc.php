@@ -2785,6 +2785,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     text-decoration: none;
     white-space: nowrap;
 
+	/*border-right: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-top: 1px solid #ddd; */
 	border-right: 1px solid transparent;
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
