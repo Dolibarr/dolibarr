@@ -2561,14 +2561,6 @@ else
         print $form->editfieldval("Date", 'datef', $object->datep, $object, $form_permission, 'datepicker');
         print '</td>';
 
-        // Due date
-        print '<tr><td>'.$form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker').'</td><td colspan="3">';
-        print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
-        if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
-	        print img_warning($langs->trans('Late'));
-        }
-        print '</td>';
-
 		// Default terms of the settlement
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
@@ -2590,6 +2582,14 @@ else
 		}
 		print "</td>";
 		print '</tr>';
+
+		// Due date
+		print '<tr><td>'.$form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker').'</td><td colspan="3">';
+		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
+		if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
+			print img_warning($langs->trans('Late'));
+		}
+		print '</td>';
 
 		// Mode of payment
 		$langs->load('bills');
