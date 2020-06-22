@@ -852,6 +852,7 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
 		}
 		$sql .= " WHERE wp.fk_website = ".$website->id;
+		$sql .= " AND wp.status = 1";
 		if ($langcode) {
 			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
 		}
