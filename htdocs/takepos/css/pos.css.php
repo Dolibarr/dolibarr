@@ -102,6 +102,7 @@ button.calcbutton {
     border-width: 0;
     margin: 1px;
 	font-size: 14pt;
+    border-radius: 3px;
 }
 
 button.calcbutton2 {
@@ -121,6 +122,7 @@ button.calcbutton2 {
 	font-weight: bold;
 	font-size: 10pt;
 	margin: 1px;
+    border-radius: 3px;
 }
 
 button.calcbutton3 {
@@ -136,12 +138,14 @@ button.calcbutton3 {
 	height: calc(25% - 2px);
 	font-size: 14pt;
 	margin: 1px;
+    border-radius: 3px;
 }
 
 button.actionbutton {
     background: #EABCA6;
     border: 2px solid #EEE;
     min-height: 40px;
+    border-radius: 3px;
 }
 
 button.actionbutton {
