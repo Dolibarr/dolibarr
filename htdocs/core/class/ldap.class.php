@@ -164,7 +164,7 @@ class Ldap
     public function connect_bind()
 	{
         // phpcs:enable
-		global $langs, $conf;
+		global $conf;
 
 		$connected=0;
 		$this->bind=0;
@@ -187,7 +187,7 @@ class Ldap
 		if (empty($this->error))
 		{
 			// Loop on each ldap server
-			foreach ($this->server as $key => $host)
+			foreach ($this->server as $host)
 			{
 				if ($connected) break;
 				if (empty($host)) continue;
@@ -416,8 +416,6 @@ class Ldap
 	 */
     public function add($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::add dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -692,7 +690,7 @@ class Ldap
 			}
 			else
 			{
-				foreach($value as $valuekey => $valuevalue)
+				foreach($value as $valuevalue)
 				{
 					$content.="$key: $valuevalue\n";
 				}
@@ -774,8 +772,6 @@ class Ldap
 	 */
     public function addAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::addAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -826,8 +822,6 @@ class Ldap
 	 */
     public function updateAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::updateAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -878,8 +872,6 @@ class Ldap
 	 */
     public function deleteAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::deleteAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
