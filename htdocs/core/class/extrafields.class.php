@@ -1621,6 +1621,13 @@ class ExtraFields
 				$keyList .= implode(', ', $fields_label);
 			}
 
+			$filter_categorie = false;
+			if (count($InfoFieldList) > 5) {
+				if ($InfoFieldList[0] == 'categorie') {
+					$filter_categorie = true;
+				}
+			}
+
 			$sql = 'SELECT '.$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false)
@@ -1641,37 +1648,49 @@ class ExtraFields
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				$value = ''; // value was used, so now we reste it to use it to build final output
+				if ($filter_categorie === false) {
+					$value = ''; // value was used, so now we reste it to use it to build final output
 
-				$obj = $this->db->fetch_object($resql);
+					$obj = $this->db->fetch_object($resql);
 
-				// Several field into label (eq table:code|libelle:rowid)
-				$fields_label = explode('|', $InfoFieldList[1]);
+					// Several field into label (eq table:code|libelle:rowid)
+					$fields_label = explode('|', $InfoFieldList[1]);
 
-				if (is_array($fields_label) && count($fields_label) > 1)
-				{
-					foreach ($fields_label as $field_toshow)
-					{
-						$translabel = '';
-						if (!empty($obj->$field_toshow)) {
-							$translabel = $langs->trans($obj->$field_toshow);
+					if (is_array($fields_label) && count($fields_label) > 1) {
+						foreach ($fields_label as $field_toshow) {
+							$translabel = '';
+							if (!empty($obj->$field_toshow)) {
+								$translabel = $langs->trans($obj->$field_toshow);
+							}
+							if ($translabel != $field_toshow) {
+								$value .= dol_trunc($translabel, 18) . ' ';
+							} else {
+								$value .= $obj->$field_toshow . ' ';
+							}
 						}
-						if ($translabel != $field_toshow) {
-							$value .= dol_trunc($translabel, 18).' ';
+					} else {
+						$translabel = '';
+						if (!empty($obj->{$InfoFieldList[1]})) {
+							$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+						}
+						if ($translabel != $obj->{$InfoFieldList[1]}) {
+							$value = dol_trunc($translabel, 18);
 						} else {
-							$value .= $obj->$field_toshow.' ';
+							$value = $obj->{$InfoFieldList[1]};
 						}
 					}
 				} else {
-					$translabel = '';
-					if (!empty($obj->{$InfoFieldList[1]})) {
-						$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+
+					$toprint = array();
+					$obj = $this->db->fetch_object($resql);
+					$c = new Categorie($this->db);
+					$c->fetch($obj->rowid);
+					$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+					foreach ($ways as $way) {
+						$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #aaa"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
 					}
-					if ($translabel != $obj->{$InfoFieldList[1]}) {
-						$value = dol_trunc($translabel, 18);
-					} else {
-						$value = $obj->{$InfoFieldList[1]};
-					}
+					$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
 				}
 			} else dol_syslog(get_class($this).'::showOutputField error '.$this->db->lasterror(), LOG_WARNING);
 		} elseif ($type == 'radio')
@@ -1710,6 +1729,13 @@ class ExtraFields
 				$keyList .= implode(', ', $fields_label);
 			}
 
+			$filter_categorie = false;
+			if (count($InfoFieldList) > 5) {
+				if ($InfoFieldList[0] == 'categorie') {
+					$filter_categorie = true;
+				}
+			}
+
 			$sql = 'SELECT '.$keyList;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.$InfoFieldList[0];
 			if (strpos($InfoFieldList[4], 'extra') !== false) {
@@ -1721,33 +1747,49 @@ class ExtraFields
 			dol_syslog(get_class($this).':showOutputField:$type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				$value = ''; // value was used, so now we reste it to use it to build final output
-				$toprint = array();
-				while ($obj = $this->db->fetch_object($resql)) {
-					// Several field into label (eq table:code|libelle:rowid)
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-						if (is_array($fields_label) && count($fields_label) > 1) {
-							foreach ($fields_label as $field_toshow) {
-								$translabel = '';
-								if (!empty($obj->$field_toshow)) {
-									$translabel = $langs->trans($obj->$field_toshow);
+				if ($filter_categorie === false) {
+					$value = ''; // value was used, so now we reste it to use it to build final output
+					$toprint = array();
+					while ($obj = $this->db->fetch_object($resql)) {
+						// Several field into label (eq table:code|libelle:rowid)
+						$fields_label = explode('|', $InfoFieldList[1]);
+						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+							if (is_array($fields_label) && count($fields_label) > 1) {
+								foreach ($fields_label as $field_toshow) {
+									$translabel = '';
+									if (!empty($obj->$field_toshow)) {
+										$translabel = $langs->trans($obj->$field_toshow);
+									}
+									if ($translabel != $field_toshow) {
+										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">' . dol_trunc($translabel, 18) . '</li>';
+									} else {
+										$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">' . $obj->$field_toshow . '</li>';
+									}
 								}
-								if ($translabel != $field_toshow) {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
-								} else {
-									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->$field_toshow.'</li>';
-								}
-							}
-						} else {
-							$translabel = '';
-							if (!empty($obj->{$InfoFieldList[1]})) {
-								$translabel = $langs->trans($obj->{$InfoFieldList[1]});
-							}
-							if ($translabel != $obj->{$InfoFieldList[1]}) {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.dol_trunc($translabel, 18).'</li>';
 							} else {
-								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">'.$obj->{$InfoFieldList[1]}.'</li>';
+								$translabel = '';
+								if (!empty($obj->{$InfoFieldList[1]})) {
+									$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+								}
+								if ($translabel != $obj->{$InfoFieldList[1]}) {
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">' . dol_trunc($translabel, 18) . '</li>';
+								} else {
+									$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #aaa">' . $obj->{$InfoFieldList[1]} . '</li>';
+								}
+							}
+						}
+					}
+				} else {
+					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+
+					$toprint = array();
+					while ($obj = $this->db->fetch_object($resql)) {
+						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
+							$c = new Categorie($this->db);
+							$c->fetch($obj->rowid);
+							$ways = $c->print_all_ways(); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
+							foreach ($ways as $way) {
+								$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #aaa"') . '>' . img_object('', 'category') . ' ' . $way . '</li>';
 							}
 						}
 					}
