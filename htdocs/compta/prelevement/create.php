@@ -157,7 +157,7 @@ if ($type == 'bank-transfer') {
 	$title = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 }
 
-print '<tr><td class="titlefield">'.$title.'</td>';
+print '<tr><td class="titlefieldcreate">'.$title.'</td>';
 print '<td>';
 print $nb;
 print '</td></tr>';

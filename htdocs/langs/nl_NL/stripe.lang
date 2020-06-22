@@ -32,7 +32,7 @@ VendorName=Verkopersnaam
 CSSUrlForPaymentForm=URL van het CSS-stijlbestand voor het betalingsformulier
 NewStripePaymentReceived=Nieuwe Stripe-betaling ontvangen
 NewStripePaymentFailed=Nieuwe Stripe-betaling geprobeerd, maar mislukt
-FailedToChargeCard=Failed to charge card
+FailedToChargeCard=Kan kaart niet gebruiken
 STRIPE_TEST_SECRET_KEY=Geheime testsleutel
 STRIPE_TEST_PUBLISHABLE_KEY=Publiceerbare testsleutel
 STRIPE_TEST_WEBHOOK_KEY=Webhook test sleutel
@@ -69,4 +69,4 @@ ToOfferALinkForTestWebhook=Link om Stripe WebHook in te stellen om de IPN te bel
 ToOfferALinkForLiveWebhook=Link om Stripe WebHook in te stellen om de IPN te bellen (live-modus)
 PaymentWillBeRecordedForNextPeriod=De betaling wordt geregistreerd voor de volgende periode.
 ClickHereToTryAgain=<a href="%s">Klik hier om het opnieuw te proberen ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Vanwege de strenge regels voor klantauthenticatie moet het aanmaken van een kaart worden gedaan vanuit Stripe backoffice. U kunt hier klikken om Stripe-klantrecord in te schakelen: %s

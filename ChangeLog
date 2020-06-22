@@ -3,7 +3,7 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 12.0 compared to 11.0 *****
+***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For users:
 
 NEW: Module MO (Manufacturing Order) is available as stable module.
@@ -230,6 +230,16 @@ Following changes may create regressions for some external modules, but were nec
   - remove input field in form '<input type="hidden" name="page" value="'.$page.'">';'
   - add parameter $pagenavastextinput to value 1 when calling print_barre_liste()
 
+WARNING FOR DOLIWAMP USERS ONLY:
+
+Only people that installed Dolibarr using the all-in-one autoinstaller for Windows called "DoliWAMP" are concerned by the following warnings:
+ 
+* DoliWAMP autoinstaller for Windows is not more available on 32bits systems. Use standard package if you need to use such architecture.
+* It is not possible to migrate from an installation done with the old DoliWAMP autoinstaller for Windows by using this new one. You must make a backup 
+  of your database, make a fresh installation using the new installer and reload.
+* Don't forget that DoliWAMP is a good solution to make a quick test of Dolibarr on your local computer but was never recommanded as a production
+  solution on a local desktop since a desktop computer has not a backup and security policy as good as on a server (when there is one). 
+  DoliWAMP remains a solution for fast test or demo purposes.
 
 
 ***** ChangeLog for 11.0.4 compared to 11.0.3 *****

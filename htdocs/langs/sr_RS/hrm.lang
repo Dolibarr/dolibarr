@@ -11,7 +11,7 @@ CloseEtablishment=Zatvori ogranak
 # Dictionary
 DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=HR - Lista odeljenja
-DictionaryFunction=HR - Lista funkcija
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Zaposleni
 Employee=Zaposleni

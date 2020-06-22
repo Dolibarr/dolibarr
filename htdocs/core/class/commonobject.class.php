@@ -6091,7 +6091,7 @@ abstract class CommonObject
 			{
 				$morecss = 'minwidth100imp';
 			}
-			elseif ($type == 'datetime' || $type == 'link')
+			elseif ($type == 'datetime' || $type == 'link')	// link means an foreign key to another primary id
 			{
 				$morecss = 'minwidth200imp';
 			}
@@ -6563,11 +6563,13 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
+			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+				$morecss .= ' widthcentpercentminusx';
+			}
 
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
-			if (!empty($param_list_array[2]))		// If we set to add a create button
-			{
+			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
 				if (!GETPOSTISSET('backtopage') && empty($val['disabled']) && empty($nonewbutton))	// To avoid to open several times the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
 				{
 		   			list($class, $classfile) = explode(':', $param_list[0]);

@@ -1096,23 +1096,14 @@ class Project extends CommonObject
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
-			$linkclose .= ' class="classfortooltip"';
-
-			/*
-			 $hookmanager->initHooks(array('projectdao'));
-			 $parameters=array('id'=>$this->id);
-			 // Note that $action and $object may have been modified by some hooks
-			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
-			 if ($reshook > 0)
-			 $linkclose = $hookmanager->resPrint;
-			 */
+			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		}
+		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$picto = 'projectpub';
 		if (!$this->public) $picto = 'project';
 
 		$linkstart = '<a href="'.$url.'"';
-		$linkstart .= ($morecss ? ' class="'.$morecss.'"' : '');
 		$linkstart .= $linkclose.'>';
 		$linkend = '</a>';
 

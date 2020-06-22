@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=下一步将在未来节省您将来的时间�
 AccountancyAreaDescActionFreq=对于非常大的公司，通常每月，每周或每天执行以下操作......
 
 AccountancyAreaDescJournalSetup=步骤%s：从菜单%s创建或检查日常报表的内容
-AccountancyAreaDescChartModel=步骤%s：从菜单%s创建一个会计科目表模型
-AccountancyAreaDescChart=步骤%s：从菜单%s创建或检查您的会计科目表内容
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=步骤%s：为每个税率定义会计科目，使用菜单%s。
 AccountancyAreaDescDefault=步骤%s：定义默认会计科目，使用菜单%s。

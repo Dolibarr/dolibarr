@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Următorii pași trebuie făcuți pentru a vă 
 AccountancyAreaDescActionFreq=Următoarele acțiuni sunt executate de obicei în fiecare lună, săptămână sau zi pentru companii foarte mari ...
 
 AccountancyAreaDescJournalSetup=PASUL %s: Creați sau verificați conținutul jurnalului din meniu %s
-AccountancyAreaDescChartModel=PASUL %s: Creați un model de plan de cont din meniul %s
-AccountancyAreaDescChart=PASUL %s: Creați sau verificați conținutul planului dvs. de conturi din meniul %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=PASUL %s: Definirea conturilor contabile pentru fiecare TVA. Pentru aceasta, utilizați intrarea din meniu %s.
 AccountancyAreaDescDefault=PAS %s: Definiți conturile implicite de contabilitate. Pentru aceasta, utilizați intrarea în meniu %s.

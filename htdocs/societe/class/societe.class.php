@@ -3064,12 +3064,12 @@ class Societe extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    	Returns an accounting code, following the accounting code module.
-	 *      May be identical to the one entered or generated automatically.
-	 *      To date only the automatic generation is implemented
+	 *    	Assigns a accounting code from the accounting code module.
+	 *      Computed value is stored into this->code_compta or this->code_compta_fournisseur according to $type.
+	 *      May be identical to the one entered or generated automatically. Currently, only the automatic generation is implemented.
 	 *
 	 *    	@param	string	$type		Type of thirdparty ('customer' or 'supplier')
-	 *		@return	string				Code compta si ok, 0 si aucun, <0 si ko
+	 *		@return	int					0 if OK, <0 if $type is not valid
 	 */
     public function get_codecompta($type)
 	{

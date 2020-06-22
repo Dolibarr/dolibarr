@@ -27,7 +27,7 @@ DangerZone=Khu vực nguy hiểm
 BuildPackage=Xây dựng gói
 BuildPackageDesc=Bạn có thể tạo gói zip của ứng dụng để bạn sẵn sàng phân phối nó trên bất kỳ Dolibarr nào. Bạn cũng có thể phân phối hoặc bán nó trên thị trường như <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Xây dựng tài liệu
-ModuleIsNotActive=Mô-đun này chưa được kích hoạt. Truy cập %s để làm sống hoặc nhấp vào đây:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=Mô-đun này đã được kích hoạt. Bất kỳ thay đổi có thể phá vỡ một tính năng sống hiện tại.
 DescriptionLong=Mô tả dài
 EditorName=Tên biên tập viên
@@ -139,3 +139,4 @@ ForeignKey=Khóa ngoại
 TypeOfFieldsHelp=Kiểu trường: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' có nghĩa là chúng ta thêm nút + sau khi kết hợp để tạo bản ghi, ví dụ 'bộ lọc' có thể là 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTEER__)')
 AsciiToHtmlConverter=Chuyển mã ASCII sang HTML
 AsciiToPdfConverter=Chuyển ASCII sang PDF
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.
