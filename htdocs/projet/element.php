@@ -540,12 +540,12 @@ if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
 }
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
 	foreach($listofreferent as $key => $element) {
-		if ($listofreferent[$key]['margin'] == 'add') {
+		if ($listofreferent[$key]['margin'] == 'minus') {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
-	foreach($newelementforplusmargin as $value) {
+	$newelementforminusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	foreach($newelementforminusmargin as $value) {
 		$listofreferent[$value]['margin']='minus';
 	}
 }
