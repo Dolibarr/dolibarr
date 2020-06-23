@@ -41,7 +41,7 @@ Compression=lzma
 SolidCompression=yes
 WizardImageFile=build\exe\doliwamp\doliwamp.bmp
 WizardSmallImageFile=build\exe\doliwamp\doliwampsmall.bmp
-SetupIconFile=doc\images\dolibarr.ico
+SetupIconFile=doc\images\dolibarr_favicon.ico
 ;To say the installer must be ran as admin
 PrivilegesRequired=admin
 DisableProgramGroupPage=yes
@@ -519,7 +519,7 @@ begin
 	    // check that we don't try an upgrade (mysql upgrade no supported)
 	    //----------------------------------------------
 
-	    if FileExists (pathWithSlashes+'/bin/mysql/mysql5.0.45'+phpVersion+'/bin/mysqld-nt.exe') then
+	    if FileExists (pathWithSlashes+'/bin/mysql/mysql5.0.45/bin/mysqld-nt.exe') then
 	    begin
 	      MsgBox('An existing installation using an old version of Mysql exists. Sorry, upgrade with this installer is not possible.', mbInformation, MB_OK);
 	      Abort();
@@ -590,13 +590,24 @@ begin
 	      
 	      if browser = 'iexplore.exe' then
 	      begin
+		    if FileExists (winPath+'/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe')  then
+		    begin
+		      if MsgBox(CustomMessage('MicrosoftEdgeDetected'),mbConfirmation,MB_YESNO) = IDYES then
+		      begin
+		        browser := winPath+'/SystemApps/Microsoft.MicrosoftEdge_8wekyb3d8bbwe/MicrosoftEdge.exe';
+		      end;
+		    end;
+		  end;
+
+	      if browser = 'iexplore.exe' then
+	      begin
             if FileExists (pfPath+'/Internet Explorer/iexplore.exe')  then
             begin
-               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer','exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, pfPath+'/Internet Explorer', 'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
 	        end
 	        else
 	        begin
-               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, winPath,'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
+               GetOpenFileName(CustomMessage('ChooseDefaultBrowser'), browser, winPath, 'exe files (*.exe)|*.exe|All files (*.*)|*.*' ,'exe');
 	        end;
 	      end;
 	
