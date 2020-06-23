@@ -535,7 +535,7 @@ if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
 	}
 	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
 	foreach($newelementforplusmargin as $value) {
-		$listofreferent[$value]['margin']='add';
+		$listofreferent[trim($value)]['margin']='add';
 	}
 }
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
@@ -546,7 +546,7 @@ if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
 	}
 	$newelementforminusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
 	foreach($newelementforminusmargin as $value) {
-		$listofreferent[$value]['margin']='minus';
+		$listofreferent[trim($value)]['margin']='minus';
 	}
 }
 
@@ -650,6 +650,8 @@ print '<td class="right" width="100">'.$langs->trans("Number").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
+
+$total_revenue_ht = 0;
 
 foreach ($listofreferent as $key => $value)
 {
@@ -780,7 +782,11 @@ foreach ($listofreferent as $key => $value)
 			// Calculate margin
 			if ($qualifiedforfinalprofit)
 			{
-			    if ($margin != "add")
+				if ($margin == 'add') {
+					$total_revenue_ht += $total_ht;
+				}
+
+			    if ($margin != "add")	// Revert sign
 				{
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
@@ -811,10 +817,19 @@ foreach ($listofreferent as $key => $value)
 }
 // and the final balance
 print '<tr class="liste_total">';
-print '<td class="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td class="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
-print '<td class="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
+print '<td class="right" colspan="2">'.$langs->trans("Profit").'</td>';
+print '<td class="right">'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td class="right">'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
+
+// and the margin (profit / revenues)
+if ($total_revenue_ht) {
+	print '<tr class="liste_total">';
+	print '<td class="right" colspan="2">'.$langs->trans("Margin").'</td>';
+	print '<td class="right">'.price(price2num($balance_ht / $total_revenue_ht, 'MT')).'</td>';
+	print '<td class="right"></td>';
+	print '</tr>';
+}
 
 print "</table>";
 
