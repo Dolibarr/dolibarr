@@ -8562,15 +8562,16 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 /**
  * Return if a file can contains executable content
  *
- * @param   string  $filename       File NamedRange
+ * @param   string  $filename       File name to test
  * @return  boolean                 True if yes, False if no
  */
 function isAFileWithExecutableContent($filename)
 {
-    if (preg_match('/\.(htm|html|js|php|php\d+|phtml|pl|py|cgi|ksh|sh|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
+    if (preg_match('/\.(htm|html|js|phar|php|php\d+|phtml|pht|pl|py|cgi|ksh|sh|shtml|bash|bat|cmd|wpk|exe|dmg)$/i', $filename))
     {
         return true;
     }
+
     return false;
 }
 
