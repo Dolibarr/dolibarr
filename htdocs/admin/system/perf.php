@@ -552,13 +552,6 @@ else
 }
 print '<br>';
 
-// Database statistics update
-/*
-print '<br>';
-print '<strong>'.$langs->trans("DatabaseStatistics").'</strong>: ';
-print '<br>';
-*/
-
 // End of page
 llxFooter();
 $db->close();
