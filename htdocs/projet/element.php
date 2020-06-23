@@ -826,7 +826,7 @@ print '</tr>';
 if ($total_revenue_ht) {
 	print '<tr class="liste_total">';
 	print '<td class="right" colspan="2">'.$langs->trans("Margin").'</td>';
-	print '<td class="right">'.price(price2num($balance_ht / $total_revenue_ht, 'MT')).'</td>';
+	print '<td class="right">'.round(100 * $balance_ht / $total_revenue_ht, 1).'%</td>';
 	print '<td class="right"></td>';
 	print '</tr>';
 }
