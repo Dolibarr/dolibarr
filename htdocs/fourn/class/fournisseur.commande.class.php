@@ -273,7 +273,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
-        $sql.= " WHERE c.entity IN (".getEntity('order_invoice').")";
+        $sql.= " WHERE c.entity IN (".getEntity('supplier_order').")";
         if ($ref) $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND c.rowid=".$id;
 
@@ -528,6 +528,7 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " fk_user_valid = ".$user->id;
             $sql.= " WHERE rowid = ".$this->id;
             $sql.= " AND fk_statut = ".self::STATUS_DRAFT;
+	        $sql.= " AND entity IN (".getEntity('supplier_order').")";
 
             $resql=$this->db->query($sql);
             if (! $resql)
@@ -844,6 +845,7 @@ class CommandeFournisseur extends CommonOrder
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+	    $sql .= " AND entity IN (".getEntity('supplier_order').")";
         if ($this->db->query($sql))
         {
         	if (! $error)
