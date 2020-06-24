@@ -1729,7 +1729,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-<?php echo $right; ?>: 20px;
+	padding-<?php echo $right; ?>: 30px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -3116,7 +3116,7 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: 3px;
+	/* padding-top: 3px; */
 }
 div.refid  {
 	font-weight: bold;
@@ -3158,7 +3158,7 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 10px;
+  /* padding-top: 10px; */
   padding-bottom: 5px;
   font-size: 1.1em;
 }
@@ -3633,7 +3633,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     width: 118px;
 }
 
-td.tdboxstats .boxstats {
+.boxtable:not(.widgetstats) td.tdboxstats .boxstats {
 	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
 }
 
