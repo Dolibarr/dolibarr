@@ -1036,6 +1036,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* ============================================================================== */
 
 .clearboth  { clear:both; }
+
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
@@ -1166,6 +1167,7 @@ table[summary="list_of_modules"] .fa-cog {
 		display: inline-block;
 	}
 
+	.clearbothonsmartphone { clear: both; display: block; }
 	/*img.photoref, div.photoref {
 		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
 	}*/

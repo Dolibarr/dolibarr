@@ -663,8 +663,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			print '<div class="center'.(in_array($action, array('consumeorproduce', 'consumeandproduceall')) ? ' formconsumeproduce' : '').'">';
 			print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ConfirmProductionDesc", $langs->transnoentitiesnoconv("Confirm")).'<br></span>';
-			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"> &nbsp; ';
-			print $langs->trans("InventoryCode").': <input type="text" class="maxwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"><br><br>';
+			print '<span class="fieldrequired">'.$langs->trans("InventoryCode").':</span> <input type="text" class="maxwidth200" name="inventorycode" value="'.$defaultstockmovementcode.'"> &nbsp; ';
+			print '<span class="clearbothonsmartphone"></span>';
+			print $langs->trans("MovementLabel").': <input type="text" class="minwidth300" name="inventorylabel" value="'.$defaultstockmovementlabel.'"><br><br>';
 			print '<input type="checkbox" id="autoclose" name="autoclose" value="1"'.(GETPOSTISSET('inventorylabel') ? (GETPOST('autoclose') ? ' checked="checked"' : '') : ' checked="checked"').'> <label for="autoclose">'.$langs->trans("AutoCloseMO").'</label><br>';
 			print '<input class="button" type="submit" value="'.$langs->trans("Confirm").'" name="confirm">';
 			print ' &nbsp; ';

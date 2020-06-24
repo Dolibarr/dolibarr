@@ -1223,6 +1223,8 @@ table[summary="list_of_modules"] .fa-cog {
 	div.refidno {
 		font-size: <?php print is_numeric($fontsize) ? ($fontsize).'px' : $fontsize; ?> !important;
 	}
+
+	.clearbothonsmartphone { clear: both; display: block; }
 }
 
 /* Force values for small screen 570 */

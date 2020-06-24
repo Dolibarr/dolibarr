@@ -422,30 +422,26 @@ print '</form>';
 print '<br>';
 
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire2">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire2" class="formconsumeproduce">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="createmovements">';
 
 // Button to record mass movement
-$codemove = (isset($_POST["codemove"]) ?GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
-$labelmovement = GETPOST("label") ?GETPOST('label') : $langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
+$codemove = (isset($_POST["codemove"]) ? GETPOST("codemove", 'alpha') : dol_print_date(dol_now(), '%Y%m%d%H%M%S'));
+$labelmovement = GETPOST("label") ? GETPOST('label') : $langs->trans("StockTransfer").' '.dol_print_date($now, '%Y-%m-%d %H:%M');
 
-print '<table class="noborder centpercent">';
-	print '<tr>';
-	print '<td class="titlefield fieldrequired">'.$langs->trans("InventoryCode").'</td>';
-	print '<td>';
-	print '<input type="text" name="codemove" size="15" value="'.dol_escape_htmltag($codemove).'">';
-	print '</td>';
-	print '</tr>';
-	print '<tr>';
-	print '<td>'.$langs->trans("MovementLabel").'</td>';
-	print '<td>';
-	print '<input type="text" name="label" class="quatrevingtpercent" value="'.dol_escape_htmltag($labelmovement).'">';
-	print '</td>';
-	print '</tr>';
-print '</table><br>';
+print '<div class="center">';
+print '<span class="fieldrequired">'.$langs->trans("InventoryCode").':</span> ';
+print '<input type="text" name="codemove" class="maxwidth300" value="'.dol_escape_htmltag($codemove).'"> &nbsp; ';
+print '<span class="clearbothonsmartphone"></span>';
+print $langs->trans("MovementLabel").': ';
+print '<input type="text" name="label" class="minwidth300" value="'.dol_escape_htmltag($labelmovement).'"><br>';
+print '<br>';
 
 print '<div class="center"><input class="button" type="submit" name="valid" value="'.dol_escape_htmltag($buttonrecord).'"></div>';
+
+print '<br>';
+print '</div>';
 
 print '</form>';
 
