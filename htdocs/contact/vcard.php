@@ -79,7 +79,7 @@ if ($company->id)
 	if (! $contact->phone_pro) $v->setPhoneNumber($company->phone, "TYPE=WORK;VOICE");
 	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "TYPE=WORK;FAX");
 	if (! $contact->zip)        $v->setAddress("", "", $company->address, $company->town, "", $company->zip, $company->country, "TYPE=WORK;POSTAL");
-	if ($company->email != $contact->email) $v->setEmail($company->email, 'TYPE=PREF,INTERNET');
+	if (empty($contact->email)) $v->setEmail($company->email, 'TYPE=PREF,INTERNET');
 	// Si contact lie a un tiers non de type "particulier"
 	if ($contact->typent_code != 'TE_PRIVATE') $v->setOrg($company->name);
 }

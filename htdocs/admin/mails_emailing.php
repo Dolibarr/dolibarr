@@ -536,8 +536,9 @@ else
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mail = new CMailFile('', '', '', '');
-		$result=$mail->check_server_port($server, $port);
+		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, '', '', '', '', $trackid, $sendcontext);
+
+		$result = $mail->check_server_port($server, $port);
 		if ($result) print '<div class="ok">'.$langs->trans("ServerAvailableOnIPOrPort", $server, $port).'</div>';
 		else
 		{

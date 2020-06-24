@@ -1584,7 +1584,8 @@ class Facture extends CommonInvoice
 	}
 
 	/**
-	 * Fetch previous and next situations invoices
+	 * Fetch previous and next situations invoices.
+	 * Return all previous and next invoices (both standard and credit notes).
 	 *
 	 * @return	void
 	 */
@@ -1595,7 +1596,7 @@ class Facture extends CommonInvoice
 		$this->tab_previous_situation_invoice = array();
 		$this->tab_next_situation_invoice = array();
 
-		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND entity = '.$conf->entity.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref.' ORDER BY situation_counter ASC';
+		$sql = 'SELECT rowid, type, situation_cycle_ref, situation_counter FROM '.MAIN_DB_PREFIX.'facture WHERE rowid <> '.$this->id.' AND entity = '.$conf->entity.' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref.' ORDER BY situation_counter ASC';
 
 		dol_syslog(get_class($this).'::fetchPreviousNextSituationInvoice ', LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -5013,8 +5014,7 @@ class FactureLigne extends CommonInvoiceLine
 
 				$returnPercent = floatval($res['situation_percent']);
 
-				if($include_credit_note) {
-
+				if ($include_credit_note) {
 				    $sql = 'SELECT fd.situation_percent FROM ' . MAIN_DB_PREFIX . 'facturedet fd';
 				    $sql.= ' JOIN ' . MAIN_DB_PREFIX . 'facture f ON (f.rowid = fd.fk_facture) ';
 				    $sql.= ' WHERE fd.fk_prev_id =' . $this->fk_prev_id;
@@ -5026,6 +5026,8 @@ class FactureLigne extends CommonInvoiceLine
 				        while($obj = $this->db->fetch_object($res)) {
 				            $returnPercent = $returnPercent + floatval($obj->situation_percent);
 				        }
+				    } else {
+				    	dol_print_error($this->db);
 				    }
 				}
 

@@ -337,9 +337,14 @@ UPDATE llx_c_lead_status set code = 'WON' where code = 'WIN';
 -- To replace amount on all invoice and lines when forgetting to apply a 20% vat
 -- update llx_facturedet set tva_tx = 20 where tva_tx = 0;
 -- update llx_facturedet set total_ht = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
--- update llx_facturedet set total_tva = total_ttc - total_ht where total_vat = 0;
 -- update llx_facture set total = round(total_ttc / 1.2, 5) where total_ht = total_ttc;
--- update llx_facture set tva = total_ttc - total where tva = 0;
+
+-- To fix bad total of price excluding tax, vat and price tax including tax.
+-- select * from llx_facture where tva <> (total_ttc - total - localtax1 - localtax2 - revenuestamp);
+-- update llx_facture set tva = (total_ttc - total - localtax1 - localtax2 - revenuestamp) where tva <> (total_ttc - total - localtax1 - localtax2 - revenuestamp);
+-- select * from llx_facturedet where total_tva <> (total_ttc - total_ht - total_localtax1 - total_localtax2);
+-- update llx_facturedet set total_tva = (total_ttc - total_ht - total_localtax1 - total_localtax2) where total_tva <> (total_ttc - total_ht - total_localtax1 - total_localtax2);
+
 
 -- To insert elements into a category
 -- Search idcategory: select rowid from llx_categorie where type=0 and ref like '%xxx%'
@@ -468,6 +473,11 @@ UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS
  
 -- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
+
+
+-- Test inconsistency of data into situation invoices: If it differs, it may be the total_ht that is wrong and situation_percent that is good.
+-- select f.rowid, f.type, fd.qty, fd.subprice, fd.situation_percent, fd.total_ht, fd.total_ttc, fd.total_tva, fd.multicurrency_total_ht, fd.multicurrency_total_tva, fd.multicurrency_total_ttc, (situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100)))
+-- from llx_facturedet as fd, llx_facture as f where fd.fk_facture = f.rowid AND (total_ht - situation_percent  / 100 * subprice * qty * (1 - (fd.remise_percent / 100))) > 0.01 and f.type = 5;
 
 
 

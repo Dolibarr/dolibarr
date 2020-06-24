@@ -1792,6 +1792,7 @@ MailToThirdparty=Third parties
 MailToMember=Members
 MailToUser=Users
 MailToProject=Projects page
+MailToTicket=Tickets
 ByDefaultInList=Show by default on list view
 YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
