@@ -131,7 +131,7 @@ ICS=Creditor Identifier CI
 END_TO_END="EndToEndId" SEPA XML tag - Unique id assigned per transaction
 USTRD="Unstructured" SEPA XML tag
 ADDDAYS=Add days to Execution Date
-
+NoDefaultIBANFound=No default IBAN found for this third party
 ### Notifications
 InfoCreditSubject=Payment of direct debit payment order %s by the bank
 InfoCreditMessage=The direct debit payment order %s has been paid by the bank<br>Data of payment: %s
