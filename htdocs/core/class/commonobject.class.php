@@ -2543,16 +2543,14 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$i = 0;
-			$num = $this->db->num_rows($resql);
-			while ($i < $num)
-			{
-				$row = $this->db->fetch_row($resql);
-				$rows[$i] = $row[0];
-				$i++;
-			}
-		}
+			if($this->db->num_rows($resql) > 0) {
+                while($row = $this->db->fetch_row($resql)) {
 
+                    $rows[] = $row[0];
+                    $rows = array_merge($rows, $this->getChildrenOfLine($row[0]));
+                }
+            }
+		}
 		return $rows;
 	}
 
