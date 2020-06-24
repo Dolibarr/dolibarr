@@ -171,7 +171,7 @@ if ($nolinesbefore) {
 				echo '<label for="prod_entry_mode_free">';
 				echo '<input type="radio" class="prod_entry_mode_free" name="prod_entry_mode" id="prod_entry_mode_free" value="free"';
 				//echo (GETPOST('prod_entry_mode')=='free' ? ' checked' : ((empty($forceall) && (empty($conf->product->enabled) || empty($conf->service->enabled)))?' checked':'') );
-				echo (GETPOST('prod_entry_mode') == 'free' ? ' checked' : '');
+				echo ((GETPOST('prod_entry_mode', 'alpha') == 'free' || ! empty($conf->global->MAIN_FREE_PRODUCT_CHECKED_BY_DEFAULT)) ? ' checked' : '');
 				echo '> ';
 				// Show type selector
 				echo $langs->trans("FreeLineOfType");
@@ -187,7 +187,7 @@ if ($nolinesbefore) {
 					echo ' ';
 				}
 			}
-			echo $form->select_type_of_lines(isset($_POST["type"]) ?GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall);
+			echo $form->select_type_of_lines(GETPOSTISSET("type") ? GETPOST("type", 'alpha', 2) : -1, 'type', 1, 1, $forceall);
 			echo '</span>';
 		}
 		// Predefined product/service

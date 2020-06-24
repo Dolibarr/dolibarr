@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (!empty($conf->propal->enabled))         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (!empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -634,10 +634,10 @@ foreach ($listofreferent as $key => $value)
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 	{
 		if ($margin == 'add') {
-			$tooltiponprofitplus.=' + '.$name."<br>\n";
+			$tooltiponprofitplus.=' &gt; '.$name." (+)<br>\n";
 		}
 		if ($margin == 'minus') {
-			$tooltiponprofitminus.=' - '.$name."<br>\n";
+			$tooltiponprofitminus.=' &gt; '.$name." (-)<br>\n";
 		}
 	}
 }
@@ -692,7 +692,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				if ($key == 'propal')
 				{
-				    if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal = false; // Refused proposal must not be included in total
+					if ($element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedfortotal = false; // Only signed proposal must not be included in total
 				}
 
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
@@ -769,7 +769,8 @@ foreach ($listofreferent as $key => $value)
 			// Each element with at least one line is output
 			$qualifiedforfinalprofit = true;
 			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) $qualifiedforfinalprofit = false;
-			//var_dump($key);
+			if ($key == 'propal' && $element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedforfinalprofit = false;
+			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
 			if ($qualifiedforfinalprofit)
@@ -795,13 +796,19 @@ foreach ($listofreferent as $key => $value)
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
 			print '<td class="right">';
-			if (!$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
-			else print price($total_ht);
+			if ($key == 'intervention' && !$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else {
+				print price($total_ht);
+				if ($key == 'propal') print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
+			}
 			print '</td>';
 			// Amount TTC
 			print '<td class="right">';
-			if (!$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
-			else print price($total_ttc);
+			if ($key == 'intervention' && !$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else {
+				print price($total_ttc);
+				if ($key == 'propal') print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
+			}
 			print '</td>';
 			print '</tr>';
 		}
