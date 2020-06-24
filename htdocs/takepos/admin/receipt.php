@@ -116,12 +116,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
 	print '</td><td class="center">';
 	if ($conf->receiptprinter->enabled) {
-		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter")
-		{
+		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 			print img_picto($langs->trans("Activated"), 'switch_on');
-		}
-		else
-		{
+		} else {
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 		}
 	} else {
