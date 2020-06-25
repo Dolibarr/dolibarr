@@ -1684,7 +1684,7 @@ class Product extends CommonObject
         $result = 0;
 
         // We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
-        $sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
+        $sql = "SELECT pfp.rowid, pfp.price as price, pfp.unitprice as unitprice, pfp.quantity as quantity, pfp.remise_percent,";
         $sql .= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
         $sql .= " ,pfp.default_vat_code";
         $sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
@@ -1717,7 +1717,7 @@ class Product extends CommonObject
                 }
                 $this->product_fourn_price_id = $obj->rowid;
                 $this->buyprice = $obj->price; // deprecated
-                $this->fourn_pu = $obj->price / $obj->quantity; // Unit price of product of supplier
+                $this->fourn_pu = $obj->unitprice; // Unit price of product of supplier
                 $this->fourn_price_base_type = 'HT'; // Price base type
                 $this->fourn_socid = $obj->fk_soc; // Company that offer this price
                 $this->ref_fourn = $obj->ref_fourn; // deprecated
