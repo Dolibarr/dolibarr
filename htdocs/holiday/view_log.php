@@ -42,7 +42,7 @@ $optioncss          = GETPOST('optioncss', 'aZ');													// Option for the 
 $search_id          = GETPOST('search_id', 'alpha');
 $search_prev_solde  = GETPOST('search_prev_solde', 'alpha');
 $search_new_solde   = GETPOST('search_new_solde', 'alpha');
-$year=GETPOST('year');
+$year               = GETPOST('year');
 if (empty($year))
 {
     $tmpdate = dol_getdate(dol_now());
@@ -104,8 +104,13 @@ if (empty($reshook))
         $toselect = '';
         $search_array_options = array();
     }
-    if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')
-        || GETPOST('button_search_x', 'alpha') || GETPOST('button_search.x', 'alpha') || GETPOST('button_search', 'alpha'))
+
+    if (GETPOST('button_removefilter_x', 'alpha')
+        || GETPOST('button_removefilter.x', 'alpha')
+        || GETPOST('button_removefilter', 'alpha')
+        || GETPOST('button_search_x', 'alpha')
+        || GETPOST('button_search.x', 'alpha')
+        || GETPOST('button_search', 'alpha'))
     {
         $massaction = ''; // Protection to avoid mass action if we force a new search during a mass action confirmation
     }
@@ -144,10 +149,11 @@ $alltypeleaves = $object->getTypes(1, -1); // To have labels
 
 llxHeader('', $langs->trans('CPTitreMenu').' ('.$langs->trans("Year").' '.$year.')');
 
+$sqlwhere = " AND date_action BETWEEN ".
+$sqlwhere.= "'".$db->idate(dol_get_first_day($year, 1, 1))."'";
+$sqlwhere.= " AND ";
+$sqlwhere.= "'".$db->idate(dol_get_last_day($year, 12, 1))."'";
 
-
-$sqlwhere = '';
-$sqlwhere.= " AND date_action BETWEEN '".$db->idate(dol_get_first_day($year, 1, 1))."' AND '".$db->idate(dol_get_last_day($year, 12, 1))."'";
 if ($search_id != '')         $sqlwhere.= natural_search('rowid', $search_id, 1);
 if ($search_prev_solde != '') $sqlwhere.= natural_search('prev_solde', $search_prev_solde, 1);
 if ($search_new_solde != '')  $sqlwhere.= natural_search('new_solde', $search_new_solde, 1);
@@ -172,10 +178,32 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-$pagination = '<div class="pagination"><ul><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year - 1).$param.'"><i class="fa fa-chevron-left" title="Previous"></i></a><li class="pagination"><span class="active">'.$langs->trans("Year").' '.$year.'</span></li><li class="pagination"><a href="'.$_SERVER["PHP_SELF"].'?year='.($year + 1).$param.'"><i class="fa fa-chevron-right" title="Next"></i></a></li></lu></div>';
+$pagination = '<div class="pagination">';
+$pagination.= '<ul>';
+$pagination.= '<li class="pagination">';
+
+$pagination.= '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year - 1).$param.'">';
+$pagination.= '<i class="fa fa-chevron-left" title="Previous"></i>';
+$pagination.= '</a>';
+
+$pagination.= '<li class="pagination">';
+$pagination.= '<span class="active">'.$langs->trans("Year").' '.$year.'</span>';
+$pagination.= '</li>';
+
+$pagination.= '<li class="pagination">';
+$pagination.= '<a href="'.$_SERVER["PHP_SELF"].'?year='.($year + 1).$param.'">';
+$pagination.= '<i class="fa fa-chevron-right" title="Next"></i>';
+$pagination.= '</a>';
+$pagination.= '</li>';
+
+$pagination.= '</li>';
+$pagination.= '</ul>';
+$pagination.= '</div>';
+
 print load_fiche_titre($langs->trans('LogCP'), $pagination, 'title_hrm.png');
 
 print '<div class="info">'.$langs->trans('LastUpdateCP').': '."\n";
+
 $lastUpdate = $object->getConfCP('lastUpdate');
 if ($lastUpdate)
 {
@@ -183,7 +211,11 @@ if ($lastUpdate)
     $yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
     print '<strong>'.dol_print_date($db->jdate($object->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
-} else print $langs->trans('None');
+}
+else
+{
+    print $langs->trans('None');
+}
 print "</div><br>\n";
 
 $moreforfilter = '';
@@ -231,20 +263,20 @@ print '</tr>';
 
 foreach ($object->logs as $logs_CP)
 {
-   	$user_action = new User($db);
-   	$user_action->fetch($logs_CP['fk_user_action']);
+    $user_action = new User($db);
+    $user_action->fetch($logs_CP['fk_user_action']);
 
-   	$user_update = new User($db);
-   	$user_update->fetch($logs_CP['fk_user_update']);
+    $user_update = new User($db);
+    $user_update->fetch($logs_CP['fk_user_update']);
 
-   	$delta = price2num($logs_CP['new_solde'] - $logs_CP['prev_solde'], 5);
-   	$detasign = ($delta > 0 ? '+' : '');
+    $delta = price2num($logs_CP['new_solde'] - $logs_CP['prev_solde'], 5);
+    $detasign = ($delta > 0 ? '+' : '');
 
-   	print '<tr class="oddeven">';
-   	if (!empty($arrayfields['cpl.rowid']['checked'])) print '<td>'.$logs_CP['rowid'].'</td>';
-   	if (!empty($arrayfields['cpl.date_action']['checked'])) print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
-   	if (!empty($arrayfields['cpl.fk_user_action']['checked'])) print '<td>'.$user_action->getNomUrl(-1).'</td>';
-   	if (!empty($arrayfields['cpl.fk_user_update']['checked'])) print '<td>'.$user_update->getNomUrl(-1).'</td>';
+    print '<tr class="oddeven">';
+    if (!empty($arrayfields['cpl.rowid']['checked'])) print '<td>'.$logs_CP['rowid'].'</td>';
+    if (!empty($arrayfields['cpl.date_action']['checked'])) print '<td style="text-align: center;">'.$logs_CP['date_action'].'</td>';
+    if (!empty($arrayfields['cpl.fk_user_action']['checked'])) print '<td>'.$user_action->getNomUrl(-1).'</td>';
+    if (!empty($arrayfields['cpl.fk_user_update']['checked'])) print '<td>'.$user_update->getNomUrl(-1).'</td>';
     if (!empty($arrayfields['cpl.type_action']['checked'])) print '<td>'.$logs_CP['type_action'].'</td>';
     if (!empty($arrayfields['cpl.fk_type']['checked']))
     {
@@ -257,8 +289,8 @@ foreach ($object->logs as $logs_CP)
     if (!empty($arrayfields['cpl.prev_solde']['checked'])) print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'], 5).' '.$langs->trans('days').'</td>';
     if (!empty($arrayfields['variation']['checked'])) print '<td style="text-align: right;">'.$detasign.$delta.'</td>';
     if (!empty($arrayfields['cpl.new_solde']['checked'])) print '<td style="text-align: right;">'.price2num($logs_CP['new_solde'], 5).' '.$langs->trans('days').'</td>';
-   	print '<td></td>';
-   	print '</tr>'."\n";
+    print '<td></td>';
+    print '</tr>'."\n";
 }
 
 if ($log_holiday == '2')
