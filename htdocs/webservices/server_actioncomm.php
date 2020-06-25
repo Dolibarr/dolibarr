@@ -328,14 +328,12 @@ function getActionComm($authentication, $id)
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'actioncomm'=>$actioncomm_result_fields);
             }
-            else
-            {
+            else {
                 $error++;
                 $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
         }
@@ -388,15 +386,11 @@ function getListActionCommType($authentication)
 				 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'actioncommtypes'=>$resultarray);
-			}
-			else
-			{
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -482,8 +476,7 @@ function createActionComm($authentication, $actioncomm)
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id);
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';

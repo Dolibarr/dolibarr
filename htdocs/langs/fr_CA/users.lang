@@ -7,7 +7,6 @@ ConfirmEnableUser=Êtes-vous sûr de vouloir activer l'utilisateur <b>%s</b>?
 ConfirmReinitPassword=Êtes-vous sûr de vouloir générer un nouveau mot de passe pour l'utilisateur <b>%s</b>?
 ConfirmSendNewPassword=Êtes-vous sûr de vouloir générer et envoyer un nouveau mot de passe pour l'utilisateur <b> %s</b>?
 LastUsersCreated=Derniers %s utilisateurs créés
-InternalExternalDesc=An <b>internal</b> user is a user that is part of your company/organization.<br>An <b>external</b> user is a customer, vendor or other (Creating an external user for a third-party can be done from the contact record of the third-party).<br><br>In both cases, permissions defines rights on Dolibarr, also external user can have a different menu manager than internal user (See Home - Setup - Display)
 ConfirmCreateContact=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce contact?
 ConfirmCreateLogin=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce membre?
 ConfirmCreateThirdParty=Êtes-vous sûr de vouloir créer un tiers pour ce membre?

@@ -1,0 +1,15 @@
+# Dolibarr language file - Source file is en_US - workflow
+WorkflowSetup=Configuración de módulo Workflow
+WorkflowDesc=Este módulo provee algunas acciones automáticas. Por defecto, el Workflow está abierto (puedes hacer lo que quieras en la orden) pero aquí puedes activar algunas acciones automáticas.
+ThereIsNoWorkflowToModify=Con los módulos activados, no hay modificaciones disponibles al workflow.
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Crear automáticamente una orden de venta luego que una propuesta comercial está firmada (la nueva orden tendrá el mismo monto de la propuesta).
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Crear automáticamente una factura de cliente luego que una propuesta comercial está firmada (la nueva factura tendrá el mismo monto de la propuesta).
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Crear automáticamente una factura de cliente luego que un contrato esté validado
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Crear automáticamente una factura de cliente luego que una orden de venta está cerrada (la nueva factura tendrá el mismo monto que la orden)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Clasificar su propuesta de origen como facturada cuando la orden de venta esté configurada como facturada (y si el monto del pedido es el mismo que el monto total de su propuesta firmada)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Clasificar su propuesta de origen como facturada cuando la factura de cliente esté validada (y el monto de la factura sea el mismo que el total de su propuesta firmada)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Clasificar su orden de venta como facturada cuando la factura de cliente esté validada (y el monto de la factura sea el mismo que el total de su orden)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Clasificar su orden de venta como facturada cuando la factura del cliente esté marcada como "Pagada" (y el monto de la factura sea el mismo que el total de su orden)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Clasificar su orden de venta como enviada cuando el viaje esté validado (y la cantidad enviada en todos sus viajes sea la misma que en el pedido para actualizar)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Clasificar su propuesta de origen de proveedor como facturada cuando la factura del proveedor esté validada (y que el monto de la factura sea el mismo que el total de su propuesta)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Clasificar su orden de compra como facturada cuando la factura de proveedor esté validada (y el monto de la factura sea el mismo que el total de su orden)

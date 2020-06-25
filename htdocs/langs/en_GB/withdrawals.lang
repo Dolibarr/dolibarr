@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Payment status must be set to 'credited' before declaring reject on specific lines.
 AmountToWithdraw=Amount to pay
-NoInvoiceToWithdraw=No customer invoice with open 'Direct Debit requests' is waiting. Go on tab '%s' on invoice card to make a request.
 MakeWithdrawRequest=Make a Direct Debit payment request
 ClassCreditedConfirm=Are you sure you want to classify this Payment receipt as credited on your bank account?
 WithdrawalRefused=Payment refused

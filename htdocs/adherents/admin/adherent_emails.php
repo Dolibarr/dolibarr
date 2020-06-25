@@ -65,26 +65,21 @@ $constantes = array(
  */
 
 //
-if ($action == 'updateall')
-{
+if ($action == 'updateall') {
     $db->begin();
     $res1 = $res2 = $res3 = $res4 = $res5 = $res6 = 0;
     $res1 = dolibarr_set_const($db, 'XXXX', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
-    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0)
-    {
+    if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0) {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
         $db->rollback();
-    }
-    else
-    {
+    } else {
         setEventMessages('RecordModifiedSuccessfully', null, 'mesgs');
         $db->commit();
     }
 }
 
 // Action to update or add a constant
-if ($action == 'update' || $action == 'add')
-{
+if ($action == 'update' || $action == 'add') {
 	$constlineid = GETPOST('rowid', 'int');
 	$constname = GETPOST('constname', 'alpha');
 
@@ -98,32 +93,25 @@ if ($action == 'update' || $action == 'add')
 
 	if (!$res > 0) $error++;
 
-	if (!$error)
-	{
+	if (!$error) {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
 // Action to enable a submodule of the adherent module
-if ($action == 'set')
-{
+if ($action == 'set') {
     $result = dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }
 
 // Action to disable a submodule of the adherent module
-if ($action == 'unset')
-{
+if ($action == 'unset') {
     $result = dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
-    if ($result < 0)
-    {
+    if ($result < 0) {
         print $db->error();
     }
 }

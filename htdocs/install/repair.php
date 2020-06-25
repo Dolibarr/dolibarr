@@ -99,8 +99,7 @@ if (preg_match('/crypted:/i', $dolibarr_main_db_pass) || !empty($dolibarr_main_d
         $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
         $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
         $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
-    }
-    else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+    } else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 }
 
 // $conf is already instancied inside inc.php
@@ -123,9 +122,7 @@ if ($db->connected)
     print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ServerConnection").": ".$dolibarr_main_db_host.$langs->transnoentities("OK"));
     $ok = 1;
-}
-else
-{
+} else {
     print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->transnoentities("Error")."</td></tr>";
     dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
     $ok = 0;
@@ -139,9 +136,7 @@ if ($ok)
         print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td class=\"right\">".$langs->trans("OK")."</td></tr>";
         dolibarr_install_syslog("repair: database connection successful: ".$dolibarr_main_db_name);
         $ok = 1;
-    }
-    else
-    {
+    } else {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td class=\"right\">".$langs->trans("Error")."</td></tr>";
         dolibarr_install_syslog("repair: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok = 0;
@@ -256,9 +251,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	            {
 	                $fieldname = $obj->Field;
 	                $fieldtype = $obj->Type;
-	            }
-	            else
-	            {
+	            } else {
 	                $fieldname = isset($obj->Key) ? $obj->Key : $obj->attname;
 	                $fieldtype = isset($obj->Type) ? $obj->Type : 'varchar';
 	            }
@@ -285,7 +278,7 @@ if ($ok && GETPOST('standard', 'alpha'))
         			} elseif ($type == 'phone') {
         				$typedb = 'varchar';
         				$lengthdb = '20';
-        			}elseif ($type == 'mail') {
+        			} elseif ($type == 'mail') {
         				$typedb = 'varchar';
         				$lengthdb = '128';
         			} elseif (($type == 'select') || ($type == 'sellist') || ($type == 'radio') || ($type == 'checkbox') || ($type == 'chkbxlst')) {
@@ -317,23 +310,17 @@ if ($ok && GETPOST('standard', 'alpha'))
 		                if ($result < 0)
 		                {
 	    	                print "KO ".$db->lasterror."<br>\n";
-	        	        }
-	            	    else
-	                	{
+	        	        } else {
 	                    	print "OK<br>\n";
 		                }
-	                }
-	                else
-	                {
+	                } else {
 	                	print ' - Mode test, no column added.';
 	                }
 	            }
 	        }
 
 	        print "</td><td>&nbsp;</td></tr>\n";
-	    }
-	    else
-	    {
+	    } else {
 	    	dol_print_error($db);
 	    }
 	}
@@ -398,14 +385,10 @@ if ($ok && GETPOST('standard', 'alpha'))
 								$db->query($sqldelete);
 
 								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we delete record</td></tr>';
-							}
-							else
-							{
+							} else {
 								print '<tr><td>Widget '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module '.$name.' not enabled in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
-						}
-						else
-						{
+						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
 						}
 					}
@@ -471,14 +454,10 @@ if ($ok && GETPOST('standard', 'alpha'))
 								$db->query($sqldeleteb);
 
 								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we delete record</td></tr>';
-							}
-							else
-							{
+							} else {
 								print '<tr><td>Constant '.$obj->file.' set in boxes_def for entity '.$obj->entity.' but MAIN_MODULE_'.strtoupper($module).' not defined in entity '.$obj->entity.', we should delete record (not done, mode test)</td></tr>';
 							}
-						}
-						else
-						{
+						} else {
 							//print '<tr><td>Constant '.$obj->name.' set in entity '.$obj->entity.' with value '.$obj->value.' -> Module found in entity '.$obj->entity.', we keep record</td></tr>';
 						}
 					}
@@ -566,9 +545,7 @@ if ($ok && GETPOST('restore_thirdparties_logos'))
 
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		$ok = 0;
 		dol_print_error($db);
 	}
@@ -670,9 +647,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha'))
 
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		$ok = 0;
 		dol_print_error($db);
 	}
@@ -729,9 +704,7 @@ if ($ok && GETPOST('rebuild_product_thumbs', 'alpha'))
 
             $i++;
         }
-    }
-    else
-    {
+    } else {
         $ok = 0;
         dol_print_error($db);
     }
@@ -815,17 +788,11 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 							{
 								$error++;
 								dol_print_error($db);
-							}
-							else
-								print ' - <span class="warning">Cleaned</span>';
-						}
-						else
-						{
+							} else print ' - <span class="warning">Cleaned</span>';
+						} else {
 							print ' - <span class="warning">Canceled (test mode)</span>';
 						}
-					}
-					else
-					{
+					} else {
 						print ' - Module condition '.$modulecond.' is ok, we do nothing.';
 					}
 				}
@@ -839,14 +806,10 @@ if ($ok && GETPOST('clean_menus', 'alpha'))
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr><td>No menu entries of disabled menus found</td></tr>';
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -884,33 +847,27 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             $object_instance = new Facture($db);
-        }
-        elseif ($modulepart == 'invoice_supplier')
+        } elseif ($modulepart == 'invoice_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
             $object_instance = new FactureFournisseur($db);
-        }
-        elseif ($modulepart == 'propal')
+        } elseif ($modulepart == 'propal')
         {
             include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
             $object_instance = new Propal($db);
-        }
-        elseif ($modulepart == 'order')
+        } elseif ($modulepart == 'order')
         {
             include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
             $object_instance = new Commande($db);
-        }
-        elseif ($modulepart == 'order_supplier')
+        } elseif ($modulepart == 'order_supplier')
         {
             include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
             $object_instance = new CommandeFournisseur($db);
-        }
-        elseif ($modulepart == 'contract')
+        } elseif ($modulepart == 'contract')
         {
             include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
             $object_instance = new Contrat($db);
-        }
-        elseif ($modulepart == 'tax')
+        } elseif ($modulepart == 'tax')
         {
             include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
             $object_instance = new ChargeSociales($db);
@@ -969,8 +926,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha'))
                             dol_delete_dir(dirname($file['fullname']), 1);
                         }
                         print "</td></tr>";
-                    }
-                    elseif ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
+                    } elseif ($result < 0) print 'Error in '.get_class($object_instance).'.fetch of id'.$id.' ref='.$ref.', result='.$result.'<br>';
                 }
             }
         }
@@ -1048,9 +1004,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                                     $error++;
                                     dol_print_error($db);
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 $error++;
                                 dol_print_error($db);
                             }
@@ -1065,14 +1019,10 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print '<tr><td colspan="2">Nothing to do</td></tr>';
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -1155,14 +1105,10 @@ if ($ok && GETPOST('set_empty_time_spent_amount', 'alpha'))
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print '<tr><td>No time spent with empty line on users with a hourly rate defined</td></tr>';
         }
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -1230,8 +1176,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 		                    	//var_dump($key.' - '.$value.' - '.$reloffile);
 		                    	try {
 		                        	$result = dol_buildpath($reloffile, 0, 2);
-		                    	}
-		                    	catch (Exception $e)
+		                    	} catch (Exception $e)
 		                    	{
 									// No catch yet
 									$result = 'found'; // If error, we force lke if we found to avoid any deletion
@@ -1256,17 +1201,11 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 	                                {
 	                                    $error++;
 	                                    dol_print_error($db);
-	                                }
-	                                else
-	                                    print ' - <span class="warning">Cleaned</span>';
-	                            }
-	                            else
-	                            {
+	                                } else print ' - <span class="warning">Cleaned</span>';
+	                            } else {
 	                                print ' - <span class="warning">Canceled (test mode)</span>';
 	                            }
-	                        }
-	                        else
-	                        {
+	                        } else {
 	                            print ' - File of '.$key.' ('.$reloffile.') found, we do nothing.';
 	                        }
 	                    }
@@ -1281,14 +1220,10 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha'))
 
 	                $i++;
 	            }
-	        }
-	        else
-	        {
+	        } else {
 	            print '<tr><td>No active module with missing files found by searching on MAIN_MODULE_(.*)_'.strtoupper($key).'</td></tr>';
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        dol_print_error($db);
 	    }
     }
@@ -1333,14 +1268,10 @@ if ($ok && GETPOST('clean_perm_table', 'alpha'))
 				}
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr><td>No lines of a disabled external module (with id > 100000) found into table rights_def</td></tr>';
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -1379,8 +1310,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha'))
             {
             	$resql = $db->query($sql);
             	print ' - Done ('.($resql ? 'OK' : 'KO').')';
-            }
-            else print ' - Disabled';
+            } else print ' - Disabled';
             print '</td></tr>';
         }
 
@@ -1391,9 +1321,7 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha'))
         	print '<!-- '.$sql.' -->';
         	$resql = $db->query($sql);
         }
-    }
-    else
-    {
+    } else {
         print '<tr><td colspan="2">Not available with database type '.$db->type.'</td></tr>';
     }
 }
@@ -1495,9 +1423,7 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
                 if ($repair_link_dispatch_lines_supplier_order_lines == 'confirmed')
                 {
 	                $resql_attach = $db->query($sql_attach);
-                }
-                else
-                {
+                } else {
                 	$resql_attach = true; // Force success in test mode
                 }
 
@@ -1551,9 +1477,7 @@ if ($oneoptionset)
 	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
 	print $langs->trans("GoToDolibarr");
 	print '</a></div>';
-}
-else
-{
+} else {
 	print '<div class="center warning" style="padding-top: 10px">';
 	print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
 	print '</div>';

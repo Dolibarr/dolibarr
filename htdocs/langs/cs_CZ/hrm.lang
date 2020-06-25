@@ -1,17 +1,17 @@
 # Dolibarr language file - en_US - hrm
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=E-mail pro zabránění externí službě HRM
-Establishments=Podniky
-Establishment=Podnik
-NewEstablishment=Nový podník
-DeleteEstablishment=Smazat podnik
-ConfirmDeleteEstablishment=Opravdu chcete smazat tento podnik?
-OpenEtablishment=Otevřít podnik
-CloseEtablishment=Zavřít podník
+Establishments=Provozovny
+Establishment=Zřízení
+NewEstablishment=Nové zařízení
+DeleteEstablishment=Smazat zařízení
+ConfirmDeleteEstablishment=Opravdu chcete toto zařízení smazat?
+OpenEtablishment=Otevřít zařízení
+CloseEtablishment=Zavřít zařízení
 # Dictionary
 DictionaryPublicHolidays=HRM - státní svátky
 DictionaryDepartment=HRM - Seznam oddělení
-DictionaryFunction=HRM - Seznam funkcí
+DictionaryFunction=HRM - Pracovní pozice
 # Module
 Employees=Zaměstnanci
 Employee=Zaměstnanec

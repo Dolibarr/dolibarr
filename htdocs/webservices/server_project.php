@@ -298,8 +298,7 @@ function createProject($authentication, $project)
                     $error++;
                 }
             }
-            else
-            {
+            else {
                 $error++;
             }
 
@@ -308,16 +307,14 @@ function createProject($authentication, $project)
                 $db->commit();
                 $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
             }
-            else
-            {
+            else {
                 $db->rollback();
                 $error++;
                 $errorcode = 'KO';
                 $errorlabel = $newobject->error;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
         }
@@ -424,14 +421,12 @@ function getProject($authentication, $id = '', $ref = '')
                     'project'=>$project_result_fields
                 );
             }
-            else
-            {
+            else {
                 $error++;
                 $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
         }

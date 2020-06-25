@@ -8,4 +8,4 @@ LinkRemoved=Връзката %s е премахната
 ErrorFailedToDeleteLink= Премахването на връзката '<b>%s</b>' не е успешно
 ErrorFailedToUpdateLink= Актуализацията на връзката '<b>%s</b>' не е успешна
 URLToLink=URL адрес
-OverwriteIfExists=Overwrite file if exists
+OverwriteIfExists=Презаписване на файл, ако съществува

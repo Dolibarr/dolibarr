@@ -103,18 +103,14 @@ class FormContract
 					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire)
 					{
 						// Do nothing
-					}
-					else
-					{
+					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
 							print '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
-						}
-						else
-						{
+						} else {
 							$disabled = 0;
 							if ($obj->statut == 0)
 							{
@@ -130,9 +126,7 @@ class FormContract
 							if ($hideunselectables && $disabled)
 							{
 								$resultat = '';
-							}
-							else
-							{
+							} else {
 								$resultat = '<option value="'.$obj->rowid.'"';
 								if ($disabled) $resultat .= ' disabled';
 								//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
@@ -157,9 +151,7 @@ class FormContract
 			}
 
 			return $num;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 			return -1;
 		}

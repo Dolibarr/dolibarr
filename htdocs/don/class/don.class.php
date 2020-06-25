@@ -314,9 +314,7 @@ class Don extends CommonObject
             {
             	$error_string[] = $langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Amount'));
                 $err++;
-            }
-            else
-            {
+            } else {
                 if ($this->amount < $minimum && $minimum > 0)
                 {
                 	$error_string[] = $langs->trans('MinimumAmount', $langs->transnoentitiesnoconv('$minimum'));
@@ -329,9 +327,7 @@ class Don extends CommonObject
         {
             $this->errors = $error_string;
             return 0;
-        }
-        else
-		{
+        } else {
             return 1;
         }
     }
@@ -422,9 +418,7 @@ class Don extends CommonObject
                 if ($result < 0) { $error++; }
                 // End call triggers
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
             $error++;
@@ -452,9 +446,7 @@ class Don extends CommonObject
         {
             $this->db->commit();
             return $ret;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -533,15 +525,11 @@ class Don extends CommonObject
             {
                 $this->db->commit();
                 $result = 1;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
                 $result = -1;
             }
-        }
-        else
-		{
+        } else {
             $this->error = $this->db->lasterror();
             $this->errors[] = $this->error;
             $this->db->rollback();
@@ -612,9 +600,7 @@ class Don extends CommonObject
     	{
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
         	foreach ($this->errors as $errmsg)
         	{
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
@@ -652,8 +638,7 @@ class Don extends CommonObject
         if (!empty($id))
         {
         	$sql .= " AND d.rowid=".$id;
-        }
-        elseif (!empty($ref))
+        } elseif (!empty($ref))
         {
         	$sql .= " AND d.ref='".$this->db->escape($ref)."'";
         }
@@ -708,9 +693,7 @@ class Don extends CommonObject
                 $this->fetch_optionals();
             }
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -761,9 +744,7 @@ class Don extends CommonObject
             		// End call triggers
             	}
             }
-        }
-        else
-        {
+        } else {
             $error++;
             $this->error = $this->db->lasterror();
         }
@@ -772,9 +753,7 @@ class Don extends CommonObject
         {
         	$this->db->commit();
         	return 1;
-        }
-        else
-        {
+        } else {
         	$this->db->rollback();
         	return -1;
         }
@@ -804,14 +783,10 @@ class Don extends CommonObject
             if ($this->db->affected_rows($resql))
             {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -835,14 +810,10 @@ class Don extends CommonObject
             if ($this->db->affected_rows($resql))
             {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -904,9 +875,7 @@ class Don extends CommonObject
             }
             $this->db->free($resql);
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->error();
             return -1;
@@ -990,9 +959,7 @@ class Don extends CommonObject
 				$this->date_modification = $this->db->jdate($obj->tms);
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -1088,17 +1055,13 @@ class Don extends CommonObject
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 				dol_delete_preview($object);
 				return 1;
-			}
-			else
-			{
+			} else {
 				$outputlangs->charset_output = $sav_charset_output;
 				dol_syslog("Erreur dans don_create");
 				dol_print_error($this->db, $obj->error);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 			return 0;
 		}

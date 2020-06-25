@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Maxime DEMAREST         <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,44 +28,49 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
 $langs->loadLangs(array("bills", "loan"));
 
-$chid = GETPOST('id', 'int');
-$action = GETPOST('action', 'aZ09');
-$cancel = GETPOST('cancel', 'alpha');
-$line_id = GETPOST('line_id', 'int');
-$last = GETPOST('last');
+$chid=GETPOST('id', 'int');
+$action=GETPOST('action', 'aZ09');
+$cancel=GETPOST('cancel', 'alpha');
+$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
 // Security check
 $socid = 0;
 if ($user->socid > 0)
-{
 	$socid = $user->socid;
-}
+elseif (GETPOSTISSET('socid')) $socid = GETPOST('socid', 'int');
+if (empty($user->rights->loan->write)) accessforbidden();
 
 $loan = new Loan($db);
 $loan->fetch($chid);
 
-if ($last)
+$echance = 0;
+$ls = new LoanSchedule($db);
+// grab all loanschedule
+$res = $ls->fetchAll($chid);
+if ($res > 0)
 {
-    $ls = new LoanSchedule($db);
-    // grab all loanschedule
-    $res = $ls->fetchAll($chid);
-    if ($res > 0)
+    foreach ($ls->lines as $l)
     {
-        foreach ($ls->lines as $l)
+        $echance++; // Count term pos
+        // last unpaid term
+        if (empty($l->fk_bank))
         {
-            // get the last unpaid loanschedule
-            if (empty($l->fk_bank))
-            {
-                $line_id = $l->id;
-                break;
-            }
+            $line_id = $l->id;
+            break;
+        }
+        // If line_id provided, only count temp pos
+        elseif ($line_id == $l->id)
+        {
+            break;
         }
     }
 }
 
+// Set current line with last unpaid line (only if shedule is used)
 if (!empty($line_id))
 {
     $line = new LoanSchedule($db);
@@ -73,6 +79,7 @@ if (!empty($line_id))
         $amount_capital = price($line->amount_capital);
         $amount_insurance = price($line->amount_insurance);
         $amount_interest = price($line->amount_interest);
+        if (empty($datepaid)) $ts_temppaid = $line->datep;
     }
 }
 
@@ -92,9 +99,7 @@ if ($action == 'add_payment')
 		exit;
 	}
 
-	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-
-	if (!GETPOST('paymenttype', 'int') > 0)
+	if (! GETPOST('paymenttype', 'int') > 0)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("PaymentMode")), null, 'errors');
 		$error++;
@@ -114,7 +119,27 @@ if ($action == 'add_payment')
 	{
 		$paymentid = 0;
 
-		$amount = GETPOST('amount_capital') + GETPOST('amount_insurance') + GETPOST('amount_interest');
+        $pay_amount_capital = price2num(GETPOST('amount_capital'));
+        $pay_amount_insurance = price2num(GETPOST('amount_insurance'));
+        // User can't set interest him self if schedule is set (else value in schedule can be incoherent)
+        if (!empty($line)) $pay_amount_interest = $line->amount_interest;
+        else $pay_amount_interest = price2num(GETPOST('amount_interest'));
+        $remaindertopay = price2num(GETPOST('remaindertopay'));
+		$amount =  $pay_amount_capital + $pay_amount_insurance + $pay_amount_interest;
+
+        // This term is allready paid
+        if (!empty($line) && !empty($line->fk_bank))
+        {
+            setEventMessages($langs->trans('TermPaidAllreadyPaid'), null, 'errors');
+            $error++;
+        }
+
+        if (empty($remaindertopay))
+        {
+			setEventMessages('Empty sumpaid', null, 'errors');
+			$error++;
+        }
+
 		if ($amount == 0)
 		{
 			setEventMessages($langs->trans('ErrorNoPaymentDefined'), null, 'errors');
@@ -127,14 +152,14 @@ if ($action == 'add_payment')
 
 			// Create a line of payments
 			$payment = new PaymentLoan($db);
-			$payment->chid = $chid;
-			$payment->datep = $datepaid;
-			$payment->label = $loan->label;
-			$payment->amount_capital = GETPOST('amount_capital');
-			$payment->amount_insurance = GETPOST('amount_insurance');
-			$payment->amount_interest = GETPOST('amount_interest');
-			$payment->paymenttype = GETPOST('paymenttype', 'int');
-			$payment->num_payment = GETPOST('num_payment');
+			$payment->chid				= $chid;
+			$payment->datep             = $datepaid;
+			$payment->label             = $loan->label;
+			$payment->amount_capital	= $pay_amount_capital;
+			$payment->amount_insurance	= $pay_amount_interest;
+			$payment->amount_interest	= $pay_amount_insurance;
+			$payment->paymenttype       = GETPOST('paymenttype', 'int');
+			$payment->num_payment		= GETPOST('num_payment');
 			$payment->note_private      = GETPOST('note_private', 'none');
 			$payment->note_public       = GETPOST('note_public', 'none');
 
@@ -156,22 +181,56 @@ if ($action == 'add_payment')
 					setEventMessages($payment->error, $payment->errors, 'errors');
 					$error++;
 				}
-				elseif (isset($line))
-				{
-					$line->fk_bank = $payment->fk_bank;
-					$line->update($user);
-				}
 			}
 
-			if (!$error)
+            // Update loan schedule with payment value
+            if (! $error && !empty($line))
+            {
+                // If payment values are modified, recalculate schedule
+                if (($line->amount_capital <> $pay_amount_capital) || ($line->amount_insurance <> $pay_amount_insurance) || ($line->amount_interest <> $pay_amount_interest))
+                {
+                    $arr_term = loanCalcMonthlyPayment(($pay_amount_capital + $pay_amount_interest), $remaindertopay, ($loan->rate / 100), $echance, $loan->nbterm);
+                    foreach ($arr_term as $k=>$v)
+                    {
+                        // Update fk_bank for current line
+                        if ($k == $echance)
+                        {
+                            $ls->lines[$k-1]->fk_bank = $payment->fk_bank;
+                            $ls->lines[$k-1]->fk_payment_loan = $payment->id;
+                        }
+                        $ls->lines[$k-1]->amount_capital = $v['mens'] - $v['interet'];
+                        $ls->lines[$k-1]->amount_interest = $v['interet'];
+                        $ls->lines[$k-1]->tms = dol_now();
+                        $ls->lines[$k-1]->fk_user_modif = $user->id;
+                        $result = $ls->lines[$k-1]->update($user, 0);
+                        if ($result < 1)
+                        {
+                            setEventMessages(null, $ls->errors, 'errors');
+                            $error++;
+                            break;
+                        }
+                    }
+                }
+                else // Only add fk_bank bank to schedule line (mark as paid)
+                {
+                    $line->fk_bank = $payment->fk_bank;
+                    $line->fk_payment_loan = $payment->id;
+                    $result = $line->update($user, 0);
+                    if ($result < 1)
+                    {
+                        setEventMessages(null, $line->errors, 'errors');
+                        $error++;
+                    }
+                }
+            }
+
+			if (! $error)
 			{
 				$db->commit();
 				$loc = DOL_URL_ROOT.'/loan/card.php?id='.$chid;
 				header('Location: '.$loc);
 				exit;
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 			}
 		}
@@ -197,11 +256,23 @@ if ($action == 'create')
 
 	print load_fiche_titre($langs->trans("DoPayment"));
 
+	$sql = "SELECT SUM(amount_capital) as total";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan";
+	$sql.= " WHERE fk_loan = ".$chid;
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$obj=$db->fetch_object($resql);
+		$sumpaid = $obj->total;
+		$db->free();
+	}
+
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="id" value="'.$chid.'">';
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="line_id" value="'.$line_id.'">';
+	print '<input type="hidden" name="remaindertopay" value="'.($total-$sumpaid).'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
     dol_fiche_head();
@@ -211,20 +282,14 @@ if ($action == 'create')
 	print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Loan").'</td>';
 
 	print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+    if ($echance > 0)
+    {
+        print '<tr><td>'.$langs->trans("Term").'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/loan/schedule.php?loanid='.$chid.'#n'.$echance.'">'.$echance.'</a></td></tr>'."\n";
+    }
 	print '<tr><td>'.$langs->trans("DateStart").'</td><td colspan="2">'.dol_print_date($loan->datestart, 'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$loan->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">'.price($loan->capital, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
-	$sql = "SELECT SUM(amount_capital) as total";
-	$sql .= " FROM ".MAIN_DB_PREFIX."payment_loan";
-	$sql .= " WHERE fk_loan = ".$chid;
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$obj = $db->fetch_object($resql);
-		$sumpaid = $obj->total;
-		$db->free();
-	}
 	print '<tr><td>'.$langs->trans("AlreadyPaid").'</td><td colspan="2">'.price($sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '<tr><td class="tdtop">'.$langs->trans("RemainderToPay").'</td><td colspan="2">'.price($total - $sumpaid, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 	print '</tr>';
@@ -239,10 +304,13 @@ if ($action == 'create')
 	print '</tr>';
 
 	print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Date").'</td><td colspan="2">';
-	$datepaid = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
-	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaye) : 0;
+    if (empty($datepaid))
+        if (empty($ts_temppaid)) $datepayment = empty($conf->global->MAIN_AUTOFILL_DATE)?-1:dol_now();
+	else $datepayment = $ts_temppaid;
+    else $datepayment = $datepaid;
 	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
 	print "</td>";
+
 	print '</tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td colspan="2">';
@@ -253,7 +321,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td colspan="2">';
-	$form->select_comptes(isset($_POST["accountid"]) ? $_POST["accountid"] : $loan->accountid, "accountid", 0, '', 1); // Show opend bank account list
+	$form->select_comptes(isset($_POST["accountid"])?$_POST["accountid"]:$loan->accountid, "accountid", 0, 'courant = '.Account::TYPE_CURRENT, 1);  // Show opend bank account list
 	print '</td></tr>';
 
 	// Number
@@ -290,9 +358,7 @@ if ($action == 'create')
 	if ($loan->datestart > 0)
 	{
 		print '<td class="left" valign="center">'.dol_print_date($loan->datestart, 'day').'</td>';
-	}
-	else
-	{
+	} else {
 		print '<td class="center" valign="center"><b>!!!</b></td>';
 	}
 
@@ -305,28 +371,25 @@ if ($action == 'create')
 	print '<td class="right">';
 	if ($sumpaid < $loan->capital)
 	{
-	    print $langs->trans("LoanCapital").': <input type="text" size="8" name="amount_capital" value="'.$amount_capital.'">';
+        print $langs->trans("LoanCapital") .': <input type="text" size="8" name="amount_capital" value="'.(GETPOSTISSET('amount_capital')?GETPOST('amount_capital'):$amount_capital).'">';
 	}
-	else
-	{
+	else {
 		print '-';
 	}
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Insurance").': <input type="text" size="8" name="amount_insurance" value="'.$amount_insurance.'">';
+		print $langs->trans("Insurance") .': <input type="text" size="8" name="amount_insurance" value="'.(GETPOSTISSET('amount_insurance')?GETPOST('amount_insurance'):$amount_insurance).'">';
 	}
-	else
-	{
+	else {
 		print '-';
 	}
 	print '<br>';
 	if ($sumpaid < $loan->capital)
 	{
-		print $langs->trans("Interest").': <input type="text" size="8" name="amount_interest" value="'.$amount_interest.'">';
+		print $langs->trans("Interest") .': <input type="text" size="8" name="amount_interest" value="'.(GETPOSTISSET('amount_interest')?GETPOST('amount_interest'):$amount_interest).'" '.(!empty($line)?'disabled title="'.$langs->trans('CantModifyInterestIfScheduleIsUsed').'"':'').'>';
 	}
-	else
-	{
+	else {
 		print '-';
 	}
 	print "</td>";

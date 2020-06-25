@@ -24,7 +24,7 @@ create table llx_subscription
   fk_adherent     integer,
   fk_type         integer,
   dateadh         datetime,
-  datef           date,
+  datef           datetime,
   subscription    double(24,8),
   fk_bank         integer DEFAULT NULL,
   fk_user_creat   integer DEFAULT NULL,

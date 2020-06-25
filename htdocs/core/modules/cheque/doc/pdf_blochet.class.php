@@ -342,26 +342,17 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$num = count($this->lines);
 		for ($j = 0; $j < $num; $j++)
 		{
-		    $lineinpage++;
+            // Dynamic max line heigh calculation
+            $dynamic_line_height = array();
+            $dynamic_line_height[] = $pdf->getStringHeight(60, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq));
+            $dynamic_line_height[] = $pdf->getStringHeight(80, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq));
+            $max_line_height = max($dynamic_line_height);
+            // Calculate number of line used function of estimated line size
+            if ($max_line_height > $this->line_height) $nb_lines = floor($max_line_height / $this->line_height) + 1;
+            else $nb_lines = 1;
 
-			$pdf->SetXY(1, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(8, $this->line_height, $j + 1, 0, 'R', 0);
-
-			$pdf->SetXY(10, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq ? $this->lines[$j]->num_chq : '', 0, 'L', 0);
-
-			$pdf->SetXY(40, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(70, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->bank_chq), 44), 0, 'L', 0);
-
-			$pdf->SetXY(100, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(80, $this->line_height, dol_trunc($outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq), 50), 0, 'L', 0);
-
-			$pdf->SetXY(180, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
-
-			$yp = $yp + $this->line_height;
-
-			if ($lineinpage >= $this->line_per_page && $j < (count($this->lines) - 1))
+            // Add page break if we do not have space to add current line
+			if ($lineinpage >= ($this->line_per_page - 1))
 			{
 			    $lineinpage = 0; $yp = 0;
 
@@ -373,6 +364,25 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
                 $pdf->MultiCell(0, 3, ''); // Set interline to 3
                 $pdf->SetTextColor(0, 0, 0);
 			}
+
+            $lineinpage += $nb_lines;
+
+			$pdf->SetXY(1, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(8, $this->line_height, $j + 1, 0, 'R', 0);
+
+			$pdf->SetXY(10, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq ? $this->lines[$j]->num_chq : '', 0, 'L', 0);
+
+			$pdf->SetXY(40, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(60, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq, 44), 0, 'L', 0);
+
+			$pdf->SetXY(100, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(80, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq, 50), 0, 'L', 0);
+
+			$pdf->SetXY(180, $this->tab_top + 10 + $yp);
+			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', 0);
+
+            $yp = $yp + ($this->line_height * $nb_lines);
 		}
 	}
 

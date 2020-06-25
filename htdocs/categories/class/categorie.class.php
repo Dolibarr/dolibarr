@@ -64,9 +64,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array ID mapping from type string
-	 *
-	 * @note This array should be removed in future, once previous constants are moved to the string value. Deprecated
+	 * @var array Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	protected $MAP_ID = array(
 		'product'      => 0,
@@ -79,7 +77,8 @@ class Categorie extends CommonObject
 		'user'         => 7,
 		'bank_line'    => 8,
 		'warehouse'    => 9,
-        'actioncomm'   => 10
+        'actioncomm'   => 10,
+		'website_page' => 11
 	);
 
     /**
@@ -316,13 +315,10 @@ class Categorie extends CommonObject
 		if ($id > 0)
 		{
 			$sql .= " WHERE rowid = ".$id;
-		}
-		elseif (!empty($ref_ext))
+		} elseif (!empty($ref_ext))
 		{
 			$sql .= " WHERE ref_ext LIKE '".$this->db->escape($ref_ext)."'";
-		}
-		else
-		{
+		} else {
 			$sql .= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category').")";
 			if (!is_null($type)) $sql .= " AND type = ".$this->db->escape($type);
 		}
@@ -361,14 +357,10 @@ class Categorie extends CommonObject
 				if (!empty($conf->global->MAIN_MULTILANGS)) $this->getMultiLangs();
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -482,21 +474,15 @@ class Categorie extends CommonObject
                 {
     				$this->db->commit();
     				return $id;
-                }
-                else
-              	{
+                } else {
                 	$this->db->rollback();
                     return -3;
                 }
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -573,9 +559,7 @@ class Categorie extends CommonObject
 			$this->db->commit();
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			dol_print_error($this->db);
 			return -1;
@@ -660,9 +644,7 @@ class Categorie extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -673,10 +655,10 @@ class Categorie extends CommonObject
 	 * Link an object to the category
 	 *
 	 * @param   CommonObject 	$obj  	Object to link to category
-	 * @param   string     		$type 	Type of category ('product', ...)
+	 * @param   string     		$type 	Type of category ('product', ...). Use '' to take $obj->element.
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
-	public function add_type($obj, $type)
+	public function add_type($obj, $type = '')
 	{
         // phpcs:enable
 		global $user, $langs, $conf;
@@ -684,6 +666,8 @@ class Categorie extends CommonObject
 		$error = 0;
 
 		if ($this->id == -1) return -2;
+
+		if (empty($type)) $type = $obj->element;
 
         $this->db->begin();
 
@@ -721,9 +705,7 @@ class Categorie extends CommonObject
 							}
 						}
 					}
-				}
-				else
-				{
+				} else {
 					$error++;
 					$this->error = $this->db->lasterror();
 				}
@@ -747,23 +729,17 @@ class Categorie extends CommonObject
 			{
 			    $this->db->commit();
 			    return 1;
-			}
-			else
-			{
+			} else {
 			    $this->db->rollback();
 			    return -2;
 			}
-		}
-		else
-		{
+		} else {
 		    $this->db->rollback();
 			if ($this->db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$this->error = $this->db->lasterrno();
 				return -3;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 			}
 			return -1;
@@ -814,15 +790,11 @@ class Categorie extends CommonObject
 			{
 			    $this->db->commit();
 			    return 1;
-			}
-			else
-			{
+			} else {
 			    $this->db->rollback();
                 return -2;
 			}
-		}
-		else
-		{
+		} else {
 		    $this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -873,18 +845,14 @@ class Categorie extends CommonObject
 			    if ($onlyids)
 			    {
 			    	$objs[] = $rec['fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])];
-			    }
-			    else
-			    {
+			    } else {
 				    $obj = new $this->MAP_OBJ_CLASS[$type]($this->db);
 				    $obj->fetch($rec['fk_'.(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])]);
 				    $objs[] = $obj;
 			    }
 			}
 			return $objs;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
@@ -1009,8 +977,7 @@ class Categorie extends CommonObject
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1045,9 +1012,7 @@ class Categorie extends CommonObject
 				$cats[] = $cat;
 			}
 			return $cats;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1079,9 +1044,7 @@ class Categorie extends CommonObject
 				$this->motherof[$obj->id_son] = $obj->id_parent;
 			}
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1113,23 +1076,23 @@ class Categorie extends CommonObject
 	    global $conf, $langs;
 
 		if (!is_numeric($type)) $type = $this->MAP_ID[$type];
+		if (is_null($type)) {
+			$this->error = 'BadValueForParameterType';
+			return -1;
+		}
 
         if (is_string($markafterid))
         {
             $markafterid = explode(',', $markafterid);
-        }
-        elseif (is_numeric($markafterid))
+        } elseif (is_numeric($markafterid))
         {
             if ($markafterid > 0)
             {
                 $markafterid = array($markafterid);
-            }
-            else
-            {
+            } else {
                 $markafterid = array();
             }
-        }
-        elseif (!is_array($markafterid))
+        } elseif (!is_array($markafterid))
         {
             $markafterid = array();
         }
@@ -1165,9 +1128,7 @@ class Categorie extends CommonObject
 				$this->cats[$obj->rowid]['ref_ext'] = $obj->ref_ext;
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1311,9 +1272,7 @@ class Categorie extends CommonObject
 				$cats[$rec['rowid']] = $cat;
 			}
 			return $cats;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1375,9 +1334,7 @@ class Categorie extends CommonObject
 			}
 			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent." than category id=".$this->id, LOG_DEBUG);
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1390,7 +1347,7 @@ class Categorie extends CommonObject
 	 * separated by $sep (" >> " by default)
 	 *
 	 * @param	string	$sep	     Separator
-	 * @param	string	$url	     Url
+	 * @param	string	$url	     Url ('', 'none' or 'urltouse')
 	 * @param   int     $nocolor     0
 	 * @param	string	$addpicto	 Add picto into link
 	 * @return	array
@@ -1424,15 +1381,16 @@ class Categorie extends CommonObject
     			    }
 			    }
 
-				if ($url == '')
-				{
+				if ($url == '') {
 			        $link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.$forced_color.'">';
 			        $linkend = '</a>';
 			        $w[] = $link.($addpicto ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
-				}
-				else
-				{
-					$w[] = "<a href='".DOL_URL_ROOT."/".$url."?catid=".$cat->id."'>".($addpicto ? img_object('', 'category') : '').$cat->label."</a>";
+				} elseif ($url == 'none') {
+					$link = '<span class="'.$forced_color.'">';
+					$linkend = '</span>';
+					$w[] = $link.($addpicto ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
+				} else {
+					$w[] = '<a class="'.$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.$cat->id.'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
 			$newcategwithpath = preg_replace('/toreplace/', $forced_color, implode($sep, $w));
@@ -1472,9 +1430,7 @@ class Categorie extends CommonObject
 				}
 			}
 			return $parents;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -1553,15 +1509,11 @@ class Categorie extends CommonObject
     				    $cats[] = $cat;
     				}
 		        }
-		    }
-		    else
-		    {
+		    } else {
 		        dol_print_error($this->db);
 		        return -1;
 		    }
-		}
-        else
-        {
+		} else {
     		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
     		$sql .= " FROM ".MAIN_DB_PREFIX."categorie_".(empty($this->MAP_CAT_TABLE[$type]) ? $type : $this->MAP_CAT_TABLE[$type])." as ct, ".MAIN_DB_PREFIX."categorie as c";
     		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_".(empty($this->MAP_CAT_FK[$type]) ? $type : $this->MAP_CAT_FK[$type])." = ".(int) $id." AND c.type = ".$this->MAP_ID[$type];
@@ -1582,9 +1534,7 @@ class Categorie extends CommonObject
     					$cats[] = $cat;
     				}
     			}
-    		}
-    		else
-    		{
+    		} else {
     			dol_print_error($this->db);
     			return -1;
     		}
@@ -1632,8 +1582,7 @@ class Categorie extends CommonObject
 				$nom = '%'.str_replace('*', '%', $nom).'%';
 			if (!$case)
 				$sql .= " AND label LIKE '".$this->db->escape($nom)."'";
-			else
-				$sql .= " AND label LIKE BINARY '".$this->db->escape($nom)."'";
+			else $sql .= " AND label LIKE BINARY '".$this->db->escape($nom)."'";
 		}
 		if ($id)
 		{
@@ -1651,9 +1600,7 @@ class Categorie extends CommonObject
 			}
 
 			return $cats;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
@@ -1878,9 +1825,7 @@ class Categorie extends CommonObject
 	                $sql2 .= " SET label='".$this->db->escape($this->label)."',";
 	                $sql2 .= " description='".$this->db->escape($this->description)."'";
 	                $sql2 .= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
-	            }
-	            else
-	            {
+	            } else {
 	                $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 	                $sql2 .= " VALUES(".$this->id.",'".$key."','".$this->db->escape($this->label);
 	                $sql2 .= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
@@ -1891,8 +1836,7 @@ class Categorie extends CommonObject
 	                $this->error = $this->db->lasterror();
 	                return -1;
 	            }
-	        }
-	        elseif (isset($this->multilangs["$key"]))
+	        } elseif (isset($this->multilangs["$key"]))
 	        {
 	            if ($this->db->num_rows($result)) // si aucune ligne dans la base
 	            {
@@ -1900,9 +1844,7 @@ class Categorie extends CommonObject
 	                $sql2 .= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
 	                $sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
 	                $sql2 .= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
-	            }
-	            else
-	            {
+	            } else {
 	                $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."categorie_lang (fk_category, lang, label, description)";
 	                $sql2 .= " VALUES(".$this->id.",'".$key."','".$this->db->escape($this->multilangs["$key"]["label"]);
 	                $sql2 .= "','".$this->db->escape($this->multilangs["$key"]["description"])."')";
@@ -1960,9 +1902,7 @@ class Categorie extends CommonObject
 	            $this->multilangs["$obj->lang"]["description"] = $obj->description;
 	        }
 	        return 1;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->error = $langs->trans("Error")." : ".$this->db->error()." - ".$sql;
 	        return -1;
 	    }
@@ -2054,8 +1994,7 @@ class Categorie extends CommonObject
 			if (intval($searchCategory) == -2)
 			{
 				$searchCategorySqlList[] = " cp.fk_categorie IS NULL";
-			}
-			elseif (intval($searchCategory) > 0)
+			} elseif (intval($searchCategory) > 0)
 			{
 				$searchCategorySqlList[] = " ".$rowIdName
 										." IN (SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type
@@ -2066,9 +2005,7 @@ class Categorie extends CommonObject
 		if (!empty($searchCategorySqlList))
 		{
 			return " AND (".implode(' AND ', $searchCategorySqlList).")";
-		}
-		else
-		{
+		} else {
 			return "";
 		}
 	}

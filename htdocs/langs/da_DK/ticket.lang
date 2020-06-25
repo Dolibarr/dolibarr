@@ -130,10 +130,14 @@ TicketNumberingModules=Opgave nummerering modul
 TicketNotifyTiersAtCreation=Underret tredjepart ved oprettelsen
 TicketGroup=Gruppe
 TicketsDisableCustomerEmail=Deaktiver altid Emails, når en opgave oprettes fra den offentlige grænseflade
+TicketsPublicNotificationNewMessage=Send e-mail (s), når en ny besked tilføjes
+TicketsPublicNotificationNewMessageHelp=Send e-mail (s), når en ny meddelelse tilføjes fra den offentlige grænseflade (til den tildelte bruger eller meddelelses-e-mailen til (opdatering) og / eller meddelelses-e-mailen til)
+TicketPublicNotificationNewMessageDefaultEmail=Underretnings-e-mail til (opdatering)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send e-mail-meddelelser om ny meddelelse til denne adresse, hvis billetten ikke har en bruger tildelt, eller brugeren ikke har en e-mail.
 #
 # Index & list page
 #
-TicketsIndex=Opgave - hjem
+TicketsIndex=Billet område
 TicketList=Liste over opgaver
 TicketAssignedToMeInfos=Denne side viser en opgaveliste oprettet af eller tildelt den aktuelle bruger
 NoTicketsFound=Ingen opgaver fundet

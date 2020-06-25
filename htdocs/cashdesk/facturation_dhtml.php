@@ -55,9 +55,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 		$sql .= " AND (p.ref LIKE '".$db->escape($search)."%' OR p.label LIKE '".$db->escape($search)."%'";
 		if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '".$db->escape($search)."%'";
 		$sql .= ")";
-	}
-	else
-	{
+	} else {
 		$sql .= " AND (p.ref LIKE '%".$db->escape($search)."%' OR p.label LIKE '%".$db->escape($search)."%'";
 		if (!empty($conf->barcode->enabled)) $sql .= " OR p.barcode LIKE '%".$db->escape($search)."%'";
 		$sql .= ")";
@@ -98,9 +96,7 @@ if (dol_strlen($search) >= 0)	// If search criteria is on char length at least
 			$resultat .= '</ul>';
 
 			print $resultat;
-		}
-		else
-		{
+		} else {
 			$langs->load("cashdesk");
 
 			print '<ul class="dhtml_bloc">';

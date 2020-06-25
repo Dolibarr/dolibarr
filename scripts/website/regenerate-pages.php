@@ -67,7 +67,7 @@ $websitepagestatic = new WebsitePage($db);
 
 $db->begin();
 
-$listofpages = $websitepagestatic->fetchAll($website->id, '', $max);
+$listofpages = $websitepagestatic->fetchAll($website->id, '', '', $max);
 
 global $dolibarr_main_data_root;
 $pathofwebsite = $dolibarr_main_data_root.'/website/'.$websiteref;

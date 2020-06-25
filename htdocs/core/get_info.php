@@ -70,10 +70,8 @@ if (!empty($conf->global->MAIN_APPLICATION_TITLE))
 	if (preg_match('/\d\.\d/', $appli))
 	{
 		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-	}
-	else $appli .= " ".DOL_VERSION;
-}
-else $appli .= " ".DOL_VERSION;
+	} else $appli .= " ".DOL_VERSION;
+} else $appli .= " ".DOL_VERSION;
 
 if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
@@ -89,9 +87,7 @@ if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 		//$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 		$logouttext .= '<span class="fa fa-sign-out atoplogin"></span>';
 		$logouttext .= '</a>';
-	}
-	else
-	{
+	} else {
 		$logouthtmltext .= $langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
 		$logouttext .= img_picto($langs->trans('Logout').":".$langs->trans('Logout'), 'logout_top.png', 'class="login"', 0, 0, 1);
 	}
@@ -118,9 +114,8 @@ $result = $hookmanager->executeHooks('printTopRightMenu', $parameters); // Note 
 if (is_numeric($result))
 {
 	if (empty($result)) $toprightmenu .= $hookmanager->resPrint; // add
-	else  $toprightmenu = $hookmanager->resPrint; // replace
-}
-else $toprightmenu .= $result; // For backward compatibility
+	else $toprightmenu = $hookmanager->resPrint; // replace
+} else $toprightmenu .= $result; // For backward compatibility
 
 // Link to module builder
 if (!empty($conf->modulebuilder->enabled))

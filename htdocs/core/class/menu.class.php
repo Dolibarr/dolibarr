@@ -52,7 +52,7 @@ class Menu
      * Add a menu entry into this->liste (at end)
      *
      * @param	string	$url        Url to follow on click (does not include DOL_URL_ROOT)
-     * @param   string	$titre      Label of menu to add
+     * @param   string	$titre      Label of menu to add. The value must already be translated.
      * @param   integer	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not (0=Not active, 1=Active, 2=Active but grey)
      * @param   string	$target		Target link
@@ -75,7 +75,7 @@ class Menu
      *
      * @param   int     $idafter    Array key after which inserting new entry
      * @param	string	$url        Url to follow on click
-     * @param   string	$titre      Label of menu to add
+     * @param   string	$titre      Label of menu to add. The value must already be translated.
      * @param   integer	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not
      * @param   string	$target		Target link

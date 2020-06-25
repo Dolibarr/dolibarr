@@ -370,8 +370,7 @@ if ($action != "infos_success") {
 		print $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketEmailNotificationFrom")).'<br>';
 		print $langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentities("Ticket"));
 		print '<div>';
-	}
-	else {
+	} else {
 		print '<div class="info marginleftonly marginrightonly">'.$langs->trans('TicketPublicInfoCreateTicket').'</div>';
 		$formticket->showForm();
 	}

@@ -99,9 +99,7 @@ if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 	{
 		// hide products in closed warehouse, but show products for internal transfer
 		$form->select_produits(GETPOST('idprod', 'int'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, 'warehouseopen,warehouseinternal', GETPOST('combinations', 'array'));
-	}
-	else
-	{
+	} else {
 		$form->select_produits(GETPOST('idprod', 'int'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500', 0, '', GETPOST('combinations', 'array'));
 	}
 

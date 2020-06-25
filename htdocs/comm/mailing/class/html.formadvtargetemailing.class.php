@@ -314,9 +314,7 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -340,74 +338,6 @@ class FormAdvTargetEmailing extends Form
 		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
     }
-
-	/**
-	 *  Return combo list with customer categories
-	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 *  @return	string HTML combo
-	 */
-	public function multiselectCustomerCategories($htmlname = 'cust_cat', $selected_array = array())
-	{
-		return $this->multiselectCategories($htmlname, $selected_array, 2);
-	}
-
-	/**
-	 *  Return combo list with customer contact
-	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 *  @return	string HTML combo
-	 */
-	public function multiselectContactCategories($htmlname = 'contact_cat', $selected_array = array())
-	{
-		return $this->multiselectCategories($htmlname, $selected_array, 4);
-	}
-
-	/**
-	 *  Return combo list of categories
-	 *
-	 *  @param  string	$htmlname  		Name of categorie
-	 * 	@param	array	$selected_array	Value selected
-	 * 	@param	int		$type			Type
-	 *  @return	string 					HTML combo
-	 */
-	public function multiselectCategories($htmlname = '', $selected_array = array(), $type = 0)
-	{
-		global $conf, $langs, $user;
-		$langs->load("dict");
-
-		$options_array = array();
-
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE type=".$type;
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($resql);
-
-					$options_array[$obj->rowid] = $obj->label;
-
-					$i++;
-				}
-			}
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
-
-		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-	}
 
 	/**
 	 * Return a combo list to select emailing target selector

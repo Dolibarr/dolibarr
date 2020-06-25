@@ -130,10 +130,14 @@ TicketNumberingModules=Čeku numerācijas modulis
 TicketNotifyTiersAtCreation=Paziņot trešajai pusei radīšanas laikā
 TicketGroup=Grupa
 TicketsDisableCustomerEmail=Vienmēr atspējojiet e-pasta ziņojumus, ja biļete tiek veidota no publiskās saskarnes
+TicketsPublicNotificationNewMessage=Sūtiet e-pastu (s), kad tiek pievienots jauns ziņojums
+TicketsPublicNotificationNewMessageHelp=Sūtiet e-pastu (s), kad no publiskās saskarnes tiek pievienots jauns ziņojums (piešķirtajam lietotājam vai paziņojumu e-pastu uz (atjaunināt) un / vai paziņojumu e-pastu uz)
+TicketPublicNotificationNewMessageDefaultEmail=Paziņojumu e-pasts adresātam (atjaunināt)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Sūtiet pa e-pastu jaunu ziņojumu paziņojumus uz šo adresi, ja biļetei nav piešķirts lietotājs vai lietotājam nav e-pasta.
 #
 # Index & list page
 #
-TicketsIndex=Pieteikumi - mājās
+TicketsIndex=Biļešu zona
 TicketList=Pieteikumu saraksts
 TicketAssignedToMeInfos=Šī lapa parāda pieteikumu sarakstu, kas izveidots vai piešķirts pašreizējam lietotājam
 NoTicketsFound=Nav atrasts neviens pieteikums

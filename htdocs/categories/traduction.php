@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
- *	\brief      Page de traduction des produits
+ *	\brief      Page of translation of products
  */
 
 require '../main.inc.php';
@@ -167,11 +167,11 @@ $cancel != $langs->trans("Cancel") &&
  * View
  */
 
-llxHeader("", "", $langs->trans("Translation"));
-
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
+
+llxHeader("", "", $langs->trans("Translation"));
 
 $title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
@@ -194,8 +194,7 @@ $object->next_prev_filter = ' type = '.$object->type;
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
-foreach ($ways as $way)
-{
+foreach ($ways as $way) {
     $morehtmlref .= $way."<br>\n";
 }
 $morehtmlref .= '</div>';
@@ -207,7 +206,7 @@ print '<br>';
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Description
 print '<tr><td class="titlefield notopnoleft">';
@@ -292,8 +291,7 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($action != 'add')
+} elseif ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
 

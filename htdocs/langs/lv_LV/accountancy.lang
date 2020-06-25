@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Veicot nākamo darbību, lai nākotnē ietaupī
 AccountancyAreaDescActionFreq=Šīs darbības parasti tiek veiktas katru mēnesi, nedēļu vai dienu ļoti lieliem uzņēmumiem ...
 
 AccountancyAreaDescJournalSetup=Solis %s: izveidojiet vai pārbaudiet žurnāla satura saturu no izvēlnes %s
-AccountancyAreaDescChartModel=Silis %s: izveidojiet konta diagrammas modeli no izvēlnes %s
-AccountancyAreaDescChart=Solis %s: izveidojiet vai pārbaudiet sava konta diagrammas saturu no izvēlnes %s
+AccountancyAreaDescChartModel=Solis %s: pārbaudiet, vai pastāv konta diagrammas modelis, vai izveidojiet to no izvēlnes %s
+AccountancyAreaDescChart=Solis %s: izvēlnē %s atlasiet un vai aizpildiet kontu no izvēlnes.
 
 AccountancyAreaDescVat=Solis %s: definējiet katras PVN likmes grāmatvedības kontus. Izmantojiet izvēlnes ierakstu %s.
 AccountancyAreaDescDefault=Solis %s: definējiet noklusējuma grāmatvedības kontus. Šajā nolūkā izmantojiet izvēlnes ierakstu %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Iesaistīto rēķinu līnijas
 ExpenseReportLines=Izdevumu atskaites līnijas, kas saistītas
 ExpenseReportLinesDone=Saistītās izdevumu pārskatu līnijas
 IntoAccount=Bind line ar grāmatvedības kontu
+TotalForAccount=Kopā grāmatvedības kontā
 
 
 Ventilate=Saistīt
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Accounting account to register donations
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grāmatvedības konts, lai reģistrētu abonementus
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Nopirkto produktu grāmatvedības konts pēc noklusējuma (tiek izmantots, ja tas nav definēts produktu lapā)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem produktiem EEK (lietots, ja nav definēts produktu lapā)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem produktiem un importētajiem no EEK (izmantots, ja tas nav noteikts produkta lapā)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Grāmatvedības konts pēc noklusējuma pārdotajiem produktiem (izmanto, ja produkta lapā nav noteikts).
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma ražojumiem, ko pārdod EEK (izmanto, ja nav definēts produktu lapā)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma produktiem, kas pārdoti un eksportēti no EEK (izmantots, ja tas nav noteikts produkta lapā)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Grāmatvedības konts pēc noklusējuma par nopirktajiem pakalpojumiem (lieto, ja tas nav noteikts pakalpojuma lapā)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma nopirktajiem pakalpojumiem EEK (izmantots, ja pakalpojuma lapā nav noteikts)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma par nopirktajiem pakalpojumiem un ievestajiem no EEK (tiek izmantots, ja pakalpojuma lapā tas nav noteikts)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Grāmatvedības konts pēc noklusējuma pārdotajiem pakalpojumiem (izmanto, ja tas nav noteikts pakalpojuma lapā)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Grāmatvedības konts pēc noklusējuma par pakalpojumiem, kas pārdoti EEK (izmantots, ja nav definēts pakalpojumu lapā)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Grāmatvedības konts pēc noklusējuma par pakalpojumiem, kas pārdoti un eksportēti no EEK (tiek izmantoti, ja tie nav definēti pakalpojumu lapā)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Trešā puse nav 
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Trešās puses konts nav definēts vai trešā persona nav zināma. Bloķēšanas kļūda.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Nav noteikts nezināms trešās puses konts un gaidīšanas konts. Bloķēšanas kļūda
 PaymentsNotLinkedToProduct=Maksājums nav saistīts ar kādu produktu / pakalpojumu
+OpeningBalance=Sākuma bilance
 ShowOpeningBalance=Rādīt sākuma atlikumu
 HideOpeningBalance=Slēpt sākuma atlikumu
+ShowSubtotalByGroup=Rādīt starpsummu pa grupām
 
 Pcgtype=Kontu grupa
 PcgtypeDesc=Kontu grupa tiek izmantota kā iepriekš definēti “filtra” un “grupēšanas” kritēriji dažiem grāmatvedības pārskatiem. Piemēram, “IENĀKUMS” vai “IZDEVUMI” tiek izmantoti kā produktu uzskaites kontu grupas, lai izveidotu izdevumu / ienākumu pārskatu.
+
+Reconcilable=Samierināms
 
 TotalVente=Kopējais apgrozījums pirms nodokļu nomaksas
 TotalMarge=Kopējā pārdošanas starpība
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Eksportēt Quadratus QuadraCompta
 Modelcsv_ebp=Eksportēt uz EBP
 Modelcsv_cogilog=Eksportēt uz Cogilog
 Modelcsv_agiris=Eksports uz Agiris
-Modelcsv_LDCompta=Eksports LD Compta (v9 un jaunākiem) (pārbaude)
+Modelcsv_LDCompta=Eksports LD Compta (v9) (pārbaude)
+Modelcsv_LDCompta10=Eksports LD Compta (v10 un jaunākiem)
 Modelcsv_openconcerto=Eksportēt OpenConcerto (tests)
 Modelcsv_configurable=Eksportēt CSV konfigurējamu
 Modelcsv_FEC=Eksporta FEC
 Modelcsv_Sage50_Swiss=Eksports uz Sage 50 Šveici
+Modelcsv_winfic=Eksportēt Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Kontu konts. Id
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=Mode pārdošana
 OptionModeProductSellIntra=Pārdošanas veids, ko eksportē EEK
 OptionModeProductSellExport=Pārdošanas režīms citās valstīs
 OptionModeProductBuy=Mode pirkumi
+OptionModeProductBuyIntra=Režīma pirkumi, kas importēti EEK
+OptionModeProductBuyExport=Režīms, kas iegādāts importēts no citām valstīm
 OptionModeProductSellDesc=Parādiet visus produktus ar grāmatvedības kontu pārdošanai.
 OptionModeProductSellIntraDesc=Rādīt visus produktus ar grāmatvedības kontu pārdošanai EEK.
 OptionModeProductSellExportDesc=Rādīt visus produktus ar grāmatvedības kontu citiem ārvalstu pārdošanas darījumiem.
 OptionModeProductBuyDesc=Parādiet visus produktus ar grāmatvedības kontu pirkumiem.
+OptionModeProductBuyIntraDesc=Rādīt visus produktus ar grāmatvedības kontu pirkumiem EEK.
+OptionModeProductBuyExportDesc=Rādīt visus produktus ar grāmatvedības kontu citiem ārvalstu pirkumiem.
 CleanFixHistory=Noņemiet grāmatvedības kodu no rindām, kas nav konta diagrammās
 CleanHistory=Atiestatīt visas saistītās vērtības izvēlētajam gadam
 PredefinedGroups=Iepriekš definētas grupas
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=Konts ir noņemts no grupas
 SaleLocal=Vietējā pārdošana
 SaleExport=Eksporta pārdošana
 SaleEEC=Pārdošana EEK
+SaleEECWithVAT=Pārdošana EEK ar PVN nav spēkā, tāpēc domājams, ka tā NAV iekšējā tirdzniecība, un ieteiktais konts ir standarta produkta konts.
+SaleEECWithoutVATNumber=Pārdošana EEK bez PVN, bet trešās puses PVN ID nav definēts. Mēs atteicamies no standarta produkta standarta konta. Ja nepieciešams, varat salabot trešās personas PVN ID vai produkta kontu.
 
 ## Dictionary
 Range=Grāmatvedības konta diapazons

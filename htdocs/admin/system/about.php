@@ -200,9 +200,7 @@ if ($showpromotemessage)
             print '<textarea style="width:80%; min-height: 60px">';
             print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
             print '</textarea>';
-        }
-        else
-        {
+        } else {
             print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
             print '<textarea style="width:80%; min-height: 60px">';
             print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);
