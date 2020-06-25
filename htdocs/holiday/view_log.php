@@ -212,8 +212,7 @@ if ($lastUpdate)
     print '<strong>'.dol_print_date($db->jdate($object->getConfCP('lastUpdate')), 'dayhour', 'tzuser').'</strong>';
     print '<br>'.$langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong>'."\n";
 }
-else
-{
+else {
     print $langs->trans('None');
 }
 print "</div><br>\n";
