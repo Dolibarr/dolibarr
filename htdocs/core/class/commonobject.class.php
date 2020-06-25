@@ -1424,15 +1424,15 @@ abstract class CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load object contact with id=$this->contactid into $this->contact
+	 *		Load object contact with id=$this->contact_id into $this->contact
 	 *
-	 *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
+	 *		@param	int		$contactid      Id du contact. Use this->contact_id if empty.
 	 *		@return	int						<0 if KO, >0 if OK
 	 */
 	public function fetch_contact($contactid = null)
 	{
         // phpcs:enable
-		if (empty($contactid)) $contactid = $this->contactid;
+		if (empty($contactid)) $contactid = $this->contact_id;
 
 		if (empty($contactid)) return 0;
 

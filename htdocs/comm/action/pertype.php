@@ -469,7 +469,7 @@ if ($resql)
         $event->fk_project = $obj->fk_project;
 
         $event->socid = $obj->fk_soc;
-        $event->contactid = $obj->fk_contact;
+        $event->contact_id = $obj->fk_contact;
 
         $event->fk_element = $obj->fk_element;
         $event->elementtype = $obj->elementtype;
@@ -880,15 +880,15 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 								}
 								$cases1[$h][$event->id]['string'] .= ', '.$cachethirdparties[$event->socid]->name;
 							}
-							if ($event->contactid > 0)
+							if ($event->contact_id > 0)
 							{
-								if (empty($cachecontacts[$event->contactid]))
+								if (empty($cachecontacts[$event->contact_id]))
 								{
 									$tmpcontact = new Contact($db);
-									$tmpcontact->fetch($event->contactid);
-									$cachecontacts[$event->contactid] = $tmpcontact;
+									$tmpcontact->fetch($event->contact_id);
+									$cachecontacts[$event->contact_id] = $tmpcontact;
 								}
-								$cases1[$h][$event->id]['string'] .= ', '.$cachecontacts[$event->contactid]->getFullName($langs);
+								$cases1[$h][$event->id]['string'] .= ', '.$cachecontacts[$event->contact_id]->getFullName($langs);
 							}
 						}
 						if ($event->date_start_in_calendar < $c && $dateendtouse > $b)
@@ -926,15 +926,15 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 								}
 								$cases2[$h][$event->id]['string'] .= ', '.$cachethirdparties[$event->socid]->name;
 							}
-							if ($event->contactid > 0)
+							if ($event->contact_id > 0)
 							{
-								if (empty($cachecontacts[$event->contactid]))
+								if (empty($cachecontacts[$event->contact_id]))
 								{
 									$tmpcontact = new Contact($db);
-									$tmpcontact->fetch($event->contactid);
-									$cachecontacts[$event->contactid] = $tmpcontact;
+									$tmpcontact->fetch($event->contact_id);
+									$cachecontacts[$event->contact_id] = $tmpcontact;
 								}
-								$cases2[$h][$event->id]['string'] .= ', '.$cachecontacts[$event->contactid]->getFullName($langs);
+								$cases2[$h][$event->id]['string'] .= ', '.$cachecontacts[$event->contact_id]->getFullName($langs);
 							}
 						}
 					} else {

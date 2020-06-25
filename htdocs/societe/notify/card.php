@@ -316,7 +316,7 @@ if ($result > 0)
         {
             $obj = $db->fetch_object($resql);
 
-            $contactstatic->id = $obj->contactid;
+            $contactstatic->id = $obj->contact_id;
             $contactstatic->lastname = $obj->lastname;
             $contactstatic->firstname = $obj->firstname;
             print '<tr class="oddeven"><td>'.$contactstatic->getNomUrl(1);

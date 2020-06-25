@@ -2618,7 +2618,7 @@ class Ticket extends CommonObject
 
 								foreach ($external_contacts as $key => $info_sendto) {
 									// altairis: avoid duplicate emails to external contacts
-									if ($info_sendto['id'] == $user->contactid) {
+									if ($info_sendto['id'] == $user->contact_id) {
 										continue;
 									}
 

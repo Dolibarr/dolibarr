@@ -177,7 +177,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 			//$object->fetch($id);
             if (!empty($object->socpeopleassigned)) {
                 reset($object->socpeopleassigned);
-                $object->contactid = key($object->socpeopleassigned);
+                $object->contact_id = key($object->socpeopleassigned);
             }
 			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
 			if ($result > 0) {
@@ -350,7 +350,7 @@ if (empty($reshook) && $action == 'add')
 	if (!empty($object->socpeopleassigned))
 	{
 		reset($object->socpeopleassigned);
-		$object->contactid = key($object->socpeopleassigned);
+		$object->contact_id = key($object->socpeopleassigned);
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -445,10 +445,10 @@ if (empty($reshook) && $action == 'update')
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
-		$object->contactid   = GETPOST("contactid", 'int');
-        if (empty($object->contactid) && !empty($object->socpeopleassigned)) {
+		$object->contact_id   = GETPOST("contactid", 'int');
+        if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
             reset($object->socpeopleassigned);
-            $object->contactid = key($object->socpeopleassigned);
+            $object->contact_id = key($object->socpeopleassigned);
         }
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note_private = GETPOST("note", "none");
@@ -1156,7 +1156,7 @@ if ($id > 0)
 		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		foreach ($socpeopleassigned as $tmpid) $object->socpeopleassigned[$id] = array('id' => $tmpid);
-		$object->contactid   = GETPOST("contactid", 'int');
+		$object->contact_id   = GETPOST("contactid", 'int');
 		$object->fk_project  = GETPOST("projectid", 'int');
 
 		$object_private = GETPOST("note", 'none');

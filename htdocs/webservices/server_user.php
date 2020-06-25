@@ -360,7 +360,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
 						'datec' => dol_print_date($user->datec, 'dayhourrfc'),
 						'datem' => dol_print_date($user->datem, 'dayhourrfc'),
 						'fk_thirdparty' => $user->socid,
-						'fk_contact' => $user->contactid,
+						'fk_contact' => $user->contact_id,
 						'fk_member' => $user->fk_member,
 						'datelastlogin' => dol_print_date($user->datelastlogin, 'dayhourrfc'),
 						'datepreviouslogin' => dol_print_date($user->datepreviouslogin, 'dayhourrfc'),

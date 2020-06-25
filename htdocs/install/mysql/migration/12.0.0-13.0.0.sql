@@ -54,3 +54,18 @@ ALTER TABLE llx_subscription MODIFY COLUMN datef DATETIME;
 
 ALTER TABLE llx_loan_schedule ADD column fk_payment_loan INTEGER;
 
+
+ALTER TABLE llx_user DROP COLUMN jabberid;
+ALTER TABLE llx_user DROP COLUMN skype;
+ALTER TABLE llx_user DROP COLUMN twitter;
+ALTER TABLE llx_user DROP COLUMN facebook;
+ALTER TABLE llx_user DROP COLUMN linkedin;
+ALTER TABLE llx_user DROP COLUMN instagram;
+ALTER TABLE llx_user DROP COLUMN snapchat;
+ALTER TABLE llx_user DROP COLUMN googleplus;
+ALTER TABLE llx_user DROP COLUMN youtube;
+ALTER TABLE llx_user DROP COLUMN whatsapp;
+
+ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
+ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
+

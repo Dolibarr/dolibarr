@@ -492,7 +492,7 @@ class ActionComm extends CommonObject
         $sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
         $sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
         $sql .= " '".$this->db->escape($this->note_private)."', ";
-        $sql .= ((isset($this->contactid) && $this->contactid > 0) ? $this->contactid : "null").", ";
+        $sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", ";
         $sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
         $sql .= ($userownerid > 0 ? $userownerid : "null").", ";
         $sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
@@ -758,7 +758,7 @@ class ActionComm extends CommonObject
                 $this->transparency			= $obj->transparency;
 
                 $this->socid = $obj->fk_soc; // To have fetch_thirdparty method working
-                $this->contactid			= $obj->fk_contact; // To have fetch_contact method working
+                $this->contact_id			= $obj->fk_contact; // To have fetch_contact method working
                 $this->fk_project = $obj->fk_project; // To have fetch_projet method working
 
                 //$this->societe->id			= $obj->fk_soc;			// deprecated
@@ -999,7 +999,7 @@ class ActionComm extends CommonObject
         }
 
         $socid = (($this->socid > 0) ? $this->socid : 0);
-        $contactid = (($this->contactid > 0) ? $this->contactid : 0);
+        $contactid = (($this->contact_id > 0) ? $this->contact_id : 0);
 		$userownerid = ($this->userownerid ? $this->userownerid : 0);
 		$userdoneid = ($this->userdoneid ? $this->userdoneid : 0);
 

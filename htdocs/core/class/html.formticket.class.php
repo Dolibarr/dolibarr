@@ -338,7 +338,7 @@ class FormTicket
 				print '</td></tr>';
 			} else {
 				print '<tr><td class="titlefield"><input type="hidden" name="socid" value="'.$user->socid.'"/></td>';
-				print '<td><input type="hidden" name="contactid" value="'.$user->contactid.'"/></td>';
+				print '<td><input type="hidden" name="contactid" value="'.$user->contact_id.'"/></td>';
 				print '<td><input type="hidden" name="type" value="Z"/></td></tr>';
 			}
 
