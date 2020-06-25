@@ -1776,7 +1776,7 @@ class Product extends CommonObject
                         $this->product_fourn_price_id = $obj->rowid;
                         $this->buyprice = $obj->price; // deprecated
                         $this->fourn_qty = $obj->quantity; // min quantity for price for a virtual supplier
-                        $this->fourn_pu = $obj->price / $obj->quantity; // Unit price of product for a virtual supplier
+                        $this->fourn_pu = $obj->price; // Unit price of product for a virtual supplier
                         $this->fourn_price_base_type = 'HT'; // Price base type for a virtual supplier
                         $this->fourn_socid = $obj->fk_soc; // Company that offer this price
                         $this->ref_fourn = $obj->ref_supplier; // deprecated
