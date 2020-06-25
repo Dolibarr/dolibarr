@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/tcpdi/tcpdi.php';
 
 
 /**
@@ -197,6 +198,8 @@ class pdf_cyan extends ModelePDFPropales
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
 
+		$tcpdi = new TCPDI();
+
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "propal"));
 
@@ -335,8 +338,8 @@ class pdf_cyan extends ModelePDFPropales
                 // Set path to the background PDF File
                 if (!empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
-                	$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
-                    $tplidx = $pdf->importPage(1);
+                	$pagecount = $tcpdi->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
+                    $tplidx = $tcpdi->importPage(1);
                 }
 
 				$pdf->Open();
@@ -466,7 +469,7 @@ class pdf_cyan extends ModelePDFPropales
 					    while ($pagenb < $pageposafternote) {
 					        $pdf->AddPage();
 					        $pagenb++;
-					        if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+					        if (!empty($tplidx)) $tcpdi->useTemplate($tplidx);
 					        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					        // $this->_pagefoot($pdf,$object,$outputlangs,1);
 					        $pdf->setTopMargin($tab_top_newpage);
@@ -522,7 +525,7 @@ class pdf_cyan extends ModelePDFPropales
 
 					    // apply note frame to last page
 					    $pdf->setPage($pageposafternote);
-					    if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+					    if (!empty($tplidx)) $tcpdi->useTemplate($tplidx);
 					    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					    $height_note = $posyafter - $tab_top_newpage;
 					    $pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
@@ -542,7 +545,7 @@ class pdf_cyan extends ModelePDFPropales
 					        $pagenb++;
 					        $pageposafternote++;
 					        $pdf->setPage($pageposafternote);
-					        if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+					        if (!empty($tplidx)) $tcpdi->useTemplate($tplidx);
 					        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 
 					        $posyafter = $tab_top_newpage;
@@ -593,7 +596,7 @@ class pdf_cyan extends ModelePDFPropales
     					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforsignature + $heightforinfotot)))	// If photo too high, we moved completely on new page
     					{
     						$pdf->AddPage('', '', true);
-    						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+    						if (!empty($tplidx)) $tcpdi->useTemplate($tplidx);
     						//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
     						$pdf->setPage($pageposbefore + 1);
 
@@ -639,7 +642,7 @@ class pdf_cyan extends ModelePDFPropales
     							if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
     							{
     								$pdf->AddPage('', '', true);
-    								if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+    								if (!empty($tplidx)) $tcpdi->useTemplate($tplidx);
     								//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
     								$pdf->setPage($pageposafter + 1);
     							}
@@ -831,7 +834,7 @@ class pdf_cyan extends ModelePDFPropales
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						// New page
 						$pdf->AddPage();
-						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (!empty($tplidx)) $tcpdi->useTemplate($tplidx);
 						$pagenb++;
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
@@ -926,13 +929,13 @@ class pdf_cyan extends ModelePDFPropales
 
 										$infile = $filetomerge_dir.'/'.$linefile->file_name;
 										if (file_exists($infile) && is_readable($infile)) {
-											$pagecount = $pdf->setSourceFile($infile);
+											$pagecount = $tcpdi->setSourceFile($infile);
 											for ($i = 1; $i <= $pagecount; $i++) {
-												$tplIdx = $pdf->importPage($i);
+												$tplIdx = $tcpdi->importPage($i);
 												if ($tplIdx !== false) {
-													$s = $pdf->getTemplatesize($tplIdx);
+													$s = $tcpdi->getTemplatesize($tplIdx);
 													$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
-													$pdf->useTemplate($tplIdx);
+													$tcpdi->useTemplate($tplIdx);
 												} else {
 													setEventMessages(null, array($infile.' cannot be added, probably protected PDF'), 'warnings');
 												}
