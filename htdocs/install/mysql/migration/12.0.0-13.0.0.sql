@@ -38,6 +38,9 @@ ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_de
 
 -- For v13
 
+UPDATE llx_const SET value = 0 WHERE name = 'FACTURE_TVAOPTION' and value = 'franchise';
+UPDATE llx_const SET value = 1 WHERE name = 'FACTURE_TVAOPTION' and value <> 'franchise' AND value <> '0' AND value <> '1';
+
 ALTER TABLE llx_commande MODIFY COLUMN date_livraison DATETIME;
 
 ALTER TABLE llx_website ADD COLUMN position integer DEFAULT 0;
