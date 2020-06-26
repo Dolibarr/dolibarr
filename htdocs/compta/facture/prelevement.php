@@ -112,12 +112,12 @@ if (empty($reshook))
 
     if ($action == "delete")
     {
-        if ($object->id > 0)
+    	if ($object->id > 0)
         {
             $result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
             if ($result == 0)
             {
-                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&mode='.$mode);
                 exit;
             }
         }
@@ -469,13 +469,21 @@ if ($object->id > 0)
 	print "</td>";
 	print '</tr>';
 
-	print '<tr><td>'.$langs->trans("RIB").'</td><td colspan="3">';
+	$title = 'CustomerIBAN';
+	if ($mode == 'bank-transfer') {
+		$title = 'SupplierIBAN';
+	}
+	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
 
 	$bac = new CompanyBankAccount($db);
 	$bac->fetch(0, $object->thirdparty->id);
 
 	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-	if ($bac->verif() <= 0) print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
+	if (!empty($bac->iban)) {
+		if ($bac->verif() <= 0) print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
+	} else {
+		print img_warning($langs->trans("NoDefaultIBANFound"));
+	}
 
 	print '</td></tr>';
 
@@ -714,7 +722,7 @@ if ($object->id > 0)
 			$obj = $db->fetch_object($result_sql);
 
 			print '<tr class="oddeven">';
-			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
+			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
 			print '<td class="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
@@ -723,7 +731,7 @@ if ($object->id > 0)
 			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
 
 			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&did='.$obj->rowid.'&mode='.$mode.'">';
 			print img_delete();
 			print '</a></td>';
 

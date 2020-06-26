@@ -91,14 +91,15 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Products and/or Services catalog
 - Commercial proposals management
 - Customer & Supplier Orders management
+- Invoices and payment management
 - Shipping management
 - Warehouse/Stock management
-- Invoices and payment management
-- Standing orders management (European SEPA)
+- Manufacturing Orders
 - Bank accounts management
+- Direct debit orders management (European SEPA)
 - Accounting management
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
-- Opportunities and/or project management
+- Opportunities or Leads management
 - Projects & Tasks management
 - Contracts management
 - Interventions management
