@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Zásilka %s klasifikováno účtoval
 ShipmentUnClassifyCloseddInDolibarr=Zásilka %s byla znovu otevřena
 ShipmentBackToDraftInDolibarr=Doprava %s se vrátí zpět na stav konceptu
 ShipmentDeletedInDolibarr=Doprava %s odstraněna
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Objednat %s vytvořil
 OrderValidatedInDolibarr=Objednávka %s ověřena
 OrderDeliveredInDolibarr=Objednávka %s označena jako dodaná
