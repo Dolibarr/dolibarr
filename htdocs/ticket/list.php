@@ -327,7 +327,7 @@ foreach ($search as $key => $val)
     if ($key == 'fk_statut')
 	{
 		$newarrayofstatus = array();
-		foreach($search['fk_statut'] as $key2 => $val2) {
+		foreach ($search['fk_statut'] as $key2 => $val2) {
 			if (in_array($val2, array('openall', 'closeall'))) continue;
 			$newarrayofstatus[] = $val2;
 		}
