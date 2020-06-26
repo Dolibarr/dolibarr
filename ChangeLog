@@ -2,7 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 11.0.4 compared to 11.0.3 *****
+***** ChangeLog for 11.0.5 compared to 11.0.4 *****
 FIX: $arraydefaultmessage is an object, as well as in /htdocs/core/class/html.formmail.class.php
 FIX: 10.0 - pagination in prelevement/bons.php
 FIX: 10.0 - undefined $langs if template file copy fails during activation of modContrat
