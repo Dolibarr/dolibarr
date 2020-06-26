@@ -44,9 +44,9 @@ if ($user->socid > 0)	// Protection if external user
 $result = restrictedArea($user, 'holiday', $id, '');
 
 $action      = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
-$massaction  = GETPOST('massaction', 'alpha');	
+$massaction  = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ');
-$optioncss   = GETPOST('optioncss', 'aZ');	
+$optioncss   = GETPOST('optioncss', 'aZ');
 
 $search_ref   = GETPOST('search_ref', 'alpha');
 
@@ -219,8 +219,7 @@ if ($num == 0)
 {
     print '<tr><td colspan="10" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
 }
-else
-{
+else {
     while ($obj = $db->fetch_object($resql))
     {
         $user = new User($db);
