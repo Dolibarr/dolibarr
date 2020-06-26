@@ -1144,7 +1144,7 @@ class DolGraph
 			foreach ($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', ';
-				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val,32))."'";
+				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
 				$i++;
 			}
 
@@ -1207,7 +1207,7 @@ class DolGraph
 			foreach ($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', ';
-				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val,32))."'";
+				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
 				$i++;
 			}
 
