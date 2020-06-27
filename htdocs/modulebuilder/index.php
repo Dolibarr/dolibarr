@@ -2136,10 +2136,11 @@ elseif (!empty($module))
 				print '<span class="fa fa-file-o"></span> '.$langs->trans("DescriptorFile").' : <strong>'.$pathtofile.'</strong>';
 				print ' <a class="editfielda paddingleft paddingright" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtofile).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
 				print '<br>';
-				print '<span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' :</span> ';
-				if (!is_array($dicts) || empty($dicts)) print '<span class="opacitymedium">'.$langs->trans("NoDictionaries").'</span>';
-				else print '<strong>'.$dicts['langs'].'</strong>';
-				print '<br>';
+				if (is_array($dicts) && !empty($dicts)) {
+					print '<span class="fa fa-file-o"></span> '.$langs->trans("LanguageFile").' :</span> ';
+					print '<strong>'.$dicts['langs'].'</strong>';
+					print '<br>';
+				}
 
 				print load_fiche_titre($langs->trans("ListOfDictionariesEntries"), '', '');
 
