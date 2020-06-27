@@ -648,7 +648,9 @@ abstract class CommonInvoice extends CommonObject
 
 			if ($diff < 0) $datelim = $date_lim_current;
 			else $datelim = $date_lim_next;
-		} else return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
+		} else {
+			return 'Bad value for type_cdr in database for record cond_reglement = '.$cond_reglement;
+		}
 
 		return $datelim;
 	}
@@ -732,49 +734,38 @@ abstract class CommonInvoice extends CommonObject
 
 						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 						$resql = $this->db->query($sql);
-						if (!$resql)
-						{
+						if (!$resql) {
 							$this->error = $this->db->lasterror();
 							dol_syslog(get_class($this).'::demandeprelevement Erreur');
 							$error++;
 						}
-					}
-					else
-					{
+					} else {
 						$this->error = 'WithdrawRequestErrorNilAmount';
 						dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
 						$error++;
 					}
 
-					if (!$error)
-					{
+					if (!$error) {
 						// Force payment mode of invoice to withdraw
 						$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement', 'code', 'id', 1);
-						if ($payment_mode_id > 0)
-						{
+						if ($payment_mode_id > 0) {
 							$result = $this->setPaymentMethods($payment_mode_id);
 						}
 					}
 
 					if ($error) return -1;
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->error = "A request already exists";
 					dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
 					return 0;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = "Status of invoice does not allow this";
 			dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
 			return -3;
@@ -798,9 +789,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->db->query($sql))
 		{
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
 			return -1;
