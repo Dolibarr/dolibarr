@@ -9,7 +9,8 @@
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
--- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
+-- To change type of field (mysql): -- VMYSQL4.1 ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
+-- To change type of field (postgres): -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name TYPE varchar(60); 
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
 -- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table
@@ -22,8 +23,8 @@
 -- -- VPGSQL8.2 SELECT setval('llx_table_rowid_seq', MAX(rowid)) FROM llx_table;
 -- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
 -- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
--- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
--- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL;
+-- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL DEFAULT '';
+-- To set a field as NOT NULL:                 -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET NOT NULL DEFAULT '';
 -- To set a field as default NULL:             -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name SET DEFAULT NULL;
 -- Note: fields with type BLOB/TEXT can't have default value.
 
@@ -48,8 +49,11 @@ UPDATE llx_c_units SET label = 'SurfaceUnitm2' WHERE code IN ('M2');
 
 ALTER TABLE llx_adherent_type ADD UNIQUE INDEX uk_adherent_type_libelle (libelle, entity);
 
-ALTER TABLE llx_mailing_cibles MODIFY COLUMN lastname varchar(160);
-ALTER TABLE llx_mailing_cibles MODIFY COLUMN firstname varchar(160);
+-- VMYSQL4.3 ALTER TABLE llx_mailing_cibles MODIFY COLUMN lastname varchar(160);
+-- VPGSQL8.2 ALTER TABLE llx_mailing_cibles ALTER COLUMN lastname TYPE varchar(160);
+
+-- VMYSQL4.3 ALTER TABLE llx_mailing_cibles MODIFY COLUMN firstname varchar(160);
+-- VPGSQL8.2 ALTER TABLE llx_mailing_cibles ALTER COLUMN fistname TYPE varchar(160);
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN login varchar(128);
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN codelastresult varchar(16);
@@ -60,16 +64,25 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 -- For v11
 
 
-ALTER TABLE llx_product_price MODIFY COLUMN tva_tx double(6,3) DEFAULT 0 NOT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_product_price MODIFY COLUMN tva_tx double(6,3) DEFAULT 0 NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN tva_tx TYPE double(6,3);
+-- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN tva_tx SET DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_product_price ALTER COLUMN tva_tx SET NOT NULL;
 
-ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
+
+-- VMYSQL4.3 ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
+-- VPGSQL8.2 ALTER TABLE llx_facturedet ALTER COLUMN situation_percent TYPE real;
+-- VPGSQL8.2 ALTER TABLE llx_facturedet ALTER COLUMN situation_percent SET DEFAULT 100;
+
 UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
 
 -- Set country to null for deprecated accounting system (there is now one per country)
 UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
 
-ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_action_trigger ALTER COLUMN elementtype TYPE varchar(64);
+-- VPGSQL8.2 ALTER TABLE llx_c_action_trigger ALTER COLUMN elementtype SET NOT NULL; 
 
 ALTER TABLE llx_societe_account ADD COLUMN site_account varchar(128);
 
@@ -77,8 +90,11 @@ UPDATE llx_holiday SET ref = rowid WHERE ref IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_holiday MODIFY COLUMN ref varchar(30) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_holiday ALTER COLUMN ref SET NOT NULL;
 
-ALTER TABLE llx_c_email_senderprofile MODIFY COLUMN active tinyint DEFAULT 1 NOT NULL;
- 
+-- VMYSQL4.3 ALTER TABLE llx_c_email_senderprofile MODIFY COLUMN active tinyint DEFAULT 1 NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_email_senderprofile ALTER COLUMN active TYPE tinyint;
+-- VPGSQL8.2 ALTER TABLE llx_c_email_senderprofile ALTER COLUMN active SET DEFAULT 1;
+-- VPGSQL8.2 ALTER TABLE llx_c_email_senderprofile ALTER COLUMN active SET NOT NULL; 
+
 insert into llx_c_type_container (code,label,module,active) values ('menu',     'Menu',     'system', 1);
 
 INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('HELP',    '15', 'Request for functionnal help',  1, 0, NULL);
@@ -125,7 +141,8 @@ create table llx_holiday_extrafields
 
 ALTER TABLE llx_holiday_extrafields ADD INDEX idx_holiday_extrafields (fk_object);
 
-ALTER TABLE llx_societe_rib MODIFY label varchar(200);
+-- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY label varchar(200);
+-- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN label TYPE varchar(200);
 
 ALTER TABLE llx_societe ADD COLUMN logo_squarred varchar(255);
 
@@ -151,7 +168,9 @@ ALTER TABLE llx_facture ADD COLUMN fk_user_closing integer DEFAULT NULL after fk
 
 ALTER TABLE llx_c_shipment_mode ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 
-ALTER TABLE llx_c_shipment_mode DROP INDEX uk_c_shipment_mode;
+-- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode DROP INDEX uk_c_shipment_mode;
+-- VPGSQL8.2 DROP INDEX uk_c_shipment_mode;
+
 ALTER TABLE llx_c_shipment_mode ADD UNIQUE INDEX uk_c_shipment_mode (code, entity);
 
 ALTER TABLE llx_facture_fourn DROP COLUMN total;
@@ -171,7 +190,10 @@ create table llx_payment_salary_extrafields
 
 ALTER TABLE llx_payment_salary_extrafields ADD INDEX idx_payment_salary_extrafields (fk_object);
 
-ALTER TABLE llx_c_price_expression MODIFY COLUMN expression varchar(255) NOT NULL;
+-- VMYSQL4.3 ALTER TABLE llx_c_price_expression MODIFY COLUMN expression varchar(255) NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_c_price_expression ALTER COLUMN expression TYPE varchar(255);
+-- VPGSQL8.2 ALTER TABLE llx_c_price_expression ALTER COLUMN expression SET DEFAULT '';
+-- VPGSQL8.2 ALTER TABLE llx_c_price_expression ALTER COLUMN expression SET NOT NULL;
 
 UPDATE llx_bank_url set url = REPLACE( url, 'compta/salaries/', 'salaries/');
 
@@ -187,7 +209,11 @@ ALTER TABLE llx_mailing_cibles ADD COLUMN tms timestamp;
 
 ALTER TABLE llx_projet ADD COLUMN usage_opportunity integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN usage_task integer DEFAULT 1;
-ALTER TABLE llx_projet CHANGE COLUMN bill_time usage_bill_time integer DEFAULT 0;		-- rename existing field
+----- rename existing field
+-- VMYSQL4.3 ALTER TABLE llx_projet CHANGE COLUMN bill_time usage_bill_time integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_projet RENAME COLUMN bill_time TO usage_bill_time;
+-- VPGSQL8.2 ALTER TABLE llx_projet ALTER COLUMN usage_bill_time TYPE integer;
+-- VPGSQL8.2 ALTER TABLE llx_projet ALTER COLUMN usage_bill_time SET DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN usage_organize_event integer DEFAULT 0;
 
 UPDATE llx_projet set usage_opportunity = 1 WHERE fk_opp_status > 0;
@@ -210,7 +236,7 @@ ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_soc FOREI
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
 
 -- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
--- VPGSQL8.2 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN rowid TYPE BIGSERIAL;
 
 
 
@@ -537,25 +563,28 @@ ALTER TABLE llx_comment ADD COLUMN fk_user_modif  integer DEFAULT NULL;
 
 
 CREATE TABLE llx_mrp_production(
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	fk_mo integer NOT NULL, 
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_mo integer NOT NULL,
 	position integer NOT NULL DEFAULT 0,
-	fk_product integer NOT NULL, 
+	fk_product integer NOT NULL,
 	fk_warehouse integer,
 	qty real NOT NULL DEFAULT 1,
     qty_frozen smallint DEFAULT 0,
-    disable_stock_change smallint DEFAULT 0, 
+    disable_stock_change smallint DEFAULT 0,
 	batch varchar(30),
 	role varchar(10),      			-- 'toconsume' or 'toproduce' (initialized at MO creation), 'consumed' or 'produced' (added after MO validation)
 	fk_mrp_production integer,		-- if role = 'consumed', id of line with role 'toconsume', if role = 'produced' id of line with role 'toproduce'
 	fk_stock_movement integer,		-- id of stock movement when movements are validated
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
+	date_creation datetime NOT NULL,
+	tms timestamp,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
 	import_key varchar(14)
 ) ENGINE=innodb;
-ALTER TABLE llx_mrp_production MODIFY COLUMN qty real NOT NULL DEFAULT 1;
+-- VMYSQL4.3 ALTER TABLE llx_mrp_production MODIFY COLUMN qty real NOT NULL DEFAULT 1;
+-- VPGSQL8.2 ALTER TABLE llx_mrp_production ALTER COLUMN qty TYPE real;
+-- VPGSQL8.2 ALTER TABLE llx_mrp_production ALTER COLUMN qty SET DEFAULT 1;
+-- VPGSQL8.2 ALTER TABLE llx_mrp_production ALTER COLUMN qty SET NOT NULL;
 
 ALTER TABLE llx_mrp_production ADD COLUMN qty_frozen smallint DEFAULT 0;
 ALTER TABLE llx_mrp_production ADD COLUMN disable_stock_change smallint DEFAULT 0;
@@ -570,4 +599,7 @@ ALTER TABLE llx_emailcollector_emailcollector ADD UNIQUE INDEX uk_emailcollector
 
 ALTER TABLE llx_website ADD COLUMN use_manifest integer;
 
-ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEFAULT 1;
+-- VMYSQL4.3 ALTER TABLE llx_facture_rec MODIFY COLUMN fk_cond_reglement integer NOT NULL DEFAULT 1;
+-- VPGSQL8.2 ALTER TABLE llx_facture_rec ALTER COLUMN fk_cond_reglement TYPE integer;
+-- VPGSQL8.2 ALTER TABLE llx_facture_rec ALTER COLUMN fk_cond_reglement SET DEFAULT 1;
+-- VPGSQL8.2 ALTER TABLE llx_facture_rec ALTER COLUMN fk_cond_reglement SET NOT NULL;
