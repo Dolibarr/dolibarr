@@ -839,6 +839,13 @@ if (empty($reshook))
     	$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
     }
 
+	// Set sales representatives
+	if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer)
+	{
+		$object->fetch($socid);
+		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
+	}
+
     $id = $socid;
     $object->fetch($socid);
 

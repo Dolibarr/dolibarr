@@ -190,6 +190,13 @@ if (empty($reshook))
 		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 	}
 
+	// Set sales representatives
+    if ($action == 'set_salesrepresentatives' && $user->rights->societe->creer)
+	{
+		$object->fetch($id);
+		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
+	}
+
 	if ($action == 'update_extras') {
         $object->fetch($id);
 
