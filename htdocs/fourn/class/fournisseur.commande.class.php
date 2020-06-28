@@ -528,7 +528,6 @@ class CommandeFournisseur extends CommonOrder
             $sql.= " fk_user_valid = ".$user->id;
             $sql.= " WHERE rowid = ".$this->id;
             $sql.= " AND fk_statut = ".self::STATUS_DRAFT;
-	        $sql.= " AND entity IN (".getEntity('supplier_order').")";
 
             $resql=$this->db->query($sql);
             if (! $resql)
