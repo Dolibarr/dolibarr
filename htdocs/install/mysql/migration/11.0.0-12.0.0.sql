@@ -66,6 +66,16 @@ ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafie
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
 
+create table llx_mrp_mo_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
+
 -- This var is per entity now, so we remove const if global if exists
 delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;
 
