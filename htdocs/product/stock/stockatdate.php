@@ -53,8 +53,10 @@ $action = GETPOST('action', 'alpha');
 $type = GETPOST('type', 'int');
 $mode = GETPOST('mode', 'alpha');
 $date = '';
+$dateendofday = '';
 if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateyear')) {
 	$date = dol_mktime(0, 0, 0, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
+	$dateendofday = dol_mktime(23, 59, 59, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
 }
 
 $productid = GETPOST('productid', 'int');
@@ -98,7 +100,7 @@ if ($conf->global->ENTREPOT_EXTRA_STATUS) {
 }
 
 
-// Get array with amount in stock per product, warehouse
+// Get array with current stock per product, warehouse
 $stock_prod_warehouse = array();
 $stock_prod = array();
 if ($date) {	// Avoid heavy sql if mandatory date is not defined
@@ -107,13 +109,15 @@ if ($date) {	// Avoid heavy sql if mandatory date is not defined
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
-	//$sql .= " AND p.entity IN (".getEntity('product').")";
 	$sql .= " AND w.rowid = ps.fk_entrepot";
 	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
 	}
 	if ($productid > 0) {
 		$sql .= " AND ps.fk_product = ".$productid;
+	}
+	if ($fk_warehouse > 0) {
+		$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
 	}
 	$sql .= " GROUP BY fk_product, fk_entrepot";
 	//print $sql;
@@ -137,6 +141,8 @@ if ($date) {	// Avoid heavy sql if mandatory date is not defined
 
 			$i++;
 		}
+
+		$db->free($resql);
 	}
 	else
 	{
@@ -144,6 +150,63 @@ if ($date) {	// Avoid heavy sql if mandatory date is not defined
 	}
 	//var_dump($stock_prod_warehouse);
 }
+
+// Get array with list of stock movements between date and now (for product/warehouse=
+$movements_prod_warehouse = array();
+$movements_prod = array();
+if ($date) {
+	$sql = "SELECT sm.fk_product, sm.fk_entrepot, SUM(sm.value) AS stock";
+	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as sm";
+	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
+	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
+	$sql .= " AND w.rowid = sm.fk_entrepot";
+	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
+		$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
+	}
+	if ($mode == 'future') {
+		$sql .= " AND sm.datem <= '".$db->idate($dateendofday)."'";
+	} else {
+		$sql .= " AND sm.datem >= '".$db->idate($date)."'";
+	}
+	if ($productid > 0) {
+		$sql .= " AND sm.fk_product = ".$productid;
+	}
+	if ($fk_warehouse > 0) {
+		$sql .= " AND sm.fk_entrepot = ".$fk_warehouse;
+	}
+	$sql .= " GROUP BY sm.fk_product, sm.fk_entrepot";
+	$resql = $db->query($sql);
+
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+
+		while($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			$fk_product 	= $obj->fk_product;
+			$fk_entrepot 	= $obj->fk_entrepot;
+			$stock 			= $obj->stock;
+
+			// Pour llx_product_stock.reel
+			$movements_prod_warehouse[$fk_product][$fk_entrepot] = $stock;
+
+			// Pour llx_product.stock
+			$movements_prod[$fk_product] += $stock;
+
+			$i++;
+		}
+
+		$db->free($resql);
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+//var_dump($movements_prod_warehouse);
+//var_dump($movements_prod);
 
 
 /*
@@ -189,89 +252,17 @@ if ($fk_warehouse > 0) {
 	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
 	$sql .= ' p.tms, p.duration, p.tobuy, p.stock';
 }
-/*
-if ($usevirtualstock)
-{
-	if (!empty($conf->commande->enabled)) {
-		$sqlCommandesCli = "(SELECT ".$db->ifsql("SUM(cd1.qty) IS NULL", "0", "SUM(cd1.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-		$sqlCommandesCli .= " FROM ".MAIN_DB_PREFIX."commandedet as cd1, ".MAIN_DB_PREFIX."commande as c1";
-		$sqlCommandesCli .= " WHERE c1.rowid = cd1.fk_commande AND c1.entity IN (".getEntity('commande').")";
-		$sqlCommandesCli .= " AND cd1.fk_product = p.rowid";
-		$sqlCommandesCli .= " AND c1.fk_statut IN (1,2))";
-	} else {
-		$sqlCommandesCli = '0';
-	}
-
-	if (!empty($conf->expedition->enabled)) {
-		$sqlExpeditionsCli = "(SELECT ".$db->ifsql("SUM(ed2.qty) IS NULL", "0", "SUM(ed2.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-		$sqlExpeditionsCli .= " FROM ".MAIN_DB_PREFIX."expedition as e2,";
-		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."expeditiondet as ed2,";
-                $sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commande as c2,";
-		$sqlExpeditionsCli .= " ".MAIN_DB_PREFIX."commandedet as cd2";
-		$sqlExpeditionsCli .= " WHERE ed2.fk_expedition = e2.rowid AND cd2.rowid = ed2.fk_origin_line AND e2.entity IN (".getEntity('expedition').")";
-                $sqlExpeditionsCli .= " AND cd2.fk_commande = c2.rowid";
-                $sqlExpeditionsCli .= " AND c2.fk_statut IN (1,2)";
-		$sqlExpeditionsCli .= " AND cd2.fk_product = p.rowid";
-		$sqlExpeditionsCli .= " AND e2.fk_statut IN (1,2))";
-	} else {
-		$sqlExpeditionsCli = '0';
-	}
-
-	if (!empty($conf->fournisseur->enabled)) {
-		$sqlCommandesFourn = "(SELECT ".$db->ifsql("SUM(cd3.qty) IS NULL", "0", "SUM(cd3.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-		$sqlCommandesFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as cd3,";
-		$sqlCommandesFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur as c3";
-		$sqlCommandesFourn .= " WHERE c3.rowid = cd3.fk_commande";
-		$sqlCommandesFourn .= " AND c3.entity IN (".getEntity('supplier_order').")";
-		$sqlCommandesFourn .= " AND cd3.fk_product = p.rowid";
-		$sqlCommandesFourn .= " AND c3.fk_statut IN (3,4))";
-
-		$sqlReceptionFourn = "(SELECT ".$db->ifsql("SUM(fd4.qty) IS NULL", "0", "SUM(fd4.qty)")." as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-		$sqlReceptionFourn .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf4,";
-		$sqlReceptionFourn .= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as fd4";
-		$sqlReceptionFourn .= " WHERE fd4.fk_commande = cf4.rowid AND cf4.entity IN (".getEntity('supplier_order').")";
-		$sqlReceptionFourn .= " AND fd4.fk_product = p.rowid";
-		$sqlReceptionFourn .= " AND cf4.fk_statut IN (3,4))";
-	} else {
-		$sqlCommandesFourn = '0';
-		$sqlReceptionFourn = '0';
-	}
-
-	if (!empty($conf->mrp->enabled)) {
-		$sqlProductionToConsume = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-		$sqlProductionToConsume .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
-		$sqlProductionToConsume .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
-		$sqlProductionToConsume .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity('mo').")";
-		$sqlProductionToConsume .= " AND mp5.fk_product = p.rowid";
-		$sqlProductionToConsume .= " AND mp5.role IN ('toconsume', 'consummed')";
-		$sqlProductionToConsume .= " AND mm5.status IN (1,2))";
-
-		$sqlProductionToProduce = "(SELECT GREATEST(0, ".$db->ifsql("SUM(".$db->ifsql("mp5.role = 'toproduce'", 'mp5.qty', '- mp5.qty').") IS NULL", "0", "SUM(".$db->ifsql("mp5.role = 'toconsume'", 'mp5.qty', '- mp5.qty').")").") as qty"; // We need the ifsql because if result is 0 for product p.rowid, we must return 0 and not NULL
-		$sqlProductionToProduce .= " FROM ".MAIN_DB_PREFIX."mrp_mo as mm5,";
-		$sqlProductionToProduce .= " ".MAIN_DB_PREFIX."mrp_production as mp5";
-		$sqlProductionToProduce .= " WHERE mm5.rowid = mp5.fk_mo AND mm5.entity IN (".getEntity('mo').")";
-		$sqlProductionToProduce .= " AND mp5.fk_product = p.rowid";
-		$sqlProductionToProduce .= " AND mp5.role IN ('toproduce', 'produced')";
-		$sqlProductionToProduce .= " AND mm5.status IN (1,2))";
-	} else {
-		$sqlProductionToConsume = '0';
-		$sqlProductionToProduce = '0';
-	}
-
-	if ($salert == 'on')	// Option to see when stock is lower than alert
-	{
-		$sql .= ' AND (';
-		$sql .= $sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
-		$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.')  + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.'))';
-		$sql .= ')';
-	}
-}
-*/
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+if ($sortfield == 'stock_reel' && $fk_warehouse <= 0) {
+	$sortfield = 'stock';
+}
+if ($sortfield == 'stock' && $fk_warehouse > 0) {
+	$sortfield = 'stock_reel';
+}
 $sql .= $db->order($sortfield, $sortorder);
 
 if ($date) {	// We avoid a heavy sql if mandatory parameter date not yet defined
@@ -358,13 +349,13 @@ if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&co
 if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 $param .= '&mode='.$mode;
 if ($fk_warehouse > 0) $param .= '&fk_warehouse='.$fk_warehouse;
-if ($productid > 0) $param .= '&fk_product='.$productid;
+if ($productid > 0) $param .= '&productid='.$productid;
 if (GETPOST('dateday', 'int') > 0) $param .= '&dateday='.GETPOST('dateday', 'int');
 if (GETPOST('datemonth', 'int') > 0) $param .= '&datemonth='.GETPOST('datemonth', 'int');
 if (GETPOST('dateyear', 'int') > 0) $param .= '&dateyear='.GETPOST('dateyear', 'int');
 
 // TODO Move this into the title line ?
-print_barre_liste('', $page, $_SERVER["PHP_SELF"], $filters, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="liste centpercent">';
@@ -381,8 +372,9 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // Fields title search
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
-print '<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_nom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
+print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Fields from hook
@@ -405,8 +397,15 @@ if ($fk_warehouse > 0) {
 print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
-print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+if ($mode == 'future') {
+	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
+	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+} else {
+	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
+	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
+}
 print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
@@ -424,7 +423,6 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	if (!empty($conf->global->STOCK_SUPPORTS_SERVICES) || $objp->fk_product_type == 0)
 	{
 		$prod->fetch($objp->rowid);
-		$prod->load_stock('warehouseopen, warehouseinternal', 0);
 
 		// Multilangs
 		/*if (!empty($conf->global->MAIN_MULTILANGS))
@@ -447,30 +445,33 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		$currentstock = '';
 		if ($fk_warehouse > 0)
 		{
-			if ($productid > 0) {
-				$currentstock = $stock_prod_warehouse[$productid][$fk_warehouse];
-			} else {
-				$currentstock = $objp->stock_reel;
-			}
+			//if ($productid > 0) {
+				$currentstock = $stock_prod_warehouse[$objp->rowid][$fk_warehouse];
+			//} else {
+			//	$currentstock = $objp->stock_reel;
+			//}
 		} else {
-			if ($productid > 0) {
-				$currentstock = $stock_prod[$productid];
-			} else {
-				$currentstock = $objp->stock;
-			}
+			//if ($productid > 0) {
+				$currentstock = $stock_prod[$objp->rowid];
+			//} else {
+			//	$currentstock = $objp->stock;
+			//}
 		}
 
 		if ($mode == 'future') {
+			$prod->load_stock('warehouseopen, warehouseinternal', 0);
 
-			$result = $prod->load_stats_reception(0, '4');
+			//$result = $prod->load_stats_reception(0, '4');
 			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
 			//print $prod->stats_reception['qty'];
 
 			$stock = 123;
 		} else {
-
-
-			$stock = 123;
+			if ($fk_warehouse > 0) {
+				$stock = $currentstock - $movements_prod_warehouse[$objp->rowid][$fk_warehouse];
+			} else {
+				$stock = $currentstock - $movements_prod[$objp->rowid];
+			}
 		}
 
 
@@ -484,11 +485,23 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
 		print '</td>';
 
-		// Current stock
-		print '<td class="right">'.$currentstock.'</td>';
+		if ($mode == 'future') {
+			// Current stock
+			print '<td class="right">'.$currentstock.'</td>';
 
-		// Stock at date
-		print '<td class="right">'.$stock.'</td>';
+			print '<td class="right"></td>';
+
+			// Stock at date
+			print '<td class="right">'.$stock.'</td>';
+		} else {
+			// Stock at date
+			print '<td class="right">'.$stock.'</td>';
+
+			print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid.($fk_warehouse > 0 ? '&search_warehouse='.$fk_warehouse : '').'">'.$langs->trans("Movements").'</a></td>';
+
+			// Current stock
+			print '<td class="right">'.$currentstock.'</td>';
+		}
 
 		// Action
 		print '<td class="right"></td>';
