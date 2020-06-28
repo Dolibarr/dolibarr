@@ -102,19 +102,23 @@ if ($conf->global->ENTREPOT_EXTRA_STATUS) {
 $stock_prod_warehouse = array();
 $stock_prod = array();
 if ($date) {	// Avoid heavy sql if mandatory date is not defined
-	$sql = "SELECT sm.fk_product, sm.fk_entrepot as fk_warehouse,";
-	$sql .= " SUM(sm.value) AS stock";
-	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as sm";
+	$sql = "SELECT ps.fk_product, ps.fk_entrepot as fk_warehouse,";
+	$sql .= " SUM(ps.reel) AS stock";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
 	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
 	//$sql .= " AND p.entity IN (".getEntity('product').")";
-	$sql .= " AND w.rowid = sm.fk_entrepot";
-	if ($conf->global->ENTREPOT_EXTRA_STATUS && count($warehouseStatus)) {
+	$sql .= " AND w.rowid = ps.fk_entrepot";
+	if (! empty($conf->global->ENTREPOT_EXTRA_STATUS) && count($warehouseStatus)) {
 		$sql .= " AND w.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
 	}
+	if ($productid > 0) {
+		$sql .= " AND ps.fk_product = ".$productid;
+	}
 	$sql .= " GROUP BY fk_product, fk_entrepot";
-	$resql = $db->query($sql);
+	//print $sql;
 
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -155,28 +159,36 @@ $num = 0;
 $title = $langs->trans('StockAtDate');
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
-$sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type,';
-$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock,';
-$sql .= ' p.desiredstock, p.seuil_stock_alerte';
+$sql .= ' p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
+$sql .= ' p.tms as datem, p.duration, p.tobuy, p.stock';
+if ($fk_warehouse > 0) {
+	$sql .= ', SUM(ps.reel) as stock_reel';
+}
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'product as p';
+if ($fk_warehouse > 0) {
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps ON p.rowid = ps.fk_product AND ps.fk_entrepot = '.$fk_warehouse;
+}
 // Add fields from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListJoin', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-	$sql .= " AND p.fk_product_type = 0";
-}
 if ($productid > 0) {
 	$sql .= " AND p.rowid = ".$productid;
 }
+if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
+	$sql .= " AND p.fk_product_type = 0";
+}
 if (!empty($canvas)) $sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
-
+if ($fk_warehouse > 0) {
+	$sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price, p.price_ttc, p.price_base_type, p.fk_product_type, p.desiredstock, p.seuil_stock_alerte,';
+	$sql .= ' p.tms, p.duration, p.tobuy, p.stock';
+}
 /*
 if ($usevirtualstock)
 {
@@ -289,8 +301,7 @@ if ($date) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 }
 
 $i = 0;
-
-
+//print $sql;
 
 $helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|';
 $helpurl .= 'ES:M&oacute;dulo_Stocks';
@@ -317,7 +328,7 @@ if ($mode == 'future') $desc = $langs->trans("StockAtDateFutureDesc");
 print '<span class="opacitymedium">'.$desc.'</span><br>'."\n";
 print '<br>'."\n";
 
-print '<form name="formFilterWarehouse" method="POST" action="">';
+print '<form name="formFilterWarehouse" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="filter">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -348,6 +359,9 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($l
 $param .= '&mode='.$mode;
 if ($fk_warehouse > 0) $param .= '&fk_warehouse='.$fk_warehouse;
 if ($productid > 0) $param .= '&fk_product='.$productid;
+if (GETPOST('dateday', 'int') > 0) $param .= '&dateday='.GETPOST('dateday', 'int');
+if (GETPOST('datemonth', 'int') > 0) $param .= '&datemonth='.GETPOST('datemonth', 'int');
+if (GETPOST('dateyear', 'int') > 0) $param .= '&dateyear='.GETPOST('dateyear', 'int');
 
 // TODO Move this into the title line ?
 print_barre_liste('', $page, $_SERVER["PHP_SELF"], $filters, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
@@ -355,7 +369,7 @@ print_barre_liste('', $page, $_SERVER["PHP_SELF"], $filters, $sortfield, $sortor
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="liste centpercent">';
 
-$stocklabel = $langs->trans('Stock');
+$stocklabel = $langs->trans('StockAtDate');
 if ($mode == 'future') $stocklabel = $langs->trans("VirtualStock");
 
 //print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
@@ -369,10 +383,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre right">&nbsp;</td>';
-print '<td class="liste_titre right"></td>';
-print '<td class="liste_titre right"></td>';
+print '<td class="liste_titre"></td>';
+print '<td class="liste_titre"></td>';
 // Fields from hook
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
@@ -384,14 +396,17 @@ print $searchpicto;
 print '</td>';
 print '</tr>';
 
+$fieldtosortcurrentstock = 'stock';
+if ($fk_warehouse > 0) {
+	$fieldtosortcurrentstock = 'stock_reel';
+}
+
 // Lines of title
 print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', $param, '', '', $sortfield, $sortorder);
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', '', $sortfield, $sortorder);
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], 'p.stock', $param, '', '', $sortfield, $sortorder, 'right ');
-print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 
 // Hook fields
@@ -412,7 +427,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		$prod->load_stock('warehouseopen, warehouseinternal', 0);
 
 		// Multilangs
-		if (!empty($conf->global->MAIN_MULTILANGS))
+		/*if (!empty($conf->global->MAIN_MULTILANGS))
 		{
 			$sql = 'SELECT label,description';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_lang';
@@ -427,39 +442,55 @@ while ($i < ($limit ? min($num, $limit) : $num))
 				if (!empty($objtp->description)) $objp->description = $objtp->description;
 				if (!empty($objtp->label)) $objp->label = $objtp->label;
 			}
+		}*/
+
+		$currentstock = '';
+		if ($fk_warehouse > 0)
+		{
+			if ($productid > 0) {
+				$currentstock = $stock_prod_warehouse[$productid][$fk_warehouse];
+			} else {
+				$currentstock = $objp->stock_reel;
+			}
+		} else {
+			if ($productid > 0) {
+				$currentstock = $stock_prod[$productid];
+			} else {
+				$currentstock = $objp->stock;
+			}
 		}
 
-		$stock = $prod->stock_reel;
+		if ($mode == 'future') {
 
-		$result = $prod->load_stats_reception(0, '4');
+			$result = $prod->load_stats_reception(0, '4');
+			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
+			//print $prod->stats_reception['qty'];
 
-		//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
-		//print $prod->stats_reception['qty'];
-		$ordered = $prod->stats_commande_fournisseur['qty'] - $prod->stats_reception['qty'];
+			$stock = 123;
+		} else {
+
+
+			$stock = 123;
+		}
 
 
 		print '<tr class="oddeven">';
 
+		// Product ref
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
 
+		// Product label
 		print '<td>'.$objp->label;
 		print '<input type="hidden" name="desc'.$i.'" value="'.dol_escape_htmltag($objp->description).'">'; // TODO Remove this and make a fetch to get description when creating order instead of a GETPOST
 		print '</td>';
 
-		// Desired stock
-		print '<td class="right"></td>';
+		// Current stock
+		print '<td class="right">'.$currentstock.'</td>';
 
-		// Limit stock for alert
-		print '<td class="right"></td>';
-
-		// Current stock (all warehouses)
+		// Stock at date
 		print '<td class="right">'.$stock.'</td>';
 
-		// Already ordered
-		print '<td class="right"></td>';
-
-		// To order
-		//print '<td class="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
+		// Action
 		print '<td class="right"></td>';
 
 		// Fields from hook
