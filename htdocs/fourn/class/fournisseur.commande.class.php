@@ -844,7 +844,7 @@ class CommandeFournisseur extends CommonOrder
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
-	    $sql .= " AND entity IN (".getEntity('supplier_order').")";
+
         if ($this->db->query($sql))
         {
         	if (! $error)
