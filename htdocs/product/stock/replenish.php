@@ -508,7 +508,8 @@ if ($usevirtualstock == 0)
 }
 print '<br>'."\n";
 
-print '<form name="formFilterWarehouse" method="GET" action="">';
+print '<form name="formFilterWarehouse" method="POST" action="">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="filter">';
 print '<input type="hidden" name="sref" value="'.$sref.'">';
 print '<input type="hidden" name="snom" value="'.$snom.'">';
