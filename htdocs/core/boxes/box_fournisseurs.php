@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_fournisseurs extends ModeleBoxes
 {
-    public $boxcode="lastsuppliers";
-    public $boximg="object_company";
-    public $boxlabel="BoxLastSuppliers";
+    public $boxcode = "lastsuppliers";
+    public $boximg = "object_company";
+    public $boxlabel = "BoxLastSuppliers";
     public $depends = array("fournisseur");
 
 	/**
@@ -60,7 +60,7 @@ class box_fournisseurs extends ModeleBoxes
 
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->societe->lire && empty($user->socid));
+        $this->hidden = !($user->rights->societe->lire && empty($user->socid));
     }
 
     /**
@@ -74,28 +74,28 @@ class box_fournisseurs extends ModeleBoxes
         global $conf, $user, $langs;
         $langs->load("boxes");
 
-		$this->max=$max;
+		$this->max = $max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-        $thirdpartystatic=new Societe($this->db);
+        $thirdpartystatic = new Societe($this->db);
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-		$thirdpartytmp=new Fournisseur($this->db);
+		$thirdpartytmp = new Fournisseur($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastModifiedSuppliers", $max));
 
         if ($user->rights->societe->lire)
         {
             $sql = "SELECT s.nom as name, s.rowid as socid, s.datec, s.tms, s.status,";
-            $sql.= " s.code_fournisseur, s.email as semail,";
-            $sql.= " s.logo, s.code_compta_fournisseur, s.entity";
+            $sql .= " s.code_fournisseur, s.email as semail,";
+            $sql .= " s.logo, s.code_compta_fournisseur, s.entity";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql.= " WHERE s.fournisseur = 1";
-            $sql.= " AND s.entity IN (".getEntity('societe').")";
-            if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-            if ($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-            $sql.= " ORDER BY s.tms DESC ";
-            $sql.= $this->db->plimit($max, 0);
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql .= " WHERE s.fournisseur = 1";
+            $sql .= " AND s.entity IN (".getEntity('societe').")";
+            if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+            if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+            $sql .= " ORDER BY s.tms DESC ";
+            $sql .= $this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
             if ($result)
@@ -106,8 +106,8 @@ class box_fournisseurs extends ModeleBoxes
                 while ($line < $num)
                 {
                     $objp = $this->db->fetch_object($result);
-    				$datec=$this->db->jdate($objp->datec);
-    				$datem=$this->db->jdate($objp->tms);
+    				$datec = $this->db->jdate($objp->datec);
+    				$datem = $this->db->jdate($objp->tms);
 					$thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->email = $objp->semail;
@@ -135,8 +135,8 @@ class box_fournisseurs extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array(
-                    'td' => 'class="center"',
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                    'td' => 'class="center opacitymedium"',
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
 

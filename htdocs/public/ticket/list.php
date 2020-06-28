@@ -170,7 +170,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
+print '<div class="ticketpublicarealist">';
 
 if ($action == "view_ticketlist")
 {
@@ -292,7 +292,7 @@ if ($action == "view_ticketlist")
 
         $limit = $conf->liste_limit;
 
-        $page = GETPOST("page", 'int');
+        $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
         if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
         $offset = $limit * $page;
         $pageprev = $page - 1;

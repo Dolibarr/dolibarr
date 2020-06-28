@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2019	Thibault FOUCART <support@ptibogxiv.net>
+/* Copyright (C) 2019	Thibault FOUCART      <support@ptibogxiv.net>
+ * Copyright (C) 2020	Andreu Bisquerra Gaya <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,118 +36,73 @@ require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$invoiceid = GETPOST('facid', 'int');
+$facid = GETPOST('facid', 'int');
+$action = GETPOST('action', 'alpha');
+$email = GETPOST('email', 'alpha');
 
-/*
- * View
- */
-
-$invoice = new Facture($db);
-if ($invoiceid > 0)
-{
-    $invoice->fetch($invoiceid);
-}
-else
-{
-    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture where ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
-    $resql = $db->query($sql);
-    $obj = $db->fetch_object($resql);
-    if ($obj)
-    {
-        $invoiceid = $obj->rowid;
-    }
-    if (!$invoiceid)
-    {
-        $invoiceid = 0; // Invoice does not exist yet
-    }
-    else
-    {
-        $invoice->fetch($invoiceid);
-    }
+if (empty($user->rights->takepos->run)) {
+	accessforbidden();
 }
 
 $langs->loadLangs(array("main", "bills", "cashdesk"));
 
+$invoice = new Facture($db);
+$invoice->fetch($facid);
+$customer = new Societe($db);
+$customer->fetch($invoice->socid);
+
+if ($action=="send")
+{
+    include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+    $formmail = new FormMail($db);
+    $outputlangs = new Translate('', $conf);
+    $model_id = $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE;
+    $arraydefaultmessage = $formmail->getEMailTemplate($db, 'facture_send', $user, $outputlangs, $model_id);
+    $subject = $arraydefaultmessage->topic;
+    ob_start(); // turn on output receipt
+    include 'receipt.php';
+    $receipt = ob_get_contents(); // get the contents of the output buffer
+    ob_end_clean();
+    $msg="<html>".$arraydefaultmessage->content."<br>".$receipt."</html>";
+    $sendto=$email;
+    $from=$mysoc->email;
+    $mail = new CMailFile($subject, $sendto, $from, $msg, array(), array(), array(), '', '', 0, 1);
+    if ($mail->error || $mail->errors) {
+        setEventMessages($mail->error, $mail->errors, 'errors');
+    } else {
+        $result = $mail->sendfile();
+    }
+    exit;
+}
+$arrayofcss = array('/takepos/css/pos.css.php');
+$arrayofjs  = array();
+top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss);
 ?>
-<link rel="stylesheet" href="css/pos.css">
 </head>
 <body class="center">
 
 <script>
-<?php
-$remaintopay = 0;
-$invoice->fetch_thirdparty($invoice->socid);
-if ($invoice->id > 0)
-{
-    $remaintopay = $invoice->getRemainToPay();
-}
-$alreadypayed = (is_object($invoice) ? ($invoice->total_ttc - $remaintopay) : 0);
-
-if ($conf->global->TAKEPOS_NUMPAD == 0) print "var received='';";
-else print "var received=0;";
-
-?>
-	var alreadypayed = <?php echo $alreadypayed ?>;
-
-	function addreceived(price)
-	{
-    	<?php
-    	if (empty($conf->global->TAKEPOS_NUMPAD)) print 'received+=String(price);'."\n";
-    	else print 'received+=parseFloat(price);'."\n";
-    	?>
-    	$('.change1').html(pricejs(parseFloat(received), 'MT'));
-    	$('.change1').val(parseFloat(received));
-		alreadypaydplusreceived=price2numjs(alreadypayed + parseFloat(received));
-    	//console.log("already+received = "+alreadypaydplusreceived);
-    	//console.log("total_ttc = "+<?php echo $invoice->total_ttc; ?>);
-    	if (alreadypaydplusreceived > <?php echo $invoice->total_ttc; ?>)
-   		{
-			var change=parseFloat(alreadypayed + parseFloat(received) - <?php echo $invoice->total_ttc; ?>);
-			$('.change2').html(pricejs(change, 'MT'));
-	    	$('.change2').val(change);
-	    	$('.change1').removeClass('colorred');
-	    	$('.change1').addClass('colorgreen');
-	    	$('.change2').removeClass('colorwhite');
-	    	$('.change2').addClass('colorred');
-		}
-    	else
-    	{
-			$('.change2').html(pricejs(0, 'MT'));
-	    	$('.change2').val(0);
-	    	if (alreadypaydplusreceived == <?php echo $invoice->total_ttc; ?>)
-	    	{
-		    	$('.change1').removeClass('colorred');
-		    	$('.change1').addClass('colorgreen');
-	    		$('.change2').removeClass('colorred');
-	    		$('.change2').addClass('colorwhite');
-	    	}
-	    	else
-	    	{
-		    	$('.change1').removeClass('colorgreen');
-		    	$('.change1').addClass('colorred');
-	    		$('.change2').removeClass('colorred');
-	    		$('.change2').addClass('colorwhite');
-	    	}
-    	}
-	}
-
-function Print(id){
-    $.colorbox.close();
-    $.colorbox({href:"receipt.php?facid="+id, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
-    echo $langs->trans("PrintTicket"); ?>"});
+function SendMail() {
+	$.ajax({
+        type: "GET",
+        url: "<?php print dol_buildpath('/takepos/send.php', 1).'?action=send&facid='.$facid.'&email='; ?>" + $("#email"). val(),
+    });
+	parent.$.colorbox.close();
 }
 
 </script>
 
 <div class="center">
 <center>
-<center><input type="email" id="email" name="email" style="width:60%;font-size: 200%;" value="<?php echo $invoice->thirdparty->email; ?>"></center>
+<center>
+<input type="email" id="email" name="email" style="width:60%;font-size: 200%;" value="<?php echo $customer->email; ?>"></center>
 </center>
 </div>
 <br>
 <div class="center">
 
-<button type="button" class="calcbutton" onclick="addreceived();"><?php print $langs->trans("SendInvoice"); ?></button>
+<button type="button" class="calcbutton"  onclick="SendMail()"><?php print $langs->trans("SendTicket"); ?></button>
 
 </div>
 

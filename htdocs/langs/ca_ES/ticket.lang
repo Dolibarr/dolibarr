@@ -130,6 +130,10 @@ TicketNumberingModules=Mòdul de numeració de tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
 TicketGroup=Grup
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
+TicketsPublicNotificationNewMessage=Enviar correu(s) electonic(s) quan s'afegeix un nou missatge
+TicketsPublicNotificationNewMessageHelp=Enviar correu(s) electrònic(s) quan un nou missatge s'afegeix des d'una interfície pública (cap a l'usuari assignat o la notificació del correu electrònic cap a (actualitzar) i/o les notificacions del correu electrònic cap a)
+TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Enviar un correu nou missatge de notificació cap a aquesta adreça si el tiquet no te usuari assignat o l'usuari no te correu electrònic.
 #
 # Index & list page
 #

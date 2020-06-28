@@ -22,7 +22,7 @@
 create table llx_facture_rec
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  titre              varchar(100) NOT NULL,
+  titre              varchar(200) NOT NULL,
   entity             integer DEFAULT 1 NOT NULL,	 -- multi company id
   fk_soc             integer NOT NULL,
   datec              datetime,            -- date de creation

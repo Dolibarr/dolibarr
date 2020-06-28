@@ -40,23 +40,23 @@ require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Get parameters
-$action=GETPOST('action', 'aZ09');
-$cancel=GETPOST('cancel', 'alpha');
+$action = GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$fuserid = (GETPOST('fuserid', 'int')?GETPOST('fuserid', 'int'):$user->id);
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$fuserid = (GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id);
 
 // Load translation files required by the page
-$langs->loadLangs(array("holiday","mails"));
+$langs->loadLangs(array("holiday", "mails"));
 
-$now=dol_now();
+$now = dol_now();
 
 $childids = $user->getAllChildIds(1);
 
 $morefilter = 'AND employee = 1';
-if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+if (!empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
 
 $error = 0;
 
@@ -90,7 +90,7 @@ if (!empty($user->rights->holiday->delete)) $candelete = 1;
 if ($object->statut == Holiday::STATUS_DRAFT && $user->rights->holiday->write && in_array($object->fk_user, $childids)) $candelete = 1;
 
 // Protection if external user
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'holiday', $object->id, 'holiday');
 
 
@@ -228,9 +228,7 @@ if (empty($reshook))
 
 		    	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 		        exit;
-		    }
-		    else
-			{
+		    } else {
 		    	$db->rollback();
 		    }
 	    }
@@ -252,9 +250,7 @@ if (empty($reshook))
 	        {
 	            setEventMessages($object->error, $object->errors, 'warnings');
 	            $action = 'editvalidator';
-	        }
-	        else
-	        {
+	        } else {
 	            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            exit;
 	        }
@@ -339,21 +335,15 @@ if (empty($reshook))
 				{
 					setEventMessages($object->error, $object->errors, 'warnings');
 					$action = 'edit';
-				}
-				else
-				{
+				} else {
 					header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 					exit;
 				}
-	        }
-	        else
-	        {
+	        } else {
 	        	setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
 	        	$action = '';
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	    	setEventMessages($langs->trans("ErrorBadStatus"), null, 'errors');
 	    	$action = '';
 	    }
@@ -375,9 +365,7 @@ if (empty($reshook))
 			if ($candelete)
 			{
 				$result = $object->delete($user);
-			}
-			else
-			{
+			} else {
 				$error++;
 				setEventMessages($langs->trans('ErrorCantDeleteCP'), null, 'errors');
 				$action = '';
@@ -389,9 +377,7 @@ if (empty($reshook))
 			$db->commit();
 			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 		}
 	}
@@ -484,15 +470,11 @@ if (empty($reshook))
 	            {
 	                setEventMessages($mail->error, $mail->errors, 'warnings');
 	                $action = '';
-	            }
-	            else
-	            {
+	            } else {
 	            	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            	exit;
 	            }
-	        }
-	        else
-	        {
+	        } else {
 	        	setEventMessages($object->error, $object->errors, 'errors');
 	        	$action = '';
 	        }
@@ -580,9 +562,7 @@ if (empty($reshook))
 	            if (!$emailTo)
 	            {
 	                dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-	            }
-	            else
-	            {
+	            } else {
 	                // From
 	                $expediteur = new User($db);
 	                $expediteur->fetch($object->fk_validator);
@@ -625,9 +605,7 @@ if (empty($reshook))
 
 	           	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	           	exit;
-	        }
-	        else
-	        {
+	        } else {
 	            $db->rollback();
 	        	$action = '';
 	        }
@@ -668,9 +646,7 @@ if (empty($reshook))
 	                if (!$emailTo)
 	                {
 	                    dol_syslog("User that request leave has no email, so we redirect directly to finished page without sending email");
-	                }
-	                else
-	                {
+	                } else {
 	                    // From
 	                    $expediteur = new User($db);
 	                    $expediteur->fetch($object->fk_validator);
@@ -706,9 +682,7 @@ if (empty($reshook))
 	                    	$action = '';
 	                    }
 	                }
-	            }
-	            else
-	            {
+	            } else {
 	            	$action = '';
 	            }
 
@@ -718,9 +692,7 @@ if (empty($reshook))
 
 	                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	                exit;
-	            }
-	            else
-	            {
+	            } else {
 	                $db->rollback();
 	                $action = '';
 	            }
@@ -755,9 +727,7 @@ if (empty($reshook))
 
 	        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	        exit;
-	    }
-	    else
-	    {
+	    } else {
 	        $db->rollback();
 	    }
 	}
@@ -805,9 +775,7 @@ if (empty($reshook))
 	        if (!$error)
 	        {
 	        	$db->commit();
-	        }
-	        else
-	        {
+	        } else {
 	        	$db->rollback();
 	        }
 
@@ -857,9 +825,7 @@ if (empty($reshook))
 	            {
 	            	setEventMessages($mail->error, $mail->errors, 'warnings');
 	            	$action = '';
-	            }
-	            else
-	            {
+	            } else {
 	            	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 	            	exit;
 	            }
@@ -903,9 +869,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
     if (($fuserid == $user->id && empty($user->rights->holiday->write)) || ($fuserid != $user->id && empty($user->rights->holiday->write_all)))
     {
         $errors[] = $langs->trans('CantCreateCP');
-    }
-    else
-    {
+    } else {
         // Formulaire de demande de congés payés
         print load_fiche_titre($langs->trans('MenuAddCP'), '', 'title_hrm.png');
 
@@ -992,15 +956,14 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 				$nb_type = $object->getCPforUser($user->id, $val['rowid']);
 				$nb_holiday += $nb_type;
 
-				$out .= ' - ' . ($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']) .': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
+				$out .= ' - '.($langs->trans($val['code']) != $val['code'] ? $langs->trans($val['code']) : $val['label']).': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 				//$out .= ' - '.$val['label'].': <strong>'.($nb_type ?price2num($nb_type) : 0).'</strong><br>';
 			}
 	        print $langs->trans('SoldeCPUser', round($nb_holiday, 5)).'<br>';
 			print $out;
 
 	        dol_fiche_end();
-        }
-        elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+        } elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
         {
         	print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
         }
@@ -1021,8 +984,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         {
         	print $form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         	//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
-        }
-        else print $form->select_dolusers(GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        } else print $form->select_dolusers(GETPOST('fuserid', 'int') ?GETPOST('fuserid', 'int') : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         print '</td>';
         print '</tr>';
 
@@ -1089,8 +1051,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
         $object = new Holiday($db);
         $include_users = $object->fetch_users_approver_holiday();
         if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
-        else
-        {
+        else {
         	$defaultselectuser = (empty($user->fk_user_holiday_validator) ? $user->fk_user : $user->fk_user_holiday_validator); // Will work only if supervisor has permission to approve so is inside include_users
         	if (!empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) $defaultselectuser = $conf->global->HOLIDAY_DEFAULT_VALIDATOR; // Can force default approver
         	if (GETPOST('valideur', 'int') > 0) $defaultselectuser = GETPOST('valideur', 'int');
@@ -1126,18 +1087,14 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 
         print '</from>'."\n";
     }
-}
-else
-{
+} else {
     if ($error)
     {
         print '<div class="tabBar">';
         print $error;
         print '<br><br><input type="button" value="'.$langs->trans("ReturnCP").'" class="button" onclick="history.go(-1)" />';
         print '</div>';
-    }
-    else
-    {
+    } else {
         // Affichage de la fiche d'une demande de congés payés
         if (($id > 0) || $ref)
         {
@@ -1246,9 +1203,7 @@ else
 			        print '<span class="opacitymedium">'.$langs->trans($listhalfday[$starthalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
-                }
-                else
-                {
+                } else {
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateDebCP').' ('.$langs->trans("FirstDayOfHoliday").')</td>';
                     print '<td>';
@@ -1268,9 +1223,7 @@ else
                     print '<span class="opacitymedium">'.$langs->trans($listhalfday[$endhalfday]).'</span>';
                     print '</td>';
                     print '</tr>';
-                }
-                else
-                {
+                } else {
                     print '<tr>';
                     print '<td class="nowrap">'.$langs->trans('DateFinCP').' ('.$langs->trans("LastDayOfHoliday").')</td>';
                     print '<td>';
@@ -1287,8 +1240,8 @@ else
                 $htmlhelp = $langs->trans('NbUseDaysCPHelp');
                 $includesaturday = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SATURDAY : 1);
                 $includesunday   = (isset($conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY) ? $conf->global->MAIN_NON_WORKING_DAYS_INCLUDE_SUNDAY : 1);
-                if ($includesaturday) $htmlhelp.='<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
-                if ($includesunday) $htmlhelp.='<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
+                if ($includesaturday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Saturday"));
+                if ($includesunday) $htmlhelp .= '<br>'.$langs->trans("DayIsANonWorkingDay", $langs->trans("Sunday"));
                 print $form->textwithpicto($langs->trans('NbUseDaysCP'), $htmlhelp);
                 print '</td>';
                 print '<td>';
@@ -1311,9 +1264,7 @@ else
                     print '<td>'.$langs->trans('DescCP').'</td>';
                     print '<td>'.nl2br($object->description).'</td>';
                     print '</tr>';
-                }
-                else
-                {
+                } else {
                     print '<tr>';
                     print '<td>'.$langs->trans('DescCP').'</td>';
                     print '<td class="tdtop">';
@@ -1373,8 +1324,7 @@ else
                         $include_users[] = $object->fk_validator;
                     }
                     if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
-                    else
-                    {
+                    else {
                     	$arrayofvalidatorstoexclude = (($user->admin || ($user->id != $userRequest->id)) ? '' : array($user->id)); // Nobody if we are admin or if we are not the user of the leave.
                     	$s = $form->select_dolusers($object->fk_validator, "valideur", (($action == 'editvalidator') ? 0 : 1), $arrayofvalidatorstoexclude, 0, $include_users);
                     	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
@@ -1497,9 +1447,7 @@ else
                         {
                             print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=valid" class="butAction">'.$langs->trans("Approve").'</a>';
                             print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=refuse" class="butAction">'.$langs->trans("ActionRefuseCP").'</a>';
-                        }
-                        else
-                        {
+                        } else {
                             print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("Approve").'</a>';
                             print '<a href="#" class="butActionRefused classfortooltip" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
                         }

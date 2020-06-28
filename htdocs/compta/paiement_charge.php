@@ -30,12 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->load("bills");
 
-$chid=GETPOST("id", 'int');
-$action=GETPOST('action', 'alpha');
+$chid = GETPOST("id", 'int');
+$action = GETPOST('action', 'alpha');
 $amounts = array();
 
 // Security check
-$socid=0;
+$socid = 0;
 if ($user->socid > 0)
 {
 	$socid = $user->socid;
@@ -108,9 +108,10 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
     		$paiement->chid         = $chid;
     		$paiement->datepaye     = $datepaye;
     		$paiement->amounts      = $amounts; // Tableau de montant
-    		$paiement->paiementtype = $_POST["paiementtype"];
-    		$paiement->num_paiement = $_POST["num_paiement"];
-    		$paiement->note         = $_POST["note"];
+    		$paiement->paiementtype = GETPOST("paiementtype", 'alphanohtml');
+    		$paiement->num_payment  = GETPOST("num_payment", 'alphanohtml');
+    		$paiement->note         = GETPOST("note", 'none');
+    		$paiement->note_private = GETPOST("note", 'none');
 
     		if (!$error)
     		{
@@ -140,9 +141,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
                 $loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
                 header('Location: '.$loc);
                 exit;
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
         }
@@ -164,11 +163,11 @@ if ($action == 'create')
 {
 	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
-    $charge->accountid=$charge->fk_account?$charge->fk_account:$charge->accountid;
-    $charge->paiementtype=$charge->mode_reglement_id?$charge->mode_reglement_id:$charge->paiementtype;
+    $charge->accountid = $charge->fk_account ? $charge->fk_account : $charge->accountid;
+    $charge->paiementtype = $charge->mode_reglement_id ? $charge->mode_reglement_id : $charge->paiementtype;
 
 	$total = $charge->amount;
-	if (! empty($conf->use_javascript_ajax))
+	if (!empty($conf->use_javascript_ajax))
 	{
 		print "\n".'<script type="text/javascript" language="javascript">';
 
@@ -243,7 +242,7 @@ if ($action == 'create')
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
-	print '<td><input name="num_paiement" type="text" value="'.GETPOST('num_paiement').'"></td></tr>'."\n";
+	print '<td><input name="num_payment" type="text" value="'.GETPOST('num_payment', 'alphanohtml').'"></td></tr>'."\n";
 
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
@@ -282,9 +281,7 @@ if ($action == 'create')
 		if ($objp->date_ech > 0)
 		{
 			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
-		}
-		else
-		{
+		} else {
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
@@ -304,9 +301,7 @@ if ($action == 'create')
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
-		}
-		else
-		{
+		} else {
 			print '-';
 		}
 		print "</td>";

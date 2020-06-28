@@ -61,9 +61,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -107,9 +105,7 @@ if ($action == "save" && empty($cancel))
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
         $db->commit();
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
         $db->rollback();
     }
@@ -172,7 +168,7 @@ if (!empty($triggers))
 
 		// If 'element' value is myobject@mymodule instead of mymodule
 		$tmparray = explode('@', $module);
-		if (! empty($tmparray[1])) {
+		if (!empty($tmparray[1])) {
 			$module = $tmparray[1];
 		}
 

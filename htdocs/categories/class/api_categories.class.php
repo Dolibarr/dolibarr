@@ -48,6 +48,11 @@ class Categories extends DolibarrApi
         3 => 'member',
         4 => 'contact',
         5 => 'account',
+        //6 => 'project',
+        //7 => 'user',
+        //8 => 'bank_line',
+        //9 => 'warehouse',
+        //10 => 'actioncomm',
     );
 
     /**
@@ -174,8 +179,7 @@ class Categories extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve category list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -238,9 +242,7 @@ class Categories extends DolibarrApi
         if ($this->category->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->category->error);
         }
     }

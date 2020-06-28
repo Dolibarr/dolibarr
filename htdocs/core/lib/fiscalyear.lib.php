@@ -34,8 +34,8 @@ function fiscalyear_prepare_head(Fiscalyear $object)
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/accountancy/admin/fiscalyear_card.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_card.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("FiscalPeriod");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -45,7 +45,7 @@ function fiscalyear_prepare_head(Fiscalyear $object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'fiscalyear');
 
-	$head[$h][0] = DOL_URL_ROOT . '/accountancy/admin/fiscalyear_info.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/fiscalyear_info.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;

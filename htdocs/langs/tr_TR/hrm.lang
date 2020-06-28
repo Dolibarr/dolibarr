@@ -9,8 +9,9 @@ ConfirmDeleteEstablishment=Bu kuruluşu silmek istediğinizden emin misiniz?
 OpenEtablishment=Kuruluş aç
 CloseEtablishment=Kuruluş kapat
 # Dictionary
+DictionaryPublicHolidays=HRM - Resmi tatiller
 DictionaryDepartment=İKY - Departman listesi
-DictionaryFunction=İKY - İşlev listesi
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Çalışanlar
 Employee=Çalışan

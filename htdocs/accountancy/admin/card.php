@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2014       Florian Henry       <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -75,28 +75,24 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
 			$account_number = GETPOST('account_number', 'string');
-		}
-		else
-		{
+		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
 		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
-		}
-		else
-		{
+		} else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type', 'alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
 		$object->label = GETPOST('label', 'alpha');
+		$object->labelshort = GETPOST('labelshort', 'alpha');
 		$object->active = 1;
 
 		$res = $object->create($user);
@@ -104,13 +100,11 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 			$error = 1;
 			$action = "create";
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		elseif ($res == - 4) {
+		} elseif ($res == - 4) {
 			$error = 2;
 			$action = "create";
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		elseif ($res < 0)
+		} elseif ($res < 0)
 		{
 		    $error++;
 		    setEventMessages($object->error, $object->errors, 'errors');
@@ -140,28 +134,24 @@ if ($action == 'add' && $user->rights->accounting->chartofaccount)
 		if ($conf->global->ACCOUNTING_MANAGE_ZERO == 1)
 		{
 			$account_number = GETPOST('account_number', 'string');
-		}
-		else
-		{
+		} else {
 			$account_number = clean_account(GETPOST('account_number', 'string'));
 		}
 
 		if (GETPOST('account_parent', 'int') <= 0)
 		{
 			$account_parent = 0;
-		}
-		else
-		{
+		} else {
 			$account_parent = GETPOST('account_parent', 'int');
 		}
 
 		$object->fk_pcg_version = $obj->pcg_version;
 		$object->pcg_type = GETPOST('pcg_type', 'alpha');
-		$object->pcg_subtype = GETPOST('pcg_subtype', 'alpha');
 		$object->account_number = $account_number;
 		$object->account_parent = $account_parent;
 		$object->account_category = GETPOST('account_category', 'alpha');
 		$object->label = GETPOST('label', 'alpha');
+		$object->labelshort = GETPOST('labelshort', 'alpha');
 
 		$result = $object->update($user);
 
@@ -236,6 +226,10 @@ if ($action == 'create') {
 	print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
 	print '<td><input name="label" size="70" value="'.$object->label.'"></td></tr>';
 
+	// Label short
+	print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
+	print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"></td></tr>';
+
 	// Account parent
 	print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 	print '<td>';
@@ -254,12 +248,6 @@ if ($action == 'create') {
 	print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
 	print '</td></tr>';
 
-	// Chart of acounts subtype
-	print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-	print '<td>';
-	print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype']) ?GETPOST('pcg_subtype', 'alpha') : $object->pcg_subtype).'">';
-	print '</td></tr>';
-
 	print '</table>';
 
 	dol_fiche_end();
@@ -271,8 +259,7 @@ if ($action == 'create') {
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($id > 0 || $ref) {
+} elseif ($id > 0 || $ref) {
 	$result = $object->fetch($id, $ref, 1);
 
 	if ($result > 0) {
@@ -301,6 +288,10 @@ elseif ($id > 0 || $ref) {
 			print '<tr><td><span class="fieldrequired">'.$langs->trans("Label").'</span></td>';
 			print '<td><input name="label" size="70" value="'.$object->label.'"</td></tr>';
 
+			// Label short
+			print '<tr><td>'.$langs->trans("LabelToShow").'</td>';
+			print '<td><input name="labelshort" size="70" value="'.$object->labelshort.'"</td></tr>';
+
 			// Account parent
 			print '<tr><td>'.$langs->trans("Accountparent").'</td>';
 			print '<td>';
@@ -317,12 +308,6 @@ elseif ($id > 0 || $ref) {
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td>';
 			print '<input type="text" name="pcg_type" value="'.dol_escape_htmltag(isset($_POST['pcg_type']) ?GETPOST('pcg_type', 'alpha') : $object->pcg_type).'">';
-			print '</td></tr>';
-
-			// Chart of accounts subtype
-			print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-			print '<td>';
-			print '<input type="text" name="pcg_subtype" value="'.dol_escape_htmltag(isset($_POST['pcg_subtype']) ?GETPOST('pcg_subtype', 'alpha') : $object->pcg_subtype).'">';
 			print '</td></tr>';
 
 			print '</table>';
@@ -354,6 +339,10 @@ elseif ($id > 0 || $ref) {
 			print '<tr><td class="titlefield">'.$langs->trans("Label").'</td>';
 			print '<td colspan="2">'.$object->label.'</td></tr>';
 
+			// Label to show
+			print '<tr><td class="titlefield">'.$langs->trans("LabelToShow").'</td>';
+			print '<td colspan="2">'.$object->labelshort.'</td></tr>';
+
 			// Account parent
 			$accp = new AccountingAccount($db);
 			if (!empty($object->account_parent)) {
@@ -368,10 +357,6 @@ elseif ($id > 0 || $ref) {
 			// Chart of accounts type
 			print '<tr><td>'.$langs->trans("Pcgtype").'</td>';
 			print '<td colspan="2">'.$object->pcg_type.'</td></tr>';
-
-			// Chart of accounts subtype
-			print '<tr><td>'.$langs->trans("Pcgsubtype").'</td>';
-			print '<td colspan="2">'.$object->pcg_subtype.'</td></tr>';
 
 			print '</table>';
 

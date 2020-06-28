@@ -23,7 +23,7 @@
  *  \ingroup    zapier
  *  \brief      Description and activation file for module Zapier
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 /**
  *  Description and activation class for module Zapier
@@ -37,7 +37,7 @@ class modZapier extends DolibarrModules
      */
     public function __construct($db)
     {
-        global $langs,$conf;
+        global $langs, $conf;
 
         $this->db = $db;
         // Id for module (must be unique).
@@ -49,7 +49,7 @@ class modZapier extends DolibarrModules
         // It is used to group modules by family in module setup page
         $this->family = "interface";
         // Module position in the family on 2 digits ('01', '10', '20', ...)
-        $this->module_position = '13';
+        $this->module_position = '22';
         // Gives the possibility for the module, to provide his own family info and position of this family (Overwrite $this->family and $this->module_position. Avoid this)
         //$this->familyinfo = array('myownfamily' => array('position' => '01', 'label' => $langs->trans("MyOwnFamily")));
         // Module label (no space allowed), used if translation string 'ModuleZapierName' not found (Zapier is name of module).
@@ -149,9 +149,9 @@ class modZapier extends DolibarrModules
             'en_US:ParentCompany'=>'Parent company or reseller',
             'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
         )*/
-        if (! isset($conf->zapier) || ! isset($conf->zapier->enabled)) {
+        if (!isset($conf->zapier) || !isset($conf->zapier->enabled)) {
             $conf->zapier = new stdClass();
-            $conf->zapier->enabled=0;
+            $conf->zapier->enabled = 0;
         }
         // Array to add new pages in new tabs
         $this->tabs = array();
@@ -181,7 +181,7 @@ class modZapier extends DolibarrModules
         // 'thirdparty'       to add a tab in third party view
         // 'user'             to add a tab in user view
         // Dictionaries
-        $this->dictionaries=array();
+        $this->dictionaries = array();
         /* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@zapier',
@@ -242,7 +242,7 @@ class modZapier extends DolibarrModules
         // Permission array used by this module
         $this->rights = array();
 
-        $r=0;
+        $r = 0;
         // Permission id (must not be already used)
         $this->rights[$r][0] = $this->numero + $r;
         // Permission label
@@ -267,8 +267,8 @@ class modZapier extends DolibarrModules
         $this->rights[$r][5] = '';
 
         // Main menu entries
-        $this->menu = array();  // List of menus to add
-        $r=0;
+        $this->menu = array(); // List of menus to add
+        $r = 0;
 
         // Add here entries to declare new menus
         // $this->menu[$r++]=array(

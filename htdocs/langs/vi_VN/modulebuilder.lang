@@ -27,7 +27,7 @@ DangerZone=Khu vực nguy hiểm
 BuildPackage=Xây dựng gói
 BuildPackageDesc=Bạn có thể tạo gói zip của ứng dụng để bạn sẵn sàng phân phối nó trên bất kỳ Dolibarr nào. Bạn cũng có thể phân phối hoặc bán nó trên thị trường như <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Xây dựng tài liệu
-ModuleIsNotActive=Mô-đun này chưa được kích hoạt. Truy cập %s để làm sống hoặc nhấp vào đây:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=Mô-đun này đã được kích hoạt. Bất kỳ thay đổi có thể phá vỡ một tính năng sống hiện tại.
 DescriptionLong=Mô tả dài
 EditorName=Tên biên tập viên
@@ -83,9 +83,9 @@ ListOfDictionariesEntries=Danh sách các mục từ điển
 ListOfPermissionsDefined=Danh sách các quyền được định nghĩa
 SeeExamples=Xem ví dụ ở đây
 EnabledDesc=Điều kiện để có trường này hoạt động (Ví dụ: 1 hoặc $conf-> golobal->MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
-DisplayOnPdf=Display on PDF
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>For document :</strong><br/>0 = not displayed <br/>1 = display<br/>2 = display only if not empty<br/><br/><strong>For document lines :</strong><br/>0 = not displayed <br/>1 = displayed in a column<br/>3 = display in line description column after the description<br/>4 = display in description column after the description only if not empty
+DisplayOnPdf=Hiển thị trên file PDF
 IsAMeasureDesc=Giá trị của trường có thể được tích lũy để có được tổng số vào danh sách không? (Ví dụ: 1 hoặc 0)
 SearchAllDesc=Là trường được sử dụng để thực hiện tìm kiếm từ công cụ tìm kiếm nhanh? (Ví dụ: 1 hoặc 0)
 SpecDefDesc=Nhập vào đây tất cả tài liệu bạn muốn cung cấp với mô-đun chưa được xác định bởi các tab khác. Bạn có thể sử dụng .md hoặc tốt hơn, cú pháp .asciidoc đầy đủ.
@@ -137,5 +137,6 @@ CSSClass=Lớp CSS
 NotEditable=Không thể chỉnh sửa
 ForeignKey=Khóa ngoại
 TypeOfFieldsHelp=Kiểu trường: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] ('1' có nghĩa là chúng ta thêm nút + sau khi kết hợp để tạo bản ghi, ví dụ 'bộ lọc' có thể là 'status=1 AND fk_user = __USER_ID AND entity IN (__SHARED_ENTEER__)')
-AsciiToHtmlConverter=Ascii to HTML converter
-AsciiToPdfConverter=Ascii to PDF converter
+AsciiToHtmlConverter=Chuyển mã ASCII sang HTML
+AsciiToPdfConverter=Chuyển ASCII sang PDF
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

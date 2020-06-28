@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Următorii pași trebuie făcuți pentru a vă 
 AccountancyAreaDescActionFreq=Următoarele acțiuni sunt executate de obicei în fiecare lună, săptămână sau zi pentru companii foarte mari ...
 
 AccountancyAreaDescJournalSetup=PASUL %s: Creați sau verificați conținutul jurnalului din meniu %s
-AccountancyAreaDescChartModel=PASUL %s: Creați un model de plan de cont din meniul %s
-AccountancyAreaDescChart=PASUL %s: Creați sau verificați conținutul planului dvs. de conturi din meniul %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=PASUL %s: Definirea conturilor contabile pentru fiecare TVA. Pentru aceasta, utilizați intrarea din meniu %s.
 AccountancyAreaDescDefault=PAS %s: Definiți conturile implicite de contabilitate. Pentru aceasta, utilizați intrarea în meniu %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Asociaza liniile facturii
 ExpenseReportLines=Linii de rapoarte de cheltuieli de asociat
 ExpenseReportLinesDone=Linii asociate de rapoarte de cheltuieli
 IntoAccount=Asociaza linia cu contul contabil
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Asociaza
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Contul contabil pentru a înregistra donații
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Contul Contabilitate pentru a înregistra abonamente
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought products and imported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cont contabil implicit pentru produsele vândute (utilizate dacă nu este definit în fișa produsului)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Contul contabil implicit pentru serviciile cumpărate (utilizat dacă nu este definit în fișa serviciului)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Accounting account by default for the bought services in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought services and imported out of EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Contul contabil implicit pentru serviciile vândute (utilizat dacă nu este definit în fișa de servicii)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Terț necunoscut 
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Contul terț nu este definit sau este necunoscut. Eroare de blocare.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Conturile terț și de așteptare necunoscute nu sunt definite. Eroare de blocare
 PaymentsNotLinkedToProduct=Plata nu legată de vreun produs/serviciu
+OpeningBalance=Opening balance
 ShowOpeningBalance=Afişează  soldurile de deschidere
 HideOpeningBalance=Ascunde soldurile de deschidere
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=Grup de conturi
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+
+Reconcilable=Reconcilable
 
 TotalVente=Cifra de afaceri totală înainte de impozitare
 TotalMarge=Total Marje vânzări
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Export pentru Quadratus QuadraCompta
 Modelcsv_ebp=Export pentru EBP
 Modelcsv_cogilog=Export pentru Cogilog
 Modelcsv_agiris=Export pentru Agiris
-Modelcsv_LDCompta=Export pentru LD Compta (v9 & superior) (Test)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export pentru OpenConcerto (Test)
 Modelcsv_configurable=Exportați CSV configurabil
 Modelcsv_FEC=Exportă fişier FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Id-ul listei de conturi
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=Mod vanzari
 OptionModeProductSellIntra=Mod  vânzări export în CEE
 OptionModeProductSellExport=Mod vânzări export în alte ţări
 OptionModeProductBuy=Mod cumparari
+OptionModeProductBuyIntra=Mode purchases imported in EEC
+OptionModeProductBuyExport=Mode purchased imported from other countries
 OptionModeProductSellDesc=Afișați toate produsele ce au cont contabil pentru vânzări.
 OptionModeProductSellIntraDesc=Afișează toate produsele cu cont contabil pentru vânzările în CEE.
 OptionModeProductSellExportDesc=Afișează toate produsele cu cont contabil pentru vânzările în alte ţări.
 OptionModeProductBuyDesc=Afișați toate produsele ce au cont contabil pentru achiziții.
+OptionModeProductBuyIntraDesc=Show all products with accounting account for purchases in EEC.
+OptionModeProductBuyExportDesc=Show all products with accounting account for other foreign purchases.
 CleanFixHistory=Eliminați codul contabil din linii care nu există în diagramele de cont
 CleanHistory=Resetați toate asocierile pentru anul selectat
 PredefinedGroups=Grupuri predefinite
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=Cont contabil eliminat din grupă
 SaleLocal=Vânzare locală
 SaleExport=Vânzare la export
 SaleEEC=Vânzări în CEE
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
 
 ## Dictionary
 Range=Rang cont contabil

@@ -263,3 +263,4 @@ WarningNumberOfRecipientIsRestrictedInMassAction=Внимание, броят н
 WarningDateOfLineMustBeInExpenseReportRange=Внимание, датата на реда не е в обхвата на разходния отчет
 WarningProjectClosed=Проектът е приключен. Трябва първо да го активирате отново.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Някои банкови транзакции бяха премахнати, след което бе генерирана разписка, в която са включени. Броят на чековете и общата сума на разписката може да се различават от броя и общата сума в списъка.
+WarningFailedToAddFileIntoDatabaseIndex=Warnin, failed to add file entry into ECM database index table

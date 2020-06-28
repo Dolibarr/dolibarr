@@ -45,9 +45,12 @@ Dolibarr working. It is here only to build Dolibarr packages, and those
 generated packages will not contains this "build" directory.
 
 
-We can find in "build", following sub-directories:
+You can find in "build", following sub-directories:
 
-* debian:
+* composer
+To test an upgrade of a lib.
+
+* debian
 To build Debian package.
 
 * dmg:

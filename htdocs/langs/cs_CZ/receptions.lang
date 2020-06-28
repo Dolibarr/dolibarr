@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
-ReceptionsSetup=Product Reception setup
+ReceptionsSetup=Nastavení recepce produktu
 RefReception=Ref. recepce
 Reception=Recepce
 Receptions=Recepce
@@ -41,5 +41,7 @@ ReceptionLine=Linka recepce
 ProductQtyInReceptionAlreadySent=Množství již odeslaných produktů z objednávek zákazníka
 ProductQtyInSuppliersReceptionAlreadyRecevied=Množství produktu již obdrženo od otevřené dodavatelské objednávky
 ValidateOrderFirstBeforeReception=Nejprve musíte potvrdit objednávku, než budete moci přijímat recepce.
-ReceptionsNumberingModules=Numbering module for receptions
-ReceptionsReceiptModel=Document templates for receptions
+ReceptionsNumberingModules=Modul číslování pro recepce
+ReceptionsReceiptModel=Šablony dokumentů pro recepce
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

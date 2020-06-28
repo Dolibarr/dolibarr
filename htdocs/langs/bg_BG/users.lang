@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - users
-HRMArea=Секция за човешки ресурси
+HRMArea=Секция с човешки ресурси
 UserCard=Карта
 GroupCard=Карта
 Permission=Разрешение
@@ -78,6 +78,7 @@ UserWillBeExternalUser=Създаденият потребителят ще бъ
 IdPhoneCaller=Идентификатор на повикващия
 NewUserCreated=Потребител %s е създаден
 NewUserPassword=Промяна на паролата за %s
+NewPasswordValidated=Вашата нова парола е валидирана и може да се използва за вход.
 EventUserModified=Потребител %s е променен
 UserDisabled=Потребител %s е деактивиран
 UserEnabled=Потребител %s е активиран
@@ -113,5 +114,5 @@ CantDisableYourself=Не можете да забраните собствени
 ForceUserExpenseValidator=Принудително валидиране на разходни отчети
 ForceUserHolidayValidator=Принудително валидиране на молби за отпуск
 ValidatorIsSupervisorByDefault=По подразбиране валидиращият е ръководителя на потребителя. Оставете празно, за да запазите това поведение.
-UserPersonalEmail=Personal email
-UserPersonalMobile=Personal mobile phone
+UserPersonalEmail=Личен имейл
+UserPersonalMobile=Личен моб. телефон

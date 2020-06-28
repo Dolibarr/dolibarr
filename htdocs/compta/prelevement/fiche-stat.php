@@ -39,18 +39,20 @@ if ($user->socid > 0) accessforbidden();
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
+$type = GETPOST('type', 'aZ09');
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 
 /*
@@ -132,9 +134,7 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		print $langs->trans("Error");
 	}
@@ -142,7 +142,7 @@ if ($prev_id > 0 || $ref)
 	/*
 	 * Stats
 	 */
-	$ligne = new LignePrelevement($db, $user);
+	$ligne = new LignePrelevement($db);
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -185,9 +185,7 @@ if ($prev_id > 0 || $ref)
 
 		print "</table>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		print $db->error().' '.$sql;
 	}
 }

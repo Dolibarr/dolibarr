@@ -9,7 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2015-2018	Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,6 +72,11 @@ class Contrat extends CommonObject
      * @var int
      */
     public $ismultientitymanaged = 1;
+
+    /**
+     * @var int  Does object support extrafields ? 0=No, 1=Yes
+     */
+    public $isextrafieldmanaged = 1;
 
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
@@ -160,12 +165,6 @@ class Contrat extends CommonObject
 	 */
 	public $date_contrat;
 
-	/**
-	 * @var integer|string		Date of contract closure
-	 * @deprecated we close contract lines, not a contract
-	 */
-	public $date_cloture;
-
 	public $commercial_signature_id;
 	public $commercial_suivi_id;
 
@@ -189,7 +188,35 @@ class Contrat extends CommonObject
 	protected $lines_id_index_mapper = array();
 
 
-	public $fields=array(
+	/**
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed.
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'help' is a string visible as a tooltip on field
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'ref' =>array('type'=>'varchar(50)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>15),
 		'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>20),
@@ -198,17 +225,11 @@ class Contrat extends CommonObject
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>35),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
 		'date_contrat' =>array('type'=>'datetime', 'label'=>'Date contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
-		'mise_en_service' =>array('type'=>'datetime', 'label'=>'Mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'fin_validite' =>array('type'=>'datetime', 'label'=>'Fin validite', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
-		'date_cloture' =>array('type'=>'datetime', 'label'=>'Date cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
 		'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
 		'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
 		'fk_commercial_signature' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial signature', 'enabled'=>1, 'visible'=>-1, 'position'=>80),
 		'fk_commercial_suivi' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk commercial suivi', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
 		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>90),
-		'fk_user_mise_en_service' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user mise en service', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
-		'fk_user_cloture' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user cloture', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>105),
 		'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>110),
 		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>115),
@@ -217,7 +238,9 @@ class Contrat extends CommonObject
 		'ref_customer' =>array('type'=>'varchar(50)', 'label'=>'Ref customer', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
 		'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>135),
 		'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>140),
+		'statut' =>array('type'=>'smallint(6)', 'label'=>'Statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Closed'))
 	);
+	// END MODULEBUILDER PROPERTIES
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
@@ -275,16 +298,12 @@ class Contrat extends CommonObject
 			if ($numref != "")
 			{
 				return $numref;
-			}
-			else
-			{
+			} else {
 				$this->error = $obj->error;
 				dol_print_error($db, get_class($this)."::getNextValue ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("Contract"));
 			return "";
@@ -387,9 +406,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -444,9 +461,7 @@ class Contrat extends CommonObject
         {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -485,16 +500,13 @@ class Contrat extends CommonObject
 		if ($force_number)
 		{
 			$num = $force_number;
-		}
-		elseif (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		} elseif (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$num = $this->getNextNumRef($this->thirdparty);
-		}
-		else
-		{
+		} else {
 			$num = $this->ref;
 		}
-        $this->newref = $num;
+        $this->newref = dol_sanitizeFileName($num);
 
 		if ($num)
 		{
@@ -568,9 +580,7 @@ class Contrat extends CommonObject
 				$this->brouillon = 0;
 				$this->date_validation = $now;
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 		}
 
@@ -578,9 +588,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -643,9 +651,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -662,12 +668,12 @@ class Contrat extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $ref_customer = '', $ref_supplier = '')
 	{
-		$sql = "SELECT rowid, statut, ref, fk_soc, mise_en_service as datemise,";
+		$sql = "SELECT rowid, statut, ref, fk_soc,";
 		$sql .= " ref_supplier, ref_customer,";
 		$sql .= " ref_ext,";
         $sql .= " entity,";
-		$sql .= " fk_user_mise_en_service, date_contrat as datecontrat,";
-		$sql .= " fk_user_author, fin_validite, date_cloture,";
+		$sql .= " date_contrat as datecontrat,";
+		$sql .= " fk_user_author,";
 		$sql .= " fk_projet as fk_project,";
 		$sql .= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql .= " note_private, note_public, model_pdf, extraparams";
@@ -697,27 +703,21 @@ class Contrat extends CommonObject
 				$this->error = 'Fetch found several records.';
 				dol_syslog($this->error, LOG_ERR);
 				$result = -2;
-			}
-			elseif ($num)   // $num = 1
+			} elseif ($num)   // $num = 1
 			{
 				$obj = $this->db->fetch_object($resql);
 				if ($obj)
 				{
 					$this->id = $obj->rowid;
 					$this->ref = (!isset($obj->ref) || !$obj->ref) ? $obj->rowid : $obj->ref;
-					$this->ref_customer				= $obj->ref_customer;
-					$this->ref_supplier				= $obj->ref_supplier;
+					$this->ref_customer = $obj->ref_customer;
+					$this->ref_supplier = $obj->ref_supplier;
 					$this->ref_ext = $obj->ref_ext;
 	                $this->entity = $obj->entity;
 					$this->statut = $obj->statut;
-					$this->mise_en_service = $this->db->jdate($obj->datemise);
 
-					$this->date_contrat				= $this->db->jdate($obj->datecontrat);
-					$this->date_creation			= $this->db->jdate($obj->datecontrat);
-
-					$this->fin_validite				= $this->db->jdate($obj->fin_validite);
-					$this->date_cloture				= $this->db->jdate($obj->date_cloture);
-
+					$this->date_contrat = $this->db->jdate($obj->datecontrat);
+					$this->date_creation = $this->db->jdate($obj->datecontrat);
 
 					$this->user_author_id = $obj->fk_user_author;
 
@@ -726,9 +726,9 @@ class Contrat extends CommonObject
 
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
-					$this->modelpdf					= $obj->model_pdf;
+					$this->modelpdf = $obj->model_pdf;
 
-					$this->fk_projet				= $obj->fk_project; // deprecated
+					$this->fk_projet = $obj->fk_project; // deprecated
 					$this->fk_project = $obj->fk_project;
 
 					$this->socid = $obj->fk_soc;
@@ -738,7 +738,7 @@ class Contrat extends CommonObject
 
 					$this->db->free($resql);
 
-					// Retreive all extrafields
+					// Retrieve all extrafields
 					// fetch optionals attributes and labels
 					$this->fetch_optionals();
 
@@ -752,16 +752,12 @@ class Contrat extends CommonObject
 
 					return $this->id;
 				}
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::fetch Contract not found");
 				$this->error = "Contract not found";
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::fetch Error searching contract");
 			$this->error = $this->db->error();
 			return -1;
@@ -867,7 +863,7 @@ class Contrat extends CommonObject
 
 				$line->fk_user_author = $objp->fk_user_author;
 				$line->fk_user_ouverture = $objp->fk_user_ouverture;
-				$line->fk_user_cloture  = $objp->fk_user_cloture;
+				$line->fk_user_cloture = $objp->fk_user_cloture;
 				$line->fk_unit = $objp->fk_unit;
 
 				$line->ref = $objp->product_ref; // deprecated
@@ -921,9 +917,7 @@ class Contrat extends CommonObject
 				$pos++;
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::Fetch Error when reading lines of contracts linked to products");
 			return -3;
 		}
@@ -1017,7 +1011,7 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -1063,8 +1057,7 @@ class Contrat extends CommonObject
     			                    $error++;
     			                }
     			            }
-    			        }
-    			        else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+    			        } else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
     			        {
     			            $origin_id = $tmp_origin_id;
     			            $ret = $this->add_object_linked($origin, $origin_id);
@@ -1111,8 +1104,7 @@ class Contrat extends CommonObject
     			            //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
     			            $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
     			        }
-    			    }
-    			    else dol_print_error($resqlcontact);
+    			    } else dol_print_error($resqlcontact);
     			}
 			}
 
@@ -1127,24 +1119,18 @@ class Contrat extends CommonObject
 				{
 					$this->db->commit();
 					return $this->id;
-				}
-				else
-				{
+				} else {
 					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = "Failed to add contract";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->trans("UnknownError: ".$this->db->error()." -", LOG_DEBUG);
 
 			$this->db->rollback();
@@ -1237,9 +1223,9 @@ class Contrat extends CommonObject
 		if (!$error)
                 {
 				// Delete contratdet extrafields
-				$main = MAIN_DB_PREFIX . 'contratdet';
-				$ef = $main . "_extrafields";
-				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_contrat = " . $this->id . ")";
+				$main = MAIN_DB_PREFIX.'contratdet';
+				$ef = $main."_extrafields";
+				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_contrat = ".$this->id.")";
 
 				dol_syslog(get_class($this)."::delete contratdet_extrafields", LOG_DEBUG);
 				$resql = $this->db->query($sql);
@@ -1313,9 +1299,7 @@ class Contrat extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -1349,8 +1333,6 @@ class Contrat extends CommonObject
 		if (isset($this->fk_soc)) $this->fk_soc = (int) $this->fk_soc;
 		if (isset($this->fk_commercial_signature)) $this->fk_commercial_signature = trim($this->fk_commercial_signature);
 		if (isset($this->fk_commercial_suivi)) $this->fk_commercial_suivi = trim($this->fk_commercial_suivi);
-		if (isset($this->fk_user_mise_en_service)) $this->fk_user_mise_en_service = (int) $this->fk_user_mise_en_service;
-		if (isset($this->fk_user_cloture)) $this->fk_user_cloture = (int) $this->fk_user_cloture;
 		if (isset($this->note_private)) $this->note_private = trim($this->note_private);
 		if (isset($this->note_public)) $this->note_public = trim($this->note_public);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
@@ -1368,15 +1350,10 @@ class Contrat extends CommonObject
 		$sql .= " entity=".$conf->entity.",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
 		$sql .= " statut=".(isset($this->statut) ? $this->statut : "null").",";
-		$sql .= " mise_en_service=".(dol_strlen($this->mise_en_service) != 0 ? "'".$this->db->idate($this->mise_en_service)."'" : 'null').",";
-		$sql .= " fin_validite=".(dol_strlen($this->fin_validite) != 0 ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
-		$sql .= " date_cloture=".(dol_strlen($this->date_cloture) != 0 ? "'".$this->db->idate($this->date_cloture)."'" : 'null').",";
 		$sql .= " fk_soc=".($this->fk_soc > 0 ? $this->fk_soc : "null").",";
 		$sql .= " fk_projet=".($this->fk_project > 0 ? $this->fk_project : "null").",";
 		$sql .= " fk_commercial_signature=".(isset($this->fk_commercial_signature) ? $this->fk_commercial_signature : "null").",";
 		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
-		$sql .= " fk_user_mise_en_service=".(isset($this->fk_user_mise_en_service) ? $this->fk_user_mise_en_service : "null").",";
-		$sql .= " fk_user_cloture=".(isset($this->fk_user_cloture) ? $this->fk_user_cloture : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
 		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
@@ -1388,7 +1365,7 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0)
+		if (!$error)
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -1415,9 +1392,7 @@ class Contrat extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1494,9 +1469,7 @@ class Contrat extends CommonObject
 			if ($price_base_type == 'HT')
 			{
 				$pu = $pu_ht;
-			}
-			else
-			{
+			} else {
 				$pu = $pu_ttc;
 			}
 
@@ -1547,9 +1520,7 @@ class Contrat extends CommonObject
 				if (($result = $this->defineBuyPrice($pu_ht, $remise_percent, $fk_product)) < 0)
 				{
 					return $result;
-				}
-				else
-				{
+				} else {
 					$pa_ht = $result;
 				}
 			}
@@ -1593,7 +1564,7 @@ class Contrat extends CommonObject
 			{
 				$contractlineid = $this->db->last_insert_id(MAIN_DB_PREFIX."contratdet");
 
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
+				if (!$error)
 				{
 					$contractline = new ContratLigne($this->db);
 					$contractline->array_options = $array_options;
@@ -1620,22 +1591,16 @@ class Contrat extends CommonObject
 				{
 					$this->db->rollback();
 					return -1;
-				}
-				else
-				{
+				} else {
 					$this->db->commit();
 					return $contractlineid;
 				}
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				$this->error = $this->db->error()." sql=".$sql;
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::addline ErrorTryToAddLineOnValidatedContract", LOG_ERR);
 			return -2;
 		}
@@ -1687,9 +1652,7 @@ class Contrat extends CommonObject
 		{
 			$remise = round(($pu * $remise_percent / 100), 2);
 			$price = $pu - $remise;
-		}
-		else
-		{
+		} else {
 			$remise_percent = 0;
 		}
 
@@ -1739,9 +1702,7 @@ class Contrat extends CommonObject
 			if (($result = $this->defineBuyPrice($pu, $remise_percent)) < 0)
 			{
 				return $result;
-			}
-			else
-			{
+			} else {
 				$pa_ht = $result;
 			}
 		}
@@ -1764,14 +1725,10 @@ class Contrat extends CommonObject
 		$sql .= ", total_ttc='".price2num($total_ttc)."'";
 		$sql .= ", fk_product_fournisseur_price=".($fk_fournprice > 0 ? $fk_fournprice : "null");
 		$sql .= ", buy_price_ht='".price2num($pa_ht)."'";
-		if ($date_start > 0) { $sql .= ",date_ouverture_prevue='".$this->db->idate($date_start)."'"; }
-		else { $sql .= ",date_ouverture_prevue=null"; }
-		if ($date_end > 0) { $sql .= ",date_fin_validite='".$this->db->idate($date_end)."'"; }
-		else { $sql .= ",date_fin_validite=null"; }
-		if ($date_debut_reel > 0) { $sql .= ",date_ouverture='".$this->db->idate($date_debut_reel)."'"; }
-		else { $sql .= ",date_ouverture=null"; }
-		if ($date_fin_reel > 0) { $sql .= ",date_cloture='".$this->db->idate($date_fin_reel)."'"; }
-		else { $sql .= ",date_cloture=null"; }
+		if ($date_start > 0) { $sql .= ",date_ouverture_prevue='".$this->db->idate($date_start)."'"; } else { $sql .= ",date_ouverture_prevue=null"; }
+		if ($date_end > 0) { $sql .= ",date_fin_validite='".$this->db->idate($date_end)."'"; } else { $sql .= ",date_fin_validite=null"; }
+		if ($date_debut_reel > 0) { $sql .= ",date_ouverture='".$this->db->idate($date_debut_reel)."'"; } else { $sql .= ",date_ouverture=null"; }
+		if ($date_fin_reel > 0) { $sql .= ",date_cloture='".$this->db->idate($date_fin_reel)."'"; } else { $sql .= ",date_cloture=null"; }
 		$sql .= ", fk_unit=".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
 		$sql .= " WHERE rowid = ".$rowid;
 
@@ -1782,14 +1739,14 @@ class Contrat extends CommonObject
 			$result = $this->update_statut($user);
 			if ($result >= 0)
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
+				if (is_array($array_options) && count($array_options) > 0) // For avoid conflicts if trigger used
 				{
 					$contractline = new ContratLigne($this->db);
 					$contractline->fetch($rowid);
 					$contractline->fetch_optionals();
 
 					// We replace values in $contractline->array_options only for entries defined into $array_options
-					foreach($array_options as $key => $value) {
+					foreach ($array_options as $key => $value) {
 						$contractline->array_options[$key] = $array_options[$key];
 					}
 
@@ -1814,16 +1771,12 @@ class Contrat extends CommonObject
 					$this->db->commit();
 					return 1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::updateline Erreur -2");
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::updateline Erreur -1");
@@ -1864,18 +1817,15 @@ class Contrat extends CommonObject
 				$error++;
 			}
 
-			if (empty($error)) {
+			if (!$error) {
 				// Remove extrafields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$contractline = new ContratLigne($this->db);
+				$contractline->id = $idline;
+				$result = $contractline->deleteExtraFields();
+				if ($result < 0)
 				{
-					$contractline = new ContratLigne($this->db);
-					$contractline->id = $idline;
-					$result = $contractline->deleteExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-						$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
-					}
+					$error++;
+					$this->error = "Error ".get_class($this)."::deleteline deleteExtraFields error -4 ".$contractline->error;
 				}
 			}
 
@@ -1887,9 +1837,7 @@ class Contrat extends CommonObject
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
 			return -2;
 		}
@@ -1985,9 +1933,7 @@ class Contrat extends CommonObject
 			$text .= ($mode != 7 || $this->nbofservicesclosed > 0) ? ($this->nbofservicesclosed.ContratLigne::LibStatut(5, 3, -1, 'class="marginleft2"')) : '';
 			$text .= ($mode == 7 ? '</span>' : '');
 			return $text;
-		}
-		else
-		{
+		} else {
 			return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 		}
 	}
@@ -2078,9 +2024,9 @@ class Contrat extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = "SELECT c.rowid, c.ref, c.datec, c.date_cloture,";
+		$sql = "SELECT c.rowid, c.ref, c.datec,";
 		$sql .= " c.tms as date_modification,";
-		$sql .= " fk_user_author, fk_user_cloture";
+		$sql .= " fk_user_author";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " WHERE c.rowid = ".$id;
 
@@ -2099,21 +2045,13 @@ class Contrat extends CommonObject
 					$this->user_creation = $cuser;
 				}
 
-				if ($obj->fk_user_cloture) {
-					$cuser = new User($this->db);
-					$cuser->fetch($obj->fk_user_cloture);
-					$this->user_cloture = $cuser;
-				}
 				$this->ref = (!$obj->ref) ? $obj->rowid : $obj->ref;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->date_cloture      = $this->db->jdate($obj->date_cloture);
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -2148,9 +2086,7 @@ class Contrat extends CommonObject
 				$i++;
 			}
 			return $tab;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -2186,9 +2122,7 @@ class Contrat extends CommonObject
 				$i++;
 			}
 			return $tab;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -2220,8 +2154,7 @@ class Contrat extends CommonObject
 			$sql .= " WHERE c.statut = 1";
 			$sql .= " AND c.rowid = cd.fk_contrat";
 			$sql .= " AND cd.statut = 0";
-		}
-		elseif ($mode == 'expired')
+		} elseif ($mode == 'expired')
 		{
 			$sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
 			$sql .= $this->from;
@@ -2229,8 +2162,7 @@ class Contrat extends CommonObject
 			$sql .= " AND c.rowid = cd.fk_contrat";
 			$sql .= " AND cd.statut = 4";
 			$sql .= " AND cd.date_fin_validite < '".$this->db->idate(dol_now())."'";
-		}
-		elseif ($mode == 'active')
+		} elseif ($mode == 'active')
 		{
 		    $sql = "SELECT cd.rowid, cd.date_fin_validite as datefin";
 		    $sql .= $this->from;
@@ -2256,8 +2188,7 @@ class Contrat extends CommonObject
 				$label = $langs->trans("BoardNotActivatedServices");
 				$labelShort = $langs->trans("BoardNotActivatedServicesShort");
 				$url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=0&sortfield=cd.date_fin_validite&sortorder=asc';
-			}
-			elseif ($mode == 'expired') {
+			} elseif ($mode == 'expired') {
 			    $warning_delay = $conf->contrat->services->expires->warning_delay;
 			    $url = DOL_URL_ROOT.'/contrat/services_list.php?mainmenu=commercial&leftmenu=contracts&mode=4&filter=expired&sortfield=cd.date_fin_validite&sortorder=asc';
 			    $label = $langs->trans("BoardExpiredServices");
@@ -2288,9 +2219,7 @@ class Contrat extends CommonObject
 			}
 
 			return $response;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -2331,9 +2260,7 @@ class Contrat extends CommonObject
 			}
             $this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -2789,14 +2716,25 @@ class ContratLigne extends CommonObjectLine
 		global $langs;
 		$langs->load("contracts");
 
-		if ($status == self::STATUS_INITIAL) { $labelStatus = $langs->trans("ServiceStatusInitial"); $labelStatusShort = $langs->trans("ServiceStatusInitial"); }
-		elseif ($status == self::STATUS_OPEN && $expired == -1) { $labelStatus = $langs->trans("ServiceStatusRunning"); $labelStatusShort = $langs->trans("ServiceStatusRunning"); }
-		elseif ($status == self::STATUS_OPEN && $expired == 0) { $labelStatus = $langs->trans("ServiceStatusNotLate"); $labelStatusShort = $langs->trans("ServiceStatusNotLateShort"); }
-		elseif ($status == self::STATUS_OPEN && $expired == 1) { $labelStatus = $langs->trans("ServiceStatusLate"); $labelStatusShort = $langs->trans("ServiceStatusLateShort"); }
-		elseif ($status == self::STATUS_CLOSED) { $labelStatus = $langs->trans("ServiceStatusClosed"); $labelStatusShort = $langs->trans("ServiceStatusClosed"); }
+        if ($status == self::STATUS_INITIAL) {
+            $labelStatus = $langs->trans("ServiceStatusInitial");
+            $labelStatusShort = $langs->trans("ServiceStatusInitial");
+        } elseif ($status == self::STATUS_OPEN && $expired == -1) {
+            $labelStatus = $langs->trans("ServiceStatusRunning");
+            $labelStatusShort = $langs->trans("ServiceStatusRunning");
+        } elseif ($status == self::STATUS_OPEN && $expired == 0) {
+            $labelStatus = $langs->trans("ServiceStatusNotLate");
+            $labelStatusShort = $langs->trans("ServiceStatusNotLateShort");
+        } elseif ($status == self::STATUS_OPEN && $expired == 1) {
+            $labelStatus = $langs->trans("ServiceStatusLate");
+            $labelStatusShort = $langs->trans("ServiceStatusLateShort");
+        } elseif ($status == self::STATUS_CLOSED) {
+            $labelStatus = $langs->trans("ServiceStatusClosed");
+            $labelStatusShort = $langs->trans("ServiceStatusClosed");
+        }
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_OPEN && $expired == 1) $statusType = 'status3';
+		if ($status == self::STATUS_OPEN && $expired == 1) $statusType = 'status1';
 		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
 
 		$params = array(); $reg = array();
@@ -2957,9 +2895,7 @@ class ContratLigne extends CommonObjectLine
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -3044,9 +2980,7 @@ class ContratLigne extends CommonObjectLine
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->pa_ht = $result;
 			}
 		}
@@ -3056,6 +2990,7 @@ class ContratLigne extends CommonObjectLine
 
 		$this->oldcopy = new ContratLigne($this->db);
 		$this->oldcopy->fetch($this->id);
+        $this->oldcopy->fetch_optionals();
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
@@ -3102,7 +3037,7 @@ class ContratLigne extends CommonObjectLine
 			$error++;
 		}
 
-		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0) // For avoid conflicts if trigger used
+		if (!$error) // For avoid conflicts if trigger used
 		{
 			$result = $this->insertExtraFields();
 			if ($result < 0)
@@ -3192,9 +3127,7 @@ class ContratLigne extends CommonObjectLine
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;
@@ -3211,6 +3144,8 @@ class ContratLigne extends CommonObjectLine
 	public function insert($notrigger = 0)
 	{
 		global $conf, $user;
+
+		$error = 0;
 
 		// Insertion dans la base
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
@@ -3250,7 +3185,7 @@ class ContratLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
 			// Insert of extrafields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options) > 0) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -3273,9 +3208,7 @@ class ContratLigne extends CommonObjectLine
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->error()." sql=".$sql;
 			return -1;
@@ -3328,9 +3261,7 @@ class ContratLigne extends CommonObjectLine
 
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -1;
 			}

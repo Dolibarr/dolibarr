@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Τα επόμενα βήματα θα πρέπ�
 AccountancyAreaDescActionFreq=Οι παρακάτω ενέργειες εκτελούνται συνήθως κάθε μήνα, εβδομάδα ή μέρα για πολύ μεγάλες επιχειρήσεις ...
 
 AccountancyAreaDescJournalSetup=STEP %s: Δημιουργήστε ή ελέγξτε το περιεχόμενο της λίστας σας από το μενού %s
-AccountancyAreaDescChartModel=STEP %s: Δημιουργήστε ένα μοντέλο χαρτογραφικού λογαριασμού από το μενού %s
-AccountancyAreaDescChart=STEP %s: Δημιουργήστε ή ελέγξτε το περιεχόμενο του γραφήματος λογαριασμού σας από το μενού %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=STEP %s: Καθορίστε λογαριασμούς λογιστικής για κάθε τιμή ΦΠΑ. Για αυτό, χρησιμοποιήστε την καταχώρηση μενού %s.
 AccountancyAreaDescDefault=STEP %s: Καθορίστε προεπιλεγμένους λογαριασμούς λογιστικής. Για αυτό, χρησιμοποιήστε την καταχώρηση μενού %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Δεσμευμένες γραμμές τιμολογίων
 ExpenseReportLines=Γραμμές εκθέσεων δαπανών που δεσμεύουν
 ExpenseReportLinesDone=Δεσμευμένες αναφορές δαπανών
 IntoAccount=Συνδέστε τη γραμμή με τον λογαριασμό λογιστικής
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Δένω
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για τ
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Λογαριασμός λογιστικής για την εγγραφή συνδρομών
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Λογαριασμός λογιστικής από προεπιλογή για τα αγορασμένα προϊόντα (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντων)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Λογαριασμός από προεπιλογή για τα προϊόντα που αγοράστηκαν στην ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντος)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Λογαριασμός από προεπιλογή για τα προϊόντα που αγοράστηκαν και εισάγονται εκτός ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντος)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Λογαριασμός λογαριασμού από προεπιλογή για τα προϊόντα που πωλούνται (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντος)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Λογαριασμός λογιστικής από προεπιλογή για τα προϊόντα που πωλούνται στην ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντων)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Λογαριασμός λογαριασμού από προεπιλογή για τα προϊόντα που πωλούνται και εξάγονται εκτός ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο προϊόντων)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Λογαριασμός λογαριασμού από προεπιλογή για τις υπηρεσίες που αγοράσατε (χρησιμοποιείται αν δεν ορίζεται στο φύλλο εξυπηρέτησης)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Λογαριασμός από προεπιλογή για τις υπηρεσίες που αγοράστηκαν στην ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο υπηρεσίας)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Λογαριασμός από προεπιλογή για τις υπηρεσίες που αγοράστηκαν και εισήχθησαν εκτός ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο υπηρεσίας)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Λογαριασμός λογαριασμού από προεπιλογή για τις υπηρεσίες πώλησης (χρησιμοποιείται αν δεν ορίζεται στο φύλλο εξυπηρέτησης)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Λογαριασμός λογαριασμού από προεπιλογή για τις υπηρεσίες που πωλούνται στην ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο υπηρεσιών)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Λογαριασμός λογαριασμού από προεπιλογή για τις υπηρεσίες που πωλούνται και εξάγονται εκτός ΕΟΚ (χρησιμοποιείται αν δεν ορίζεται στο φύλλο υπηρεσιών)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Άγνωστο τ
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Ο λογαριασμός τρίτου μέρους δεν έχει οριστεί ή είναι άγνωστος τρίτος. Σφάλμα αποκλεισμού.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ο λογαριασμός λογαριασμού τρίτου μέρους και ο λογαριασμός αναμονής δεν έχουν οριστεί. Σφάλμα αποκλεισμού
 PaymentsNotLinkedToProduct=Πληρωμή που δεν συνδέεται με κανένα προϊόν / υπηρεσία
+OpeningBalance=Opening balance
 ShowOpeningBalance=Εμφάνιση αρχικού υπολοίπου
 HideOpeningBalance=Κρύψιμο αρχικού υπολοίπου
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=Ομάδα του λογαριασμού
-PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Η ομάδα λογαριασμού χρησιμοποιείται ως προκαθορισμένα κριτήρια «φίλτρου» και «ομαδοποίησης» για ορισμένες λογιστικές αναφορές. Για παράδειγμα, τα «ΕΙΣΟΔΗΜΑ» ή «ΕΞΟΔΑ» χρησιμοποιούνται ως ομάδες λογιστικών λογαριασμών προϊόντων για τη δημιουργία της αναφοράς εξόδων / εσόδων.
+
+Reconcilable=Συμβιβάσιμος
 
 TotalVente=Total turnover before tax
 TotalMarge=Συνολικό περιθώριο πωλήσεων
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Εξαγωγή για Quadratus QuadraCompta
 Modelcsv_ebp=Εξαγωγή για EBP
 Modelcsv_cogilog=Εξαγωγή για το Cogilog
 Modelcsv_agiris=Εξαγωγή για Agiris
-Modelcsv_LDCompta=Εξαγωγή για LD Compta (v9 και άνω) (Test)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Εξαγωγή για LD Compta (v10 και άνω)
 Modelcsv_openconcerto=Εξαγωγή για OpenConcerto (Test)
 Modelcsv_configurable=Εξαγωγή CSV εξαγωγής
 Modelcsv_FEC=Εξαγωγή FEC
 Modelcsv_Sage50_Swiss=Εξαγωγή για Sage 50 Ελβετία
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Λογαριασμός Id
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=Κατάσταση πωλήσεων
 OptionModeProductSellIntra=Mode πωλήσεις που εξάγονται στην ΕΟΚ
 OptionModeProductSellExport=Mode πωλήσεις που εξάγονται σε άλλες χώρες
 OptionModeProductBuy=Κατάσταση αγορών
+OptionModeProductBuyIntra=Λειτουργίες που εισάγονται σε ΕΟΚ
+OptionModeProductBuyExport=Λειτουργία που αγοράστηκε εισαγόμενη από άλλες χώρες
 OptionModeProductSellDesc=Εμφάνιση όλων των προϊόντων με λογιστικό λογαριασμό για πωλήσεις.
 OptionModeProductSellIntraDesc=Εμφάνιση όλων των προϊόντων με λογιστική καταγραφή πωλήσεων στην ΕΟΚ.
 OptionModeProductSellExportDesc=Εμφάνιση όλων των προϊόντων με λογαρια σμό για άλλες ξένες πωλήσεις.
 OptionModeProductBuyDesc=Εμφάνιση όλων των προϊόντων με λογιστικό λογαριασμό για αγορές.
+OptionModeProductBuyIntraDesc=Εμφάνιση όλων των προϊόντων με λογιστικό λογαριασμό για αγορές σε ΕΟΚ.
+OptionModeProductBuyExportDesc=Εμφάνιση όλων των προϊόντων με λογιστικό λογαριασμό για άλλες αγορές στο εξωτερικό.
 CleanFixHistory=Καταργήστε τον κωδικό λογιστικής από γραμμές που δεν υπάρχουν στα γραφήματα λογαριασμού
 CleanHistory=Επαναφέρετε όλες τις συνδέσεις για το επιλεγμένο έτος
 PredefinedGroups=Προκαθορισμένες ομάδες
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=Ο λογαριασμός αφαιρέθηκε από τ
 SaleLocal=Τοπική πώληση
 SaleExport=Εξαγωγή πώλησης
 SaleEEC=Πώληση στην ΕΟΚ
+SaleEECWithVAT=Πώληση σε ΕΟΚ με μηδενικό ΦΠΑ, επομένως υποθέτουμε ότι ΔΕΝ είναι ενδοκοινοτική πώληση και ο προτεινόμενος λογαριασμός είναι ο τυπικός λογαριασμός προϊόντος.
+SaleEECWithoutVATNumber=Πώληση σε ΕΟΚ χωρίς ΦΠΑ, αλλά δεν ορίζεται το ΑΦΜ τρίτου μέρους. Εφεδρικός λογαριασμός προϊόντος για τυπικές πωλήσεις. Εάν χρειαστεί, μπορείτε να διορθώσετε το αναγνωριστικό ΦΠΑ τρίτου μέρους ή τον λογαριασμό προϊόντος.
 
 ## Dictionary
 Range=Εύρος λογιστικού λογαριασμού

@@ -5,12 +5,13 @@ Establishments=Pembentukan
 Establishment=Pembentukan
 NewEstablishment=Pembentukan baru
 DeleteEstablishment=Hapus pembentukan
-ConfirmDeleteEstablishment=Anda yakin ingin menghapus pembentukan ini?
+ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=Pembentukan terbuka
 CloseEtablishment=Pembentukan tertutup
 # Dictionary
+DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=HRM - Daftar Departement
-DictionaryFunction=HRM - Daftar Fungsi
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=karyawan
 Employee=karyawan

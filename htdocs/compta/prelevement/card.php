@@ -45,11 +45,13 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 
+$type = GETPOST('type', 'aZ09');
+
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -58,12 +60,13 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'pl.fk_soc';
 if (!$sortorder) $sortorder = 'DESC';
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
+
 
 /*
  * Actions
@@ -271,10 +274,6 @@ if ($id > 0 || $ref)
 		print '<tr class="oddeven"><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $form->selectarray("methode", $object->methodes_trans);
 		print '</td></tr>';
-        /*print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
-		print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-		print '<input class="flat" type="file" name="userfile"><br>';
-		print '</td></tr>';*/
 		print '</table><br>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("SetToStatusSent")).'"></div>';
 		print '</form>';
@@ -293,7 +292,7 @@ if ($id > 0 || $ref)
 		print $form->selectDate('', '', '', '', '', "infocredit", 1, 1);
 		print '</td></tr>';
 		print '</table>';
-		print '<br>'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice");
+		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
 		print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("ClassCredited")).'"></div>';
 		print '</form>';
 		print '<br>';
@@ -321,7 +320,7 @@ if ($id > 0 || $ref)
 	}
 
 
-	$ligne = new LignePrelevement($db, $user);
+	$ligne = new LignePrelevement($db);
 
 	/*
 	 * Lines into withdraw request
@@ -362,14 +361,14 @@ if ($id > 0 || $ref)
 
 		$urladd = "&amp;id=".$id;
 
-		print '<form method="get" action="' . $_SERVER ['PHP_SELF'] . '" name="search_form">' . "\n";
-		print '<input type="hidden" name="id" value="' . $id . '"/>';
-		print '<input type="hidden" name="socid" value="' . $socid . '"/>';
-		if (! empty($page)) {
-			print '<input type="hidden" name="page" value="' . $page . '"/>';
+		print '<form method="get" action="'.$_SERVER ['PHP_SELF'].'" name="search_form">'."\n";
+		print '<input type="hidden" name="id" value="'.$id.'"/>';
+		print '<input type="hidden" name="socid" value="'.$socid.'"/>';
+		if (!empty($page)) {
+			print '<input type="hidden" name="page" value="'.$page.'"/>';
 		}
-		if (! empty($limit)) {
-			print '<input type="hidden" name="limit" value="' . $limit . '"/>';
+		if (!empty($limit)) {
+			print '<input type="hidden" name="limit" value="'.$limit.'"/>';
 		}
 		print_barre_liste($langs->trans("Lines"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
@@ -406,15 +405,26 @@ if ($id > 0 || $ref)
 
 			print '<td class="right">'.price($obj->amount)."</td>\n";
 
-			print '<td>';
+			print '<td class="right">';
 
 			if ($obj->statut == 3)
 			{
 		  		print '<b>'.$langs->trans("StatusRefused").'</b>';
-			}
-			else
-			{
-		  		print "&nbsp;";
+			} else {
+				if ($object->statut == BonPrelevement::STATUS_CREDITED)
+				{
+					if ($obj->statut == 2) {
+						if ($user->rights->prelevement->bons->credit)
+						{
+							//print '<a class="butActionDelete" href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
+							print '<a href="line.php?action=rejet&id='.$obj->rowid.'">'.$langs->trans("StandingOrderReject").'</a>';
+						} else {
+							//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
+						}
+					}
+				} else {
+					//print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine").'">'.$langs->trans("StandingOrderReject").'</a>';
+				}
 			}
 
 			print '</td></tr>';
@@ -445,9 +455,7 @@ if ($id > 0 || $ref)
 		print '</form>';
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

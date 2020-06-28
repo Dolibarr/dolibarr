@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Tasks'));
 $title = $langs->trans("TasksStatistics");
 $dir = $conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'project');
+print load_fiche_titre($title, '', 'projecttask');
 
 dol_mkdir($dir);
 
@@ -199,8 +199,7 @@ print '</div>';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
 	$stringtoshow .= $px1->show();
 	$stringtoshow .= "<br>\n";
 }

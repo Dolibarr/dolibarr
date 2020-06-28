@@ -43,7 +43,7 @@ $type = GETPOST('type', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -107,8 +107,7 @@ if ($action == 'add' && $user->rights->asset->write)
 	if (empty($object->label)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	else {
+	} else {
 		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."asset_type WHERE label='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
@@ -128,15 +127,11 @@ if ($action == 'add' && $user->rights->asset->write)
 		{
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
-	}
-	else
-	{
+	} else {
 		$action = 'create';
 	}
 }
@@ -162,9 +157,7 @@ if ($action == 'update' && $user->rights->asset->write)
 	if ($ret >= 0 && !count($object->errors))
 	{
 		setEventMessages($langs->trans("AssetsTypeModified"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -182,9 +175,7 @@ if ($action == 'confirm_delete' && $user->rights->asset->write)
 		setEventMessages($langs->trans("AssetsTypeDeleted"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("AssetsTypeCanNotBeDeleted"), null, 'errors');
 		$action = '';
 	}
@@ -308,8 +299,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 			if ($user->rights->asset->write)
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			else
-				print '<td class="right">&nbsp;</td>';
+			else print '<td class="right">&nbsp;</td>';
 			print "</tr>";
 			$i++;
 		}
@@ -317,9 +307,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '</div>';
 
 		print '</form>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -367,8 +355,7 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 		print '</td></tr>';
-	}
-	else // For external software
+	} else // For external software
 	{
 		// Accountancy_code_asset
 		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
@@ -578,8 +565,7 @@ if ($rowid > 0)
 			print '<td>';
 			print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 			print '</td></tr>';
-		}
-		else // For external software
+		} else // For external software
 		{
 			// Accountancy_code_asset
 			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
@@ -609,37 +595,15 @@ if ($rowid > 0)
 			print $object->showOptionals($extrafields, 'edit', $parameters);
 		}
 
-		print '</table>';
+		// Other attributes
+		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
 
-		// Extra field
-		if (empty($reshook))
-		{
-			print '<br><br><table class="border centpercent">';
-			foreach ($extrafields->attributes[$object->element]['label'] as $key=>$label)
-			{
-				if (isset($_POST["options_".$key])) {
-					if (is_array($_POST["options_".$key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_".$key]);
-					} else {
-						$value = $_POST["options_".$key];
-					}
-				} else {
-					$value = $adht->array_options["options_".$key];
-				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showInputField($key, $value);
-				print "</td></tr>\n";
-			}
-			print '</table><br><br>';
-		}
+		print '</table>';
 
 		dol_fiche_end();
 
-		print '<div class="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-		print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<div class="center"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+		print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print "</form>";

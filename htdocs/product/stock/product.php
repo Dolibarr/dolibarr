@@ -255,9 +255,7 @@ if ($action == "correct_stock" && !$cancel)
 					$origin_element,
 					$origin_id
 				); // We do not change value of stock for a correction
-			}
-			else
-			{
+			} else {
 				$result = $object->correct_stock(
 		    		$user,
 		    		GETPOST("id_entrepot"),
@@ -277,15 +275,11 @@ if ($action == "correct_stock" && !$cancel)
 				{
 					header("Location: ".$backtopage);
 					exit;
-				}
-				else
-				{
+				} else {
 	            	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 			    setEventMessages($object->error, $object->errors, 'errors');
 			    $action = 'correction';
 			}
@@ -356,15 +350,11 @@ if ($action == "transfert_stock" && !$cancel)
 						$batch = $pdluo->batch;
 						$eatby = $pdluo->eatby;
 						$sellby = $pdluo->sellby;
-					}
-					else
-					{
+					} else {
 						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
 						$error++;
 					}
-				}
-				else
-				{
+				} else {
 					$srcwarehouseid = GETPOST('id_entrepot', 'int');
 					$batch = $batchnumber;
 					$eatby = $d_eatby;
@@ -401,9 +391,7 @@ if ($action == "transfert_stock" && !$cancel)
 					);
 					if ($result2 < 0) $error++;
 				}
-			}
-			else
-			{
+			} else {
 				if (!$error)
 				{
     			    // Remove stock
@@ -443,15 +431,11 @@ if ($action == "transfert_stock" && !$cancel)
 				{
 					header("Location: ".$backtopage);
 					exit;
-				}
-				else
-				{
+				} else {
 					header("Location: product.php?id=".$object->id);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 				$action = 'transfert';
@@ -472,9 +456,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
         {
             if ((!GETPOST("sellby")) && (!GETPOST("eatby")) && (!$batchnumber)) {
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
-            }
-            else
-            {
+            } else {
                 $d_eatby = dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
                 $d_sellby = dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
                 $pdluo->batch = $batchnumber;
@@ -486,14 +468,10 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
                     setEventMessages($pdluo->error, $pdluo->errors, 'errors');
                 }
             }
-        }
-        else
-        {
+        } else {
             setEventMessages($langs->trans('BatchInformationNotfound'), null, 'errors');
         }
-    }
-    else
-    {
+    } else {
         setEventMessages($pdluo->error, null, 'errors');
     }
     header("Location: product.php?id=".$id);
@@ -661,10 +639,10 @@ if ($id > 0 || $ref)
 
 			// Number of product from customer order already sent (partial shipping)
 			if (!empty($conf->expedition->enabled)) {
-                require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
+                require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
                 $filterShipmentStatus = '';
                 if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)) {
-                    $filterShipmentStatus = Expedition::STATUS_VALIDATED  . ',' . Expedition::STATUS_CLOSED;
+                    $filterShipmentStatus = Expedition::STATUS_VALIDATED.','.Expedition::STATUS_CLOSED;
                 } elseif (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)) {
                     $filterShipmentStatus = Expedition::STATUS_CLOSED;
                 }
@@ -674,7 +652,8 @@ if ($id > 0 || $ref)
 			}
 
 			// Number of supplier order running
-			if (!empty($conf->fournisseur->enabled)) {
+			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))
+			{
 				if ($found) $helpondiff .= '<br>'; else $found = 1;
 				$result = $object->load_stats_commande_fournisseur(0, '3,4', 1);
 				$helpondiff .= $langs->trans("ProductQtyInSuppliersOrdersRunning").': '.$object->stats_commande_fournisseur['qty'];
@@ -684,7 +663,7 @@ if ($id > 0 || $ref)
 			}
 
 			// Number of product from supplier order already received (partial receipt)
-			if (!empty($conf->fournisseur->enabled)) {
+			if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) {
 				if ($found) $helpondiff .= '<br>'; else $found = 1;
 				$helpondiff .= $langs->trans("ProductQtyInSuppliersShipmentAlreadyRecevied").': '.$object->stats_reception['qty'];
 			}
@@ -752,9 +731,7 @@ if ($id > 0 || $ref)
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 		print '<br><br>';
 	}
-}
-else
-{
+} else {
 	dol_print_error();
 }
 
@@ -778,14 +755,10 @@ if (empty($reshook))
 		{
 			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
-			}
-			else
-			{
+			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("CorrectStock").'</a>';
 			}
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
 		}
 
@@ -794,14 +767,10 @@ if (empty($reshook))
 		{
 			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("TransferStock").'</a>';
-			}
-			else
-			{
+			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 			}
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
 		}
 
@@ -866,7 +835,6 @@ if (!$variants) {
 
 			$entrepotstatic->id = $obj->rowid;
 			$entrepotstatic->ref = $obj->ref;
-			$entrepotstatic->libelle = $obj->ref;
 			$entrepotstatic->label = $obj->ref;
 			$entrepotstatic->lieu = $obj->lieu;
 			$entrepotstatic->fk_parent = $obj->fk_parent;
@@ -908,6 +876,7 @@ if (!$variants) {
 						print "\n".'<tr>';
 						print '<td colspan="9">';
 						print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder centpercent"><tr><td width="10%"></td>';
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 						print '<td class="center" width="10%">';
@@ -917,7 +886,7 @@ if (!$variants) {
 						print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
 						print '</td>';
 						print '<td class="right" width="10%">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
-						print '<td colspan="4"><input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'">';
+						print '<td colspan="4"><input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
 						print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 						print '</table>';
 						print '</form>';
@@ -975,6 +944,7 @@ if (!$variants) {
 
 		if (!empty($user->rights->produit->creer)) {
 			print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="addlimitstockwarehouse">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
 		}
@@ -1091,9 +1061,7 @@ if (!$variants) {
 			print '<td class="right">'.$stock_total.'</td>';
 			print '<td></td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		?>

@@ -32,19 +32,19 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","admin","contracts"));
+$langs->loadLangs(array("companies", "admin", "contracts"));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='contrat';  //Must be the $element of the class that manage extrafield
+$action = GETPOST('action', 'alpha');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'contrat'; //Must be the $element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -65,10 +65,10 @@ $textobject = $langs->transnoentitiesnoconv('Contracts');
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ContractsSetup"), $linkback, 'title_setup');
 
-$head=contract_admin_prepare_head();
+$head = contract_admin_prepare_head();
 
 dol_fiche_head($head, 'attributes', $langs->trans("Contracts"), -1, 'contract');
 
@@ -80,9 +80,9 @@ dol_fiche_end();
 // Buttons
 if ($action != 'create' && $action != 'edit')
 {
-    print '<div class="tabsAction">';
-    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
-    print "</div>";
+	print '<div class="tabsAction">';
+	print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
+	print "</div>";
 }
 
 
@@ -95,9 +95,9 @@ if ($action != 'create' && $action != 'edit')
 if ($action == 'create')
 {
 	print '<br><div name="topofform" id="newattrib"></div>';
-    print load_fiche_titre($langs->trans('NewAttribute'));
+	print load_fiche_titre($langs->trans('NewAttribute'));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /* ************************************************************************** */
@@ -105,12 +105,12 @@ if ($action == 'create')
 /* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
+if ($action == 'edit' && !empty($attrname))
 {
 	print '<div name="topofform"></div><br>';
-    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
-    require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
+	require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
 llxFooter();

@@ -71,12 +71,12 @@ class ProductCombination
 	 */
 	public $entity;
 
-    /**
-     * Constructor
-     *
-     * @param   DoliDB $db     Database handler
-     */
-    public function __construct(DoliDB $db)
+	/**
+	 * Constructor
+	 *
+	 * @param   DoliDB $db     Database handler
+	 */
+	public function __construct(DoliDB $db)
 	{
 		global $conf;
 
@@ -189,16 +189,16 @@ class ProductCombination
 	 */
 	public function countNbOfCombinationForFkProductParent($fk_product_parent)
 	{
-	    $nb = 0;
-	    $sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product').")";
+		$nb = 0;
+		$sql = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_parent = ".(int) $fk_product_parent." AND entity IN (".getEntity('product').")";
 
-	    $resql = $this->db->query($sql);
-	    if ($resql) {
-	        $obj = $this->db->fetch_object($resql);
-	        if ($obj) $nb = $obj->nb;
-	    }
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			if ($obj) $nb = $obj->nb;
+		}
 
-	    return $nb;
+		return $nb;
 	}
 
 	/**
@@ -326,19 +326,28 @@ class ProductCombination
 
 		$child = new Product($this->db);
 		$child->fetch($this->fk_product_child);
+
 		$child->price_autogen = $parent->price_autogen;
-		$child->weight = $parent->weight + $this->variation_weight;
-		$child->weight_units = $parent->weight_units;
-		$varlabel = $this->getCombinationLabel($this->fk_product_child);
-		$child->label = $parent->label.$varlabel;
+		$child->weight = $parent->weight;
+		if ($this->variation_weight) {	// If we must add a delta on weight
+			$child->weight = ($child->weight ? $child->weight : 0) + $this->variation_weight;
+		}
+		$child->weight_units    = $parent->weight_units;
+
+		// Don't update the child label if the user has already modified it.
+		if ($child->label == $parent->label) {
+			// This will trigger only at variant creation time
+			$varlabel               = $this->getCombinationLabel($this->fk_product_child);
+			$child->label           = $parent->label.$varlabel;;
+		}
 
 		if ($child->update($child->id, $user) > 0) {
 			$new_vat = $parent->tva_tx;
 			$new_npr = $parent->tva_npr;
 
 			// MultiPrix
-			if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
-				for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
 					if ($parent->multiprices[$i] != '') {
 						$new_type = $parent->multiprices_base_type[$i];
@@ -502,9 +511,10 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	 * @param bool $price_var_percent Is the price variation a relative variation?
 	 * @param bool|float $forced_pricevar If the price variation is forced
 	 * @param bool|float $forced_weightvar If the weight variation is forced
+	 * @param bool|string $forced_refvar If the reference is forced
 	 * @return int <0 KO, >0 OK
 	 */
-	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false)
+	public function createProductCombination(User $user, Product $product, array $combinations, array $variations, $price_var_percent = false, $forced_pricevar = false, $forced_weightvar = false, $forced_refvar = false)
 	{
 		global $db, $conf;
 
@@ -513,21 +523,29 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 		$db->begin();
 
-		$newproduct = clone $product;
+		$forced_refvar = trim($forced_refvar);
+
+		if (!empty($forced_refvar) && $forced_refvar != $product->ref) {
+			$existingProduct = new Product($db);
+			$result = $existingProduct->fetch('', $forced_refvar);
+			if ($result > 0) {
+				$newproduct = $existingProduct;
+			} else {
+				$existingProduct = false;
+				$newproduct = clone $product;
+				$newproduct->ref = $forced_refvar;
+			}
+		} else {
+			$forced_refvar = false;
+			$existingProduct = false;
+			$newproduct = clone $product;
+		}
 
 		//Final weight impact
-		$weight_impact = $forced_weightvar;
-
-		if ($forced_weightvar === false) {
-			$weight_impact = 0;
-		}
+		$weight_impact = (float) $forced_weightvar;	// If false, return 0
 
 		//Final price impact
-		$price_impact = $forced_pricevar;
-
-		if ($forced_pricevar === false) {
-			$price_impact = 0;
-		}
+		$price_impact = (float) $forced_pricevar;	// If false, return 0
 
 		$newcomb = new ProductCombination($db);
 		$existingCombination = $newcomb->fetchByProductCombination2ValuePairs($product->id, $combinations);
@@ -536,7 +554,6 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 			$newcomb = $existingCombination;
 		} else {
 			$newcomb->fk_product_parent = $product->id;
-
 			if ($newcomb->create($user) < 0) {		// Create 1 entry into product_attribute_combination (1 entry for all combinations)
 				$db->rollback();
 				return -1;
@@ -573,10 +590,12 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				$price_impact += (float) price2num($variations[$currcombattr][$currcombval]['price']);
 			}
 
-			if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-			    $newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR . $prodattrval->ref;
-			} else {
-			    $newproduct->ref .= '_'.$prodattrval->ref;
+			if ($forced_refvar === false) {
+				if (isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+					$newproduct->ref .= $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR.$prodattrval->ref;
+				} else {
+					$newproduct->ref .= '_'.$prodattrval->ref;
+				}
 			}
 
 			//The first one should not contain a linebreak
@@ -592,58 +611,65 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 		$newproduct->weight += $weight_impact;
 
-		//To avoid wrong information in price history log
-		$newproduct->price = 0;
-		$newproduct->price_ttc = 0;
-		$newproduct->price_min = 0;
-		$newproduct->price_min_ttc = 0;
-
-		// A new variant must use a new barcode (not same product)
-		$newproduct->barcode = -1;
-
 		// Now create the product
 		//print 'Create prod '.$newproduct->ref.'<br>'."\n";
-		$newprodid = $newproduct->create($user);
-		if ($newprodid < 0)
-		{
-			//In case the error is not related with an already existing product
-			if ($newproduct->error != 'ErrorProductAlreadyExists') {
-			    $this->error[] = $newproduct->error;
-			    $this->errors = $newproduct->errors;
+		if ($existingProduct === false) {
+			//To avoid wrong information in price history log
+			$newproduct->price = 0;
+			$newproduct->price_ttc = 0;
+			$newproduct->price_min = 0;
+			$newproduct->price_min_ttc = 0;
+
+			// A new variant must use a new barcode (not same product)
+			$newproduct->barcode = -1;
+			$result = $newproduct->create($user);
+
+			if ($result < 0)
+			{
+				//In case the error is not related with an already existing product
+				if ($newproduct->error != 'ErrorProductAlreadyExists') {
+					$this->error[] = $newproduct->error;
+					$this->errors = $newproduct->errors;
+					$db->rollback();
+					return -1;
+				}
+
+				/**
+				 * If there is an existing combination, then we update the prices and weight
+				 * Otherwise, we try adding a random number to the ref
+				 */
+
+				if ($newcomb->fk_product_child) {
+					$res = $newproduct->fetch($existingCombination->fk_product_child);
+				} else {
+					$orig_prod_ref = $newproduct->ref;
+					$i = 1;
+
+					do {
+						$newproduct->ref = $orig_prod_ref.$i;
+						$res = $newproduct->create($user);
+
+						if ($newproduct->error != 'ErrorProductAlreadyExists') {
+							$this->errors[] = $newproduct->error;
+							break;
+						}
+
+						$i++;
+					} while ($res < 0);
+				}
+
+				if ($res < 0) {
+					$db->rollback();
+					return -1;
+				}
+			}
+		} else {
+			$result = $newproduct->update($newproduct->id, $user);
+			if ($result < 0)
+			{
 				$db->rollback();
 				return -1;
 			}
-
-			/**
-			 * If there is an existing combination, then we update the prices and weight
-			 * Otherwise, we try adding a random number to the ref
-			 */
-
-			if ($newcomb->fk_product_child) {
-				$res = $newproduct->fetch($existingCombination->fk_product_child);
-			} else {
-				$orig_prod_ref = $newproduct->ref;
-				$i = 1;
-
-				do {
-					$newproduct->ref = $orig_prod_ref.$i;
-					$res = $newproduct->create($user);
-
-					if ($newproduct->error != 'ErrorProductAlreadyExists') {
-					    $this->errors[] = $newproduct->error;
-						break;
-					}
-
-					$i++;
-				} while ($res < 0);
-			}
-
-			if ($res < 0) {
-				$db->rollback();
-				return -1;
-			}
-
-			$newproduct->weight += $weight_impact;
 		}
 
 		$newcomb->fk_product_child = $newproduct->id;
@@ -658,14 +684,14 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 		return $newproduct->id;
 	}
 
-    /**
-     * Copies all product combinations from the origin product to the destination product
-     *
+	/**
+	 * Copies all product combinations from the origin product to the destination product
+	 *
 	 * @param 	User 	$user	Object user
-     * @param   int     $origProductId  Origin product id
-     * @param   Product $destProduct    Destination product
-     * @return  int                     >0 OK <0 KO
-     */
+	 * @param   int     $origProductId  Origin product id
+	 * @param   Product $destProduct    Destination product
+	 * @return  int                     >0 OK <0 KO
+	 */
 	public function copyAll(User $user, $origProductId, Product $destProduct)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
@@ -687,7 +713,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				$variations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
 			}
 
-            if ($this->createProductCombination(
+			if ($this->createProductCombination(
 				$user,
 				$destProduct,
 				$variations,
@@ -695,7 +721,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 				$combination->variation_price_percentage,
 				$combination->variation_price,
 				$combination->variation_weight
-			) < 0)
+				) < 0)
 			{
 				return -1;
 			}
@@ -713,10 +739,10 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 	{
 		$label = '';
 		$sql = 'SELECT pav.value AS label';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
-		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
-		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
-		$sql.= ' WHERE pac.fk_product_child='.$prod_child;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'product_attribute_combination pac';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_combination2val pac2v ON pac2v.fk_prod_combination=pac.rowid';
+		$sql .= ' INNER JOIN '.MAIN_DB_PREFIX.'product_attribute_value pav ON pav.rowid=pac2v.fk_prod_attr_val';
+		$sql .= ' WHERE pac.fk_product_child='.$prod_child;
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -730,7 +756,7 @@ WHERE c.fk_product_parent = ".(int) $productid." AND p.tosell = 1";
 
 				if ($obj->label)
 				{
-					$label.=' '.$obj->label;
+					$label .= ' '.$obj->label;
 				}
 				$i++;
 			}

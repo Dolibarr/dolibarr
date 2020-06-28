@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
- *	\brief      Page de traduction des produits
+ *	\brief      Page of translation of products
  */
 
 require '../main.inc.php';
@@ -36,18 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 $langs->loadLangs(array('categories', 'languages'));
 
 $id     = GETPOST('id', 'int');
-$ref    = GETPOST('ref', 'alpha');
+$label  = GETPOST('label', 'alpha');
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $type   = GETPOST('type', 'aZ09');
 
-if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
-
-// Security check
-$fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
-$fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-
-if ($id == "")
+if ($id == '' && $label == '')
 {
 	dol_print_error('', 'Missing parameter id');
 	exit();
@@ -57,7 +51,16 @@ if ($id == "")
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
 $object = new Categorie($db);
+$result = $object->fetch($id, $label, $type);
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
+$object->fetch_optionals();
+if ($result <= 0) {
+	dol_print_error($db, $object->error); exit;
+}
 
+if (is_numeric($type)) $type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
 
 /*
  * Actions
@@ -159,28 +162,18 @@ $cancel != $langs->trans("Cancel") &&
     }
 }
 
-$result = $object->fetch($id, $ref);
-
 
 /*
  * View
  */
 
-llxHeader("", "", $langs->trans("Translation"));
-
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 $formother = new FormOther($db);
 
-if ($type == Categorie::TYPE_PRODUCT)       $title = $langs->trans("ProductsCategoryShort");
-elseif ($type == Categorie::TYPE_SUPPLIER)  $title = $langs->trans("SuppliersCategoryShort");
-elseif ($type == Categorie::TYPE_CUSTOMER)  $title = $langs->trans("CustomersCategoryShort");
-elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCategoryShort");
-elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
-elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
-elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
-elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
-else                                        $title = $langs->trans("Category");
+llxHeader("", "", $langs->trans("Translation"));
+
+$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
 
@@ -194,27 +187,26 @@ if (!empty($object->multilangs))
     }
 }
 
-dol_fiche_head($head, 'translation', $title, -1, 'category');
+dol_fiche_head($head, 'translation', $langs->trans($title), -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-
+$object->next_prev_filter = ' type = '.$object->type;
 $object->ref = $object->label;
 $morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
-foreach ($ways as $way)
-{
+foreach ($ways as $way) {
     $morehtmlref .= $way."<br>\n";
 }
 $morehtmlref .= '</div>';
 
-dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 print '<br>';
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border centpercent">';
+print '<table class="border centpercent tableforfield">';
 
 // Description
 print '<tr><td class="titlefield notopnoleft">';
@@ -299,8 +291,7 @@ if ($action == 'edit')
 	print '</div>';
 
 	print '</form>';
-}
-elseif ($action != 'add')
+} elseif ($action != 'add')
 {
     if ($cnt_trans) print '<div class="underbanner clearboth"></div>';
 

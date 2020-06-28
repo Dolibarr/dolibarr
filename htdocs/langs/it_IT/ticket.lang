@@ -130,6 +130,10 @@ TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketGroup=Gruppo
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
@@ -203,7 +207,7 @@ TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of th
 TicketMessageMailSignature=Firma
 TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
 TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
-TicketMessageMailSignatureLabelAdmin=Signature of response email
+TicketMessageMailSignatureLabelAdmin=Firma dell'email di risposta
 TicketMessageMailSignatureHelpAdmin=Questo testo verrà inserito dopo il messaggio di risposta
 TicketMessageHelp=Only this text will be saved in the message list on ticket card.
 TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
@@ -219,8 +223,8 @@ MarkMessageAsPrivate=Mark message as private
 TicketMessagePrivateHelp=This message will not display to external users
 TicketEmailOriginIssuer=Issuer at origin of the tickets
 InitialMessage=Initial Message
-LinkToAContract=Link to a contract
-TicketPleaseSelectAContract=Select a contract
+LinkToAContract=Collega ad un contratto
+TicketPleaseSelectAContract=Seleziona un contratto
 UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
 TicketMailExchanges=Mail exchanges
 TicketInitialMessageModified=Initial message modified

@@ -64,7 +64,7 @@ class Contact extends CommonObject
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>15),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>20),
@@ -86,9 +86,9 @@ class Contact extends CommonObject
 		'phone_mobile' =>array('type'=>'varchar(30)', 'label'=>'Phone mobile', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
 		'fax' =>array('type'=>'varchar(30)', 'label'=>'Fax', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'email' =>array('type'=>'varchar(255)', 'label'=>'Email', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
-		'socialnetworks' =>array('type'=>'text', 'label'=>'Socialnetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'socialnetworks' =>array('type'=>'text', 'label'=>'SocialNetworks', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
 		'photo' =>array('type'=>'varchar(255)', 'label'=>'Photo', 'enabled'=>1, 'visible'=>-1, 'position'=>170),
-		'priv' =>array('type'=>'smallint(6)', 'label'=>'Priv', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
+		'priv' =>array('type'=>'smallint(6)', 'label'=>'Private', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>175),
 		'no_email' =>array('type'=>'smallint(6)', 'label'=>'No email', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>180),
 		'fk_user_creat' =>array('type'=>'integer', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-1, 'position'=>185),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-1, 'position'=>190),
@@ -181,6 +181,10 @@ class Contact extends CommonObject
 	public $phone_mobile;
 	public $fax;
 
+	/**
+	 * Private or public
+	 * @var int
+	 */
 	public $priv;
 
 	public $birthday;
@@ -283,9 +287,7 @@ class Contact extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -310,9 +312,9 @@ class Contact extends CommonObject
 		// Clean parameters
 		$this->lastname = $this->lastname ?trim($this->lastname) : trim($this->name);
         $this->firstname = trim($this->firstname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords(strtolower($this->lastname));
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(strtolower($this->firstname));
         if (empty($this->socid)) $this->socid = 0;
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
@@ -354,7 +356,7 @@ class Contact extends CommonObject
 
 			if (!$error)
 			{
-                $result = $this->update($this->id, $user, 1, 'add');	// This include updateRoles(), ...
+                $result = $this->update($this->id, $user, 1, 'add'); // This include updateRoles(), ...
                 if ($result < 0)
                 {
                     $error++;
@@ -384,16 +386,12 @@ class Contact extends CommonObject
             {
                 $this->db->commit();
                 return $this->id;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
                 dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
                 return -2;
             }
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 
 			$this->db->rollback();
@@ -423,9 +421,9 @@ class Contact extends CommonObject
 		$this->entity = ((isset($this->entity) && is_numeric($this->entity)) ? $this->entity : $conf->entity);
 
 		// Clean parameters
-		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords($this->lastname);
+		if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->lastname = ucwords(strtolower($this->lastname));
 		if (!empty($conf->global->MAIN_ALL_TO_UPPER)) $this->lastname = strtoupper($this->lastname);
-        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords($this->firstname);
+        if (!empty($conf->global->MAIN_FIRST_TO_UPPER)) $this->firstname = ucwords(strtolower($this->firstname));
 
 		$this->lastname = trim($this->lastname) ?trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
@@ -485,7 +483,7 @@ class Contact extends CommonObject
 		    $action = 'update';
 
 		    // Actions on extra fields
-		    if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+		    if (!$error)
 		    {
 		    	$result = $this->insertExtraFields();
 		    	if ($result < 0)
@@ -592,16 +590,12 @@ class Contact extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
             $this->db->rollback();
 			return -1;
@@ -757,14 +751,10 @@ class Contact extends CommonObject
                     $error++;
                     $this->error = $this->db->lasterror();
 				}
-			}
-			else
-			{
+			} else {
 				$result = true;
 			}
-		}
-		else
-		{
+		} else {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
 			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
@@ -787,9 +777,7 @@ class Contact extends CommonObject
 		{
 		    $this->db->commit();
 		    return 1;
-		}
-		else
-		{
+		} else {
 		    dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 		    $this->db->rollback();
 		    return -$error;
@@ -798,19 +786,18 @@ class Contact extends CommonObject
 
 
 	/**
-	 *  Load object contact
+	 *  Load object contact.
 	 *
-	 *  @param      int		$id         id du contact
-	 *  @param      User	$user       Utilisateur (abonnes aux alertes) qui veut les alertes de ce contact
-     *  @param      string  $ref_ext    External reference, not given by Dolibarr
-     *  @param		string	$email		Email
-	 *  @return     int     		    -1 if KO, 0 if OK but not found, 1 if OK
+	 *  @param      int		$id         	Id of contact
+	 *  @param      User	$user       	Load also alerts of this user (subscribing to alerts) that want alerts about this contact
+     *  @param      string  $ref_ext    	External reference, not given by Dolibarr
+     *  @param		string	$email			Email
+     *  @param		int		$loadalsoroles	Load also roles
+	 *  @return     int     		    	>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($id, $user = null, $ref_ext = '', $email = '')
+	public function fetch($id, $user = null, $ref_ext = '', $email = '', $loadalsoroles = 0)
 	{
 		global $langs;
-
-        $langs->load("dict");
 
 		dol_syslog(get_class($this)."::fetch id=".$id." ref_ext=".$ref_ext." email=".$email, LOG_DEBUG);
 
@@ -820,7 +807,7 @@ class Contact extends CommonObject
 			return -1;
 		}
 
-		$langs->load("companies");
+		$langs->loadLangs(array("dict", "companies"));
 
 		$sql = "SELECT c.rowid, c.entity, c.fk_soc, c.ref_ext, c.civility as civility_code, c.lastname, c.firstname,";
 		$sql .= " c.address, c.statut, c.zip, c.town,";
@@ -843,8 +830,7 @@ class Contact extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql .= " WHERE c.rowid = ".$id;
-		else
-		{
+		else {
 			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
 			if ($ref_ext) {
 				$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
@@ -857,7 +843,14 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if ($this->db->num_rows($resql))
+			$num = $this->db->num_rows($resql);
+			if ($num > 1)
+			{
+				$this->error = 'Fetch found several records. Rename one of contact to avoid duplicate.';
+				dol_syslog($this->error, LOG_ERR);
+
+				return 2;
+			} elseif ($num)   // $num = 1
 			{
 				$obj = $this->db->fetch_object($resql);
 
@@ -931,14 +924,16 @@ class Contact extends CommonObject
 						$this->user_id = $uobj->rowid;
 					}
 					$this->db->free($resql);
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->error();
 					return -1;
 				}
 
-				// Charge alertes du user
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
+
+				// Load also alerts of this user
 				if ($user)
 				{
 					$sql = "SELECT fk_user";
@@ -955,33 +950,26 @@ class Contact extends CommonObject
 							$this->birthday_alert = 1;
 						}
 						$this->db->free($resql);
-					}
-					else
-					{
+					} else {
 						$this->error = $this->db->error();
 						return -1;
 					}
 				}
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-
-				$resultRole = $this->fetchRoles();
-				if ($resultRole < 0) {
-					return $resultRole;
+				// Load also roles of this address
+				if ($loadalsoroles) {
+					$resultRole = $this->fetchRoles();
+					if ($resultRole < 0) {
+						return $resultRole;
+					}
 				}
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1002,8 +990,7 @@ class Contact extends CommonObject
 		if (in_array($this->civility_id, array('MR')) || in_array($this->civility_code, array('MR')))
 		{
 			$this->gender = 'man';
-		}
-		elseif(in_array($this->civility_id, array('MME','MLE')) || in_array($this->civility_code, array('MME','MLE')))
+		} elseif (in_array($this->civility_id, array('MME', 'MLE')) || in_array($this->civility_code, array('MME', 'MLE')))
 		{
 			$this->gender = 'woman';
 		}
@@ -1047,9 +1034,7 @@ class Contact extends CommonObject
 			}
 			$this->db->free($resql);
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1101,9 +1086,7 @@ class Contact extends CommonObject
 
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$this->error = $this->db->error().' sql='.$sql;
 			}
@@ -1151,7 +1134,7 @@ class Contact extends CommonObject
 		}
 
 		// Removed extrafields
-        if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) {
+        if (!$error) {
             // For avoid conflicts if trigger used
 			$result = $this->deleteExtraFields();
 			if ($result < 0) $error++;
@@ -1169,9 +1152,7 @@ class Contact extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			dol_syslog("Error ".$this->error, LOG_ERR);
 			return -1;
@@ -1218,9 +1199,7 @@ class Contact extends CommonObject
 			}
 
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 		}
 	}
@@ -1245,9 +1224,7 @@ class Contact extends CommonObject
 
 			$this->db->free($resql);
 			return $nb;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1278,7 +1255,7 @@ class Contact extends CommonObject
 			$label .= '</div><div style="clear: both;"></div>';
 		}
 
-        $label .= '<u>'.$langs->trans("ShowContact").'</u>';
+        $label .= '<u>'.$langs->trans("Contact").'</u>';
         $label .= '<br><b>'.$langs->trans("Name").':</b> '.$this->getFullName($langs);
         //if ($this->civility_id) $label.= '<br><b>' . $langs->trans("Civility") . ':</b> '.$this->civility_id;		// TODO Translate cibilty_id code
         if (!empty($this->poste)) $label .= '<br><b>'.$langs->trans("Poste").':</b> '.$this->poste;
@@ -1331,7 +1308,7 @@ class Contact extends CommonObject
 		}
 
 		$result .= $linkstart;
-		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
 		if ($withpicto != 2) $result .= ($maxlen ?dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs));
 		$result .= $linkend;
 
@@ -1508,9 +1485,7 @@ class Contact extends CommonObject
 		{
 			$this->db->rollback();
 			return -$error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1580,7 +1555,7 @@ class Contact extends CommonObject
 	}
 
 	/**
-	 * Fetch Role for a contact
+	 * Fetch Roles for a contact
 	 *
 	 * @return float|int
 	 * @throws Exception
@@ -1592,7 +1567,7 @@ class Contact extends CommonObject
 		$num = 0;
 
 		$sql = "SELECT tc.rowid, tc.element, tc.source, tc.code, tc.libelle, sc.rowid as contactroleid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe_contacts as sc";
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_type_contact as tc";
 		$sql .= " ON tc.rowid = sc.fk_c_type_contact";
 		$sql .= " AND sc.fk_socpeople = ".$this->id;
@@ -1663,9 +1638,7 @@ class Contact extends CommonObject
 			}
 
 			return $tab;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			dol_print_error($this->db);
 			return -1;

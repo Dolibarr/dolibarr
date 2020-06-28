@@ -126,9 +126,7 @@ if (GETPOST('addfilter', 'alpha'))
 	if ($result > 0)
 	{
 		$object->fetchFilters();
-	}
-	else
-	{
+	} else {
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
 	}
 }
@@ -141,9 +139,7 @@ if ($action == 'deletefilter')
 	if ($result > 0)
 	{
 		$object->fetchFilters();
-	}
-	else
-	{
+	} else {
 		setEventMessages($emailcollectorfilter->errors, $emailcollectorfilter->error, 'errors');
 	}
 }
@@ -162,9 +158,7 @@ if (GETPOST('addoperation', 'alpha'))
 	if ($result > 0)
 	{
 		$object->fetchActions();
-	}
-	else
-	{
+	} else {
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
@@ -181,9 +175,7 @@ if ($action == 'updateoperation')
     if ($result > 0)
     {
         $object->fetchActions();
-    }
-    else
-    {
+    } else {
         setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
     }
 }
@@ -195,9 +187,7 @@ if ($action == 'deleteoperation')
 	if ($result > 0)
 	{
 		$object->fetchActions();
-	}
-	else
-	{
+	} else {
 		setEventMessages($emailcollectoroperation->errors, $emailcollectoroperation->error, 'errors');
 	}
 }
@@ -211,9 +201,7 @@ if ($action == 'confirm_collect')
 	{
 	    $debuginfo = $object->debuginfo;
 	    setEventMessages($object->lastresult, null, 'mesgs');
-	}
-	else
-	{
+	} else {
 	    $debuginfo = $object->debuginfo;
 	    setEventMessages($object->error, null, 'errors');
 	}
@@ -231,7 +219,9 @@ if ($action == 'confirm_collect')
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-llxHeader('', 'EmailCollector', '');
+$help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
+
+llxHeader('', 'EmailCollector', $help_url);
 
 // Example : Adding jquery code
 print '<script type="text/javascript" language="javascript">
@@ -430,25 +420,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			$connection = imap_open($connectstringsource, $object->login, $object->password);
-		}
-		catch (Exception $e)
+		} catch (Exception $e)
 		{
 			print $e->getMessage();
 		}
 
 		$morehtml .= $form->textwithpicto('', 'connect string '.$connectstringserver);
-	}
-	else
-	{
+	} else {
 		$morehtml .= 'IMAP functions not available on your PHP';
 	}
 
 	if (!$connection)
 	{
 		$morehtml .= 'Failed to open IMAP connection '.$connectstringsource;
-	}
-	else
-	{
+	} else {
 		$morehtml .= imap_num_msg($connection);
 	}
 
@@ -481,7 +466,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	// Filters
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
 	print '</tr>';
@@ -560,7 +545,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<div class="clearboth"></div><br>';
 
 	// Operations
-	print '<table id="tablelines" class="noborder noshadow">';
+	print '<table id="tablelines" class="noborder noshadow tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td><td></td>';
 	print '</tr>';
@@ -573,12 +558,23 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) $arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
+
+	// support hook for add action
+	$parameters = array('arrayoftypes' => $arrayoftypes);
+	$res = $hookmanager->executeHooks('addMoreActionsEmailCollector', $parameters, $object, $action);
+
+	if ($res)
+		$arrayoftypes = $hookmanager->resArray;
+	else foreach ($hookmanager->resArray as $k=>$desc)
+			$arrayoftypes[$k] = $desc;
+
+
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300');
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
 	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
 	//var_dump($htmltext);
-	print $form->textwithpicto('', $htmltext);
+	print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
 	print '<td></td>';
 	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
@@ -600,8 +596,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (in_array($ruleaction['type'], array('recordevent')))
 		{
             print $form->textwithpicto('', $langs->transnoentitiesnoconv('IfTrackingIDFoundEventWillBeLinked'));
-		}
-		elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
+		} elseif (in_array($ruleaction['type'], array('loadthirdparty', 'loadandcreatethirdparty'))) {
 			print $form->textwithpicto('', $langs->transnoentitiesnoconv('EmailCollectorLoadThirdPartyHelp'));
 		}
 		print '</td>';
@@ -611,9 +606,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		    print '<input type="text" class="quatrevingtquinzepercent" name="operationparam2" value="'.$ruleaction['actionparam'].'"><br>';
 		    print '<input type="hidden" name="rowidoperation2" value="'.$ruleaction['id'].'"><br>';
 		    print '<input type="submit" class="button" name="saveoperation2" value="'.$langs->trans("Save").'"> <input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-		}
-		else
-		{
+		} else {
 		    print $ruleaction['actionparam'];
 		}
 		print '</td>';
@@ -629,7 +622,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '</td>';
 		// Delete
 		print '<td class="right nowraponall">';
-		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
+		print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editoperation&operationid='.$ruleaction['id'].'">'.img_edit().'</a>';
 		print ' <a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteoperation&operationid='.$ruleaction['id'].'">'.img_delete().'</a>';
 		print '</td>';
 		print '</tr>';

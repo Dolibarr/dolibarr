@@ -32,7 +32,7 @@ VendorName=Nom del venedor
 CSSUrlForPaymentForm=Url del full d'estil CSS per al formulari de pagament
 NewStripePaymentReceived=S'ha rebut un nou pagament de Stripe
 NewStripePaymentFailed=S'ha intentat el pagament de Stripe però, ha fallat
-FailedToChargeCard=Failed to charge card
+FailedToChargeCard=No s'ha pogut fer el càrrec a la targeta
 STRIPE_TEST_SECRET_KEY=Clau secreta de test
 STRIPE_TEST_PUBLISHABLE_KEY=Clau de test publicable
 STRIPE_TEST_WEBHOOK_KEY=Clau de prova de Webhook
@@ -69,4 +69,4 @@ ToOfferALinkForTestWebhook=Enllaç a la configuració de Stripe WebHook per truc
 ToOfferALinkForLiveWebhook=Enllaç a la configuració de Stripe WebHook per trucar a l’IPN (mode en directe)
 PaymentWillBeRecordedForNextPeriod=El pagament es registrarà per al període següent.
 ClickHereToTryAgain=<a href="%s">Feu clic aquí per tornar-ho a provar ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=A causa de les fortes regles d'autenticació de clients, la creació d'una targeta s'ha de fer des del panell de Stripe. Podeu fer clic aquí per activar el registre de clients de Stripe: %s

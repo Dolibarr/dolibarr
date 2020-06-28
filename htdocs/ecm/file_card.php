@@ -33,6 +33,7 @@ $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal'
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 if (!$user->rights->ecm->setup) accessforbidden();
 
@@ -46,11 +47,12 @@ if ($user->socid > 0)
     $socid = $user->socid;
 }
 
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
@@ -112,9 +114,7 @@ if ($cancel)
     {
         header("Location: ".$backtopage);
         exit;
-    }
-    else
-    {
+    } else {
     	header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section).($module ? '&module='.urlencode($module) : ''));
         exit;
     }
@@ -175,9 +175,7 @@ if ($action == 'update')
 		{
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$object->share = getRandomPassword(true);
-		}
-		else
-		{
+		} else {
 			$object->share = '';
 		}
 
@@ -189,9 +187,7 @@ if ($action == 'update')
 			{
 				setEventMessages($object->error, $object->errors, 'warnings');
 			}
-		}
-		else
-		{
+		} else {
 			// Call create to insert record
 			$object->entity = $conf->entity;
 			$object->filepath = preg_replace('/[\\/]+$/', '', $newdirrelativetodocument);
@@ -221,9 +217,7 @@ if ($action == 'update')
 
         header('Location: '.$_SERVER["PHP_SELF"].'?urlfile='.urlencode($urlfile).'&section='.urlencode($section));
         exit;
-    }
-    else
-    {
+    } else {
         $db->rollback();
     }
 }
@@ -267,9 +261,7 @@ while ($tmpecmdir && $result > 0)
 	{
 		$s = ' -> '.$s;
 		$result = $tmpecmdir->fetch($tmpecmdir->fk_parent);
-	}
-	else
-	{
+	} else {
 		$tmpecmdir = 0;
 	}
 	$i++;
@@ -281,10 +273,13 @@ $s = img_picto('', 'object_dir').' <a href="'.DOL_URL_ROOT.'/ecm/index.php">'.$l
 if ($action == 'edit') $s .= '<input type="text" name="label" class="quatrevingtpercent" value="'.$urlfiletoshow.'">';
 else $s .= $urlfiletoshow;
 
-$morehtml = '';
+$linkback = '';
+if ($backtopage) {
+	$linkback = '<a href="'.$backtopage.'">'.$langs->trans("BackToTree").'</a>';
+}
 
 $object->ref = ''; // Force to hide ref
-dol_banner_tab($object, '', $morehtml, 0, '', '', $s);
+dol_banner_tab($object, '', $linkback, 0, '', '', $s);
 
 print '<div class="fichecenter">';
 
@@ -311,9 +306,7 @@ $object->fetch(0, '', $filepathtodocument);
 if (!empty($object->label))
 {
 	print $object->label;
-}
-else
-{
+} else {
 	print img_warning().' '.$langs->trans("FileNotYetIndexedInDatabase");
 }
 print '</td></tr>';
@@ -361,20 +354,14 @@ if (!empty($object->share))
 		if ($action != 'edit') print '<input type="text" class="quatrevingtpercent" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		else print $fulllink;
 		if ($action != 'edit') print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here
-	}
-	else
-	{
+	} else {
 		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
-}
-else
-{
+} else {
 	if ($action != 'edit')
 	{
 		print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
-	}
-	else
-	{
+	} else {
 		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
 	}
 }

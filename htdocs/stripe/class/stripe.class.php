@@ -95,8 +95,7 @@ class Stripe extends CommonObject
 		$sql .= " AND service = '".$mode."'";
 		if ($fk_soc > 0) {
 			$sql .= " AND fk_soc = ".$fk_soc;
-		}
-		else {
+		} else {
 			$sql .= " AND fk_soc IS NULL";
 		}
 		$sql .= " AND fk_user IS NULL AND fk_adherent IS NULL";
@@ -113,8 +112,7 @@ class Stripe extends CommonObject
     		} else {
     			$tokenstring = '';
     		}
-    	}
-    	else {
+    	} else {
     		dol_print_error($this->db);
     	}
 
@@ -139,7 +137,8 @@ class Stripe extends CommonObject
 
 
 	/**
-	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet)
+	 * Get the Stripe customer of a thirdparty (with option to create it if not linked yet).
+	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
 	 * @param	Societe	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity)
 	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
@@ -188,14 +187,12 @@ class Stripe extends CommonObject
 					} else {
 						$customer = \Stripe\Customer::retrieve("$tiers", array("stripe_account" => $key));
 					}
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					// For exemple, we may have error: 'No such customer: cus_XXXXX; a similar object exists in live mode, but a test mode key was used to make this request.'
 					$this->error = $e->getMessage();
 				}
-			}
-			elseif ($createifnotlinkedtostripe)
+			} elseif ($createifnotlinkedtostripe)
 			{
 			    $ipaddress = getUserRemoteIP();
 
@@ -246,22 +243,19 @@ class Stripe extends CommonObject
 					}
 
 					// Create customer in Dolibarr
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
+					$sql .= " VALUES (".$object->id.", '', '".$this->db->escape($customer->id)."', 'stripe', '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."', ".$status.", ".$conf->entity.", '".$this->db->idate(dol_now())."', ".$user->id.")";
 					$resql = $this->db->query($sql);
 					if (!$resql)
 					{
 						$this->error = $this->db->lasterror();
 					}
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -289,8 +283,7 @@ class Stripe extends CommonObject
 			} else {
 				$stripepaymentmethod = \Stripe\PaymentMethod::retrieve(''.$paymentmethod->id.'', array("stripe_account" => $key));
 			}
-		}
-		catch (Exception $e)
+		} catch (Exception $e)
 		{
 			$this->error = $e->getMessage();
 		}
@@ -416,7 +409,8 @@ class Stripe extends CommonObject
     			"currency" => $currency_code,
     		    "payment_method_types" => array("card"),
     		    "description" => $description,
-    		    "statement_descriptor" => dol_trunc($tag, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+    		    "statement_descriptor_suffix" => dol_trunc($tag, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+    			//"save_payment_method" => true,
 				"setup_future_usage" => "on_session",
     			"metadata" => $metadata
     		);
@@ -479,8 +473,7 @@ class Stripe extends CommonObject
     						$obj = $this->db->fetch_object($resql);
     						if ($obj) $paymentintentalreadyexists++;
     					}
-    				}
-    				else dol_print_error($this->db);
+    				} else dol_print_error($this->db);
 
     				// If not, we create it.
     				if (!$paymentintentalreadyexists)
@@ -496,20 +489,16 @@ class Stripe extends CommonObject
 	                        dol_syslog(get_class($this)."::PaymentIntent failed to insert paymentintent with id=".$paymentintent->id." into database.");
 	    				}
     				}
-    			}
-    			else
-    			{
+    			} else {
     			    $_SESSION["stripe_payment_intent"] = $paymentintent;
     			}
-    		}
-    		catch (Stripe\Error\Card $e)
+    		} catch (Stripe\Error\Card $e)
     		{
     			$error++;
     			$this->error = $e->getMessage();
     			$this->code = $e->getStripeCode();
     			$this->declinecode = $e->getDeclineCode();
-    		}
-    		catch (Exception $e)
+    		} catch (Exception $e)
     		{
     		    /*var_dump($dataforintent);
     		    var_dump($description);
@@ -529,9 +518,7 @@ class Stripe extends CommonObject
 		if (!$error)
 		{
 			return $paymentintent;
-		}
-		else
-		{
+		} else {
 			return null;
 		}
 	}
@@ -559,7 +546,7 @@ class Stripe extends CommonObject
 	{
 		global $conf;
 
-		dol_syslog("getSetupIntent", LOG_INFO, 1);
+		dol_syslog("getSetupIntent description=".$description.' confirmnow='.$confirmnow, LOG_INFO, 1);
 
 		$error = 0;
 
@@ -601,6 +588,8 @@ class Stripe extends CommonObject
 				global $stripearrayofkeysbyenv;
 				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
 
+				dol_syslog("getSetupIntent ".$stripearrayofkeysbyenv[$status]['publishable_key'], LOG_DEBUG);
+
 				// Note: If all data for payment intent are same than a previous on, even if we use 'create', Stripe will return ID of the old existing payment intent.
 				if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 					//$setupintent = \Stripe\SetupIntent::create($dataforintent, array("idempotency_key" => "$description"));
@@ -639,7 +628,7 @@ class Stripe extends CommonObject
 					{
 						$now=dol_now();
 						$sql = "INSERT INTO " . MAIN_DB_PREFIX . "prelevement_facture_demande (date_demande, fk_user_demande, ext_payment_id, fk_facture, sourcetype, entity, ext_payment_site)";
-						$sql .= " VALUES ('".$this->db->idate($now)."', '0', '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "')";
+						$sql .= " VALUES ('".$this->db->idate($now)."', ".$user->id.", '".$this->db->escape($setupintent->id)."', ".$object->id.", '".$this->db->escape($object->element)."', " . $conf->entity . ", '" . $service . "', ".$amount.")";
 						$resql = $this->db->query($sql);
 						if (! $resql)
 						{
@@ -653,8 +642,7 @@ class Stripe extends CommonObject
 				{
 					$_SESSION["stripe_setup_intent"] = $setupintent;
 				}*/
-			}
-			catch (Exception $e)
+			} catch (Exception $e)
 			{
 				/*var_dump($dataforintent);
 				 var_dump($description);
@@ -666,14 +654,12 @@ class Stripe extends CommonObject
 			}
 		}
 
-		dol_syslog("getSetupIntent return error=".$error, LOG_INFO, -1);
-
 		if (!$error)
 		{
+			dol_syslog("getSetupIntent ".(is_object($setupintent) ? $setupintent->id : ''), LOG_INFO, -1);
 			return $setupintent;
-		}
-		else
-		{
+		} else {
+			dol_syslog("getSetupIntent return error=".$error, LOG_INFO, -1);
 			return null;
 		}
 	}
@@ -716,9 +702,7 @@ class Stripe extends CommonObject
 							if (!preg_match('/^pm_/', $cardref))
 							{
 								$card = $cu->sources->retrieve($cardref);
-							}
-							else
-							{
+							} else {
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						} else {
@@ -726,20 +710,17 @@ class Stripe extends CommonObject
 							{
 								//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
 								$card = $cu->sources->retrieve($cardref);
-							}
-							else {
+							} else {
 								//$card = \Stripe\PaymentMethod::retrieve($cardref, array("stripe_account" => $stripeacc));		// Don't know if this works
 								$card = \Stripe\PaymentMethod::retrieve($cardref);
 							}
 						}
-					}
-					catch (Exception $e)
+					} catch (Exception $e)
 					{
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
-				}
-				elseif ($createifnotlinkedtostripe)
+				} elseif ($createifnotlinkedtostripe)
 				{
 					$exp_date_month = $obj->exp_date_month;
 					$exp_date_year = $obj->exp_date_year;
@@ -760,13 +741,11 @@ class Stripe extends CommonObject
 							{
 								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard);
-								if (! $card)
+								if (!$card)
 								{
 									$this->error = 'Creation of card on Stripe has failed';
 								}
-							}
-							else
-							{
+							} else {
 								$connect = '';
 								if (!empty($stripeacc)) $connect = $stripeacc.'/';
 								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
@@ -784,13 +763,11 @@ class Stripe extends CommonObject
 							{
 								dol_syslog("Try to create card with dataforcard = ".json_encode($dataforcard));
 								$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
-								if (! $card)
+								if (!$card)
 								{
 									$this->error = 'Creation of card on Stripe has failed';
 								}
-							}
-							else
-							{
+							} else {
 								$connect = '';
 								if (!empty($stripeacc)) $connect = $stripeacc.'/';
 								$url = 'https://dashboard.stripe.com/'.$connect.'test/customers/'.$cu->id;
@@ -819,17 +796,14 @@ class Stripe extends CommonObject
 								$this->error = $this->db->lasterror();
 							}
 						}
-					}
-					catch (Exception $e)
+					} catch (Exception $e)
 					{
 						$this->error = $e->getMessage();
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -939,9 +913,7 @@ class Stripe extends CommonObject
 					if ($paymentintent->status == 'succeeded')
 					{
 						$charge->status = 'ok';
-					}
-					else
-					{
+					} else {
 						$charge->status = 'failed';
 						$charge->failure_code = $stripe->code;
 						$charge->failure_message = $stripe->error;
@@ -950,13 +922,12 @@ class Stripe extends CommonObject
 						$stripefailuremessage = $stripe->error;
 						$stripefailuredeclinecode = $stripe->declinecode;
 					}
-				}
-				elseif (preg_match('/acct_/i', $source))
+				} elseif (preg_match('/acct_/i', $source))
 				{
                     $charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-                        "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+                        "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -966,7 +937,7 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-					    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+					    "statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 						"description" => "Stripe payment: ".$description,
 						"capture"  => $capture,
 						"metadata" => $metadata,
@@ -993,10 +964,10 @@ class Stripe extends CommonObject
 				if (!in_array($currency, $arrayzerounitcurrency)) $stripefee = round($fee * 100);
 				else $stripefee = round($fee);
 
-        		$paymentarray = array(
+				$paymentarray = array(
 					"amount" => "$stripeamount",
 					"currency" => "$currency",
-        		    "statement_descriptor" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
+				"statement_descriptor_suffix" => dol_trunc($description, 10, 'right', 'UTF-8', 1), // 22 chars that appears on bank receipt (company + description)
 					"description" => "Stripe payment: ".$description,
 					"capture"  => $capture,
 					"metadata" => $metadata,
@@ -1034,17 +1005,13 @@ class Stripe extends CommonObject
 					{
 						$charge->status = 'ok';
 						$charge->id = $paymentintent->id;
-					}
-					else
-					{
+					} else {
 						$charge->status = 'failed';
 						$charge->failure_code = $stripe->code;
 						$charge->failure_message = $stripe->error;
 						$charge->failure_declinecode = $stripe->declinecode;
 					}
-				}
-				else
-				{
+				} else {
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 				}
 			}
@@ -1056,9 +1023,7 @@ class Stripe extends CommonObject
 			if (preg_match('/pm_/i', $source))
 			{
 				$return->message = 'Payment retreived by card status = '.$charge->status;
-			}
-			else
-			{
+			} else {
 				if ($charge->source->type == 'card') {
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;
 				} elseif ($charge->source->type == 'three_d_secure') {

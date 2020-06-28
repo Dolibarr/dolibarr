@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=De volgende stappen kunnen in de toekomst een t
 AccountancyAreaDescActionFreq=De volgende werkzaamheden worden meestal elke maand, week of dagelijks uitgevoerd bij grote bedrijven....
 
 AccountancyAreaDescJournalSetup=STAP %s: Aanmaken of controleren journaal vanuit menu %s
-AccountancyAreaDescChartModel=STAP %s: Maak rekeningschema aan vanuit menu %s
-AccountancyAreaDescChart=STAP %s: Aanmaken of controleren van het rekeningschema menu %s
+AccountancyAreaDescChartModel=STAP %s: Controleer of er een rekeningschema bestaat of maak er een vanuit het menu %s
+AccountancyAreaDescChart=STAP %s: Selecteer en/of voltooi uw rekeningoverzicht vanuit menu %s
 
 AccountancyAreaDescVat=STAP %s: Vastleggen grootboekrekeningen voor BTW registratie. Gebruik hiervoor menukeuze %s. 
 AccountancyAreaDescDefault=STAP %s: standaard grootboekrekeningen vastleggen. Gebruik hiervoor het menu-item %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Gekoppelde factuurregels
 ExpenseReportLines=Te koppelen kostenboekingen
 ExpenseReportLinesDone=Gekoppelde kostenboekingen
 IntoAccount=Koppel regel aan grootboekrekening
+TotalForAccount=Totaal grootboekrekening
 
 
 Ventilate=Koppelen
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Grootboeknummer voor donaties
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Grootboekrekening om abonnementen te registreren
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standaard grootboekrekening voor de gekochte producten (gebruikt indien niet gedefinieerd in de productfiche)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte producten in de EEG (gebruikt indien niet gedefinieerd in het productblad)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Grootboekrekening standaard voor de gekochte producten en geïmporteerd uit de EEG (gebruikt indien niet gedefinieerd in het productblad)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standaard grootboekrekening omzet producten (indien niet opgegeven bij productgegevens)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standaard grootboekrekening voor de in EEG verkochte producten (gebruikt indien niet gedefinieerd bij de productgegevens)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standaard boekhoudrekening voor de producten die worden verkocht en uitgevoerd uit de EEG (gebruikt indien niet gedefinieerd bij de productgegevens)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standaard grootboekrekening inkoop diensten (indien niet opgegeven bij dienstgegevens)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Grootboekrekening standaard voor de gekochte services in EEC (gebruikt indien niet gedefinieerd in het serviceblad)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standaard grootboekrekening voor de gekochte services en geïmporteerd uit EEC (gebruikt indien niet gedefinieerd in het serviceblad)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standaard grootboekrekening omzet diensten (indien niet opgegeven bij dienstgegevens)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Standaard grootboekrekening voor de in EEG verkochte diensten (gebruikt indien niet gedefinieerd bij de servicegegevens)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Standaard grootboekrekening voor de diensten die worden verkocht en geëxporteerd uit EEG (gebruikt indien niet gedefinieerd in het serviceblad)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Onbekende relatie
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tegenrekening relatie niet gedefinieerd of relatie onbekend. Blokkeringsfout.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Onbekend account van derden en wachtaccount niet gedefinieerd. Blokkeerfout
 PaymentsNotLinkedToProduct=Betaling niet gekoppeld aan een product / dienst
+OpeningBalance=Begin balans
 ShowOpeningBalance=Toon beginsaldo
 HideOpeningBalance=Verberg beginsaldo
+ShowSubtotalByGroup=Totaal per groep
 
 Pcgtype=Rekening hoofdgroep
-PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Cluster grootboekrekeningen welke gebruikt worden als vooraf gedefinieerde 'filter'- en' groepeer'-criteria voor sommige boekhoudrapporten. 'INKOMEN' of 'UITGAVEN' worden bijvoorbeeld gebruikt als groepen voor boekhoudrekeningen van producten om het kosten- / inkomstenrapport samen te stellen.
+
+Reconcilable=Samentrekken
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Exporteren naar Quadratus QuadraCompta
 Modelcsv_ebp=Exporteren naar EBP
 Modelcsv_cogilog=Exporteren naar Cogilog
 Modelcsv_agiris=Exporteren naar Agiris
-Modelcsv_LDCompta=Exporteren naar LD Compta (v9 en hoger) (test)
+Modelcsv_LDCompta=Exporteren voor LD Compta (v9) (test)
+Modelcsv_LDCompta10=Exporteren voor LD Compta (v10 en hoger)
 Modelcsv_openconcerto=Exporteren voor OpenConcerto (test)
 Modelcsv_configurable=Configureerbare CSV export
 Modelcsv_FEC=FEC exporteren
 Modelcsv_Sage50_Swiss=Export voor Sage 50 Zwitserland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Rekeningschema Id
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=Instellingen verkopen
 OptionModeProductSellIntra=Mode verkoop uitgevoerd in EEG
 OptionModeProductSellExport=Mode-verkopen geëxporteerd naar andere landen
 OptionModeProductBuy=Instellingen inkopen
+OptionModeProductBuyIntra=Modus voor aankopen geïmporteerd in EEC
+OptionModeProductBuyExport=Modus voor gekocht geïmporteerd uit andere landen
 OptionModeProductSellDesc=Omzet grootboekrekening bij producten
 OptionModeProductSellIntraDesc=Toon alle producten met boekhoudaccount voor verkoop in de EEG.
 OptionModeProductSellExportDesc=Toon alle producten met een rekening voor overige buitenlandse verkopen.
 OptionModeProductBuyDesc=Inkoop grootboekrekening bij producten
+OptionModeProductBuyIntraDesc=Toon alle producten met grootboekrekening voor aankopen in de EEG.
+OptionModeProductBuyExportDesc=Toon alle producten met grootboekrekening voor andere buitenlandse aankopen.
 CleanFixHistory=Verwijder tegenrekening van regels welke niet voorkomen in het rekeningschema
 CleanHistory=Verwijder alle koppelingen van gekozen boekjaar,
 PredefinedGroups=Voorgedefinieerde groepen
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=Rekening uit groep verwijderd.
 SaleLocal=Lokale verkoop
 SaleExport=Verkoop buitenland
 SaleEEC=Verkoop binnen EEG
+SaleEECWithVAT=Verkoop in de EEG met een btw die niet nul is, dus we veronderstellen dat dit GEEN intracommunautaire verkoop is en de voorgestelde grootboekrekening het standaardproductaccount is.
+SaleEECWithoutVATNumber=Verkoop in de EEG zonder btw, maar het btw-nummer van een derde partij is niet gedefinieerd. Voor standaardverkoop vallen we terug op het product-grootboekrekening. U kunt indien nodig het btw-nummer van een derde partij of het productaccount aanpassen.
 
 ## Dictionary
 Range=Grootboeknummer van/tot

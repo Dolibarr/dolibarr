@@ -102,8 +102,7 @@ if ($confirm == 'yes') {
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
-	}
-	elseif ($action == 'confirm_deletevalue')
+	} elseif ($action == 'confirm_deletevalue')
 	{
 		if ($objectval->fetch($valueid) > 0) {
 			if ($objectval->delete() < 1) {
@@ -133,7 +132,7 @@ llxHeader('', $title);
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
@@ -263,7 +262,7 @@ if ($action == 'edit') {
 				<td><?php echo dol_htmlentities($attrval->ref) ?></td>
 				<td><?php echo dol_htmlentities($attrval->value) ?></td>
 				<td class="right">
-					<a href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
+					<a class="editfielda marginrightonly" href="card.php?id=<?php echo $object->id ?>&action=edit_value&valueid=<?php echo $attrval->id ?>"><?php echo img_edit() ?></a>
 					<a href="card.php?id=<?php echo $object->id ?>&action=delete_value&valueid=<?php echo $attrval->id ?>"><?php echo img_delete() ?></a>
 				</td>
 			<?php

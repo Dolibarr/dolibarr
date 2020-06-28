@@ -27,7 +27,7 @@ DangerZone=Bīstamā zona
 BuildPackage=Izveidot paketi
 BuildPackageDesc=Jūs varat izveidot zip pakotni no jūsu pieteikuma, lai jūs būtu gatavi to izplatīt jebkurā Dolibarr. Jūs varat arī to izplatīt vai pārdot tirgū kā <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Izveidot dokumentāciju
-ModuleIsNotActive=Šis modulis vēl nav aktivizēts. Lai to veiktu, spiediet uz %s vai noklikšķiniet šeit:
+ModuleIsNotActive=Šis modulis vēl nav aktivizēts. Dodieties uz vietni %s, lai to aktivizētu, vai noklikšķiniet šeit
 ModuleIsLive=Šis modulis ir aktivizēts. Jebkuras izmaiņas var pārtraukt pašreizējo tiešraides funkciju.
 DescriptionLong=Apraksts
 EditorName=Redaktora vārds
@@ -83,8 +83,8 @@ ListOfDictionariesEntries=Vārdnīcu ierakstu saraksts
 ListOfPermissionsDefined=Noteikto atļauju saraksts
 SeeExamples=Skatiet piemērus šeit
 EnabledDesc=Nosacījums, lai šis lauks būtu aktīvs (piemēri: 1 vai $ conf-> globāla-> MYMODULE_MYOPTION)
-VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un izveidojiet / atjauniniet / skatiet veidlapas, 2 = ir redzams tikai sarakstā, 3 = ir redzams tikai izveides / atjaunināšanas / skata formā (nav sarakstā), 4 = ir redzams sarakstā un tikai atjaunināt / skatīt formu (neveidot), 5 = redzama tikai saraksta beigu skata formā (neveidot, ne atjaunināt.) Negatīvas vērtības līdzekļu lauka izmantošana pēc noklusējuma netiek parādīta sarakstā, bet to var atlasīt apskatei. Tas var būt izteiciens, piemēram: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> holiday-> define_holiday? 1: 0)
-DisplayOnPdfDesc=Parādiet šo lauku saderīgos PDF dokumentos. Varat pārvaldīt pozīciju ar lauku "Position". <br/> Pašlaik zināmie saderīgie PDF modeļi ir: eratosteēns 
+VisibleDesc=Vai lauks ir redzams? (Piemēri: 0 = nekad nav redzams, 1 = redzams sarakstā un izveidojiet / atjauniniet / skatiet veidlapas, 2 = ir redzams tikai sarakstā, 3 = ir redzams tikai izveides / atjaunināšanas / skata formā (nav sarakstā), 4 = ir redzams sarakstā un tikai atjaunināt / skatīt formu (neveidot), 5 = redzama tikai saraksta beigu skata formā (neveidot, ne atjaunināt). <br> <br> Negatīvas vērtības līdzekļu izmantošana lauka pēc noklusējuma netiek parādīta, bet to var atlasīt apskatei). <br> <br> Tas var būt izteiciens, piemēram: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF'])? 0: 1 <br> ($ user-> rights-> rights-
+DisplayOnPdfDesc=Parādiet šo lauku saderīgos PDF dokumentos. Varat pārvaldīt pozīciju ar lauku "Position". <br/> Pašlaik zināms savietojamie PDF modeļi ir: Eratostens (rīkojums), Espadon (kuģis), sūkli (rēķini), ciāna (propal / citāts), Cornas (piegādātājs rīkojums) <br/> <br/> <strong> Par dokumenta: </strong> <br/> 0 = nav redzams <br/> 1 = displejs <br/> 2 = parādīt tikai tad, ja nav iztukšot <br/> <br/> <strong> dokumentu līnijas: </strong> <br/> 0 = nav redzama <br/> 1 = parādīti kolonnā <br/> 3 = displeja līnija apraksta slejā pēc apraksta <br/> 4 = displeja apraksta ailē pēc tam, kad apraksts tikai tad, ja nav tukšs
 DisplayOnPdf=Displejs PDF formātā
 IsAMeasureDesc=Vai lauka vērtību var uzkrāties, lai kopsumma tiktu iekļauta sarakstā? (Piemēri: 1 vai 0)
 SearchAllDesc=Vai laukums tiek izmantots, lai veiktu meklēšanu no ātrās meklēšanas rīka? (Piemēri: 1 vai 0)
@@ -139,3 +139,4 @@ ForeignKey=Sveša atslēga
 TypeOfFieldsHelp=Lauku tips: <br> varchar (99), double (24,8), real, text, html, datetime, timestamp, integer, integer: ClassName: reliapath / to / classfile.class.php [: 1 [: filter]] ('1' nozīmē mēs pievienojam pogu + pēc kombināta, lai izveidotu ierakstu; “filtrs” var būt “status = 1 UN fk_user = __USER_ID UN entītija (piemēram, __SHARED_ENTITIES__)”.
 AsciiToHtmlConverter=Ascii uz HTML pārveidotāju
 AsciiToPdfConverter=Ascii uz PDF pārveidotāju
+TableNotEmptyDropCanceled=Tabula nav tukša. Dzēšana tika atcelta.

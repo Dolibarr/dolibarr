@@ -77,7 +77,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -88,7 +92,11 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -677,6 +685,26 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $filecontent=file_get_contents($file);
         $result=utf8_check($filecontent);
         $this->assertFalse($result);
+    }
+
+    /**
+     * testDolAsciiCheck
+     *
+     * @return void
+     */
+    public function testDolAsciiCheck()
+    {
+    	// True
+    	$result=ascii_check('azerty');
+    	$this->assertTrue($result);
+
+    	$result=ascii_check('é');
+    	$this->assertFalse($result);
+
+    	$file=dirname(__FILE__).'/textutf8.txt';
+    	$filecontent=file_get_contents($file);
+    	$result=ascii_check($filecontent);
+    	$this->assertFalse($result);
     }
 
     /**

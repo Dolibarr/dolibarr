@@ -27,30 +27,30 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'contracts'));
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$socid=GETPOST('socid', 'int');
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$socid = GETPOST('socid', 'int');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'contrat', $id);
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
 $object->fetch($id, $ref);
 
-$permissionnote=$user->rights->contrat->creer;	// Used by the include of actions_setnotes.inc.php
+$permissionnote = $user->rights->contrat->creer; // Used by the include of actions_setnotes.inc.php
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contractcard','globalcard'));
+$hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 
 

@@ -21,7 +21,7 @@
 /**
  *	\file       htdocs/projet/activity/index.php
  *	\ingroup    projet
- *	\brief      Page activite perso du module projet
+ *	\brief      Page on activity of projects
  */
 
 require "../../main.inc.php";
@@ -85,16 +85,13 @@ $morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user 
 $morehtml .= '</SELECT>';
 $morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
 
-print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
-//print load_fiche_titre($title, '', 'project');
-
-if ($mine) print $langs->trans("MyTasksDesc").'<br><br>';
-else
-{
-	if ($user->rights->projet->all->lire && !$socid) print $langs->trans("TasksDesc").'<br><br>';
-	else print $langs->trans("TasksPublicDesc").'<br><br>';
+if ($mine) $tooltiphelp = $langs->trans("MyTasksDesc");
+else {
+	if ($user->rights->projet->all->lire && !$socid) $tooltiphelp = $langs->trans("TasksDesc");
+	else $tooltiphelp = $langs->trans("TasksPublicDesc");
 }
 
+print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'projecttask', 0, $morehtml);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -172,9 +169,7 @@ if ($resql)
 	}
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 print '<tr class="liste_total">';
@@ -229,9 +224,7 @@ if ($resql)
 	}
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 print '<tr class="liste_total">';
@@ -341,9 +334,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_MONTH))
     		print "</tr>\n";
     	}
     	$db->free($resql);
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
     print '<tr class="liste_total">';
@@ -393,9 +384,7 @@ if (!empty($conf->global->PROJECT_TASK_TIME_YEAR))
 			print "</tr>\n";
 		}
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	print '<tr class="liste_total">';
@@ -420,8 +409,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
         {
             $listofprojectcontacttype[$obj->rowid] = $obj->code;
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
     if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
     // Get id of types of contacts for tasks (This list never contains a lot of elements)
     $listoftaskcontacttype = array();
@@ -435,8 +423,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
         {
             $listoftaskcontacttype[$obj->rowid] = $obj->code;
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
     if (count($listoftaskcontacttype) == 0) $listoftaskcontacttype[0] = '0'; // To avoid sql syntax error if not found
 
 
@@ -538,8 +525,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 				$tasktmp->ref = $obj->ref;
 				$tasktmp->label = $obj->label;
 				print $tasktmp->getNomUrl(1, 'withproject', 'task', 1, '<br>');
-			}
-			else print $langs->trans("NoTasks");
+			} else print $langs->trans("NoTasks");
 			print '</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->dateo), 'day').'</td>';
 			print '<td class="center">'.dol_print_date($db->jdate($obj->datee), 'day');
@@ -582,9 +568,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_SH
 
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

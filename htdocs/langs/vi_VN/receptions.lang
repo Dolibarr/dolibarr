@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Số lượng sản phẩm từ đ
 ValidateOrderFirstBeforeReception=Trước tiên, bạn phải xác nhận đơn đặt hàng trước khi có thể tiếp nhận.
 ReceptionsNumberingModules=Mô-đun đánh số cho tiếp nhận
 ReceptionsReceiptModel=Mẫu tài liệu cho tiếp nhận
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

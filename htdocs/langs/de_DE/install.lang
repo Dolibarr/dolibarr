@@ -16,7 +16,7 @@ PHPSupportCurl=Ihre PHP-Konfiguration unterstützt cURL.
 PHPSupportCalendar=Ihre PHP-Konfiguration unterstützt die Kalender-Erweiterungen.
 PHPSupportUTF8=Ihre PHP-Konfiguration unterstützt die UTF8-Funktionen.
 PHPSupportIntl=Ihre PHP-Konfiguration unterstützt die Internationalisierungs-Funktionen.
-PHPSupportxDebug=This PHP supports extended debug functions.
+PHPSupportxDebug=Dieses PHP unterstützt erweiterte Debug-Funktionen.
 PHPSupport=Dieses PHP unterstützt %s-Funktionen.
 PHPMemoryOK=Die Sitzungsspeicherbegrenzung ihrer PHP-Konfiguration steht auf <b>%s</b>. Dies sollte ausreichend sein.
 PHPMemoryTooLow=Der maximale PHP-Sitzungsspeicher ist auf <b>%s</b> Bytes gesetzt. Dieser Wert ist zu niedrig. Ändern sie den Parameter <b>memory_limit</b> in der <b>php.ini</b> auf mindestens <b>%s</b> Bytes!
@@ -27,7 +27,7 @@ ErrorPHPDoesNotSupportCurl=Ihre PHP-Version unterstützt die Erweiterung Curl ni
 ErrorPHPDoesNotSupportCalendar=Ihre PHP-Installation unterstützt die Kalender-Erweiterungen nicht.
 ErrorPHPDoesNotSupportUTF8=Ihre PHP-Installation unterstützt die UTF8-Funktionen nicht. Dolibarr wird nicht korrekt funktionieren. Beheben Sie das Problem vor der Installation.
 ErrorPHPDoesNotSupportIntl=Ihre PHP-Konfiguration unterstützt keine Internationalisierungsfunktion (intl-extension).
-ErrorPHPDoesNotSupportxDebug=Your PHP installation does not support extend debug functions.
+ErrorPHPDoesNotSupportxDebug=Ihre PHP-Installation unterstützt keine erweiterten Debug-Funktionen.
 ErrorPHPDoesNotSupport=Ihre PHP-Installation unterstützt keine %s-Funktionen.
 ErrorDirDoesNotExists=Das Verzeichnis %s existiert nicht.
 ErrorGoBackAndCorrectParameters=Gehen Sie zurück und prüfen/korrigieren Sie die Parameter.
@@ -151,7 +151,7 @@ KeepDefaultValuesProxmox=Sie haben den Dolibarr-Setup-Assistenten von einer virt
 UpgradeExternalModule=Führen Sie ein dediziertes Upgrade des externen Moduls durch
 SetAtLeastOneOptionAsUrlParameter=Zumindest eine Option für die URL Argumente ist notwendig. z.B. '...repair.php?standard=confirmed'
 NothingToDelete=Nichts zu säubern / zu löschen
-NothingToDo=Keine Aufgaben zum erledigen
+NothingToDo=Keine Aufgaben zu erledigen
 #########
 # upgrade
 MigrationFixData=Denormalisierte Daten bereinigen
@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Während des Migrationsprozesses wurden Fehler gemelde
 YouTryInstallDisabledByDirLock=Die Anwendung hat versucht, sich selbst zu aktualisieren, aber die Installations- / Aktualisierungsseiten wurden aus Sicherheitsgründen deaktiviert (Verzeichnis umbenannt mit .lock-Suffix). <br>
 YouTryInstallDisabledByFileLock=Die Anwendung hat versucht, sich selbst zu aktualisieren, aber die Installations-/Upgrade-Seiten wurden aus Sicherheitsgründen deaktiviert (durch die Existenz einer Sperrdatei <strong>install.lock</strong> im Dokumenten-Verzeichnis).<br>
 ClickHereToGoToApp=Hier klicken um zu Ihrer Anwendung zu kommen
-ClickOnLinkOrRemoveManualy=Klicken Sie auf den folgenden Link. Wenn Sie immer die gleiche Seite sehen, müssen Sie die Datei install.lock im Dokumenten-Verzeichnis entfernen/umbenennen.
-Loaded=Loaded
-FunctionTest=Function test
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+Loaded=Geladen
+FunctionTest=Funktionstest

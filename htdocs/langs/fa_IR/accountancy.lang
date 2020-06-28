@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=برای صرفه‌جوئی در زمان در
 AccountancyAreaDescActionFreq=عملیات زیر معمولا هر ماه یا هر هفته یا بار یا حتی هر روز یک بار برای شرکت‌های بسیار بزرگ انجام می‌پذیرد....
 
 AccountancyAreaDescJournalSetup=گام %s: ایجاد یا بررسی فهرست محتوای دفتر از گزینۀ %s
-AccountancyAreaDescChartModel=گام %s: ساخت یا شکل‌دهی نمودار حساب از گزینۀ %s 
-AccountancyAreaDescChart=گام %s: ساخت یا بررسی نمودار حساب از گزینۀ %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=گام %s: تعریف حساب‌های حساب‌داری برای هر یک از انواع ضریب‌های مالیات بر ارزش افزوده. برای این کار از گزینۀ %s استفاده نمائید.
 AccountancyAreaDescDefault=گام %s: تعریف حساب‌های حساب‌داری پیش‌فرض. برای این، از گزینۀ %s استفاده نمائید.
@@ -121,6 +121,7 @@ InvoiceLinesDone=سطور بند شدۀ صورت‌حساب‌ها
 ExpenseReportLines=سطور گزارش هزینه‌ها که باید بند شوند
 ExpenseReportLinesDone=سطور بندشدۀ گزارش هزینه‌ها
 IntoAccount=بندکردن سطر به حساب حسابداری
+TotalForAccount=Total for accounting account
 
 
 Ventilate=بندکردن
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=حساب حساب‌داری ثبت کمک و اعا�
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=حساب حساب‌داری ثبت اشتراک‌ها
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought products and imported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=حساب حساب‌داری پیش‌فرض برای محصولات فروخته شده (در صورت عدم تعریف در برگۀ محصولات استفاده می‌شود)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=حساب حساب‌داری پیش‌فرض برای خدمات خریداری شده (در صورت عدم تعریف در برگۀ خدمات استفاده می‌شود)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Accounting account by default for the bought services in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought services and imported out of EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=حساب حساب‌داری پیش‌فرض برای خدمات فروخته شده (در صورت عدم تعریف در برگۀ خدمات استفاده می‌شود)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unkno
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=حساب شخص‌سوم تعریف نشده یا شخص سوم ناشناخته است. خطای انسدادی
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=حساب شخص‌سوم ناشناخته و حساب انتظار تعریف نشده است. خطای انسدادی
 PaymentsNotLinkedToProduct=پرداخت به هیچ محصول/خدمتی وصل نشده است
+OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=گروه حساب
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+
+Reconcilable=Reconcilable
 
 TotalVente=جمع گردش‌مالی پیش‌از محاسبۀ مالیات
 TotalMarge=حاشیه فروش کل
@@ -307,11 +317,13 @@ Modelcsv_quadratus=صدور برای Quadratus QuadraCompta
 Modelcsv_ebp=صدور برای EBP
 Modelcsv_cogilog=صدور برای Cogilog
 Modelcsv_agiris=صدور برای Agiris
-Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=صادرکردن برای OpenConcerto  (آزمایشی)
 Modelcsv_configurable= صدور قابل پیکربندی CSV 
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=صادرکردن برای Sage 50 Switzerland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=ساختار شناسۀ حساب‌‌ها
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=حالت فروش
 OptionModeProductSellIntra=حالت فروش به شکل EEC صادر می‌گردد
 OptionModeProductSellExport=حالت فروش به حالت سایر کشورها صادر می‌گرد
 OptionModeProductBuy=حالت خرید
+OptionModeProductBuyIntra=Mode purchases imported in EEC
+OptionModeProductBuyExport=Mode purchased imported from other countries
 OptionModeProductSellDesc=نمایش همۀ محصولات دارای حساب‌حساب‌داری برای فروش
 OptionModeProductSellIntraDesc=نمایش همۀ محصولات در حساب حسابداری برای فروش در EEC
 OptionModeProductSellExportDesc=نمایش همۀ محصولات در حساب حسابداری برای سایر فروش‌های خارجی
 OptionModeProductBuyDesc=نمایش همۀ محصولات دارای حساب‌حساب‌داری برای خرید
+OptionModeProductBuyIntraDesc=Show all products with accounting account for purchases in EEC.
+OptionModeProductBuyExportDesc=Show all products with accounting account for other foreign purchases.
 CleanFixHistory=حذف کد حساب‌داری از سطوری که در ساختار و نمودار حساب  وجود ندارند
 CleanHistory=بازسازی همۀ بندشدن‌ها برای سال انتخاب شده
 PredefinedGroups=گروه‌های از پیش‌تعریف شده
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=حساب از گروه حذف شده‌است
 SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
 
 ## Dictionary
 Range=بازۀ حساب حساب‌داری

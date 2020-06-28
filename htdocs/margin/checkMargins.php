@@ -43,7 +43,7 @@ $optioncss  = GETPOST('optioncss', 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -222,7 +222,7 @@ if ($result) {
 
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice = 'BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
+	else // value is 'costprice' or 'pmp'
 	    $labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';

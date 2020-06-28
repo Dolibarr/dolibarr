@@ -25,7 +25,7 @@ CREATE TABLE llx_menu
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	menu_handler  varchar(16) NOT NULL,						-- Menu handler name
 	entity        integer DEFAULT 1 NOT NULL,				-- Multi company id
-	module        varchar(64),								-- Module name if record is added by a module
+	module        varchar(255),								-- Module name if record is added by a module
 	type          varchar(4) NOT NULL,						-- Menu top or left
 	mainmenu      varchar(100) NOT NULL,					-- Name family/module for top menu (home, companies, ...)
     leftmenu      varchar(100) NULL,						-- Name family/module for left menu (setup, info, ...)

@@ -52,7 +52,7 @@ class Menu
      * Add a menu entry into this->liste (at end)
      *
      * @param	string	$url        Url to follow on click (does not include DOL_URL_ROOT)
-     * @param   string	$titre      Label of menu to add
+     * @param   string	$titre      Label of menu to add. The value must already be translated.
      * @param   integer	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not (0=Not active, 1=Active, 2=Active but grey)
      * @param   string	$target		Target link
@@ -67,7 +67,7 @@ class Menu
      */
     public function add($url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
     {
-        $this->liste[]=array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix);
+        $this->liste[] = array('url'=>$url, 'titre'=>$titre, 'level'=>$level, 'enabled'=>$enabled, 'target'=>$target, 'mainmenu'=>$mainmenu, 'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix);
     }
 
     /**
@@ -75,7 +75,7 @@ class Menu
      *
      * @param   int     $idafter    Array key after which inserting new entry
      * @param	string	$url        Url to follow on click
-     * @param   string	$titre      Label of menu to add
+     * @param   string	$titre      Label of menu to add. The value must already be translated.
      * @param   integer	$level      Level of menu to add
      * @param   int		$enabled    Menu active or not
      * @param   string	$target		Target link
@@ -90,9 +90,9 @@ class Menu
      */
     public function insert($idafter, $url, $titre, $level = 0, $enabled = 1, $target = '', $mainmenu = '', $leftmenu = '', $position = 0, $id = '', $idsel = '', $classname = '', $prefix = '')
     {
-        $array_start = array_slice($this->liste, 0, ($idafter+1));
-        $array_new   = array(0=>array('url'=>$url,'titre'=>$titre,'level'=>$level,'enabled'=>$enabled,'target'=>$target,'mainmenu'=>$mainmenu,'leftmenu'=>$leftmenu,'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));
-        $array_end   = array_slice($this->liste, ($idafter+1));
+        $array_start = array_slice($this->liste, 0, ($idafter + 1));
+        $array_new   = array(0=>array('url'=>$url, 'titre'=>$titre, 'level'=>$level, 'enabled'=>$enabled, 'target'=>$target, 'mainmenu'=>$mainmenu, 'leftmenu'=>$leftmenu, 'position'=>$position, 'id'=>$id, 'idsel'=>$idsel, 'classname'=>$classname, 'prefix'=>$prefix));
+        $array_end   = array_slice($this->liste, ($idafter + 1));
         $this->liste = array_merge($array_start, $array_new, $array_end);
     }
 
@@ -117,10 +117,10 @@ class Menu
      */
     public function getNbOfVisibleMenuEntries()
     {
-        $nb=0;
-        foreach($this->liste as $val)
+        $nb = 0;
+        foreach ($this->liste as $val)
         {
-            if (! empty($val['enabled'])) $nb++;
+            if (!empty($val['enabled'])) $nb++;
         }
         return $nb;
     }

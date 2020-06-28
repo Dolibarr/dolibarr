@@ -47,7 +47,7 @@ $id = GETPOST('id', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -132,9 +132,7 @@ if (empty($reshook))
 	    {
 	        setEventMessages('Security key '.$securitykey.' is wrong', null, 'errors');
 	        $action = '';
-	    }
-	    else
-	    {
+	    } else {
 	        $object = new Cronjob($db);
 	    	$job = $object->fetch($id);
 
@@ -155,9 +153,7 @@ if (empty($reshook))
 	    		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
 	    		}
 	    		$action = '';
-	    	}
-	    	else
-	    	{
+	    	} else {
 	    		setEventMessages($object->error, $object->errors, 'errors');
 	    		$action = '';
 	    	}
@@ -196,9 +192,7 @@ if (empty($reshook))
 				elseif ($massaction == 'enable') $result = $tmpcron->setStatut(Cronjob::STATUS_ENABLED);
 				//else dol_print_error($db, 'Bad value for massaction');
 				if ($result < 0) setEventMessages($tmpcron->error, $tmpcron->errors, 'errors');
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -444,9 +438,7 @@ if ($num > 0)
 			$object->ref = $langs->trans($obj->label);
 			print $object->getNomUrl(0, '', 1);
 			$object->ref = $obj->rowid;
-		}
-		else
-		{
+		} else {
 			//print $langs->trans('CronNone');
 		}
 		print '</td>';
@@ -466,8 +458,7 @@ if ($num > 0)
 			$texttoshow .= $langs->trans('CronMethod').': '.$obj->methodename;
 			$texttoshow .= '<br>'.$langs->trans('CronArgs').': '.$obj->params;
 			$texttoshow .= '<br>'.$langs->trans('Comment').': '.$langs->trans($obj->note);
-		}
-		elseif ($obj->jobtype == 'command')
+		} elseif ($obj->jobtype == 'command')
 		{
 			$text = $langs->trans('CronCommand');
 			$texttoshow = $langs->trans('CronCommand').': '.dol_trunc($obj->command);
@@ -550,15 +541,15 @@ if ($num > 0)
 		$backtourl = urlencode($_SERVER["PHP_SELF"].'?'.$param.($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : ''));
 		if ($user->rights->cron->create)
 		{
-			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
+			print '<a class="editfielda" href="'.DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
 			print "&backtourl=".$backtourl."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'), 'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{
 			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"]."?id=".$obj->rowid."&action=delete".($page ? '&page='.$page : '').($sortfield ? '&sortfield='.$sortfield : '').($sortorder ? '&sortorder='.$sortorder : '').$param;
-			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete')."</a> &nbsp;";
+			print "\" title=\"".dol_escape_htmltag($langs->trans('CronDelete'))."\">".img_picto($langs->trans('CronDelete'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
 		} else {
-			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete')."</a> &nbsp; ";
+			print "<a href=\"#\" title=\"".dol_escape_htmltag($langs->trans('NotEnoughPermissions'))."\">".img_picto($langs->trans('NotEnoughPermissions'), 'delete', '', false, 0, 0, '', 'marginleftonly')."</a> &nbsp; ";
 		}
 		if ($user->rights->cron->execute)
 		{
@@ -567,12 +558,12 @@ if ($num > 0)
 				print (empty($conf->global->CRON_KEY) ? '' : '&securitykey='.$conf->global->CRON_KEY);
 				print ($sortfield ? '&sortfield='.$sortfield : '');
 				print ($sortorder ? '&sortorder='.$sortorder : '');
-				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play").'</a>';
+				print $param."\" title=\"".dol_escape_htmltag($langs->trans('CronExecute'))."\">".img_picto($langs->trans('CronExecute'), "play", '', false, 0, 0, '', 'marginleftonly').'</a>';
 			} else {
-				print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'), "playdisabled").'</a>';
+				print '<a href="#" class="cursordefault" title="'.dol_escape_htmltag($langs->trans('JobDisabled')).'">'.img_picto($langs->trans('JobDisabled'), "playdisabled", '', false, 0, 0, '', 'marginleftonly').'</a>';
 			}
 		} else {
-			print '<a href="#" class="cursornotallowed" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), "playdisabled").'</a>';
+			print '<a href="#" class="cursornotallowed" title="'.dol_escape_htmltag($langs->trans('NotEnoughPermissions')).'">'.img_picto($langs->trans('NotEnoughPermissions'), "playdisabled", '', false, 0, 0, '', 'marginleftonly').'</a>';
 		}
 		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 		{
@@ -586,9 +577,7 @@ if ($num > 0)
 
 		$i++;
 	}
-}
-else
-{
+} else {
 	print '<tr><td colspan="9" class="opacitymedium">'.$langs->trans('CronNoJobs').'</td></tr>';
 }
 
