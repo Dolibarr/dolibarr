@@ -233,28 +233,22 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			continue;
 		}
 
-		if ($feature == 'societe')
-		{
+		if ($feature == 'societe') {
 			if (!$user->rights->societe->lire && !$user->rights->fournisseur->lire) { $readok = 0; $nbko++; }
 		}
-		elseif ($feature == 'contact')
-		{
+		elseif ($feature == 'contact') {
 			if (!$user->rights->societe->contact->lire) { $readok = 0; $nbko++; }
 		}
-		elseif ($feature == 'produit|service')
-		{
+		elseif ($feature == 'produit|service') {
 			if (!$user->rights->produit->lire && !$user->rights->service->lire) { $readok = 0; $nbko++; }
 		}
-		elseif ($feature == 'prelevement')
-		{
+		elseif ($feature == 'prelevement') {
 			if (!$user->rights->prelevement->bons->lire) { $readok = 0; $nbko++; }
 		}
-		elseif ($feature == 'cheque')
-		{
+		elseif ($feature == 'cheque') {
 			if (!$user->rights->banque->cheque) { $readok = 0; $nbko++; }
 		}
-		elseif ($feature == 'projet')
-		{
+		elseif ($feature == 'projet') {
 			if (!$user->rights->projet->lire && !$user->rights->projet->all->lire) { $readok = 0; $nbko++; }
 		}
 		elseif (!empty($feature2))														// This is for permissions on 2 levels
@@ -296,29 +290,26 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 	{
 		foreach ($featuresarray as $feature)
 		{
-			if ($feature == 'contact')
-			{
+			if ($feature == 'contact') {
 				if (!$user->rights->societe->contact->creer) { $createok = 0; $nbko++; }
 			}
-			elseif ($feature == 'produit|service')
-			{
+			elseif ($feature == 'produit|service') {
 				if (!$user->rights->produit->creer && !$user->rights->service->creer) { $createok = 0; $nbko++; }
 			}
-			elseif ($feature == 'prelevement')
-			{
+			elseif ($feature == 'prelevement') {
 				if (!$user->rights->prelevement->bons->creer) { $createok = 0; $nbko++; }
 			}
-			elseif ($feature == 'commande_fournisseur')
-			{
+			elseif ($feature == 'commande_fournisseur') {
 				if (!$user->rights->fournisseur->commande->creer) { $createok = 0; $nbko++; }
 			}
-			elseif ($feature == 'banque')
-			{
+			elseif ($feature == 'banque') {
 				if (!$user->rights->banque->modifier) { $createok = 0; $nbko++; }
 			}
-			elseif ($feature == 'cheque')
-			{
+			elseif ($feature == 'cheque') {
 				if (!$user->rights->banque->cheque) { $createok = 0; $nbko++; }
+			}
+			elseif ($feature == 'ecm') {
+				if (!$user->rights->ecm->upload) { $createok = 0; $nbko++; }
 			}
 			elseif (!empty($feature2))														// This is for permissions on one level
 			{
