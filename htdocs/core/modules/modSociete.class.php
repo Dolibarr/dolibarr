@@ -263,7 +263,7 @@ class modSociete extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			's.rowid'=>"Id", 's.nom'=>"Name", 's.name_alias'=>"AliasNameShort", 's.status'=>"Status", 's.client'=>"Customer", 's.fournisseur'=>"Supplier", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification",
 			's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode", 's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
-			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'd.nom'=>'State', 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax",
+			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'd.nom'=>'State', 'r.nom' => 'Region', 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax",
 			's.url'=>"Url", 's.email'=>"Email", 's.default_lang'=>"DefaultLang", 's.siren'=>"ProfId1", 's.siret'=>"ProfId2", 's.ape'=>"ProfId3", 's.idprof4'=>"ProfId4",
 			's.idprof5'=>"ProfId5", 's.idprof6'=>"ProfId6", 's.tva_intra'=>"VATIntraShort", 's.capital'=>"Capital", 's.note_private'=>"NotePrivate", 's.note_public'=>"NotePublic",
 			't.libelle'=>"ThirdPartyType", 'ce.code'=>"Staff", "cfj.libelle"=>"JuridicalStatus", 's.fk_prospectlevel'=>'ProspectLevel',
@@ -295,7 +295,7 @@ class modSociete extends DolibarrModules
 			's.default_lang'=>"Text", 's.siret'=>"Text", 's.siren'=>"Text", 's.ape'=>"Text", 's.idprof4'=>"Text", 's.idprof5'=>"Text", 's.idprof6'=>"Text",
 			's.tva_intra'=>"Text", 's.capital'=>"Numeric", 's.note_private'=>"Text", 's.note_public'=>"Text", 't.libelle'=>"Text",
 			'ce.code'=>"List:c_effectif:libelle:code", "cfj.libelle"=>"Text", 's.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
-			'st.code'=>'List:c_stcomm:libelle:code', 'd.nom'=>'Text', 'u.login'=>'Text', 'u.firstname'=>'Text', 'u.lastname'=>'Text', 'payterm.libelle'=>'Text',
+			'st.code'=>'List:c_stcomm:libelle:code', 'd.nom'=>'Text', 'r.nom' => 'Text', 'u.login'=>'Text', 'u.firstname'=>'Text', 'u.lastname'=>'Text', 'payterm.libelle'=>'Text',
 			'paymode.libelle'=>'Text', 's.entity'=>'Numeric',
 			's.price_level'=>'Numeric'
 		);
@@ -310,6 +310,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_regions as r ON r.code_region = d.fk_region AND r.fk_pays = s.fk_pays';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
@@ -333,7 +334,7 @@ class modSociete extends DolibarrModules
 		$this->export_fields_array[$r] = array(
 			'c.rowid'=>"IdContact", 'c.civility'=>"CivilityCode", 'c.lastname'=>'Lastname', 'c.firstname'=>'Firstname', 'c.poste'=>'PostOrFunction',
 			'c.datec'=>"DateCreation", 'c.tms'=>"DateLastModification", 'c.priv'=>"ContactPrivate", 'c.address'=>"Address", 'c.zip'=>"Zip", 'c.town'=>"Town",
-			'd.nom'=>'State', 'co.label'=>"Country", 'co.code'=>"CountryCode", 'c.phone'=>"Phone", 'c.fax'=>"Fax", 'c.phone_mobile'=>"Mobile", 'c.email'=>"EMail",
+			'd.nom'=>'State', 'r.nom' => 'Region', 'co.label'=>"Country", 'co.code'=>"CountryCode", 'c.phone'=>"Phone", 'c.fax'=>"Fax", 'c.phone_mobile'=>"Mobile", 'c.email'=>"EMail",
 			'c.statut'=>"Status",
 			's.rowid'=>"IdCompany", 's.nom'=>"CompanyName", 's.status'=>"Status", 's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode",
 			's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
@@ -344,7 +345,7 @@ class modSociete extends DolibarrModules
 		$this->export_examplevalues_array[$r] = array('s.client'=>'0 (no customer no prospect)/1 (customer)/2 (prospect)/3 (customer and prospect)', 's.fournisseur'=>'0 (not a supplier) or 1 (supplier)');
 		$this->export_TypeFields_array[$r] = array(
 			'c.civility'=>"List:c_civility:label:code", 'c.lastname'=>'Text', 'c.firstname'=>'Text', 'c.poste'=>'Text', 'c.datec'=>"Date", 'c.priv'=>"Boolean",
-			'c.address'=>"Text", 'c.zip'=>"Text", 'c.town'=>"Text", 'd.nom'=>'Text', 'co.label'=>"List:c_country:label:rowid", 'co.code'=>"Text", 'c.phone'=>"Text",
+			'c.address'=>"Text", 'c.zip'=>"Text", 'c.town'=>"Text", 'd.nom'=>'Text', 'r.nom' => 'Text', 'co.label'=>"List:c_country:label:rowid", 'co.code'=>"Text", 'c.phone'=>"Text",
 			'c.fax'=>"Text", 'c.email'=>"Text",
 			'c.statut'=>"Status",
 			's.rowid'=>"List:societe:nom::thirdparty", 's.nom'=>"Text", 's.status'=>"Status", 's.code_client'=>"Text", 's.code_fournisseur'=>"Text",
@@ -375,6 +376,7 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extrasoc ON s.rowid = extrasoc.fk_object';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON c.fk_departement = d.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_regions as r ON r.code_region = d.fk_region AND r.fk_pays = c.fk_pays';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as co ON c.fk_pays = co.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople_extrafields as extra ON extra.fk_object = c.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id';
