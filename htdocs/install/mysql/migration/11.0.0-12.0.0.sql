@@ -80,7 +80,7 @@ ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
 
 -- Delete an old index that is duplicated
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
--- VPGSQL8.2 DROP INDEX ix_fk_product_stock
+-- VPGSQL8.2 DROP INDEX ix_fk_product_stock;
 
 ALTER TABLE llx_actioncomm DROP COLUMN punctual;
 
