@@ -407,7 +407,8 @@ if (!$search_all)
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
-	$sql .= " p.rowid, p.ref, p.title";
+	$sql .= " p.rowid, p.ref, p.title,";
+	$sql .= " u.login";
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			//prevent error with sql_mode=only_full_group_by
