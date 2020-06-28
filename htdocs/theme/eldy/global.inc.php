@@ -4513,7 +4513,7 @@ td.cal_other_month {
 .treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 4px !important; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 26px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-
+.treeview .hitarea { margin-top: 3px; }
 
 
 /* ============================================================================== */

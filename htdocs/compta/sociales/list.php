@@ -150,6 +150,7 @@ if ($search_typeid) {
     $sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+if (!empty($conf->projet->enabled)) $sql .= ", p.rowid, p.ref, p.title";
 $sql .= $db->order($sortfield, $sortorder);
 
 $totalnboflines = 0;
