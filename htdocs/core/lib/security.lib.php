@@ -309,6 +309,10 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 			elseif ($feature == 'cheque')
 			{
 				if (!$user->rights->banque->cheque) { $createok = 0; $nbko++; }
+			} elseif ($feature == 'import') {
+				if (!$user->rights->import->run) { $createok = 0; $nbko++; }
+			} elseif ($feature == 'ecm') {
+				if (!$user->rights->ecm->upload) { $createok = 0; $nbko++; }
 			}
 			elseif (!empty($feature2))														// This is for permissions on one level
 			{
