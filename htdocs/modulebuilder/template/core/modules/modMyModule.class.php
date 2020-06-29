@@ -333,7 +333,7 @@ class modMyModule extends DolibarrModules
 		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		$this->export_icon[$r]='myobject@mymodule';
 		// Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-		$keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
+		$keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		//$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
 		//unset($this->export_fields_array[$r]['t.fieldtoremove']);
@@ -363,7 +363,7 @@ class modMyModule extends DolibarrModules
 		 $this->export_code[$r]=$this->rights_class.'_'.$r;
 		 $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
 		 $this->export_icon[$r]='myobject@mymodule';
-		 $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
+		 $keyforclass = 'MyObject'; $keyforclassfile='/mymodule/class/myobject.class.php'; $keyforelement='myobject@mymodule';
 		 include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
 		 $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@mymodule';
 		 include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
