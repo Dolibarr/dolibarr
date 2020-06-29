@@ -289,6 +289,8 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->banque->modifier) { $createok = 0; $nbko++; }
 			} elseif ($feature == 'cheque') {
 				if (!$user->rights->banque->cheque) { $createok = 0; $nbko++; }
+			} elseif ($feature == 'import') {
+				if (!$user->rights->import->run) { $createok = 0; $nbko++; }
 			} elseif ($feature == 'ecm') {
 				if (!$user->rights->ecm->upload) { $createok = 0; $nbko++; }
 			}
