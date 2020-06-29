@@ -617,10 +617,10 @@ textarea.centpercent {
 	padding-<?php print $right; ?>: 2px;
 }
 .paddingtop {
-	padding-bottom: 4px;
+	padding-top: 4px;
 }
 .paddingtop2 {
-	padding-bottom: 2px;
+	padding-top: 2px;
 }
 .paddingbottom {
 	padding-bottom: 4px;
