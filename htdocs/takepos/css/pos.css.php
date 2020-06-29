@@ -157,7 +157,7 @@ button.actionbutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width: calc(33% - 2px);
+	width: calc(33.33% - 2px);
 	height: calc(25% - 2px);
 	margin: 1px;
    	border-width: 0;
@@ -274,10 +274,12 @@ table.postablelines tr td {
 
 div.paymentbordline
 {
-	width:50%;
+	width:calc(50% - 16px);
 	background-color:#888;
 	border-radius: 8px;
 	margin-bottom: 4px;
+	display: inline-block;
+	padding: 5px;
 }
 
 @media only screen and (max-aspect-ratio: 6/4) {
@@ -471,6 +473,14 @@ div.description_content {
     margin-left: 4px;
     font-size: 1.3em;
 }
+
+@media screen and (max-width: 767px) {
+	.topnav .login_block_other a {
+		padding: 5px 5px;
+		font-size: 1.2em;
+	}
+}
+
 .topnav-right > a {
 	font-size: 17px;
 }
@@ -572,7 +582,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	.topnav input[type="text"] {
-		max-width: 100px;
+		max-width: 90px;
 	}
 
 	.topnav-right {

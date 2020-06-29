@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 global $mysoc;
 
-$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"));
+$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
@@ -137,20 +137,36 @@ else $soc->fetch($conf->global->$constforcompanyid);
  * Actions
  */
 
+// Action to record a payment on a TakePOS invoice
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
-    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
-    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
-    else {
-        $accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-    	$bankaccount = $conf->global->$accountname;
-    }
+	$bankaccount = 0;
+	$error = 0;
+
+	if (! empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+		$bankaccount = GETPOST('accountid', 'int');
+	}
+	else {
+	    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+	    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
+	    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
+	    else {
+	        $accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
+	    	$bankaccount = $conf->global->$accountname;
+	    }
+	}
+
+	if ($bankaccount <= 0) {
+		$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
+		$error++;
+	}
+
 	$now = dol_now();
 	$res = 0;
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
+
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
@@ -180,19 +196,20 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	//}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-	if ($invoice->statut != Facture::STATUS_DRAFT) {
+	if ($error) {
+		dol_htmloutput_errors($errormsg, null, 1);
+	} elseif ($invoice->statut != Facture::STATUS_DRAFT) {
 		//If invoice is validated but it is not fully paid is not error and make the payment
-		if ($invoice->getRemainToPay() > 0) $res = 1;
-		else {
+		if ($invoice->getRemainToPay() > 0) {
+			$res = 1;
+		} else {
 			dol_syslog("Sale already validated");
 			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
 		}
-	} elseif (count($invoice->lines) == 0)
-	{
+	} elseif (count($invoice->lines) == 0) {
 		dol_syslog("Sale without lines");
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
-	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
-	{
+	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
 		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 		$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 
@@ -219,7 +236,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$remaintopay = $invoice->getRemainToPay();
 
 	// Add the payment
-	if ($res >= 0 && $remaintopay > 0) {
+	if (!$error && $res >= 0 && $remaintopay > 0) {
 		$payment = new Paiement($db);
 		$payment->datepaye = $now;
 		$payment->fk_account = $bankaccount;
