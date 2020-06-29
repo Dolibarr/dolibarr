@@ -1114,11 +1114,12 @@ class DoliDBPgsql extends DoliDB
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if (preg_match("/^[^\s]/i", $field_desc['value']))
-	    if (!in_array($field_desc['type'], array('int', 'date', 'datetime')))
-	    {
-	        $sql .= "(".$field_desc['value'].")";
-	    }
+		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+			if (!in_array($field_desc['type'], array('int', 'date', 'datetime')) && $field_desc['value'])
+		    {
+		        $sql .= "(".$field_desc['value'].")";
+		    }
+		}
 		if (preg_match("/^[^\s]/i", $field_desc['attribute']))
             $sql .= " ".$field_desc['attribute'];
 		if (preg_match("/^[^\s]/i", $field_desc['null']))
@@ -1155,7 +1156,7 @@ class DoliDBPgsql extends DoliDB
         // phpcs:enable
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
 			$sql .= "(".$field_desc['value'].")";
 		}
 
