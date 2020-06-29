@@ -1460,7 +1460,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $sql2 .= " WHERE mc.email = '".$db->escape($objcon->email)."'"; // Search is done on email.
         $sql2 .= " AND mc.statut = 1";
         $sql2 .= " AND u.rowid = m.fk_user_valid";
-        $sql2 .= " AND mc.fk_mailing=m.rowid";
+        $sql2 .= " AND mc.fk_mailing = m.rowid";
     }
 
     if (!empty($sql) && !empty($sql2)) {
