@@ -830,7 +830,7 @@ class ExtraFields
 	public function fetch_name_optionals_label($elementtype, $forceload = false)
 	{
         // phpcs:enable
-		global $conf;
+		global $conf, $langs;
 
 		if (empty($elementtype)) return array();
 
@@ -930,6 +930,11 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name]=$tab->enabled;
 					$this->attributes[$tab->elementtype]['help'][$tab->name]=$tab->help;
+
+					// Load languages
+					if (!empty($tab->langs)) {
+						$langs->load($tab->langs);
+					}
 
 					$this->attributes[$tab->elementtype]['loaded']=1;
 				}
