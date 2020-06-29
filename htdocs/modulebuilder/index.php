@@ -150,20 +150,17 @@ if ($dirins && $action == 'initmodule' && $modulename)
 
 		dol_delete_file($destdir.'/sql/data.sql');
 		dol_delete_file($destdir.'/sql/update_x.x.x-y.y.y.sql');
-		dol_delete_dir($destdir.'/sql');
 
 		dol_delete_file($destdir.'/class/actions_'.strtolower($modulename).'.class.php');
 		dol_delete_file($destdir.'/class/api_'.strtolower($modulename).'.class.php');
-		dol_delete_dir($destdir.'/class');
 
 		dol_delete_file($destdir.'/css/'.strtolower($modulename).'.css.php');
-		dol_delete_dir($destdir.'/css');
 
 		dol_delete_file($destdir.'/js/'.strtolower($modulename).'.js.php');
-		dol_delete_dir($destdir.'/js');
 
 		dol_delete_file($destdir.'/scripts/'.strtolower($modulename).'.php');
-		dol_delete_dir($destdir.'/scripts');
+
+		dol_delete_file($destdir.'/test/phpunit/MyModuleFunctionnalTest.php');
 
 		// Delete some files related to Object (because the previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
@@ -172,18 +169,21 @@ if ($dirins && $action == 'initmodule' && $modulename)
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
 		dol_delete_file($destdir.'/lib/'.strtolower($modulename).'_myobject.lib.php');
-		dol_delete_file($destdir.'/test/phpunit/MyModuleFunctionnalTest.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
-		dol_delete_file($destdir.'/test/phpunit');
-		dol_delete_file($destdir.'/test');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject.key.sql');
 		dol_delete_file($destdir.'/sql/llx_'.strtolower($modulename).'_myobject_extrafields.key.sql');
 		dol_delete_file($destdir.'/img/object_myobject.png');
 		dol_delete_file($destdir.'/class/myobject.class.php');
-		dol_delete_dir($destdir.'/class');
-		dol_delete_dir($destdir.'/sql');
+
+		dol_delete_dir($destdir.'/class', 1);
+		dol_delete_dir($destdir.'/sql', 1);
+		dol_delete_dir($destdir.'/scripts', 1);
+		dol_delete_dir($destdir.'/js', 1);
+		dol_delete_dir($destdir.'/css', 1);
+		dol_delete_dir($destdir.'/test/phpunit', 1);
+		dol_delete_dir($destdir.'/test', 1);
 	}
 
 	// Edit PHP files

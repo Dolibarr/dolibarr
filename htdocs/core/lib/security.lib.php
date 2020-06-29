@@ -290,8 +290,9 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 				if (!$user->rights->banque->cheque) { $createok = 0; $nbko++; }
 			} elseif ($feature == 'import') {
 				if (!$user->rights->import->run) { $createok = 0; $nbko++; }
-			}
-			elseif (!empty($feature2)) {														// This is for permissions on one level
+			} elseif ($feature == 'ecm') {
+				if (!$user->rights->ecm->upload) { $createok = 0; $nbko++; }
+			} elseif (!empty($feature2)) {														// This is for permissions on one level
 				foreach ($feature2 as $subfeature) {
 					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->creer) continue; // User can edit its own card
 					if ($subfeature == 'user' && $user->id == $objectid && $user->rights->user->self->password) continue; // User can edit its own password
