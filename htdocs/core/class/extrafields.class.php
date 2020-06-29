@@ -2086,10 +2086,14 @@ class ExtraFields
 						$value_key = '';
 					}
 				}
-				elseif (in_array($key_type, array('price', 'double', 'html')))
+				elseif (in_array($key_type, array('price', 'double')))
 				{
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
+				}
+				elseif (in_array($key_type, array('html')))
+				{
+					$value_key = GETPOST("options_".$key, 'alpha');
 				}
 				else
 				{
