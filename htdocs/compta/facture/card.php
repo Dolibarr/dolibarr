@@ -1255,7 +1255,8 @@ if (empty($reshook))
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT)
 						{
 							$typeamount = GETPOST('typedeposit', 'alpha');
-							$valuedeposit = GETPOST('valuedeposit', 'int');
+							$valuedeposit = GETPOST('valuedeposit');
+							$valuedeposit = price2num($valuedeposit, 'MU');
 
 							$amountdeposit = array();
 							if (!empty($conf->global->MAIN_DEPOSIT_MULTI_TVA))
