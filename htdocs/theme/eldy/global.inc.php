@@ -312,6 +312,11 @@ a.buttonticket {
     /* height: 40px; */
 }
 
+/* Used by categories */
+span.categorysquarre {
+    padding: 0 4px 0 4px;
+}
+
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
     border: none;

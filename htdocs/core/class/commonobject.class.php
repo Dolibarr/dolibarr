@@ -8277,6 +8277,27 @@ abstract class CommonObject
      * Adds it to non existing supplied categories.
      * Existing categories are left untouch.
      *
+     * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
+     * @return	int							Array of category objects or < 0 if KO
+     */
+    public function getCategoriesCommon($type_categ)
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+    	// Get current categories
+    	$c = new Categorie($this->db);
+    	$existing = $c->containing($this->id, $type_categ, 'id');
+
+    	return $existing;
+    }
+
+    /**
+     * Sets object to given categories.
+     *
+     * Deletes object from existing categories not supplied.
+     * Adds it to non existing supplied categories.
+     * Existing categories are left untouch.
+     *
      * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
      * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
      * @return	int							<0 if KO, >0 if OK

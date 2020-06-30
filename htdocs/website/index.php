@@ -987,23 +987,35 @@ if ($action == 'addcontainer')
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 			$action = 'createcontainer';
 		}
-		else {
-			// If there is no home page yet, this new page will be set as the home page
-			if (empty($object->fk_default_home)) {
-				$object->fk_default_home = $pageid;
-				$res = $object->update($user);
-				if ($res <= 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				} else {
-					$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+	}
 
-					// Generate the index.php page (to be the home page) and wrapper.php file
-					$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+	if (!$error) {
+		// Website categories association
+		$categoriesarray = GETPOST('categories', 'array');
+		$result = $objectpage->setCategories($categoriesarray);
+		if ($result < 0)
+		{
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 
-					if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
-				}
+	if (!$error) {
+		// If there is no home page yet, this new page will be set as the home page
+		if (empty($object->fk_default_home)) {
+			$object->fk_default_home = $pageid;
+			$res = $object->update($user);
+			if ($res <= 0)
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+
+				// Generate the index.php page (to be the home page) and wrapper.php file
+				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+
+				if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
 			}
 		}
 	}
@@ -1670,7 +1682,7 @@ if ($action == 'updatemeta')
 	}
 
 	if (!$error) {
-		// Supplier categories association
+		// Website categories association
 		$categoriesarray = GETPOST('categories', 'array');
 		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0)
@@ -3814,11 +3826,15 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
+
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$c = new Categorie($db);
 
 			foreach ($listofpages['list'] as $answerrecord)
 			{
@@ -3826,10 +3842,12 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				{
 					print '<tr>';
 
+					// Type of container
 					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
 					print $langs->trans($answerrecord->type_container); // TODO Use label of container
 					print '</td>';
 
+					// Container url and label
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
@@ -3838,6 +3856,23 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<br>';
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
+
+					// Categories
+					print '<td>';
+					if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
+					{
+						// Get current categories
+						$existing = $c->containing($answerrecord->id, Categorie::TYPE_WEBSITE_PAGE, 'object');
+						if (is_array($existing)) {
+							foreach ($existing as $tmpcategory) {
+								//var_dump($tmpcategory);
+								print '<span class="categorysquarre marginrightonly" style="background-color: #'.($tmpcategory->color != '' ? $tmpcategory->color : '888').'" title="'.dol_escape_htmltag($langs->trans("Category").' '.$tmpcategory->label).'"></span>';
+							}
+						}
+					}
+					//var_dump($existing);
+					print '</td>';
+
 
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
@@ -3882,10 +3917,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '</td>';
 
 					print '</tr>';
-				}
-				else {
+				} else {
 					print '<tr>';
 
+					// Type of container
 					print '<td>';
 					$translateofrecordtype = array(
 						'website_csscontent'=>'WEBSITE_CSS_INLINE',
@@ -3913,9 +3948,13 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
 					$param .= '&searchstring='.urlencode($searchkey);
 
+					// Container url and label
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].$param;
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '</td>';
+
+					print '<td>';
 					print '</td>';
 
 					print '<td class="tdoverflow100">';
