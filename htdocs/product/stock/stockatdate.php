@@ -128,8 +128,7 @@ if ($date) {	// Avoid heavy sql if mandatory date is not defined
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		while($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
 			$tmp_fk_product   = $obj->fk_product;
@@ -143,9 +142,7 @@ if ($date) {	// Avoid heavy sql if mandatory date is not defined
 		}
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	//var_dump($stock_prod_warehouse);
@@ -182,8 +179,7 @@ if ($date) {
 		$num = $db->num_rows($resql);
 		$i = 0;
 
-		while($i < $num)
-		{
+		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			$fk_product 	= $obj->fk_product;
 			$fk_entrepot 	= $obj->fk_entrepot;
@@ -199,9 +195,7 @@ if ($date) {
 		}
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

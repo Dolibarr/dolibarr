@@ -444,7 +444,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	User			$user		Objet user that modify
+	 *	@param	User		$user		Objet user that modify
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
     public function modify($dn, $info, $user)
