@@ -44,8 +44,7 @@ $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (!$sortorder) $sortorder = "DESC";
 if (!$sortfield) $sortfield = "date";
-if ($page < 0) { $page = 0; }
-elseif (empty($page)) $page = 0;
+if ($page < 0) { $page = 0; } elseif (empty($page)) $page = 0;
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $offset = $limit * $page;
 
@@ -120,14 +119,12 @@ if ($compression == 'zip')
     	if ($ret == -2) {
     		$langs->load("errors");
     		$errormsg = $langs->trans("ErrNoZipEngine");
-    	}
-    	else {
+    	} else {
     		$langs->load("errors");
     		$errormsg = $langs->trans("ErrorFailedToWriteInDir", $outputdir);
     	}
     }
-}
-elseif (in_array($compression, array('gz', 'bz')))
+} elseif (in_array($compression, array('gz', 'bz')))
 {
 	$userlogin = ($user->login ? $user->login : 'unknown');
 
@@ -135,7 +132,7 @@ elseif (in_array($compression, array('gz', 'bz')))
 
     $file .= '.tar';
     // We also exclude '/temp/' dir and 'documents/admin/documents'
-    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude='documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
+    $cmd = "tar -cf ".$outputdir."/".$file." --exclude-vcs --exclude 'temp' --exclude 'dolibarr.log' --exclude 'dolibarr_*.log' --exclude 'documents/admin/documents' -C ".dirname(DOL_DATA_ROOT)." ".basename(DOL_DATA_ROOT);
 
     $result = $utils->executeCLI($cmd, $outputfile);
 
@@ -145,9 +142,7 @@ elseif (in_array($compression, array('gz', 'bz')))
         $langs->load("errors");
         dol_syslog("Documents tar retval after exec=".$retval, LOG_ERR);
         $errormsg = 'Error tar generation return '.$retval;
-    }
-    else
-    {
+    } else {
         if ($compression == 'gz')
         {
             $cmd = "gzip -f ".$outputdir."/".$file;

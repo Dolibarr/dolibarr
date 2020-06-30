@@ -84,7 +84,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
             $sql = "SELECT DISTINCT b.piece_num";
             $sql .= ", b.doc_date as date_movement";
             $sql .= ", b.label_operation";
-            $sql .= ", b.montant";
+            $sql .= ", b.montant as amount";
             $sql .= ", b.code_journal";
             $sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
             $sql .= " WHERE b.fk_doc = 0";
@@ -103,7 +103,7 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
                     $date		= $this->db->jdate($objp->date_movement);
 					$journal	= $objp->code_journal;
                     $label		= $objp->label_operation;
-					$amount		= $objp->montant;
+					$amount		= $objp->amount;
 
 					$bookkeepingstatic->id = $objp->id;
 					$bookkeepingstatic->piece_num = $objp->piece_num;
@@ -140,7 +140,10 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num == 0) $this->info_box_contents[$line][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoRecordedManualEntries"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                	'td' => 'class="center opacitymedium"',
+                	'text'=>$langs->trans("NoRecordedManualEntries")
+                );
 
                 $this->db->free($result);
             } else {

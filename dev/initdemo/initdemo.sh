@@ -172,6 +172,11 @@ echo "mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
 mysql -P$port -u$admin $passwd $base < $mydir/$dumpfile
 export res=$?
 
+if [ $res -ne 0 ]; then
+	echo "Error to load database dump with mysql -P$port -u$admin -p***** $base < $mydir/$dumpfile"
+	exit
+fi 
+
 $mydir/updatedemo.php confirm
 export res=$?
 

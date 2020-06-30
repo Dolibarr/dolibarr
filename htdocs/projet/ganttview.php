@@ -281,8 +281,7 @@ if (count($tasksarray) > 0)
             $tasks[$taskcursor]['task_is_group'] = 1;
         	$tasks[$taskcursor]['task_css'] = 'ggroupblack';
             //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
-        }
-        elseif ($task->hasChildren() > 0) {
+        } elseif ($task->hasChildren() > 0) {
             $tasks[$taskcursor]['task_is_group'] = 1;
         	//$tasks[$taskcursor]['task_is_group'] = 0;
             $tasks[$taskcursor]['task_css'] = 'ggroupblack';
@@ -379,15 +378,11 @@ if (count($tasksarray) > 0)
 		print '</div>'."\n";
 
 		print '</div>';
-	}
-	else
-	{
+	} else {
 		$langs->load("admin");
 		print $langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled");
 	}
-}
-else
-{
+} else {
 	print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
 }
 

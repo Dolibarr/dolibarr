@@ -209,8 +209,7 @@ llxHeader('', $langs->trans("OpenSurvey"), "", '', 0, 0, $arrayofjs, $arrayofcss
 if (!isset($_SESSION["nbrecaseshoraires"]))
 {
 	$_SESSION["nbrecaseshoraires"] = 5;
-}
-elseif (GETPOST('ajoutcases') && $_SESSION["nbrecaseshoraires"] == 5)
+} elseif (GETPOST('ajoutcases') && $_SESSION["nbrecaseshoraires"] == 5)
 {
 	$_SESSION["nbrecaseshoraires"] = 10;
 }
@@ -319,9 +318,7 @@ $premierjourmois = date("N", mktime(0, 0, 0, $_SESSION["mois"], 1, $_SESSION["an
 if (is_integer($_SESSION["mois"]) && $_SESSION["mois"] > 0 && $_SESSION["mois"] < 13)
 {
 	$motmois = dol_print_date(mktime(0, 0, 0, $_SESSION["mois"], 10), '%B');
-}
-else
-{
+} else {
 	$motmois = dol_print_date(dol_now(), '%B');
 }
 

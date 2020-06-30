@@ -31,6 +31,7 @@ PageForLib=Arquivo para a biblioteca comum do PHP
 PageForObjLib=Arquivo para a biblioteca PHP dedicada ao objeto
 SqlFileKeyExtraFields=Arquivo SQL para chaves de atributos complementares
 ListOfDictionariesEntries=Lista de entradas dos dicionários
+DisplayOnPdf=Exibir em PDF
 MenusDefDesc=Defina aqui os menus fornecidos pelo seu módulo
 DictionariesDefDesc=Defina aqui os dicionários fornecidos pelo seu módulo
 PermissionsDefDesc=Defina aqui as novas permissões fornecidas pelo seu módulo

@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Open-DSI             <support@open-dsi.fr>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020		Tobias Sekan		<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 $langs->loadLangs(array("users", "companies", "agenda", "commercial", "other"));
 
 $action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'actioncommlist'; // To manage different context of search
 $resourceid = GETPOST("search_resourceid", "int") ?GETPOST("search_resourceid", "int") : GETPOST("resourceid", "int");
 $pid = GETPOST("search_projectid", 'int', 3) ?GETPOST("search_projectid", 'int', 3) : GETPOST("projectid", 'int', 3);
@@ -49,14 +51,15 @@ $optioncss = GETPOST('optioncss', 'alpha');
 $year = GETPOST("year", 'int');
 $month = GETPOST("month", 'int');
 $day = GETPOST("day", 'int');
+$toselect = GETPOST('toselect', 'array');
+$confirm = GETPOST('confirm', 'alpha');
+
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('search_actioncode', 'array'))
 {
     $actioncode = GETPOST('search_actioncode', 'array', 3);
     if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
     $actioncode = GETPOST("search_actioncode", "alpha", 3) ?GETPOST("search_actioncode", "alpha", 3) : (GETPOST("search_actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode = (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE);
@@ -154,6 +157,11 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  *	Actions
  */
 
+if (GETPOST('cancel', 'alpha'))
+{
+	$action='list'; $massaction='';
+}
+
 if (GETPOST("viewcal") || GETPOST("viewweek") || GETPOST("viewday"))
 {
 	$param = '';
@@ -185,9 +193,53 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $datestart = '';
     $dateend = '';
     $search_status = '';
+	$toselect = '';
     $search_array_options = array();
 }
 
+if (empty($reshook) && !empty($massaction))
+{
+	unset($percent);
+
+	switch ($massaction)
+	{
+		case 'set_all_events_to_todo':
+			$percent = ActionComm::EVENT_TODO;
+			break;
+
+		case 'set_all_events_to_in_progress':
+			$percent = ActionComm::EVENT_IN_PROGRESS;
+			break;
+
+		case 'set_all_events_to_finished':
+			$percent = ActionComm::EVENT_FINISHED;
+			break;
+	}
+
+	if (isset($percent))
+	{
+		foreach ($toselect as $toselectid)
+		{
+			$result = $object->updatePercent($toselectid, $percent);
+			if ($result < 0)
+			{
+				dol_print_error($db);
+				break;
+			}
+		}
+	}
+}
+
+// As mass deletion happens with a confirm step, $massaction is not use for the final step (deletion).
+if (empty($reshook))
+{
+	$objectclass = 'ActionComm';
+	$objectlabel = 'Events';
+	$uploaddir = true;
+	// Only users that can delete any event can remove records.
+	$permissiontodelete = $user->rights->agenda->allactions->delete;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+}
 
 /*
  *  View
@@ -239,10 +291,23 @@ if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
+// List of mass actions available
+$arrayofmassactions = array(
+	'set_all_events_to_todo' => $langs->trans("SetAllEventsToTodo"),
+	'set_all_events_to_in_progress' => $langs->trans("SetAllEventsToInProgress"),
+	'set_all_events_to_finished' => $langs->trans("SetAllEventsToFinished"),
+);
+if ($user->rights->agenda->allactions->delete)
+{
+	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+}
+
+$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
+
 $sql = "SELECT";
 if ($usergroup > 0) $sql .= " DISTINCT";
 $sql .= " s.nom as societe, s.rowid as socid, s.client, s.email as socemail,";
-$sql .= " a.id, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
+$sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulldayevent, a.location,";
 $sql .= ' a.fk_user_author,a.fk_user_action,';
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
@@ -279,24 +344,18 @@ if (!empty($actioncode))
     {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
-        else
-        {
+        else {
             if ($actioncode == 'AC_OTH') $sql .= " AND c.type != 'systemauto'";
             if ($actioncode == 'AC_OTH_AUTO') $sql .= " AND c.type = 'systemauto'";
         }
-    }
-    else
-    {
+    } else {
         if ($actioncode == 'AC_NON_AUTO') $sql .= " AND c.type != 'systemauto'";
         elseif ($actioncode == 'AC_ALL_AUTO') $sql .= " AND c.type = 'systemauto'";
-        else
-        {
+        else {
             if (is_array($actioncode))
             {
                 $sql .= " AND c.code IN ('".implode("','", $actioncode)."')";
-            }
-            else
-            {
+            } else {
                 $sql .= " AND c.code IN ('".implode("','", explode(',', $actioncode))."')";
             }
         }
@@ -366,6 +425,8 @@ if ($resql)
 
 	$num = $db->num_rows($resql);
 
+	$arrayofselected = is_array($toselect) ? $toselect : array();
+
 	// Local calendar
 	$newtitle = '<div class="nowrap clear inline-block minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
 	//$newtitle=$langs->trans($title);
@@ -385,14 +446,8 @@ if ($resql)
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	$nav = '';
 
-	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
-	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
 	if ($filter)          $nav .= '<input type="hidden" name="search_filter" value="'.$filter.'">';
-	//if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
-	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
 	if ($showbirthday)    $nav .= '<input type="hidden" name="search_showbirthday" value="1">';
-	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
-	//if ($usergroup)       $nav.='<input type="hidden" name="usergroup" value="'.$usergroup.'">';
 	print $nav;
 
     dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
@@ -424,8 +479,7 @@ if ($resql)
     if (empty($reshook))
     {
 		$s .= $hookmanager->resPrint;
-    }
-    elseif ($reshook > 1)
+    } elseif ($reshook > 1)
 	{
     	$s = $hookmanager->resPrint;
     }
@@ -442,7 +496,9 @@ if ($resql)
         $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1);
+
+    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
     $moreforfilter = '';
 
@@ -548,6 +604,7 @@ if ($resql)
 
 		$actionstatic->id = $obj->id;
 		$actionstatic->ref = $obj->id;
+		$actionstatic->code = $obj->code;
 		$actionstatic->type_code = $obj->type_code;
 		$actionstatic->type_label = $obj->type_label;
 		$actionstatic->type_picto = $obj->type_picto;
@@ -574,8 +631,7 @@ if ($resql)
 			{
 				$userstatic->fetch($obj->fk_user_action);
 				print $userstatic->getNomUrl(-1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print '</td>';
 		}
 
@@ -583,21 +639,30 @@ if ($resql)
 		if (!empty($arrayfields['c.libelle']['checked']))
 		{
 			print '<td class="nowraponall">';
+			$actioncomm = $actionstatic;
+			// TODO Code common with code into showactions
+			$imgpicto = '';
 			if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 			{
-	    		if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
-    			else {
-    			    if ($actionstatic->type_code == 'AC_RDV')       print img_picto('', 'object_group', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_TEL')   print img_picto('', 'object_phoning', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_EMAIL') print img_picto('', 'object_email', '', false, 0, 0, '', '').' ';
-    			    elseif ($actionstatic->type_code == 'AC_INT')   print img_picto('', 'object_intervention', '', false, 0, 0, '', '').' ';
-    			    elseif (!preg_match('/_AUTO/', $actionstatic->type_code)) print img_picto('', 'object_other', '', false, 0, 0, '', '').' ';
-    			}
+				if ($actioncomm->type_picto) {
+					$imgpicto = img_picto('', $actioncomm->type_picto);
+				} else {
+					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
+					elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
+				}
 			}
+			print $imgpicto;
+
 			$labeltype = $obj->type_code;
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
-			if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
+			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
+				$labeltype = $langs->trans("Message");
+			} elseif (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
 			print dol_trunc($labeltype, 28);
 			print '</td>';
 		}
@@ -620,7 +685,7 @@ if ($resql)
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->dp), $formatToUse);
 			$late = 0;
 			if ($obj->percent == 0 && $obj->dp && $db->jdate($obj->dp) < ($now - $delay_warning)) $late = 1;
@@ -633,7 +698,7 @@ if ($resql)
 
 		// End date
 		if (!empty($arrayfields['a.datep2']['checked'])) {
-			print '<td class="center">';
+			print '<td class="center nowraponall">';
 			print dol_print_date($db->jdate($obj->dp2), $formatToUse);
 			print '</td>';
 		}
@@ -649,8 +714,7 @@ if ($resql)
 				$societestatic->email = $obj->socemail;
 
 				print $societestatic->getNomUrl(1, '', 28);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print '</td>';
 		}
 
@@ -672,8 +736,7 @@ if ($resql)
                             $contactListCache[$socpeopleassigned['id']] = $contact->getNomUrl(1, '', 0);
                             $contactList[] = $contact->getNomUrl(1, '', 0);
                         }
-                    }
-                    else {
+                    } else {
                         // use cache
                         $contactList[] = $contactListCache[$socpeopleassigned['id']];
                     }
@@ -681,8 +744,7 @@ if ($resql)
                 if (!empty($contactList)) {
                     print implode(', ', $contactList);
                 }
-            }
-            elseif ($obj->fk_contact > 0) //keep for retrocompatibility with faraway event
+            } elseif ($obj->fk_contact > 0) //keep for retrocompatibility with faraway event
 			{
 				$contactstatic->id = $obj->fk_contact;
 				$contactstatic->email = $obj->email;
@@ -693,9 +755,7 @@ if ($resql)
 				$contactstatic->phone_perso = $obj->phone_perso;
 				$contactstatic->country_id = $obj->country_id;
 				print $contactstatic->getNomUrl(1, '', 0);
-			}
-			else
-			{
+			} else {
 				print "&nbsp;";
 			}
 			print '</td>';
@@ -717,7 +777,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
@@ -735,7 +795,15 @@ if ($resql)
 			$datep = $db->jdate($obj->datep);
 			print '<td align="center" class="nowrap">'.$actionstatic->LibStatut($obj->percent, 5, 0, $datep).'</td>';
 		}
-		print '<td></td>';
+		// Action column
+		print '<td class="nowrap center">';
+		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		{
+			$selected = 0;
+			if (in_array($obj->id, $arrayofselected)) $selected = 1;
+			print '<input id="cb'.$obj->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		print '</td>';
 
 		print "</tr>\n";
 		$i++;
@@ -745,9 +813,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

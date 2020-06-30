@@ -1,7 +1,4 @@
 # Dolibarr language file - Source file is en_US - stocks
-Stock=Valores
-Stocks=Cepo
-ListOfStockMovements=Lista de movimientos de stock
 inventoryEdit=Editar
 SelectCategory=Filtro de categoria
 inventoryDeleteLine=Eliminar linea

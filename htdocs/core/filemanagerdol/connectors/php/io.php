@@ -46,8 +46,7 @@ function GetResourceTypePath($resourceType, $sCommand)
 
 	if ($sCommand == "QuickUpload")
 		return $Config['QuickUploadPath'][$resourceType];
-	else
-		return $Config['FileTypesPath'][$resourceType];
+	else return $Config['FileTypesPath'][$resourceType];
 }
 
 /**
@@ -67,9 +66,7 @@ function GetResourceTypeDirectory($resourceType, $sCommand)
 
 		// Map the "UserFiles" path to a local directory.
 		return Server_MapPath($Config['QuickUploadPath'][$resourceType]);
-	}
-	else
-	{
+	} else {
 		if (strlen($Config['FileTypesAbsolutePath'][$resourceType]) > 0)
 			return $Config['FileTypesAbsolutePath'][$resourceType];
 
@@ -178,9 +175,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		if (isset($Config['ChmodOnFolderCreate']) && !$Config['ChmodOnFolderCreate'])
 		{
 			mkdir($folderPath);
-		}
-		else
-		{
+		} else {
 			$permissions = '0777';
 			if (isset($Config['ChmodOnFolderCreate']) && $Config['ChmodOnFolderCreate'])
 			{
@@ -202,9 +197,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		ini_restore('error_reporting');
 
 		return $sErrorMsg;
-	}
-	else
-		return '';
+	} else return '';
 }
 
 /**
@@ -236,8 +229,11 @@ function GetRootPath()
     return substr($sRealPath, 0, $position);
 }
 
-// Emulate the asp Server.mapPath function.
-// given an url path return the physical directory that it corresponds to
+/**
+ *  Emulate the asp Server.mapPath function.
+ *  @param	string		$path		given an url path return the physical directory that it corresponds to
+ *  @return	string					Path
+ */
 function Server_MapPath($path)
 {
     // This function is available only for Apache
@@ -338,7 +334,12 @@ function GetCurrentFolder()
 	return $sCurrentFolder;
 }
 
-// Do a cleanup of the folder name to avoid possible problems
+/**
+ * Do a cleanup of the folder name to avoid possible problems
+ *
+ * @param	string	$sNewFolderName		Folder
+ * @return	string						Folder sanitized
+ */
 function SanitizeFolderName($sNewFolderName)
 {
 	$sNewFolderName = stripslashes($sNewFolderName);
@@ -349,7 +350,12 @@ function SanitizeFolderName($sNewFolderName)
 	return $sNewFolderName;
 }
 
-// Do a cleanup of the file name to avoid possible problems
+/**
+ * Do a cleanup of the file name to avoid possible problems
+ *
+ * @param	string	$sNewFileName		Folder
+ * @return	string						Folder sanitized
+ */
 function SanitizeFileName($sNewFileName)
 {
 	global $Config;
@@ -366,7 +372,15 @@ function SanitizeFileName($sNewFileName)
 	return $sNewFileName;
 }
 
-// This is the function that sends the results of the uploading process.
+/**
+ * This is the function that sends the results of the uploading process.
+ *
+ * @param	string		$errorNumber	errorNumber
+ * @param	string		$fileUrl		fileUrl
+ * @param	string		$fileName		fileName
+ * @param	string		$customMsg		customMsg
+ * @return	void
+ */
 function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customMsg = '')
 {
 	// Minified version of the document.domain automatic fix script (#1919).

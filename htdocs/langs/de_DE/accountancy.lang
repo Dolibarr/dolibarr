@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Die nächsten Schritte sollten getan werden, um
 AccountancyAreaDescActionFreq=Die folgende Aktionen werden in der Regel jeden Monat, Woche oder Tag für sehr großes Unternehmen durchgeführt ...
 
 AccountancyAreaDescJournalSetup=SCHRITT %s: Buchhaltungsjournal erstellen oder kontrollieren via Menü  %s
-AccountancyAreaDescChartModel=SCHRITT %s: Erstellen Sie ein Modell des Kontenplans im Menü %s
-AccountancyAreaDescChart=SCHRITT %s: Erstellen oder überprüfen des Inhalts Ihres Kontenplans im Menü %s
+AccountancyAreaDescChartModel=SCHRITT 1%s: Prüfe, ob ein Kontenplanmodell vorhanden ist, oder erstelle eines aus dem Menü 1%s
+AccountancyAreaDescChart=SCHRITT 1%s: Wähle einen Kontenplan aus dem Menü 1%s aus und/oder vervollständige es
 
 AccountancyAreaDescVat=SCHRITT %s: Definition des Buchhaltungskonto für jeden Steuersatz. Kann im Menü %s geändert werden.
 AccountancyAreaDescDefault=Schritt %s: Vorgabekonten festlegen. Im Menü %s festlegen.
@@ -121,6 +121,7 @@ InvoiceLinesDone=verbundene Rechnungszeilen
 ExpenseReportLines=Zeilen von Spesenabrechnungen zu verbinden
 ExpenseReportLinesDone=Gebundene Zeile von Spesenabrechnungen
 IntoAccount=mit dem Buchhaltungskonto verbundene Zeilen
+TotalForAccount=Gesamtsumme für Buchhaltungskonto
 
 
 Ventilate=zusammenfügen
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Buchhaltungskonto für Spenden
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Buchhaltungskonto für Abonnements
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Standard-Buchhaltungskonto für gekaufte Produkte \n(wenn nicht anders im Produktblatt definiert)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Standardmäßig Buchhaltungskonto für die gekauften Produkte in der EU (wird verwendet, wenn nicht im Produktblatt definiert)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Standardmäßig Buchhaltungskonto für die gekauften und aus der EU importierten Produkte (wird verwendet, wenn nicht im Produktblatt definiert)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard-Buchhaltungskonto für die verkauften Produkte (wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Standard-Buchhaltungskonto für in die EU verkaufte Produkte \n(wird verwendet, wenn nicht im Produktblatt definiert)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Standard-Buchhaltungskonto für ausserhalb der EU verkaufte Produkte [EXPORT] \n(wird verwendet, wenn nicht im Produktblatt definiert) 
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard-Buchhaltungskonto für die gekauften Leistungen (wenn nicht anders im Produktblatt definiert)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Standardmäßig Buchhaltungskonto für die gekauften Dienstleistungen in der EU (wird verwendet, wenn nicht im Leistungsblatt definiert)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Standardmäßig Buchhaltungskonto für die gekauften und aus der EU importierten Dienstleistungen (wird verwendet, wenn nicht im Leistungsblatt definiert)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard-Buchhaltungskonto für die verkauften Leistungen (wenn nicht anders im Produktblatt definiert)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Standard-Buchhaltungskonto für in die EU verkaufte Dienstleistungen \n(wird verwendet, wenn nicht im Produktblatt definiert) 
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Standard-Buchhaltungskonto für ausserhalb der EU verkaufte Dienstleistungen [EXPORT] \n(wird verwendet, wenn nicht im Produktblatt definiert) 
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Geschäftspartner
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Drittanbieter-Konto nicht definiert oder Drittanbieter unbekannt. Fehler beim Blockieren.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unbekanntes Drittanbieter-Konto und wartendes Konto nicht definiert. Fehler beim Blockieren
 PaymentsNotLinkedToProduct=Zahlung ist keinem Produkt oder Dienstleistung zugewisen
+OpeningBalance=Eröffnungsbilanz
 ShowOpeningBalance=Eröffnungsbilanz anzeigen
 HideOpeningBalance=Eröffnungsbilanz ausblenden
+ShowSubtotalByGroup=Zwischensumme nach Gruppe anzeigen
 
 Pcgtype=Kontenklasse
 PcgtypeDesc=Kontengruppen werden für einige Buchhaltungsberichte als vordefinierte Filter- und Gruppierungskriterien verwendet. Beispielsweise werden "EINKOMMEN" oder "AUSGABEN" als Gruppen für die Buchhaltung von Produktkonten verwendet, um die Ausgaben- / Einnahmenrechnung zu erstellen.
+
+Reconcilable=ausgleichsfähig
 
 TotalVente=Gesamtumsatz vor Steuern
 TotalMarge=Gesamtumsatzrendite
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Export für Quadratus QuadraCompta
 Modelcsv_ebp=Export für EBP
 Modelcsv_cogilog=Export für Cogilog
 Modelcsv_agiris=Export für Agiris
-Modelcsv_LDCompta=Export für LD Compta (ab Version 9) (Test)
+Modelcsv_LDCompta=Export für LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Export für LD Compta (v10 und höher)
 Modelcsv_openconcerto=Export für OpenConcerto (Test)
 Modelcsv_configurable=konfigurierbarer CSV-Export
 Modelcsv_FEC=Export nach FEC
 Modelcsv_Sage50_Swiss=Export für Sage 50 (Schweiz)
+Modelcsv_winfic=Exportiere Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Kontenplan ID
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=Modus Verkäufe Inland
 OptionModeProductSellIntra=Modus Verkäufe in EU/EWG
 OptionModeProductSellExport=Modus Verkäufe Export (ausserhalb EU/EWG)
 OptionModeProductBuy=Modus Einkäufe
+OptionModeProductBuyIntra=Modus in die EU importierte Einkäufe
+OptionModeProductBuyExport=Modus aus anderen Staaten importierte Einkäufe
 OptionModeProductSellDesc=Alle Produkte mit Buchhaltungskonto für Verkäufe Inland anzeigen.
 OptionModeProductSellIntraDesc=Alle Produkte mit Buchhaltungskonto für Verkäufe in EWG anzeigen.
 OptionModeProductSellExportDesc=Alle Produkte mit Abrechnungskonto für Verkäufe Ausland anzeigen.
 OptionModeProductBuyDesc=Alle Produkte mit Buchhaltungskonto für Einkäufe anzeigen.
+OptionModeProductBuyIntraDesc=Alle Produkte mit Buchhaltungskonto für Einkäufe in der EWG anzeigen.
+OptionModeProductBuyExportDesc=Alle Produkte mit Buchhaltungskonto für andere ausländische Einkäufe anzeigen.
 CleanFixHistory=Nicht existierenden Buchhaltungskonten von Positionen entfernen, die im Kontenplan nicht vorkommen.
 CleanHistory=Alle Zuordnungen für das ausgewählte Jahr zurücksetzen.
 PredefinedGroups=Vordefinierte Gruppen
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=Konto aus der Gruppe entfernt
 SaleLocal=Verkauf Inland
 SaleExport=Verkauf Export (ausserhalb EWG)
 SaleEEC=Verkauf in EU/EWG
+SaleEECWithVAT=Verkauf in der EU mit Mehrwertsteuer (nicht null), und daher anzunehmen ist, dass es sich NICHT um einen innergemeinschaftlichen Verkauf handelt und das vorgeschlagene Konto daher das Standardproduktkonto ist.
+SaleEECWithoutVATNumber=Verkauf in der EU ohne MwSt., aber ohne Definition der MwSt-ID des Geschäftspartners. Bei diesen Standardverkäufen greifen wir auf das Produktkonto zurück. Bei Bedarf kann die MwSt.-ID des Partners oder  Produktkontos festlegt werden.
 
 ## Dictionary
 Range=Bereich von Sachkonten

@@ -85,8 +85,8 @@ MaxSize=Максимален размер
 AttachANewFile=Прикачване на нов файл / документ
 LinkedObject=Свързан обект
 NbOfActiveNotifications=Брой известия (брой получени имейли)
-PredefinedMailTest=__(Здравейте)__,\nТова е тестово съобщение, изпратено до __EMAIL__.\nДвата реда са разделени, чрез въвеждане на нов ред.\n\n__USER_SIGNATURE__
-PredefinedMailTestHtml=__(Здравейте)__,\nТова е <b>тестово</b> съобщение (думата 'тестово' трябва да бъде с удебелен шрифт).<br>Двата реда са разделени, чрез въвеждане на нов ред.<br><br>__USER_SIGNATURE__
+PredefinedMailTest=__(Hello)__\nThis is a test mail sent to __EMAIL__.\nThe lines are separated by a carriage return.\n\n__USER_SIGNATURE__
+PredefinedMailTestHtml=__(Hello)__<br>This is a <b>test</b> mail sent to __EMAIL__ (the word test must be in bold).<br>The lines are separated by a carriage return.<br><br>__USER_SIGNATURE__
 PredefinedMailContentContract=__(Здравейте)__,\n\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
 PredefinedMailContentSendInvoice=__(Здравейте)__,\n\nМоля, вижте приложената фактура __REF__\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__(Здравейте)__,\n\nБихме желали да Ви напомним, че фактура __REF__ все още не е платена. Копие на фактурата е прикачено към съобщението.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Поздрави)__,\n\n__USER_SIGNATURE__
@@ -262,7 +262,7 @@ TicketCreatedByEmailCollector=Тикетът е създаден, чрез им�
 OpeningHoursFormatDesc=Използвайте средно тире '-' за разделяне на часовете на отваряне и затваряне.<br> Използвайте интервал, за да въведете различни диапазони.<br> Пример: 8-12 14-18
 
 ##### Export #####
-ExportsArea=Секция за експортиране
+ExportsArea=Секция с експортирания
 AvailableFormats=Налични формати
 LibraryUsed=Използвана библиотека
 LibraryVersion=Версия на библиотеката

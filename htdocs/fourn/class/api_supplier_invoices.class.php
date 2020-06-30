@@ -177,8 +177,7 @@ class SupplierInvoices extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve supplier invoice list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -669,9 +668,7 @@ class SupplierInvoices extends DolibarrApi
     	$updateRes = $this->invoice->deleteline($lineid);
     	if ($updateRes > 0) {
     		return $this->get($id);
-    	}
-    	else
-    	{
+    	} else {
     		throw new RestException(405, $this->invoice->error);
     	}
     }

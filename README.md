@@ -28,7 +28,7 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
 - [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp)
-- DoliDeb for Debian or Ubuntu
+- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
@@ -91,14 +91,15 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Products and/or Services catalog
 - Commercial proposals management
 - Customer & Supplier Orders management
+- Invoices and payment management
 - Shipping management
 - Warehouse/Stock management
-- Invoices and payment management
-- Standing orders management (European SEPA)
+- Manufacturing Orders
 - Bank accounts management
+- Direct debit orders management (European SEPA)
 - Accounting management
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
-- Opportunities and/or project management
+- Opportunities or Leads management
 - Projects & Tasks management
 - Contracts management
 - Interventions management

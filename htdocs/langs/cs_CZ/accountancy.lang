@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Další kroky by měly být provedeny, abyste u
 AccountancyAreaDescActionFreq=Tyto akce jsou proto zpravidla prováděny každý měsíc, týden nebo den pro velmi velké společnosti ...
 
 AccountancyAreaDescJournalSetup=KROK %s: Vytvořte nebo zkontrolujte obsah vašeho seznamu časopisů z nabídky %s
-AccountancyAreaDescChartModel=KROK %s: Vytvoření modelu schématu účtu z nabídky %s
-AccountancyAreaDescChart=KROK %s: Vytvořte nebo zkontrolujte obsah schématu účtu z nabídky %s
+AccountancyAreaDescChartModel=KROK %s: Zkontrolujte, zda existuje model účtové osnovy, nebo vytvořte jeden z nabídky %s.
+AccountancyAreaDescChart=KROK %s: Vyberte a | nebo dokončete svůj účtový graf z nabídky %s
 
 AccountancyAreaDescVat=KROK %s: Definujte účetní účty pro každou DPH. K tomu použijte položku nabídky %s.
 AccountancyAreaDescDefault=KROK %s: Definujte výchozí účetní účty. K tomu použijte položku nabídky %s.
@@ -98,8 +98,8 @@ MenuExpenseReportAccounts=Účet výkazů výdajů
 MenuLoanAccounts=Úvěrové účty
 MenuProductsAccounts=produktové účty
 MenuClosureAccounts=Uzavření účtů
-MenuAccountancyClosure=Closure
-MenuAccountancyValidationMovements=Validate movements
+MenuAccountancyClosure=Uzavření
+MenuAccountancyValidationMovements=Ověřte pohyby
 ProductsBinding=Produkty účty
 TransferInAccounting=Transfer v účetnictví
 RegistrationInAccounting=Registrace v účetnictví
@@ -110,7 +110,7 @@ ExpenseReportsVentilation=Záväzná zpráva o výdajích
 CreateMvts=Vytvořit novou transakci
 UpdateMvts=Modifikace transakce
 ValidTransaction=Ověřte transakci
-WriteBookKeeping=Register transactions in Ledger
+WriteBookKeeping=Zaregistrujte transakce v knize
 Bookkeeping=účetní kniha
 AccountBalance=Zůstatek na účtu
 ObjectsRef=Zdrojový objekt ref
@@ -121,6 +121,7 @@ InvoiceLinesDone=Prověřené řádky faktury
 ExpenseReportLines=Řádky výkazů výdajů navázat
 ExpenseReportLinesDone=Vázané linie vyúčtování výdajů
 IntoAccount=Prověřit řádky v účetním účtu
+TotalForAccount=Celkem za účetní účet
 
 
 Ventilate=Prověřit
@@ -161,20 +162,25 @@ ACCOUNTING_RESULT_LOSS=Výsledek účetní účet (ztráta)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Časopis uzavření
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Účtovací účet přechodného bankovního převodu
-TransitionalAccount=Transitional bank transfer account
+TransitionalAccount=Účet přechodného bankovního převodu
 
 ACCOUNTING_ACCOUNT_SUSPENSE=Čekající účet
 DONATION_ACCOUNTINGACCOUNT=Účtování účet registrovaných darů
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Účtovací účet pro registraci předplatného
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené produkty (používá se, pokud není definováno v produktovém listu)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Účetní účet ve výchozím nastavení u zakoupených produktů v EHS (používá se, pokud není definováno v produktovém listu)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Účetní účet ve výchozím nastavení pro nakoupené produkty a dovážený z EHS (používá se, pokud není definován v listu produktu)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané produkty (použít, pokud není definován v listu produktu)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Účetní účet ve výchozím nastavení u produktů prodávaných v EHS (používá se, pokud není definováno v produktovém listu)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Účetní účet ve výchozím nastavení u produktů prodaných a vyvezených z EHS (používá se, pokud není definováno v produktovém listu)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené služby (použít, pokud není definován v servisním listu)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Účetní účet ve výchozím nastavení pro zakoupené služby v EHS (používá se, pokud není definováno v listu služeb)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Účetní účet ve výchozím nastavení pro nakoupené služby a importovaný z EHS (používá se, pokud není definováno v listu služeb)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účetní účet ve výchozím nastavení pro prodané služby (použít, pokud není definován v servisním listu)
-ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
-ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Účetní účet ve výchozím nastavení pro služby prodávané v EHS (používá se, pokud není definováno v listu služeb)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Účetní účet ve výchozím nastavení pro služby prodané a vyvezené z EHS (použité, pokud není definováno v listu služeb)
 
 Doctype=Typ dokumentu
 Docdate=Datum
@@ -197,10 +203,10 @@ ByPersonalizedAccountGroups=Individuálními skupinami
 ByYear=Podle roku
 NotMatch=Nenastaveno
 DeleteMvt=Odstraňte řádky knihy
-DelMonth=Month to delete
+DelMonth=Měsíc k odstranění
 DelYear=Odstrannění roku
 DelJournal=Journal, který chcete smazat
-ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
+ConfirmDeleteMvt=Tím vymažete všechny řádky knihy pro rok / měsíc a / nebo z konkrétního deníku (je vyžadováno alespoň jedno kritérium). Budete muset znovu použít funkci 'Registrace v účetnictví', aby se vymazaný záznam vrátil do knihy.
 ConfirmDeleteMvtPartial=Tímto bude smazána transakce z Ledger (všechny řádky související se stejnou transakcí budou smazány)
 FinanceJournal=Finanční deník
 ExpenseReportsJournal=Výdajové zprávy journal
@@ -223,16 +229,20 @@ DescThirdPartyReport=Zde naleznete seznam zákazníků a prodejců subjektů a j
 ListAccounts=Seznam účetních účtů
 UnknownAccountForThirdparty=Neznámý účet subjektu. Použijeme %s
 UnknownAccountForThirdpartyBlocking=Neznámý účet subjektu. Chyba blokování
-ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
-ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
+ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Účet subjektu není definován nebo subjekt je neznámý. Použijeme %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Neznámý a vedlejší účet subjektu pro platbu není definován. Hodnotu účtu vedlejších účtů ponecháme prázdnou.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Účet subjektu není definován nebo neznámý subjekt. Chyba blokování.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Neznámý účet subjektu a účet čekání není definován. Chyba blokování
 PaymentsNotLinkedToProduct=Platba není spojena s žádným produktem / službou
-ShowOpeningBalance=Show opening balance
-HideOpeningBalance=Hide opening balance
+OpeningBalance=Počáteční zůstatek
+ShowOpeningBalance=Zobrazit počáteční zůstatek
+HideOpeningBalance=Skrýt počáteční zůstatek
+ShowSubtotalByGroup=Zobrazit mezisoučet podle skupiny
 
 Pcgtype=Skupina účtů
-PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Skupina účtů se používá jako předdefinovaná kritéria pro filtrování a seskupování pro některé účetní výkazy. Například „PŘÍJMY“ nebo „VÝDAJE“ se používají jako skupiny pro účetní účty produktů k sestavení výkazu nákladů / výnosů.
+
+Reconcilable=Smíření
 
 TotalVente=Celkový obrat před zdaněním
 TotalMarge=Celkové tržby marže
@@ -243,18 +253,18 @@ DescVentilDoneCustomer=Seznamte se zde se seznamem řádků faktur zákazníků 
 DescVentilTodoCustomer=Vázat fakturační řádky, které již nejsou vázány účtem účetnictví produktu
 ChangeAccount=Změnit výrobek/službu na účetnm účtu ve vybraných řádcích s následujícím účetním účtem:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
+DescVentilSupplier=Seznamte se zde se seznamem linek s fakturami dodavatele vázaných nebo dosud vázaných na účet účetnictví produktu (jsou viditelné pouze záznamy, které ještě nebyly převedeny do účetnictví)
 DescVentilDoneSupplier=Zde si přečtěte seznam řádků prodejních faktur a jejich účetní účet
 DescVentilTodoExpenseReport=Vázat řádky výkazu výdajů, které již nejsou vázány účtem účtování poplatků
 DescVentilExpenseReport=Zde si přečtěte seznam výkazů výdajů vázaných (nebo ne) na účty účtování poplatků
 DescVentilExpenseReportMore=Pokud nastavíte účetní účet na řádcích výkazu druhů výdajů, aplikace bude schopna provést veškerou vazbu mezi řádky výkazu výdajů a účetním účtem vašeho účtovacího schématu, a to jedním kliknutím tlačítkem <strong> "%s" </strong>. Pokud účet nebyl nastaven na slovník poplatků nebo máte stále nějaké řádky, které nejsou vázány na žádný účet, budete muset provést ruční vazbu z nabídky "<strong> %s </strong>".
 DescVentilDoneExpenseReport=Poraďte se zde seznam v souladu se zprávami výdajů a jejich poplatků účtování účtu
 
-DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
-OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
-ValidateMovements=Validate movements
-DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
-SelectMonthAndValidate=Select month and validate movements
+DescClosure=Zde se podívejte na počet pohybů za měsíc, kteří nejsou validováni a fiskální roky již otevřeny
+OverviewOfMovementsNotValidated=Krok 1 / Přehled pohybů neověřených. (Nezbytné uzavřít fiskální rok)
+ValidateMovements=Ověřte pohyby
+DescValidateMovements=Jakékoli úpravy nebo vymazání písem, nápisů a vymazání budou zakázány. Všechny přihlášky na cvičení musí být validovány, jinak nebude možné uzavřít
+SelectMonthAndValidate=Vyberte měsíc a potvrďte pohyby
 
 ValidateHistory=Ověřit automaticky
 AutomaticBindingDone=Automatické vázání provedeno
@@ -270,7 +280,7 @@ ListOfProductsWithoutAccountingAccount=Seznam výrobků, které nejsou vázány 
 ChangeBinding=Změnit vazby
 Accounted=Účtováno v knize
 NotYetAccounted=Zatím nebyl zaznamenán v knize
-ShowTutorial=Show Tutorial
+ShowTutorial=Zobrazit výuku
 NotReconciled=Nesladěno
 
 ## Admin
@@ -281,7 +291,7 @@ AccountingJournals=účetní deníky
 AccountingJournal=Účetní deník
 NewAccountingJournal=Nový účetní deník
 ShowAccountingJournal=Zobrazit účetní deník
-NatureOfJournal=Nature of Journal
+NatureOfJournal=Povaha časopisu
 AccountingJournalType1=Různé operace
 AccountingJournalType2=Odbyt
 AccountingJournalType3=Nákupy
@@ -307,27 +317,33 @@ Modelcsv_quadratus=Export pro Quadratus QuadraCompta
 Modelcsv_ebp=Export pro EBP
 Modelcsv_cogilog=Export pro Cogilog
 Modelcsv_agiris=Export pro Agiris
-Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
-Modelcsv_openconcerto=Export for OpenConcerto (Test)
+Modelcsv_LDCompta=Export pro LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Export pro LD Compta (v10 a vyšší)
+Modelcsv_openconcerto=Export pro OpenConcerto (Test)
 Modelcsv_configurable=Export CSV konfigurovatelný
 Modelcsv_FEC=Export FEC
-Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
+Modelcsv_Sage50_Swiss=Export pro Sage 50 Švýcarsko
+Modelcsv_winfic=Exportovat Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Schéma Id účtů
 
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init účetnictví
 InitAccountancyDesc=Tato stránka může být použita k inicializaci účetnictví u produktů a služeb, které nemají účetní účet definovaný pro prodej a nákup.
 DefaultBindingDesc=Tato stránka může být použita k nastavení výchozího účtu, který bude použit pro propojení záznamů o platbách, darování, daních a DPH, pokud již nebyl stanoven žádný účet.
-DefaultClosureDesc=This page can be used to set parameters used for accounting closures.
+DefaultClosureDesc=Na této stránce lze nastavit parametry používané pro uzavření účetnictví.
 Options=možnosti
 OptionModeProductSell=prodejní režim
 OptionModeProductSellIntra=Režim prodeje vyváženého v EHS
 OptionModeProductSellExport=Režim prodeje vyvážené v jiných zemích
 OptionModeProductBuy=Nákupní režim
+OptionModeProductBuyIntra=Nákupy režimů importované do EHS
+OptionModeProductBuyExport=Režim zakoupený dovezený z jiných zemí
 OptionModeProductSellDesc=Zobrazit všechny produkty s vyúčtováním pro přímý prodej.
 OptionModeProductSellIntraDesc=Zobrazit všechny produkty s účetním účtem pro prodej v EHS.
 OptionModeProductSellExportDesc=Zobrazit všechny produkty s účetním účtem pro ostatní zahraniční prodeje.
 OptionModeProductBuyDesc=Zobrazit všechny produkty které připadají v úvahu pro nákupy.
+OptionModeProductBuyIntraDesc=Zobrazit všechny produkty s účetním účtem pro nákupy v EHS.
+OptionModeProductBuyExportDesc=Zobrazit všechny produkty s účetním účtem pro ostatní zahraniční nákupy.
 CleanFixHistory=Odstraňte účtovací kód z řádků, které neexistují ve schématech účtu
 CleanHistory=Obnovit všechny vazby pro vybraný rok
 PredefinedGroups=Předdefinované skupiny
@@ -335,9 +351,11 @@ WithoutValidAccount=Bez platného zvláštním účtu
 WithValidAccount=S platným zvláštním účtu
 ValueNotIntoChartOfAccount=Tato hodnota účetního účtu neexistuje v účtu
 AccountRemovedFromGroup=Účet byl odstraněn ze skupiny
-SaleLocal=Local sale
-SaleExport=Export sale
-SaleEEC=Sale in EEC
+SaleLocal=Místní prodej
+SaleExport=Exportní prodej
+SaleEEC=Prodej v EHS
+SaleEECWithVAT=Prodej v EHS s nulovou DPH, takže předpokládáme, že se nejedná o intrakomunitní prodej a navrhovaný účet je standardní produktový účet.
+SaleEECWithoutVATNumber=Prodej v EHS bez DPH, ale DIČ třetí strany není definováno. Pro standardní prodej jsme upadli na produktový účet. V případě potřeby můžete opravit DIČ třetí strany nebo produktový účet.
 
 ## Dictionary
 Range=Řada účetních účtu
@@ -358,7 +376,7 @@ UseMenuToSetBindindManualy=Řádky, které ještě nejsou vázány, použijte na
 
 ## Import
 ImportAccountingEntries=Účetní zápisy
-DateExport=Date export
+DateExport=Datum exportu
 WarningReportNotReliable=Upozornění: Tento přehled není založen na záznamníku, takže neobsahuje transakci upravenou ručně v Knihovně. Je-li vaše deník aktuální, zobrazení účetnictví je přesnější.
 ExpenseReportJournal=Účet výkazů výdajů
 InventoryJournal=Inventářový věstník

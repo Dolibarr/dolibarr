@@ -78,7 +78,12 @@ if (!empty($canvas))
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
+if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+	|| !empty($conf->mrp->enabled))
 {
     $virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -136,9 +141,7 @@ if (dol_strlen($type))
     if ($type == 1)
     {
         $sql .= " AND p.fk_product_type = '1'";
-    }
-    else
-    {
+    } else {
         $sql .= " AND p.fk_product_type <> '1'";
     }
 }
@@ -188,8 +191,7 @@ if ($resql)
 
 	if (isset($type))
 	{
-		if ($type == 1) { $texte = $langs->trans("Services"); }
-		else { $texte = $langs->trans("Products"); }
+		if ($type == 1) { $texte = $langs->trans("Services"); } else { $texte = $langs->trans("Products"); }
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
@@ -403,9 +405,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

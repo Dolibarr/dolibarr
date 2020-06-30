@@ -55,8 +55,7 @@ if ($id > 0 || !empty($ref))
 		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorRecordNotFound'), null, 'errors');
 		$error++;
-	}
-	elseif ($ret < 0)
+	} elseif ($ret < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
 		$error++;
@@ -65,9 +64,7 @@ if ($id > 0 || !empty($ref))
 if (!$error)
 {
 	$object->fetch_thirdparty();
-}
-else
-{
+} else {
 	header('Location: '.DOL_URL_ROOT.'/comm/propal/list.php');
 	exit;
 }
@@ -89,31 +86,23 @@ if ($action == 'addcontact' && $user->rights->propale->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
-
-// Toggle the status of a contact
+} // Toggle the status of a contact
 elseif ($action == 'swapstatut' && $user->rights->propale->creer)
 {
 	if ($object->id > 0)
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
 	}
-}
-
-// Deletes a contact
+} // Deletes a contact
 elseif ($action == 'deletecontact' && $user->rights->propale->creer)
 {
 	$result = $object->delete_contact($lineid);
@@ -122,9 +111,7 @@ elseif ($action == 'deletecontact' && $user->rights->propale->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

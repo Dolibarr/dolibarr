@@ -41,8 +41,7 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC))
 				$error++;
 				if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2) {
 					setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
-				}
-				else {
+				} else {
 					setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 				}
 			}
@@ -58,15 +57,13 @@ if (GETPOST('sendit', 'alpha') && !empty($conf->global->MAIN_UPLOAD_DOC))
 			if (!empty($upload_dirold) && !empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 			{
 				$result = dol_add_file_process($upload_dirold, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs);
-			}
-			elseif (!empty($upload_dir))
+			} elseif (!empty($upload_dir))
 			{
 				$result = dol_add_file_process($upload_dir, $allowoverwrite, 1, 'userfile', GETPOST('savingdocmask', 'alpha'), null, '', $generatethumbs);
 			}
 		}
 	}
-}
-elseif (GETPOST('linkit', 'none') && !empty($conf->global->MAIN_UPLOAD_DOC))
+} elseif (GETPOST('linkit', 'none') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
     $link = GETPOST('link', 'alpha');
     if ($link)
@@ -86,8 +83,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
     if (GETPOST('section', 'alpha')) {
         // For a delete from the ECM module, upload_dir is ECM root dir and urlfile contains relative path from upload_dir
         $file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
-    }
-    else								// For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+    } else // For a delete from the file manager into another module, or from documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 	{
        	$urlfile = basename($urlfile);
        	$file = $upload_dir.(preg_match('/\/$/', $upload_dir) ? '' : '/').$urlfile;
@@ -124,8 +120,7 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         } else {
             setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
         }
-    }
-    elseif ($linkid)	// delete of external link
+    } elseif ($linkid)	// delete of external link
     {
         require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
         $link = new Link($db);
@@ -148,16 +143,13 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
         if ($backtopage) {
         	header('Location: '.$backtopage);
             exit;
-        }
-        else
-        {
+        } else {
         	$tmpurl = $_SERVER["PHP_SELF"].'?id='.$object->id.(GETPOST('section_dir', 'alpha') ? '&section_dir='.urlencode(GETPOST('section_dir', 'alpha')) : '').(!empty($withproject) ? '&withproject=1' : '');
         	header('Location: '.$tmpurl);
             exit;
         }
     }
-}
-elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
+} elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha'))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $langs->load('link');
@@ -176,13 +168,10 @@ elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('
         {
             setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');
         }
-    }
-    else
-    {
+    } else {
         //error fetching
     }
-}
-elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
+} elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 {
 	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
 	if (!empty($upload_dir))
@@ -197,7 +186,13 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
 	        if (isAFileWithExecutableContent($filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 	        {
-	            $filenameto .= '.noexe';
+	        	// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
+	        	$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
+	        	if (! preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash.='/';
+
+	        	if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
+		            $filenameto .= '.noexe';
+	        	}
 	        }
 
 	        if ($filenamefrom && $filenameto)
@@ -211,8 +206,10 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 
 	            if (empty($reshook))
 	            {
-	            	if (!file_exists($destpath))
-	            	{
+	            	if (preg_match('/^\./', $filenameto)) {
+	            		$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	            		setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
+	            	} elseif (!file_exists($destpath)) {
 	            		$result = dol_move($srcpath, $destpath);
 			            if ($result)
 			            {
@@ -235,16 +232,12 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 			            	}
 
 			                setEventMessages($langs->trans("FileRenamed"), null);
-			            }
-			            else
-			            {
-			                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+			            } else {
+			                $langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 			                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
 			            }
-	            	}
-	            	else
-	            	{
-	            		$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	            	} else {
+	            		$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 	            		setEventMessages($langs->trans("ErrorDestinationAlreadyExists", $filenameto), null, 'errors');
 	            	}
 	            }
@@ -269,9 +262,7 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 		    		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		    		$ecmfile->share = getRandomPassword(true);
 		    	}
-		    }
-		    else
-		    {
+		    } else {
 		    	$ecmfile->share = '';
 		    }
 		    $result = $ecmfile->update($user);

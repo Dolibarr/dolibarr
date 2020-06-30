@@ -116,8 +116,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname = 'class="tmenusel"';
 			elseif (!empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname = 'class="tmenusel"';
 			else $classname = 'class="tmenu"';
-		}
-		elseif ($showmode == 2) $classname = 'class="tmenu"';
+		} elseif ($showmode == 2) $classname = 'class="tmenu"';
 
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
@@ -131,12 +130,12 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	{
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (empty($conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI) ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
-		
+
 		$logoContainerAdditionalClass = 'backgroundforcompanylogo';
 		if (!empty($conf->global->MAIN_INFO_SOCIETE_LOGO_NO_BACKGROUND)) {
 			$logoContainerAdditionalClass = '';
 		}
-		
+
 		if (!empty($mysoc->logo_squarred_mini) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_squarred_mini))
 		{
 			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_squarred_mini);
@@ -145,12 +144,11 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 		 {
 		 $urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 		 }*/
-		else
-		{
-			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
+		else {
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
 			$logoContainerAdditionalClass = '';
 		}
-		
+
 		$title = $langs->trans("GoIntoSetupToChangeLogo");
 
 		print "\n".'<!-- Show logo on menu -->'."\n";
@@ -357,14 +355,13 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				}
 				$i++;
 			}
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 		$db->free($resql);
 	}
 
 	if (!empty($conf->accounting->enabled) && !empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy');
+		$newmenu->add('', $langs->trans("RegistrationInAccounting"), 1, $user->rights->accounting->comptarapport->lire, '', 'accountancy', 'accountancy', 10);
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
@@ -410,45 +407,12 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					}
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				// Should not happend. Entries are added
 				$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
 			}
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 		$db->free($resql);
-
-		/*
-		$sql = "SELECT rowid, label, accountancy_journal";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-		$sql.= " WHERE entity = ".$conf->entity;
-		$sql.= " AND clos = 0";
-		$sql.= " ORDER BY label";
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$numr = $db->num_rows($resql);
-			$i = 0;
-
-			if ($numr > 0)
-			while ($i < $numr)
-			{
-				$objp = $db->fetch_object($resql);
-				$newmenu->add('/accountancy/journal/bankjournal.php?id_account='.$objp->rowid, $langs->trans("Journal").' - '.$objp->label, 1, $user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-				$i++;
-			}
-		}
-		else dol_print_error($db);
-		$db->free($resql);
-
-		// Add other journal
-		$newmenu->add("/accountancy/journal/sellsjournal.php?leftmenu=journal",$langs->trans("SellsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		$newmenu->add("/accountancy/journal/purchasesjournal.php?leftmenu=journal",$langs->trans("PurchasesJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		$newmenu->add("/accountancy/journal/expensereportsjournal.php?leftmenu=journal",$langs->trans("ExpenseReportsJournal"),1,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy_journal');
-		*/
 	}
 
 	if (!empty($conf->ftp->enabled) && $mainmenu == 'ftp')	// Entry for FTP
@@ -503,9 +467,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 				if ($altok % 2 == 0)
 				{
 					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
-				}
-				else
-				{
+				} else {
 					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
 				}
 			}
@@ -563,14 +525,11 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					else print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'enabled';
-				}
-				elseif ($showmenu)                 // Not enabled but visible (so greyed)
+				} elseif ($showmenu)                 // Not enabled but visible (so greyed)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
 					$lastlevel0 = 'greyed';
-				}
-				else
-				{
+				} else {
 				    $lastlevel0 = 'hidden';
 				}
 				if ($showmenu)
@@ -596,8 +555,7 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					// If title is not pure text and contains a table, no carriage return added
 					if (!strstr($menu_array[$i]['titre'], '<table')) print '<br>';
 					print '</div>'."\n";
-				}
-				elseif ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
+				} elseif ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
 				}

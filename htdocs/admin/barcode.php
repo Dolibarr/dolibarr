@@ -50,8 +50,7 @@ if ($action == 'setbarcodeproducton')
 	{
 	    $res = dolibarr_set_const($db, "BARCODE_STANDARD_PRODUCT_MASK", '020{000000000}', 'chaine', 0, '', $conf->entity);
 	}
-}
-elseif ($action == 'setbarcodeproductoff')
+} elseif ($action == 'setbarcodeproductoff')
 {
 	$res = dolibarr_del_const($db, "BARCODE_PRODUCT_ADDON_NUM", $conf->entity);
 }
@@ -67,8 +66,7 @@ if ($action == 'setcoder')
 
 	$resql = $db->query($sqlp);
 	if (!$resql) dol_print_error($db);
-}
-elseif ($action == 'update')
+} elseif ($action == 'update')
 {
 	$location = GETPOST('GENBARCODE_LOCATION', 'alpha');
 	$res = dolibarr_set_const($db, "GENBARCODE_LOCATION", $location, 'chaine', 0, '', $conf->entity);
@@ -80,13 +78,10 @@ elseif ($action == 'update')
 	if ($res > 0)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-elseif ($action == 'updateengine')
+} elseif ($action == 'updateengine')
 {
     $sql = "SELECT rowid, coder";
     $sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
@@ -264,20 +259,14 @@ if ($resql)
 						$url = DOL_URL_ROOT.'/viewimage.php?modulepart=barcode&amp;generator='.urlencode($obj->coder).'&amp;code='.urlencode($obj->example).'&amp;encoding='.urlencode($obj->encoding);
 						//print $url;
 						print '<img src="'.$url.'" title="'.$obj->example.'" border="0">';
-					}
-					else
-					{
+					} else {
 						print $langs->trans("FormatNotSupportedByGenerator");
 					}
-				}
-				else
-				{
+				} else {
 					print 'ErrorClassNotFoundInModule '.$classname.' '.$obj->coder;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $langs->trans("ChooseABarCode");
 		}
 		print '</td>';
@@ -392,8 +381,7 @@ if ($conf->product->enabled)
 
 	    		    try {
 	        			dol_include_once($dirroot.$file.'.php');
-	    			}
-	    			catch (Exception $e)
+	    			} catch (Exception $e)
 	    			{
 	    			    dol_syslog($e->getMessage(), LOG_ERR);
 	    			}
@@ -411,9 +399,7 @@ if ($conf->product->enabled)
 	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproductoff&amp;value='.$file.'">';
 	    				print img_picto($langs->trans("Activated"), 'switch_on');
 	    				print '</a></td>';
-	    			}
-	    			else
-	    			{
+	    			} else {
 	    				print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setbarcodeproducton&amp;value='.$file.'">';
 	    				print img_picto($langs->trans("Disabled"), 'switch_off');
 	    				print '</a></td>';

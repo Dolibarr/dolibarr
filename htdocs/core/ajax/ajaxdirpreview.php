@@ -61,15 +61,16 @@ if (!isset($mode) || $mode != 'noajax')    // For ajax call
 
 	$upload_dir = dirname(str_replace("../", "/", $rootdirfordoc.'/'.$file));
 
-    $ecmdir = new EcmDirectory($db);
-    $result = $ecmdir->fetch($section);
-    if (!$result > 0)
-    {
-        //dol_print_error($db,$ecmdir->error);
-        //exit;
-    }
-}
-else    // For no ajax call
+	$ecmdir = new EcmDirectory($db);
+	if ($section > 0) {
+	    $result = $ecmdir->fetch($section);
+	    if (!$result > 0)
+	    {
+	        //dol_print_error($db,$ecmdir->error);
+	        //exit;
+	    }
+	}
+} else // For no ajax call
 {
 	$rootdirfordoc = $conf->ecm->dir_output;
 
@@ -85,8 +86,7 @@ else    // For no ajax call
         }
 
         $relativepath = $ecmdir->getRelativePath(); // Example   'mydir/'
-    }
-	elseif (GETPOST('section_dir'))
+    } elseif (GETPOST('section_dir'))
 	{
 		$relativepath = GETPOST('section_dir');
 	}
@@ -234,8 +234,7 @@ if ($type == 'directory')
         $formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
     }
     // Manual list
-    else
-    {
+    else {
     	if ($module == 'medias')
     	{
     		/*
@@ -259,9 +258,7 @@ if ($type == 'directory')
 	    		if (!preg_match('/pageid=/', $param)) $param .= '&pageid='.urlencode(GETPOST('pageid', 'int'));
 	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 	    	}
-    	}
-    	else
-    	{
+    	} else {
         	$relativepath = $ecmdir->getRelativePath();
         	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
     	}
@@ -270,9 +267,7 @@ if ($type == 'directory')
 		if (($section === '0' || empty($section)) && ($module != 'medias'))
         {
             $filearray = array();
-        }
-        else
-        {
+        } else {
         	$filearray = dol_dir_list($upload_dir, "files", 0, '', array('^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^CVS$'), $sortfield, $sorting, 1);
         }
 
@@ -282,13 +277,11 @@ if ($type == 'directory')
         	if (isset($search_doc_ref) && $search_doc_ref != '') $param .= '&search_doc_ref='.$search_doc_ref;
 
             $textifempty = $langs->trans('NoFileFound');
-        }
-        elseif ($section === '0')
+        } elseif ($section === '0')
         {
         	if ($module == 'ecm') $textifempty = '<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         	else $textifempty = $langs->trans('NoFileFound');
-        }
-        else $textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
+        } else $textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 
         if ($module == 'medias')
         {
@@ -296,8 +289,7 @@ if ($type == 'directory')
             $modulepart = 'medias';
             $perm = ($user->rights->website->write || $user->rights->emailing->creer);
             $title = 'none';
-        }
-        elseif ($module == 'ecm') // DMS/ECM -> manual structure
+        } elseif ($module == 'ecm') // DMS/ECM -> manual structure
         {
             if ($user->rights->ecm->read)
             {
@@ -320,9 +312,7 @@ if ($type == 'directory')
             $perm = $user->rights->ecm->upload;
             $modulepart = 'ecm';
             $title = ''; // Use default
-        }
-        else
-        {
+        } else {
             $useinecm = 5;
             $modulepart = 'ecm';
             $perm = $user->rights->ecm->upload;
@@ -331,7 +321,7 @@ if ($type == 'directory')
 
         // When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
         // When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-        //var_dump("title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
+        //var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
         $formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm);
     }
 }
@@ -355,7 +345,7 @@ if ($useajax || $action == 'delete')
 	$section_id = $section;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-	$useglobalvars = 1;
+
 	$form = new Form($db);
 	$formquestion['urlfile'] = array('type'=>'hidden', 'value'=>$urlfile, 'name'=>'urlfile'); // We must always put field, even if empty because it is filled by javascript later
 	$formquestion['section'] = array('type'=>'hidden', 'value'=>$section, 'name'=>'section'); // We must always put field, even if empty because it is filled by javascript later

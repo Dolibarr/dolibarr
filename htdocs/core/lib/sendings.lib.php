@@ -304,9 +304,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 						}
 
 						$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
-					}
-					else
-					{
+					} else {
 						$label = (!empty($objp->label) ? $objp->label : $objp->product_label);
 					}
 
@@ -332,9 +330,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					print '</td>';
-				}
-				else
-				{
+				} else {
 					print "<td>";
 					if ($objp->fk_product_type == 1) $text = img_object($langs->trans('Service'), 'service');
 					else $text = img_object($langs->trans('Product'), 'product');
@@ -415,7 +411,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					//var_dump($expedition->linkedObjects);
 
 					$receiving = '';
-					if (count($expedition->linkedObjects['delivery']) > 0) $receiving = reset($expedition->linkedObjects['delivery']); // Take first link
+					if (!empty($expedition->linkedObjects['delivery'])) $receiving = reset($expedition->linkedObjects['delivery']); // Take first link
 
 					if (!empty($receiving))
 					{
@@ -439,9 +435,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 						print '<td class="right">';
 						print dol_print_date($receiving->date_delivery, 'day');
 						print '</td>';
-					}
-					else
-					{
+					} else {
 						//print '<td>&nbsp;</td>';
 						print '<td>&nbsp;</td>';
 						print '<td>&nbsp;</td>';
@@ -454,9 +448,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			print '</table>';
 		}
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 

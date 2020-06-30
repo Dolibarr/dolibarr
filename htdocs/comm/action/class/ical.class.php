@@ -179,16 +179,13 @@ class ICal
 								$tmpkey = '';
 								$tmpvalue = '';
 							}
-						}
-                    	elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value))
+						} elseif (preg_match('/^ENCODING=QUOTED-PRINTABLE:/i', $value))
                     	{
                     		if (preg_match('/=$/', $value))
                     		{
                     			$tmpkey = $key;
                     			$tmpvalue = $tmpvalue.preg_replace('/=$/', "", $value); // We must wait to have next line to have complete message
-                    		}
-                    		else
-                    		{
+                    		} else {
                     			$value = quotedPrintDecode(preg_replace('/^ENCODING=QUOTED-PRINTABLE:/i', '', $tmpvalue.$value));
                     		}
                     	}                    	//$value=quotedPrintDecode($tmpvalue.$value);
@@ -236,9 +233,7 @@ class ICal
         	if (stristr($key, "DTSTART;VALUE=DATE") || stristr($key, "DTEND;VALUE=DATE"))
         	{
         		list($key, $value) = array($key, $value);
-        	}
-        	else
-        	{
+        	} else {
         		list($key, $value) = $this->ical_dt_date($key, $value);
         	}
         }
@@ -377,9 +372,7 @@ class ICal
         {
             usort($temp, array(&$this, "ical_dtstart_compare"));
             return $temp;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

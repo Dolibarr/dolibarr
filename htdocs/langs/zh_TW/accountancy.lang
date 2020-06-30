@@ -26,7 +26,7 @@ BackToChartofaccounts=回到會計科目表
 Chartofaccounts=會計科目表
 CurrentDedicatedAccountingAccount=目前的專用帳戶
 AssignDedicatedAccountingAccount=新帳戶指派給
-InvoiceLabel=帳單標籤
+InvoiceLabel=發票標籤
 OverviewOfAmountOfLinesNotBound=行數金額的概述未綁定到會計帳戶
 OverviewOfAmountOfLinesBound=行數金額的概述已綁定到會計帳戶
 OtherInfo=其他資訊
@@ -58,7 +58,7 @@ AccountancyAreaDescActionOnceBis=下一步驟可在未來節省您的時間當�
 AccountancyAreaDescActionFreq=接下來的動作在大型公司一般是每個月、每週或每天執行…
 
 AccountancyAreaDescJournalSetup=步驟%s: 從選單%s您的日記帳清單中建立或檢查內容 
-AccountancyAreaDescChartModel=步驟%s:從選單%s建立一個會計科目表模組
+AccountancyAreaDescChartModel=步驟%s: 確認會計項目表模組是否存在，或者從%s選單建立新的。
 AccountancyAreaDescChart=步驟%s: 從選單中建立或檢查會計項目表的內容%s。
 
 AccountancyAreaDescVat=步驟%s：為每個營業稅稅率定義會計科目。為此，請使用選單條目%s。
@@ -121,6 +121,7 @@ InvoiceLinesDone=已關聯的各式發票
 ExpenseReportLines=費用報表關聯數
 ExpenseReportLinesDone=已關連的費用報表
 IntoAccount=會計項目的關聯
+TotalForAccount=會計科目總計
 
 
 Ventilate=關聯
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=註冊捐款的會計科目
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=用於註冊訂閱的會計科目
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=所購買產品的預設會計科目（如果在產品表中未定義則使用）
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=預設情況下，在EEC中所購買產品的會計帳戶（如果未在產品單中定義則使用）
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=預設情況下，用於在EEC以外購買產品並且輸入產品的會計帳戶（如果在產品表中未定義，則使用）
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=所銷售產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=在歐盟所販賣產品的預設會計科目（如果在產品表中未定義則使用）
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=在歐盟以外地區所販賣產品並且輸出的預設會計科目（如果在產品表中未定義則使用）
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=委外服務預設會計項目(若沒在服務頁中定義時使用)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=預設情況下，在EEC中購買服務的會計帳戶（如果未在服務單中定義，則使用）
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=預設情況下，用於在EEC以外購買服務並且輸入服務的會計帳戶（如果未在服務單中定義，則使用）
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=服務收入預設會計項目(若沒在服務頁中定義時使用)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=在歐盟國家中服務收入預設會計項目(若沒在服務頁中定義時使用)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=在歐盟以外國家中服務收入預設會計項目(若沒在服務頁中定義時使用)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=未知合作方�
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=未定義合作方帳戶或未知的合作方。封鎖錯誤。
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=未定義的未知合作方帳戶和等待帳戶。封鎖錯誤
 PaymentsNotLinkedToProduct=付款未連結到任何產品/服務
+OpeningBalance=初期餘額
 ShowOpeningBalance=顯示初期餘額
 HideOpeningBalance=隱藏初期餘額
+ShowSubtotalByGroup=依組顯示小計
 
 Pcgtype=會計項目大類
 PcgtypeDesc=用作某些會計報告的預定義“過濾器”和“分組”標準的科目組。例如“ INCOME”或“ EXPENSE”用作產品的會計科目組，以建立費用/收入報告。
+
+Reconcilable=可和解
 
 TotalVente=稅前總周轉
 TotalMarge=總銷貨淨利
@@ -307,11 +317,13 @@ Modelcsv_quadratus=匯出為Quadratus QuadraCompta
 Modelcsv_ebp=匯出為EBP
 Modelcsv_cogilog=匯出為Cogilog
 Modelcsv_agiris=匯出到Agiris
-Modelcsv_LDCompta=匯出為LD Compta（v9及更高版本）（測試）
+Modelcsv_LDCompta=LD Compta（v9）（測試）匯出
+Modelcsv_LDCompta10=LD Compta用之匯出（v10及更高版本）
 Modelcsv_openconcerto=匯出為OpenConcerto（測試）
 Modelcsv_configurable=匯出為可設置CSV
 Modelcsv_FEC=匯出為FEC
 Modelcsv_Sage50_Swiss=匯出為Sage 50 Switzerland
+Modelcsv_winfic=匯出Winfic-eWinfic-WinSis Compta
 ChartofaccountsId=會計項目表ID
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=銷售模式
 OptionModeProductSellIntra=在EEC中的銷售模式已匯出
 OptionModeProductSellExport=在其他國家/城市中的銷售模式已匯出
 OptionModeProductBuy=採購模式
+OptionModeProductBuyIntra=在EEC中購買輸入模式
+OptionModeProductBuyExport=在EEC以外地區購買輸入模式
 OptionModeProductSellDesc=顯示銷售產品的會計項目
 OptionModeProductSellIntraDesc=顯示所有在EEC中有銷售會計科目的產品。
 OptionModeProductSellExportDesc=顯示所有在除了EEC地區(其他國家)中有銷售會計科目的產品。
 OptionModeProductBuyDesc=顯示採購所有產品的會計項目
+OptionModeProductBuyIntraDesc=顯示所有具有在EEC中購買之會計帳戶的產品。
+OptionModeProductBuyExportDesc=顯示所有具有其他國外購買之會計帳戶的產品。
 CleanFixHistory=移除會計代號將不再出現在會計項目表中。
 CleanHistory=針對選定年度重設全部關聯性
 PredefinedGroups=預定義的群組
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=帳戶已從群組中刪除
 SaleLocal=本地銷售
 SaleExport=出口銷售
 SaleEEC=在歐盟銷售
+SaleEECWithVAT=在EEC中具有營業稅的銷售不為空，因此我們認為這不是內部銷售，建議的帳戶是標準產品帳戶。
+SaleEECWithoutVATNumber=在EEC中銷售沒有營業稅但合作方的營業稅ID未定義。我們退回標準銷售的產品帳戶。您可以根據需要修改合作方或產品帳戶的營業稅ID。
 
 ## Dictionary
 Range=會計項目範圍

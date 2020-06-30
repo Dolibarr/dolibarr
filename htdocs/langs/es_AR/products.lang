@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - products
+ProductRef=Ref. Producto
+ProductLabel=Etiqueta del producto
+ProductLabelTranslated=Etiqueta traducida del producto
+ProductDescriptionTranslated=Descripción traducida del producto
+ExportDataset_produit_1=Productos
+SuppliersPrices=Precio de Proveedor

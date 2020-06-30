@@ -76,13 +76,9 @@ if (GETPOST('fk_projet') != '')
 	    }
 
 	    echo json_encode($return_arr);
-	}
-	else
-	{
+	} else {
 	    echo json_encode(array('nom'=>'Error', 'label'=>'Error', 'key'=>'Error', 'value'=>'Error'));
 	}
-}
-else
-{
+} else {
     echo json_encode(array('nom'=>'ErrorBadParameter', 'label'=>'ErrorBadParameter', 'key'=>'ErrorBadParameter', 'value'=>'ErrorBadParameter'));
 }

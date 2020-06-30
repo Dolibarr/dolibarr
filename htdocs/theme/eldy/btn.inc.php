@@ -7,7 +7,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
             --btncolorbg: #fbfbfb;
             --btncolorborderhover: none;
             --btncolorborder: #FFF;
-            --butactionbg:rgb(225, 235, 225);
+            --butactionbg:rgb(218, 235, 225);
             --butactiondeletebg: rgb(234,228,225);
 }
 
@@ -220,6 +220,11 @@ TITLE BUTTON
     font-weight: 300;
     background-color: var(--btncolorbg);
 	border: 1px solid var(--btncolorborder);
+}
+
+a.btnTitle.btnTitleSelected {
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
 
 .btnTitle > .btnTitle-icon{

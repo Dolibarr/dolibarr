@@ -46,7 +46,7 @@ function blockedlogadmin_prepare_head()
 	$b = new BlockedLog($db);
 	if ($b->alreadyUsed())
 	{
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">...</span>';
+		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">...</span>' : '');
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;

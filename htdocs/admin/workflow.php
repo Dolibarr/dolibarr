@@ -134,8 +134,7 @@ foreach ($workflowcodes as $key => $params)
 		if ($family == 'create')
 		{
 			print $langs->trans("AutomaticCreation");
-		}
-		elseif (preg_match('/classify_(.*)/', $family, $reg))
+		} elseif (preg_match('/classify_(.*)/', $family, $reg))
 		{
 			print $langs->trans("AutomaticClassification");
 			if ($reg[1] == 'proposal') print ' - '.$langs->trans('Proposal');
@@ -143,9 +142,7 @@ foreach ($workflowcodes as $key => $params)
 			if ($reg[1] == 'supplier_proposal') print ' - '.$langs->trans('SupplierProposal');
 			if ($reg[1] == 'supplier_order') print ' - '.$langs->trans('SupplierOrder');
 			if ($reg[1] == 'reception') print ' - '.$langs->trans('Reception');
-		}
-		else
-		{
+		} else {
 			print $langs->trans("Description");
 		}
 		print '</td>';
@@ -166,17 +163,13 @@ foreach ($workflowcodes as $key => $params)
    	if (!empty($conf->use_javascript_ajax))
    	{
    		print ajax_constantonoff($key);
-   	}
-   	else
-   	{
+   	} else {
    		if (!empty($conf->global->$key))
    		{
    			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del'.$key.'">';
   			print img_picto($langs->trans("Activated"), 'switch_on');
    			print '</a>';
-   		}
-   		else
-   		{
+   		} else {
    			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set'.$key.'">';
   			print img_picto($langs->trans("Disabled"), 'switch_off');
    			print '</a>';

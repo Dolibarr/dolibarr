@@ -678,8 +678,7 @@ class Facture extends CommonInvoice
 				                $error++;
 				            }
 				        }
-				    }
-				    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+				    } else // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
 				    {
 				        $origin_id = $tmp_origin_id;
     					$ret = $this->add_object_linked($origin, $origin_id);
@@ -726,8 +725,7 @@ class Facture extends CommonInvoice
 				        //print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
 				        $this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
 				    }
-				}
-				else dol_print_error($resqlcontact);
+				} else dol_print_error($resqlcontact);
 			}
 
 			/*
@@ -787,8 +785,7 @@ class Facture extends CommonInvoice
 						break;
 					}
 				}
-			}
-			elseif (!$error && empty($this->fac_rec)) 		// If this->lines is an array of invoice line arrays
+			} elseif (!$error && empty($this->fac_rec)) 		// If this->lines is an array of invoice line arrays
 			{
 				$fk_parent_line = 0;
 
@@ -987,29 +984,21 @@ class Facture extends CommonInvoice
 					{
 						$this->db->commit();
 						return $this->id;
-					}
-					else
-					{
+					} else {
 						$this->db->rollback();
 						return -4;
 					}
-				}
-				else
-				{
+				} else {
 					$this->error = $langs->trans('FailedToUpdatePrice');
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -1094,8 +1083,7 @@ class Facture extends CommonInvoice
 		{
 			$this->error = $facture->error;
 			$this->errors = $facture->errors;
-		}
-		elseif ($this->type == self::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
+		} elseif ($this->type == self::TYPE_SITUATION && !empty($conf->global->INVOICE_USE_SITUATION))
 		{
 			$this->fetchObjectLinked('', '', $this->id, 'facture');
 
@@ -1178,6 +1166,30 @@ class Facture extends CommonInvoice
 			    unset($object->lines[$i]);
 			    unset($object->products[$i]); // Tant que products encore utilise
 			}
+						// Bloc to update dates of service (month by month only if previously filled at 1d near start or end of month)
+			// If it's a service with start and end dates
+			if (!empty($line->date_start) && !empty($line->date_end) ) {
+				// Get the dates
+				$start = dol_getdate($line->date_start);
+				$end = dol_getdate($line->date_end);
+
+				// Get the first and last day of the month
+				$first = dol_get_first_day($start['year'], $start['mon']);
+				$last = dol_get_first_day($end['year'], $end['mon']);
+
+				// Get diff betweend start/end of month and previously filled
+				$diffFirst = num_between_day($first, dol_mktime($start['hours'], $start['minutes'], $start['seconds'], $start['mon'], $start['mday'], $start['year'], 'user'));
+				$diffLast = num_between_day(dol_mktime($end['hours'], $end['minutes'], $end['seconds'], $end['mon'], $end['mday'], $end['year'], 'user'), $last);
+
+				// If there is <= 1d (or 2?) of start/or/end of month
+				if ($diffFirst <= 2 && $diffLast <= 2) {
+					$nextMonth = dol_get_next_month($end['mon'], $end['year']);
+					$newFirst = dol_get_first_day($nextMonth['year'], $nextMonth['month']);
+					$newLast = dol_get_last_day($nextMonth['year'], $nextMonth['month']);
+					$object->lines[$i]->date_start = $newFirst;
+					$object->lines[$i]->date_end = $newLast;
+				}
+			}
 		}
 
 		// Create clone
@@ -1216,9 +1228,7 @@ class Facture extends CommonInvoice
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1301,7 +1311,7 @@ class Facture extends CommonInvoice
 		$this->demand_reason_id     = $object->demand_reason_id;
 		$this->date_livraison       = $object->date_livraison;
 		$this->fk_delivery_address  = $object->fk_delivery_address; // deprecated
-		$this->contact_id           = $object->contactid;
+		$this->contact_id           = $object->contact_id;
 		$this->ref_client           = $object->ref_client;
 
 		if (empty($conf->global->MAIN_DISABLE_PROPAGATE_NOTES_FROM_ORIGIN))
@@ -1343,10 +1353,8 @@ class Facture extends CommonInvoice
 			if (!$error)
 			{
 				return 1;
-			}
-			else return -1;
-		}
-		else return -1;
+			} else return -1;
+		} else return -1;
 	}
 
 	/**
@@ -1621,16 +1629,12 @@ class Facture extends CommonInvoice
 					return -3;
 				}
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = 'Invoice with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
 				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1751,16 +1755,15 @@ class Facture extends CommonInvoice
 			}
 			$this->db->free($result);
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -3;
 		}
 	}
 
 	/**
-	 * Fetch previous and next situations invoices
+	 * Fetch previous and next situations invoices.
+	 * Return all previous and next invoices (both standard and credit notes).
 	 *
 	 * @return	void
 	 */
@@ -1771,7 +1774,7 @@ class Facture extends CommonInvoice
 		$this->tab_previous_situation_invoice = array();
 		$this->tab_next_situation_invoice = array();
 
-		$sql = 'SELECT rowid, situation_counter FROM '.MAIN_DB_PREFIX.'facture';
+		$sql = 'SELECT rowid, type, situation_cycle_ref, situation_counter FROM '.MAIN_DB_PREFIX.'facture';
 		$sql .= ' WHERE rowid <> '.$this->id;
 		$sql .= ' AND entity = '.$this->entity;
 		$sql .= ' AND situation_cycle_ref = '.(int) $this->situation_cycle_ref;
@@ -1791,9 +1794,7 @@ class Facture extends CommonInvoice
 				       )
 					{
 					    $this->tab_previous_situation_invoice[] = $invoice;
-					}
-					else
-					{
+					} else {
 					    $this->tab_next_situation_invoice[] = $invoice;
 					}
 				}
@@ -1909,9 +1910,7 @@ class Facture extends CommonInvoice
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1997,23 +1996,17 @@ class Facture extends CommonInvoice
 
 					$this->db->commit();
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->error = $facligne->error;
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $facligne->error;
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -3;
 		}
@@ -2039,8 +2032,7 @@ class Facture extends CommonInvoice
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
 		if (empty($ref_client))
 			$sql .= ' SET ref_client = NULL';
-		else
-			$sql .= ' SET ref_client = \''.$this->db->escape($ref_client).'\'';
+		else $sql .= ' SET ref_client = \''.$this->db->escape($ref_client).'\'';
 		$sql .= ' WHERE rowid = '.$this->id;
 
 		dol_syslog(__METHOD__.' this->id='.$this->id.', ref_client='.$ref_client, LOG_DEBUG);
@@ -2070,9 +2062,7 @@ class Facture extends CommonInvoice
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -2187,8 +2177,8 @@ class Facture extends CommonInvoice
 			}
 
             // Invoice line extrafileds
-			$main = MAIN_DB_PREFIX . 'facturedet';
-			$ef = $main . "_extrafields";
+			$main = MAIN_DB_PREFIX.'facturedet';
+			$ef = $main."_extrafields";
 			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_facture = $rowid)";
 			// Delete invoice line
 			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
@@ -2236,23 +2226,17 @@ class Facture extends CommonInvoice
 
 					$this->db->commit();
 					return 1;
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror()." sql=".$sql;
 					$this->db->rollback();
 					return -6;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror()." sql=".$sql;
 				$this->db->rollback();
 				return -4;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -2;
 		}
@@ -2297,9 +2281,7 @@ class Facture extends CommonInvoice
 	            $result = $this->call_trigger('BILL_PAYED', $user);
 	            if ($result < 0) $error++;
 	            // End call triggers
-			}
-			else
-			{
+			} else {
 				$error++;
 				$this->error = $this->db->lasterror();
 			}
@@ -2308,15 +2290,11 @@ class Facture extends CommonInvoice
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -2352,9 +2330,7 @@ class Facture extends CommonInvoice
             $result = $this->call_trigger('BILL_UNPAYED', $user);
             if ($result < 0) $error++;
             // End call triggers
-		}
-		else
-		{
+		} else {
 			$error++;
 			$this->error = $this->db->error();
 			dol_print_error($this->db);
@@ -2364,9 +2340,7 @@ class Facture extends CommonInvoice
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -2421,16 +2395,12 @@ class Facture extends CommonInvoice
 
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -2;
@@ -2539,8 +2509,7 @@ class Facture extends CommonInvoice
 		if ($force_number)
 		{
 			$num = $force_number;
-		}
-		elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
+		} elseif (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		{
 			if (!empty($conf->global->FAC_FORCE_DATE_VALIDATION))	// If option enabled, we force invoice date
 			{
@@ -2548,9 +2517,7 @@ class Facture extends CommonInvoice
 				$this->date_lim_reglement = $this->calculate_date_lim_reglement();
 			}
 			$num = $this->getNextNumRef($this->thirdparty);
-		}
-		else
-		{
+		} else {
 			$num = $this->ref;
 		}
 		$this->newref = dol_sanitizeFileName($num);
@@ -2779,9 +2746,7 @@ class Facture extends CommonInvoice
 				    $this->setFinal($user);
                 }
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 		}
 
@@ -2789,9 +2754,7 @@ class Facture extends CommonInvoice
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -2918,15 +2881,11 @@ class Facture extends CommonInvoice
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -3045,9 +3004,7 @@ class Facture extends CommonInvoice
 			if ($price_base_type == 'HT')
 			{
 				$pu = $pu_ht;
-			}
-			else
-			{
+			} else {
 				$pu = $pu_ttc;
 			}
 
@@ -3188,23 +3145,17 @@ class Facture extends CommonInvoice
 				{
 					$this->db->commit();
 					return $this->line->id;
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->lasterror();
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->line->error;
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
@@ -3419,16 +3370,12 @@ class Facture extends CommonInvoice
 				$this->update_price(1);
 				$this->db->commit();
 				return $result;
-			}
-			else
-			{
+			} else {
 			    $this->error = $this->line->error;
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = "Invoice statut makes operation forbidden";
 			return -2;
 		}
@@ -3548,16 +3495,12 @@ class Facture extends CommonInvoice
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $line->error;
 			return -1;
@@ -3615,9 +3558,7 @@ class Facture extends CommonInvoice
 
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -3684,9 +3625,7 @@ class Facture extends CommonInvoice
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				foreach ($this->errors as $errmsg)
 				{
 					dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -3844,9 +3783,7 @@ class Facture extends CommonInvoice
 				$this->date_closing      = $this->db->jdate($obj->dateclosing);
 			}
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -3904,13 +3841,10 @@ class Facture extends CommonInvoice
 					if ($shortlist == 1)
 					{
 						$ga[$obj->fid] = $obj->ref;
-					}
-					elseif ($shortlist == 2)
+					} elseif ($shortlist == 2)
 					{
 						$ga[$obj->fid] = $obj->ref.' ('.$obj->name.')';
-					}
-					else
-					{
+					} else {
 						$ga[$i]['id'] = $obj->fid;
 						$ga[$i]['ref'] 	= $obj->ref;
 						$ga[$i]['name'] = $obj->name;
@@ -3919,9 +3853,7 @@ class Facture extends CommonInvoice
 				}
 			}
 			return $ga;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -3969,9 +3901,7 @@ class Facture extends CommonInvoice
 			}
 			//print_r($return);
 			return $return;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -4017,9 +3947,7 @@ class Facture extends CommonInvoice
 		    $sqlSit .= " GROUP BY fs.situation_cycle_ref";
 		    $sqlSit .= " ORDER BY fs.situation_counter";
             $sql .= " AND ( f.type != ".self::TYPE_SITUATION." OR f.rowid IN (".$sqlSit.") )"; // Type non 5 si facture non avoir
-		}
-		else
-		{
+		} else {
 		    $sql .= " AND f.type != ".self::TYPE_SITUATION; // Type non 5 si facture non avoir
 		}
 
@@ -4044,149 +3972,8 @@ class Facture extends CommonInvoice
 			}
 
 			return $return;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
-			return -1;
-		}
-	}
-
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *	Create a withdrawal request for a standing order.
-	 *  Use the remain to pay excluding all existing open direct debit requests.
-	 *
-	 *	@param      User	$fuser      User asking the direct debit transfer
-	 *  @param		float	$amount		Amount we request direct debit for
-	 *	@return     int         		<0 if KO, >0 if OK
-	 */
-    public function demande_prelevement($fuser, $amount = 0)
-	{
-        // phpcs:enable
-
-		$error = 0;
-
-		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
-
-		if ($this->statut > self::STATUS_DRAFT && $this->paye == 0)
-		{
-	        require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-	        $bac = new CompanyBankAccount($this->db);
-	        $bac->fetch(0, $this->socid);
-
-        	$sql = 'SELECT count(*)';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-			$sql .= ' WHERE fk_facture = '.$this->id;
-			$sql .= ' AND traite = 0';
-
-			dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
-			$resql = $this->db->query($sql);
-			if ($resql)
-			{
-				$row = $this->db->fetch_row($resql);
-				if ($row[0] == 0)
-				{
-					$now = dol_now();
-
-                    $totalpaye = $this->getSommePaiement();
-                    $totalcreditnotes = $this->getSumCreditNotesUsed();
-                    $totaldeposits = $this->getSumDepositsUsed();
-                    //print "totalpaye=".$totalpaye." totalcreditnotes=".$totalcreditnotes." totaldeposts=".$totaldeposits;
-
-                    // We can also use bcadd to avoid pb with floating points
-                    // For example print 239.2 - 229.3 - 9.9; does not return 0.
-                    //$resteapayer=bcadd($this->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
-                    //$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-					if (empty($amount)) $amount = price2num($this->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-
-					if (is_numeric($amount) && $amount != 0)
-					{
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-						$sql .= ' (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)';
-						$sql .= ' VALUES ('.$this->id;
-						$sql .= ",'".price2num($amount)."'";
-						$sql .= ",'".$this->db->idate($now)."'";
-						$sql .= ",".$fuser->id;
-						$sql .= ",'".$bac->code_banque."'";
-						$sql .= ",'".$bac->code_guichet."'";
-						$sql .= ",'".$bac->number."'";
-						$sql .= ",'".$bac->cle_rib."')";
-
-						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
-						$resql = $this->db->query($sql);
-						if (!$resql)
-						{
-						    $this->error = $this->db->lasterror();
-						    dol_syslog(get_class($this).'::demandeprelevement Erreur');
-						    $error++;
-						}
-					}
-					else
-					{
-						$this->error = 'WithdrawRequestErrorNilAmount';
-	                    dol_syslog(get_class($this).'::demandeprelevement WithdrawRequestErrorNilAmount');
-	                    $error++;
-					}
-
-        			if (!$error)
-        			{
-        				// Force payment mode of invoice to withdraw
-        				$payment_mode_id = dol_getIdFromCode($this->db, 'PRE', 'c_paiement', 'code', 'id', 1);
-        				if ($payment_mode_id > 0)
-        				{
-        					$result = $this->setPaymentMethods($payment_mode_id);
-        				}
-        			}
-
-                    if ($error) return -1;
-                    return 1;
-                }
-                else
-                {
-                    $this->error = "A request already exists";
-                    dol_syslog(get_class($this).'::demandeprelevement Impossible de creer une demande, demande deja en cours');
-                    return 0;
-                }
-            }
-            else
-            {
-                $this->error = $this->db->error();
-                dol_syslog(get_class($this).'::demandeprelevement Erreur -2');
-                return -2;
-            }
-        }
-        else
-        {
-            $this->error = "Status of invoice does not allow this";
-            dol_syslog(get_class($this)."::demandeprelevement ".$this->error." $this->statut, $this->paye, $this->mode_reglement_id");
-            return -3;
-        }
-    }
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/**
-	 *  Supprime une demande de prelevement
-	 *
-	 *  @param  User	$fuser      User making delete
-	 *  @param  int		$did        id de la demande a supprimer
-	 *  @return	int					<0 if OK, >0 if KO
-	 */
-    public function demande_prelevement_delete($fuser, $did)
-	{
-        // phpcs:enable
-		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'prelevement_facture_demande';
-		$sql .= ' WHERE rowid = '.$did;
-		$sql .= ' AND traite = 0';
-		if ($this->db->query($sql))
-		{
-			return 0;
-		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			dol_syslog(get_class($this).'::demande_prelevement_delete Error '.$this->error);
 			return -1;
 		}
 	}
@@ -4249,9 +4036,7 @@ class Facture extends CommonInvoice
 			}
 
 			return $response;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -4371,8 +4156,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ht = -200;
 					$line->multicurrency_total_ttc = -239.2;
 					$line->multicurrency_total_tva = -39.2;
-				}
-				elseif ($xnbp == 2)    // UP is negative (free line)
+				} elseif ($xnbp == 2)    // UP is negative (free line)
 				{
 					$line->subprice = -100;
 					$line->total_ht = -100;
@@ -4382,8 +4166,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ht = -200;
 					$line->multicurrency_total_ttc = -239.2;
 					$line->multicurrency_total_tva = -39.2;
-				}
-				elseif ($xnbp == 3)    // Discount is 50% (product line)
+				} elseif ($xnbp == 3)    // Discount is 50% (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
@@ -4394,8 +4177,7 @@ class Facture extends CommonInvoice
 					$line->multicurrency_total_ttc = 119.6;
 					$line->multicurrency_total_tva = 19.6;
 					$line->remise_percent = 50;
-				}
-				else    // (product line)
+				} else // (product line)
 				{
 					$prodid = mt_rand(1, $num_prods);
 					$line->fk_product = $prodids[$prodid];
@@ -4481,9 +4263,7 @@ class Facture extends CommonInvoice
 			}
             $this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -4644,9 +4424,7 @@ class Facture extends CommonInvoice
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(__METHOD__.' Error: '.$errmsg, LOG_ERR);
@@ -4731,13 +4509,10 @@ class Facture extends CommonInvoice
 		        if (($totalpaye < $this->total_ttc - $RetainedWarrantyAmount) && $this->date_lim_reglement < ($now - $conf->facture->client->warning_delay))
 		        {
 		            $hasDelay = 1;
-		        }
-		        elseif ($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay))
+		        } elseif ($totalpaye < $this->total_ttc && $this->retained_warranty_date_limit < ($now - $conf->facture->client->warning_delay))
 		        {
 		            $hasDelay = 1;
-		        }
-		        else
-		        {
+		        } else {
 		            $hasDelay = 0;
 		        }
 		    }
@@ -4823,13 +4598,10 @@ class Facture extends CommonInvoice
 	            $total2BillWT += $this->total_ttc;
 
 	            $retainedWarrantyAmount = $total2BillWT * $this->retained_warranty / 100;
-	        }
-	        else {
+	        } else {
 	            return -1;
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        // Because one day retained warranty could be used on standard invoices
 	        $retainedWarrantyAmount = $this->total_ttc * $this->retained_warranty / 100;
 	    }
@@ -4865,16 +4637,12 @@ class Facture extends CommonInvoice
 	        {
 	            $this->retained_warranty = floatval($value);
 	            return 1;
-	        }
-	        else
-	        {
+	        } else {
 	            dol_syslog(get_class($this).'::setRetainedWarranty Erreur '.$sql.' - '.$this->db->error());
 	            $this->error = $this->db->error();
 	            return -1;
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        dol_syslog(get_class($this).'::setRetainedWarranty, status of the object is incompatible');
 	        $this->error = 'Status of the object is incompatible '.$this->statut;
 	        return -2;
@@ -4908,16 +4676,12 @@ class Facture extends CommonInvoice
 	        {
 	            $this->retained_warranty_date_limit = $timestamp;
 	            return 1;
-	        }
-	        else
-	        {
+	        } else {
 	            dol_syslog(get_class($this).'::setRetainedWarrantyDateLimit Erreur '.$sql.' - '.$this->db->error());
 	            $this->error = $this->db->error();
 	            return -1;
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        dol_syslog(get_class($this).'::setRetainedWarrantyDateLimit, status of the object is incompatible');
 	        $this->error = 'Status of the object is incompatible '.$this->statut;
 	        return -2;
@@ -5098,9 +4862,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->db->free($result);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 		    $this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -5153,9 +4915,7 @@ class FactureLigne extends CommonInvoiceLine
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->pa_ht = $result;
 			}
 		}
@@ -5271,9 +5031,7 @@ class FactureLigne extends CommonInvoiceLine
     							$this->db->rollback();
     							return -3;
 						    }
-						}
-						else
-						{
+						} else {
 							$result = $discount->link_to_invoice($this->rowid, 0);
 							if ($result < 0)
 							{
@@ -5283,17 +5041,13 @@ class FactureLigne extends CommonInvoiceLine
 								return -3;
 							}
 						}
-					}
-					else
-					{
+					} else {
 						$this->error = $langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
 						dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 						$this->db->rollback();
 						return -3;
 					}
-				}
-				else
-				{
+				} else {
 					$this->error = $discount->error;
 					dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
 					$this->db->rollback();
@@ -5315,9 +5069,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -2;
@@ -5370,9 +5122,7 @@ class FactureLigne extends CommonInvoiceLine
 			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
 			{
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->pa_ht = $result;
 			}
 		}
@@ -5450,9 +5200,7 @@ class FactureLigne extends CommonInvoiceLine
 			}
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;
@@ -5494,9 +5242,7 @@ class FactureLigne extends CommonInvoiceLine
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -5536,9 +5282,7 @@ class FactureLigne extends CommonInvoiceLine
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;

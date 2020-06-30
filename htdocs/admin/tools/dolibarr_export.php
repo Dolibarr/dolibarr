@@ -56,9 +56,7 @@ if ($action == 'delete')
 		$ret = dol_delete_file($file, 1);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-	}
-	else
-	{
+	} else {
 		$file = $conf->admin->dir_output.'/documents/'.basename(GETPOST('urlfile', 'alpha'));
 		$ret = dol_delete_file($file, 1);
 		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
@@ -187,9 +185,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     if (empty($conf->global->SYSTEMTOOLS_MYSQLDUMP))
     {
         $fullpathofmysqldump = $db->getPathOfDump();
-    }
-    else
-    {
+    } else {
         $fullpathofmysqldump = $conf->global->SYSTEMTOOLS_MYSQLDUMP;
     }
     print '<br>';
@@ -200,7 +196,6 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     print '<div class="formelementrow">';
     print '<input type="checkbox" name="use_transaction" value="yes" id="checkbox_use_transaction" />';
     print '<label for="checkbox_use_transaction">'.$langs->trans("UseTransactionnalMode").'</label>';
-
     print '</div>';
 
     if (!empty($conf->global->MYSQL_OLD_OPTION_DISABLE_FK)) {
@@ -339,9 +334,7 @@ if (in_array($type, array('pgsql'))) {
     print '<div class="formelementrow">'.$langs->trans("FullPathToPostgreSQLdumpCommand");
     if (empty($conf->global->SYSTEMTOOLS_POSTGRESQLDUMP)) {
         $fullpathofpgdump = $db->getPathOfDump();
-    }
-    else
-    {
+    } else {
         $fullpathofpgdump = $conf->global->SYSTEMTOOLS_POSTGRESQLDUMP;
     }
     print '<br>';
@@ -434,9 +427,7 @@ if (in_array($type, array('mysql', 'mysqli'))) {
     	'id' => 'radio_compression_none',
     	'label' => $langs->trans("None")
     );
-}
-else
-{
+} else {
 	$compression['none'] = array(
 		'function' => '',
 		'id' => 'radio_compression_none',
@@ -464,9 +455,7 @@ foreach ($compression as $key => $val)
 		if ($key == 'gz') $checked = ' checked';
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-	}
-	else
-	{
+	} else {
 		// Disabled export format
 		print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
 		print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
@@ -584,8 +573,7 @@ foreach ($filecompression as $key => $val)
     	if ($key == 'gz') $checked = ' checked';
         print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'"'.$checked.'>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';
-    }
-    else	// Disabled export format
+    } else // Disabled export format
     {
         print '<input type="radio" name="compression" value="'.$key.'" id="'.$val['id'].'" disabled>';
         print ' <label for="'.$val['id'].'">'.$val['label'].'</label>';

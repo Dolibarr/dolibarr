@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=Cantitatea de produse din comanda 
 ValidateOrderFirstBeforeReception=Mai întâi trebuie să validezi comanda înainte de a putea face recepții.
 ReceptionsNumberingModules=Mod de numerotare pentru recepţii 
 ReceptionsReceiptModel=Şabloane documente pentru recepţii
+NoMorePredefinedProductToDispatch=No more predefined products to dispatch
+

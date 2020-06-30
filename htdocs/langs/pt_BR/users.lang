@@ -99,3 +99,5 @@ CantDisableYourself=Você não pode desativar seu próprio registro de usuário
 ForceUserExpenseValidator=Forçar validação do relatório de despesas
 ForceUserHolidayValidator=Forçar validação da solicitação de licença
 ValidatorIsSupervisorByDefault=Por padrão, a validação é feita pelo supervisor do usuário. Mantenha vazio para continuar desta maneira.
+UserPersonalEmail=E-mail pessoal
+UserPersonalMobile=Celular pessoal

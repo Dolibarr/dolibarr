@@ -49,6 +49,7 @@ class WebsitePage extends CommonObject
 	 */
 	public $picto = 'file-code';
 
+
 	/**
      * @var int ID
      */
@@ -108,6 +109,29 @@ class WebsitePage extends CommonObject
 	const STATUS_VALIDATED = 1;
 
 
+	/**
+	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
+	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
+	 *  'label' the translation key.
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'position' is the sort order of field.
+	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
+	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
+	 *  'noteditable' says if field is not editable (1 or 0)
+	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'index' if we want an index in database.
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
+	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
+	 *  'help' is a string visible as a tooltip on field
+	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 *
+	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
+	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
@@ -122,7 +146,7 @@ class WebsitePage extends CommonObject
 	    'description'    =>array('type'=>'varchar(255)', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>30, 'searchall'=>1),
 		'image'          =>array('type'=>'varchar(255)', 'label'=>'Image', 'enabled'=>1, 'visible'=>1, 'position'=>32, 'searchall'=>0, 'help'=>'Relative path of media. Used if Type is "blogpost"'),
 		'keywords'       =>array('type'=>'varchar(255)', 'label'=>'Keywords', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
-		'lang'           =>array('type'=>'varchar(6)', 'label'=>'Lang', 'enabled'=>1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
+		'lang'           =>array('type'=>'varchar(6)', 'label'=>'Lang', 'enabled'=>1, 'notnull'=>-1, 'visible'=>1, 'position'=>45, 'searchall'=>0),
 		//'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'index'=>true,   'position'=>1000),
 	    'fk_website'     =>array('type'=>'integer', 'label'=>'WebsiteId', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'position'=>40, 'searchall'=>0, 'foreignkey'=>'websitepage.rowid'),
 	    'fk_page'        =>array('type'=>'integer', 'label'=>'ParentPageId', 'enabled'=>1, 'visible'=>1, 'notnull'=>-1, 'position'=>45, 'searchall'=>0, 'foreignkey'=>'website.rowid'),
@@ -139,6 +163,35 @@ class WebsitePage extends CommonObject
 		'import_key'     =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'index'=>1, 'position'=>1000, 'notnull'=>-1),
 	);
 	// END MODULEBUILDER PROPERTIES
+
+
+	// If this object has a subtable with lines
+
+	/**
+	 * @var int    Name of subtable line
+	 */
+	//public $table_element_line = 'mymodule_myobjectline';
+
+	/**
+	 * @var int 	Field with ID of parent key if this field has a parent or for child tables
+	 */
+	public $fk_element = 'fk_website_page';
+
+	/**
+	 * @var int    Name of subtable class that manage subtable lines
+	 */
+	//public $class_element_line = 'MyObjectline';
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+	 */
+	//protected $childtables=array();
+
+	/**
+	 * @var array	List of child tables. To know object to delete on cascade.
+	 */
+	protected $childtablesoncascade = array('categorie_website_page');
+
 
 
 	/**
@@ -215,8 +268,7 @@ class WebsitePage extends CommonObject
 		{
 			$sql .= ' AND t.rowid = '.$id;
 		}
-		else
-		{
+		else {
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
@@ -329,10 +381,23 @@ class WebsitePage extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid' || $key == 't.fk_website') {
+				if ($key == 't.rowid' || $key == 't.fk_website' || $key == 'status') {
 					$sqlwhere[] = $key.'='.$value;
+				} elseif ($key == 'type_container') {
+					$sqlwhere[] = $key."='".$value."'";
 				} elseif ($key == 'lang' || $key == 't.lang') {
-					$sqlwhere[] = $key." = '".$this->db->escape(substr($value, 0, 2))."'";
+					$listoflang = array();
+					$foundnull = 0;
+					foreach (explode(',', $value) as $tmpvalue) {
+						if ($tmpvalue == 'null') {
+							$foundnull++;
+							continue;
+						}
+						$listoflang[] = "'".$this->db->escape(substr(str_replace("'", '', $tmpvalue), 0, 2))."'";
+					}
+					$stringtouse = $key." IN (".join(',', $listoflang).")";
+					if ($foundnull) $stringtouse = '('.$stringtouse.' OR '.$key.' IS NULL)';
+					$sqlwhere[] = $stringtouse;
 				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
@@ -487,9 +552,33 @@ class WebsitePage extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = false)
 	{
-		$result = $this->deleteCommon($user, $trigger);
+		$error = 0;
 
-		if ($result > 0)
+		// Delete all child tables
+		if (!$error) {
+			foreach ($this->childtablesoncascade as $table)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX.$table;
+				$sql .= " WHERE fk_website_page = ".(int) $this->id;
+
+				$result = $this->db->query($sql);
+				if (!$result) {
+					$error++;
+					$this->errors[] = $this->db->lasterror();
+					break;
+				}
+			}
+		}
+
+		if (!$error) {
+			$result = $this->deleteCommon($user, $trigger);
+			if ($result <= 0)
+			{
+				$error++;
+			}
+		}
+
+		if (!$error)
 		{
 			$websiteobj = new Website($this->db);
 			$result = $websiteobj->fetch($this->fk_website);
@@ -504,10 +593,17 @@ class WebsitePage extends CommonObject
 
 				dol_delete_file($filealias);
 				dol_delete_file($filetpl);
+			} else {
+				$this->error = $websiteobj->error;
+				$this->errors = $websiteobj->errors;
 			}
 		}
 
-		return $result;
+		if (! $error) {
+			return 1;
+		} else {
+			return -1;
+		}
 	}
 
 	/**
@@ -685,6 +781,21 @@ class WebsitePage extends CommonObject
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return $this->setCategoriesCommon($categories, Categorie::TYPE_WEBSITE_PAGE);
+	}
 
 	/**
 	 * Initialise object with example values

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - exports
-ExportsArea=Секция за експортиране
-ImportArea=Секция за импортиране
+ExportsArea=Секция с експортирания
+ImportArea=Секция с импортирания
 NewExport=Ново експортиране
 NewImport=Ново импортиране
 ExportableDatas=Експортируем набор от данни
@@ -26,6 +26,8 @@ FieldTitle=Заглавие на полето
 NowClickToGenerateToBuildExportFile=Сега, изберете формата на файла от полето на комбинирания списък и кликнете върху „Генериране“, за да създадете файла за експортиране...
 AvailableFormats=Налични формати
 LibraryShort=Библиотека
+ExportCsvSeparator=Разделител на символи в .csv
+ImportCsvSeparator=Разделител на символи в .csv
 Step=Стъпка
 FormatedImport=Асистент за импортиране
 FormatedImportDesc1=Този модул ви позволява да актуализирате съществуващи данни или да добавяте нови обекти в базата данни от файл без технически познания, използвайки асистент.

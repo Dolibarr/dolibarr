@@ -227,9 +227,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -297,9 +295,7 @@ class CommandeFournisseurDispatch extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -392,9 +388,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -459,9 +453,7 @@ class CommandeFournisseurDispatch extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -514,9 +506,7 @@ class CommandeFournisseurDispatch extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -552,28 +542,23 @@ class CommandeFournisseurDispatch extends CommonObject
         if ($mode == 0)
         {
             return $langs->trans($this->statuts[$status]);
-        }
-        elseif ($mode == 1)
+        } elseif ($mode == 1)
         {
             return $langs->trans($this->statutshort[$status]);
-        }
-        elseif ($mode == 2)
+        } elseif ($mode == 2)
         {
             return $langs->trans($this->statuts[$status]);
-        }
-        elseif ($mode == 3)
+        } elseif ($mode == 3)
         {
             if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut0');
             elseif ($status == 1) return img_picto($langs->trans($this->statuts[$status]), 'statut4');
             elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut8');
-        }
-        elseif ($mode == 4)
+        } elseif ($mode == 4)
         {
             if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
             elseif ($status == 1) return img_picto($langs->trans($this->statuts[$status]), 'statut4').' '.$langs->trans($this->statuts[$status]);
             elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]);
-        }
-        elseif ($mode == 5)
+        } elseif ($mode == 5)
         {
             if ($status == 0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut0');
             elseif ($status == 1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$status]).' </span>'.img_picto($langs->trans($this->statuts[$status]), 'statut4');

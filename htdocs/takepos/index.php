@@ -134,9 +134,7 @@ foreach ($categories as $key => $categorycursor)
     if ($categorycursor['level'] == $levelofmaincategories)
     {
         $maincategories[$key] = $categorycursor;
-    }
-    else
-    {
+    } else {
         $subcategories[$key] = $categorycursor;
     }
 }
@@ -756,8 +754,13 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 	<div class="header">
 		<div class="topnav">
 			<div class="topnav-left">
-			<div class="inline-block valignmiddle"><a class="topnav-terminalhour" onclick="TerminalsDialog();">
-			<?php echo $langs->trans("Terminal")." ";
+			<div class="inline-block valignmiddle">
+			<a class="topnav-terminalhour" onclick="TerminalsDialog();">
+			<span class="fa fa-cash-register"></span>
+			<span class="hideonsmartphone">
+			<?php echo $langs->trans("Terminal"); ?>
+			</span>
+			<?php echo " ";
 			if ($_SESSION["takeposterminal"] == "") echo "1";
 			else echo $_SESSION["takeposterminal"];
 			echo '<span class="hideonsmartphone"> - '.dol_print_date(dol_now(), "day").'</span>';
@@ -767,15 +770,17 @@ if (empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 			<div class="inline-block valignmiddle" id="customerandsales">
 			</div>
 			<!-- More info about customer -->
-			<div class="inline-block valignmiddle" id="moreinfo"></div>
-			<div class="inline-block valignmiddle" id="infowarehouse"></div>
+			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="moreinfo"></div>
+			<div class="inline-block valignmiddle tdoverflowmax150onsmartphone" id="infowarehouse"></div>
 			</div>
 			<div class="topnav-right">
 				<div class="login_block_other">
 				<input type="text" id="search" name="search" onkeyup="Search2(<?php echo $keyCodeForEnter; ?>);"  placeholder="<?php echo $langs->trans("Search"); ?>" autofocus>
 				<a onclick="ClearSearch();"><span class="fa fa-backspace"></span></a>
 				<a onclick="window.location.href='<?php echo DOL_URL_ROOT; ?>';"><span class="fas fa-home"></span></a>
+				<?php if (empty($conf->dol_use_jmobile)) { ?>
 				<a onclick="FullScreen();"><span class="fa fa-expand-arrows-alt"></span></a>
+				<?php } ?>
 				</div>
 				<div class="login_block_user">
 				<?php
@@ -850,9 +855,7 @@ $r = 0;
 if (empty($conf->global->TAKEPOS_BAR_RESTAURANT))
 {
     $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("New").'</div>', 'action'=>'New();');
-}
-else
-{
+} else {
     // BAR RESTAURANT specific menu
     $menus[$r++] = array('title'=>'<span class="fa fa-layer-group paddingrightonly"></span><div class="trunc">'.$langs->trans("Place").'</div>', 'action'=>'Floors();');
 }
@@ -866,7 +869,7 @@ $menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></sp
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
-	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").'</div>', 'action'=>'DirectPayment();');
+	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").' <span class="opacitymedium">('.$langs->trans("Cash").')</span></div>', 'action'=>'DirectPayment();');
 }
 
 // BAR RESTAURANT specific menu
@@ -946,8 +949,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
         	{
         		echo '<button style="'.$menu['style'].'" type="button" id="actionnext" class="actionbutton" onclick="MoreActions('.count($menus).');">'.$langs->trans("Next").'</button>';
         		echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
-        	}
-            elseif ($i > 12) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
+        	} elseif ($i > 12) echo '<button style="display: none;" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
             else echo '<button style="'.$menu['style'].'" type="button" id="action'.$i.'" class="actionbutton" onclick="'.$menu['action'].'">'.$menu['title'].'</button>';
         }
 
@@ -976,13 +978,10 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				if ($count == ($MAXCATEG - 2)) {
 				    //echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="catimg'.$count.'" />';
 				    echo '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
-				}
-				elseif ($count == ($MAXCATEG - 1)) {
+				} elseif ($count == ($MAXCATEG - 1)) {
 				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
 				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
-				}
-				else
-				{
+				} else {
 				    echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
 				}
 				?>
@@ -1011,13 +1010,10 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
     				if ($count == ($MAXPRODUCT - 2)) {
     				    //echo '<img class="imgwrapper" src="img/arrow-prev-top.png" height="100%" id="proimg'.$count.'" />';
     					print '<span class="fa fa-chevron-left centerinmiddle" style="font-size: 5em;"></span>';
-    				}
-    				elseif ($count == ($MAXPRODUCT - 1)) {
+    				} elseif ($count == ($MAXPRODUCT - 1)) {
     				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="proimg'.$count.'" />';
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
-    				}
-    				else
-    				{
+    				} else {
     					print '<div class="" id="proprice'.$count.'"></div>';
     					print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
     				}

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,11 @@ class PaymentLoan extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'payment_loan';
+
+    /**
+     * @var string String with name of icon for PaymentLoan
+     */
+    public $picto = 'money-bill-alt';
 
     /**
      * @var int Loan ID
@@ -165,9 +171,7 @@ class PaymentLoan extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
@@ -178,9 +182,7 @@ class PaymentLoan extends CommonObject
 			$this->amount_capital = $totalamount;
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -254,9 +256,7 @@ class PaymentLoan extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -326,9 +326,7 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -369,6 +367,40 @@ class PaymentLoan extends CommonObject
 			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
+        // Set loan unpaid if loan has no other payment
+        if (!$error)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+            $loan = new Loan($this->db);
+            $loan->fetch($this->fk_loan);
+            $sum_payment = $loan->getSumPayment();
+            if ($sum_payment == 0)
+            {
+                dol_syslog(get_class($this)."::delete : set loan to unpaid", LOG_DEBUG);
+                if ($loan->set_unpaid($user) < 1)
+                {
+                    $error++;
+                    dol_print_error($this->db);
+                }
+            }
+        }
+
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+		//	}
+		//}
+
 		// Commit or rollback
 		if ($error)
 		{
@@ -379,9 +411,7 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -405,6 +435,7 @@ class PaymentLoan extends CommonObject
 		global $conf;
 
 		$error = 0;
+        $this->db->begin();
 
 		if (!empty($conf->banque->enabled))
 		{
@@ -453,26 +484,44 @@ class PaymentLoan extends CommonObject
 					}
 				}
 
+
 				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
 				if ($mode == 'payment_loan')
 				{
 					$result = $acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label ? $this->label : ''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $acc->error;
 				$error++;
 			}
 		}
 
+
+        // Set loan payment started if no set
+        if (!$error)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+            $loan = new Loan($this->db);
+            $loan->fetch($fk_loan);
+            if ($loan->paid == $loan::STATUS_UNPAID)
+            {
+                dol_syslog(get_class($this)."::addPaymentToBank : set loan payment to started", LOG_DEBUG);
+                if ($loan->set_started($user) < 1)
+                {
+                    $error++;
+                    dol_print_error($this->db);
+                }
+            }
+        }
+
 		if (!$error)
 		{
+            $this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
+            $this->db->rollback();
 			return -1;
 		}
 	}
@@ -496,9 +545,7 @@ class PaymentLoan extends CommonObject
 		{
 		    $this->fk_bank = $id_bank;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -507,25 +554,39 @@ class PaymentLoan extends CommonObject
 	/**
 	 *  Return clicable name (with eventually a picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=No picto
-	 * 	@param	int		$maxlen			Max length label
-	 *	@return	string					Chaine with URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=No picto
+	 * 	@param	int		$maxlen						Max length label
+     *	@param	int  	$notooltip					1=Disable tooltip
+     *	@param	string	$moretitle					Add more text to title tooltip
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $maxlen = 0)
+	public function getNomUrl($withpicto = 0, $maxlen = 0, $notooltip = 0, $moretitle = '', $save_lastsearch_value = -1)
 	{
-		global $langs;
+		global $langs, $conf;
+
+		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-
-		if (!empty($this->id))
-		{
-			$link = '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id.'">';
-			$linkend = '</a>';
-
-			if ($withpicto) $result .= ($link.img_object($langs->trans("ShowPayment").': '.$this->ref, 'payment').$linkend.' ');
-			if ($withpicto && $withpicto != 2) $result .= ' ';
-			if ($withpicto != 2) $result .= $link.($maxlen ?dol_trunc($this->ref, $maxlen) : $this->ref).$linkend;
+		$label = '<u>'.$langs->trans("Loan").'</u>';
+		if (!empty($this->id)) {
+			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->id;
 		}
+		if ($moretitle) $label .= ' - '.$moretitle;
+
+		$url = DOL_URL_ROOT.'/loan/payment/card.php?id='.$this->id;
+
+		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) $add_save_lastsearch_values = 1;
+		if ($add_save_lastsearch_values) $url .= '&save_lastsearch_values=1';
+
+		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend = '</a>';
+
+		$result .= $linkstart;
+		if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+		if ($withpicto != 2) $result .= $this->ref;
+		$result .= $linkend;
 
 		return $result;
 	}

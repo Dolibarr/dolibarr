@@ -123,14 +123,12 @@ if ($type == "c")
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactcustomerlist';
 	$titre .= '  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche = "card.php";
-}
-elseif ($type == "f")
+} elseif ($type == "f")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactsupplierlist';
 	$titre .= ' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche = "card.php";
-}
-elseif ($type == "o")
+} elseif ($type == "o")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactotherlist';
 	$titre .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
@@ -326,9 +324,7 @@ if (!empty($userid))    // propre au commercial
 if ($search_priv != '0' && $search_priv != '1')
 {
 	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
-}
-else
-{
+} else {
 	if ($search_priv == '0') $sql .= " AND p.priv='0'";
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
@@ -358,7 +354,6 @@ if (strlen($search_fax))            $sql .= natural_search('p.fax', $search_fax)
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_{$key})) {
-			//$sql.= natural_search("p.socialnetworks->'$.".$key."'", $search_{$key});
 			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
 		}
 	}
@@ -376,16 +371,13 @@ if ($search_import_key)             $sql .= natural_search("p.import_key", $sear
 if ($type == "o")        // filtre sur type
 {
 	$sql .= " AND p.fk_soc IS NULL";
-}
-elseif ($type == "f")        // filtre sur type
+} elseif ($type == "f")        // filtre sur type
 {
 	$sql .= " AND s.fournisseur = 1";
-}
-elseif ($type == "c")        // filtre sur type
+} elseif ($type == "c")        // filtre sur type
 {
 	$sql .= " AND s.client IN (1, 3)";
-}
-elseif ($type == "p")        // filtre sur type
+} elseif ($type == "p")        // filtre sur type
 {
 	$sql .= " AND s.client IN (2, 3)";
 }
@@ -403,9 +395,7 @@ $sql .= $hookmanager->resPrint;
 if ($view == "recent")
 {
 	$sql .= $db->order("p.datec", "DESC");
-}
-else
-{
+} else {
 	$sql .= $db->order($sortfield, $sortorder);
 }
 
@@ -922,9 +912,7 @@ while ($i < min($num, $limit))
 		    $objsoc = new Societe($db);
 		    $objsoc->fetch($obj->socid);
 		    print $objsoc->getNomUrl(1);
-		}
-		else
-			print '&nbsp;';
+		} else print '&nbsp;';
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
@@ -939,7 +927,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation

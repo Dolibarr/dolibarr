@@ -41,9 +41,7 @@ InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
 LastModifiedInterventions=Jaunākās %s labotās iejaukšanās
 FichinterToProcess=Intervences process
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Šādi-up klientu kontaktu
-# Modele numérotation
 PrintProductsOnFichinter=Drukājiet arī intervences kartē norādītās "produkta" (ne tikai pakalpojumu) līnijas
 PrintProductsOnFichinterDetails=interventions generated from orders
 UseServicesDurationOnFichinter=Izmantojiet pasūtījumu veikšanai paredzēto iejaukšanās pakalpojumu ilgumu
@@ -53,7 +51,6 @@ InterventionStatistics=Intervences statistika
 NbOfinterventions=Intervences karšu skaits
 NumberOfInterventionsByMonth=Intervences karšu skaits pēc mēneša (validācijas datums)
 AmountOfInteventionNotIncludedByDefault=Ienākuma summa pēc noklusējuma netiek iekļauta peļņā (vairumā gadījumu laika kontrolsaraksts tiek izmantots, lai uzskaitītu pavadīto laiku). Lai tos iekļautu, pievienojiet opciju PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT uz 1 sākuma iestatīšanas pogu.
-##### Exports #####
 InterId=Intervention id
 InterRef=Intervention ref.
 InterDateCreation=Date creation intervention
@@ -65,3 +62,5 @@ InterLineId=Line id intervention
 InterLineDate=Line date intervention
 InterLineDuration=Line duration intervention
 InterLineDesc=Line description intervention
+RepeatableIntervention=Intervences paraugs
+ToCreateAPredefinedIntervention=Lai izveidotu iepriekš noteiktu vai atkārtotu intervenci, izveidojiet kopēju intervenci un pārveidojiet to par intervences veidni
