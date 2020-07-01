@@ -2388,44 +2388,44 @@ class Societe extends CommonObject
 
 		$label .= '<div class="centpercent">';
 
-		if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
+		if ($option == 'customer' || $option == 'compta' || $option == 'category')
 		{
-		    $label .= '<u>'.$langs->trans("ShowCustomer").'</u>';
+		    $label .= '<u>'.$langs->trans("Customer").'</u>';
 		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		}
 		elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			$label .= '<u>'.$langs->trans("ShowProspect").'</u>';
+			$label .= '<u>'.$langs->trans("Prospect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		}
-		elseif ($option == 'supplier')
+		elseif ($option == 'supplier' || $option == 'category_supplier')
 		{
-			$label .= '<u>'.$langs->trans("ShowSupplier").'</u>';
+			$label .= '<u>'.$langs->trans("Supplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		}
 		elseif ($option == 'agenda')
 		{
-			$label .= '<u>'.$langs->trans("ShowAgenda").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		}
 		elseif ($option == 'project')
 		{
-			$label .= '<u>'.$langs->trans("ShowProject").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		}
 		elseif ($option == 'margin')
 		{
-			$label .= '<u>'.$langs->trans("ShowMargin").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		}
 		elseif ($option == 'contact')
 		{
-			$label .= '<u>'.$langs->trans("ShowContacts").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		}
 		elseif ($option == 'ban')
 		{
-			$label .= '<u>'.$langs->trans("ShowBan").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 

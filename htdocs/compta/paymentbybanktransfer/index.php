@@ -106,7 +106,9 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 {
 	$sql .= " AND f.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 }
-$sql .= " AND pfd.traite = 0 AND pfd.fk_facture_fourn = f.rowid";
+$sql .= " AND pfd.traite = 0";
+$sql .= " AND pfd.ext_payment_id IS NULL";
+$sql .= " AND pfd.fk_facture_fourn = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 
@@ -195,7 +197,8 @@ if ($result)
     print"\n<!-- debut table -->\n";
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><th>'.$langs->trans("LatestBankTransferReceipts", $limit).'</th>';
+    print '<tr class="liste_titre">';
+    print '<th>'.$langs->trans("LatestBankTransferReceipts", $limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
     print '<th class="right">'.$langs->trans("Amount").'</th>';
     print '<th class="right">'.$langs->trans("Status").'</th>';
@@ -222,7 +225,7 @@ if ($result)
 	        $i++;
 	    }
     } else {
-    	print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+    	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
     }
 
     print "</table></div><br>";

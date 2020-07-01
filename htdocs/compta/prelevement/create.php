@@ -5,7 +5,7 @@
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019      Markus Welters       <markus@welters.de>
+ * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/compta/prelevement/create.php
  *  \ingroup    prelevement
- *	\brief      Prelevement creation page
+ *	\brief      Page to create a direct debit order or a credit transfer order
  */
 
 require '../../main.inc.php';
@@ -77,11 +77,17 @@ if (empty($reshook))
 	}
 	if ($action == 'create')
 	{
-		// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
+		$delayindays = 0;
+		if ($type != 'bank-transfer') {
+			$conf->global->PRELEVEMENT_ADDDAYS;
+		} else {
+			$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
+		}
 		$bprev = new BonPrelevement($db);
-	    $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday') + $conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
+	    $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), (GETPOST('reday', 'int') + $delayindays), GETPOST('reyear', 'int'));
 
-	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate);
+	    // $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
+	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
 		if ($result < 0)
 		{
 			setEventMessages($bprev->error, $bprev->errors, 'errors');
@@ -257,8 +263,10 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 {
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
-$sql .= " AND f.total_ttc > 0";
+//$sql .= " AND pfd.amount > 0";
+$sql .= " AND f.total_ttc > 0";		// Avoid credit notes
 $sql .= " AND pfd.traite = 0";
+$sql .= " AND pfd.ext_payment_id IS NULL";
 if ($type == 'bank-transfer') {
 	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
 } else {
