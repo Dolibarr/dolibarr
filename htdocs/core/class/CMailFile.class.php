@@ -396,7 +396,23 @@ class CMailFile
             //$this->message->setFrom(array('john@doe.com' => 'John Doe'));
             if (! empty($from)) {
                 try {
-                    $result = $this->message->setFrom($this->getArrayAddress($from));
+
+					// Prevent email spoofing for smtp server with a strict configuration
+					$regexp = '/([a-z0-9_\.\-\+])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i'; // This regular expression extracts all emails from a string
+					$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
+					$adressEmailFrom = reset($adressEmailFrom);
+					if($emailMatchs !== false
+						&& $conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING
+						&& filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL)
+						&& $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom)
+					{
+						$result = $this->message->setFrom($conf->global->MAIN_MAIL_SMTPS_ID);
+					}
+					else
+					{
+						$result = $this->message->setFrom($this->getArrayAddress($from));
+					}
+
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
