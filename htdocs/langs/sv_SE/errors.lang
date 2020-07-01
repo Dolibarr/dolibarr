@@ -263,3 +263,4 @@ WarningNumberOfRecipientIsRestrictedInMassAction=Varning, antalet olika mottagar
 WarningDateOfLineMustBeInExpenseReportRange=Varning, datumet för raden ligger inte inom kostnadsberäkningsområdet
 WarningProjectClosed=Projektet är stängt. Du måste öppna den först igen.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
+WarningFailedToAddFileIntoDatabaseIndex=Warnin, failed to add file entry into ECM database index table

@@ -220,7 +220,7 @@ class modContrat extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		// Nettoyage avant activation
 		$this->remove($options);

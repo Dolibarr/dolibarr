@@ -205,7 +205,13 @@ if (!empty($morelogincontent)) {
 	</div>
 <?php } ?>
 
-<?php if (!empty($morelogincontent) && is_array($morelogincontent)) {
+
+<!-- Common footer is not used for passwordforgotten page, this is same than footer but inside passwordforgotten tpl -->
+
+<?php
+if (!empty($conf->global->MAIN_HTML_FOOTER)) print $conf->global->MAIN_HTML_FOOTER;
+
+if (!empty($morelogincontent) && is_array($morelogincontent)) {
 	foreach ($morelogincontent as $format => $option)
 	{
 		if ($format == 'js') {
@@ -217,7 +223,52 @@ if (!empty($morelogincontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }
+
+// Google Analytics
+// TODO Add a hook here
+if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
+{
+	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
+	foreach ($tmptagarray as $tmptag) {
+		print "\n";
+		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
+		print "
+					<!-- Global site tag (gtag.js) - Google Analytics -->
+					<script async src=\"https://www.googletagmanager.com/gtag/js?id=".trim($tmptag)."\"></script>
+					<script>
+					window.dataLayer = window.dataLayer || [];
+					function gtag(){dataLayer.push(arguments);}
+					gtag('js', new Date());
+
+					gtag('config', '".trim($tmptag)."');
+					</script>";
+		print "\n";
+	}
+}
+
+// Google Adsense
+if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIENT) && !empty($conf->global->MAIN_GOOGLE_AD_SLOT))
+{
+	if (empty($conf->dol_use_jmobile))
+	{
+		?>
+	<div class="center"><br>
+		<script type="text/javascript"><!--
+			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
+			google_ad_slot = "<?php echo $conf->global->MAIN_GOOGLE_AD_SLOT ?>";
+			google_ad_width = <?php echo $conf->global->MAIN_GOOGLE_AD_WIDTH ?>;
+			google_ad_height = <?php echo $conf->global->MAIN_GOOGLE_AD_HEIGHT ?>;
+			//-->
+		</script>
+		<script type="text/javascript"
+			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+		</script>
+	</div>
+		<?php
+	}
+}
 ?>
+
 
 </div>
 </div>	<!-- end of center -->

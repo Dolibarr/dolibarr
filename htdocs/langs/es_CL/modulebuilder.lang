@@ -21,7 +21,6 @@ EnterNameOfObjectToDeleteDesc=Puede eliminar un objeto. ADVERTENCIA: ¡Se elimin
 BuildPackage=Paquete de compilación
 BuildPackageDesc=Puede generar un paquete zip de su aplicación para que esté listo para distribuirlo en cualquier Dolibarr. También puede distribuirlo o venderlo en un mercado como <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Documentación de construcción
-ModuleIsNotActive=Este módulo aún no está activado. Vaya a %s para hacerlo en vivo o haga clic aquí:
 ModuleIsLive=Este módulo ha sido activado. Cualquier cambio puede romper una característica actual en vivo.
 DescriptorFile=Archivo descriptivo del módulo
 ClassFile=Archivo para la clase DAO CRUD de PHP

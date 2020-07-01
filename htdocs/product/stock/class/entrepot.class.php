@@ -697,6 +697,8 @@ class Entrepot extends CommonObject
 
         if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
+        if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) $withpicto = 0;
+
         $result = '';
 
         $label = '<u>'.$langs->trans("Warehouse").'</u>';

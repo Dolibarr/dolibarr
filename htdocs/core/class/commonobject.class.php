@@ -1424,15 +1424,15 @@ abstract class CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load object contact with id=$this->contactid into $this->contact
+	 *		Load object contact with id=$this->contact_id into $this->contact
 	 *
-	 *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
+	 *		@param	int		$contactid      Id du contact. Use this->contact_id if empty.
 	 *		@return	int						<0 if KO, >0 if OK
 	 */
 	public function fetch_contact($contactid = null)
 	{
         // phpcs:enable
-		if (empty($contactid)) $contactid = $this->contactid;
+		if (empty($contactid)) $contactid = $this->contact_id;
 
 		if (empty($contactid)) return 0;
 
@@ -3043,7 +3043,12 @@ abstract class CommonObject
 					//print 'Line '.$i.' rowid='.$obj->rowid.' vat_rate='.$obj->vatrate.' total_ht='.$obj->total_ht.' total_tva='.$obj->total_tva.' total_ttc='.$obj->total_ttc.' total_ht_by_vats='.$total_ht_by_vats[$obj->vatrate].' total_tva_by_vats='.$total_tva_by_vats[$obj->vatrate].' (new calculation = '.$tmpvat.') total_ttc_by_vats='.$total_ttc_by_vats[$obj->vatrate].($diff?" => DIFF":"")."<br>\n";
 					if ($diff)
 					{
-						if (abs($diff) > 0.1) { dol_syslog('A rounding difference was detected into TOTAL but is too high to be corrected', LOG_WARNING); exit; }
+						if (abs($diff) > 0.1) {
+							$errmsg = 'A rounding difference was detected into TOTAL but is too high to be corrected. Some data in your line may be corrupted. Try to edit each line manually.';
+							dol_syslog($errmsg, LOG_WARNING);
+							dol_print_error('', $errmsg);
+							exit;
+						}
 						$sqlfix = "UPDATE ".MAIN_DB_PREFIX.$this->table_element_line." SET ".$fieldtva." = ".($obj->total_tva - $diff).", total_ttc = ".($obj->total_ttc - $diff)." WHERE rowid = ".$obj->rowid;
 						dol_syslog('We found a difference of '.$diff.' for line rowid = '.$obj->rowid.". We fix the total_vat and total_ttc of line by running sqlfix = ".$sqlfix);
 								$resqlfix = $this->db->query($sqlfix);
@@ -5839,7 +5844,7 @@ abstract class CommonObject
 			if ($type == 'date')
 			{
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')
+			} elseif ($type == 'datetime' || $type == 'link')	// link means an foreign key to another primary id
 			{
 				$morecss = 'minwidth200imp';
 			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
@@ -6273,11 +6278,13 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
+			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+				$morecss .= ' widthcentpercentminusx';
+			}
 
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
-			if (!empty($param_list_array[2]))		// If we set to add a create button
-			{
+			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
 				if (!GETPOSTISSET('backtopage') && empty($val['disabled']) && empty($nonewbutton))	// To avoid to open several times the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
 				{
 		   			list($class, $classfile) = explode(':', $param_list[0]);
@@ -7972,7 +7979,9 @@ abstract class CommonObject
 			            break;
 		            }
 	            } else {
-		            $sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
+	            	// Delete record in child table
+	            	$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $table . ' WHERE ' . $this->fk_element . ' = ' . $this->id;
+
 		            $resql = $this->db->query($sql);
 		            if (!$resql) {
 						$error++;
@@ -8052,7 +8061,11 @@ abstract class CommonObject
 						$error++;
 						$this->errors[] = $this->error;
 					} else {
-						$result = $this->delete($user);
+						if (get_class($this) == 'Contact') { // TODO special code because delete() for contact has not been standardized like other delete.
+							$result = $this->delete();
+						} else {
+							$result = $this->delete($user);
+						}
 						if ($result < 0) {
 							$error++;
 							$this->errors[] = $this->error;
@@ -8256,6 +8269,27 @@ abstract class CommonObject
     }
 
     /* Part for categories/tags */
+
+    /**
+     * Sets object to given categories.
+     *
+     * Deletes object from existing categories not supplied.
+     * Adds it to non existing supplied categories.
+     * Existing categories are left untouch.
+     *
+     * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
+     * @return	int							Array of category objects or < 0 if KO
+     */
+    public function getCategoriesCommon($type_categ)
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+    	// Get current categories
+    	$c = new Categorie($this->db);
+    	$existing = $c->containing($this->id, $type_categ, 'id');
+
+    	return $existing;
+    }
 
     /**
      * Sets object to given categories.

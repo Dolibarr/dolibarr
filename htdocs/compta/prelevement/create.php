@@ -96,6 +96,9 @@ if (empty($reshook))
 			}
 		} else {
 			setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+
+			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$bprev->id);
+			exit;
 		}
 	}
 }
@@ -138,8 +141,8 @@ print load_fiche_titre($title);
 
 dol_fiche_head();
 
-$nb = $bprev->NbFactureAPrelever();
-$pricetowithdraw = $bprev->SommeAPrelever();
+$nb = $bprev->nbOfInvoiceToPay($type);
+$pricetowithdraw = $bprev->SommeAPrelever($type);
 if ($nb < 0)
 {
 	dol_print_error($bprev->error);
@@ -151,7 +154,7 @@ if ($type == 'bank-transfer') {
 	$title = $langs->trans("NbOfInvoiceToPayByBankTransfer");
 }
 
-print '<tr><td class="titlefield">'.$title.'</td>';
+print '<tr><td class="titlefieldcreate">'.$title.'</td>';
 print '<td>';
 print $nb;
 print '</td></tr>';
@@ -175,17 +178,32 @@ if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
         print $form->selectDate();
+
         if ($mysoc->isInEEC()) {
+        	$title = $langs->trans("CreateForSepa");
+
             print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
-            print '<input class="butAction" type="submit" value="'.$langs->trans("CreateForSepa").'"/>';
+            print '<input class="butAction" type="submit" value="'.$title.'"/>';
         } else {
-            print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">'.$langs->trans("CreateAll")."</a>\n";
+        	$title = $langs->trans("CreateAll");
+        	if ($type == 'bank-transfer') {
+        		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+        	}
+        	print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
 	} else {
 		if ($mysoc->isInEEC())
 		{
-			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
-			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
+			$title = $langs->trans("CreateForSepaFRST");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
+			}
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+
+			if ($type != 'bank-transfer') {
+				$title = $langs->trans("CreateForSepaRCUR");
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+			}
 		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
@@ -195,7 +213,13 @@ if ($nb) {
 		}
 	}
 } else {
-    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+	$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
+	$title = $langs->trans("CreateAll");
+	if ($type == 'bank-transfer') {
+		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
+		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+	}
+	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">'.$title."</a>\n";
 }
 
 print "</form>\n";
@@ -227,9 +251,9 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 $sql .= " AND f.total_ttc > 0";
 $sql .= " AND pfd.traite = 0";
 if ($type == 'bank-transfer') {
-	$sql .= " AND pfd.fk_facture = f.rowid";
-} else {
 	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+} else {
+	$sql .= " AND pfd.fk_facture = f.rowid";
 }
 if ($socid > 0) $sql .= " AND f.fk_soc = ".$socid;
 
@@ -290,23 +314,29 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 
+			$bac->fetch(0, $obj->socid);
+
 			print '<tr class="oddeven">';
+
+			// Ref invoice
 			print '<td>';
 			$invoicestatic->id = $obj->rowid;
 			$invoicestatic->ref = $obj->ref;
 			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
+
 			// Thirdparty
 			print '<td>';
 			$thirdpartystatic->fetch($obj->socid);
 			print $thirdpartystatic->getNomUrl(1, 'ban');
 			print '</td>';
+
 			// RIB
 			print '<td>';
-			print $thirdpartystatic->display_rib();
-			$bac->fetch(0, $obj->socid);
+			print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 			if ($bac->verif() <= 0) print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
 			print '</td>';
+
 			// RUM
 			print '<td>';
 			print $thirdpartystatic->display_rib('rum');

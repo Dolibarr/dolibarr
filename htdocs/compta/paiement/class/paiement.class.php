@@ -68,9 +68,11 @@ class Paiement extends CommonObject
 	 */
 	public $montant;
 
-	public $amount; // Total amount of payment
-	public $amounts = array(); // Array of amounts
-	public $multicurrency_amounts = array(); // Array of amounts
+	public $amount;                        // Total amount of payment (in the main currency)
+	public $multicurrency_amount;          // Total amount of payment (in the currency of the bank account)
+	public $amounts = array();               // array: invoice ID => amount for that invoice (in the main currency)>
+	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
+
 	public $author;
 	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
 	public $paiementcode; // Code of payment.
@@ -159,7 +161,7 @@ class Paiement extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $fk_bank = '')
 	{
-		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank,';
+		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.ext_payment_id, p.ext_payment_site, p.fk_bank, p.multicurrency_amount,';
 		$sql .= ' c.code as type_code, c.libelle as type_label,';
 		$sql .= ' p.num_paiement as num_payment, p.note,';
 		$sql .= ' b.fk_account';
@@ -179,6 +181,7 @@ class Paiement extends CommonObject
 			if ($this->db->num_rows($resql))
 			{
 				$obj = $this->db->fetch_object($resql);
+
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->ref ? $obj->ref : $obj->rowid;
 				$this->date           = $this->db->jdate($obj->dp);
@@ -187,6 +190,7 @@ class Paiement extends CommonObject
 				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount; // deprecated
 				$this->amount         = $obj->amount;
+				$this->multicurrency_amount = $obj->multicurrency_amount;
 				$this->note           = $obj->note;
 				$this->type_label = $obj->type_label;
 				$this->type_code      = $obj->type_code;
@@ -494,8 +498,10 @@ class Paiement extends CommonObject
 		{
 			$accline = new AccountLine($this->db);
 
-			$result = $accline->fetch($bank_line_id);
-			if ($result == 0) $accline->rowid = $bank_line_id; // If not found, we set artificially rowid to allow delete of llx_bank_url
+			$result=$accline->fetch($bank_line_id);
+			if ($result == 0) {
+				$accline->id = $accline->rowid = $bank_line_id;    // If not found, we set artificially rowid to allow delete of llx_bank_url
+			}
 
             // Delete bank account url lines linked to payment
 			$result = $accline->delete_urls($user);

@@ -197,14 +197,14 @@ print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
 print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
-print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, 'class="right"');
-print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, 'class="center"');
+print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
+print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 print_liste_field_titre('');
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print '<td class="liste_titre"><input type="text" class="flat" name="search_facture" size="12" value="'.dol_escape_htmltag($search_facture).'"></td>';
-print '<td class="liste_titre"><input type="text" class="flat" name="search_societe" size="18" value="'.dol_escape_htmltag($search_societe).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat maxwidth150" name="search_facture" value="'.dol_escape_htmltag($search_facture).'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat maxwidth150" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 // Action column

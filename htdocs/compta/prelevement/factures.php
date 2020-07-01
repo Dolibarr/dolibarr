@@ -38,7 +38,7 @@ $langs->loadLangs(array('banks', 'categories', 'companies', 'withdrawals', 'bill
 if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
-$prev_id = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
 
@@ -68,9 +68,9 @@ $thirdpartytmp = new Societe($db);
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id > 0 || $ref)
+if ($id > 0 || $ref)
 {
-  	if ($object->fetch($prev_id, $ref) >= 0)
+  	if ($object->fetch($id, $ref) >= 0)
     {
     	$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
@@ -181,7 +181,7 @@ if ($result)
   	$num = $db->num_rows($result);
   	$i = 0;
 
-  	$param = "&amp;id=".$prev_id;
+  	$param = "&id=".$id;
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -193,7 +193,7 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	$massactionbutton = '';
 

@@ -1176,7 +1176,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             // Price
             print '<tr><td class="titlefieldcreate">'.$langs->trans("SellingPrice").'</td>';
             print '<td><input name="price" class="maxwidth50" value="'.$object->price.'">';
-            print $form->selectPriceBaseType($object->price_base_type, "price_base_type");
+            print $form->selectPriceBaseType($conf->global->PRODUCT_PRICE_BASE_TYPE, "price_base_type");
             print '</td></tr>';
 
             // Min price

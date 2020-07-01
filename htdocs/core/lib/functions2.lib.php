@@ -2204,60 +2204,52 @@ function cartesianArray(array $input)
 /**
  * Get name of directory where the api_...class.php file is stored
  *
- * @param   string  $module     Module name
- * @return  string              Directory name
+ * @param   string  $moduleobject     Module object name
+ * @return  string              	  Directory name
  */
-function getModuleDirForApiClass($module)
+function getModuleDirForApiClass($moduleobject)
 {
-    $moduledirforclass = $module;
+    $moduledirforclass = $moduleobject;
     if ($moduledirforclass != 'api') $moduledirforclass = preg_replace('/api$/i', '', $moduledirforclass);
 
-    if ($module == 'contracts') {
+    if ($moduleobject == 'contracts') {
     	$moduledirforclass = 'contrat';
-    } elseif (in_array($module, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents'))) {
+    } elseif (in_array($moduleobject, array('admin', 'login', 'setup', 'access', 'status', 'tools', 'documents'))) {
         $moduledirforclass = 'api';
-    } elseif ($module == 'contact' || $module == 'contacts' || $module == 'customer' || $module == 'thirdparty' || $module == 'thirdparties') {
+    } elseif ($moduleobject == 'contact' || $moduleobject == 'contacts' || $moduleobject == 'customer' || $moduleobject == 'thirdparty' || $moduleobject == 'thirdparties') {
         $moduledirforclass = 'societe';
-    } elseif ($module == 'propale' || $module == 'proposals') {
+    } elseif ($moduleobject == 'propale' || $moduleobject == 'proposals') {
         $moduledirforclass = 'comm/propal';
-    } elseif ($module == 'agenda' || $module == 'agendaevents') {
+    } elseif ($moduleobject == 'agenda' || $moduleobject == 'agendaevents') {
         $moduledirforclass = 'comm/action';
-    } elseif ($module == 'adherent' || $module == 'members' || $module == 'memberstypes' || $module == 'subscriptions') {
+    } elseif ($moduleobject == 'adherent' || $moduleobject == 'members' || $moduleobject == 'memberstypes' || $moduleobject == 'subscriptions') {
         $moduledirforclass = 'adherents';
-    } elseif ($module == 'don' || $module == 'donations') {
+    } elseif ($moduleobject == 'don' || $moduleobject == 'donations') {
         $moduledirforclass = 'don';
-    } elseif ($module == 'banque' || $module == 'bankaccounts') {
+    } elseif ($moduleobject == 'banque' || $moduleobject == 'bankaccounts') {
         $moduledirforclass = 'compta/bank';
-    } elseif ($module == 'category' || $module == 'categorie') {
+    } elseif ($moduleobject == 'category' || $moduleobject == 'categorie') {
         $moduledirforclass = 'categories';
-    } elseif ($module == 'order' || $module == 'orders') {
+    } elseif ($moduleobject == 'order' || $moduleobject == 'orders') {
         $moduledirforclass = 'commande';
-    } elseif ($module == 'shipments') {
+    } elseif ($moduleobject == 'shipments') {
         $moduledirforclass = 'expedition';
-    } elseif ($module == 'facture' || $module == 'invoice' || $module == 'invoices') {
+    } elseif ($moduleobject == 'facture' || $moduleobject == 'invoice' || $moduleobject == 'invoices') {
         $moduledirforclass = 'compta/facture';
-    } elseif ($module == 'products') {
-        $moduledirforclass = 'product';
-    } elseif ($module == 'project' || $module == 'projects' || $module == 'tasks') {
+    } elseif ($moduleobject == 'project' || $moduleobject == 'projects' || $moduleobject == 'task' || $moduleobject == 'tasks') {
         $moduledirforclass = 'projet';
-    } elseif ($module == 'task') {
-        $moduledirforclass = 'projet';
-    } elseif ($module == 'stock' || $module == 'stockmovements' || $module == 'warehouses') {
+    } elseif ($moduleobject == 'stock' || $moduleobject == 'stockmovements' || $moduleobject == 'warehouses') {
         $moduledirforclass = 'product/stock';
-    } elseif ($module == 'supplierproposals' || $module == 'supplierproposal' || $module == 'supplier_proposal') {
+    } elseif ($moduleobject == 'supplierproposals' || $moduleobject == 'supplierproposal' || $moduleobject == 'supplier_proposal') {
     	$moduledirforclass = 'supplier_proposal';
-    } elseif ($module == 'fournisseur' || $module == 'supplierinvoices' || $module == 'supplierorders') {
+    } elseif ($moduleobject == 'fournisseur' || $moduleobject == 'supplierinvoices' || $moduleobject == 'supplierorders') {
         $moduledirforclass = 'fourn';
-    } elseif ($module == 'expensereports') {
-        $moduledirforclass = 'expensereport';
-    } elseif ($module == 'users') {
-        $moduledirforclass = 'user';
-    } elseif ($module == 'ficheinter' || $module == 'interventions') {
+    } elseif ($moduleobject == 'ficheinter' || $moduleobject == 'interventions') {
     	$moduledirforclass = 'fichinter';
-    } elseif ($module == 'tickets') {
-    	$moduledirforclass = 'ticket';
-    } elseif ($module == 'boms') {
-        $moduledirforclass = 'bom';
+    } elseif ($moduleobject == 'mos') {
+    	$moduledirforclass = 'mrp';
+    } elseif (in_array($moduleobject, array('products', 'expensereports', 'users', 'tickets', 'boms'))) {
+    	$moduledirforclass = preg_replace('/s$/', '', $moduleobject);
     }
 
     return $moduledirforclass;

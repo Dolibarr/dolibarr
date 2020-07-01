@@ -32,9 +32,14 @@
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
+ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
+ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 
 
 -- For v13
+
+UPDATE llx_const SET value = 0 WHERE name = 'FACTURE_TVAOPTION' and value = 'franchise';
+UPDATE llx_const SET value = 1 WHERE name = 'FACTURE_TVAOPTION' and value <> 'franchise' AND value <> '0' AND value <> '1';
 
 ALTER TABLE llx_commande MODIFY COLUMN date_livraison DATETIME;
 
@@ -45,4 +50,25 @@ ALTER TABLE llx_establishment ADD COLUMN name varchar(128);
 UPDATE llx_establishment SET ref = rowid WHERE ref IS NULL;
 ALTER TABLE llx_establishment MODIFY COLUMN ref varchar(30) NOT NULL;
 ALTER TABLE llx_establishment MODIFY COLUMN name varchar(128);
+
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRICE_BASE_TYPE', 0, 'HT', 'string', 0);
+
+ALTER TABLE llx_subscription MODIFY COLUMN datef DATETIME;
+
+ALTER TABLE llx_loan_schedule ADD column fk_payment_loan INTEGER;
+
+
+ALTER TABLE llx_user DROP COLUMN jabberid;
+ALTER TABLE llx_user DROP COLUMN skype;
+ALTER TABLE llx_user DROP COLUMN twitter;
+ALTER TABLE llx_user DROP COLUMN facebook;
+ALTER TABLE llx_user DROP COLUMN linkedin;
+ALTER TABLE llx_user DROP COLUMN instagram;
+ALTER TABLE llx_user DROP COLUMN snapchat;
+ALTER TABLE llx_user DROP COLUMN googleplus;
+ALTER TABLE llx_user DROP COLUMN youtube;
+ALTER TABLE llx_user DROP COLUMN whatsapp;
+
+ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
+ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
 

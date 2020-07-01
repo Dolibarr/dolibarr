@@ -268,10 +268,10 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
         if ($offsetforchartofaccount > 0)
         {
         	// Replace lines
-        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (1401, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
+        	// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', '0', '...', 1);'
         	// with
-        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (1401 + 200100000, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
-        	$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
+        	// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', '0', '...', 1);'
+        	$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
         	$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
         	//var_dump($newsql);
         	$arraysql[$i] = $newsql;
@@ -649,7 +649,7 @@ function security_prepare_head()
 
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
-    if ($nbPerms > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>';
+    if ($nbPerms > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
     $head[$h][2] = 'default';
     $h++;
 

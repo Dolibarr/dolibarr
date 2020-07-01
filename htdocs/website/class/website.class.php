@@ -112,6 +112,11 @@ class Website extends CommonObject
 	public $use_manifest;
 
 	/**
+	 * @var int
+	 */
+	public $position;
+
+	/**
 	 * List of containers
 	 *
 	 * @var array
@@ -201,6 +206,7 @@ class Website extends CommonObject
 		$sql .= 'virtualhost,';
 		$sql .= 'fk_user_creat,';
 		$sql .= 'date_creation,';
+		$sql .= 'position,';
 		$sql .= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.((empty($this->entity) && $this->entity != '0') ? 'NULL' : $this->entity).',';
@@ -213,6 +219,7 @@ class Website extends CommonObject
 		$sql .= ' '.(!isset($this->virtualhost) ? 'NULL' : "'".$this->db->escape($this->virtualhost)."'").",";
 		$sql .= ' '.(!isset($this->fk_user_creat) ? $user->id : $this->fk_user_creat).',';
 		$sql .= ' '.(!isset($this->date_creation) || dol_strlen($this->date_creation) == 0 ? 'NULL' : "'".$this->db->idate($this->date_creation)."'").",";
+		$sql .= ' '.((int) $this->position).",";
 		$sql .= ' '.(!isset($this->date_modification) || dol_strlen($this->date_modification) == 0 ? 'NULL' : "'".$this->db->idate($this->date_modification)."'");
 		$sql .= ')';
 
@@ -621,7 +628,7 @@ class Website extends CommonObject
 	 */
 	public function createFromClone($user, $fromid, $newref, $newlang = '')
 	{
-        global $conf;
+        global $conf, $langs;
 		global $dolibarr_main_data_root;
 
 		$now = dol_now();
@@ -663,12 +670,15 @@ class Website extends CommonObject
 		$object->virtualhost = '';
 		$object->date_creation = $now;
 		$object->fk_user_creat = $user->id;
+		$object->position = $object->position + 1;
+		if (empty($object->lang)) $object->lang = substr($langs->defaultlang, 0, 2); // Should not happen. Protection for corrupted site with no languages
 
 		// Create clone
 		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 		if ($result < 0) {
 			$error++;
+			$this->error = $object->error;
 			$this->errors = $object->errors;
 			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
 		}
@@ -1012,7 +1022,7 @@ class Website extends CommonObject
 			fputs($fp, $line);
 
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, lang, image, keywords, status, date_creation, tms, import_key, grabbed_from, type_container, htmlheader, content, author_alias)';
 
 			$line .= " VALUES(";
 			$line .= $objectpageold->newid."__+MAX_llx_website_page__, ";
@@ -1056,7 +1066,8 @@ class Website extends CommonObject
 			// When we have a link src="image/websiteref/file.png" into html content
 			$stringtoexport = str_replace('="image/'.$website->ref.'/', '="image/__WEBSITE_KEY__/', $stringtoexport);
 
-			$line .= "'".$this->db->escape($stringtoexport)."'"; // Replace \r \n to have record on 1 line
+			$line .= "'".$this->db->escape($stringtoexport)."', "; // Replace \r \n to have record on 1 line
+			$line .= "'".$this->db->escape($objectpageold->author_alias)."'";
 			$line .= ");";
 			$line .= "\n";
 			fputs($fp, $line);
@@ -1079,7 +1090,7 @@ class Website extends CommonObject
 		// Build zip file
 		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
 		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-*.zip';
-		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'.zip';
+		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(), 'dayhourlog').'-V'.((float) DOL_VERSION).'.zip';
 
 		dol_delete_file($fileglob, 0);
 		$result = dol_compress_file($filedir, $filename, 'zip');
@@ -1271,7 +1282,7 @@ class Website extends CommonObject
 	 * Rebuild all files of a containers of a website. TODO Add other files too.
 	 * Note: Files are already regenerated during importWebSite so this function is useless when importing a website.
 	 *
-	 * @return 	int						<0 if KO, >0 if OK
+	 * @return 	int						<0 if KO, >=0 if OK
 	 */
 	public function rebuildWebSiteFiles()
 	{
@@ -1338,9 +1349,8 @@ class Website extends CommonObject
 		if ($error)
 		{
 			return -1;
-		}
-		else {
-			return 1;
+		} else {
+			return $num;
 		}
 	}
 

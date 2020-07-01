@@ -378,7 +378,7 @@ print '</div>';
 if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA))
 {
     // This list can be very long, so we allow to hide it to prefer to use the list page.
-    // Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to show this list
+    // Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to hide this list
 
     print '<br>';
 

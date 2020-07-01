@@ -464,6 +464,7 @@ if (!empty($search_product))       $sql .= natural_search('p.label', $search_pro
 if ($search_warehouse != '' && $search_warehouse != '-1')          $sql .= natural_search('e.rowid', $search_warehouse, 2);
 if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
 if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
+if (!empty($product_id))           $sql .= natural_search('p.rowid', $product_id);
 if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
 if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 // Add where from extra fields

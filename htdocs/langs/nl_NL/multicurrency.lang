@@ -18,5 +18,5 @@ MulticurrencyReceived=Ontvangen, originele valuta
 MulticurrencyRemainderToTake=Resterend bedrag, oorspronkelijke valuta
 MulticurrencyPaymentAmount=Betalingsbedrag, originele valuta
 AmountToOthercurrency=Bedrag in (in valuta van ontvangende account)
-CurrencyRateSyncSucceed=Currency rate synchronization done successfuly
-MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Use the currency of the document for online payments
+CurrencyRateSyncSucceed=Synchronisatie van valutakoersen is geslaagd
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Gebruik de valuta van het document voor online betalingen

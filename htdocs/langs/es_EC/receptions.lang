@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - receptions
+ReceptionsSetup=Configuración de recepción del producto
 RefReception=Referencia de recepción
 Reception=Recepción
 ReceptionsArea=Area de recepciones
@@ -26,3 +27,5 @@ ReceptionCreationIsDoneFromOrder=Por el momento, la creación de una nueva recep
 ProductQtyInReceptionAlreadySent=Cantidad de producto de pedido abierto ya enviado
 ProductQtyInSuppliersReceptionAlreadyRecevied=Cantidad del producto de la orden de proveedor abierto ya recibida
 ValidateOrderFirstBeforeReception=Primero debe validar el pedido antes de poder hacer recepciones.
+ReceptionsNumberingModules=Módulo de numeración para recepciones.
+ReceptionsReceiptModel=Plantillas de documentos para recepciones

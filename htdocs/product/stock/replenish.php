@@ -49,8 +49,8 @@ $hookmanager->initHooks(array('stockreplenishlist'));
 //checks if a product has been ordered
 
 $action = GETPOST('action', 'alpha');
-$sref = GETPOST('sref', 'alpha');
-$snom = GETPOST('snom', 'alpha');
+$search_ref = GETPOST('search_ref', 'alpha');
+$search_label = GETPOST('search_label', 'alpha');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
 $type = GETPOST('type', 'int');
 $tobuy = GETPOST('tobuy', 'int');
@@ -99,15 +99,16 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+
 /*
  * Actions
  */
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha') || isset($_POST['valid'])) // Both test are required to be compatible with all browsers
 {
-    $sref = '';
-    $snom = '';
-    $sal = '';
+    $search_ref = '';
+    $search_label = '';
+    $sall = '';
     $salert = '';
 	$draftorder = '';
 }
@@ -289,7 +290,7 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 $prod = new Product($db);
 
-$title = $langs->trans('Status');
+$title = $langs->trans('MissingStocks');
 
 if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entrepot > 0) {
 	$sqldesiredtock = $db->ifsql("pse.desiredstock IS NULL", "p.desiredstock", "pse.desiredstock");
@@ -298,7 +299,6 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE) && $fk_entre
 	$sqldesiredtock = 'p.desiredstock';
 	$sqlalertstock = 'p.seuil_stock_alerte';
 }
-
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.price,';
 $sql .= ' p.price_ttc, p.price_base_type,p.fk_product_type,';
@@ -341,8 +341,8 @@ if (dol_strlen($type)) {
         $sql .= ' AND p.fk_product_type <> 1';
     }
 }
-if ($sref) $sql .= natural_search('p.ref', $sref);
-if ($snom) $sql .= natural_search('p.label', $snom);
+if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
+if ($search_label) $sql .= natural_search('p.label', $search_label);
 $sql .= ' AND p.tobuy = 1';
 if (!empty($canvas)) $sql .= ' AND p.canvas = "'.$db->escape($canvas).'"';
 $sql .= ' GROUP BY p.rowid, p.ref, p.label, p.description, p.price';
@@ -476,9 +476,11 @@ $helpurl .= 'ES:M&oacute;dulo_Stocks';
 llxHeader('', $title, $helpurl, '');
 
 $head = array();
+
 $head[0][0] = DOL_URL_ROOT.'/product/stock/replenish.php';
 $head[0][1] = $title;
 $head[0][2] = 'replenish';
+
 $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $langs->trans("ReplenishmentOrders");
 $head[1][2] = 'replenishorders';
@@ -489,6 +491,9 @@ print load_fiche_titre($langs->trans('Replenishment'), '', 'stock');
 dol_fiche_head($head, 'replenish', '', -1, '');
 
 print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDesc").'</span><br>'."\n";
+if (empty($fk_warhouse) && !empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE)) {
+	print '<span class="opacitymedium">'.$langs->trans("ReplenishmentStatusDescPerWarehouse").'</span>'."<br>\n";
+}
 if ($usevirtualstock == 1)
 {
 	print $langs->trans("CurentSelectionMode").': ';
@@ -503,10 +508,11 @@ if ($usevirtualstock == 0)
 }
 print '<br>'."\n";
 
-print '<form name="formFilterWarehouse" method="GET" action="">';
+print '<form name="formFilterWarehouse" method="POST" action="">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="filter">';
-print '<input type="hidden" name="sref" value="'.$sref.'">';
-print '<input type="hidden" name="snom" value="'.$snom.'">';
+print '<input type="hidden" name="search_ref" value="'.$search_ref.'">';
+print '<input type="hidden" name="search_label" value="'.$search_label.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
 print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
@@ -530,8 +536,8 @@ print '</div>';
 
 print '</form>';
 
-if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alpha')) {
-	$filters = '&sref='.$sref.'&snom='.$snom;
+if ($search_ref || $search_label || $sall || $salert || $draftorder || GETPOST('search', 'alpha')) {
+	$filters = '&search_ref='.$search_ref.'&search_label='.$search_label;
 	$filters .= '&sall='.$sall;
 	$filters .= '&salert='.$salert;
 	$filters .= '&draftorder='.$draftorder;
@@ -549,7 +555,7 @@ if ($sref || $snom || $sall || $salert || $draftorder || GETPOST('search', 'alph
 		$num
 	);
 } else {
-	$filters = '&sref='.$sref.'&snom='.$snom;
+	$filters = '&search_ref='.$search_ref.'&search_label='.$search_label;
 	$filters .= '&fourn_id='.$fourn_id;
 	$filters .= (isset($type) ? '&type='.$type : '');
 	$filters .= '&='.$salert;
@@ -573,8 +579,8 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print '<table class="liste centpercent">';
 
 $param = (isset($type) ? '&type='.$type : '');
-$param .= '&fourn_id='.$fourn_id.'&snom='.$snom.'&salert='.$salert.'&draftorder='.$draftorder;
-$param .= '&sref='.$sref;
+$param .= '&fourn_id='.$fourn_id.'&search_label='.$search_label.'&salert='.$salert.'&draftorder='.$draftorder;
+$param .= '&search_ref='.$search_ref;
 $param .= '&mode='.$mode;
 $param .= '&fk_supplier='.$fk_supplier;
 $param .= '&fk_entrepot='.$fk_entrepot;
@@ -600,8 +606,8 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 // Fields title search
 print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre"><input class="flat" type="text" name="sref" size="8" value="'.dol_escape_htmltag($sref).'"></td>';
-print '<td class="liste_titre"><input class="flat" type="text" name="snom" size="8" value="'.dol_escape_htmltag($snom).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
+print '<td class="liste_titre"><input class="flat" type="text" name="search_label" size="8" value="'.dol_escape_htmltag($search_label).'"></td>';
 if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre right">&nbsp;</td>';

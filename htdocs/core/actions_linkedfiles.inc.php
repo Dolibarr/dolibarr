@@ -186,7 +186,13 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 	        // Because if we put the documents directory into a directory inside web root (very bad), this allows to execute on demand arbitrary code.
 	        if (isAFileWithExecutableContent($filenameto) && empty($conf->global->MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED))
 	        {
-	            $filenameto .= '.noexe';
+	        	// $upload_dir ends with a slash, so be must be sure the medias dir to compare to ends with slash too.
+	        	$publicmediasdirwithslash = $conf->medias->multidir_output[$conf->entity];
+	        	if (! preg_match('/\/$/', $publicmediasdirwithslash)) $publicmediasdirwithslash.='/';
+
+	        	if (strpos($upload_dir, $publicmediasdirwithslash) !== 0) {	// We never add .noexe on files into media directory
+		            $filenameto .= '.noexe';
+	        	}
 	        }
 
 	        if ($filenamefrom && $filenameto)
@@ -200,8 +206,10 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
 	            if (empty($reshook))
 	            {
-	            	if (!file_exists($destpath))
-	            	{
+	            	if (preg_match('/^\./', $filenameto)) {
+	            		$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	            		setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
+	            	} elseif (!file_exists($destpath)) {
 	            		$result = dol_move($srcpath, $destpath);
 			            if ($result)
 			            {
@@ -225,11 +233,11 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes')
 
 			                setEventMessages($langs->trans("FileRenamed"), null);
 			            } else {
-			                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+			                $langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 			                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
 			            }
 	            	} else {
-	            		$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	            		$langs->load("errors"); // lang must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 	            		setEventMessages($langs->trans("ErrorDestinationAlreadyExists", $filenameto), null, 'errors');
 	            	}
 	            }

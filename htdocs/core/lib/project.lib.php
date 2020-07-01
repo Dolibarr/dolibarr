@@ -2171,7 +2171,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		{
 			if (!in_array('prospectionstatus', $hiddenfields)) print_liste_field_titre("OpportunityStatus", "", "", "", "", '', $sortfield, $sortorder, 'right ');
 			print_liste_field_titre("OpportunityAmount", "", "", "", "", 'align="right"', $sortfield, $sortorder);
-			print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
+			//print_liste_field_titre('OpportunityWeightedAmount', '', '', '', '', 'align="right"', $sortfield, $sortorder);
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
 		{
@@ -2205,10 +2205,11 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 
 				print '<tr class="oddeven">';
 
-				print '<td>';
+				print '<td class="tdoverflowmax150">';
 				print $projectstatic->getNomUrl(1, '', 0, '', '-', 0, -1, 'nowraponall');
 				if (!in_array('projectlabel', $hiddenfields)) print '<br><span class="opacitymedium">'.dol_trunc($objp->title, 24).'</span>';
 				print '</td>';
+
 				print '<td class="nowraponall tdoverflowmax100">';
 				if ($objp->fk_soc > 0)
 				{
@@ -2222,7 +2223,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 				if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 				{
 					if (!in_array('prospectionstatus', $hiddenfields)) {
-						print '<td class="center">';
+						print '<td class="center tdoverflowmax75">';
 						// Because color of prospection status has no meaning yet, it is used if hidden constant is set
 						if (empty($conf->global->USE_COLOR_FOR_PROSPECTION_STATUS)) {
 							$oppStatusCode = dol_getIdFromCode($db, $objp->opp_status, 'c_lead_status', 'rowid', 'code');
@@ -2249,14 +2250,12 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 					}
 
 					print '<td class="right">';
-					if ($objp->opp_amount) print price($objp->opp_amount, 0, '', 1, -1, -1, $conf->currency);
-					print '</td>';
-					print '<td class="right">';
-                    if ($objp->opp_percent && $objp->opp_amount) {
-                        $opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
-                        print price($opp_weighted_amount, 0, '', 1, -1, -1, $conf->currency);
-                        $ponderated_opp_amount += price2num($opp_weighted_amount);
-                    }
+					if ($objp->opp_percent && $objp->opp_amount) {
+						$opp_weighted_amount = $objp->opp_percent * $objp->opp_amount / 100;
+						$alttext = $langs->trans("OpportunityWeightedAmount").' '.price($opp_weighted_amount, 0, '', 1, -1, 0, $conf->currency);
+						$ponderated_opp_amount += price2num($opp_weighted_amount);
+					}
+					if ($objp->opp_amount) print '<span title="'.$alttext.'">'.price($objp->opp_amount, 0, '', 1, -1, 0, $conf->currency).'</span>';
 					print '</td>';
 				}
 
@@ -2297,14 +2296,16 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		}
 
 		print '<tr class="liste_total">';
-		print '<td colspan="2">'.$langs->trans("Total")."</td>";
+		print '<td>'.$langs->trans("Total")."</td><td></td>";
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
 			if (!in_array('prospectionstatus', $hiddenfields)) {
 				print '<td class="liste_total"></td>';
 			}
-			print '<td class="liste_total right">'.price($total_opp_amount, 0, '', 1, -1, -1, $conf->currency).'</td>';
-			print '<td class="liste_total right">'.$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1).'</td>';
+			print '<td class="liste_total right">';
+			//$form->textwithpicto(price($ponderated_opp_amount, 0, '', 1, -1, -1, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc"), 1);
+			print $form->textwithpicto(price($total_opp_amount, 0, '', 1, -1, 0, $conf->currency), $langs->trans("OpportunityPonderatedAmountDesc").' : '.price($ponderated_opp_amount, 0, '', 1, -1, 0, $conf->currency));
+			print '</td>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
 		{

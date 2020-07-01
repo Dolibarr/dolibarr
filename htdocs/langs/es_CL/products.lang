@@ -25,7 +25,6 @@ ServicesOnSaleOnly=Servicios solo para venta
 ServicesOnPurchaseOnly=Servicios solo para compra
 ServicesNotOnSell=Servicios no en venta y no en compra
 ServicesOnSellAndOnBuy=Servicios para venta y compra
-LastModifiedProductsAndServices=Últimos productos / servicios %s modificados
 LastRecordedProducts=Últimos %s productos grabados
 LastRecordedServices=Últimos %s servicios grabados
 NotOnSell=No en venta

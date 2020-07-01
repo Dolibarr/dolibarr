@@ -3,7 +3,7 @@
  * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
  * Copyright (C) 2018		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2019		Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array("ticket", "companies", "other", "projects"));
 
-
 // Get parameters
 $action     = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
@@ -65,7 +64,7 @@ $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -145,6 +144,12 @@ if ($project_ref)
 	$search_fk_project = $projectid;
 }
 
+$permissiontoread = $user->rights->ticket->read;
+$permissiontoadd = $user->rights->ticket->write;
+$permissiontodelete = $user->rights->ticket->delete;
+
+$error = 0;
+
 
 /*
  * Actions
@@ -183,10 +188,95 @@ if (empty($reshook))
 	// Mass actions
 	$objectclass = 'Ticket';
 	$objectlabel = 'Ticket';
-	$permissiontoread = $user->rights->ticket->read;
-	$permissiontodelete = $user->rights->ticket->delete;
 	$uploaddir = $conf->ticket->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	// Close records
+	if (!$error && $massaction == 'close' && $permissiontoadd)
+	{
+		$objecttmp = new $objectclass($db);
+		if (!$error)
+		{
+			$db->begin();
+
+			$nbok = 0;
+			foreach ($toselect as $toselectid)
+			{
+				$result = $objecttmp->fetch($toselectid);
+				if ($result > 0)
+				{
+					$result = $objecttmp->close($user);
+					if ($result < 0)
+					{
+						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+						$error++;
+						break;
+					} else $nbok++;
+				} else {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				}
+			}
+
+			if (!$error)
+			{
+				if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+			//var_dump($listofobjectthirdparties);exit;
+		}
+	}
+
+	// Reopen records
+	if (!$error && $massaction == 'reopen' && $permissiontoadd)
+	{
+		$objecttmp = new $objectclass($db);
+		if (!$error)
+		{
+			$db->begin();
+
+			$nbok = 0;
+			foreach ($toselect as $toselectid)
+			{
+				$result = $objecttmp->fetch($toselectid);
+				if ($result > 0)
+				{
+					if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
+						$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
+						if ($result < 0)
+						{
+							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+							$error++;
+							break;
+						} else $nbok++;
+					} else {
+						$langs->load("errors");
+						setEventMessages($langs->trans("ErrorObjectMustHaveStatusClosedToBeReOpened", $objecttmp->ref), null, 'errors');
+						$error++;
+						break;
+					}
+				} else {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				}
+			}
+
+			if (!$error)
+			{
+				if ($nbok > 1) setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				else setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+			//var_dump($listofobjectthirdparties);exit;
+		}
+	}
 }
 
 
@@ -236,11 +326,23 @@ foreach ($search as $key => $val)
 {
     if ($key == 'fk_statut')
 	{
-	    $tmpstatus = '';
-	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) $tmpstatus .= ($tmpstatus ? ',' : '')."'".Ticket::STATUS_NOT_READ."', '".Ticket::STATUS_READ."', '".Ticket::STATUS_ASSIGNED."', '".Ticket::STATUS_IN_PROGRESS."', '".Ticket::STATUS_NEED_MORE_INFO."', '".Ticket::STATUS_WAITING."'";
-	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) $tmpstatus .= ($tmpstatus ? ',' : '')."'".Ticket::STATUS_CLOSED."', '".Ticket::STATUS_CANCELED."'";
-	    if ($tmpstatus) $sql .= " AND fk_statut IN (".$tmpstatus.")";
-	    elseif (is_array($search[$key]) && count($search[$key])) $sql .= natural_search($key, join(',', $search[$key]), 2);
+		$newarrayofstatus = array();
+		foreach ($search['fk_statut'] as $key2 => $val2) {
+			if (in_array($val2, array('openall', 'closeall'))) continue;
+			$newarrayofstatus[] = $val2;
+		}
+	    if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) {
+	    	$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
+	    	$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
+	    	$newarrayofstatus[] = Ticket::STATUS_IN_PROGRESS;
+	    	$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
+	    	$newarrayofstatus[] = Ticket::STATUS_WAITING;
+	    }
+	    if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) {
+	    	$newarrayofstatus[] = Ticket::STATUS_CLOSED;
+	    	$newarrayofstatus[] = Ticket::STATUS_CANCELED;
+	    }
+	    if (count($newarrayofstatus)) $sql .= natural_search($key, join(',', $newarrayofstatus), 2);
 	    continue;
 	}
 	if ($key == 'fk_user_assign')
@@ -450,6 +552,8 @@ $arrayofmassactions = array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
+if ($user->rights->ticket->write) $arrayofmassactions['close'] = $langs->trans("Close");
+if ($user->rights->ticket->write) $arrayofmassactions['reopen'] = $langs->trans("ReOpen");
 if ($user->rights->ticket->delete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
@@ -547,8 +651,8 @@ foreach ($object->fields as $key => $val)
 		    $arrayofstatus['openall'] = '-- '.$langs->trans('OpenAll').' --';
 		    foreach ($object->statuts_short as $key2 => $val2)
 		    {
-		        $arrayofstatus[$key2] = $val2;
-		        if ($key2 == '6') $arrayofstatus['closeall'] = '-- '.$langs->trans('ClosedAll').' --';
+		    	if ($key2 == Ticket::STATUS_CLOSED) $arrayofstatus['closeall'] = '-- '.$langs->trans('ClosedAll').' --';
+		    	$arrayofstatus[$key2] = $val2;
 		    }
 		    print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').'">';
 		    //var_dump($arrayofstatus);var_dump($search['fk_statut']);var_dump(array_values($search[$key]));

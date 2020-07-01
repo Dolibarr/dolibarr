@@ -75,7 +75,7 @@ if ($pageid > 0)
 	{
 		$weblangs->load("website");
 		http_response_code(404);
-		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage").'</center>';
+		print '<center><br><br>'.$weblangs->trans("YouTryToAccessToAFileThatIsNotAWebsitePage", $websitepage->pageurl, $websitepage->type_container, $websitepage->status).'</center>';
 		exit;
 	}
 }

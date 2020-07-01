@@ -21,7 +21,7 @@
 /**
  *      \file       htdocs/compta/prelevement/list.php
  *      \ingroup    prelevement
- *      \brief      Page liste des prelevements
+ *      \brief      Page list of direct debit orders or credit transfers orders
  */
 
 require '../../main.inc.php';
@@ -96,23 +96,35 @@ $form = new Form($db);
 llxHeader('', $langs->trans("WithdrawalsLines"));
 
 $sql = "SELECT p.rowid, p.ref, p.statut as status, p.datec";
-$sql .= " ,f.rowid as facid, f.ref as invoiceref, f.total_ttc";
+$sql .= " , f.rowid as facid, f.ref as invoiceref, f.total_ttc";
 $sql .= " , s.rowid as socid, s.nom as name, s.code_client, s.email";
 $sql .= " , pl.amount, pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+if ($type == 'bank-transfer') {
+	$sql .= " , ".MAIN_DB_PREFIX."facture_fourn as f";
+} else {
+	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+}
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND pf.fk_prelevement_lignes = pl.rowid";
-$sql .= " AND pf.fk_facture = f.rowid";
+if ($type == 'bank-transfer') {
+	$sql .= " AND pf.fk_facture_fourn = f.rowid";
+} else {
+	$sql .= " AND pf.fk_facture = f.rowid";
+}
 $sql .= " AND f.fk_soc = s.rowid";
 $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($search_line) $sql .= " AND pl.rowid = '".$db->escape($search_line)."'";
 if ($search_bon) $sql .= natural_search("p.ref", $search_bon);
-if ($search_code) $sql .= natural_search("s.code_client", $search_code);
+if ($type == 'bank-transfer') {
+	if ($search_code) $sql .= natural_search("s.code_fourn", $search_code);
+} else {
+	if ($search_code) $sql .= natural_search("s.code_client", $search_code);
+}
 if ($search_company) $sql .= natural_search("s.nom", $search_company);
 
 $sql .= $db->order($sortfield, $sortorder);
@@ -152,7 +164,11 @@ if ($result)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	print_barre_liste($langs->trans("WithdrawalsLines"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
+    $title = $langs->trans("WithdrawalsLines");
+    if ($type == 'bank-transfer') {
+    	$title = $langs->trans("CreditTransferLines");
+    }
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, '', '', $limit, 0, 0, 1);
 
 	$moreforfilter = '';
 
@@ -173,9 +189,14 @@ if ($result)
     print '</td>';
     print '</tr>';
 
+    $columntitle= "WithdrawalsReceipts";
+    if ($type == 'bank-transfer') {
+    	$columntitle= "BankTransferReceipts";
+    }
+
     print '<tr class="liste_titre">';
+    print_liste_field_titre($columntitle, $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("Line", $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
-    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("Bill", $_SERVER["PHP_SELF"], "f.ref", '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
     print_liste_field_titre("CustomerCode", $_SERVER["PHP_SELF"], "s.code_client", '', $param, '', $sortfield, $sortorder, 'center ');
@@ -184,53 +205,58 @@ if ($result)
     print_liste_field_titre('');
 	print "</tr>\n";
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+	if ($num) {
+	    while ($i < min($num, $limit))
+	    {
+	        $obj = $db->fetch_object($result);
 
-        $bon->ref = $obj->ref;
-        $bon->statut = $obj->status;
+	        $bon->id = $obj->rowid;
+	        $bon->ref = $obj->ref;
+	        $bon->statut = $obj->status;
 
-        $company->id = $obj->socid;
-        $company->name = $obj->name;
-        $company->email = $obj->email;
-        $company->code_client = $obj->code_client;
+	        $company->id = $obj->socid;
+	        $company->name = $obj->name;
+	        $company->email = $obj->email;
+	        $company->code_client = $obj->code_client;
 
-        print '<tr class="oddeven">';
+	        print '<tr class="oddeven">';
 
-        print '<td>';
-        print $line->LibStatut($obj->statut_ligne, 2);
-        print "&nbsp;";
-        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
-        print substr('000000'.$obj->rowid_ligne, -6);
-        print '</a></td>';
+	        print '<td>';
+	        print $bon->getNomUrl(1);
+	        print "</td>\n";
 
-        print '<td>';
-        print $bon->getNomUrl(1);
-        print "</td>\n";
+	        print '<td>';
+	        print $line->LibStatut($obj->statut_ligne, 2);
+	        print "&nbsp;";
+	        print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid_ligne.'">';
+	        print substr('000000'.$obj->rowid_ligne, -6);
+	        print '</a></td>';
 
-        print '<td>';
-        print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
-        print img_object($langs->trans("ShowBill"), "bill");
-        print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->invoiceref."</a></td>\n";
-        print '</a>';
-        print '</td>';
+	        print '<td>';
+	        print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
+	        print img_object($langs->trans("ShowBill"), "bill");
+	        print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->invoiceref."</a></td>\n";
+	        print '</a>';
+	        print '</td>';
 
-        print '<td>';
-        print $company->getNomUrl(1);
-		print "</td>\n";
+	        print '<td>';
+	        print $company->getNomUrl(1);
+			print "</td>\n";
 
-        print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
+	        print '<td align="center"><a href="card.php?id='.$obj->rowid.'">'.$obj->code_client."</a></td>\n";
 
-        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+	        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-        print '<td class="right">'.price($obj->amount)."</td>\n";
+	        print '<td class="right">'.price($obj->amount)."</td>\n";
 
-        print '<td>&nbsp;</td>';
+	        print '<td>&nbsp;</td>';
 
-        print "</tr>\n";
-        $i++;
-    }
+	        print "</tr>\n";
+	        $i++;
+	    }
+	} else {
+		print '<tr><td class="opacitymedium" colspan="8">'.$langs->trans("None").'</td></tr>';
+	}
     print "</table>";
     print '</div>';
 

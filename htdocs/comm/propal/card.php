@@ -347,7 +347,7 @@ if (empty($reshook))
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
 					$object->socid = GETPOST('socid', 'int');
-					$object->contactid = GETPOST('contactid', 'int');
+					$object->contact_id = GETPOST('contactid', 'int');
 					$object->fk_project = GETPOST('projectid', 'int');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
@@ -375,7 +375,7 @@ if (empty($reshook))
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->contactid = GETPOST('contactid', 'int');
+				$object->contact_id = GETPOST('contactid', 'int');
 				$object->fk_project = GETPOST('projectid', 'int');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated

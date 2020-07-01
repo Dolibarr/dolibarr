@@ -55,7 +55,7 @@ class Societe extends CommonObject
 	public $table_element = 'societe';
 
 	/**
-	 * @var int Field with ID of parent key if this field has a parent
+	 * @var int Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_soc';
 
@@ -2981,12 +2981,12 @@ class Societe extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *    	Returns an accounting code, following the accounting code module.
-	 *      May be identical to the one entered or generated automatically.
-	 *      To date only the automatic generation is implemented
+	 *    	Assigns a accounting code from the accounting code module.
+	 *      Computed value is stored into this->code_compta or this->code_compta_fournisseur according to $type.
+	 *      May be identical to the one entered or generated automatically. Currently, only the automatic generation is implemented.
 	 *
 	 *    	@param	string	$type		Type of thirdparty ('customer' or 'supplier')
-	 *		@return	string				Code compta si ok, 0 si aucun, <0 si ko
+	 *		@return	int					0 if OK, <0 if $type is not valid
 	 */
     public function get_codecompta($type)
 	{
@@ -3766,7 +3766,6 @@ class Societe extends CommonObject
 		elseif ($localTaxNum == 1) $sql .= " AND t.localtax1_type <> '0'";
 		elseif ($localTaxNum == 2) $sql .= " AND t.localtax2_type <> '0'";
 
-		dol_syslog("useLocalTax", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

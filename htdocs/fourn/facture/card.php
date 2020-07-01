@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 if (!empty($conf->product->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 }
 if (!empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -2491,14 +2492,6 @@ if ($action == 'create')
         print $form->editfieldval("Date", 'datef', $object->datep, $object, $form_permission, 'datepicker');
         print '</td>';
 
-        // Due date
-        print '<tr><td>'.$form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker').'</td><td colspan="3">';
-        print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
-        if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
-	        print img_warning($langs->trans('Late'));
-        }
-        print '</td>';
-
 		// Default terms of the settlement
 		$langs->load('bills');
 		print '<tr><td class="nowrap">';
@@ -2518,6 +2511,14 @@ if ($action == 'create')
 		}
 		print "</td>";
 		print '</tr>';
+
+		// Due date
+		print '<tr><td>'.$form->editfieldkey("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker').'</td><td colspan="3">';
+		print $form->editfieldval("DateMaxPayment", 'date_lim_reglement', $object->date_echeance, $object, $form_permission, 'datepicker');
+		if ($action != 'editdate_lim_reglement' && $object->hasDelay()) {
+			print img_warning($langs->trans('Late'));
+		}
+		print '</td>';
 
 		// Mode of payment
 		$langs->load('bills');

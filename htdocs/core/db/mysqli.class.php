@@ -791,7 +791,7 @@ class DoliDBMysqli extends DoliDB
         $sql .= $field_desc['type'];
         if (preg_match("/^[^\s]/i", $field_desc['value']))
         {
-            if (!in_array($field_desc['type'], array('date', 'datetime')))
+        	if (!in_array($field_desc['type'], array('date', 'datetime')) && $field_desc['value'])
             {
                 $sql .= "(".$field_desc['value'].")";
             }
@@ -837,7 +837,7 @@ class DoliDBMysqli extends DoliDB
         // phpcs:enable
         $sql = "ALTER TABLE ".$table;
         $sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-        if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+        if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
         	$sql .= "(".$field_desc['value'].")";
         }
         if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')

@@ -5,12 +5,13 @@ Establishments=Sedii
 Establishment=Sediu
 NewEstablishment=Sediu nou
 DeleteEstablishment=Sterge Sediu
-ConfirmDeleteEstablishment=Sunteți sigur că doriti ștergerea acestei unităti?
+ConfirmDeleteEstablishment=Sigur doriți să ștergeți această unitate?
 OpenEtablishment=Deschide Sediu
 CloseEtablishment=Inchide Sediu
 # Dictionary
+DictionaryPublicHolidays=Managementul resurselor umane - Sarbatori oficiale
 DictionaryDepartment=HRM - Lista Departamente
-DictionaryFunction=HRM - Lista Functiuni
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Angajati
 Employee=Angajat

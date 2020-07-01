@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Τα επόμενα βήματα θα πρέπ�
 AccountancyAreaDescActionFreq=Οι παρακάτω ενέργειες εκτελούνται συνήθως κάθε μήνα, εβδομάδα ή μέρα για πολύ μεγάλες επιχειρήσεις ...
 
 AccountancyAreaDescJournalSetup=STEP %s: Δημιουργήστε ή ελέγξτε το περιεχόμενο της λίστας σας από το μενού %s
-AccountancyAreaDescChartModel=STEP %s: Δημιουργήστε ένα μοντέλο χαρτογραφικού λογαριασμού από το μενού %s
-AccountancyAreaDescChart=STEP %s: Δημιουργήστε ή ελέγξτε το περιεχόμενο του γραφήματος λογαριασμού σας από το μενού %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=STEP %s: Καθορίστε λογαριασμούς λογιστικής για κάθε τιμή ΦΠΑ. Για αυτό, χρησιμοποιήστε την καταχώρηση μενού %s.
 AccountancyAreaDescDefault=STEP %s: Καθορίστε προεπιλεγμένους λογαριασμούς λογιστικής. Για αυτό, χρησιμοποιήστε την καταχώρηση μενού %s.

@@ -86,7 +86,6 @@ if (GETPOST('createfromclone', 'alpha')) { $action = 'createfromclone'; }
 if (GETPOST('createpagefromclone', 'alpha')) { $action = 'createpagefromclone'; }
 if (empty($action) && $file_manager) $action = 'file_manager';
 if (empty($action) && $replacesite) $action = 'replacesite';
-
 if (GETPOST('refreshsite') || GETPOST('refreshsite_x') || GETPOST('refreshsite.x')) $pageid = 0;
 
 // Load variable for pagination
@@ -209,7 +208,7 @@ $permtouploadfile = $user->rights->website->write;
 $diroutput = $conf->medias->multidir_output[$conf->entity];
 
 $relativepath = $section_dir;
-$upload_dir = $diroutput.'/'.$relativepath;
+$upload_dir = preg_replace('/\/$/', '', $diroutput).'/'.preg_replace('/^\//', '', $relativepath);
 
 $htmlheadercontentdefault = '';
 $htmlheadercontentdefault .= '<link rel="stylesheet" id="google-fonts-css"  href="//fonts.googleapis.com/css?family=Open+Sans:300,400,700" />'."\n";
@@ -930,17 +929,16 @@ if ($action == 'addcontainer')
 				$objectpage->grabbed_from = $urltograb;
 			}
 		}
-	}
-	else {
-		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alphanohtml');
+	} else {
+		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alphanohtml');
-		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
+		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
-		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
+		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->htmlheader = GETPOST('htmlheader', 'none');
 		$objectpage->author_alias = GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml');
 
@@ -989,23 +987,35 @@ if ($action == 'addcontainer')
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 			$action = 'createcontainer';
 		}
-		else {
-			// If there is no home page yet, this new page will be set as the home page
-			if (empty($object->fk_default_home)) {
-				$object->fk_default_home = $pageid;
-				$res = $object->update($user);
-				if ($res <= 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				} else {
-					$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+	}
 
-					// Generate the index.php page (to be the home page) and wrapper.php file
-					$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+	if (!$error) {
+		// Website categories association
+		$categoriesarray = GETPOST('categories', 'array');
+		$result = $objectpage->setCategories($categoriesarray);
+		if ($result < 0)
+		{
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 
-					if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
-				}
+	if (!$error) {
+		// If there is no home page yet, this new page will be set as the home page
+		if (empty($object->fk_default_home)) {
+			$object->fk_default_home = $pageid;
+			$res = $object->update($user);
+			if ($res <= 0)
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+
+				// Generate the index.php page (to be the home page) and wrapper.php file
+				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+
+				if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
 			}
 		}
 	}
@@ -1602,22 +1612,31 @@ if ($action == 'updatemeta')
 		$websitepagetemp = new WebsitePage($db);
 		foreach ($arrayofaliastotest as $aliastotest)
 		{
-			$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
-			if ($result < 0)
-			{
+			// Disallow alias name pageX (already used to save the page with id)
+			if (preg_match('/^page\d+/i', $aliastotest)) {
 				$error++;
 				$langs->load("errors");
-				setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+				setEventMessages("Alias 'pageX' is not allowed", null, 'errors');
 				$action = 'editmeta';
 				break;
-			}
-			if ($result > 0)
-			{
-				$error++;
-				$langs->load("errors");
-				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
-				$action = 'editmeta';
-				break;
+			} else {
+				$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
+				if ($result < 0)
+				{
+					$error++;
+					$langs->load("errors");
+					setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+					$action = 'editmeta';
+					break;
+				}
+				if ($result > 0)
+				{
+					$error++;
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+					$action = 'editmeta';
+					break;
+				}
 			}
 		}
 	}
@@ -1626,15 +1645,15 @@ if ($action == 'updatemeta')
 	{
 		$objectpage->old_object = clone $objectpage;
 
-		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alphanohtml');
-		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alphanohtml');
+		$objectpage->title = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
+		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'aZ09');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
+		$objectpage->aliasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
 		$objectpage->otherlang = GETPOST('WEBSITE_OTHERLANG', 'aZ09comma');
-		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml');
+		$objectpage->description = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 		$objectpage->image = GETPOST('WEBSITE_IMAGE', 'alpha');
-		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alphanohtml');
+		$objectpage->keywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 		$objectpage->fk_page = (GETPOST('pageidfortranslation', 'int') > 0 ? GETPOST('pageidfortranslation', 'int') : 0);
 		$objectpage->author_alias = trim(GETPOST('WEBSITE_AUTHORALIAS', 'alphanohtml'));
@@ -1663,7 +1682,7 @@ if ($action == 'updatemeta')
 	}
 
 	if (!$error) {
-		// Supplier categories association
+		// Website categories association
 		$categoriesarray = GETPOST('categories', 'array');
 		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0)
@@ -1774,6 +1793,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 
 		$objectnew = new Website($db);
 		$result = $objectnew->createFromClone($user, GETPOST('id', 'int'), GETPOST('siteref', 'aZ09'), (GETPOST('newlang', 'aZ09') ?GETPOST('newlang', 'aZ09') : ''));
+
 		if ($result < 0)
 		{
 			$error++;
@@ -2053,7 +2073,7 @@ if ($action == 'regeneratesite')
 	$result = $object->rebuildWebSiteFiles();
 	if ($result > 0)
 	{
-		setEventMessages($langs->trans("PagesRegenerated"), null, 'mesgs');
+		setEventMessages($langs->trans("PagesRegenerated", $result), null, 'mesgs');
 		$action = 'preview';
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -2748,7 +2768,10 @@ if (!GETPOST('hide_websitemenu'))
 		{
 			$url = 'https://wiki.dolibarr.org/index.php/Module_Website';
 
-			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url).'<br>';
+			$htmltext = $langs->transnoentitiesnoconv("YouCanEditHtmlSource", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSource2", $url);
+			$htmltext .= $langs->transnoentitiesnoconv("YouCanEditHtmlSourceMore", $url);
+			$htmltext .= '<br>';
             if ($conf->browser->layout == 'phone')
             {
                 print $form->textwithpicto('', $htmltext, 1, 'help', 'inline-block', 1, 2, 'tooltipsubstitution');
@@ -3302,12 +3325,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pageauthoralias = '';
 		$pagestatus = 1;
 	}
-	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = GETPOST('WEBSITE_TITLE', 'alpha');
+	if (GETPOST('WEBSITE_TITLE', 'alpha'))       $pagetitle = str_replace(array('<', '>'), '', GETPOST('WEBSITE_TITLE', 'alphanohtml'));
 	if (GETPOST('WEBSITE_PAGENAME', 'alpha'))    $pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
-	if (GETPOST('WEBSITE_ALIASALT', 'alpha'))    $pagealiasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
-	if (GETPOST('WEBSITE_DESCRIPTION', 'alpha')) $pagedescription = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
+	if (GETPOST('WEBSITE_ALIASALT', 'alpha'))    $pagealiasalt = str_replace(array('<', '>'), '', GETPOST('WEBSITE_ALIASALT', 'alphanohtml'));
+	if (GETPOST('WEBSITE_DESCRIPTION', 'alpha')) $pagedescription = str_replace(array('<', '>'), '', GETPOST('WEBSITE_DESCRIPTION', 'alphanohtml'));
 	if (GETPOST('WEBSITE_IMAGE', 'alpha'))       $pageimage = GETPOST('WEBSITE_IMAGE', 'alpha');
-	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
+	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
 	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
 
@@ -3362,8 +3385,10 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_IMAGE" value="'.dol_escape_htmltag($pageimage).'">';
 	print '</td></tr>';
 
+	// Keywords
 	print '<tr><td>';
-	print $langs->trans('WEBSITE_KEYWORDS');
+	$htmlhelp = $langs->trans("WEBSITE_KEYWORDSDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_KEYWORDS'), $htmlhelp, 1, 'help', '', 0, 2, 'keywordtooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_KEYWORDS" value="'.dol_escape_htmltag($pagekeywords).'">';
 	print '</td></tr>';
@@ -3801,11 +3826,15 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
+
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$c = new Categorie($db);
 
 			foreach ($listofpages['list'] as $answerrecord)
 			{
@@ -3813,10 +3842,12 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				{
 					print '<tr>';
 
+					// Type of container
 					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
 					print $langs->trans($answerrecord->type_container); // TODO Use label of container
 					print '</td>';
 
+					// Container url and label
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
@@ -3825,6 +3856,23 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<br>';
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
+
+					// Categories
+					print '<td>';
+					if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
+					{
+						// Get current categories
+						$existing = $c->containing($answerrecord->id, Categorie::TYPE_WEBSITE_PAGE, 'object');
+						if (is_array($existing)) {
+							foreach ($existing as $tmpcategory) {
+								//var_dump($tmpcategory);
+								print '<span class="categorysquarre marginrightonly" style="background-color: #'.($tmpcategory->color != '' ? $tmpcategory->color : '888').'" title="'.dol_escape_htmltag($langs->trans("Category").' '.$tmpcategory->label).'"></span>';
+							}
+						}
+					}
+					//var_dump($existing);
+					print '</td>';
+
 
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
@@ -3869,10 +3917,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '</td>';
 
 					print '</tr>';
-				}
-				else {
+				} else {
 					print '<tr>';
 
+					// Type of container
 					print '<td>';
 					$translateofrecordtype = array(
 						'website_csscontent'=>'WEBSITE_CSS_INLINE',
@@ -3900,9 +3948,13 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
 					$param .= '&searchstring='.urlencode($searchkey);
 
+					// Container url and label
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].$param;
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
+					print '</td>';
+
+					print '<td>';
 					print '</td>';
 
 					print '<td class="tdoverflow100">';

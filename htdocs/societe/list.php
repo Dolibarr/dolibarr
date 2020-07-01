@@ -1211,23 +1211,15 @@ while ($i < min($num, $limit))
 		$s = '';
 		if (($obj->client == 1 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS))
 		{
-	  		$companystatic->name = $langs->trans("Customer");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'customer', 0, 1);
+			$s .= '<a class="customer-back" title="'.$langs->trans("Customer").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Customer"), 0, 1).'</a>';
 		}
 		if (($obj->client == 2 || $obj->client == 3) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			if ($s) $s .= ", ";
-			$companystatic->name = $langs->trans("Prospect");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'prospect', 0, 1);
+			$s .= '<a class="customer-back" title="'.$langs->trans("Prospect").'" href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Prospect"), 0, 1).'</a>';
 		}
 		if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $obj->fournisseur)
 		{
-			if ($s) $s .= ", ";
-			$companystatic->name = $langs->trans("Supplier");
-	  		$companystatic->name_alias = '';
-			$s .= $companystatic->getNomUrl(0, 'supplier', 0, 1);
+			$s .= '<a class="vendor-back" title="'.$langs->trans("Supplier").'" href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$companystatic->id.'">'.dol_substr($langs->trans("Supplier"), 0, 1).'</a>';
 		}
 		print $s;
 		print '</td>';

@@ -256,7 +256,8 @@ if ($mode == 'config' && $user->admin) {
         print '<input type="hidden" name="action" value="updateprinter">';
     }
 
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
+
+    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
     print $langs->trans("ReceiptPrinterDesc")."<br><br>\n";
 
@@ -342,11 +343,11 @@ if ($mode == 'config' && $user->admin) {
     }
     print '</form>';
 
-    print '<div><p></div>';
+    print '<br>';
 
-    dol_fiche_head();
 
-    print $langs->trans("ReceiptPrinterTypeDesc")."<br><br>\n";
+    print load_fiche_titre($langs->trans("ReceiptPrinterTypeDesc"), '', '')."\n";
+
     print '<table class="noborder centpercent">'."\n";
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_DUMMY").':</td><td>'.$langs->trans("CONNECTOR_DUMMY_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT").':</td><td>'.$langs->trans("CONNECTOR_NETWORK_PRINT_HELP").'</td></tr>';
@@ -354,12 +355,12 @@ if ($mode == 'config' && $user->admin) {
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_WINDOWS_PRINT_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("CONNECTOR_CUPS_PRINT").':</td><td>'.$langs->trans("CONNECTOR_CUPS_PRINT_HELP").'</td></tr>';
     print '</table>';
-    dol_fiche_end();
 
-    print '<div><p></div>';
+    print '<br>';
 
-    dol_fiche_head();
-    print $langs->trans("ReceiptPrinterProfileDesc")."<br><br>\n";
+
+    print load_fiche_titre($langs->trans("ReceiptPrinterProfileDesc"), '', '')."\n";
+
     print '<table class="noborder centpercent">'."\n";
     print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_DEFAULT").':</td><td>'.$langs->trans("PROFILE_DEFAULT_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_SIMPLE").':</td><td>'.$langs->trans("PROFILE_SIMPLE_HELP").'</td></tr>';
@@ -367,7 +368,6 @@ if ($mode == 'config' && $user->admin) {
     print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_P822D").':</td><td>'.$langs->trans("PROFILE_P822D_HELP").'</td></tr>';
     print '<tr class="oddeven"><td>'.$langs->trans("PROFILE_STAR").':</td><td>'.$langs->trans("PROFILE_STAR_HELP").'</td></tr>';
     print '</table>';
-    dol_fiche_end();
 }
 
 if ($mode == 'template' && $user->admin) {
@@ -379,9 +379,9 @@ if ($mode == 'template' && $user->admin) {
         print '<input type="hidden" name="action" value="updatetemplate">';
     }
 
-    dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), 0, 'technic');
 
-    print $langs->trans("ReceiptPrinterTemplateDesc")."<br><br>\n";
+    print load_fiche_titre($langs->trans("ReceiptPrinterTemplateDesc"), '', '')."<br><br>\n";
+
     print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Name").'</th>';
@@ -408,15 +408,15 @@ if ($mode == 'template' && $user->admin) {
                 print '<td>'.$printer->listprinterstemplates[$line]['name'].'</td>';
                 print '<td>'.nl2br(htmlentities($printer->listprinterstemplates[$line]['template'])).'</td>';
                 // edit icon
-                print '<td><a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=edittemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
+                print '<td><a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=edittemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'">';
                 print img_picto($langs->trans("Edit"), 'edit');
                 print '</a>';
                 // delete icon
-                print '<a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
+                print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=deletetemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
                 print img_picto($langs->trans("Delete"), 'delete');
                 print '</a>';
                 // test icon
-                print '<a href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
+                print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=template&amp;action=testtemplate&amp;templateid='.$printer->listprinterstemplates[$line]['rowid'].'&amp;templatename='.$printer->listprinterstemplates[$line]['name'].'">';
                 print img_picto($langs->trans("TestPrinterTemplate"), 'printer');
                 print '</a></td>';
             }
@@ -437,21 +437,22 @@ if ($mode == 'template' && $user->admin) {
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
     }
     print '</form>';
-    print '<div><p></div>';
+
+    print '<br>';
+
     print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Tag").'</th>';
     print '<th>'.$langs->trans("Description").'</th>';
     print "</tr>\n";
-    $max = count($printer->tags);
-    for ($tag = 0; $tag < $max; $tag++) {
+
+    $langs->loadLangs(array("bills", "companies"));
+    foreach ($printer->tags as $key => $val) {
         print '<tr class="oddeven">';
-        print '<td>&lt;'.$printer->tags[$tag].'&gt;</td><td>'.$langs->trans(strtoupper($printer->tags[$tag])).'</td>';
+        print '<td>&lt;'.$key.'&gt;</td><td>'.$langs->trans($val).'</td>';
         print '</tr>';
     }
     print '</table>';
-
-    dol_fiche_end();
 }
 
 // End of page

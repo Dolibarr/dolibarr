@@ -177,7 +177,7 @@ if (empty($reshook) && $action == 'confirm_clone' && $confirm == 'yes')
 			//$object->fetch($id);
             if (!empty($object->socpeopleassigned)) {
                 reset($object->socpeopleassigned);
-                $object->contactid = key($object->socpeopleassigned);
+                $object->contact_id = key($object->socpeopleassigned);
             }
 			$result = $object->createFromClone($user, GETPOST('socid', 'int'));
 			if ($result > 0) {
@@ -350,7 +350,7 @@ if (empty($reshook) && $action == 'add')
 	if (!empty($object->socpeopleassigned))
 	{
 		reset($object->socpeopleassigned);
-		$object->contactid = key($object->socpeopleassigned);
+		$object->contact_id = key($object->socpeopleassigned);
 	}
 
 	// Fill array 'array_options' with data from add form
@@ -445,10 +445,10 @@ if (empty($reshook) && $action == 'update')
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
-		$object->contactid   = GETPOST("contactid", 'int');
-        if (empty($object->contactid) && !empty($object->socpeopleassigned)) {
+		$object->contact_id   = GETPOST("contactid", 'int');
+        if (empty($object->contact_id) && !empty($object->socpeopleassigned)) {
             reset($object->socpeopleassigned);
-            $object->contactid = key($object->socpeopleassigned);
+            $object->contact_id = key($object->socpeopleassigned);
         }
 		$object->fk_project  = GETPOST("projectid", 'int');
 		$object->note_private = GETPOST("note", "none");
@@ -792,6 +792,7 @@ if ($action == 'create')
 	            	}
                     setdatefields();
                     $("#fullday").change(function() {
+						console.log("setdatefields");
                         setdatefields();
                     });
                     $("#selectcomplete").change(function() {
@@ -846,9 +847,7 @@ if ($action == 'create')
 	if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
 	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
 	if (GETPOST("afaire") == 1) {
-        print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldayend');
-    } elseif (GETPOST("afaire") == 2) {
-        print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
+        print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart');	// Empty value not allowed for start date and hours if "todo"
     } else {
         print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
     }
@@ -863,11 +862,9 @@ if ($action == 'create')
 	}
 	print '<tr><td><span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
 	if (GETPOST("afaire") == 1) {
-        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
-    } elseif (GETPOST("afaire") == 2) {
-        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
     } else {
-        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 1, 0, 'fulldayend');
+        print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
     }
 	print '</td></tr>';
 
@@ -1156,7 +1153,7 @@ if ($id > 0)
 		$object->socid       = GETPOST("socid", "int");
 		$socpeopleassigned   = GETPOST("socpeopleassigned", 'array');
 		foreach ($socpeopleassigned as $tmpid) $object->socpeopleassigned[$id] = array('id' => $tmpid);
-		$object->contactid   = GETPOST("contactid", 'int');
+		$object->contact_id   = GETPOST("contactid", 'int');
 		$object->fk_project  = GETPOST("projectid", 'int');
 
 		$object_private = GETPOST("note", 'none');

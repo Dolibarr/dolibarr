@@ -263,3 +263,4 @@ WarningNumberOfRecipientIsRestrictedInMassAction=هشدار، در هنگام ا
 WarningDateOfLineMustBeInExpenseReportRange=هشدار، تاریخ مربوط به سطر در بازۀ گزارش هزینه‌ها نیست
 WarningProjectClosed=طرح بسته است. ابتدا باید آن را باز کنید
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
+WarningFailedToAddFileIntoDatabaseIndex=Warnin, failed to add file entry into ECM database index table

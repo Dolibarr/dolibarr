@@ -17,7 +17,8 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
--- Actions commerciales
+-- Table of events and actions (past and to do). 
+-- This is also the table to track events on other Dolibarr objects.
 -- ========================================================================
 
 create table llx_actioncomm
@@ -40,7 +41,7 @@ create table llx_actioncomm
   fk_soc			integer,
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,
-  fk_user_action	integer,						-- user id of owner of action (note that users assigned to event are stored into another table)
+  fk_user_action	integer,						-- user id of owner of action (note that users assigned to event are stored into table 'actioncomm_resources')
   fk_user_done		integer,						-- user id of user that has made action (deprecated)
 
   transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event. This field may be deprecated if we want to store transparency for each assigned user, moved into table llx_actioncomm_resources.

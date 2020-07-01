@@ -41,7 +41,7 @@ $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int'); // id of record
-$mode = GETPOST('mode', 'aZ09'); // '' or 'tmp'
+$mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
 $piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
 
 // Security check
@@ -114,11 +114,13 @@ if ($action == "confirm_update") {
 			$object->credit = $credit;
 
 			if (floatval($debit) != 0.0) {
-				$object->montant = $debit;
+				$object->montant = $debit;	// deprecated
+				$object->amount = $debit;
 				$object->sens = 'D';
 			}
 			if (floatval($credit) != 0.0) {
-				$object->montant = $credit;
+				$object->montant = $credit;	// deprecated
+				$object->amount = $credit;
 				$object->sens = 'C';
 			}
 
@@ -173,12 +175,14 @@ if ($action == "confirm_update") {
 		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
-			$object->montant = $debit;
+			$object->montant = $debit;	// deprecated
+			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
 		if (floatval($credit) != 0.0) {
-			$object->montant = $credit;
+			$object->montant = $credit;	// deprecated
+			$object->amount = $credit;
 			$object->sens = 'C';
 		}
 
@@ -241,7 +245,8 @@ if ($action == "confirm_update") {
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
-		$object->montant = 0;
+		$object->montant = 0;	// deprecated
+		$object->amount = 0;
 
 		$result = $object->createStd($user, 0, $mode);
 		if ($result < 0) {

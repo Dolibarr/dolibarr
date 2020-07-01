@@ -263,3 +263,4 @@ WarningNumberOfRecipientIsRestrictedInMassAction=Avertisment, numărul destinata
 WarningDateOfLineMustBeInExpenseReportRange=Avertisment, data liniei nu este în intervalul raportului de cheltuieli
 WarningProjectClosed=Proiectul este închis. Trebuie să-l redeschideți mai întâi.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
+WarningFailedToAddFileIntoDatabaseIndex=Warnin, failed to add file entry into ECM database index table

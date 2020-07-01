@@ -140,7 +140,7 @@ class Facturation
             $remise_percent = 0;
         }
         $montant_remise_ht = ($resultarray[6] - $resultarray[0]);
-        $this->montantRemise($montant_remise_ht);
+        $this->amountDiscount($montant_remise_ht);
 
         $newcartarray = $_SESSION['poscart'];
 
@@ -256,7 +256,7 @@ class Facturation
         $this->qte('RESET');
         $this->stock('RESET');
         $this->remisePercent('RESET');
-        $this->montantRemise('RESET');
+        $this->amountDiscount('RESET');
         $this->prix('RESET');
         $this->tva('RESET');
     }
@@ -270,13 +270,13 @@ class Facturation
     {
         $this->numInvoice('RESET');
         $this->getSetPaymentMode('RESET');
-        $this->montantEncaisse('RESET');
-        $this->montantRendu('RESET');
+        $this->amountCollected('RESET');
+        $this->amountReturned('RESET');
         $this->paiementLe('RESET');
 
-        $this->prixTotalHt('RESET');
-        $this->montantTva('RESET');
-        $this->prixTotalTtc('RESET');
+        $this->amountWithoutTax('RESET');
+        $this->amountVat('RESET');
+        $this->amountWithTax('RESET');
     }
 
 
@@ -387,7 +387,7 @@ class Facturation
      * @param	int		$aMontantRemise		Amount
      * @return	string						Amount
      */
-    public function montantRemise($aMontantRemise = null)
+    public function amountDiscount($aMontantRemise = null)
     {
 
         if (is_null($aMontantRemise)) {
@@ -475,7 +475,7 @@ class Facturation
      * @param	int		$aMontantEncaisse		Amount
      * @return	int								Amount
      */
-    public function montantEncaisse($aMontantEncaisse = null)
+    public function amountCollected($aMontantEncaisse = null)
     {
 
         if (is_null($aMontantEncaisse)) {
@@ -493,7 +493,7 @@ class Facturation
      * @param	int			$aMontantRendu		Amount
      * @return	int								Amount
      */
-    public function montantRendu($aMontantRendu = null)
+    public function amountReturned($aMontantRendu = null)
     {
 
         if (is_null($aMontantRendu)) {
@@ -528,7 +528,7 @@ class Facturation
      * @param	int		$aTotalHt		Total amount
      * @return	int						Total amount
      */
-    public function prixTotalHt($aTotalHt = null)
+    public function amountWithoutTax($aTotalHt = null)
     {
         if (is_null($aTotalHt)) {
             return $this->prix_total_ht;
@@ -545,7 +545,7 @@ class Facturation
      * @param	int		$aMontantTva	Amount vat
      * @return	int						Amount vat
      */
-    public function montantTva($aMontantTva = null)
+    public function amountVat($aMontantTva = null)
     {
         if (is_null($aMontantTva)) {
             return $this->montant_tva;
@@ -562,7 +562,7 @@ class Facturation
      * @param	int		$aTotalTtc		Amount ttc
      * @return	int						Amount ttc
      */
-    public function prixTotalTtc($aTotalTtc = null)
+    public function amountWithTax($aTotalTtc = null)
     {
         if (is_null($aTotalTtc))
         {

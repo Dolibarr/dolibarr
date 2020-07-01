@@ -184,7 +184,7 @@ llxHeader('', $langs->trans("MassBarcodeInit"));
 print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';
 
-print $langs->trans("MassBarcodeInitDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("MassBarcodeInitDesc").'</span><br>';
 print '<br>';
 
 //print img_picto('','puce').' '.$langs->trans("PrintsheetForOneBarCode").'<br>';
@@ -300,6 +300,12 @@ if ($conf->product->enabled || $conf->product->service)
 	print '<input class="button" type="submit" name="eraseallbarcode" id="eraseallbarcode" value="'.$langs->trans("EraseAllCurrentBarCode").'"'.$moretags2.' onClick="return confirm_erase();">';
 	print '<br><br><br><br>';
 }
+
+
+print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'generic');
+print '<br>'."\n";
+print $langs->trans("ClickHereToGoTo").' : <a href="'.DOL_URL_ROOT.'/barcode/printsheet.php">'.$langs->trans("BarCodePrintsheet").'</a>';
+
 
 
 print '</form>';

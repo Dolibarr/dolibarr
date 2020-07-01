@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Các bước tiếp theo nên được thực h
 AccountancyAreaDescActionFreq=Các hành động sau đây thường được thực hiện mỗi tháng, tuần hoặc ngày đối với các công ty rất lớn ...
 
 AccountancyAreaDescJournalSetup=BƯỚC %s: Tạo hoặc kiểm tra nội dung danh sách nhật ký của bạn từ menu %s
-AccountancyAreaDescChartModel=BƯỚC %s: Tạo mô hình hệ thống tài khoản từ menu %s
-AccountancyAreaDescChart=BƯỚC %s: Tạo hoặc kiểm tra nội dung hệ thống tài khoản của bạn từ menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=BƯỚC %s: Xác định tài khoản kế toán cho mỗi mức thuế VAT. Để làm điều này, sử dụng mục menu %s.
 AccountancyAreaDescDefault=BƯỚC %s: Xác định tài khoản kế toán mặc định. Đối với điều này, sử dụng mục menu %s.

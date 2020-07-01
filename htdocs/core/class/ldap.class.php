@@ -55,6 +55,10 @@ class Ldap
 	/**
 	 * Version du protocole ldap
 	 */
+    public $ldapProtocolVersion;
+    /**
+     * Server DN
+     */
     public $domain;
 	/**
 	 * User administrateur Ldap
@@ -160,7 +164,7 @@ class Ldap
     public function connect_bind()
 	{
         // phpcs:enable
-		global $langs, $conf;
+		global $conf;
 
 		$connected = 0;
 		$this->bind = 0;
@@ -183,7 +187,7 @@ class Ldap
 		if (empty($this->error))
 		{
 			// Loop on each ldap server
-			foreach ($this->server as $key => $host)
+			foreach ($this->server as $host)
 			{
 				if ($connected) break;
 				if (empty($host)) continue;
@@ -395,8 +399,6 @@ class Ldap
 	 */
     public function add($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::add dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -442,13 +444,11 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	User			$user		Objet user that modify
+	 *	@param	User		$user		Objet user that modify
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
     public function modify($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::modify dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -473,6 +473,11 @@ class Ldap
 		$this->dump($dn, $info);
 
 		//print_r($info);
+
+    	// For better compatibility with Samba4 AD
+		if ($this->serverType == "activedirectory") {
+			unset($info['cn']); // For avoid error : Operation not allowed on RDN (Code 67)
+		}
 		$result = @ldap_modify($this->connection, $dn, $info);
 
 		if ($result)
@@ -499,8 +504,6 @@ class Ldap
 	 */
     public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::modify dn=".$dn." newrdn=".$newrdn." newparent=".$newparent." deleteoldrdn=".($deleteoldrdn ? 1 : 0));
 
 		// Check parameters
@@ -548,8 +551,6 @@ class Ldap
 	 */
     public function update($dn, $info, $user, $olddn, $newrdn = false, $newparent = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::update dn=".$dn." olddn=".$olddn);
 
 		// Check parameters
@@ -566,11 +567,12 @@ class Ldap
 
 		if (!$olddn || $olddn != $dn)
 		{
-			if (!empty($olddn) && !empty($newrdn) && !empty($newparent) && $conf->global->LDAP_SERVER_PROTOCOLVERSION === '3')
+			if (! empty($olddn) && ! empty($newrdn) && ! empty($newparent) && $this->ldapProtocolVersion === '3')
 			{
 				// This function currently only works with LDAPv3
 				$result = $this->rename($olddn, $newrdn, $newparent, $user, true);
-			} else {
+				$result = $this->modify($dn, $info, $user);	// We force "modify" for avoid some fields not modify
+			}	else {
 				// If change we make is rename the key of LDAP record, we create new one and if ok, we delete old one.
 				$result = $this->add($dn, $info, $user);
 				if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn); // If add fails, we do not try to delete old one
@@ -602,8 +604,6 @@ class Ldap
 	 */
     public function delete($dn)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::delete Delete LDAP entry dn=".$dn);
 
 		// Check parameters
@@ -658,7 +658,7 @@ class Ldap
 			{
 				$content .= "$key: $value\n";
 			} else {
-				foreach ($value as $valuekey => $valuevalue)
+				foreach ($value as $valuevalue)
 				{
 					$content .= "$key: $valuevalue\n";
 				}
@@ -738,8 +738,6 @@ class Ldap
 	 */
     public function addAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::addAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -788,8 +786,6 @@ class Ldap
 	 */
     public function updateAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::updateAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters
@@ -838,8 +834,6 @@ class Ldap
 	 */
     public function deleteAttribute($dn, $info, $user)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::deleteAttribute dn=".$dn." info=".join(',', $info));
 
 		// Check parameters

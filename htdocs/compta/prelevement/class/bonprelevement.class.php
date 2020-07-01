@@ -276,7 +276,7 @@ class BonPrelevement extends CommonObject
 		$sql .= ", p.method_trans, p.fk_user_trans";
 		$sql .= ", p.date_credit as date_credit";
 		$sql .= ", p.fk_user_credit";
-		$sql .= ", p.statut";
+		$sql .= ", p.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
 		if ($rowid > 0) $sql .= " AND p.rowid = ".$rowid;
@@ -303,7 +303,8 @@ class BonPrelevement extends CommonObject
 				$this->date_credit    = $this->db->jdate($obj->date_credit);
 				$this->user_credit    = $obj->fk_user_credit;
 
-				$this->statut         = $obj->statut;
+				$this->status         = $obj->status;
+				$this->statut         = $obj->status;	// For backward compatibility
 
 				$this->fetched = 1;
 
@@ -646,7 +647,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Returns amount of withdrawal
 	 *
-	 *	@param	string	$mode		'direct-debit' or 'credit-transfer'
+	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
 	 *	@return	double	 			<O if KO, Total amount
 	 */
 	public function SommeAPrelever($mode = 'direct-debit')
@@ -655,7 +656,7 @@ class BonPrelevement extends CommonObject
 		global $conf;
 
 		$sql = "SELECT sum(pfd.amount) as nb";
-		if ($mode != 'credit-transfer') {
+		if ($mode != 'bank-transfer') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 		} else {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
@@ -688,7 +689,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get number of invoices waiting for payment
 	 *
-	 *	@param	string	$mode		'direct-debit' or 'credit-transfer'
+	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
 	 *	@return	int					<O if KO, number of invoices if OK
 	 */
 	public function nbOfInvoiceToPay($mode = 'direct-debit')
@@ -700,7 +701,7 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get number of invoices to withdrawal
 	 *
-	 *	@param	string	$mode		'direct-debit' or 'credit-transfer'
+	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
 	 *	@return	int					<O if KO, number of invoices if OK
 	 */
 	public function NbFactureAPrelever($mode = 'direct-debit')
@@ -709,7 +710,7 @@ class BonPrelevement extends CommonObject
 		global $conf;
 
 		$sql = "SELECT count(f.rowid) as nb";
-		if ($mode == 'credit-transfer') {
+		if ($mode == 'bank-transfer') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		} else {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -720,7 +721,7 @@ class BonPrelevement extends CommonObject
 		{
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 		}
-		if ($mode == 'credit-transfer') {
+		if ($mode == 'bank-transfer') {
 			$sql .= " AND f.rowid = pfd.fk_facture_fourn";
 		} else {
 			$sql .= " AND f.rowid = pfd.fk_facture";

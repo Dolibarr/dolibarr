@@ -108,7 +108,8 @@ class Ticket extends CommonObject
 	/**
 	 * @var int  Ticket statut
 	 */
-	public $fk_statut;
+	public $fk_statut;				// deprecated
+	public $status;
 
 	/**
 	 * @var string State resolution
@@ -463,7 +464,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_user_assign,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.resolution,";
 		$sql .= " t.progress,";
 		$sql .= " t.timing,";
@@ -509,7 +510,10 @@ class Ticket extends CommonObject
 				$this->fk_user_assign = $obj->fk_user_assign;
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
-				$this->fk_statut = $obj->fk_statut;
+
+				$this->status = $obj->status;
+				$this->fk_statut = $this->status;		// For backward compatibility
+
 				$this->resolution = $obj->resolution;
 				$this->progress = $obj->progress;
 				$this->timing = $obj->timing;
@@ -2364,8 +2368,9 @@ class Ticket extends CommonObject
 			// If destination file already exists, we add a suffix to avoid to overwrite
 			if (is_file($destfile))
 			{
+				$pathinfo = pathinfo($filename[$i]);
 				$now = dol_now();
-				$destfile .= '.'.dol_print_date($now, 'dayhourlog');
+				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
 			}
 
 			$res = dol_move($filepath[$i], $destfile, 0, 1);
@@ -2617,7 +2622,7 @@ class Ticket extends CommonObject
 
 								foreach ($external_contacts as $key => $info_sendto) {
 									// altairis: avoid duplicate emails to external contacts
-									if ($info_sendto['id'] == $user->contactid) {
+									if ($info_sendto['id'] == $user->contact_id) {
 										continue;
 									}
 

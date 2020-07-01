@@ -1529,7 +1529,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
 			print '</td><td>';
 			$type = $langs->trans("Internal");
-			if ($object->societe_id > 0) $type = $langs->trans("External");
+			if ($object->socid > 0) $type = $langs->trans("External");
 			print $type;
 			if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 			print '</td></tr>'."\n";
@@ -1766,10 +1766,10 @@ if ($action == 'create' || $action == 'adduserldap')
 				} else {
 					print $langs->trans("ThisUserIsNot");
 				}
-				if (!empty($object->contactid))
+				if (!empty($object->contact_id))
 				{
 					$contact = new Contact($db);
-					$contact->fetch($object->contactid);
+					$contact->fetch($object->contact_id);
 					if ($object->socid > 0) print ' / ';
 					else print '<br>';
 					print $contact->getNomUrl(1, '');
@@ -2214,15 +2214,15 @@ if ($action == 'create' || $action == 'adduserldap')
 		   	} else {
 				// Select mode
 				$type = 0;
-				if ($object->contactid) $type = $object->contactid;
+				if ($object->contact_id) $type = $object->contact_id;
 
-				if ($object->socid > 0 && ! ($object->contactid > 0)) {	// external user but no link to a contact
+				if ($object->socid > 0 && ! ($object->contact_id > 0)) {	// external user but no link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
 					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
-				} elseif ($object->socid > 0 && $object->contactid > 0) {	// external user with a link to a contact
+				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, $object->contactid, 'contactid', 1, '', '', 1, '', false, 1);
+					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
 			   		if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 				} else {	// $object->socid is not > 0 here
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
@@ -2523,11 +2523,11 @@ if ($action == 'create' || $action == 'adduserldap')
 					$societe = new Societe($db);
 					$societe->fetch($object->socid);
 					print $societe->getNomUrl(1, '');
-					if ($object->contactid)
+					if ($object->contact_id)
 					{
 						$contact = new Contact($db);
-						$contact->fetch($object->contactid);
-						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contactid.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
+						$contact->fetch($object->contact_id);
+						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contact_id.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
 					}
 				} else {
 					print $langs->trans("ThisUserIsNot");
