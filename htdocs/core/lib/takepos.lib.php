@@ -37,6 +37,11 @@ function takepos_prepare_head()
 	$head[$h][1] = $langs->trans("Parameters");
 	$head[$h][2] = 'setup';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/appearance.php';
+	$head[$h][1] = $langs->trans("Appearance");
+	$head[$h][2] = 'appearance';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/receipt.php';
 	$head[$h][1] = $langs->trans("Receipt");
