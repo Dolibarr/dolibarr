@@ -108,7 +108,7 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_HIDE_PRODUCT_IMAGES", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
-// Terminals
+// Lines to show
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfLinesToShow");
 print '<td colspan="2">';
