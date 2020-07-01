@@ -656,7 +656,7 @@ class Menubase
 
                 // Define $right
                 $perms = true;
-                if ($menu['perms'])
+                if (isset($menu['perms']))
                 {
                 	$tmpcond = $menu['perms'];
                 	if ($leftmenu == 'all') $tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force part of condition to true
@@ -666,7 +666,7 @@ class Menubase
 
                 // Define $enabled
                 $enabled = true;
-                if ($menu['enabled'])
+                if (isset($menu['enabled']))
                 {
                 	$tmpcond = $menu['enabled'];
                 	if ($leftmenu == 'all') $tmpcond = preg_replace('/\$leftmenu\s*==\s*["\'a-zA-Z_]+/', '1==1', $tmpcond); // Force part of condition to true

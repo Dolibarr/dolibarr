@@ -1153,8 +1153,6 @@ if (!$error && $massaction == 'validate' && $permissiontoadd)
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
-				//if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
-				//else
 				$result = $objecttmp->validate($user);
 				if ($result == 0)
 				{

@@ -94,7 +94,7 @@ print '</td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.rowid as socid";
+$sql .= " s.nom as name, s.email, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -133,14 +133,15 @@ if ($resql)
             $invoicestatic->type = $obj->type;
             $alreadypayed = $invoicestatic->getSommePaiement();
 
+            $thirdpartystatic->id = $obj->socid;
+            $thirdpartystatic->name = $obj->name;
+            $thirdpartystatic->email = $obj->email;
 
             print '<tr class="oddeven"><td>';
             print $invoicestatic->getNomUrl(1, 'withdraw');
             print '</td>';
 
             print '<td>';
-            $thirdpartystatic->id = $obj->socid;
-            $thirdpartystatic->name = $obj->name;
             print $thirdpartystatic->getNomUrl(1, 'customer');
             print '</td>';
 

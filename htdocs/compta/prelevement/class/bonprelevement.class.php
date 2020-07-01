@@ -703,9 +703,16 @@ class BonPrelevement extends CommonObject
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 		}
 		$sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-		$sql .= " WHERE f.fk_statut = 1";
-		$sql .= " AND f.entity IN (".getEntity('invoice').")";
-		$sql .= " AND f.rowid = pfd.fk_facture";
+		$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
+		if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
+		{
+			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
+		}
+		if ($mode != 'bank-transfer') {
+			$sql .= " AND f.rowid = pfd.fk_facture";
+		} else {
+			$sql .= " AND f.rowid = pfd.fk_facture_fourn";
+		}
 		$sql .= " AND f.paye = 0";
 		$sql .= " AND pfd.traite = 0";
 		$sql .= " AND f.total_ttc > 0";
@@ -744,16 +751,16 @@ class BonPrelevement extends CommonObject
 	/**
 	 *	Get number of invoices to withdrawal
 	 *
-	 *	@param	string	$mode		'direct-debit' or 'bank-transfer'
+	 *	@param	string	$type		'direct-debit' or 'bank-transfer'
 	 *	@return	int					<O if KO, number of invoices if OK
 	 */
-	public function NbFactureAPrelever($mode = 'direct-debit')
+	public function NbFactureAPrelever($type = 'direct-debit')
 	{
 		// phpcs:enable
 		global $conf;
 
 		$sql = "SELECT count(f.rowid) as nb";
-		if ($mode == 'bank-transfer') {
+		if ($type == 'bank-transfer') {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 		} else {
 			$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -764,7 +771,7 @@ class BonPrelevement extends CommonObject
 		{
 			$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 		}
-		if ($mode == 'bank-transfer') {
+		if ($type == 'bank-transfer') {
 			$sql .= " AND f.rowid = pfd.fk_facture_fourn";
 		} else {
 			$sql .= " AND f.rowid = pfd.fk_facture";

@@ -66,6 +66,16 @@ ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafie
 
 ALTER TABLE llx_facture_rec MODIFY COLUMN titre varchar(200) NOT NULL;
 
+create table llx_mrp_mo_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
+
 -- This var is per entity now, so we remove const if global if exists
 delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;
 
@@ -80,7 +90,7 @@ ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
 
 -- Delete an old index that is duplicated
 -- VMYSQL4.1 DROP INDEX ix_fk_product_stock on llx_product_batch;
--- VPGSQL8.2 DROP INDEX ix_fk_product_stock
+-- VPGSQL8.2 DROP INDEX ix_fk_product_stock;
 
 ALTER TABLE llx_actioncomm DROP COLUMN punctual;
 
@@ -312,3 +322,5 @@ UPDATE llx_prelevement_facture_demande SET entity = 1 WHERE entity IS NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
