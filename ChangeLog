@@ -104,8 +104,8 @@ NEW: class tool for converting units
 NEW: Close #13011 Add button create thirdparty when creating intervention
 NEW: Colorful theme for TakePOS
 NEW: columns units in product list
-NEW: compatibility of translabel with more dict
-NEW: Confirm file delete on fracture card
+NEW: compatibility of translabel with more dictionaries
+NEW: Confirm file delete on invoice card
 NEW: "contact_civility" for ODT templates
 NEW: CUPS printing compatibility for TakePOS
 NEW: Customer command list - Add date start & date end
@@ -113,16 +113,11 @@ NEW: display weight in shipment list
 NEW: Documentation about PHP support in Dolibarr
 NEW: Donation - Update FR CERFA to 11580*04
 NEW: Easier way to setup the different types of tax. Better visibility.
-NEW: enable put for agendaevents api
 NEW: Expedition list - Add date start & date end
 NEW: Experiment supplier packaging with option PRODUCT_USE_SUPPLIER_PACKAGING: Using price according to the minimum quantity
 NEW: Export module, add extrafields for Contract and Contract line
 NEW: Extend retained warranty to be  available for all invoices
-NEW: filter by product on supplier order API
 NEW: French new regions
-NEW: get documents for categories with RESP API
-NEW: get proposal by ref with API
-NEW: Hidden option MAIN_TEMP_DIR
 NEW: hook and data id
 NEW: hook on ics generation to add more events in eventarray
 NEW: hook on product load stats
@@ -209,6 +204,11 @@ NEW: Bookkeeping by account - Add selectfields & hook
 NEW: Can force position of legend of graph on right (instead of top)
 NEW: Can change destination of "Back to list" using a "backtolist" parameter
 NEW: add more category types from hook
+NEW: enable put for agendaevents api
+NEW: filter by product on supplier order API
+NEW: get documents for categories with RESP API
+NEW: get proposal by ref with API
+NEW: Hidden option MAIN_TEMP_DIR
 
 WARNING:
 
