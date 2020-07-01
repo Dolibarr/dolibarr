@@ -1850,9 +1850,8 @@ function show_subsidiaries($conf, $langs, $db, $object)
  * 		@param	string		$donetodo		donetodo
  * 		@param	string		$now		    now
  * 		@param	string		$filters		array
- * 		@param	string		$donetodo		donetodo
- * 		@param	string		$sqlANDOR		"AND", "OR" or ""
- * 		@return	void
+ * 		@param	string		$sqlANDOR		"AND", "OR" or "" sql condition
+ * 		@return	string      sql request
  */
 function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDOR = "AND")
 {
@@ -1877,6 +1876,8 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
     if ($donetodo == 'todo') $sql .= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep > '".$db->idate($now)."'))";
     elseif ($donetodo == 'done') $sql .= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep <= '".$db->idate($now)."'))";
     if (is_array($filters) && $filters['search_agenda_label']) $sql .= natural_search('a.label', $filters['search_agenda_label']);
+
+    return $sql;
 }
 
 /**
@@ -1884,7 +1885,7 @@ function addEventTypeSQL(&$sql, $actioncode, $donetodo, $now, $filters, $sqlANDO
  *
  * 		@param	string	    $actioncode		Action code
  * 		@param	string		$objcon		    objcon
- * 		@param	Object		$filterobj
+ * 		@param	Object		$filterobj      filterobj
  * 		@return	string
  */
 function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
