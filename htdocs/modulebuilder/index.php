@@ -2848,7 +2848,7 @@ elseif (!empty($module))
 						print '</td>';
 
 						print '<td>';
-						print $menu['left'];
+						print $menu['leftmenu'];
 						print '</td>';
 
 						print '<td>';
