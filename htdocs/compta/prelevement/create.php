@@ -304,9 +304,14 @@ if ($resql)
 	}
     print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
 
+    $tradinvoice = "Invoice";
+    if ($type == 'bank-transfer') {
+    	$tradinvoice = "SupplierInvoice";
+    }
+
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Invoice").'</td>';
+	print '<td>'.$langs->trans($tradinvoice).'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print '<td>'.$langs->trans("RUM").'</td>';
