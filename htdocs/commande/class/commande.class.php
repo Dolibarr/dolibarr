@@ -1014,7 +1014,7 @@ class Commande extends CommonOrder
 					// Complete vat rate with code
 					$vatrate = $line->tva_tx;
 					if ($line->vat_src_code && !preg_match('/\(.*\)/', $vatrate)) $vatrate .= ' ('.$line->vat_src_code.')';
-					$origin = !empty($line->origin) ? $line->origin : $this->element;
+					$origin = (!empty($line->origin) ? $line->origin : $this->element);
                     $result = $this->addline(
 						$line->desc,
 						$line->subprice,
