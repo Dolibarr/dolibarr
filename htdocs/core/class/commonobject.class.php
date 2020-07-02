@@ -2525,10 +2525,11 @@ abstract class CommonObject
 	/**
 	 * 	Get children of line
 	 *
-	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of children lines id
+	 * 	@param	int		$id		            Id of parent line
+	 * 	@param	int		$includealltree		0 = 1st level child, 1 = All level child
+	 * 	@return	array			            Array with list of children lines id
 	 */
-	public function getChildrenOfLine($id)
+	public function getChildrenOfLine($id, $includealltree = 0)
 	{
 		$rows = array();
 
@@ -2541,16 +2542,13 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$i = 0;
-			$num = $this->db->num_rows($resql);
-			while ($i < $num)
-			{
-				$row = $this->db->fetch_row($resql);
-				$rows[$i] = $row[0];
-				$i++;
+			if ($this->db->num_rows($resql) > 0) {
+				while ($row = $this->db->fetch_row($resql)) {
+					$rows[] = $row[0];
+					if (!empty($includealltree)) $rows = array_merge($rows, $this->getChildrenOfLine($row[0]), $includealltree);
+				}
 			}
 		}
-
 		return $rows;
 	}
 
