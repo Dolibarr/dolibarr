@@ -2070,11 +2070,13 @@ class Societe extends CommonObject
 	/**
 	 *  Return array of sales representatives
 	 *
-	 *  @param	User	$user		Object user
-	 *  @param	int		$mode		0=Array with properties, 1=Array of id.
-	 *  @return array       		Array of sales representatives of third party
+	 *  @param	User		$user			Object user
+	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
+	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 *  @return array       				Array of sales representatives of third party
 	 */
-    public function getSalesRepresentatives(User $user, $mode = 0)
+    public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
 		global $conf;
 
@@ -2091,6 +2093,11 @@ class Societe extends CommonObject
 		} else $sql .= " WHERE entity in (0, ".$conf->entity.")";
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".$this->id;
+		if (empty($sortfield) && empty($sortorder)) {
+			$sortfield = 'u.lastname,u.firstname';
+			$sortorder = 'ASC,ASC';
+		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
