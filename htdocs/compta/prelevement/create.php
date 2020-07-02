@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
@@ -120,7 +120,11 @@ if (empty($reshook))
 $form = new Form($db);
 
 $thirdpartystatic = new Societe($db);
-$invoicestatic = new Facture($db);
+if ($type != 'bank-transfer') {
+	$invoicestatic = new Facture($db);
+} else {
+	$invoicestatic = new FactureFournisseur($db);
+}
 $bprev = new BonPrelevement($db);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
@@ -183,6 +187,7 @@ print '<div class="tabsAction">'."\n";
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
@@ -190,8 +195,13 @@ if ($nb) {
 
         if ($mysoc->isInEEC()) {
         	$title = $langs->trans("CreateForSepa");
+        	if ($type == 'bank-transfer') {
+        		$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
+        	}
 
-            print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
+        	if ($type != 'bank-transfer') {
+            	print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
+        	}
             print '<input class="butAction" type="submit" value="'.$title.'"/>';
         } else {
         	$title = $langs->trans("CreateAll");
@@ -363,7 +373,9 @@ if ($resql)
 			print '<td>';
 			print $thirdpartystatic->display_rib('rum');
 			$format = $thirdpartystatic->display_rib('format');
-			if ($format) print ' ('.$format.')';
+			if ($type != 'bank-transfer') {
+				if ($format) print ' ('.$format.')';
+			}
 			print '</td>';
 			// Amount
 			print '<td class="right">';
