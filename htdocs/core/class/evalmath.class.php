@@ -194,7 +194,7 @@ class EvalMath
 	 *
 	 * @return string Output
 	 */
-	private function vars()
+	public function vars()
 	{
 		$output = $this->v;
 		unset($output['pi']);
