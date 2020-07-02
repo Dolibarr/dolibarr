@@ -55,7 +55,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all',
 $type = GETPOST('type', 'int');
 $tobuy = GETPOST('tobuy', 'int');
 $salert = GETPOST('salert', 'alpha');
-$allalert = GETPOST('allalert', 'alpha');
+$includeproductswithoutdesiredqty = GETPOST('includeproductswithoutdesiredqty', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 $draftorder = GETPOST('draftorder', 'alpha');
 
@@ -111,7 +111,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
     $search_label = '';
     $sall = '';
     $salert = '';
-    $allalert = '';
+    $includeproductswithoutdesiredqty = '';
 	$draftorder = '';
 }
 if ($draftorder == 'on') $draftchecked = "checked";
@@ -430,7 +430,7 @@ if ($usevirtualstock)
 	$sql .= ' ('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	$sql .= ' - ('.$sqlCommandesCli.' - '.$sqlExpeditionsCli.') + ('.$sqlCommandesFourn.' - '.$sqlReceptionFourn.') + ('.$sqlProductionToProduce.' - '.$sqlProductionToConsume.')))';
 	$sql .= ' OR ';
-	if ($allalert == 'on') {
+	if ($includeproductswithoutdesiredqty == 'on') {
 		$sql .= ' (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 	} else {
 		$sql .= ' ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
@@ -441,7 +441,7 @@ if ($usevirtualstock)
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
             $sql .= ' AND ((';
-		if ($allalert == 'on') {
+		if ($includeproductswithoutdesiredqty == 'on') {
 			$sql .= $sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
 		} else {
 			$sql .= $sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')';
@@ -452,7 +452,7 @@ if ($usevirtualstock)
 	}
 } else {
 	$sql .= ' HAVING (('.$sqldesiredtock.' >= 0 AND ('.$sqldesiredtock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
-	if ($allalert == 'on') {
+	if ($includeproductswithoutdesiredqty == 'on') {
 		$sql .= ' OR (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
 	} else {
 		$sql .= ' OR ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").'))))';
@@ -460,7 +460,7 @@ if ($usevirtualstock)
 
 	if ($salert == 'on')	// Option to see when stock is lower than alert
 	{
-		if ($allalert == 'on') {
+		if ($includeproductswithoutdesiredqty == 'on') {
 			$sql .= ' AND (('.$sqlalertstock.' >= 0 OR '.$sqlalertstock.' IS NULL) AND ('.$db->ifsql("$sqlalertstock IS NULL", "0", $sqlalertstock).' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
 		} else {
 			$sql .= ' AND ('.$sqlalertstock.' >= 0 AND ('.$sqlalertstock.' > SUM('.$db->ifsql("s.reel IS NULL", "0", "s.reel").')))';
@@ -469,9 +469,9 @@ if ($usevirtualstock)
 	}
 }
 
-$allalertchecked = '';
-if ($allalert == 'on') {
-    $allalertchecked = 'checked';
+$includeproductswithoutdesiredqtychecked = '';
+if ($includeproductswithoutdesiredqty == 'on') {
+    $includeproductswithoutdesiredqtychecked = 'checked';
 }
 
 // Add where from hooks
@@ -547,7 +547,7 @@ print '<input type="hidden" name="action" value="filter">';
 print '<input type="hidden" name="search_ref" value="'.$search_ref.'">';
 print '<input type="hidden" name="search_label" value="'.$search_label.'">';
 print '<input type="hidden" name="salert" value="'.$salert.'">';
-print '<input type="hidden" name="allalert" value="'.$allalert.'">';
+print '<input type="hidden" name="includeproductswithoutdesiredqty" value="'.$includeproductswithoutdesiredqty.'">';
 print '<input type="hidden" name="draftorder" value="'.$draftorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -629,7 +629,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 }
 
 $param = (isset($type) ? '&type='.$type : '');
-$param .= '&fourn_id='.$fourn_id.'&search_label='.$search_label.'&allalert='.$allalert.'&salert='.$salert.'&draftorder='.$draftorder;
+$param .= '&fourn_id='.$fourn_id.'&search_label='.$search_label.'&includeproductswithoutdesiredqty='.$includeproductswithoutdesiredqty.'&salert='.$salert.'&draftorder='.$draftorder;
 $param .= '&search_ref='.$search_ref;
 $param .= '&mode='.$mode;
 $param .= '&fk_supplier='.$fk_supplier;
@@ -686,8 +686,8 @@ print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'"></td>';
 print '<td class="liste_titre"><input class="flat" type="text" name="search_label" size="8" value="'.dol_escape_htmltag($search_label).'"></td>';
 if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre right">'.$langs->trans('IncludeProductWithUndefinedAlerts').'&nbsp;<input type="checkbox" id="allalert" name="allalert" '.(!empty($allalertchecked) ? $allalertchecked : '').'></td>';
+print '<td class="liste_titre right">'.$form->textwithpicto($langs->trans('IncludeEmptyDesiredStock'), $langs->trans('IncludeProductWithUndefinedAlerts')).'&nbsp;<input type="checkbox" id="includeproductswithoutdesiredqty" name="includeproductswithoutdesiredqty" '.(!empty($includeproductswithoutdesiredqtychecked) ? $includeproductswithoutdesiredqtychecked : '').'></td>';
+print '<td class="liste_titre right"></td>';
 print '<td class="liste_titre right">'.$langs->trans('AlertOnly').'&nbsp;<input type="checkbox" id="salert" name="salert" '.(!empty($alertchecked) ? $alertchecked : '').'></td>';
 print '<td class="liste_titre right">'.$langs->trans('IncludeAlsoDraftOrders').'&nbsp;<input type="checkbox" id="draftorder" name="draftorder" '.(!empty($draftchecked) ? $draftchecked : '').'></td>';
 print '<td class="liste_titre">&nbsp;</td>';
@@ -696,7 +696,7 @@ $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sort
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 
-print '<td class="liste_titre maxwidthsearch">';
+print '<td class="liste_titre maxwidthsearch right">';
 $searchpicto = $form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
 print '</td>';
@@ -785,26 +785,23 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		if (empty($usevirtualstock)) $stocktobuy = max(max($desiredstock, $alertstock) - $stock - $ordered, 0);
 		else $stocktobuy = max(max($desiredstock, $alertstock) - $stock, 0); //ordered is already in $stock in virtual mode
 
-		$disabled = '';
+		$picto = '';
 		if ($ordered > 0)
 		{
-			$stockforcompare = $usevirtualstock ? $stock : $stock + $ordered;
-			if ($stockforcompare >= $desiredstock)
+			$stockforcompare = ($usevirtualstock ? $stock : $stock + $ordered);
+			/*if ($stockforcompare >= $desiredstock)
 			{
-				$picto = img_picto('', './img/yes', '', 1);
-				$disabled = 'disabled';
+				$picto = img_picto('', 'help');
 			} else {
-				$picto = img_picto('', './img/no', '', 1);
-			}
+				$picto = img_picto('', 'help');
+			}*/
 		} else {
-			//$picto = img_help('',$langs->trans("NoPendingReceptionOnSupplierOrder"));
-			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), './img/no', '', 1);
+			$picto = img_picto($langs->trans("NoPendingReceptionOnSupplierOrder"), 'help');
 		}
 
 		print '<tr class="oddeven">';
 
 		// Select field
-		//print '<td><input type="checkbox" class="check" name="' . $i . '"' . $disabled . '></td>';
 		print '<td><input type="checkbox" class="check" name="choose'.$i.'"></td>';
 
 		print '<td class="nowrap">'.$prod->getNomUrl(1, '').'</td>';
@@ -837,10 +834,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td class="right">'.$warning.$stock.'</td>';
 
 		// Already ordered
-		print '<td class="right"><a href="replenishorders.php?sproduct='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
+		print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
 
 		// To order
-		//print '<td class="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
 		print '<td class="right"><input type="text" size="4" name="tobuy'.$i.'" value="'.$stocktobuy.'"></td>';
 
 		// Supplier
