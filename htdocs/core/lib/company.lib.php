@@ -1562,10 +1562,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
         $out .= '<td class="liste_titre"></td>';
         $out .= '<td class="liste_titre"></td>';
         $out .= '<td class="liste_titre">';
-        $out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, !empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 1 : -1, 1);
+        $out .= $formactions->select_type_actions($actioncode, "actioncode", '', empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1, 0, (empty($conf->global->AGENDA_USE_MULTISELECT_TYPE) ? 0 : 1), 1);
         $out .= '</td>';
         $out .= '<td class="liste_titre maxwidth100onsmartphone"><input type="text" class="maxwidth100onsmartphone" name="search_agenda_label" value="'.$filters['search_agenda_label'].'"></td>';
-        $out .= '<td class="liste_titre" align="center">'.$form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1).'</td>';
+        $out .= '<td class="liste_titre center">'.$form->selectDateToDate($tms_start, $tms_end, 'dateevent', 1).'</td>';
         $out .= '<td class="liste_titre"></td>';
         $out .= '<td class="liste_titre"></td>';
         $out .= '<td class="liste_titre"></td>';
