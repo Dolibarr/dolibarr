@@ -46,9 +46,7 @@ if ($pdluoid > 0)
 	if ($result > 0)
 	{
 		$pdluoid = $pdluo->id;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $pdluo->error, $pdluo->errors);
 	}
 }
@@ -104,9 +102,7 @@ if (!empty($conf->productbatch->enabled) &&
 		// If form was opened for a specific pdluoid, field is disabled
 		print '<input type="text" name="batch_number_bis" size="40" disabled="disabled" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 		print '<input type="hidden" name="batch_number" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
-	}
-	else
-	{
+	} else {
 		print '<input type="text" name="batch_number" size="40" value="'.(GETPOST('batch_number') ?GETPOST('batch_number') : $pdluo->batch).'">';
 	}
 	print '</td>';

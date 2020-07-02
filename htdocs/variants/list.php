@@ -126,8 +126,8 @@ foreach ($variants as $key => $attribute) {
 	print '<td class="right">'.$attribute->countChildValues().'</td>';
 	print '<td class="right">'.$attribute->countChildProducts().'</td>';
 	print '<td class="right">';
-	print '<a href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
-	print '<a href="card.php?id='.$attribute->id.'&action=delete">'.img_delete().'</a>';
+	print '<a class="editfielda marginrightonly paddingleftonly" href="card.php?id='.$attribute->id.'&action=edit">'.img_edit().'</a>';
+	print '<a class="marginrightonly paddingleftonlyhref="card.php?id='.$attribute->id.'&action=delete">'.img_delete().'</a>';
 	print '</td>';
 	print '<td class="center linecolmove tdlineupdown">';
 	if ($key > 0) {

@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=De neste skrittene bør gjøres for å spare ti
 AccountancyAreaDescActionFreq=Følgende tiltak blir vanligvis utført hver måned, uke eller dag for svært store selskaper ...
 
 AccountancyAreaDescJournalSetup=TRINN %s: Lag eller kontroller innholdet i din journalliste fra menyen %s
-AccountancyAreaDescChartModel=TRINN %s: Lag en kontomodell fra menyen %s
-AccountancyAreaDescChart=TRINN %s: Opprett eller kontroller innhold i din kontoplan fra meny %s
+AccountancyAreaDescChartModel=TRINN %s: Sjekk at det finnes en modell av kontoplan eller lag en fra menyen %s
+AccountancyAreaDescChart=TRINN %s: Velg og|eller fullfør kontoplanen din fra meny %s
 
 AccountancyAreaDescVat=TRINN %s: Definer regnskapskonto for hver MVA-sats. Bruk menyoppføringen %s.
 AccountancyAreaDescDefault=TRINN %s: Definer standard regnskapskontoer. For dette, bruk menyoppføringen %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Bundne fakturalinjer
 ExpenseReportLines=Utgiftsrapport-linjer som skal bindes
 ExpenseReportLinesDone=Bundne utgiftsrapport-linjer
 IntoAccount=Bind linje med regnskapskonto
+TotalForAccount=Totalt for regnskapskonto
 
 
 Ventilate=Bind
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Regnskapskonto for registrering av donasjoner
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Regnskapskonto for å registrere abonnementer
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Regnskapskonto som standard for de kjøpte varene (brukt hvis ikke definert i produktarket)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Regnskapskonto som standard for kjøpte produkter i EU (brukt hvis ikke definert i produktarket)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Regnskapskonto som standard for kjøpte produkter og importert ut av EU (brukt hvis ikke definert i produktarket)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Standard regnskapskonto for solgte varer (brukt hvis ikke definert på varekortet)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Regnskapskonto som standard for varene som selges i EU (brukt hvis ikke definert i varearket)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Regnskapskonto som standard for produktene som er solgt og eksportert ut av EU (brukt hvis ikke definert i varearket)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Standard regnskapskonto for kjøpte tjenester (brukt hvis ikke definert på tjenestekortet)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Regnskapskonto som standard for kjøpte tjenester i EU (brukt hvis ikke definert i tjenestearket)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Regnskapskonto som standard for kjøpte tjenester og importert ut av EU (brukt hvis ikke definert i tjenestearket)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Standard regnskapskonto for solgte tjenester (brukt hvis ikke definert på tjenestekortet)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Regnskapskonto som standard for tjenestene som selges i EU (brukes hvis ikke definert i tjenestearket)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Regnskapskonto som standard for tjenestene som er solgt og eksportert ut av EU (brukt hvis ikke definert i tjenestearket)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Tredjepart ukjent
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Tredjepartskonto ikke definert eller tredjepart ukjent. Blokkeringsfeil.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukjent tredjepartskonto og ventekonto ikke definert. Blokkeringsfeil
 PaymentsNotLinkedToProduct=Betaling ikke knyttet til noen vare/tjeneste
+OpeningBalance=Inngående balanse
 ShowOpeningBalance=Vis åpningsbalanse
 HideOpeningBalance=Skjul åpningsbalansen
+ShowSubtotalByGroup=Vis subtotal etter gruppe
 
 Pcgtype=Kontogruppe
 PcgtypeDesc=Kontogruppe brukes som forhåndsdefinerte 'filter' og 'gruppering' kriterier for noen regnskapsrapporter. For eksempel blir 'INNTEKT' eller 'UTGIFT' brukt som grupper for regnskapsføring av varer for å lage utgifts-/inntektsrapporten.
+
+Reconcilable=Kan avstemmes
 
 TotalVente=Total omsetning før skatt
 TotalMarge=Total salgsmargin
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Eksport til Quadratus QuadraCompta
 Modelcsv_ebp=Eksport tilEBP
 Modelcsv_cogilog=Eksport til Cogilog
 Modelcsv_agiris=Eksport til Agiris
-Modelcsv_LDCompta=Eksporter for LD Compta (v9 og høyere) (Test)
+Modelcsv_LDCompta=Eksport for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Eksporter for LD Compta (v10 og høyere)
 Modelcsv_openconcerto=Eksport for OpenConcerto (Test)
 Modelcsv_configurable=Eksport CSV Konfigurerbar
 Modelcsv_FEC=Eksporter FEC
 Modelcsv_Sage50_Swiss=Eksport for Sage 50 Switzerland
+Modelcsv_winfic=Eksporter Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Kontoplan ID
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=Salgsmodus
 OptionModeProductSellIntra=Modussalg eksportert i EU
 OptionModeProductSellExport=Modussalg eksportert i andre land
 OptionModeProductBuy=Innkjøpsmodus
+OptionModeProductBuyIntra=Moduskjøp importert i EU
+OptionModeProductBuyExport=Moduskjøp importert fra andre land
 OptionModeProductSellDesc=Vis alle varer for salg, med regnskapskonto
 OptionModeProductSellIntraDesc=Vis alle varer med regnskapskonto for salg innen EU
 OptionModeProductSellExportDesc=Vis alle varer med regnskapskonto for andre internasjonale salg.
 OptionModeProductBuyDesc=Vis alle varer for kjøp, med regnskapskonto
+OptionModeProductBuyIntraDesc=Vis alle produkter med regnskapskonto for kjøp i EU.
+OptionModeProductBuyExportDesc=Vis alle produkter med regnskapskonto for andre utenlandske kjøp.
 CleanFixHistory=Fjern regnskapskode fra linjer som ikke finnes i kontooversikt
 CleanHistory=Nullstill alle bindinger for valgt år
 PredefinedGroups=Forhåndsdefinerte grupper
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=Kontoen er fjernet fra gruppen
 SaleLocal=Lokalt salg
 SaleExport=Eksportsalg
 SaleEEC=Salg i EU
+SaleEECWithVAT=Salg i EU med mva som ikke er null, så vi antar at dette IKKE er et intra-EU salg og den foreslåtte kontoen er standard produktkonto.
+SaleEECWithoutVATNumber=Salg i EU uten mva, men mva-ID for tredjepart er ikke definert. Vi faller tilbake på produktkontoen for standard salg. Du kan fikse mva-ID for tredjepart eller produktkonto om nødvendig.
 
 ## Dictionary
 Range= Oversikt over regnskapskonto

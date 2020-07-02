@@ -207,8 +207,7 @@ class DBase
                     $value = true;
                 elseif ($value == 'f' || $value == 'n')
                     $value = false;
-                else
-                    $value = null;
+                else $value = null;
             }
             $record[$i] = $value;
         }
@@ -295,8 +294,7 @@ class DBase
         $i = unpack("S$n", $data);
         if ($n == 1)
             return (int) $i[1];
-        else
-            return array_merge($i);
+        else return array_merge($i);
     }
 
     private static function putInt16($fd, $value)
@@ -310,8 +308,7 @@ class DBase
         $i = unpack("L$n", $data);
         if ($n == 1)
             return (int) $i[1];
-        else
-            return array_merge($i);
+        else return array_merge($i);
     }
 
     private static function putInt32($fd, $value)

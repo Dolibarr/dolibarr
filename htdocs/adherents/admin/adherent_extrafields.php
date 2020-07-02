@@ -78,8 +78,7 @@ dol_fiche_end();
 
 
 // Buttons
-if ($action != 'create' && $action != 'edit')
-{
+if ($action != 'create' && $action != 'edit') {
 	print '<div class="tabsAction">';
 	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
 	print "</div>";
@@ -92,8 +91,7 @@ if ($action != 'create' && $action != 'edit')
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($action == 'create')
-{
+if ($action == 'create') {
 	print '<div name="topofform"></div><br>';
 	print load_fiche_titre($langs->trans('NewAttribute'));
 
@@ -105,8 +103,7 @@ if ($action == 'create')
 /* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && !empty($attrname))
-{
+if ($action == 'edit' && !empty($attrname)) {
 	print '<div name="topofform"></div><br>';
 	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 

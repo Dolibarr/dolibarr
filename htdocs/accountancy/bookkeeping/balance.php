@@ -55,7 +55,7 @@ $pagenext = $page + 1;
 //if (! $sortfield) $sortfield="p.date_fin";
 //if (! $sortorder) $sortorder="DESC";
 
-
+$show_subgroup = GETPOST('show_subgroup', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(23, 59, 59, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
 
@@ -130,10 +130,11 @@ if (!empty($search_accountancy_code_end)) {
 
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
-	$search_accountancy_code_start = '';
-	$search_accountancy_code_end = '';
+	$show_subgroup = '';
 	$search_date_start = '';
 	$search_date_end = '';
+	$search_accountancy_code_start = '';
+	$search_accountancy_code_end = '';
 	$filter = array();
 }
 
@@ -223,6 +224,12 @@ if ($action != 'export_csv')
 	$moreforfilter .= $form->selectDate($search_date_start ? $search_date_start : -1, 'date_start', 0, 0, 1, '', 1, 0);
 	$moreforfilter .= $langs->trans('DateEnd').': ';
 	$moreforfilter .= $form->selectDate($search_date_end ? $search_date_end : -1, 'date_end', 0, 0, 1, '', 1, 0);
+
+	$moreforfilter .= ' - ';
+	$moreforfilter .= $langs->trans('ShowSubtotalByGroup').': ';
+	$moreforfilter .= '<input type="checkbox" name="show_subgroup" value="show_subgroup"'.($show_subgroup == 'show_subgroup' ? ' checked' : '').'>';
+
+
 	$moreforfilter .= '</div>';
 
 	if (!empty($moreforfilter)) {
@@ -289,26 +296,31 @@ if ($action != 'export_csv')
 		}
 		print '<tr class="oddeven">';
 
-		// Permet d'afficher le compte comptable
-		if (empty($displayed_account) || $root_account_description != $displayed_account)
+		if (!empty($show_subgroup))
 		{
-			// Affiche un Sous-Total par compte comptable
-			if ($displayed_account != "") {
-				print '<tr class="liste_total"><td class="right" colspan="2">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';
-				print "<td>&nbsp;</td>\n";
+			// Show accounting account
+			if (empty($displayed_account) || $root_account_description != $displayed_account) {
+				// Show subtotal per accounting account
+				if ($displayed_account != "") {
+					print '<tr class="liste_total">';
+					print '<td class="right" colspan="3">'.$langs->trans("SubTotal").':</td>';
+					print '<td class="nowrap right">'.price($sous_total_debit).'</td>';
+					print '<td class="nowrap right">'.price($sous_total_credit).'</td>';
+					print '<td class="nowrap right">'.price(price2num($sous_total_credit - $sous_total_debit)).'</td>';
+					print "<td></td>\n";
+					print '</tr>';
+				}
+
+				// Show first line of a break
+				print '<tr class="trforbreak">';
+				print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
 				print '</tr>';
+
+				$displayed_account = $root_account_description;
+				$sous_total_debit = 0;
+				$sous_total_credit = 0;
 			}
-
-			// Show first line of a break
-			print '<tr class="trforbreak">';
-			print '<td colspan="7" style="font-weight:bold; border-bottom: 1pt solid black;">'.$line->numero_compte.($root_account_description ? ' - '.$root_account_description : '').'</td>';
-			print '</tr>';
-
-			$displayed_account = $root_account_description;
-			$sous_total_debit = 0;
-			$sous_total_credit = 0;
 		}
-
 		// $object->get_compte_racine($line->numero_compte);
 
 		print '<td>'.length_accountg($line->numero_compte).'</td>';
@@ -326,12 +338,15 @@ if ($action != 'export_csv')
 		$sous_total_credit += $line->credit;
 	}
 
-	print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
-	print "<td>&nbsp;</td>\n";
-	print '</tr>';
+	if (!empty($show_subgroup))
+	{
+		print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("SubTotal").':</td><td class="nowrap right">'.price($sous_total_debit).'</td><td class="nowrap right">'.price($sous_total_credit).'</td><td class="nowrap right">'.price(price2num($sous_total_debit - $sous_total_credit)).'</td>';
+		print "<td></td>\n";
+		print '</tr>';
+	}
 
 	print '<tr class="liste_total"><td class="right" colspan="3">'.$langs->trans("AccountBalance").':</td><td class="nowrap right">'.price($total_debit).'</td><td class="nowrap right">'.price($total_credit).'</td><td class="nowrap right">'.price(price2num($total_debit - $total_credit)).'</td>';
-	print "<td>&nbsp;</td>\n";
+	print "<td></td>\n";
 	print '</tr>';
 
 	print "</table>";

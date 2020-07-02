@@ -223,9 +223,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			}
 			print "</table><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

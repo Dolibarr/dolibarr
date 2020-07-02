@@ -61,6 +61,9 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 	}
 }
 
+/**
+ * Class template for classes of numbering product
+ */
 abstract class ModeleProductCode
 {
 	/**
@@ -97,7 +100,6 @@ abstract class ModeleProductCode
 	 */
 	public function getExample($langs)
 	{
-		$langs->load("bills");
 		return $langs->trans("NoExample");
 	}
 
@@ -167,9 +169,7 @@ abstract class ModeleProductCode
 				$liste[$row[0]] = $row[1];
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 		return $liste;
@@ -206,16 +206,14 @@ abstract class ModeleProductCode
 			$s .= yn(!$this->code_null, 1, 2);
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			$s .= '<br>';
-		}
-		elseif ($type == 1)
+		} elseif ($type == 1)
 		{
 			$s .= $langs->trans("RequiredIfService").': ';
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';
 			$s .= yn(!$this->code_null, 1, 2);
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '</strike> '.yn(1, 1, 2).' ('.$langs->trans("ForcedToByAModule", $langs->transnoentities("yes")).')';
 			$s .= '<br>';
-		}
-		elseif ($type == -1)
+		} elseif ($type == -1)
 		{
 			$s .= $langs->trans("Required").': ';
 			if (!empty($conf->global->MAIN_COMPANY_CODE_ALWAYS_REQUIRED) && !empty($this->code_null)) $s .= '<strike>';

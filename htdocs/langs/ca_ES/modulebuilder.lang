@@ -27,7 +27,7 @@ DangerZone=Zona perillosa
 BuildPackage=Construeix el paquet
 BuildPackageDesc=Podeu generar un paquet zip de la vostra aplicació de manera que estigueu a punt per distribuir-lo a qualsevol Dolibarr. També podeu distribuir-lo o vendre-lo al mercat com <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Construeix documentació
-ModuleIsNotActive=Aquest mòdul encara no està activat. Aneu a %s per fer-lo en viu o feu clic aquí:
+ModuleIsNotActive=Aquest mòdul encara no està activat. Aneu a %s per activar-ho o feu clic aquí
 ModuleIsLive=Aquest mòdul ha estat activat. Qualsevol canvi pot trencar la funció actual en viu.
 DescriptionLong=Descripció llarga
 EditorName=Nom de l'editor
@@ -83,8 +83,8 @@ ListOfDictionariesEntries=Llista d'entrades de diccionaris
 ListOfPermissionsDefined=Llista de permisos definits
 SeeExamples=Mira exemples aquí
 EnabledDesc=Condició per tenir activat aquest camp (Exemples: 1 ó $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=És visible el camp? (Exemples: 0=Mai visible, 1=Visible en llistat i en formularis de crear/modificar/visualitzar, 2=Visible només en llistat, 3=Visible només en formularis de crear/modificar/visualitzar (no en llistat), 4=Visible en llistat i només en formularis de modificar/visualitzar (no al crear), 5=Visible en llistat i només en formularis de visualitzar (no al crear ni al modificar). Utilitzar el valor negatiu significa que el camp no es mostra per defecte al llistat, però es pot seleccionar per a la seva visualització). Pot ser una expressió, per exemple: <br> preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br> ($user->rights->holiday->define_holiday ? 1 : 0)
-DisplayOnPdfDesc=Mostra aquest camp en documents PDF compatibles. Podeu gestionar la posició amb el camp "Posició". <br/> Actualment, els models PDF compatibles coneguts són: eratostè 
+VisibleDesc=És visible el camp ? (Exemples: 0=Mai visible, 1=Visible als llistats i als formularis crear/modificar/veure, 2=Visible només als llistats, 3=Visible només als formularis crear/modificar/veure (no als llistats), 4=Visible als llistats i només als formularis modificar/veure (no al de crear), 5=Visible als llistats i només al formulari de veure (però no als formularis de crear i modificar).<br><br>Utilitzant un valor negatiu implicarà que el camp no es mostrarà per defecte als llistats però podrà ser escollit per veure's).<br><br>pot ser una expressió, per exemple:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Mostra aquest camp en documents PDF compatibles. Podeu gestionar la posició amb el camp "Posició". <br/> Actualment, els models PDF compatibles coneguts són: eratosthene (comanda), espadon (enviament), sponge (factures), cyan (propal / pressupost), cornas (comanda del proveïdor) <br/> <br/><strong>Per al document :</strong><br/>0 = no es mostra<br/> 1 = mostra <br/> 2 = només si no està buit <br/> <br/> <strong> Per a les línies de documents: </strong> <br/> 0 = no es veuen les <br/> 1 = mostra en una columna <br/> = 3 = mostra a la columna de descripció de línia després de la descripció <br/> 4 = mostra a la columna de descripció després de la descripció només si no està buida
 DisplayOnPdf=Visualització en PDF
 IsAMeasureDesc=Es pot acumular el valor del camp per obtenir un total en la llista? (Exemples: 1 o 0)
 SearchAllDesc=El camp utilitzat per realitzar una cerca des de l'eina de cerca ràpida? (Exemples: 1 o 0)
@@ -139,3 +139,4 @@ ForeignKey=Clau forània
 TypeOfFieldsHelp=Tipus de camps: <br> varchar(99), double (24,8), real, text, html, datetime, timestamp, integer, integer:ClassName: relativepath/to/classfile.class.php[:1[:filter]] ('1' significa que afegim un botó + després del desplegable per crear el registre, 'filtre' pot ser 'status=1 AND fk_user=__USER_ID AND entity IN (__SHARED_ENTITIES__)' per exemple)
 AsciiToHtmlConverter=Convertidor Ascii a HTML
 AsciiToPdfConverter=Convertidor Ascii a PDF
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

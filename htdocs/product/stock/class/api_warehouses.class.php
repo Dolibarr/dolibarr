@@ -151,8 +151,7 @@ class Warehouses extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve warehouse list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {

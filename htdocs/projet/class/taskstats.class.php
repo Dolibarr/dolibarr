@@ -82,9 +82,7 @@ class TaskStats extends Stats
 						$row[1],
 						$row[0]
 					);
-				}
-				else
-					$other += $row[1];
+				} else $other += $row[1];
 				$i++;
 			}
 			if ($num > $limit)

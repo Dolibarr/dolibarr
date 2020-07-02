@@ -1,0 +1,11 @@
+# Dolibarr language file - Source file is en_US - modulebuilder
+ObjectKey=Clave de objeto
+ModuleBuilderDeschooks=Esta pestaña está dedicada a los ganchos.
+ModuleBuilderDescwidgets=Esta pestaña está dedicada a administrar / crear widgets.
+BuildDocumentation=Crear documentación
+DescriptorFile=Archivo descriptor del módulo
+ApiClassFile=Archivo para la clase API de PHP
+PageForList=Página PHP para la lista de registro
+PathToModulePackage=Ruta del módulo/aplicación zip
+SpaceOrSpecialCharAreNotAllowed=No se permiten espacios ni caracteres especiales.
+FileNotYetGenerated=Archivo aún no generado

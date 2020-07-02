@@ -421,14 +421,11 @@ class Mo extends CommonObject
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}
@@ -582,8 +579,7 @@ class Mo extends CommonObject
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 			$this->db->commit();
 			return 1;
-		}
-		else {
+		} else {
 			setEventMessages($this->error, $this->errors, 'errors');
 			$this->db->rollback();
 			return -1;
@@ -655,8 +651,7 @@ class Mo extends CommonObject
 								$error++;
 								$this->error = "BadValueForquantityToConsume";
 								break;
-							}
-							else {
+							} else {
 								$moline->fk_product = $line->fk_product;
 								$moline->role = 'toconsume';
 								$moline->position = $line->position;
@@ -762,16 +757,12 @@ class Mo extends CommonObject
 			if ($numref != "")
 			{
 				return $numref;
-			}
-			else
-			{
+			} else {
 				$this->error = $obj->error;
 				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
+		} else {
 			print $langs->trans("Error")." ".$langs->trans("Error_MRP_MO_ADDON_NotDefined");
 			return "";
 		}
@@ -816,9 +807,7 @@ class Mo extends CommonObject
 		{
 			$this->fetch_product();
 			$num = $this->getNextNumRef($this->product);
-		}
-		else
-		{
+		} else {
 			$num = $this->ref;
 		}
 		$this->newref = $num;
@@ -899,9 +888,7 @@ class Mo extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -929,7 +916,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MO_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'MRP_MO_UNVALIDATE');
 	}
 
 	/**
@@ -954,7 +941,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MO_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'MRP_MO_CANCEL');
 	}
 
 	/**
@@ -967,7 +954,7 @@ class Mo extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
+		if ($this->status != self::STATUS_PRODUCED && $this->status != self::STATUS_CANCELED)
 		{
 			return 0;
 		}
@@ -979,7 +966,7 @@ class Mo extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MO_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'MRP_MO_REOPEN');
 	}
 
     /**
@@ -1008,7 +995,7 @@ class Mo extends CommonObject
         }
 
         $url = dol_buildpath('/mrp/mo_card.php', 1).'?id='.$this->id;
-        if ($option = 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
+        if ($option == 'production') $url = dol_buildpath('/mrp/mo_production.php', 1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {
@@ -1028,8 +1015,7 @@ class Mo extends CommonObject
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1145,9 +1131,7 @@ class Mo extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -1180,9 +1164,7 @@ class Mo extends CommonObject
 	        $this->error = $this->error;
 	        $this->errors = $this->errors;
 	        return $result;
-	    }
-	    else
-	    {
+	    } else {
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
@@ -1226,10 +1208,10 @@ class Mo extends CommonObject
 	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
+	 * Use public function doScheduledJob($param1, $param2, ...) to get parameters
 	 *
 	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	//public function doScheduledJob($param1, $param2, ...)
 	public function doScheduledJob()
 	{
 		global $conf, $langs;
@@ -1328,9 +1310,7 @@ class Mo extends CommonObject
 			$productstatic->fetch($line->fk_product);
 			$this->tpl['label'] .= $productstatic->getNomUrl(1);
 			//$this->tpl['label'].= ' - '.$productstatic->label;
-		}
-		else
-		{
+		} else {
 			// If origin MRP line is not a product, but another MRP
 			// TODO
 		}
@@ -1513,14 +1493,11 @@ class MoLine extends CommonObjectLine
 			foreach ($filter as $key => $value) {
 				if ($key == 't.rowid') {
 					$sqlwhere[] = $key.'='.$value;
-				}
-				elseif (strpos($key, 'date') !== false) {
+				} elseif (strpos($key, 'date') !== false) {
 					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
-				}
-				elseif ($key == 'customsql') {
+				} elseif ($key == 'customsql') {
 					$sqlwhere[] = $value;
-				}
-				else {
+				} else {
 					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 				}
 			}

@@ -41,9 +41,7 @@ function printDropdownBookmarksList()
     if (!empty($_SERVER["QUERY_STRING"]))
     {
         $url .= (dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '');
-    }
-    else
-    {
+    } else {
         global $sortfield, $sortorder;
         $tmpurl = '';
         // No urlencode, all param $url will be urlencoded later
@@ -60,7 +58,7 @@ function printDropdownBookmarksList()
     }
 
     $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? 'onsubmit="return false"' : '').'>';
+    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' onsubmit="return false"' : '').'>';
     $searchForm .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 
@@ -90,7 +88,7 @@ function printDropdownBookmarksList()
 	    	$i = 0;
 	    	while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql))
 	    	{
-	    		$bookmarkList .= '<a class="dropdown-item bookmark-item" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
+	    		$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 	    		$bookmarkList .= dol_escape_htmltag($obj->title);
 	    		$bookmarkList .= '</a>';
 	    		$i++;
@@ -122,9 +120,7 @@ function printDropdownBookmarksList()
     		}
     		$searchForm .= '</select>';
     	}
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
 

@@ -76,9 +76,7 @@ if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE))
 {
     // Compare version with last install database version (upgrades never occured)
     if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_INSTALL) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_INSTALL));
-}
-else
-{
+} else {
     // Compare version with last upgrade database version
     if (DOL_VERSION != $conf->global->MAIN_VERSION_LAST_UPGRADE) print ' '.img_warning($langs->trans("RunningUpdateProcessMayBeRequired", DOL_VERSION, $conf->global->MAIN_VERSION_LAST_UPGRADE));
 }
@@ -107,14 +105,10 @@ if (function_exists('curl_init'))
 
             // Show version
             print $langs->trans("LastStableVersion").' : <b>'.(($version != '0.0') ? $version : $langs->trans("Unknown")).'</b>';
-        }
-        else
-        {
+        } else {
             print $langs->trans("LastStableVersion").' : <b>'.$langs->trans("UpdateServerOffline").'</b>';
         }
-    }
-    else
-    {
+    } else {
         print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="butAction">'.$langs->trans("Check").'</a>';
     }
 }
@@ -323,7 +317,6 @@ $configfileparameters = array(
 		'?dolibarr_js_CKEDITOR' => 'dolibarr_js_CKEDITOR',
 		'?dolibarr_js_JQUERY' => 'dolibarr_js_JQUERY',
 		'?dolibarr_js_JQUERY_UI' => 'dolibarr_js_JQUERY_UI',
-		'?dolibarr_js_JQUERY_FLOT' => 'dolibarr_js_JQUERY_FLOT',
 		'?dolibarr_font_DOL_DEFAULT_TTF' => 'dolibarr_font_DOL_DEFAULT_TTF',
 		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 		'separator4' => '',
@@ -365,9 +358,7 @@ foreach ($configfileparameters as $key => $value)
 		if (strpos($newkey, 'separator') !== false)
 		{
 			print '<td colspan="3">&nbsp;</td>';
-		}
-		else
-		{
+		} else {
 			// Label
 			print "<td>".$value.'</td>';
 			// Key
@@ -391,8 +382,7 @@ foreach ($configfileparameters as $key => $value)
 					}
 					++$i;
 				}
-			}
-			elseif ($newkey == 'dolibarr_main_instance_unique_id')
+			} elseif ($newkey == 'dolibarr_main_instance_unique_id')
 			{
 			    //print $conf->file->instance_unique_id;
 			    global $dolibarr_main_cookie_cryptkey;
@@ -402,9 +392,7 @@ foreach ($configfileparameters as $key => $value)
 			        print img_warning("EditConfigFileToAddEntry", 'dolibarr_main_instance_unique_id');
 			    }
 			    print ' &nbsp; <span class="opacitymedium">('.$langs->trans("HashForPing").'='.md5('dolibarr'.$valuetoshow).')</span>';
-			}
-			else
-			{
+			} else {
 			    print ${$newkey};
 			}
 			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
@@ -441,9 +429,7 @@ if (empty($conf->multicompany->enabled))
 {
 	// If no multicompany mode, admins can see global and their constantes
 	$sql .= " WHERE entity IN (0,".$conf->entity.")";
-}
-else
-{
+} else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
 	if ($user->entity) $sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 }

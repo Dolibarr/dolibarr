@@ -123,14 +123,10 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
                     $includeconferror = 'ErrorBadValueForDolibarrMainDBType';
                 }
             }
-        }
-        else
-        {
+        } else {
             $includeconferror = 'ErrorBadValueForDolibarrMainDocumentRoot';
         }
-    }
-    else
-    {
+    } else {
         $includeconferror = 'ErrorBadFormatForConfFile';
     }
 }
@@ -209,9 +205,7 @@ if (@file_exists($lockfile))
         print '<a href="'.$dolibarr_main_url_root.'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"]) ? '&username='.urlencode($_POST["login"]) : '').'">';
         print $langs->trans("ClickHereToGoToApp");
         print '</a>';
-    }
-    else
-    {
+    } else {
         print 'If you always reach this page, you must remove install.lock file manually.<br>';
     }
     exit;
@@ -364,9 +358,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
     {
         $jQueryCustomPath = $forcejqueryurl;
         $jQueryUiCustomPath = $forcejqueryurl;
-    }
-    else
-    {
+    } else {
         $jQueryCustomPath = (defined('JS_JQUERY') && constant('JS_JQUERY')) ? JS_JQUERY : false;
         $jQueryUiCustomPath = (defined('JS_JQUERY_UI') && constant('JS_JQUERY_UI')) ? JS_JQUERY_UI : false;
     }
@@ -547,11 +539,9 @@ function detect_dolibarr_main_url_root()
 		$proto = ((!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == 'on') || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) ? 'https' : 'http';
 		if (!empty($_SERVER["HTTP_HOST"])) {
 			$serverport = $_SERVER["HTTP_HOST"];
-		}
-		elseif (!empty($_SERVER["SERVER_NAME"])) {
+		} elseif (!empty($_SERVER["SERVER_NAME"])) {
 			$serverport = $_SERVER["SERVER_NAME"];
-		}
-		else {
+		} else {
 			$serverport = 'localhost';
 		}
 		$dolibarr_main_url_root = $proto."://".$serverport.$_SERVER["SCRIPT_NAME"];

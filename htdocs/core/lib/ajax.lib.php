@@ -20,7 +20,7 @@
 
 /**
  *  \file		htdocs/core/lib/ajax.lib.php
- *  \brief		Page called by Ajax request for produts
+ *  \brief		Page called to enhance interface with Javascript and Ajax features.
  */
 
 
@@ -494,9 +494,7 @@ function ajax_constantonoff($code, $input = array(), $entity = null, $revertonof
 	{
 		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
-	}
-	else
-	{
+	} else {
 		$out = "\n<!-- Ajax code to switch constant ".$code." -->".'
 		<script>
 			$(document).ready(function() {

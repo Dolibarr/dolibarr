@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Os próximos passos devem ser efetuados para ec
 AccountancyAreaDescActionFreq=As seguintes ações são normalmente executadas a cada mês, semana ou dia para grandes empresas...
 
 AccountancyAreaDescJournalSetup=PASSO %s: Crie o verifique o conteúdo do sua lista de diários a partir do menu %s
-AccountancyAreaDescChartModel=PASSO %s: Crie um modelo de gráfico de conta no menu %s
-AccountancyAreaDescChart=PASSO %s: Criar or verificar conteúdo do seu gráfico de conta no menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=PASSO %s: Defina a conta contabilística para cada taxa de IVA. Para tal pode usar a entrada %s do menu.
 AccountancyAreaDescDefault=STEP %s: definir contas contábeis padrão. Para isso, use a entrada do menu %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Linhas vinculadas de faturas
 ExpenseReportLines=Linhas de relatórios de despesas para vincular
 ExpenseReportLinesDone=Linhas vinculadas de relatórios de despesas
 IntoAccount=Vincular linha com a conta contabilística
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Vincular
@@ -168,10 +169,15 @@ DONATION_ACCOUNTINGACCOUNT=Conta contabilística para registar donativos
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought products and imported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Conta contabilística padrão para produtos vendidos (utilizada se não for definida na folha de produto)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Conta contabilística padrão para compra de serviços (usada se não for definida na folha de serviço)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Accounting account by default for the bought services in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought services and imported out of EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Conta contabilística padrão para serviços vendidos (usada se não for definida na folha de serviço)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
@@ -228,11 +234,15 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unkno
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Pagamento não vinculado a nenhum produto / serviço
+OpeningBalance=Opening balance
 ShowOpeningBalance=Show opening balance
 HideOpeningBalance=Hide opening balance
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=Grupo de conta
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+
+Reconcilable=Reconcilable
 
 TotalVente=Total de volume de negócios sem impostos
 TotalMarge=Margem total de vendas
@@ -307,11 +317,13 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
-Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Exportar CSV configurável
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=ID de plano de contas
 
 ## Tools - Init accounting account on product / service
@@ -324,10 +336,14 @@ OptionModeProductSell=Modo de vendas
 OptionModeProductSellIntra=Mode sales exported in EEC
 OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Modo de compras
+OptionModeProductBuyIntra=Mode purchases imported in EEC
+OptionModeProductBuyExport=Mode purchased imported from other countries
 OptionModeProductSellDesc=Mostrar todos os produtos com conta contabilística para as vendas.
 OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
 OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Mostrar todos os produtos com conta contabilística para as compras.
+OptionModeProductBuyIntraDesc=Show all products with accounting account for purchases in EEC.
+OptionModeProductBuyExportDesc=Show all products with accounting account for other foreign purchases.
 CleanFixHistory=Remover o código contábil das linhas que não existem nos gráficos de contas
 CleanHistory=Repor todas as vinculações para o ano selecionado
 PredefinedGroups=Grupos pré-definidos
@@ -338,6 +354,8 @@ AccountRemovedFromGroup=Account removed from group
 SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
 
 ## Dictionary
 Range=Gama da conta contabilística

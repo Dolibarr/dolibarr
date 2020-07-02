@@ -282,7 +282,8 @@ class modEmailCollector extends DolibarrModules
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
-				$descriptionA1 = 'This collector will scan your mailbox to find emails that match some rules and create automatically a ticket (Module Ticket must be enabled) with the email informations. You can use this collector if you provide some support by email, so your ticket request will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from the ticket, you may also see answers of your customers or partners directly on the ticket view.';
+				$descriptionA1 = 'This collector will scan your mailbox to find emails that match some rules and create automatically a ticket (Module Ticket must be enabled) with the email informations. You can use this collector if you provide some support by email, so your ticket request will be automatically generated.';
+				$descriptionA1 .= ' If the collector Collect_Responses is also enabled, when you send an email from the ticket, you may also see answers of your customers or partners directly on the ticket view.';
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
 				$sqlforexampleA1 .= " VALUES (".$conf->entity.", 'Collect_Ticket_Requets', 'Example to collect ticket requests', '".$this->db->escape($descriptionA1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
 				$sqlforexampleA2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
@@ -319,7 +320,9 @@ class modEmailCollector extends DolibarrModules
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
-				$descriptionC1 = "This collector will scan your mailbox to find emails that match some rules and create automatically a lead (Module Project must be enabled) with the email informations. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated. If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>Note: With this initial example, the title of the lead is generated including the email. If the thirdparty can't be found in database (new customer), the lead will be attached to the thirdparty with ID 1.";
+				$descriptionC1 = "This collector will scan your mailbox to find emails that match some rules and create automatically a lead (Module Project must be enabled) with the email informations. You can use this collector if you want to follow your lead using the module Project (1 lead = 1 project), so your leads will be automatically generated.";
+				$descriptionC1 .= " If the collector Collect_Responses is also enabled, when you send an email from your leads, proposals or any other object, you may also see answers of your customers or partners directly on the application.<br>";
+				$descriptionC1 .= "Note: With this initial example, the title of the lead is generated including the email. If the thirdparty can't be found in database (new customer), the lead will be attached to the thirdparty with ID 1.";
 				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
 				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Leads', 'Example to collect leads', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
 				$sqlforexampleC2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";

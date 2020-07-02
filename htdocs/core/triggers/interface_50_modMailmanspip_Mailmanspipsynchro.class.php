@@ -71,15 +71,12 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
     			$this->error = $object->context['linkto']->error;
     			$this->errors = $object->context['linkto']->errors;
     			$return = -1;
-    		}
-			else
-			{
+    		} else {
 				$return = 1;
 			}
 
         	return $return;
-        }
-        elseif ($action == 'CATEGORY_UNLINK')
+        } elseif ($action == 'CATEGORY_UNLINK')
         {
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -89,9 +86,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
         		$this->error = $object->context['unlinkoff']->error;
         		$this->errors = $object->context['unlinkoff']->errors;
         		$return = -1;
-        	}
-        	else
-        	{
+        	} else {
         		$return = 1;
         	}
 
@@ -109,15 +104,12 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                 $this->errors = $object->errors;
                 if (!empty($object->error)) $this->errors[] = $object->error;
                 $return = -1;
-            }
-            else
-            {
+            } else {
                 $return = 1;
             }
 
             return $return;
-        }
-        elseif ($action == 'MEMBER_MODIFY')
+        } elseif ($action == 'MEMBER_MODIFY')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -132,9 +124,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                         $this->errors = $object->oldcopy->errors;
                         if (!empty($object->oldcopy->error)) $this->errors[] = $object->oldcopy->error;
                         $return = -1;
-                    }
-                    else
-                    {
+                    } else {
                         $return = 1;
                     }
                 }
@@ -144,16 +134,13 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
                     $this->errors = $object->errors;
                     if (!empty($object->error)) $this->errors[] = $object->error;
                     $return = -1;
-                }
-                else
-                {
+                } else {
                     $return = 1;
                 }
             }
 
 			return $return;
-        }
-        elseif ($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE')
+        } elseif ($action == 'MEMBER_RESILIATE' || $action == 'MEMBER_DELETE')
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -164,9 +151,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 				$this->errors = $object->errors;
 				if (!empty($object->error)) $this->errors[] = $object->error;
 				$return = -1;
-			}
-			else
-			{
+			} else {
 				$return = 1;
 			}
 

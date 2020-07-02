@@ -45,8 +45,7 @@ if (!$user->rights->accounting->bind->write)
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else
-{
+else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 }
@@ -192,8 +191,7 @@ if ($action == 'validatehistory') {
 	if ($error)
 	{
 		$db->rollback();
-	}
-	else {
+	} else {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
@@ -248,6 +246,7 @@ $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ff
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 $sql .= "  AND ff.fk_statut > 0";
+$sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
@@ -262,15 +261,13 @@ if ($resql) {
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
 		for ($i = 2; $i <= 12; $i++) {
 			print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -318,6 +315,7 @@ $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = ff
 $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
 $sql .= "  AND ff.fk_statut > 0";
+$sql .= "  AND ffd.product_type <= 2";
 $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
@@ -332,15 +330,13 @@ if ($resql) {
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/supplier/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
     	for ($i = 2; $i <= 12; $i++) {
             print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -388,6 +384,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     $sql .= " WHERE ff.datef >= '".$db->idate($search_date_start)."'";
     $sql .= "  AND ff.datef <= '".$db->idate($search_date_end)."'";
     $sql .= "  AND ff.fk_statut > 0";
+	$sql .= "  AND ffd.product_type <= 2";
     $sql .= " AND ff.entity IN (".getEntity('facture_fourn', 0).")"; // We don't share object for accountancy
 
     dol_syslog('htdocs/accountancy/supplier/index.php');

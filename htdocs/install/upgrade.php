@@ -120,8 +120,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             $dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
             $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
             $dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this as it is used to know the password was initially crypted
-        }
-        else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
+        } else $dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
     }
 
     // $conf is already instancied inside inc.php
@@ -150,9 +149,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection").": $dolibarr_main_db_host ".$langs->transnoentities("OK"));
         $ok = 1;
-    }
-    else
-    {
+    } else {
         print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>\n";
         dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
         $ok = 0;
@@ -166,9 +163,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>\n";
             dolibarr_install_syslog("upgrade: Database connection successful: ".$dolibarr_main_db_name);
             $ok = 1;
-        }
-        else
-        {
+        } else {
             print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>\n";
             dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase", $dolibarr_main_db_name));
             $ok = 0;
@@ -292,9 +287,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             				$i++;
             			}
             			$db->free($resql);
-            		}
-            		else
-            		{
+            		} else {
             			if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
             			{
             				print '<tr><td colspan="2"><span class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
@@ -334,9 +327,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             	if (preg_match('/\.sql$/i', $file)) $filesindir[] = $file;
             }
             sort($filesindir);
-        }
-        else
-		{
+        } else {
             print '<div class="error">'.$langs->trans("ErrorCanNotReadDir", $dir).'</div>';
         }
 
@@ -346,8 +337,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
             if (preg_match('/'.$from.'/i', $file))
             {
                 $filelist[] = $file;
-            }
-            elseif (preg_match('/'.$to.'/i', $file))	// First test may be false if we migrate from x.y.* to x.y.*
+            } elseif (preg_match('/'.$to.'/i', $file))	// First test may be false if we migrate from x.y.* to x.y.*
             {
                 $filelist[] = $file;
             }
@@ -356,9 +346,7 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
         if (count($filelist) == 0)
         {
         	print '<div class="error">'.$langs->trans("ErrorNoMigrationFilesFoundForParameters").'</div>';
-        }
-		else
-		{
+        } else {
 			$listoffileprocessed = array(); // Protection to avoid to process twice the same file
 
 	        // Loop on each migrate files

@@ -118,8 +118,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
-//$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
-//$result = restrictedArea($user, 'mrp', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
 $objectlist = new MouvementStock($db);
 
@@ -790,8 +790,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			print '<td class="center nowraponall">';
 			if ($productlot->id > 0)
 				print $productlot->getNomUrl(1);
-			else
-				print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
+			else print $productlot->batch; // the id may not be defined if movement was entered when lot was not saved or if lot was removed after movement.
 			print '</td>';
 		}
 		if (!empty($arrayfields['pl.eatby']['checked'])) {

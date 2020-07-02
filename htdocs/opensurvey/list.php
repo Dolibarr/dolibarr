@@ -190,9 +190,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
     $sql .= $db->plimit($limit + 1, $offset);
 
     $resql = $db->query($sql);
@@ -357,8 +355,7 @@ while ($i < min($num, $limit))
 	{
 		$obj2 = $db->fetch_object($resql2);
 		$nbuser = $obj2->nb;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	$opensurvey_static->id = $obj->rowid;
 	$opensurvey_static->ref = $obj->rowid;

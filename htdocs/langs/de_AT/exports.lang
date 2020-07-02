@@ -1,3 +1,2 @@
 # Dolibarr language file - Source file is en_US - exports
-SQLUsedForExport=SQL Request used to extract data
 FieldsInTargetDatabase=Zielfelder in der Systemdatenbank (* erforderlich)

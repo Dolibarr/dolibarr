@@ -509,8 +509,7 @@ while ($i < min($num, $limit)) {
             else print $object->showOutputField($val, $key, $obj->$key, '');
             print '</td>';
             if (!$i) $totalarray['nbfield']++;
-            if (!empty($val['isameasure']))
-            {
+            if (!empty($val['isameasure'])) {
                 if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
                 $totalarray['val']['t.'.$key] += $obj->$key;
             }
@@ -519,7 +518,7 @@ while ($i < min($num, $limit)) {
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
-    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
     $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     // Action column

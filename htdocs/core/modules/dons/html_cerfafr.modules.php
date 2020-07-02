@@ -103,9 +103,7 @@ class html_cerfafr extends ModeleDon
 			{
 				$dir = $conf->don->dir_output;
 				$file = $dir."/SPECIMEN.html";
-			}
-			else
-			{
+			} else {
 				$donref = dol_sanitizeFileName($don->ref);
 				$dir = $conf->don->dir_output."/".$donref;
 				$file = $dir."/".$donref.".html";
@@ -130,20 +128,15 @@ class html_cerfafr extends ModeleDon
 				{
 					$formclass->load_cache_types_paiements();
 					$paymentmode = $formclass->cache_types_paiements[$don->modepaiementid]['label'];
-				}
-				else $paymentmode = '';
+				} else $paymentmode = '';
 
 				if ($don->modepaymentcode == 'CHQ') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
-				}
-				elseif ($don->modepaymentcode == 'LIQ') {
+				} elseif ($don->modepaymentcode == 'LIQ') {
 					$ModePaiement = '<td width="25%"><input type="checkbox" checked="checked"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
-				}
-				elseif ($don->modepaymentcode == 'VIR' || $don->modepaymentcode == 'PRE' || $don->modepaymentcode == 'CB') {
+				} elseif ($don->modepaymentcode == 'VIR' || $don->modepaymentcode == 'PRE' || $don->modepaymentcode == 'CB') {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
-				}
-				else
-				{
+				} else {
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
 
@@ -216,9 +209,7 @@ class html_cerfafr extends ModeleDon
 					if ($conf->global->DONATION_ART200 >= 1)
 					{
 						$art200 = '<input type="checkbox" disabled="true" checked="checked" >200 du CGI';
-					}
-					else
-					{
+					} else {
 						$art200 = '<input type="checkbox" disabled="true">200 du CGI';
 					}
 				}
@@ -229,9 +220,7 @@ class html_cerfafr extends ModeleDon
 					if ($conf->global->DONATION_ART238 >= 1)
 					{
 						$art238 = '<input type="checkbox" disabled="true" checked="checked" >238 bis du CGI';
-					}
-					else
-					{
+					} else {
 						$art238 = '<input type="checkbox" disabled="true">238 bis du CGI';
 					}
 				}
@@ -242,9 +231,7 @@ class html_cerfafr extends ModeleDon
 					if ($conf->global->DONATION_ART978 >= 1)
 					{
 						$art978 = '<input type="checkbox" disabled="true" checked="checked" >978 du CGI';
-					}
-					else
-					{
+					} else {
 						$art978 = '<input type="checkbox" disabled="true">978 du CGI';
 					}
 				}
@@ -261,15 +248,11 @@ class html_cerfafr extends ModeleDon
 				$this->result = array('fullpath'=>$file);
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "DON_OUTPUTDIR");
 			return 0;
 		}
@@ -315,12 +298,10 @@ class html_cerfafr extends ModeleDon
 			if ($dix[$i] == 0) {
 				$secon[$i] = '';
 				$prim[$i] = $chif[$unite[$i]];
-			}
-			elseif ($dix[$i] == 1) {
+			} elseif ($dix[$i] == 1) {
 				$secon[$i] = '';
 				$prim[$i] = $chif[($unite[$i] + 10)];
-			}
-			elseif ($dix[$i] == 2) {
+			} elseif ($dix[$i] == 2) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'vingt et';
                     $prim[$i] = $chif[$unite[$i]];
@@ -328,8 +309,7 @@ class html_cerfafr extends ModeleDon
                     $secon[$i] = 'vingt';
                     $prim[$i] = $chif[$unite[$i]];
 				}
-			}
-			elseif ($dix[$i] == 3) {
+			} elseif ($dix[$i] == 3) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'trente et';
                     $prim[$i] = $chif[$unite[$i]];
@@ -337,63 +317,51 @@ class html_cerfafr extends ModeleDon
                     $secon[$i] = 'trente';
                     $prim[$i] = $chif[$unite[$i]];
 				}
-			}
-			elseif ($dix[$i] == 4) {
+			} elseif ($dix[$i] == 4) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'quarante et';
                     $prim[$i] = $chif[$unite[$i]];
-				}
-				else {
+				} else {
                     $secon[$i] = 'quarante';
                     $prim[$i] = $chif[$unite[$i]];
 				}
-			}
-			elseif ($dix[$i] == 5) {
+			} elseif ($dix[$i] == 5) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'cinquante et';
                     $prim[$i] = $chif[$unite[$i]];
-				}
-				else {
+				} else {
                     $secon[$i] = 'cinquante';
                     $prim[$i] = $chif[$unite[$i]];
 				}
-			}
-			elseif ($dix[$i] == 6) {
+			} elseif ($dix[$i] == 6) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'soixante et';
                     $prim[$i] = $chif[$unite[$i]];
-				}
-				else {
+				} else {
                     $secon[$i] = 'soixante';
                     $prim[$i] = $chif[$unite[$i]];
 				}
-			}
-			elseif ($dix[$i] == 7) {
+			} elseif ($dix[$i] == 7) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'soixante et';
                     $prim[$i] = $chif[$unite[$i] + 10];
-				}
-				else {
+				} else {
                     $secon[$i] = 'soixante';
                     $prim[$i] = $chif[$unite[$i] + 10];
 				}
-			}
-			elseif ($dix[$i] == 8) {
+			} elseif ($dix[$i] == 8) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'quatre-vingts et';
                     $prim[$i] = $chif[$unite[$i]];
-				}
-				else {
+				} else {
                     $secon[$i] = 'quatre-vingt';
                     $prim[$i] = $chif[$unite[$i]];
 				}
-			}
-			elseif ($dix[$i] == 9) {
+			} elseif ($dix[$i] == 9) {
 				if ($unite[$i] == 1) {
                     $secon[$i] = 'quatre-vingts et';
                     $prim[$i] = $chif[$unite[$i] + 10];
-				}
-				else {
+				} else {
                     $secon[$i] = 'quatre-vingts';
                     $prim[$i] = $chif[$unite[$i] + 10];
 				}
@@ -412,15 +380,13 @@ class html_cerfafr extends ModeleDon
 			$somme = $trio[3].'  '.$secon[3].' '.$prim[3].' million ';
 		elseif (($cent[3] != 0 && $cent[3] != '') || ($dix[3] != 0 && $dix[3] != '') || ($unite[3] != 0 && $unite[3] != ''))
 			$somme = $trio[3].' '.$secon[3].' '.$prim[3].' millions ';
-		else
-			$somme = $trio[3].' '.$secon[3].' '.$prim[3];
+		else $somme = $trio[3].' '.$secon[3].' '.$prim[3];
 
 		if (($cent[2] == 0 || $cent[2] == '') && ($dix[2] == 0 || $dix[2] == '') && ($unite[2] == 1))
 			$somme = $somme.' mille ';
 		elseif (($cent[2] != 0 && $cent[2] != '') || ($dix[2] != 0 && $dix[2] != '') || ($unite[2] != 0 && $unite[2] != ''))
 			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2].' milles ';
-		else
-			$somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2];
+		else $somme = $somme.$trio[2].' '.$secon[2].' '.$prim[2];
 
 		$somme = $somme.$trio[1].' '.$secon[1].' '.$prim[1];
 
@@ -428,7 +394,6 @@ class html_cerfafr extends ModeleDon
 
 		if (($cent_c == '0' || $cent_c == '') && ($dix_c == '0' || $dix_c == ''))
 			return $somme.' et z&eacute;ro '.$dev2;
-		else
-			return $somme.$trio_c.' '.$secon_c.' '.$dev2;
+		else return $somme.$trio_c.' '.$secon_c.' '.$dev2;
 	}
 }

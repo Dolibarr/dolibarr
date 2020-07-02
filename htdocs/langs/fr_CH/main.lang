@@ -19,3 +19,4 @@ FormatDateHourShort=%d/%m/%Y %I:%M %p
 FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y, %I:%M %p
 FormatDateHourText=%d %B %Y, %I:%M %p
+EmptySearchString=Enter non empty search criterias

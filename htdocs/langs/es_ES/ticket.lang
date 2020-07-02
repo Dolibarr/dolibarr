@@ -130,10 +130,14 @@ TicketNumberingModules=Módulo de numeración de tickets
 TicketNotifyTiersAtCreation=Notificar a los terceros en la creación
 TicketGroup=Grupo
 TicketsDisableCustomerEmail=Desactivar siempre los e-mails al crear tickets desde la interfaz pública
+TicketsPublicNotificationNewMessage=Enviar e-mail(s) cuando se añade un nuevo mensaje
+TicketsPublicNotificationNewMessageHelp=Enviar e-mail(s) cuando se añade un nuevo mensaje desde la interfaz pública (al usuario asignado o al e-mail de notificaciones (actualización) y o el e-mail de notificaciones a)
+TicketPublicNotificationNewMessageDefaultEmail=Notificaciones por e-mail a (actualización)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Envíe notificaciones de mensajes nuevos por e-mail a esta dirección si el ticket no tiene un usuario asignado o si el usuario no tiene un e-mail.
 #
 # Index & list page
 #
-TicketsIndex=Ticket - Inicio
+TicketsIndex=Área de tickets
 TicketList=Listado de tickets
 TicketAssignedToMeInfos=Esta página muestra el listado de tickets que están asignados al usuario actual
 NoTicketsFound=Ningún ticket encontrado
@@ -254,7 +258,7 @@ TicketPublicDesc=Puede crear un ticket de soporte o comprobar un ID existente.
 YourTicketSuccessfullySaved=¡Ticket guardado con éxito!
 MesgInfosPublicTicketCreatedWithTrackId=Se ha creado un nuevo ticket con ID %s y Ref %s.
 PleaseRememberThisId=Por favor, mantenga el número de seguimiento ya que podríamos solicitarlo más adelante.
-TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
+TicketNewEmailSubject=Confirmación de creación de ticket - Ref. %s (ID de ticket público %s)
 TicketNewEmailSubjectCustomer=Nuevo ticket de soporte
 TicketNewEmailBody=Este es un e-mail automático para confirmar que ha registrado un nuevo ticket.
 TicketNewEmailBodyCustomer=Este es un e-mail automático para confirmar que se acaba de crear un nuevo ticket en su cuenta.
@@ -273,7 +277,7 @@ Subject=Asunto
 ViewTicket=Ver ticket
 ViewMyTicketList=Ver mi lista de tickets
 ErrorEmailMustExistToCreateTicket=Error: dirección de e-mail no encontrada en nuestra base de datos
-TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
+TicketNewEmailSubjectAdmin=Nuevo ticket creado - Ref. %s (ID de ticket público %s)
 TicketNewEmailBodyAdmin=<p> El ticket acaba de crearse con ID # %s, ver información: </p>
 SeeThisTicketIntomanagementInterface=Ver Ticket en la interfaz de administración
 TicketPublicInterfaceForbidden=La interfaz pública para los tickets no estaba habilitada.

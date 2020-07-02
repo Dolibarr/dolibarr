@@ -110,9 +110,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 				$endyear = GETPOST($param_year, 'int');
 				$shownb = GETPOST($param_shownb, 'alpha');
 				$showtot = GETPOST($param_showtot, 'alpha');
-			}
-			else
-			{
+			} else {
 				$tmparray = json_decode($_COOKIE['DOLUSERCOOKIE_box_'.$this->boxcode], true);
 				$endyear = $tmparray['year'];
 				$shownb = $tmparray['shownb'];
@@ -151,9 +149,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 						if ($startmonth != 1)
 						{
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
-						}
-						else
-						{
+						} else {
 							$legend[] = $i;
 						}
 						$i++;
@@ -195,9 +191,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
 						if ($startmonth != 1)
 						{
 							$legend[] = sprintf("%d/%d", $i - 2001, $i - 2000);
-						}
-						else
-						{
+						} else {
 							$legend[] = $i;
 						}
 						$i++;
@@ -269,9 +263,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
                     'td' => 'class="nohover center"',
                     'textnoformat'=>$stringtoshow,
                 );
-			}
-			else
-			{
+			} else {
 				$this->info_box_contents[0][0] = array(
                     'tr'=>'class="oddeven nohover"',
                     'td' => 'class="nohover left"',
@@ -279,8 +271,7 @@ class box_graph_orders_supplier_permonth extends ModeleBoxes
                     'text' => $mesg,
                 );
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

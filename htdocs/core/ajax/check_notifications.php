@@ -60,9 +60,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             dol_syslog("We ask to check browser notification on a too large period. We fix this with current date.");
             $starttime = $time;
         }
-    }
-    else
-    {
+    } else {
         $starttime = $time;
     }
 
@@ -109,9 +107,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
             $eventfound[] = $event;
         }
-    }
-    else
-    {
+    } else {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
     }
 }

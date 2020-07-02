@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target (Example: '' or '_top')
  * @param 	int		$type_user     	0=Menu for backoffice, 1=Menu for front office
- * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+ * @param  	array	$tabMenu        If array with menu entries already loaded, we put this array here (in most cases, it's empty). For eldy menu, it contains menu entries loaded from database.
  * @param	Menu	$menu			Object Menu to return back list of menu entries
  * @param	int		$noout			1=Disable output (Initialise &$menu only).
  * @param	string	$mode			'top', 'topnb', 'left', 'jmobile'
@@ -227,19 +227,21 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$tmpentry = array(
 	    'enabled'=>(!empty($conf->propal->enabled) ||
 	        !empty($conf->commande->enabled) ||
-	        !empty($conf->supplier_order->enabled) ||
-	        !empty($conf->supplier_proposal->enabled) ||
-	        !empty($conf->contrat->enabled) ||
+	    	!empty($conf->fournisseur->enabled) ||
+	    	!empty($conf->supplier_proposal->enabled) ||
+	    	!empty($conf->supplier_order->enabled) ||
+	    	!empty($conf->contrat->enabled) ||
 	        !empty($conf->ficheinter->enabled)
 	        ) ? 1 : 0,
 		'perms'=>(!empty($user->rights->propal->lire) ||
 				  !empty($user->rights->commande->lire) ||
-				  !empty($user->rights->supplier_order->lire) ||
+				  !empty($user->rights->fournisseur->lire) ||
 				  !empty($user->rights->supplier_proposal->lire) ||
+				  !empty($user->rights->supplier_order->lire) ||
 				  !empty($user->rights->contrat->lire) ||
 				  !empty($user->rights->ficheinter->lire)
 			),
-	    'module'=>'propal|commande|supplier_order|supplier_proposal|contrat|ficheinter'
+	    'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
 
 	$onlysupplierorder = !empty($user->rights->fournisseur->commande->lire) &&
@@ -306,8 +308,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Bank
 	$tmpentry = array(
 	    'enabled'=>(!empty($conf->banque->enabled) || !empty($conf->prelevement->enabled)),
-	    'perms'=>(!empty($user->rights->banque->lire) || !empty($user->rights->prelevement->lire)),
-	    'module'=>'banque|prelevement'
+		'perms'=>(!empty($user->rights->banque->lire) || !empty($user->rights->prelevement->lire) || !empty($user->rights->paymentbybanktransfer->read)),
+	    'module'=>'banque|prelevement|paymentbybanktransfer'
 	);
 	$menu_arr[] = array(
 		'name' => 'Bank',
@@ -437,9 +439,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 				{
 					$mtitle .= $langs->trans($item);
 				}
-			}
-			else
-			{
+			} else {
 				$mtitle = $langs->trans($smenu->title);
 			}
 			// Add item
@@ -454,6 +454,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$num = count($newTabMenu);
 	for ($i = 0; $i < $num; $i++)
 	{
+		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
 		$idsel = (empty($newTabMenu[$i]['mainmenu']) ? 'none' : $newTabMenu[$i]['mainmenu']);
 
 		$showmode = isVisibleToUserType($type_user, $newTabMenu[$i], $listofmodulesforexternal);
@@ -481,8 +482,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			if (!empty($_SESSION['idmenu']) && $newTabMenu[$i]['rowid'] == $_SESSION['idmenu']) $classname = 'class="tmenusel"';
 			elseif (!empty($_SESSION["mainmenu"]) && $newTabMenu[$i]['mainmenu'] == $_SESSION["mainmenu"]) $classname = 'class="tmenusel"';
 			else $classname = 'class="tmenu"';
-		}
-		elseif ($showmode == 2) $classname = 'class="tmenu"';
+		} elseif ($showmode == 2) $classname = 'class="tmenu"';
 
 		$menu->add($shorturl, $newTabMenu[$i]['titre'], 0, $showmode, ($newTabMenu[$i]['target'] ? $newTabMenu[$i]['target'] : $atarget), ($newTabMenu[$i]['mainmenu'] ? $newTabMenu[$i]['mainmenu'] : $newTabMenu[$i]['rowid']), ($newTabMenu[$i]['leftmenu'] ? $newTabMenu[$i]['leftmenu'] : ''), $newTabMenu[$i]['position'], $id, $idsel, $classname);
 	}
@@ -510,9 +510,8 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		{
 			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_mini);
 		}*/
-		else
-		{
-			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo_squarred_alpha.png';
+		else {
+			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_512x512_white.png';
 			$logoContainerAdditionalClass = '';
 		}
 		$title = $langs->trans("GoIntoSetupToChangeLogo");
@@ -1010,7 +1009,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			if (!empty($conf->facture->enabled))
 			{
 				$langs->load("bills");
-				$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills", $langs->trans("BillsCustomers"), 0, $user->rights->facture->lire, '', $mainmenu, 'customers_bills');
+				$newmenu->add("/compta/facture/index.php?leftmenu=customers_bills", $langs->trans("BillsCustomers"), 0, $user->rights->facture->lire, '', $mainmenu, 'customers_bills');
 				$newmenu->add("/compta/facture/card.php?action=create", $langs->trans("NewBill"), 1, $user->rights->facture->creer);
 				$newmenu->add("/compta/facture/list.php?leftmenu=customers_bills", $langs->trans("List"), 1, $user->rights->facture->lire, '', $mainmenu, 'customers_bills_list');
 
@@ -1038,7 +1037,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			if (!empty($conf->societe->enabled) && !empty($conf->supplier_invoice->enabled))
 			{
 				$langs->load("bills");
-				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"), 0, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills');
+				$newmenu->add("/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"), 0, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills');
 				$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&amp;action=create", $langs->trans("NewBill"), 1, $user->rights->fournisseur->facture->creer, '', $mainmenu, 'suppliers_bills_create');
 				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("List"), 1, $user->rights->fournisseur->facture->lire, '', $mainmenu, 'suppliers_bills_list');
 
@@ -1306,14 +1305,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 								}
 								$i++;
 							}
-						}
-						else
-						{
+						} else {
 							// Should not happend. Entries are added
 							$newmenu->add('', $langs->trans("NoJournalDefined"), 2, $user->rights->accounting->comptarapport->lire);
 						}
-					}
-					else dol_print_error($db);
+					} else dol_print_error($db);
 					$db->free($resql);
 				}
 
@@ -1431,7 +1427,10 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                     $newmenu->add("/compta/stats/cabyuser.php?leftmenu=report", $langs->trans("ByUsers"), 2, $user->rights->compta->resultat->lire);
                     $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=report", $langs->trans("ByProductsAndServices"), 2, $user->rights->compta->resultat->lire);
                     $newmenu->add("/compta/stats/byratecountry.php?leftmenu=report", $langs->trans("ByVatRate"), 2, $user->rights->compta->resultat->lire);
-
+					//Achats
+					$newmenu->add("/compta/stats/supplier_turnover.php?leftmenu=accountancy_report", $langs->trans("ReportPurchaseTurnover"), 1, $user->rights->compta->resultat->lire);
+					$newmenu->add("/compta/stats/supplier_turnover_by_thirdparty.php?leftmenu=accountancy_report", $langs->trans("ByCompanies"), 2, $user->rights->compta->resultat->lire);
+					$newmenu->add("/compta/stats/supplier_turnover_by_prodserv.php?leftmenu=accountancy_report", $langs->trans("ByProductsAndServices"), 2, $user->rights->compta->resultat->lire);
                     // Journaux
                     $newmenu->add("/compta/journal/sellsjournal.php?leftmenu=report", $langs->trans("SellsJournal"), 1, $user->rights->compta->resultat->lire, '', '', '', 50);
                     $newmenu->add("/compta/journal/purchasesjournal.php?leftmenu=report", $langs->trans("PurchasesJournal"), 1, $user->rights->compta->resultat->lire, '', '', '', 51);
@@ -1462,7 +1461,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 			// Load translation files required by the page
 			$langs->loadLangs(array("withdrawals", "banks", "bills", "categories"));
 
-			// Bank-Caisse
+			// Bank-Cash account
 			if (!empty($conf->banque->enabled))
 			{
 				$newmenu->add("/compta/bank/list.php?leftmenu=bank&amp;mainmenu=bank", $langs->trans("MenuBankCash"), 0, $user->rights->banque->lire, '', $mainmenu, 'bank');
@@ -1482,26 +1481,37 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				$newmenu->add("/compta/bank/categ.php", $langs->trans("RubriquesTransactions"), 1, $user->rights->categorie->creer, '', $mainmenu, 'tags');
 			}
 
-			// Prelevements
+			// Direct debit order
 			if (!empty($conf->prelevement->enabled))
 			{
 				$newmenu->add("/compta/prelevement/index.php?leftmenu=withdraw&amp;mainmenu=bank", $langs->trans("StandingOrders"), 0, $user->rights->prelevement->bons->lire, '', $mainmenu, 'withdraw');
 
 				if ($usemenuhider || empty($leftmenu) || $leftmenu == "withdraw") {
-                    //$newmenu->add("/compta/prelevement/demandes.php?status=0&amp;mainmenu=bank",$langs->trans("StandingOrderToProcess"),1,$user->rights->prelevement->bons->lire);
-
 				    $newmenu->add("/compta/prelevement/create.php?mainmenu=bank", $langs->trans("NewStandingOrder"), 1, $user->rights->prelevement->bons->creer);
 
 				    $newmenu->add("/compta/prelevement/bons.php?mainmenu=bank", $langs->trans("WithdrawalsReceipts"), 1, $user->rights->prelevement->bons->lire);
 				    $newmenu->add("/compta/prelevement/list.php?mainmenu=bank", $langs->trans("WithdrawalsLines"), 1, $user->rights->prelevement->bons->lire);
 				    $newmenu->add("/compta/prelevement/rejets.php?mainmenu=bank", $langs->trans("Rejects"), 1, $user->rights->prelevement->bons->lire);
 				    $newmenu->add("/compta/prelevement/stats.php?mainmenu=bank", $langs->trans("Statistics"), 1, $user->rights->prelevement->bons->lire);
-
-                    //$newmenu->add("/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
                 }
 			}
 
-			// Gestion cheques
+			// Bank transfer order
+			if (!empty($conf->paymentbybanktransfer->enabled))
+			{
+				$newmenu->add("/compta/paymentbybanktransfer/index.php?leftmenu=banktransfer&amp;mainmenu=bank", $langs->trans("PaymentByBankTransfer"), 0, $user->rights->paymentbybanktransfer->read, '', $mainmenu, 'banktransfer');
+
+				if ($usemenuhider || empty($leftmenu) || $leftmenu == "banktransfer") {
+					$newmenu->add("/compta/prelevement/create.php?type=bank-transfer&mainmenu=bank", $langs->trans("NewPaymentByBankTransfer"), 1, $user->rights->paymentbybanktransfer->create);
+
+					$newmenu->add("/compta/prelevement/bons.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferReceipts"), 1, $user->rights->paymentbybanktransfer->read);
+					$newmenu->add("/compta/prelevement/list.php?type=bank-transfer&mainmenu=bank", $langs->trans("PaymentByBankTransferLines"), 1, $user->rights->paymentbybanktransfer->read);
+					$newmenu->add("/compta/prelevement/rejets.php?type=bank-transfer&mainmenu=bank", $langs->trans("Rejects"), 1, $user->rights->paymentbybanktransfer->read);
+					$newmenu->add("/compta/prelevement/stats.php?type=bank-transfer&mainmenu=bank", $langs->trans("Statistics"), 1, $user->rights->paymentbybanktransfer->read);
+				}
+			}
+
+			// Management of checks
 			if (empty($conf->global->BANK_DISABLE_CHECK_DEPOSIT) && !empty($conf->banque->enabled) && (!empty($conf->facture->enabled) || !empty($conf->global->MAIN_MENU_CHEQUE_DEPOSIT_ON)))
 			{
 				$newmenu->add("/compta/paiement/cheque/index.php?leftmenu=checks&amp;mainmenu=bank", $langs->trans("MenuChequeDeposits"), 0, $user->rights->banque->cheque, '', $mainmenu, 'checks');
@@ -1590,6 +1600,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
                 $newmenu->add("/product/stock/massstockmove.php", $langs->trans("MassStockTransferShort"), 1, $user->rights->stock->mouvement->creer);
                 if ($conf->supplier_order->enabled) $newmenu->add("/product/stock/replenish.php", $langs->trans("Replenishment"), 1, $user->rights->stock->mouvement->creer && $user->rights->fournisseur->lire);
+                $newmenu->add("/product/stock/stockatdate.php", $langs->trans("StockAtDate"), 1, $user->rights->produit->lire && $user->rights->stock->lire && $conf->global->MAIN_FEATURES_LEVEL >= 2);
 
                 // Categories for warehouses
                 if (!empty($conf->categorie->enabled))
@@ -1609,9 +1620,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
 						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
 						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
-					}
-					else
-					{
+					} else {
 						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock');
 						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
 						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);
@@ -1710,14 +1719,12 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($conf->global->PROJECT_USE_OPPORTUNITIES == 0)
 				{
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : '').'&search_status=99', $langs->trans("List"), 1, $showmode, '', 'project', 'list');
-				}
-				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1)
+				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 1)
 				{
 					$newmenu->add("/projet/list.php?leftmenu=projets".($search_project_user ? '&search_project_user='.$search_project_user : ''), $langs->trans("List"), 1, $showmode, '', 'project', 'list');
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99&contextpage=lead', $langs->trans("ListOpenLeads"), 2, $showmode);
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_opp_status=notopenedopp&search_status=99&contextpage=project', $langs->trans("ListOpenProjects"), 2, $showmode);
-				}
-				elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
+				} elseif ($conf->global->PROJECT_USE_OPPORTUNITIES == 2) {	// 2 = leads only
 					$newmenu->add('/projet/list.php?mainmenu=project&amp;leftmenu=list&search_usage_opportunity=1&search_status=99', $langs->trans("List"), 2, $showmode);
 				}
 
@@ -1971,9 +1978,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 				if ($altok % 2 == 0)
 				{
 					print '<div class="blockvmenu blockvmenuimpair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
-				}
-				else
-				{
+				} else {
 					print '<div class="blockvmenu blockvmenupair'.$invert.($lastopened ? ' blockvmenulast' : '').($altok == 1 ? ' blockvmenufirst' : '').'">'."\n";
 				}
 			}
@@ -2031,14 +2036,11 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					else print '</span>';
 					print '</div>'."\n";
 					$lastlevel0 = 'enabled';
-				}
-				elseif ($showmenu)                 // Not enabled but visible (so greyed)
+				} elseif ($showmenu)                 // Not enabled but visible (so greyed)
 				{
 					print '<div class="menu_titre">'.$tabstring.'<font class="vmenudisabled">'.$menu_array[$i]['titre'].'</font></div>'."\n";
 					$lastlevel0 = 'greyed';
-				}
-				else
-				{
+				} else {
 				    $lastlevel0 = 'hidden';
 				}
 				if ($showmenu)
@@ -2064,8 +2066,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					// If title is not pure text and contains a table, no carriage return added
 					if (!strstr($menu_array[$i]['titre'], '<table')) print '<br>';
 					print '</div>'."\n";
-				}
-				elseif ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
+				} elseif ($showmenu && $lastlevel0 == 'enabled')       // Not enabled but visible (so greyed), except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring.'<font class="vsmenudisabled vsmenudisabledmargin">'.$menu_array[$i]['titre'].'</font><br></div>'."\n";
 				}

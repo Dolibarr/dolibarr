@@ -75,9 +75,7 @@ $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
 if (!$user->rights->societe->client->voir || $user->socid)
 {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$user->id.'-'.$year.'.png';
-}
-else
-{
+} else {
     $filenamenb = $dir.'/shipmentsnbinyear-'.$year.'.png';
 }
 
@@ -285,8 +283,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 // Show graphs
 print '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
     print $px1->show();
     print "<br>\n";
     /*print $px2->show();

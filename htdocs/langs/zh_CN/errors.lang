@@ -263,3 +263,4 @@ WarningNumberOfRecipientIsRestrictedInMassAction=Warning, number of different re
 WarningDateOfLineMustBeInExpenseReportRange=警告，行日期不在费用报表范围内
 WarningProjectClosed=Project is closed. You must re-open it first.
 WarningSomeBankTransactionByChequeWereRemovedAfter=Some bank transaction were removed after that the receipt including them were generated. So nb of cheques and total of receipt may differ from number and total in list.
+WarningFailedToAddFileIntoDatabaseIndex=Warnin, failed to add file entry into ECM database index table

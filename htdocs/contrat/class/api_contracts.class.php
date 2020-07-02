@@ -169,8 +169,7 @@ class Contracts extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve contrat list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -464,9 +463,7 @@ class Contracts extends DolibarrApi
         $updateRes = $this->contract->deleteline($lineid, DolibarrApiAccess::$user);
         if ($updateRes > 0) {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
               throw new RestException(405, $this->contract->error);
         }
     }
@@ -501,9 +498,7 @@ class Contracts extends DolibarrApi
         if ($this->contract->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->contract->error);
         }
     }

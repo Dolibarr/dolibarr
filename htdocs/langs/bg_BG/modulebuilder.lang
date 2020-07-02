@@ -27,7 +27,7 @@ DangerZone=Опасна зона
 BuildPackage=Създаване на пакет
 BuildPackageDesc=Може да генерирате zip пакет, така че да сте готови да го разпространите към всеки Dolibarr. Може също така да го разпространите или да го продадете в онлайн магазина <a href="https://www.dolistore.com">DoliStore.com</a>.
 BuildDocumentation=Създаване на документация
-ModuleIsNotActive=Този модул все още не е активиран. Отидете в %s, за да го направите или кликнете тук:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=Този модул е активиран. Всяка промяна може да прекъсне текуща функция.
 DescriptionLong=Дълго описание
 EditorName=Име на редактор
@@ -83,8 +83,8 @@ ListOfDictionariesEntries=Списък на записи в речници
 ListOfPermissionsDefined=Списък на дефинирани права
 SeeExamples=Вижте примери тук
 EnabledDesc=Условие това поле да бъде активно (Примери: 1 или $conf->global->MYMODULE_MYOPTION)
-VisibleDesc=Видимо ли е полето? (Примери: 0 = Никога не се вижда, 1 = Видимо в списък и формуляри за създаване / актуализиране / преглеждане, 2 = Видимо само в списък, 3 = Видимо само във формуляр за създаване / актуализиране / преглеждане (не и в списък), 4 = Видимо само в списък и във формуляр за актуализиране / преглеждане (не и за създаване), 5 = Видимо само в списък и във формуляр за преглеждане (не и за създаване и актуализиране). Използването на отрицателна стойност означава, че полето не се показва по подразбиране в списък, но може да бъде избрано за преглеждане). Може да бъде израз, например:<br>preg_match('/public/',$ _SERVER['PHP_SELF'])?0:1<br>($user->rights->vacation->define_holiday?1:0).
-DisplayOnPdfDesc=Показване на това поле в съвместими PDF документи .
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratosthene (order), espadon (ship), sponge (invoices), cyan (propal/quotation), cornas (supplier order)<br/><br/><strong>For document :</strong><br/>0 = not displayed <br/>1 = display<br/>2 = display only if not empty<br/><br/><strong>For document lines :</strong><br/>0 = not displayed <br/>1 = displayed in a column<br/>3 = display in line description column after the description<br/>4 = display in description column after the description only if not empty
 DisplayOnPdf=Показване в PDF
 IsAMeasureDesc=Може ли стойността в полето да бъде натрупвана, за да се получи обща в списъка? (Пример: 1 или 0)
 SearchAllDesc=Използва ли се полето за извършване на търсене, чрез инструмента за бързо търсене? (Пример: 1 или 0)
@@ -139,3 +139,4 @@ ForeignKey=Външен ключ
 TypeOfFieldsHelp=Тип на полета:<br>varchar(99), double(24,8), real, text, html, datetime, timestamp, integer, integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]] (например '1' означава, че добавяме бутон + след комбинирания списък, за да създадем записа, 'filter' може да бъде 'status=1 AND fk_user=__USER_ID AND entity IN (__SHARED_ENTITIES__)')
 AsciiToHtmlConverter=Ascii към HTML конвертор
 AsciiToPdfConverter=Ascii към PDF конвертор
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

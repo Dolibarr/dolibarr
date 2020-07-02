@@ -35,7 +35,7 @@ PRODUCT_MODIFYInDolibarr=Produkt %s bearbeitet
 HOLIDAY_CREATEInDolibarr=Ferienantrag %s erzeugt
 HOLIDAY_MODIFYInDolibarr=Ferienantrag %s geändert
 HOLIDAY_APPROVEInDolibarr=Ferienantrag %s frei gegeben
-HOLIDAY_VALIDATEDInDolibarr=Ferienantrag %s bestätigt
+HOLIDAY_VALIDATEInDolibarr=Ferienantrag %s bestätigt
 HOLIDAY_DELETEInDolibarr=Ferienantrag %s gelöscht
 EXPENSE_REPORT_CREATEInDolibarr=Spesenabrechnung %s erzeugt
 EXPENSE_REPORT_VALIDATEInDolibarr=Spesenabrechnung %s geprüft
@@ -59,6 +59,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ,zum Aktionen, die nicht vom Benutzer
 AgendaUrlOptions4=<b>logint=%s</b> ,um Einträge für dem Benutzer <b>%s</b> zugewiesene Aktionen anzuzeigen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um Aktionen vom Projekt <b>__PROJECT_ID__</b> anzuzeigen.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, um automatische Einträge auszublenden.
+AgendaUrlOptionsIncludeHolidays=Setze <b>includeholidays=1</b> um Ferien im Kalender anzuzeigen.
 AgendaHideBirthdayEvents=Geburtstage von Kontakten verstecken
 ExtSitesEnableThisTool=Externe Kalender gemäss systemweiten Einstellungen anzeigen. Externe Kalender, die Benutzer definiert haben, sind davon nicht betroffen.
 DateActionBegin=Beginnzeit des Ereignis

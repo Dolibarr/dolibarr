@@ -129,7 +129,12 @@ else $result = restrictedArea($user, 'produit|service', '', '', '', '', '', $obj
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
+if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+	|| !empty($conf->mrp->enabled))
 {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -211,6 +216,23 @@ $arrayfields = array(
 	'p.tosell'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Sell").')', 'checked'=>1, 'position'=>1000),
 	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000)
 );
+
+// MultiPrices
+if ($conf->global->PRODUIT_MULTIPRICES){
+	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+	{
+		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+		if (!empty($conf->global->$keyforlabel)) {
+			$labelp = $i.' - '.$langs->trans($conf->global->$keyforlabel);
+		} else {
+			$labelp = $langs->trans("SellingPrice")." ".$i;
+		}
+		$arrayfields['p.sellprice'.$i] = array('label'=>$labelp, 'checked'=>1, 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>40);
+		$arraypricelevel[$i] = array($i);
+	}
+}
+
+//var_dump($arraypricelevel);
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
@@ -291,14 +313,10 @@ if ($search_type != '' && $search_type != '-1')
 	if ($search_type == 1)
 	{
 		$texte = $langs->trans("Services");
-	}
-	else
-	{
+	} else {
 		$texte = $langs->trans("Products");
 	}
-}
-else
-{
+} else {
 	$texte = $langs->trans("ProductsAndServices");
 }
 
@@ -452,8 +470,7 @@ if ($resql)
 		if ($search_type == 0)
 		{
 			$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-		}
-		elseif ($search_type == 1)
+		} elseif ($search_type == 1)
 		{
 			$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 		}
@@ -733,6 +750,19 @@ if ($resql)
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
+
+	// Multiprice
+	if ($conf->global->PRODUIT_MULTIPRICES){
+		foreach ($arraypricelevel as $key => $value)
+		{
+			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+			{
+				print '<td class="liste_titre right">';
+				print '</td>';
+			}
+		}
+	}
+
 	// Minimum buying Price
 	if (!empty($arrayfields['p.minbuyprice']['checked']))
 	{
@@ -865,6 +895,18 @@ if ($resql)
     if (!empty($arrayfields['p.sellprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
+
+	// Multiprices
+	if ($conf->global->PRODUIT_MULTIPRICES){
+		foreach ($arraypricelevel as $key => $value)
+		{
+			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+			{
+				print_liste_field_titre($arrayfields['p.sellprice'.$key]['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+			}
+		}
+	}
+
     if (!empty($arrayfields['p.minbuyprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
@@ -1060,15 +1102,13 @@ if ($resql)
 				if ((float) $duration_value > 1)
 				{
 				    $dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-				}
-				elseif ((float) $duration_value > 0)
+				} elseif ((float) $duration_value > 0)
 				{
 				    $dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 				}
 				print $duration_value;
 				print ((!empty($duration_unit) && isset($dur[$duration_unit]) && $duration_value != '') ? ' '.$langs->trans($dur[$duration_unit]) : '');
-			}
-			elseif (!preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
+			} elseif (!preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
 			{
 				print $obj->duration;
 			}
@@ -1200,6 +1240,40 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
+
+		// Multiprices
+		if ($conf->global->PRODUIT_MULTIPRICES){
+			foreach ($arraypricelevel as $key => $value)
+			{
+				if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+				{
+					print '<td class="right nowraponall">';
+					if ($obj->tosell)
+					{
+						// TODO Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
+						// then reuse the cache array if we need prices for other price levels
+						$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
+						$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
+						$resultp .= " WHERE fk_product = ".$obj->rowid;
+						$resultp .= " AND p.price_level = ".$key;
+						$resultp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+						$resultp = $db->query($resultp);
+						if ($resultp)
+						{
+							$objp = $db->fetch_object($resultp);
+								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+							else print price($objp->price).' '.$langs->trans("HT");
+								$db->free($resultp);
+						} else {
+							dol_print_error($db);
+						}
+					}
+					print '</td>';
+					if (!$i) $totalarray['nbfield']++;
+				}
+			}
+		}
+
 		// Better buy price
 		if (!empty($arrayfields['p.minbuyprice']['checked']))
 		{
@@ -1215,8 +1289,7 @@ if ($resql)
 						{
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
 							print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext);
-						}
-						else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+						} else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
 					}
 				}
 			}
@@ -1345,7 +1418,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -1410,9 +1483,7 @@ if ($resql)
 	print "</table>";
 	print "</div>";
 	print '</form>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

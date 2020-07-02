@@ -105,8 +105,11 @@ img.demothumb {
     object-fit: contain;
     height: 140px;
     background-position-y: bottom;
+	background-position-x: right;
 }
-
+.demologo {
+	width: 200px;
+}
 
 @media only screen and (max-width: 767px)
 {

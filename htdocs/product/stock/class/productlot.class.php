@@ -571,8 +571,7 @@ class Productlot extends CommonObject
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
         	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
