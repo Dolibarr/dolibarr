@@ -552,7 +552,7 @@ class dolReceiptPrinter extends Printer
         // tags a remplacer par leur valeur avant de parser (dol_value_xxx)
         $this->template = str_replace('<dol_value_object_id>', $object->id, $this->template);
         $this->template = str_replace('<dol_value_object_ref>', $object->ref, $this->template);
-        $this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
+        //$this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
         $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
         $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
         $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
@@ -563,7 +563,7 @@ class dolReceiptPrinter extends Printer
 
         $this->template = str_replace('<dol_value_customer_firstname>', $object->thirdparty->firstname, $this->template);
         $this->template = str_replace('<dol_value_customer_lastname>', $object->thirdparty->lastname, $this->template);
-        $this->template = str_replace('<dol_value_customer_mail>', $object->thirdparty->mail, $this->template);
+        $this->template = str_replace('<dol_value_customer_mail>', $object->thirdparty->email, $this->template);
         $this->template = str_replace('<dol_value_customer_phone>', $object->thirdparty->phone, $this->template);
         $this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
         $this->template = str_replace('<dol_value_customer_tax_number>', $object->thirdparty->vatintra, $this->template);
