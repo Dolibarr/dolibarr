@@ -689,7 +689,11 @@ if (!empty($conf->service->enabled) && $type == 1) print '<td class="liste_titre
 print '<td class="liste_titre right">'.$form->textwithpicto($langs->trans('IncludeEmptyDesiredStock'), $langs->trans('IncludeProductWithUndefinedAlerts')).'&nbsp;<input type="checkbox" id="includeproductswithoutdesiredqty" name="includeproductswithoutdesiredqty" '.(!empty($includeproductswithoutdesiredqtychecked) ? $includeproductswithoutdesiredqtychecked : '').'></td>';
 print '<td class="liste_titre right"></td>';
 print '<td class="liste_titre right">'.$langs->trans('AlertOnly').'&nbsp;<input type="checkbox" id="salert" name="salert" '.(!empty($alertchecked) ? $alertchecked : '').'></td>';
-print '<td class="liste_titre right">'.$langs->trans('IncludeAlsoDraftOrders').'&nbsp;<input type="checkbox" id="draftorder" name="draftorder" '.(!empty($draftchecked) ? $draftchecked : '').'></td>';
+print '<td class="liste_titre right">';
+if (! empty($conf->global->STOCK_REPLENISH_ADD_CHECKBOX_INCLUDE_DRAFT_ORDER)) {
+	print $langs->trans('IncludeAlsoDraftOrders').'&nbsp;<input type="checkbox" id="draftorder" name="draftorder" '.(!empty($draftchecked) ? $draftchecked : '').'>';
+}
+print '</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Fields from hook
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
