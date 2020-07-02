@@ -766,7 +766,7 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		print '<td class="right">'.$warning.$stock.'</td>';
 
 		// Already ordered
-		print '<td class="right"><a href="replenishorders.php?sproduct='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
+		print '<td class="right"><a href="replenishorders.php?search_product='.$prod->id.'">'.$ordered.'</a> '.$picto.'</td>';
 
 		// To order
 		//print '<td class="right"><input type="text" name="tobuy'.$i.'" value="'.$stocktobuy.'" '.$disabled.'></td>';
