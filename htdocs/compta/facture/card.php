@@ -1489,7 +1489,7 @@ if (empty($reshook))
 						$result = $srcobject->fetch($object->origin_id);
 
 						$typeamount = GETPOST('typedeposit', 'aZ09');
-						$valuedeposit = GETPOST('valuedeposit', 'int');
+						$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
 
 						// If deposit invoice
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable')))
