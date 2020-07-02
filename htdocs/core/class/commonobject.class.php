@@ -2542,9 +2542,8 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if($this->db->num_rows($resql) > 0) {
-				while($row = $this->db->fetch_row($resql)) {
-
+			if ($this->db->num_rows($resql) > 0) {
+				while ($row = $this->db->fetch_row($resql)) {
 					$rows[] = $row[0];
 					if (!empty($includealltree)) $rows = array_merge($rows, $this->getChildrenOfLine($row[0]), $includealltree);
 				}
