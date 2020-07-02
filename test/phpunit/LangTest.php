@@ -154,7 +154,7 @@ class LangTest extends PHPUnit\Framework\TestCase
         include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
 		$filesarray = scandir(DOL_DOCUMENT_ROOT.'/langs');
-		foreach($filesarray as $key => $code)
+		foreach ($filesarray as $key => $code)
 		{
 			if (! preg_match('/^[a-z]+_[A-Z]+$/', $code)) continue;
 
@@ -183,7 +183,7 @@ class LangTest extends PHPUnit\Framework\TestCase
 			unset($tmplangs);
 
 			$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
-			foreach($filesarray2 as $key => $file) {
+			foreach ($filesarray2 as $key => $file) {
 				if (! preg_match('/\.lang$/', $file)) {
 					continue;
 				}

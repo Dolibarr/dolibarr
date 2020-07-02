@@ -77,9 +77,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			else $year_end++;
 		}
 		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -209,8 +207,7 @@ if ($modecompta == "CREANCES-DETTES") {
 	}
 
 	$builddate = dol_now();
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("TurnoverCollected").', '.$langs->trans("ByVatRate");
 	$calcmode = $langs->trans("CalcModeEngagement");
@@ -220,11 +217,9 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$description .= $langs->trans("DepositsAreIncluded");
 
 	$builddate = dol_now();
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
-}
-elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
 {
 }
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
@@ -275,7 +270,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND f.type IN (0,1,2,3,5)";
 	}
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")";
-	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label ";
+	$sql .= " GROUP BY fd.tva_tx,fd.product_type, cc.label, cc.code ";
+	$sql .= " ORDER BY country, product_type, vatrate";
+
 
 	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);
 	$resql = $db->query($sql);
@@ -356,7 +353,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql .= " AND ff.type IN (0,1,2,3,5)";
 	}
 	$sql2 .= " AND ff.entity IN (".getEntity("facture_fourn", 0).")";
-	$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label";
+	$sql2 .= " GROUP BY ffd.tva_tx, ffd.product_type, cc.label, cc.code ";
+	$sql2 .= " ORDER BY country, product_type, vatrate";
 
 	//print $sql2;
 	dol_syslog("htdocs/compta/tva/index.php sql=".$sql, LOG_DEBUG);

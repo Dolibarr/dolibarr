@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=De volgende stappen kunnen in de toekomst een t
 AccountancyAreaDescActionFreq=De volgende werkzaamheden worden meestal elke maand, week of dagelijks uitgevoerd bij grote bedrijven....
 
 AccountancyAreaDescJournalSetup=STAP %s: Aanmaken of controleren journaal vanuit menu %s
-AccountancyAreaDescChartModel=STAP %s: Maak rekeningschema aan vanuit menu %s
-AccountancyAreaDescChart=STAP %s: Aanmaken of controleren van het rekeningschema menu %s
+AccountancyAreaDescChartModel=STAP %s: Controleer of er een rekeningschema bestaat of maak er een vanuit het menu %s
+AccountancyAreaDescChart=STAP %s: Selecteer en/of voltooi uw rekeningoverzicht vanuit menu %s
 
 AccountancyAreaDescVat=STAP %s: Vastleggen grootboekrekeningen voor BTW registratie. Gebruik hiervoor menukeuze %s. 
 AccountancyAreaDescDefault=STAP %s: standaard grootboekrekeningen vastleggen. Gebruik hiervoor het menu-item %s.

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2015-2020  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2018  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,9 +171,7 @@ class PaymentLoan extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
@@ -183,9 +182,7 @@ class PaymentLoan extends CommonObject
 			$this->amount_capital = $totalamount;
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -259,9 +256,7 @@ class PaymentLoan extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -331,9 +326,7 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -374,6 +367,40 @@ class PaymentLoan extends CommonObject
 			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
+        // Set loan unpaid if loan has no other payment
+        if (!$error)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+            $loan = new Loan($this->db);
+            $loan->fetch($this->fk_loan);
+            $sum_payment = $loan->getSumPayment();
+            if ($sum_payment == 0)
+            {
+                dol_syslog(get_class($this)."::delete : set loan to unpaid", LOG_DEBUG);
+                if ($loan->set_unpaid($user) < 1)
+                {
+                    $error++;
+                    dol_print_error($this->db);
+                }
+            }
+        }
+
+		//if (! $error)
+		//{
+		//	if (! $notrigger)
+		//	{
+				// Uncomment this and change MYOBJECT to your own tag if you
+				// want this action call a trigger.
+
+				//// Call triggers
+				//include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+				//$interface=new Interfaces($this->db);
+				//$result=$interface->run_triggers('MYOBJECT_DELETE',$this,$user,$langs,$conf);
+				//if ($result < 0) { $error++; $this->errors=$interface->errors; }
+				//// End call triggers
+		//	}
+		//}
+
 		// Commit or rollback
 		if ($error)
 		{
@@ -384,9 +411,7 @@ class PaymentLoan extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -410,6 +435,7 @@ class PaymentLoan extends CommonObject
 		global $conf;
 
 		$error = 0;
+        $this->db->begin();
 
 		if (!empty($conf->banque->enabled))
 		{
@@ -458,26 +484,44 @@ class PaymentLoan extends CommonObject
 					}
 				}
 
+
 				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
 				if ($mode == 'payment_loan')
 				{
 					$result = $acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label ? $this->label : ''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $acc->error;
 				$error++;
 			}
 		}
 
+
+        // Set loan payment started if no set
+        if (!$error)
+        {
+            require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
+            $loan = new Loan($this->db);
+            $loan->fetch($fk_loan);
+            if ($loan->paid == $loan::STATUS_UNPAID)
+            {
+                dol_syslog(get_class($this)."::addPaymentToBank : set loan payment to started", LOG_DEBUG);
+                if ($loan->set_started($user) < 1)
+                {
+                    $error++;
+                    dol_print_error($this->db);
+                }
+            }
+        }
+
 		if (!$error)
 		{
+            $this->db->commit();
 			return 1;
 		}
-		else
-		{
+		else {
+            $this->db->rollback();
 			return -1;
 		}
 	}
@@ -501,9 +545,7 @@ class PaymentLoan extends CommonObject
 		{
 		    $this->fk_bank = $id_bank;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}

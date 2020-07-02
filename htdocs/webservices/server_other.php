@@ -304,8 +304,7 @@ function getDocument($authentication, $modulepart, $file, $refname = '')
 					'document'=>$objectret
 				);
 			}
-			else
-			{
+			else {
 				dol_syslog("File doesn't exist ".$original_file);
 				$errorcode = 'NOT_FOUND';
 				$errorlabel = '';

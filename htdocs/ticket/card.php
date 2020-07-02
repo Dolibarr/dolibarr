@@ -140,6 +140,7 @@ if (empty($reshook)) {
 			header("Location: " . $backtopage);
 			exit;
 		}
+
 		$action = 'view';
 	}
 
@@ -147,11 +148,11 @@ if (empty($reshook)) {
 	if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
 		$error = 0;
 
-		if (!GETPOST("subject", 'alpha')) {
+		if (!GETPOST("subject", 'alphanohtml')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
 			$action = 'create';
-		} elseif (!GETPOST("message", 'alpha')) {
+		} elseif (!GETPOST("message", 'restricthtml')) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
 			$action = 'create';
@@ -160,10 +161,10 @@ if (empty($reshook)) {
 		if (!$error) {
 			$db->begin();
 
-			$object->ref = GETPOST("ref", 'alpha');
+			$object->ref = GETPOST("ref", 'alphanohtml');
 			$object->fk_soc = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
-			$object->subject = GETPOST("subject", 'alpha');
-			$object->message = GETPOST("message", 'none');
+			$object->subject = GETPOST("subject", 'alphanohtml');
+			$object->message = GETPOST("message", 'restricthtml');
 
 			$object->type_code = GETPOST("type_code", 'alpha');
 			$object->category_code = GETPOST("category_code", 'alpha');
@@ -288,7 +289,7 @@ if (empty($reshook)) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")));
 			$action = 'edit';
-		} elseif (!GETPOST("subject")) {
+		} elseif (!GETPOST("subject", 'alphanohtml')) {
 			$error++;
 			array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
 			$action = 'edit';
@@ -298,7 +299,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			$object->label = GETPOST("label", 'alphanohtml');
-			$object->description = GETPOST("description", 'none');
+			$object->description = GETPOST("description", 'restricthtml');
 
 			//...
 			$ret = $object->update($user);
@@ -470,7 +471,7 @@ if (empty($reshook)) {
 	if ($action == 'setsubject') {
 		if ($object->fetch(GETPOST('id', 'int'))) {
 			if ($action == 'setsubject') {
-				$object->subject = trim(GETPOST('subject', 'alpha'));
+				$object->subject = trim(GETPOST('subject', 'alphanohtml'));
 			}
 
 			if ($action == 'setsubject' && empty($object->subject)) {
@@ -490,7 +491,7 @@ if (empty($reshook)) {
 	if ($action == 'confirm_reopen' && $user->rights->ticket->manage && !GETPOST('cancel')) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			// prevent browser refresh from reopening ticket several times
-			if ($object->fk_statut == Ticket::STATUS_CLOSED) {
+			if ($object->fk_statut == Ticket::STATUS_CLOSED || $object->fk_statut == Ticket::STATUS_CANCELED) {
 				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
 				if ($res) {
 					// Log action in ticket logs table
@@ -523,7 +524,7 @@ if (empty($reshook)) {
 		if (!GETPOST('cancel')) {
 			$object->fetch('', '', GETPOST('track_id', 'alpha'));
 			$oldvalue_message = $object->message;
-			$fieldtomodify = GETPOST('message_initial');
+			$fieldtomodify = GETPOST('message_initial', 'restricthtml');
 
 			$object->message = $fieldtomodify;
 			$ret = $object->update($user);
@@ -986,8 +987,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		print '<td>';
 		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
 			print '<input class="button" type="submit" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
-		}
-		else {
+		} else {
 			//    Button to edit Properties
 			if ($object->fk_statut < 5 && $user->rights->ticket->write) {
 				print '<a class="editfielda" href="card.php?track_id='.$object->track_id.'&action=view&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
@@ -1206,9 +1206,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 				}
 			}
 			print '</div>'."\n";
-		}
-		else
-		{
+		} else {
 			print '<br>';
 		}
 

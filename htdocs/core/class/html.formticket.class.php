@@ -175,7 +175,7 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		// Si origin du ticket
+		// If ticket created from another object
 		if (isset($this->param['origin']) && $this->param['originid'] > 0) {
 			// Parse element/subelement (ex: project_task)
 			$element = $subelement = $this->param['origin'];
@@ -225,7 +225,7 @@ class FormTicket
 				if ($this->withthreadid > 0) {
 					$subject = $langs->trans('SubjectAnswerToTicket').' '.$this->withthreadid.' : '.$this->topic_title.'';
 				}
-				print '<input class="text minwidth300" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" />';
+				print '<input class="text minwidth500" id="subject" name="subject" value="'.(GETPOST('subject', 'alpha') ? GETPOST('subject', 'alpha') : $subject).'" autofocus />';
 				print '</td></tr>';
 			}
 		}
@@ -338,7 +338,7 @@ class FormTicket
 				print '</td></tr>';
 			} else {
 				print '<tr><td class="titlefield"><input type="hidden" name="socid" value="'.$user->socid.'"/></td>';
-				print '<td><input type="hidden" name="contactid" value="'.$user->contactid.'"/></td>';
+				print '<td><input type="hidden" name="contactid" value="'.$user->contact_id.'"/></td>';
 				print '<td><input type="hidden" name="type" value="Z"/></td></tr>';
 			}
 
@@ -987,12 +987,12 @@ class FormTicket
 			print '</td></tr>';
 		}
 
-		// MESSAGE
-		$defaultmessage = "";
-		if (is_array($arraydefaultmessage) && count($arraydefaultmessage) > 0 && $arraydefaultmessage->content) {
+        // MESSAGE
+        $defaultmessage="";
+		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
 			$defaultmessage = $arraydefaultmessage->content;
 		}
-		$defaultmessage = str_replace('\n', "\n", $defaultmessage);
+        $defaultmessage = str_replace('\n', "\n", $defaultmessage);
 
 		// Deal with format differences between message and signature (text / HTML)
 		if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__SIGNATURE__'])) {

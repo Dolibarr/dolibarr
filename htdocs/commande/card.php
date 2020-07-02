@@ -154,9 +154,7 @@ if (empty($reshook))
 		if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers'))
 		{
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
-		}
-		else
-		{
+		} else {
 			if ($object->id > 0)
 			{
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
@@ -167,9 +165,7 @@ if (empty($reshook))
 				{
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
-				}
-				else
-				{
+				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$object = $orig;
 					$action = '';
@@ -187,9 +183,7 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				setEventMessages($langs->trans('OrderReopened', $object->ref), null);
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -203,9 +197,7 @@ if (empty($reshook))
 		{
 			header('Location: list.php?restore_lastsearch_values=1');
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -234,9 +226,7 @@ if (empty($reshook))
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -288,7 +278,7 @@ if (empty($reshook))
 			$object->shipping_method_id = GETPOST('shipping_method_id', 'int');
 			$object->warehouse_id = GETPOST('warehouse_id', 'int');
 			$object->fk_delivery_address = GETPOST('fk_address');
-			$object->contactid = GETPOST('contactid');
+			$object->contact_id = GETPOST('contactid');
 			$object->fk_incoterms = GETPOST('incoterm_id', 'int');
 			$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 			$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
@@ -502,17 +492,14 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	}
-
-	elseif ($action == 'classifybilled' && $usercancreate)
+	} elseif ($action == 'classifybilled' && $usercancreate)
 	{
 		$ret = $object->classifyBilled($user);
 
 		if ($ret < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-	elseif ($action == 'classifyunbilled' && $usercancreate)
+	} elseif ($action == 'classifyunbilled' && $usercancreate)
 	{
 		$ret = $object->classifyUnBilled();
 		if ($ret < 0) {
@@ -527,17 +514,13 @@ if (empty($reshook))
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'setremise' && $usercancreate) {
+	} elseif ($action == 'setremise' && $usercancreate) {
 		$result = $object->set_remise($user, GETPOST('remise'));
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'setabsolutediscount' && $usercancreate) {
+	} elseif ($action == 'setabsolutediscount' && $usercancreate) {
 		if (GETPOST('remise_id')) {
 			if ($object->id > 0) {
 				$object->insert_discount(GETPOST('remise_id'));
@@ -545,9 +528,7 @@ if (empty($reshook))
 				dol_print_error($db, $object->error);
 			}
 		}
-	}
-
-	elseif ($action == 'setdate' && $usercancreate) {
+	} elseif ($action == 'setdate' && $usercancreate) {
 		// print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 		$date = dol_mktime(0, 0, 0, GETPOST('order_month'), GETPOST('order_day'), GETPOST('order_year'));
 
@@ -555,22 +536,16 @@ if (empty($reshook))
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'setdate_livraison' && $usercancreate)
-	{
-	    //print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	} elseif ($action == 'setdate_livraison' && $usercancreate) {
+	    // print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
 	    $datedelivery = dol_mktime(GETPOST('liv_hour', 'int'), GETPOST('liv_min', 'int'), 0, GETPOST('liv_month', 'int'), GETPOST('liv_day', 'int'), GETPOST('liv_year', 'int'));
 
 	    $object->fetch($id);
 	    $result = $object->set_date_livraison($user, $datedelivery);
-	    if ($result < 0)
-	    {
+	    if ($result < 0) {
 	        setEventMessages($object->error, $object->errors, 'errors');
 	    }
-	}
-
-	elseif ($action == 'setmode' && $usercancreate) {
+	} elseif ($action == 'setmode' && $usercancreate) {
 		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
 		if ($result < 0)
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -584,21 +559,15 @@ if (empty($reshook))
 	// Multicurrency rate
 	elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		$result = $object->setMulticurrencyRate(price2num(GETPOST('multicurrency_tx')));
-	}
-
-	elseif ($action == 'setavailability' && $usercancreate) {
+	} elseif ($action == 'setavailability' && $usercancreate) {
 		$result = $object->availability(GETPOST('availability_id'));
 		if ($result < 0)
 			setEventMessages($object->error, $object->errors, 'errors');
-	}
-
-	elseif ($action == 'setdemandreason' && $usercancreate) {
+	} elseif ($action == 'setdemandreason' && $usercancreate) {
 		$result = $object->demand_reason(GETPOST('demand_reason_id'));
 		if ($result < 0)
 			setEventMessages($object->error, $object->errors, 'errors');
-	}
-
-	elseif ($action == 'setconditions' && $usercancreate) {
+	} elseif ($action == 'setconditions' && $usercancreate) {
 		$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
@@ -651,13 +620,9 @@ if (empty($reshook))
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'setremisepercent' && $usercancreate) {
+	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$result = $object->set_remise($user, GETPOST('remise_percent'));
-	}
-
-	elseif ($action == 'setremiseabsolue' && $usercancreate) {
+	} elseif ($action == 'setremiseabsolue' && $usercancreate) {
 		$result = $object->set_remise_absolue($user, GETPOST('remise_absolue'));
 	}
 
@@ -677,9 +642,7 @@ if (empty($reshook))
 		{
 			$idprod = 0;
 			$tva_tx = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
-		}
-		else
-		{
+		} else {
 			$idprod = GETPOST('idprod', 'int');
 			$tva_tx = '';
 		}
@@ -727,9 +690,7 @@ if (empty($reshook))
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error++;
 				}
@@ -797,9 +758,7 @@ if (empty($reshook))
 							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
 							if (empty($tva_tx)) $tva_npr = 0;
 						}
-					}
-					else
-					{
+					} else {
 						setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					}
 				}
@@ -819,9 +778,7 @@ if (empty($reshook))
 							if ($priceforthequantityarray['price_base_type'] == 'HT')
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
+							} else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -844,9 +801,7 @@ if (empty($reshook))
 							if ($priceforthequantityarray['price_base_type'] == 'HT')
 							{
 								$pu_ht = $priceforthequantityarray['unitprice'];
-							}
-							else
-							{
+							} else {
 								$pu_ttc = $priceforthequantityarray['unitprice'];
 							}
 							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
@@ -1159,19 +1114,15 @@ if (empty($reshook))
 	} elseif ($action == 'updateline' && $usercancreate && GETPOST('cancel', 'alpha') == $langs->trans('Cancel')) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
-	}
-
-	elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
+	} elseif ($action == 'confirm_validate' && $confirm == 'yes' && $usercanvalidate)
 	{
-		$idwarehouse = GETPOST('idwarehouse');
+		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
 		{
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		}
-		else
-		{
+		} else {
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -1206,9 +1157,7 @@ if (empty($reshook))
 
 					$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
@@ -1222,9 +1171,7 @@ if (empty($reshook))
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
 		{
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		}
-		else
-		{
+		} else {
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -1261,26 +1208,20 @@ if (empty($reshook))
 				}
 			}
 		}
-	}
-
-	elseif ($action == 'confirm_shipped' && $confirm == 'yes' && $usercanclose) {
+	} elseif ($action == 'confirm_shipped' && $confirm == 'yes' && $usercanclose) {
 		$result = $object->cloture($user);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	}
-
-	elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanvalidate)
+	} elseif ($action == 'confirm_cancel' && $confirm == 'yes' && $usercanvalidate)
 	{
-		$idwarehouse = GETPOST('idwarehouse');
+		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
 		if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
 		{
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
-		}
-		else
-		{
+		} else {
 		   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
@@ -1351,8 +1292,7 @@ if (empty($reshook))
 	        {
 	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'OrderLine';
-	        }
-	        elseif ($fromElement == 'propal')
+	        } elseif ($fromElement == 'propal')
 	        {
 	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'PropaleLigne';
@@ -1404,8 +1344,7 @@ if (empty($reshook))
 	                } else {
 	                    $error++;
 	                }
-	            }
-	            else {
+	            } else {
 	                $error++;
 	            }
 	        }
@@ -1535,12 +1474,10 @@ if ($action == 'create' && $usercancreate)
 			// For compatibility
 			if ($element == 'order' || $element == 'commande') {
 				$element = $subelement = 'commande';
-			}
-			elseif ($element == 'propal') {
+			} elseif ($element == 'propal') {
 				$element = 'comm/propal';
 				$subelement = 'propal';
-			}
-			elseif ($element == 'contract') {
+			} elseif ($element == 'contract') {
 				$element = $subelement = 'contrat';
 			}
 
@@ -1586,9 +1523,7 @@ if ($action == 'create' && $usercancreate)
 			// Object source contacts list
 			$srccontactslist = $objectsrc->liste_contact(-1, 'external', 1);
 		}
-	}
-	else
-	{
+	} else {
 		$cond_reglement_id  = $soc->cond_reglement_id;
 		$mode_reglement_id  = $soc->mode_reglement_id;
 		$fk_account         = $soc->fk_account;
@@ -1626,8 +1561,7 @@ if ($action == 'create' && $usercancreate)
 	print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
 	if (!empty($conf->global->MAIN_USE_PROPAL_REFCLIENT_FOR_ORDER) && !empty($origin) && !empty($originid))
 		print '<input type="text" name="ref_client" value="'.$ref_client.'"></td>';
-	else
-		print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
+	else print '<input type="text" name="ref_client" value="'.GETPOST('ref_client').'"></td>';
 	print '</tr>';
 
 	// Thirdparty
@@ -1959,9 +1893,7 @@ if ($action == 'create' && $usercancreate)
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
 			{
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
-			}
-			else
-			{
+			} else {
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
@@ -1991,9 +1923,7 @@ if ($action == 'create' && $usercancreate)
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
 			{
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
-			}
-			else
-			{
+			} else {
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
@@ -2033,9 +1963,7 @@ if ($action == 'create' && $usercancreate)
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES))
 			{
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(2);
-			}
-			else
-			{
+			} else {
 			   	$qualified_for_stock_change = $object->hasProductsOrServices(1);
 			}
 
@@ -2389,9 +2317,7 @@ if ($action == 'create' && $usercancreate)
 			if ($action != 'editincoterm')
 			{
 				print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-			}
-			else
-			{
+			} else {
 				print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 			}
 			print '</td></tr>';
@@ -2563,8 +2489,7 @@ if ($action == 'create' && $usercancreate)
 					if ($object->statut > Commande::STATUS_DRAFT || !empty($conf->global->COMMANDE_SENDBYEMAIL_FOR_ALL_STATUS)) {
 						if ($usercansend) {
 							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
-						} else
-							print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
+						} else print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans('SendMail').'</a>';
 					}
 				}
 

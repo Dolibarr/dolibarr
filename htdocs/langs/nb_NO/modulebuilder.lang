@@ -27,7 +27,7 @@ DangerZone=Faresone
 BuildPackage=Bygg pakke
 BuildPackageDesc=Du kan generere en zip-pakke med applikasjonen din, slik at du er klar til å distribuere den på en hvilken som helst Dolibarr. Du kan også distribuere den eller selge den på enmarkedsplass som <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Bygg dokumentasjon
-ModuleIsNotActive=Denne modulen er ikke aktivert enda. Gå inn på %s for å aktivere eller klikk her:
+ModuleIsNotActive=Denne modulen er ikke aktivert ennå. Gå til %s for å aktivere, eller klikk her
 ModuleIsLive=Denne modulen har blitt aktivert. Enhver endring kan ødelegge en gjeldende kjørende funksjon.
 DescriptionLong=Lang beskrivelse
 EditorName=Navn på editor
@@ -139,3 +139,4 @@ ForeignKey=Fremmed nøkkel
 TypeOfFieldsHelp=Type felt: <br> varchar (99), dobbel (24,8), ekte, tekst, html, datetime, tidstempel, heltall, heltall:ClassName:relativepath/to/classfile.class.php [:1[:filter]] ('1' betyr at vi legger til en + -knapp etter kombinasjonsboksen for å opprette posten, 'filter' kan være 'status=1 OG fk_user=__USER_ID OG enhet IN (__SHARED_ENTITIES__)' for eksempel)
 AsciiToHtmlConverter=Ascii til HTML konverter
 AsciiToPdfConverter=Ascii til PDF konverter
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=Os próximos passos devem ser efetuados para ec
 AccountancyAreaDescActionFreq=As seguintes ações são normalmente executadas a cada mês, semana ou dia para grandes empresas...
 
 AccountancyAreaDescJournalSetup=PASSO %s: Crie o verifique o conteúdo do sua lista de diários a partir do menu %s
-AccountancyAreaDescChartModel=PASSO %s: Crie um modelo de gráfico de conta no menu %s
-AccountancyAreaDescChart=PASSO %s: Criar or verificar conteúdo do seu gráfico de conta no menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=PASSO %s: Defina a conta contabilística para cada taxa de IVA. Para tal pode usar a entrada %s do menu.
 AccountancyAreaDescDefault=STEP %s: definir contas contábeis padrão. Para isso, use a entrada do menu %s.

@@ -47,7 +47,7 @@ if (GETPOST('sendit') && !empty($conf->global->MAIN_UPLOAD_DOC))
 {
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-    dol_add_file_process($upload_dir, 0, 0, 'userfile');
+    dol_add_file_process($upload_dir, 1, 0, 'userfile');
 }
 
 if ($action == 'updateform')

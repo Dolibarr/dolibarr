@@ -81,13 +81,11 @@ if ($currentInvId)																	// Here to breakdown
 			$remainAmount = $currentRemain - $currentAmount; // To keep value between curRemain and curAmount
 			$result += $remainAmount; // result must be deduced by
 			$currentAmount += $remainAmount; // curAmount put to curRemain
-		} else
-		{
+		} else {
 			$currentAmount = $currentRemain;
 			$result += $currentRemain;
 		}
-	} else
-	{
+	} else {
 		// Reset the substraction for this amount
 		$result += price2num($currentAmount);
 		$currentAmount = 0;

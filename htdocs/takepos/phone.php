@@ -39,10 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 
 if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// Decode place if it is an order from customer phone
-	$key = GETPOST('key');
-	$place = dol_decode($key);
+	$place = GETPOSTISSET("key") ? dol_decode(GETPOST('key')) : GETPOST('place', 'aZ09');
+} else {
+	$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 }
-else $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 $idproduct = GETPOST('idproduct', 'int');
@@ -71,27 +71,45 @@ if ($action == "productinfo") {
 	print "<br>".$prod->description;
 	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 	print '<br>';
-}
-elseif ($action == "publicpreorder") {
+} elseif ($action == "publicpreorder") {
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="TakeposPrintingOrder();">'.$langs->trans('Confirm').'</button>';
 	print "<br><br>";
-	print 	'<div class="comment">
+	print '<div class="comment">
             <textarea class="textinput" placeholder="'.$langs->trans('Note').'"></textarea>
 			</div>';
 	print '<br>';
-}
-elseif ($action == "publicpayment") {
+} elseif ($action == "publicpayment") {
 	$langs->loadLangs(array("orders"));
 	print '<h1>'.$langs->trans('StatusOrderDelivered').'</h1>';
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('Payment').'</button>';
 	print '<br>';
 }
 elseif ($action == "checkplease") {
-	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('Cash').'</button>';
-	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('CreditCard').'</button>';
-	print '<br>';
-}
-elseif ($action == "editline") {
+	if (GETPOSTISSET("payment")) {
+		print '<h1>'.$langs->trans('StatusOrderDelivered').'</h1>';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+		$printer = new dolReceiptPrinter($db);
+		$printer->initPrinter($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]});
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->text($langs->trans('IM'));
+		$printer->printer->feed();
+		$printer->printer->text($langs->trans('Place').": ".$place);
+		$printer->printer->feed();
+		$printer->printer->text($langs->trans('Payment').": ".$langs->trans(GETPOST('payment', 'alpha')));
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->printer->feed();
+		$printer->close();
+	}	else {
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'Cash\');">'.$langs->trans('Cash').'</button>';
+		print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease(\'CreditCard\');">'.$langs->trans('CreditCard').'</button>';
+		print '<br>';
+	}
+} elseif ($action == "editline") {
 	$placeid = GETPOST('placeid', 'int');
 	$selectedline = GETPOST('selectedline', 'int');
 	$invoice = new Facture($db);
@@ -112,8 +130,7 @@ elseif ($action == "editline") {
 			print '<button type="button" class="publicphonebutton2 phoneblue width24" onclick="SetNote(place, '.$selectedline.');">'.$langs->trans('Note').'</button>';
         }
     }
-}
-else {
+} else {
 	// Title
 	$title = 'TakePOS - Dolibarr '.DOL_VERSION;
 	if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $title = 'TakePOS - '.$conf->global->MAIN_APPLICATION_TITLE;
@@ -152,9 +169,7 @@ else {
     	if ($categorycursor['level'] == $levelofmaincategories)
     	{
         	$maincategories[$key] = $categorycursor;
-    	}
-    	else
-    	{
+    	} else {
         	$subcategories[$key] = $categorycursor;
     	}
 	}
@@ -231,6 +246,9 @@ function AddProductConfirm(placeid, productid){
 }
 
 function SetQty(place, selectedline, qty){
+	<?php
+	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
+		?>
 	if (qty==0){
 		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
 		});
@@ -239,6 +257,21 @@ function SetQty(place, selectedline, qty){
 		$("#phonediv2").load("auto_order.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
 		});
 	}
+		<?php
+	}
+	else {
+		?>
+	if (qty==0){
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=deleteline&place="+place+"&idline="+selectedline, function() {
+		});
+	}
+	else{
+		$("#phonediv2").load("invoice.php?mobilepage=invoice&action=updateqty&place="+place+"&idline="+selectedline+"&number="+qty, function() {
+		});
+	}
+		<?php
+	}
+	?>	
 	LoadCats();
 }
 
@@ -263,7 +296,7 @@ function LoadCats(){
 }
 
 function LoadProducts(idcat){
-    
+
 	<?php
 	if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 		echo '$("#phonediv1").load("auto_order.php?mobilepage=products&catid="+idcat+"&place="+place, function() {
@@ -301,14 +334,16 @@ function Exit(){
     window.location.href='../user/logout.php';
 }
 
-function CheckPlease(){
-	$("#phonediv1").load("auto_order.php?action=checkplease&place="+place, function() {
-	});
-	console.log("Request the check to the waiter");
-	$.ajax({
-		type: "GET",
-		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=thecheck&=place='.$place; ?>",
-	});
+function CheckPlease(payment){
+	if (payment==undefined){
+		$("#phonediv1").load("auto_order.php?action=checkplease&place="+place, function() {
+		});
+	}
+	else{
+		console.log("Request the check to the waiter");
+		$("#phonediv1").load("auto_order.php?action=checkplease&place=<?php echo $place;?>&payment="+payment, function() {
+		});
+	}
 }
 
 </script>

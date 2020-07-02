@@ -62,13 +62,10 @@ $helpurl = '';
 if ($type == '0')
 {
 	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-}
-elseif ($type == '1')
+} elseif ($type == '1')
 {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
-}
-else
-{
+} else {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 $title = $langs->trans("Statistics");
@@ -152,9 +149,7 @@ if ($resql)
 		$i++;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 //var_dump($infoprod);

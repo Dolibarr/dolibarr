@@ -40,9 +40,7 @@ if (!defined('ISLOADEDBYSTEELSHEET'))	// File is run after an include of a php p
 		if ($conf->global->MAIN_OPTIMIZEFORCOLORBLIND == 'flashy')
 		{
 			$theme_datacolor = array(array(157, 56, 191), array(0, 147, 183), array(250, 190, 30), array(221, 75, 57), array(0, 166, 90), array(140, 140, 220), array(190, 120, 120), array(190, 190, 100), array(115, 125, 150), array(100, 170, 20), array(150, 135, 125), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
-		}
-		else
-		{
+		} else {
 			// for now we use the same configuration for all types of color blind
 			$theme_datacolor = array(array(248, 220, 1), array(9, 85, 187), array(42, 208, 255), array(0, 0, 0), array(169, 169, 169), array(253, 102, 136), array(120, 154, 190), array(146, 146, 55), array(0, 52, 251), array(196, 226, 161), array(222, 160, 41), array(85, 135, 150), array(150, 135, 80), array(150, 80, 150));
 		}
@@ -67,8 +65,8 @@ $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
 $colorbackbody = '255,255,255';
-$colortexttitlenotab = '0,123,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
-$colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,113,120, violet: 0,50,120
+$colortexttitlenotab = '0,123,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
+$colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitle = '0,0,0';
 $colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
@@ -82,7 +80,7 @@ $toolTipFontColor = '#333';
 // text color
 $textSuccess   = '#28a745';
 $colorblind_deuteranopes_textSuccess = '#37de5d';
-$textWarning   = '#a37c0d'; // See $badgeWarning
+$textWarning   = '#bc9526'; // See $badgeWarning
 $textDanger    = '#9f4705'; // See $badgeDanger
 $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested with a color blind people so use default color
 
@@ -91,7 +89,7 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 $badgePrimary   = '#007bff';
 $badgeSecondary = '#cccccc';
 $badgeSuccess   = '#55a580';
-$badgeWarning   = '#a37c0d'; // See $textDanger bc9526
+$badgeWarning   = '#bc9526'; // See $textWarning bc9526
 $badgeDanger    = '#9f4705'; // See $textDanger
 $badgeInfo      = '#aaaabb';
 $badgeDark      = '#343a40';

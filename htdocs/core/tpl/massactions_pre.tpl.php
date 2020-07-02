@@ -98,9 +98,7 @@ if ($massaction == 'presend')
 			$fuser = new User($db);
 			$fuser->fetch($thirdpartyid);
 			$liste['thirdparty'] = $fuser->getFullName($langs)." &lt;".$fuser->email."&gt;";
-		}
-		else
-		{
+		} else {
 			$soc = new Societe($db);
 			$soc->fetch($thirdpartyid);
 			foreach ($soc->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -158,9 +156,7 @@ if ($massaction == 'presend')
 		print img_warning().' '.$langs->trans('WarningNumberOfRecipientIsRestrictedInMassAction', $conf->global->MAILING_LIMIT_SENDBYWEB);
 		print ' - <a href="javascript: window.history.go(-1)">'.$langs->trans("GoBack").'</a>';
 		$arrayofmassactions = array();
-	}
-	else
-	{
+	} else {
 		print $formmail->get_form();
 	}
 

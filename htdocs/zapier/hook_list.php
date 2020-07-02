@@ -509,8 +509,7 @@ while ($i < min($num, $limit)) {
             else print $object->showOutputField($val, $key, $obj->$key, '');
             print '</td>';
             if (!$i) $totalarray['nbfield']++;
-            if (!empty($val['isameasure']))
-            {
+            if (!empty($val['isameasure'])) {
                 if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
                 $totalarray['val']['t.'.$key] += $obj->$key;
             }

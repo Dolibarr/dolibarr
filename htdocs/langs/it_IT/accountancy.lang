@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=I prossimi passi dovrebbero essere fatti per fa
 AccountancyAreaDescActionFreq=Le seguenti azioni vengono di solito eseguite ogni mese, settimana o giorno per le grandi compagnie...
 
 AccountancyAreaDescJournalSetup=PASSO %s: Crea o controlla il contenuto del tuo elenco del giornale dal menu %s
-AccountancyAreaDescChartModel=STEP %s: Crea un modello di piano dei conti dal menu %s
-AccountancyAreaDescChart=STEP %s: Crea o seleziona il tuo piano dei conti dal menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=STEP %s: Definisci le voci del piano dei conti per ogni IVA/tassa. Per fare ciò usa il menu %s.
 AccountancyAreaDescDefault=STEP %s: Definisci gli account di contabilità di default. Per questo, usa la voce menù %s.

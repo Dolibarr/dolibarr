@@ -52,9 +52,7 @@ if (GETPOST('action', 'alpha') == 'set')
     {
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -129,9 +127,15 @@ if ($conf->global->TAKEPOS_SUPPLEMENTS)
 }
 
 print '<tr class="oddeven value"><td>';
-print $langs->trans("AutoOrder");
+print 'QR - '.$langs->trans("AutoOrder");
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_AUTO_ORDER", array(), $conf->entity, 0, 0, 1, 0);
+print '</td></tr>';
+
+print '<tr class="oddeven value"><td>';
+print 'QR - '.$langs->trans("CustomerMenu");
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_QR_MENU", array(), $conf->entity, 0, 0, 1, 0);
 print '</td></tr>';
 
 
@@ -157,10 +161,27 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
 		print '<td>';
 		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
 		print '<td>';
-		print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?id=".dol_encode($row['rowid'])."' height='42' width='42'>";
+		print "<a target='_blank' href='printqr.php?id=".$row['rowid']."'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'></a>";
 		print '</td></tr>';
     }
 
+	print '</table>';
+}
+
+if ($conf->global->TAKEPOS_QR_MENU)
+{
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	print '<br>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("URL").'</td><td>'.$langs->trans("QR").'</td>';
+	print "</tr>\n";
+	print '<tr class="oddeven value"><td>';
+	print "<a target='_blank' href='".$urlwithroot."/takepos/public/menu.php'>".$urlwithroot."/takepos/public/menu.php</a>";
+	print '<td>';
+	print "<a target='_blank' href='printqr.php'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' height='42' width='42'></a>";
+	print '</td></tr>';
 	print '</table>';
 }
 

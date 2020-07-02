@@ -35,9 +35,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 						$datenotinstring = $db->jdate($datenotinstring);
 					}
 					$value = $datenotinstring;
-				}
-				else
-				{
+				} else {
 					$value = $obj->$tmpkey;
 				}
 				// If field is a computed field, we make computation to get value

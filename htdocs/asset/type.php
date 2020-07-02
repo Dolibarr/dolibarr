@@ -107,8 +107,7 @@ if ($action == 'add' && $user->rights->asset->write)
 	if (empty($object->label)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	else {
+	} else {
 		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."asset_type WHERE label='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
@@ -128,15 +127,11 @@ if ($action == 'add' && $user->rights->asset->write)
 		{
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
-	}
-	else
-	{
+	} else {
 		$action = 'create';
 	}
 }
@@ -162,9 +157,7 @@ if ($action == 'update' && $user->rights->asset->write)
 	if ($ret >= 0 && !count($object->errors))
 	{
 		setEventMessages($langs->trans("AssetsTypeModified"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -182,9 +175,7 @@ if ($action == 'confirm_delete' && $user->rights->asset->write)
 		setEventMessages($langs->trans("AssetsTypeDeleted"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("AssetsTypeCanNotBeDeleted"), null, 'errors');
 		$action = '';
 	}
@@ -308,8 +299,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 
 			if ($user->rights->asset->write)
 				print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			else
-				print '<td class="right">&nbsp;</td>';
+			else print '<td class="right">&nbsp;</td>';
 			print "</tr>";
 			$i++;
 		}
@@ -317,9 +307,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '</div>';
 
 		print '</form>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -367,8 +355,7 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 		print '</td></tr>';
-	}
-	else // For external software
+	} else // For external software
 	{
 		// Accountancy_code_asset
 		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
@@ -578,8 +565,7 @@ if ($rowid > 0)
 			print '<td>';
 			print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
 			print '</td></tr>';
-		}
-		else // For external software
+		} else // For external software
 		{
 			// Accountancy_code_asset
 			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';

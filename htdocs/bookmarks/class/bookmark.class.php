@@ -127,9 +127,7 @@ class Bookmark extends CommonObject
 
             $this->db->free($resql);
             return $this->id;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return -1;
         }
@@ -174,17 +172,13 @@ class Bookmark extends CommonObject
                 $this->id = $id;
                 $this->db->commit();
                 return $id;
-            }
-            else
-            {
+            } else {
                 $this->error = $this->db->lasterror();
                 $this->errno = $this->db->lasterrno();
                 $this->db->rollback();
                 return -2;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             $this->errno = $this->db->lasterrno();
             $this->db->rollback();
@@ -218,9 +212,7 @@ class Bookmark extends CommonObject
         if ($this->db->query($sql))
         {
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -242,9 +234,7 @@ class Bookmark extends CommonObject
         if ($resql)
         {
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -320,8 +310,7 @@ class Bookmark extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';

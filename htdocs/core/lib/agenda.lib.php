@@ -304,9 +304,7 @@ function show_array_actions_to_do($max = 5)
 	    print "</table></div><br>";
 
 	    $db->free($resql);
-	}
-	else
-	{
+	} else {
 	    dol_print_error($db);
 	}
 }
@@ -393,9 +391,7 @@ function show_array_last_actions_done($max = 5)
 		print "</table></div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -481,7 +477,7 @@ function actions_prepare_head($object)
         $listofresourcelinked = $resource->getElementResources($object->element, $object->id);
         $nbResources = (is_array($listofresourcelinked) ?count($listofresourcelinked) : 0);
 		$head[$h][1] = $langs->trans("Resources");
-		if ($nbResources > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbResources).'</span>';
+		if ($nbResources > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbResources).'</span>' : '');
 		$head[$h][2] = 'resources';
 		$h++;
 	}
@@ -494,7 +490,7 @@ function actions_prepare_head($object)
     $nbLinks = Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans("Documents");
-	if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
+    if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>' : '');
     $head[$h][2] = 'documents';
     $h++;
 

@@ -154,24 +154,20 @@ else $colortextbackhmenu = '000000';
 $colorbackvmenu1 = join(',', colorStringToArray($colorbackvmenu1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbackvmenu1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbackvmenu = 'FFFFFF'; }
-else { $colortextbackvmenu = '000000'; }
+if ($tmpval <= 460) { $colortextbackvmenu = 'FFFFFF'; } else { $colortextbackvmenu = '000000'; }
 
 $colorbacktitle1 = join(',', colorStringToArray($colorbacktitle1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktitle1);
 if ($colortexttitle == '')
 {
     $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-    if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; }
-    else { $colortexttitle = '000000'; $colorshadowtitle = 'FFFFFF'; }
-}
-else $colorshadowtitle = '888888';
+    if ($tmpval <= 460) { $colortexttitle = 'FFFFFF'; $colorshadowtitle = '888888'; } else { $colortexttitle = '000000'; $colorshadowtitle = 'FFFFFF'; }
+} else $colorshadowtitle = '888888';
 
 $colorbacktabcard1 = join(',', colorStringToArray($colorbacktabcard1)); // Normalize value to 'x,y,z'
 $tmppart = explode(',', $colorbacktabcard1);
 $tmpval = (!empty($tmppart[0]) ? $tmppart[0] : 0) + (!empty($tmppart[1]) ? $tmppart[1] : 0) + (!empty($tmppart[2]) ? $tmppart[2] : 0);
-if ($tmpval <= 460) { $colortextbacktab = 'FFFFFF'; }
-else { $colortextbacktab = '000000'; }
+if ($tmpval <= 460) { $colortextbacktab = 'FFFFFF'; } else { $colortextbacktab = '000000'; }
 
 
 // Format color value to match expected format (may be 'FFFFFF' or '255,255,255')
@@ -237,7 +233,7 @@ print 'fontsizesmaller='.$fontsizesmaller."\n";
 print 'topMenuFontSize='.$topMenuFontSize."\n";
 print 'toolTipBgColor='.$toolTipBgColor."\n";
 print 'toolTipFontColor='.$toolTipFontColor."\n";
-print 'conf->global->THEME_AGRESSIVENESS_RATIO='.$conf->global->THEME_AGRESSIVENESS_RATIO." (must be between -100 and +100)\n";
+print 'conf->global->THEME_SATURATE_RATIO='.$conf->global->THEME_SATURATE_RATIO." (must be between 0 and 1)\n";
 print '*/'."\n";
 
 

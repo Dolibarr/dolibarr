@@ -17,5 +17,3 @@ Journaux=Diarios Contables
 JournalFinancial=Diarios Financieros
 AssignDedicatedAccountingAccount=Nueva cuenta para asignar
 InvoiceLabel=Etiqueta de la factura
-AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
-AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s

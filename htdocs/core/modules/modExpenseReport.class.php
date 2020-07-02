@@ -34,7 +34,7 @@ class modExpenseReport extends DolibarrModules
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
-	 *   @param		Database	$db      Database handler
+	 *   @param		DoliDb	$db      Database handler
 	 */
 	public function __construct($db)
 	{

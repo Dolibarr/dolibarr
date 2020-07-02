@@ -272,8 +272,7 @@ class EvalMath
 				while (($o2 = $stack->pop()) != '(') { // pop off the stack back to the last (
 					if (is_null($o2))
 						return $this->trigger(5, "unexpected ')'", ")");
-					else
-						$output[] = $o2;
+					else $output[] = $o2;
 				}
 				if (preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches)) { // did we just close a function?
 					$fnn = $matches[1]; // get the function name
@@ -295,8 +294,7 @@ class EvalMath
 				while (($o2 = $stack->pop()) != '(') {
 					if (is_null($o2))
 						return $this->trigger(5, "unexpected ','", ","); // oops, never had a (
-					else
-						$output[] = $o2; // pop the argument expression stuff and push onto the output
+					else $output[] = $o2; // pop the argument expression stuff and push onto the output
 				}
 				// make sure there was a function
 				if (!preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches))

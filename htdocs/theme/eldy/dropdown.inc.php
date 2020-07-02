@@ -209,10 +209,8 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-    background: rgb(<?php echo $colorbackhmenu1 ?>);
+    background: var(--colorbackhmenu1);
 }
-
-
 
 .dropdown-menu .dropdown-header{
     padding: 8px 8px 8px 8px;
@@ -363,7 +361,9 @@ a.top-menu-dropdown-link {
     content: "\f0da";
     /* color: rgba(0,0,0,0.3); */
 }
-
+.dropdown-item.bookmark-item-external::before {
+	content: "\f35d";
+}
 
 .dropdown-item.active, .dropdown-item:hover, .dropdown-item:focus  {
     color: #<?php echo $colortextbackhmenu; ?> !important;

@@ -407,16 +407,15 @@ if (!$search_all)
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
-	$sql .= " p.rowid, p.ref, p.title";
+	$sql .= " p.rowid, p.ref, p.title,";
+	$sql .= " u.login";
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			//prevent error with sql_mode=only_full_group_by
 			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
 		}
 	}
-}
-else
-{
+} else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
@@ -1301,9 +1300,7 @@ if ($resql)
     $title = '';
 
     print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

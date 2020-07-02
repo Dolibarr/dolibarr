@@ -126,9 +126,7 @@ if (GETPOST('save', 'alpha'))
 	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -146,9 +144,7 @@ print '<br>';
 if (empty($conf->use_javascript_ajax))
 {
 	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
-}
-else
-{
+} else {
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre">';
     print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
@@ -170,8 +166,7 @@ else
         if ($value == 0)
         {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=activate_'.strtolower($const).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-        }
-        elseif ($value == 1)
+        } elseif ($value == 1)
         {
             print '<a href="'.$_SERVER['PHP_SELF'].'?action=disable_'.strtolower($const).'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
         }
@@ -211,9 +206,7 @@ else
         $readonly = ($mode == 'dolibarr_readonly' ? 1 : 0);
         $editor = new DolEditor('formtestfield', isset($conf->global->FCKEDITOR_TEST) ? $conf->global->FCKEDITOR_TEST : 'Test', '', 200, $mode, 'In', true, $uselocalbrowser, 1, 120, 8, $readonly);
         $editor->Create();
-    }
-    else
-    {
+    } else {
         print '<div style="border: 1px solid #888;" contenteditable="true">';
         print $conf->global->FCKEDITOR_TEST;
         print '</div>';

@@ -124,7 +124,7 @@ div.mainmenu.tools::before {
 }
 
 div.mainmenu.website::before {
-    content: "\f542";
+    content: "\f57d";
 }
 
 div.mainmenu.generic1::before {
@@ -146,11 +146,11 @@ div.mainmenu.generic4::before {
 /* Define color of some picto */
 
 .fa-phone, .fa-mobile-alt, .fa-fax {
-	opacity: 0.5;
+	opacity: 0.7;
 	color: #440;
 }
 .fa-at, .fa-external-link-alt {
-	opacity: 0.5;
+	opacity: 0.7;
 	color: #304;
 }
 .fa-trash {

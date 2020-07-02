@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Eroarea (erorile) au fost raportate în timpul procesu
 YouTryInstallDisabledByDirLock=Aplicația a încercat să se autoactualizeze, însă paginile de instalare/upgrade au fost dezactivate pentru securitate (directorul redenumit cu sufixul .lock). <br>
 YouTryInstallDisabledByFileLock=Aplicația a încercat să se autoactualizeze, însă paginile de instalare / upgrade au fost dezactivate pentru securitate (prin existența unui fișier de blocare <strong> install.lock </strong> în directorul de documente Dolibarr). <br>
 ClickHereToGoToApp=Faceți clic aici pentru a merge la aplicația dvs.
-ClickOnLinkOrRemoveManualy=Faceți clic pe următorul link. Dacă vedeți întotdeauna aceeași pagină, trebuie să eliminați / redenumiți fișierul install.lock din directorul de documente.
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
 Loaded=Loaded
 FunctionTest=Function test

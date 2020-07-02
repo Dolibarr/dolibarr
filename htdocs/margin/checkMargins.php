@@ -222,7 +222,7 @@ if ($result) {
 
 	if ($conf->global->MARGIN_TYPE == "1")
 	    $labelcostprice = 'BuyingPrice';
-	else   // value is 'costprice' or 'pmp'
+	else // value is 'costprice' or 'pmp'
 	    $labelcostprice = 'CostPrice';
 
 	$moreforfilter = '';

@@ -158,79 +158,71 @@ class dolReceiptPrinter extends Printer
     {
         $this->db = $db;
         $this->tags = array(
-            'dol_line_feed',
-            'dol_line_feed_reverse',
-            'dol_align_left',
-            'dol_align_center',
-            'dol_align_right',
-            'dol_use_font_a',
-            'dol_use_font_b',
-            'dol_use_font_c',
-            'dol_bold',
-            'dol_bold_disabled',
-            'dol_double_height',
-            'dol_double_width',
-            'dol_default_height_width',
-            'dol_underline',
-            'dol_underline_disabled',
-            'dol_cut_paper_full',
-            'dol_cut_paper_partial',
-            'dol_open_drawer',
-            'dol_beep',
-            'dol_print_text',
-            'dol_print_barcode',
-            'dol_value_date',
-            'dol_value_date_time',
-            'dol_value_year',
-            'dol_value_month_letters',
-            'dol_value_month',
-            'dol_value_day',
-            'dol_value_day_letters',
+            'dol_line_feed' => 'DOL_LINE_FEED',
+        	'dol_line_feed_reverse' => 'DOL_LINE_FEED_REVERSE',
+            'dol_align_left' => 'DOL_ALIGN_LEFT',
+            'dol_align_center' => 'DOL_ALIGN_CENTER',
+            'dol_align_right' => 'DOL_ALIGN_RIGHT',
+            'dol_use_font_a' => 'DOL_USE_FONT_A',
+            'dol_use_font_b' => 'DOL_USE_FONT_B',
+        	'dol_use_font_c' => 'DOL_USE_FONT_C',
+        	'dol_bold' => 'DOL_BOLD',
+        	'dol_bold_disabled' => 'DOL_BOLD_DISABLED',
+        	'dol_double_height' => 'DOL_DOUBLE_HEIGHT',
+        	'dol_double_width' => 'DOL_DOUBLE_WIDTH',
+        	'dol_default_height_width' => 'DOL_DEFAULT_HEIGHT_WIDTH',
+        	'dol_underline' => 'DOL_UNDERLINE',
+        	'dol_underline_disabled' => 'DOL_UNDERLINE_DISABLED',
+        	'dol_cut_paper_full' => 'DOL_CUT_PAPER_FULL',
+        	'dol_cut_paper_partial' => 'DOL_CUT_PAPER_PARTIAL',
+        	'dol_open_drawer' => 'DOL_OPEN_DRAWER',
+        	'dol_beep' => 'DOL_BEEP',
+        	'dol_print_text' => 'DOL_PRINT_TEXT',
+        	'dol_print_barcode' => 'DOL_PRINT_BARCODE',
+        	'dol_value_date' => 'DateInvoice',
+        	'dol_value_date_time' => 'DateInvoiceWithTime',
+        	'dol_value_year' => 'YearInvoice',
+        	'dol_value_month_letters' => 'DOL_VALUE_MONTH_LETTERS',
+        	'dol_value_month' => 'DOL_VALUE_MONTH',
+        	'dol_value_day' => 'DOL_VALUE_DAY',
+        	'dol_value_day_letters' => 'DOL_VALUE_DAY',
             //'dol_print_payment',
-            'dol_print_logo',
-            'dol_print_logo_old',
-            'dol_value_object_id',
-            'dol_value_object_ref',
-            'dol_print_object_lines',
-            'dol_print_object_tax',
-            'dol_print_object_local_tax',
-            'dol_print_object_total',
-            'dol_print_object_number',
-			'dol_print_order_lines',
-            'dol_value_customer_firstname',
-            'dol_value_customer_lastname',
-            'dol_value_customer_mail',
-            'dol_value_customer_phone',
-            'dol_value_customer_mobile',
-            'dol_value_customer_skype',
-            'dol_value_customer_tax_number',
-            'dol_value_customer_account_balance',
-            'dol_value_mysoc_name',
-            'dol_value_mysoc_address',
-            'dol_value_mysoc_zip',
-            'dol_value_mysoc_town',
-            'dol_value_mysoc_country',
-            'dol_value_mysoc_idprof1',
-            'dol_value_mysoc_idprof2',
-            'dol_value_mysoc_idprof3',
-            'dol_value_mysoc_idprof4',
-            'dol_value_mysoc_idprof5',
-            'dol_value_mysoc_idprof6',
-            'dol_value_mysoc_tva_intra',
-            'dol_value_mysoc_capital',
-            'dol_value_vendor_lastname',
-            'dol_value_vendor_firstname',
-            'dol_value_vendor_mail',
-            'dol_value_customer_points',
-            'dol_value_object_points',
-            //'dol_print_if_customer',
-            //'dol_print_if_vendor',
-            //'dol_print_if_happy_hour',
-            //'dol_print_if_num_object_unique',
-            //'dol_print_if_customer_points',
-            //'dol_print_if_object_points',
-            //'dol_print_if_customer_tax_number',
-            //'dol_print_if_customer_account_balance_positive',
+        	'dol_print_logo' => 'DOL_PRINT_LOGO',
+        	'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
+        	'dol_value_object_id' => 'InvoiceID',
+        	'dol_value_object_ref' => 'InvoiceRef',
+        	'dol_print_object_lines' => 'DOL_PRINT_OBJECT_LINES',
+        	'dol_print_object_tax' => 'TotalVAT',
+        	'dol_print_object_local_tax1' => 'TotalLT1',
+        	'dol_print_object_local_tax2' => 'TotalLT2',
+        	'dol_print_object_total' => 'Total',
+        	'dol_print_object_number' => 'DOL_PRINT_OBJECT_NUMBER',
+        	//'dol_value_object_points' => 'DOL_VALUE_OBJECT_POINTS',
+        	'dol_print_order_lines' => 'DOL_PRINT_ORDER_LINES',
+        	'dol_value_customer_firstname' => 'DOL_VALUE_CUSTOMER_FIRSTNAME',
+        	'dol_value_customer_lastname' => 'DOL_VALUE_CUSTOMER_LASTNAME',
+        	'dol_value_customer_mail' => 'DOL_VALUE_CUSTOMER_MAIL',
+        	'dol_value_customer_phone' => 'DOL_VALUE_CUSTOMER_PHONE',
+        	'dol_value_customer_skype' => 'DOL_VALUE_CUSTOMER_SKYPE',
+        	'dol_value_customer_tax_number' => 'DOL_VALUE_CUSTOMER_TAX_NUMBER',
+        	//'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
+        	//'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
+        	'dol_value_mysoc_name' => 'DOL_VALUE_MYSOC_NAME',
+        	'dol_value_mysoc_address' => 'Address',
+        	'dol_value_mysoc_zip' => 'Zip',
+        	'dol_value_mysoc_town' => 'Town',
+        	'dol_value_mysoc_country' => 'Country',
+        	'dol_value_mysoc_idprof1' => 'ProfId1',
+        	'dol_value_mysoc_idprof2' => 'ProfId2',
+        	'dol_value_mysoc_idprof3' => 'ProfId3',
+        	'dol_value_mysoc_idprof4' => 'ProfId4',
+        	'dol_value_mysoc_idprof5' => 'ProfId5',
+        	'dol_value_mysoc_idprof6' => 'ProfId6',
+        	'dol_value_mysoc_tva_intra' => 'VATIntra',
+        	'dol_value_mysoc_capital' => 'Capital',
+        	'dol_value_vendor_lastname' => 'VendorLastname',
+        	'dol_value_vendor_firstname' => 'VendorFirstname',
+        	'dol_value_vendor_mail' => 'VendorEmail',
         );
     }
 
@@ -545,30 +537,38 @@ class dolReceiptPrinter extends Printer
     /**
      *  Function to Print Receipt Ticket
      *
-     *  @param   object    $object          order or invoice object
-     *  @param   int       $templateid      Template id
-     *  @param   int       $printerid       Printer id
-     *  @return  int                        0 if OK; >0 if KO
+     *  @param   Facture|Commande   $object         Order or invoice object
+     *  @param   int       			$templateid     Template id
+     *  @param   int       			$printerid      Printer id
+     *  @return  int                				0 if OK; >0 if KO
      */
     public function sendToPrinter($object, $templateid, $printerid)
     {
-        global $conf, $mysoc, $langs;
+        global $conf, $mysoc, $langs, $user;
         $error = 0;
         $ret = $this->loadTemplate($templateid);
 
         // tags a remplacer par leur valeur avant de parser (dol_value_xxx)
         $this->template = str_replace('<dol_value_object_id>', $object->id, $this->template);
         $this->template = str_replace('<dol_value_object_ref>', $object->ref, $this->template);
-        $this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
-        $this->template = str_replace('<dol_value_customer_firstname>', $object->customer_firstname, $this->template);
-        $this->template = str_replace('<dol_value_customer_lastname>', $object->customer_lastname, $this->template);
-        $this->template = str_replace('<dol_value_customer_mail>', $object->customer_mail, $this->template);
-        $this->template = str_replace('<dol_value_customer_phone>', $object->customer_phone, $this->template);
-        $this->template = str_replace('<dol_value_customer_mobile>', $object->customer_mobile, $this->template);
-        $this->template = str_replace('<dol_value_customer_skype>', $object->customer_skype, $this->template);
-        $this->template = str_replace('<dol_value_customer_tax_number>', $object->customer_tax_number, $this->template);
-        $this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
-        $this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
+        //$this->template = str_replace('<dol_value_object_points>', $object->points, $this->template);
+        $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
+        $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
+        $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
+        $this->template = str_replace('<dol_value_month_letters>', $langs->trans("Month".dol_print_date($object->date, '%m')), $this->template);
+        $this->template = str_replace('<dol_value_month>', dol_print_date($object->date, '%m'), $this->template);
+        $this->template = str_replace('<dol_value_day>', dol_print_date($object->date, '%d'), $this->template);
+        $this->template = str_replace('<dol_value_day_letters>', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
+
+        $this->template = str_replace('<dol_value_customer_firstname>', $object->thirdparty->firstname, $this->template);
+        $this->template = str_replace('<dol_value_customer_lastname>', $object->thirdparty->lastname, $this->template);
+        $this->template = str_replace('<dol_value_customer_mail>', $object->thirdparty->email, $this->template);
+        $this->template = str_replace('<dol_value_customer_phone>', $object->thirdparty->phone, $this->template);
+        //$this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
+        $this->template = str_replace('<dol_value_customer_tax_number>', $object->thirdparty->tva_intra, $this->template);
+        //$this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
+        //$this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
+
         $this->template = str_replace('<dol_value_mysoc_name>', $mysoc->name, $this->template);
         $this->template = str_replace('<dol_value_mysoc_address>', $mysoc->address, $this->template);
         $this->template = str_replace('<dol_value_mysoc_zip>', $mysoc->zip, $this->template);
@@ -582,16 +582,10 @@ class dolReceiptPrinter extends Printer
         $this->template = str_replace('<dol_value_mysoc_idprof6>', $mysoc->idprof6, $this->template);
         $this->template = str_replace('<dol_value_mysoc_tva_intra>', $mysoc->tva_intra, $this->template);
         $this->template = str_replace('<dol_value_mysoc_capital>', $mysoc->capital, $this->template);
-        $this->template = str_replace('<dol_value_vendor_firstname>', $object->vendor_firstname, $this->template);
-        $this->template = str_replace('<dol_value_vendor_lastname>', $object->vendor_lastname, $this->template);
-        $this->template = str_replace('<dol_value_vendor_mail>', $object->vendor_mail, $this->template);
-        $this->template = str_replace('<dol_value_date>', dol_print_date($object->date, 'day'), $this->template);
-        $this->template = str_replace('<dol_value_date_time>', dol_print_date($object->date, 'dayhour'), $this->template);
-        $this->template = str_replace('<dol_value_year>', dol_print_date($object->date, '%Y'), $this->template);
-        $this->template = str_replace('<dol_value_month_letters>', $langs->trans("Month".dol_print_date($object->date, '%m')), $this->template);
-        $this->template = str_replace('<dol_value_month>', dol_print_date($object->date, '%m'), $this->template);
-        $this->template = str_replace('<dol_value_day>', dol_print_date($object->date, '%d'), $this->template);
-        $this->template = str_replace('<dol_value_day_letters>', $langs->trans("Day".dol_print_date($object->date, '%m')[1]), $this->template);
+
+        $this->template = str_replace('<dol_value_vendor_firstname>', $user->firstname, $this->template);
+        $this->template = str_replace('<dol_value_vendor_lastname>', $user->lastname, $this->template);
+        $this->template = str_replace('<dol_value_vendor_mail>', $user->email, $this->template);
 
         // parse template
         $p = xml_parser_create();
@@ -634,6 +628,26 @@ class dolReceiptPrinter extends Printer
                              $this->printer->text($spaces.$vatkey.'% '.str_pad(price($vatvalue), 10, ' ', STR_PAD_LEFT)."\n");
                         }
                         break;
+                    case 'DOL_PRINT_OBJECT_TAX1':
+                    	//var_dump($object);
+                    	$total_localtax1 = 0;
+                    	foreach ($object->lines as $line) {
+                    		$total_localtax1 += $line->total_localtax1;
+                    	}
+                    	foreach ($vatarray as $vatkey => $vatvalue) {
+                    		$this->printer->text(str_pad(price($total_localtax1), 10, ' ', STR_PAD_LEFT)."\n");
+                    	}
+                    	break;
+                    case 'DOL_PRINT_OBJECT_TAX2':
+                    	//var_dump($object);
+                    	$total_localtax2 = 0;
+                    	foreach ($object->lines as $line) {
+                    		$total_localtax2 += $line->total_localtax2;
+                    	}
+                    	foreach ($vatarray as $vatkey => $vatvalue) {
+                    		$this->printer->text(str_pad(price($total_localtax2), 10, ' ', STR_PAD_LEFT)."\n");
+                    	}
+                    	break;
                     case 'DOL_PRINT_OBJECT_TOTAL':
                         $title = $langs->trans('TotalHT');
                         $spacestoadd = $nbcharactbyline - strlen($title) - 10;

@@ -11,7 +11,7 @@ CloseEtablishment=Chiudi azienda
 # Dictionary
 DictionaryPublicHolidays=HRM - Giorni festivi
 DictionaryDepartment=HRM - Lista dipartimenti
-DictionaryFunction=HRM - Lista funzioni
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=Dipendenti
 Employee=Dipendente

@@ -102,9 +102,7 @@ class modAsset extends DolibarrModules
 		// Example: $this->const=array(0=>array('ASSETS_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('ASSETS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
-		$this->const = array(
-			//1=>array('ASSET_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
-		);
+		$this->const = array();
 
 
 		if (!isset($conf->asset) || !isset($conf->asset->enabled))

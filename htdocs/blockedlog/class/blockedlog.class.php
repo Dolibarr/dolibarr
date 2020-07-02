@@ -201,8 +201,7 @@ class BlockedLog
 			$object = new Facture($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
 		}
@@ -212,99 +211,80 @@ class BlockedLog
 			$object = new FactureFournisseur($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->element === 'payment') {
+		} elseif ($this->element === 'payment') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 
 			$object = new Paiement($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->element === 'payment_supplier') {
+		} elseif ($this->element === 'payment_supplier') {
 			require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 			$object = new PaiementFourn($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->element === 'payment_donation') {
+		} elseif ($this->element === 'payment_donation') {
 			require_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 
 			$object = new PaymentDonation($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->element === 'payment_various') {
+		} elseif ($this->element === 'payment_various') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
 			$object = new PaymentVarious($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->element === 'don' || $this->element === 'donation') {
+		} elseif ($this->element === 'don' || $this->element === 'donation') {
 			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 			$object = new Don($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->element === 'subscription') {
+		} elseif ($this->element === 'subscription') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 			$object = new Subscription($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->element === 'cashcontrol') {
+		} elseif ($this->element === 'cashcontrol') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/cashcontrol/class/cashcontrol.class.php';
 
 			$object = new CashControl($this->db);
 			if ($object->fetch($this->fk_object) > 0) {
 				return $object->getNomUrl(1);
-			}
-			else {
+			} else {
 				$this->error++;
 			}
-		}
-		elseif ($this->action == 'MODULE_SET')
+		} elseif ($this->action == 'MODULE_SET')
 		{
 			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
-		}
-		elseif ($this->action == 'MODULE_RESET')
+		} elseif ($this->action == 'MODULE_RESET')
 		{
 			if ($this->signature == '0000000000') {
 				return '<i class="opacitymedium">System to track events into unalterable logs were disabled after some recording were done. We saved a special Fingerprint to track the chain as broken.</i>';
-			}
-			else
-			{
+			} else {
 				return '<i class="opacitymedium">System to track events into unalterable logs were disabled. This is possible because no record were done yet.</i>';
 			}
 		}
@@ -361,24 +341,19 @@ class BlockedLog
 		if ($object->element == 'payment' || $object->element == 'payment_supplier')
 		{
 			$this->date_object = $object->datepaye;
-		}
-		elseif ($object->element == 'payment_salary')
+		} elseif ($object->element == 'payment_salary')
 		{
 			$this->date_object = $object->datev;
-		}
-		elseif ($object->element == 'payment_donation' || $object->element == 'payment_various')
+		} elseif ($object->element == 'payment_donation' || $object->element == 'payment_various')
 		{
 			$this->date_object = $object->datepaid ? $object->datepaid : $object->datep;
-		}
-		elseif ($object->element == 'subscription')
+		} elseif ($object->element == 'subscription')
 		{
 			$this->date_object = $object->dateh;
-		}
-		elseif ($object->element == 'cashcontrol')
+		} elseif ($object->element == 'cashcontrol')
 		{
 			$this->date_object = $object->date_creation;
-		}
-		else {
+		} else {
 			$this->date_object = $object->date;
 		}
 		// ref
@@ -477,13 +452,11 @@ class BlockedLog
 							$this->object_data->invoiceline[$lineid]->{$keyline} = $valueline;
 						}
 					}
-				}
-				elseif (!is_object($value)) $this->object_data->{$key} = $value;
+				} elseif (!is_object($value)) $this->object_data->{$key} = $value;
 			}
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
-		}
-		elseif ($this->element == 'invoice_supplier')
+		} elseif ($this->element == 'invoice_supplier')
 		{
 			foreach ($object as $key=>$value)
 			{
@@ -495,8 +468,7 @@ class BlockedLog
 			}
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
-		}
-		elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation' || $this->element == 'payment_various')
+		} elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation' || $this->element == 'payment_various')
 		{
 			$datepayment = $object->datepaye ? $object->datepaye : ($object->datepaid ? $object->datepaid : $object->datep);
 			$paymenttypeid = $object->paiementid ? $object->paiementid : ($object->paymenttype ? $object->paymenttype : $object->type_payment);
@@ -528,18 +500,15 @@ class BlockedLog
 				{
 					include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 					$tmpobject = new FactureFournisseur($this->db);
-				}
-				elseif ($this->element == 'payment')
+				} elseif ($this->element == 'payment')
 				{
 					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 					$tmpobject = new Facture($this->db);
-				}
-				elseif ($this->element == 'payment_donation')
+				} elseif ($this->element == 'payment_donation')
 				{
 					include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 					$tmpobject = new Don($this->db);
-				}
-				elseif ($this->element == 'payment_various')
+				} elseif ($this->element == 'payment_various')
 				{
 					include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 					$tmpobject = new PaymentVarious($this->db);
@@ -572,8 +541,7 @@ class BlockedLog
 						$this->errors[] = $this->error;
 						dol_syslog("Failed to fetch thirdparty for object with id ".$tmpobject->id, LOG_ERR);
 						return -1;
-					}
-					elseif ($result < 0)
+					} elseif ($result < 0)
 					{
 						$this->error = $tmpobject->error;
 						$this->errors = $tmpobject->errors;
@@ -620,14 +588,12 @@ class BlockedLog
 			$this->object_data->amount = $totalamount;
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
-		}
-		elseif ($this->element == 'payment_salary')
+		} elseif ($this->element == 'payment_salary')
 		{
 			$this->object_data->amounts = array($object->amount);
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
-		}
-		elseif ($this->element == 'subscription')
+		} elseif ($this->element == 'subscription')
 		{
 			foreach ($object as $key=>$value)
 			{
@@ -639,8 +605,7 @@ class BlockedLog
 			}
 
 			if (!empty($object->newref)) $this->object_data->ref = $object->newref;
-		}
-		else 	// Generic case
+		} else // Generic case
 		{
 			foreach ($object as $key=>$value)
 			{
@@ -713,15 +678,11 @@ class BlockedLog
 				$this->certified		= ($obj->certified == 1);
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -864,15 +825,11 @@ class BlockedLog
 				$this->db->commit();
 
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -953,9 +910,7 @@ class BlockedLog
 	 		{
 	 			$previoussignature = $obj->signature;
 	 		}
-	 	}
-	 	else
-	 	{
+	 	} else {
 	 		dol_print_error($this->db);
 	 		exit;
 	 	}
@@ -995,16 +950,13 @@ class BlockedLog
 		if ($element == 'all') {
 	 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity;
-		}
-		elseif ($element == 'not_certified') {
+		} elseif ($element == 'not_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 0";
-		}
-		elseif ($element == 'just_certified') {
+		} elseif ($element == 'just_certified') {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND certified = 1";
-		}
-		else {
+		} else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."blockedlog
 	         WHERE entity=".$conf->entity." AND element='".$element."' AND fk_object=".(int) $fk_object;
 		}
@@ -1097,8 +1049,7 @@ class BlockedLog
 		{
 			$obj = $this->db->fetch_object($res);
 			if ($obj) $result = true;
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		dol_syslog("Module Blockedlog alreadyUsed with ignoresystem=".$ignoresystem." is ".$result);
 

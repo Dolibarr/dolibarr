@@ -132,9 +132,7 @@ if ($action == 'checkdispatchline' && !((empty($conf->global->MAIN_USE_ADVANCED_
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -175,9 +173,7 @@ if ($action == 'uncheckdispatchline' && !((empty($conf->global->MAIN_USE_ADVANCE
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -218,9 +214,7 @@ if ($action == 'denydispatchline' && !((empty($conf->global->MAIN_USE_ADVANCED_P
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -395,8 +389,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 		$errors = $object->errors;
 		$error++;
 	}
-	else
-	{
+	else {
 		// If module stock is enabled and the stock increase is done on purchase order dispatching
 		if ($entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 		{
@@ -418,8 +411,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fourn
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	}
-	else
-	{
+	else {
 		$db->commit();
 	}
 }
@@ -452,8 +444,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 		$error++;
 		$errors=$supplierorderdispatch->errors;
 	}
-	else
-	{
+	else {
 		// If module stock is enabled and the stock increase is done on purchase order dispatching
 		if ($entrepot > 0 && ! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 		{
@@ -467,8 +458,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 					$errors=$mouv->errors;
 					$error++;
 				}
-				else
-				{
+				else {
 					$mouv->origin = &$object;
 					$result=$mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
 					if ($result < 0)
@@ -485,8 +475,7 @@ if ($action == 'updateline' && $user->rights->fournisseur->commande->receptionne
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	}
-	else
-	{
+	else {
 		$db->commit();
 	}
 }
@@ -714,14 +703,11 @@ if ($id > 0 || !empty($ref)) {
 				print '<tr class="liste_titre">';
 
 				print '<td>'.$langs->trans("Description").'</td>';
-				if (!empty($conf->productbatch->enabled))
-				{
+				if (!empty($conf->productbatch->enabled)) {
 					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
 					print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
-				}
-				else
-				{
+				} else {
 					print '<td></td>';
 					print '<td></td>';
 					print '<td></td>';
@@ -743,12 +729,9 @@ if ($id > 0 || !empty($ref)) {
 				print '<td align="right">'.$langs->trans("Warehouse");
 
 				// Select warehouse to force it everywhere
-				if (count($listwarehouses) > 1)
-				{
+				if (count($listwarehouses) > 1) {
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 1, 0, 0, '', 0, 0, $disabled);
-				}
-				elseif (count($listwarehouses) == 1)
-				{
+				} elseif (count($listwarehouses) == 1) {
 					print '<br>'.$langs->trans("ForceTo").' '.$form->selectarray('fk_default_warehouse', $listwarehouses, $fk_default_warehouse, 0, 0, 0, '', 0, 0, $disabled);
 				}
 
@@ -875,9 +858,7 @@ if ($id > 0 || !empty($ref)) {
 							if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
 							{
 							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
-							}
-							else
-							{
+							} else {
 							    print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
 
@@ -931,9 +912,7 @@ if ($id > 0 || !empty($ref)) {
 							if (!empty($conf->global->SUPPLIER_ORDER_EDIT_BUYINGPRICE_DURING_RECEIPT)) // Not tested !
 							{
 							    print $langs->trans("BuyingPrice").': <input class="maxwidth75" name="pu'.$suffix.'" type="text" value="'.price2num($up_ht_disc, 'MU').'">';
-							}
-							else
-							{
+							} else {
 							    print '<input class="maxwidth75" name="pu'.$suffix.'" type="hidden" value="'.price2num($up_ht_disc, 'MU').'">';
 							}
 
@@ -949,9 +928,7 @@ if ($id > 0 || !empty($ref)) {
 						if (!empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
 						    $type = 'batch';
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
-						}
-						else
-						{
+						} else {
 						    $type = 'dispatch';
 						    print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 						}
@@ -1049,8 +1026,7 @@ if ($id > 0 || !empty($ref)) {
 		    print "<br>\n";
 		    if (empty($conf->global->SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED))
 				print '<div class="opacitymedium">'.$langs->trans("NoPredefinedProductToDispatch").'</div>'; // No predefined line at all
-			else
-				print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>'; // No predefined line that remain to be dispatched.
+			else print '<div class="opacitymedium">'.$langs->trans("NoMorePredefinedProductToDispatch").'</div>'; // No predefined line that remain to be dispatched.
 		}
 
 		print '</form>';
@@ -1069,7 +1045,7 @@ if ($id > 0 || !empty($ref)) {
 		</script>';
 
 	// List of lines already dispatched
-	$sql = "SELECT p.ref, p.label,";
+	$sql = "SELECT p.rowid as pid, p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.datec";
 	$sql.=" ,cd.rowid, cd.subprice";
@@ -1114,8 +1090,7 @@ if ($id > 0 || !empty($ref)) {
 			// Status
 			if (!empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS) && empty($reception->rowid)) {
 				print '<td class="center" colspan="2">'.$langs->trans("Status").'</td>';
-			}
-			elseif (!empty($conf->reception->enabled)) {
+			} elseif (!empty($conf->reception->enabled)) {
 				print '<td class="center"></td>';
 			}
 
@@ -1156,9 +1131,18 @@ if ($id > 0 || !empty($ref)) {
 				print '<td>'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
 
 				if (!empty($conf->productbatch->enabled)) {
-					print '<td class="dispatch_batch_number">'.$objp->batch.'</td>';
-					print '<td class="dispatch_dluo">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
-					print '<td class="dispatch_dlc">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+					if ($objp->batch) {
+						include_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+						$lot=new Productlot($db);
+						$lot->fetch(0, $objp->pid, $objp->batch);
+						print '<td class="dispatch_batch_number">'.$lot->getNomUrl(1).'</td>';
+						print '<td class="dispatch_dluo">'.dol_print_date($lot->eatby, 'day').'</td>';
+						print '<td class="dispatch_dlc">'.dol_print_date($lot->sellby, 'day').'</td>';
+					} else {
+						print '<td class="dispatch_batch_number"></td>';
+						print '<td class="dispatch_dluo"></td>';
+						print '<td class="dispatch_dlc"></td>';
+					}
 				}
 
 				// Qty
@@ -1167,8 +1151,7 @@ if ($id > 0 || !empty($ref)) {
 				{
 					print '<input style="width: 50px;" type="number" min="1" name="qty" value="' . $objp->qty . '" />';
 				}
-				else
-				{
+				else {
 					print $objp->qty;
 				}
 				print '<input type="hidden" name="price" value="'.$objp->subprice.'" />';
@@ -1187,8 +1170,7 @@ if ($id > 0 || !empty($ref)) {
 						print $langs->trans("ErrorNoWarehouseDefined");
 					}
 				}
-				else
-				{
+				else {
 					$warehouse_static->id = $objp->warehouse_id;
 					$warehouse_static->libelle = $objp->entrepot;
 					print $warehouse_static->getNomUrl(1);
@@ -1257,8 +1239,7 @@ if ($id > 0 || !empty($ref)) {
 					print '</a>';
 					print '</td>';
 				}
-				else
-				{
+				else {
 					print '<td class="center valignmiddle">';
 					print '<input type="submit" class="button" id="savelinebutton" name="save" value="'.$langs->trans("Save").'" />';
 					print '</td>';

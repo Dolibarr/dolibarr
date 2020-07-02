@@ -148,12 +148,15 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
-input[name=duration_value]
+input[name=duration_value], input[name=durationhour]
 {
-	margin-right: 4px;
+	margin-right: 4px !important;
 }
 input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
+}
+input[type=checkbox], input[type=radio] {
+    margin: 0 3px 0 3px;
 }
 input, input.flat, form.flat select, select, select.flat, .dataTables_length label select {
 	border: none;
@@ -171,15 +174,15 @@ input {
 	padding-left: 5px;
 }
 select {
-	padding-top: 4px;
+	padding-top: 5px;
 	padding-right: 4px;
-	padding-bottom: 3px;
+	padding-bottom: 5px;
 	padding-left: 2px;
 }
 input, select {
-	margin-left:0px;
-	margin-bottom:1px;
-	margin-top:1px;
+	margin-left: 0px;
+	margin-bottom: 1px;
+	margin-top: 1px;
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
@@ -193,6 +196,7 @@ input, select {
 input.button:focus {
 	border-bottom: 0;
 }
+
 input.button.massactionconfirmed {
     margin: 4px;
 }
@@ -308,6 +312,11 @@ a.buttonticket {
     /* height: 40px; */
 }
 
+/* Used by categories */
+span.categorysquarre {
+    padding: 0 4px 0 4px;
+}
+
 /* Used by timesheets */
 span.timesheetalreadyrecorded input {
     border: none;
@@ -419,8 +428,8 @@ hr { border: 0; border-top: 1px solid #ccc; }
 .tabBar hr { margin-top: 20px; margin-bottom: 17px; }
 
 .button:not(.bordertransp):not(.buttonpayment), .buttonDelete:not(.bordertransp):not(.buttonpayment) {
-	margin-bottom: 0;
-	margin-top: 0;
+	margin-bottom: 3px;
+	margin-top: 3px;
 	margin-left: 5px;
 	margin-right: 5px;
 	font-family: <?php print $fontlist ?>;
@@ -552,6 +561,9 @@ textarea.centpercent {
     text-align: center;
     margin: 0px auto;
 }
+.alignstart {
+    text-align: start;
+}
 .left {
 	text-align: <?php print $left; ?>;
 }
@@ -610,10 +622,10 @@ textarea.centpercent {
 	padding-<?php print $right; ?>: 2px;
 }
 .paddingtop {
-	padding-bottom: 4px;
+	padding-top: 4px;
 }
 .paddingtop2 {
-	padding-bottom: 2px;
+	padding-top: 2px;
 }
 .paddingbottom {
 	padding-bottom: 4px;
@@ -667,10 +679,12 @@ body[class*="colorblind-"] .text-success{
     color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfieldlang {
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop,
+.editfieldlang {
     color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfieldlang:hover {
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover,
+.editfieldlang:hover {
     color: var(--colortexttitle) !important;
 }
 .fawidth30 {
@@ -1027,6 +1041,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* ============================================================================== */
 
 .clearboth  { clear:both; }
+
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
@@ -1065,6 +1080,7 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
+.maxwidthdate  { max-width: 80px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -1153,9 +1169,14 @@ table[summary="list_of_modules"] .fa-cog {
 	}
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
-		width: calc(100% - 30px) !important;
+		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}
+
+	.clearbothonsmartphone { clear: both; display: block; }
+	/*img.photoref, div.photoref {
+		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
+	}*/
 }
 
 /* Force values for small screen 570 */
@@ -1268,9 +1289,9 @@ table[summary="list_of_modules"] .fa-cog {
 	    padding-bottom: 5px;
 	}
     img.photoref, div.photoref {
-    	border: none;
+    	border: 1px solid rgba(0, 0, 0, 0.2);
+    	box-shadow: none;
         -webkit-box-shadow: none;
-        box-shadow: none;
         padding: 4px;
     	height: 20px;
     	width: 20px;
@@ -1367,7 +1388,7 @@ td.showDragHandle {
 
 .side-nav {
 	display: table-cell;
-	border-<?php echo $right; ?>: 1px solid #d0d0d0;
+	border-<?php echo $right; ?>: 1px solid #E0E0E0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
 	transition: left 0.5s ease;
@@ -1716,7 +1737,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-<?php echo $right; ?>: 20px;
+	padding-<?php echo $right; ?>: 30px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -1964,6 +1985,13 @@ div.mainmenu {
 	min-width: 40px;
 }
 
+a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
+    outline: none;
+}
+button.ui-button.ui-corner-all.ui-widget:focus {
+    outline: none;
+}
+
 /* For mainmenu, we always load the img */
 
 div.mainmenu.menu {
@@ -2121,9 +2149,7 @@ a.tmenuimage:hover{
                 print 'div.mainmenu.'.$val.'::before {
                     content: "\f249";
                 }'."\n";
-            }
-            else
-            {
+            } else {
                 print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
                 $url = dol_buildpath($path.'/theme/'.$theme.'/img/menus/generic'.(min($generic, 4))."_over.png", 1);
                 print "div.mainmenu.".$val." {\n";
@@ -2131,9 +2157,7 @@ a.tmenuimage:hover{
                 print "}\n";
             }
             $generic++;
-        }
-        else
-        {
+        } else {
             print "div.mainmenu.".$val." {\n";
             print "	background-image: url(".$url.");\n";
             print "}\n";
@@ -2648,8 +2672,8 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 div.tabs {
     text-align: <?php print $left; ?>;
     padding-top: 10px;
-    padding-left: 6px !important;
-    padding-right: 6px !important;
+    padding-left: 6px;
+    padding-right: 6px;
 	clear:both;
 	height:100%;
 }
@@ -2769,6 +2793,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     text-decoration: none;
     white-space: nowrap;
 
+	/*border-right: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-top: 1px solid #ddd; */
 	border-right: 1px solid transparent;
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
@@ -2867,6 +2894,9 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 .nopaddingleft {
 	padding-<?php print $left; ?>: 0px;
 }
+div.tabs.nopaddingleft {
+	padding-<?php print $left; ?>: 0px;
+}
 .nopaddingright {
 	padding-<?php print $right; ?>: 0px;
 }
@@ -2963,22 +2993,22 @@ td.border, div.tagtable div div.border {
 }
 table.liste, table.noborder, table.formdoc, div.noborder {
 	width: 100%;
-
 	border-collapse: separate !important;
 	border-spacing: 0px;
-
 	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
-	/* border-top-width: 2px;
-	border-top-color: var(--colorbackhmenu1);
-	border-top-style: solid; */
-
-	/*border-bottom-width: 1px;
-	border-bottom-color: rgb(<?php echo $colortopbordertitle1 ?>);
-	border-bottom-style: solid;*/
-
 	margin: 0px 0px 5px 0px;
+
+	/*width: calc(100% - 7px);
+    border-collapse: separate !important;
+    border-spacing: 0px;
+    border-top-width: 0px;
+    border-top-color: rgb(215,215,215);
+    border-top-style: solid;
+    margin: 0px 0px 5px 2px;
+    box-shadow: 1px 1px 5px #ddd;
+    */
 }
 #tablelines {
 	border-bottom-width: 1px;
@@ -3094,7 +3124,7 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: 3px;
+	/* padding-top: 3px; */
 }
 div.refid  {
 	font-weight: bold;
@@ -3136,7 +3166,7 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 10px;
+  /* padding-top: 10px; */
   padding-bottom: 5px;
   font-size: 1.1em;
 }
@@ -3610,6 +3640,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding-bottom: 2px;
     width: 118px;
 }
+
+.boxtable:not(.widgetstats) td.tdboxstats .boxstats {
+	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+}
+
 .tabBar .fichehalfright .boxstats {
     padding-top: 8px;
     padding-bottom: 4px;
@@ -3843,7 +3878,7 @@ div.info {
     padding-bottom: 8px;
     margin: 1em 0em 1em 0em;
     background: #eff8fc;
-    color: #668;
+    color: #558;
 }
 
 /* Warning message */
@@ -3983,14 +4018,19 @@ div.titre {
 	padding-top: 5px;
     padding-bottom: 5px;
 }
-.secondary, div.titre {
+div.fiche > table.table-fiche-title:first-of-type div {
+    color: var(--colortexttitlenotab);
+    /* font-weight: 600; */
+}
+div.titre {
+    color: var(--colortexttitlenotab);
+}
+
+.secondary {
     color: var(--colortexttitlenotab);
 }
 .tertiary {
 	color: var(--colortexttitlenotab2);
-}
-table.table-fiche-title:first-of-type div {
-    color: var(--colortexttitlenotab);
 }
 
 table.table-fiche-title .col-title div.titre{
@@ -4296,7 +4336,7 @@ span[phptag] {
 }
 .websitebar .button, .websitebar .buttonDelete
 {
-	padding: 2px 5px 3px 5px !important;
+	padding: 4px 5px 4px 5px !important;
 	margin: 2px 4px 2px 4px  !important;
     line-height: normal;
     background: #f5f5f5 !important;
@@ -4475,10 +4515,10 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-top: 4px; padding-top: 4px !important; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 4px !important; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 26px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-
+.treeview .hitarea { margin-top: 3px; }
 
 
 /* ============================================================================== */
@@ -5119,6 +5159,9 @@ span#select2-taskid-container[title^='--'] {
     background-color: rgb(<?php echo $colorbackhmenu1 ?>);
     color: #<?php echo $colortextbackhmenu; ?>;
 }
+.select2-container--default .select2-results__option--highlighted[aria-selected] span {
+    color: #fff !important;
+}
 
 span.select2.select2-container.select2-container--default {
     border-left: none;
@@ -5363,7 +5406,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 2px 5px 1px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 0 0 2px 3px;
   position: relative;
   line-height: 13px;
@@ -5419,7 +5462,8 @@ span.noborderoncategories a, li.noborderoncategories a {
 	vertical-align: top;
 }
 span.noborderoncategories {
-	padding: 3px 5px 0px 5px;
+	padding: 4px 5px 0px 5px;
+	display: inline-block;
 }
 .categtextwhite, .treeview .categtextwhite.hover {
 	color: #fff !important;

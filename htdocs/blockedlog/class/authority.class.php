@@ -128,8 +128,7 @@ class BlockedLogAuthority
 
 		if (!in_array($block, $blocks)) {
 			return true;
-		}
-		else {
+		} else {
 			return false;
 		}
     }
@@ -179,15 +178,11 @@ class BlockedLogAuthority
 				$this->tms = $this->db->jdate($obj->tms);
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -232,15 +227,11 @@ class BlockedLogAuthority
 				$this->db->commit();
 
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -276,9 +267,7 @@ class BlockedLogAuthority
 			$this->db->commit();
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -316,8 +305,7 @@ class BlockedLogAuthority
 			echo $block->signature.' '.$url.' '.$res.'<br>';
 			if ($res === 'blockalreadyadded' || $res === 'blockadded') {
 				$block->setCertified();
-			}
-			else {
+			} else {
 				$this->error = $langs->trans('ImpossibleToContactAuthority ', $url);
 				return -1;
 			}

@@ -119,8 +119,7 @@ class ProductAttribute
 
     			$return[] = $tmp;
     		}
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 
 		return $return;
 	}

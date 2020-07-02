@@ -58,7 +58,7 @@ AccountancyAreaDescActionOnceBis=下一步驟可在未來節省您的時間當�
 AccountancyAreaDescActionFreq=接下來的動作在大型公司一般是每個月、每週或每天執行…
 
 AccountancyAreaDescJournalSetup=步驟%s: 從選單%s您的日記帳清單中建立或檢查內容 
-AccountancyAreaDescChartModel=步驟%s:從選單%s建立一個會計科目表模組
+AccountancyAreaDescChartModel=步驟%s: 確認會計項目表模組是否存在，或者從%s選單建立新的。
 AccountancyAreaDescChart=步驟%s: 從選單中建立或檢查會計項目表的內容%s。
 
 AccountancyAreaDescVat=步驟%s：為每個營業稅稅率定義會計科目。為此，請使用選單條目%s。
