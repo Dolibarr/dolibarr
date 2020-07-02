@@ -982,7 +982,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
 				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
 				} else {
-				    echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+				    if (!$conf->global->TAKEPOS_HIDE_CATEGORY_IMAGES) echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
 				}
 				?>
 				<?php if ($count != ($MAXCATEG - 2) && $count != ($MAXCATEG - 1)) { ?>
@@ -1015,7 +1015,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
     				} else {
     					print '<div class="" id="proprice'.$count.'"></div>';
-    					print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+    					if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
     				}
     				?>
 					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1)) { ?>
