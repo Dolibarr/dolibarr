@@ -1178,7 +1178,7 @@ if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
 	$res = $object->fetch(0, $websitekey);
 	$website = $object;
 
-	$res = $objectpage->fetch($pageid, $object->fk_website);
+	$res = $objectpage->fetch($pageid, $object->id);
 
 	if ($res > 0)
 	{
@@ -3484,8 +3484,10 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$c = new Categorie($db);
 			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
 			$arrayselected = array();
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			if (is_array($cats)) {
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
 			}
 
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', null, null, 1);
