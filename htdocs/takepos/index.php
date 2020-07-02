@@ -932,7 +932,13 @@ if ($resql)
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('ActionButtons');
 if (!empty($reshook)) {
-    $menus[$r++] = $reshook;
+	if (is_array($reshook) && !isset($reshook['title'])) {
+		foreach ($reshook as $reshook) {
+			$menus[$r++] = $reshook;
+		}
+	} else {
+		$menus[$r++] = $reshook;
+	}
 }
 
 if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
