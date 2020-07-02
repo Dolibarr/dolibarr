@@ -197,17 +197,16 @@ class dolReceiptPrinter extends Printer
         	'dol_print_object_local_tax2' => 'TotalLT2',
         	'dol_print_object_total' => 'Total',
         	'dol_print_object_number' => 'DOL_PRINT_OBJECT_NUMBER',
-        	'dol_value_object_points' => 'DOL_VALUE_OBJECT_POINTS',
+        	//'dol_value_object_points' => 'DOL_VALUE_OBJECT_POINTS',
         	'dol_print_order_lines' => 'DOL_PRINT_ORDER_LINES',
         	'dol_value_customer_firstname' => 'DOL_VALUE_CUSTOMER_FIRSTNAME',
         	'dol_value_customer_lastname' => 'DOL_VALUE_CUSTOMER_LASTNAME',
         	'dol_value_customer_mail' => 'DOL_VALUE_CUSTOMER_MAIL',
         	'dol_value_customer_phone' => 'DOL_VALUE_CUSTOMER_PHONE',
-        	'dol_value_customer_mobile' => 'DOL_VALUE_CUSTOMER_MOBILE',
         	'dol_value_customer_skype' => 'DOL_VALUE_CUSTOMER_SKYPE',
         	'dol_value_customer_tax_number' => 'DOL_VALUE_CUSTOMER_TAX_NUMBER',
-        	'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
-        	'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
+        	//'dol_value_customer_account_balance' => 'DOL_VALUE_CUSTOMER_ACCOUNT_BALANCE',
+        	//'dol_value_customer_points' => 'DOL_VALUE_CUSTOMER_POINTS',
         	'dol_value_mysoc_name' => 'DOL_VALUE_MYSOC_NAME',
         	'dol_value_mysoc_address' => 'Address',
         	'dol_value_mysoc_zip' => 'Zip',
@@ -565,10 +564,10 @@ class dolReceiptPrinter extends Printer
         $this->template = str_replace('<dol_value_customer_lastname>', $object->thirdparty->lastname, $this->template);
         $this->template = str_replace('<dol_value_customer_mail>', $object->thirdparty->email, $this->template);
         $this->template = str_replace('<dol_value_customer_phone>', $object->thirdparty->phone, $this->template);
-        $this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
-        $this->template = str_replace('<dol_value_customer_tax_number>', $object->thirdparty->vatintra, $this->template);
-        $this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
-        $this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
+        //$this->template = str_replace('<dol_value_customer_mobile>', $object->thirdparty->mobile, $this->template);
+        $this->template = str_replace('<dol_value_customer_tax_number>', $object->thirdparty->tva_intra, $this->template);
+        //$this->template = str_replace('<dol_value_customer_account_balance>', $object->customer_account_balance, $this->template);
+        //$this->template = str_replace('<dol_value_customer_points>', $object->customer_points, $this->template);
 
         $this->template = str_replace('<dol_value_mysoc_name>', $mysoc->name, $this->template);
         $this->template = str_replace('<dol_value_mysoc_address>', $mysoc->address, $this->template);
