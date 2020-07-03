@@ -433,7 +433,7 @@ function CloseBill() {
 }
 
 function Floors() {
-	console.log("Open box to select floor");
+	console.log("Open box to select floor place="+place);
 	$.colorbox({href:"floors.php?place="+place, width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Floors"); ?>"});
 }
 
@@ -932,7 +932,13 @@ if ($resql)
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('ActionButtons');
 if (!empty($reshook)) {
-    $menus[$r++] = $reshook;
+	if (is_array($reshook) && !isset($reshook['title'])) {
+		foreach ($reshook as $reshook) {
+			$menus[$r++] = $reshook;
+		}
+	} else {
+		$menus[$r++] = $reshook;
+	}
 }
 
 if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');

@@ -2091,6 +2091,10 @@ class ExtraFields
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
 				}
+				elseif (in_array($key_type, array('html')))
+				{
+					$value_key = GETPOST("options_".$key, 'alpha');
+				}
 				else
 				{
 					$value_key = GETPOST("options_".$key);
