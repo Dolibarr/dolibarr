@@ -131,6 +131,12 @@ else print "var received=0;";
     	<?php
     	if (empty($conf->global->TAKEPOS_NUMPAD)) print 'received+=String(price);'."\n";
     	else print 'received+=parseFloat(price);'."\n";
+		$constforcompanyid = 'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"];
+		if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
+			// If the sale is convertible to invoice, change create invoice to 'C' button on use numpad
+			print '$(\'button:contains("'.$langs->trans("CreateBill").'")\').attr("onclick","reset()");'."\n";
+			print '$(\'button:contains("'.$langs->trans("CreateBill").'")\').text(\'C\');'."\n";
+		}
     	?>
     	$('.change1').html(pricejs(parseFloat(received), 'MT'));
     	$('.change1').val(parseFloat(received));
@@ -276,6 +282,13 @@ $action_buttons = array(
 	    "class" => "poscolordelete"
 	),
 );
+
+if ($invoice->id > 0 && ($invoice->socid != $conf->global->$constforcompanyid)) {
+    $action_buttons[0]['text']=$langs->trans("CreateBill");
+	$action_buttons[0]['function']="Validate('invoice');";
+	$action_buttons[0]['span']="style='font-size: 10pt;'";
+}
+
 $numpad = $conf->global->TAKEPOS_NUMPAD;
 
 print '<button type="button" class="calcbutton" onclick="addreceived('.($numpad == 0 ? '7' : '10').');">'.($numpad == 0 ? '7' : '10').'</button>';

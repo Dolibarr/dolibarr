@@ -156,7 +156,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	    }
 	}
 
-	if ($bankaccount <= 0) {
+	if ($bankaccount <= 0 && $pay != "invoice") {
 		$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 		$error++;
 	}
@@ -194,6 +194,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	//	if ($conf->global->TAKEPOS_ADDON == "terminal") $conf->global->FACTURE_ADDON = $conf->global->{'TAKEPOS_ADDON'.$_SESSION["takeposterminal"]};
 	//	else $conf->global->FACTURE_ADDON = $conf->global->TAKEPOS_ADDON;
 	//}
+	
+	if ($pay == "invoice") $invoice->module_source = '';
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 	if ($error) {
