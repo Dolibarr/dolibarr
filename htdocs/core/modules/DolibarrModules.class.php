@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2005-2020  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
@@ -998,7 +998,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         dol_syslog(get_class($this)."::_active insert activation constant", LOG_DEBUG);
         $resql = $this->db->query($sql);
-        if (!$resql) { $err++;
+        if (!$resql) {
+        	$err++;
         }
 
         return $err;
@@ -1078,7 +1079,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     {
                         if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
                             $result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-                            if ($result <= 0) { $error++;
+                            if ($result <= 0) {
+                            	$error++;
                             }
                         }
                     }
@@ -1096,7 +1098,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     {
                         if (preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'llx_' && substr($file, 0, 4) != 'data') {
                             $result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-                            if ($result <= 0) { $error++;
+                            if ($result <= 0) {
+                            	$error++;
                             }
                         }
                     }
@@ -1107,14 +1110,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $files = array();
                     while (($file = readdir($handle)) !== false)
                     {
-                               $files[] = $file;
+                    	$files[] = $file;
                     }
                     sort($files);
                     foreach ($files as $file)
                     {
                         if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 4) == 'data') {
                             $result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-                            if ($result <= 0) { $error++;
+                            if ($result <= 0) {
+                            	$error++;
                             }
                         }
                     }
@@ -1125,14 +1129,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $files = array();
                     while (($file = readdir($handle)) !== false)
                     {
-                               $files[] = $file;
+                    	$files[] = $file;
                     }
                     sort($files);
                     foreach ($files as $file)
                     {
                         if (preg_match('/\.sql$/i', $file) && !preg_match('/\.key\.sql$/i', $file) && substr($file, 0, 6) == 'update') {
                             $result = run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG) ? 1 : 0, '', 1);
-                            if ($result <= 0) { $error++;
+                            if ($result <= 0) {
+                            	$error++;
                             }
                         }
                     }
@@ -1159,9 +1164,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *
      * @param string $option Options when disabling module ('newboxdefonly'=insert only boxes definition)
      *
+     * @param  int $force_entity     Force current entity
      * @return int             Error count (0 if OK)
      */
-    public function insert_boxes($option = '')
+    public function insert_boxes($option = '', $force_entity = null)
     {
         // phpcs:enable
         include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
@@ -1177,20 +1183,24 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
             foreach ($this->boxes as $key => $value)
             {
+            	$entity = (! empty($force_entity) ? (int) $force_entity : $conf->entity);
                 $file  = isset($this->boxes[$key]['file']) ? $this->boxes[$key]['file'] : '';
                 $note  = isset($this->boxes[$key]['note']) ? $this->boxes[$key]['note'] : '';
                 $enabledbydefaulton = isset($this->boxes[$key]['enabledbydefaulton']) ? $this->boxes[$key]['enabledbydefaulton'] : 'Home';
 
-                if (empty($file)) { $file  = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
+                if (empty($file)) {
+                	$file  = isset($this->boxes[$key][1]) ? $this->boxes[$key][1] : ''; // For backward compatibility
                 }
-                if (empty($note)) { $note  = isset($this->boxes[$key][2]) ? $this->boxes[$key][2] : ''; // For backward compatibility
+                if (empty($note)) {
+                	$note  = isset($this->boxes[$key][2]) ? $this->boxes[$key][2] : ''; // For backward compatibility
                 }
 
                 // Search if boxes def already present
                 $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."boxes_def";
                 $sql .= " WHERE file = '".$this->db->escape($file)."'";
-                $sql .= " AND entity = ".$conf->entity;
-                if ($note) { $sql .= " AND note ='".$this->db->escape($note)."'";
+                $sql .= " AND entity = ".$entity;
+                if ($note) {
+                	$sql .= " AND note ='".$this->db->escape($note)."'";
                 }
 
                 $result = $this->db->query($sql);
@@ -1202,13 +1212,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                         if (!$err) {
                             $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (file, entity, note)";
                             $sql .= " VALUES ('".$this->db->escape($file)."', ";
-                            $sql .= $conf->entity.", ";
+                            $sql .= $entity.", ";
                             $sql .= $note ? "'".$this->db->escape($note)."'" : "null";
                             $sql .= ")";
 
                             dol_syslog(get_class($this)."::insert_boxes", LOG_DEBUG);
                             $resql = $this->db->query($sql);
-                            if (!$resql) { $err++;
+                            if (!$resql) {
+                            	$err++;
                             }
                         }
                         if (!$err && !preg_match('/newboxdefonly/', $option)) {
@@ -1216,12 +1227,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
                             foreach ($pos_name as $key2 => $val2)
                             {
-                                    //print 'key2='.$key2.'-val2='.$val2."<br>\n";
-                                if ($enabledbydefaulton && $val2 != $enabledbydefaulton) { continue; // Not enabled by default onto this page.
+                                //print 'key2='.$key2.'-val2='.$val2."<br>\n";
+                                if ($enabledbydefaulton && $val2 != $enabledbydefaulton) {
+                                	continue; // Not enabled by default onto this page.
                                 }
 
                                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id,position,box_order,fk_user,entity)";
-                                $sql .= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$conf->entity.")";
+                                $sql .= " VALUES (".$lastid.", ".$key2.", '0', 0, ".$entity.")";
 
                                 dol_syslog(get_class($this)."::insert_boxes onto page ".$key2."=".$val2."", LOG_DEBUG);
                                 $resql = $this->db->query($sql);
@@ -1235,8 +1247,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                         }
                         else
                         {
-                                  $this->error = $this->db->lasterror();
-                                  $this->db->rollback();
+                        	$this->error = $this->db->lasterror();
+                        	$this->db->rollback();
                         }
                     }
                     // else box already registered into database
@@ -1330,9 +1342,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Adds cronjobs
      *
+     * @param  int $force_entity     Force current entity
      * @return int             Error count (0 if OK)
      */
-    public function insert_cronjobs()
+    public function insert_cronjobs($force_entity = null)
     {
         // phpcs:enable
         include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
@@ -1346,7 +1359,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
             foreach ($this->cronjobs as $key => $value)
             {
-                $entity = isset($this->cronjobs[$key]['entity']) ? $this->cronjobs[$key]['entity'] : $conf->entity;
+            	if (! empty($force_entity)) {
+            		$entity = (isset($this->cronjobs[$key]['entity']) && $this->cronjobs[$key]['entity'] == 0 ? $this->cronjobs[$key]['entity'] : $force_entity);
+            	} else {
+            		$entity = isset($this->cronjobs[$key]['entity']) ? $this->cronjobs[$key]['entity'] : $conf->entity;
+            	}
                 $label  = isset($this->cronjobs[$key]['label']) ? $this->cronjobs[$key]['label'] : '';
                 $jobtype = isset($this->cronjobs[$key]['jobtype']) ? $this->cronjobs[$key]['jobtype'] : '';
                 $class  = isset($this->cronjobs[$key]['class']) ? $this->cronjobs[$key]['class'] : '';
@@ -1509,9 +1526,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Adds tabs
      *
+     * @param  int $force_entity     Force current entity
      * @return int  Error count (0 if ok)
      */
-    public function insert_tabs()
+    public function insert_tabs($force_entity = null)
     {
         // phpcs:enable
         global $conf;
@@ -1524,15 +1542,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $i = 0;
             foreach ($this->tabs as $key => $value)
             {
-                if (is_array($value) && count($value) == 0) { continue; // Discard empty arrays
+                if (is_array($value) && count($value) == 0) {
+                	continue; // Discard empty arrays
                 }
 
-                $entity = $conf->entity;
+                $entity = (! empty($force_entity) ? $force_entity : $conf->entity);
                 $newvalue = $value;
 
                 if (is_array($value)) {
                     $newvalue = $value['data'];
-                    if (isset($value['entity'])) { $entity = $value['entity'];
+                    if (isset($value['entity'])) {
+                    	$entity = ((! empty($force_entity) && $value['entity'] > 0) ? (int) $force_entity : $value['entity']);
                     }
                 }
 
@@ -1575,16 +1595,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Adds constants
      *
+     * @param  int $force_entity     Force current entity
      * @return int Error count (0 if OK)
      */
-    public function insert_const()
+    public function insert_const($force_entity = null)
     {
         // phpcs:enable
         global $conf;
 
         $err = 0;
 
-        if (empty($this->const)) { return 0;
+        if (empty($this->const)) {
+        	return 0;
         }
 
         dol_syslog(get_class($this)."::insert_const", LOG_DEBUG);
@@ -1596,12 +1618,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $val       = $this->const[$key][2];
             $note      = isset($this->const[$key][3]) ? $this->const[$key][3] : '';
             $visible   = isset($this->const[$key][4]) ? $this->const[$key][4] : 0;
-            $entity    = (!empty($this->const[$key][5]) && $this->const[$key][5] != 'current') ? 0 : $conf->entity;
+            $entity    = ((!empty($this->const[$key][5]) && $this->const[$key][5] != 'current') ? 0 : (! empty($force_entity) ? $force_entity : $conf->entity));
 
             // Clean
-            if (empty($visible)) { $visible = '0';
+            if (empty($visible)) {
+            	$visible = '0';
             }
-            if (empty($val) && $val != '0') { $val = '';
+            if (empty($val) && $val != '0') {
+            	$val = '';
             }
 
             $sql = "SELECT count(*)";
@@ -1714,11 +1738,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 {
                     $r_id       = $this->rights[$key][0];
                     $r_desc     = $this->rights[$key][1];
-                    $r_type     = isset($this->rights[$key][2]) ? $this->rights[$key][2] : '';
+                    $r_type     = (isset($this->rights[$key][2]) ? $this->rights[$key][2] : '');
                     $r_def      = $this->rights[$key][3];
                     $r_perms    = $this->rights[$key][4];
-                    $r_subperms = isset($this->rights[$key][5]) ? $this->rights[$key][5] : '';
-                    $r_modul = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
+                    $r_subperms = (isset($this->rights[$key][5]) ? $this->rights[$key][5] : '');
+                    $r_modul	= (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 
                     if (empty($r_type)) { $r_type = 'w'; }
                     if (empty($r_def)) { $r_def = 0; }
@@ -1856,14 +1880,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Adds menu entries
      *
+     * @param  int $force_entity     Force current entity
      * @return int     Error count (0 if OK)
      */
-    public function insert_menus()
+    public function insert_menus($force_entity = null)
     {
         // phpcs:enable
         global $user;
 
-        if (!is_array($this->menu) || empty($this->menu)) { return 0;
+        if (!is_array($this->menu) || empty($this->menu)) {
+        	return 0;
         }
 
         include_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
@@ -1880,7 +1906,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $menu->menu_handler = 'all';
 
             //$menu->module=strtolower($this->name);    TODO When right_class will be same than module name
-            $menu->module = empty($this->rights_class) ?strtolower($this->name) : $this->rights_class;
+            $menu->module = (empty($this->rights_class) ? strtolower($this->name) : $this->rights_class);
 
             if (!$this->menu[$key]['fk_menu']) {
                 $menu->fk_menu = 0;
@@ -1928,6 +1954,9 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             $menu->user = $this->menu[$key]['user'];
             $menu->enabled = isset($this->menu[$key]['enabled']) ? $this->menu[$key]['enabled'] : 0;
             $menu->position = $this->menu[$key]['position'];
+            if (! empty($force_entity)) {
+            	$menu->entity = (int) $force_entity;
+            }
 
             if (!$err) {
                 $result = $menu->create($user); // Save menu entry into table llx_menu
@@ -1991,9 +2020,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Creates directories
      *
+     * @param  int $force_entity     Force current entity
      * @return int Error count (0 if OK)
      */
-    public function create_dirs()
+    public function create_dirs($force_entity = null)
     {
         // phpcs:enable
         global $langs, $conf;
@@ -2005,7 +2035,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             {
                 $addtodatabase = 0;
 
-                if (!is_array($value)) { $dir = $value; // Default simple mode
+                if (!is_array($value)) {
+                	$dir = $value; // Default simple mode
                 } else {
                     $constname = $this->const_name."_DIR_";
                     $dir       = $this->dirs[$key][1];
@@ -2013,17 +2044,21 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $subname   = empty($this->dirs[$key][3]) ? '' : strtoupper($this->dirs[$key][3]); // Add submodule name (ex: $conf->module->submodule->dir_output)
                     $forcename = empty($this->dirs[$key][4]) ? '' : strtoupper($this->dirs[$key][4]); // Change the module name if different
 
-                    if (!empty($forcename)) { $constname = 'MAIN_MODULE_'.$forcename."_DIR_";
+                    if (!empty($forcename)) {
+                    	$constname = 'MAIN_MODULE_'.$forcename."_DIR_";
                     }
-                    if (!empty($subname)) {   $constname = $constname.$subname."_";
+                    if (!empty($subname)) {
+                    	$constname = $constname.$subname."_";
                     }
 
                     $name = $constname.strtoupper($this->dirs[$key][0]);
                 }
 
                 // Define directory full path ($dir must start with "/")
-                if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $conf->entity == 1) { $fulldir = DOL_DATA_ROOT.$dir;
-                } else { $fulldir = DOL_DATA_ROOT."/".$conf->entity.$dir;
+                if (empty($conf->global->MAIN_MODULE_MULTICOMPANY) || $conf->entity == 1) {
+                	$fulldir = DOL_DATA_ROOT.$dir;
+                } else {
+                	$fulldir = DOL_DATA_ROOT."/".(! empty($force_entity) ? (int) $force_entity : $conf->entity).$dir;
                 }
                 // Create dir if it does not exists
                 if (!empty($fulldir) && !file_exists($fulldir)) {
@@ -2037,7 +2072,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 // Define the constant in database if requested (not the default mode)
                 if (!empty($addtodatabase)) {
                     $result = $this->insert_dirs($name, $dir);
-                    if ($result) { $err++;
+                    if ($result) {
+                    	$err++;
                     }
                 }
             }
@@ -2051,12 +2087,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Adds directories definitions
      *
-     * @param string $name Name
-     * @param string $dir  Directory
+     * @param string	$name			Name
+     * @param string	$dir			Directory
+     * @param int		$force_entity	Force current entity
      *
      * @return int             Error count (0 if OK)
      */
-    public function insert_dirs($name, $dir)
+    public function insert_dirs($name, $dir, $force_entity = null)
     {
         // phpcs:enable
         global $conf;
@@ -2066,7 +2103,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $sql = "SELECT count(*)";
         $sql .= " FROM ".MAIN_DB_PREFIX."const";
         $sql .= " WHERE ".$this->db->decrypt('name')." = '".$name."'";
-        $sql .= " AND entity = ".$conf->entity;
+        $sql .= " AND entity = ".(! empty($force_entity) ? (int) $force_entity : $conf->entity);
 
         dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
         $result = $this->db->query($sql);
@@ -2121,9 +2158,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Adds generic parts
      *
+     * @param int $force_entity	Force current entity
      * @return int Error count (0 if OK)
      */
-    public function insert_module_parts()
+    public function insert_module_parts($force_entity = null)
     {
         // phpcs:enable
         global $conf;
@@ -2133,10 +2171,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if (is_array($this->module_parts) && !empty($this->module_parts)) {
             foreach ($this->module_parts as $key => $value)
             {
-                if (is_array($value) && count($value) == 0) { continue; // Discard empty arrays
+                if (is_array($value) && count($value) == 0) {
+                	continue; // Discard empty arrays
                 }
 
-                $entity = $conf->entity; // Reset the current entity
+                $entity = (! empty($force_entity) ? (int) $force_entity : $conf->entity); // Reset the current entity
                 $newvalue = $value;
 
                 // Serialize array parameters
@@ -2145,12 +2184,14 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     // Example when $key='hooks', then $value is an array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>X)
                     if (isset($value['data']) && is_array($value['data'])) {
                         $newvalue = json_encode($value['data']);
-                        if (isset($value['entity'])) { $entity = $value['entity'];
+                        if (isset($value['entity'])) {
+                        	$entity = ((! empty($force_entity) && $value['entity'] > 0) ? (int) $force_entity : $value['entity']);
                         }
                     }
                     elseif (isset($value['data']) && !is_array($value['data'])) {
                         $newvalue = $value['data'];
-                        if (isset($value['entity'])) { $entity = $value['entity'];
+                        if (isset($value['entity'])) {
+                        	$entity = ((! empty($force_entity) && $value['entity'] > 0) ? (int) $force_entity : $value['entity']);
                         }
                     }
                     else    // when hook is declared with syntax 'hook'=>array('hookcontext1','hookcontext2',...)
@@ -2212,7 +2253,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             foreach ($this->module_parts as $key => $value)
             {
                 // If entity is defined
-                if (is_array($value) && isset($value['entity'])) { $entity = $value['entity'];
+                if (is_array($value) && isset($value['entity'])) {
+                	$entity = $value['entity'];
                 }
 
                 $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";

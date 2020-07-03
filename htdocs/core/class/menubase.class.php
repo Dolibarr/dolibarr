@@ -189,6 +189,7 @@ class Menubase
         $this->perms = trim($this->perms);
         $this->enabled = trim($this->enabled);
         $this->user = (int) $this->user;
+        $this->entity = (isset($this->entity) ? (int) $this->entity : $conf->entity);
         if (empty($this->position)) $this->position = 0;
         if (!$this->level) $this->level = 0;
 
@@ -224,7 +225,7 @@ class Menubase
         $sql .= " AND fk_menu = ".((int) $this->fk_menu);
         $sql .= " AND position = ".((int) $this->position);
         $sql .= " AND url = '".$this->db->escape($this->url)."'";
-        $sql .= " AND entity = ".$conf->entity;
+        $sql .= " AND entity = ".$this->entity;
 
         $result = $this->db->query($sql);
         if ($result)
@@ -254,7 +255,7 @@ class Menubase
 		        $sql .= "usertype";
 		        $sql .= ") VALUES (";
 		        $sql .= " '".$this->db->escape($this->menu_handler)."',";
-		        $sql .= " '".$this->db->escape($conf->entity)."',";
+		        $sql .= " '".$this->db->escape($this->entity)."',";
 		        $sql .= " '".$this->db->escape($this->module)."',";
 		        $sql .= " '".$this->db->escape($this->type)."',";
 		        $sql .= " ".($this->mainmenu ? "'".$this->db->escape($this->mainmenu)."'" : "''").","; // Can't be null
