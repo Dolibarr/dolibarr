@@ -8,7 +8,7 @@ Description...
 ![Screenshot mymodule](img/screenshot_mymodule.png?raw=true "MyModule"){imgmd}
 -->
 
-Other modules are available on [Dolistore.com](https://www.dolistore.com>).
+Other modules are available on [Dolistore.com](https://www.dolistore.com).
 
 ## Translations
 

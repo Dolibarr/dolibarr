@@ -36,6 +36,7 @@ ErrorBadSupplierCodeSyntax=Bad syntax for vendor code
 ErrorSupplierCodeRequired=Vendor code required
 ErrorSupplierCodeAlreadyUsed=Vendor code already used
 ErrorBadParameters=Bad parameters
+ErrorWrongParameters=Wrong or missing parameters
 ErrorBadValueForParameter=Wrong value '%s' for parameter '%s'
 ErrorBadImageFormat=Image file has not a supported format (Your PHP does not support functions to convert images of this format)
 ErrorBadDateFormat=Value '%s' has wrong date format

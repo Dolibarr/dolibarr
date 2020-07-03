@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (!empty($conf->propal->enabled))         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (!empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -535,18 +535,18 @@ if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
 	}
 	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
 	foreach($newelementforplusmargin as $value) {
-		$listofreferent[$value]['margin']='add';
+		$listofreferent[trim($value)]['margin']='add';
 	}
 }
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
 	foreach($listofreferent as $key => $element) {
-		if ($listofreferent[$key]['margin'] == 'add') {
+		if ($listofreferent[$key]['margin'] == 'minus') {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
-	foreach($newelementforplusmargin as $value) {
-		$listofreferent[$value]['margin']='minus';
+	$newelementforminusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	foreach($newelementforminusmargin as $value) {
+		$listofreferent[trim($value)]['margin']='minus';
 	}
 }
 
@@ -635,10 +635,10 @@ foreach($listofreferent as $key => $value)
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 	{
 		if ($margin == 'add') {
-			$tooltiponprofitplus.=' + '.$name."<br>\n";
+			$tooltiponprofitplus.=' &gt; '.$name." (+)<br>\n";
 		}
 		if ($margin == 'minus') {
-			$tooltiponprofitminus.=' - '.$name."<br>\n";
+			$tooltiponprofitminus.=' &gt; '.$name." (-)<br>\n";
 		}
 	}
 }
@@ -650,6 +650,8 @@ print '<td class="right" width="100">'.$langs->trans("Number").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
+
+$total_revenue_ht = 0;
 
 foreach ($listofreferent as $key => $value)
 {
@@ -691,7 +693,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				if ($key == 'propal')
 				{
-				    if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal = false; // Refused proposal must not be included in total
+					if ($element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedfortotal = false; // Only signed proposal must not be included in total
 				}
 
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
@@ -775,12 +777,17 @@ foreach ($listofreferent as $key => $value)
 			// Each element with at least one line is output
 			$qualifiedforfinalprofit = true;
 			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) $qualifiedforfinalprofit = false;
-			//var_dump($key);
+			if ($key == 'propal' && $element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedforfinalprofit = false;
+			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
 			if ($qualifiedforfinalprofit)
 			{
-			    if ($margin != "add")
+				if ($margin == 'add') {
+					$total_revenue_ht += $total_ht;
+				}
+
+			    if ($margin != "add")	// Revert sign
 				{
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
@@ -797,13 +804,19 @@ foreach ($listofreferent as $key => $value)
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
 			print '<td class="right">';
-			if (!$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
-			else print price($total_ht);
+			if ($key == 'intervention' && !$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else {
+				print price($total_ht);
+				if ($key == 'propal') print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
+			}
 			print '</td>';
 			// Amount TTC
 			print '<td class="right">';
-			if (!$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
-			else print price($total_ttc);
+			if ($key == 'intervention' && !$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else {
+				print price($total_ttc);
+				if ($key == 'propal') print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -811,10 +824,19 @@ foreach ($listofreferent as $key => $value)
 }
 // and the final balance
 print '<tr class="liste_total">';
-print '<td class="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td class="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
-print '<td class="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
+print '<td class="right" colspan="2">'.$langs->trans("Profit").'</td>';
+print '<td class="right">'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td class="right">'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
+
+// and the margin (profit / revenues)
+if ($total_revenue_ht) {
+	print '<tr class="liste_total">';
+	print '<td class="right" colspan="2">'.$langs->trans("Margin").'</td>';
+	print '<td class="right">'.round(100 * $balance_ht / $total_revenue_ht, 1).'%</td>';
+	print '<td class="right"></td>';
+	print '</tr>';
+}
 
 print "</table>";
 

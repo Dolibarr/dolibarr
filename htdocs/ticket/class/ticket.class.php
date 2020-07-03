@@ -108,7 +108,8 @@ class Ticket extends CommonObject
 	/**
 	 * @var int  Ticket statut
 	 */
-	public $fk_statut;
+	public $fk_statut;				// deprecated
+	public $status;
 
 	/**
 	 * @var string State resolution
@@ -463,7 +464,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_user_assign,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.resolution,";
 		$sql .= " t.progress,";
 		$sql .= " t.timing,";
@@ -509,7 +510,10 @@ class Ticket extends CommonObject
 				$this->fk_user_assign = $obj->fk_user_assign;
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
-				$this->fk_statut = $obj->fk_statut;
+
+				$this->status = $obj->status;
+				$this->fk_statut = $this->status;		// For backward compatibility
+
 				$this->resolution = $obj->resolution;
 				$this->progress = $obj->progress;
 				$this->timing = $obj->timing;
