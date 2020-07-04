@@ -142,8 +142,8 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_compta = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
-					$dateline = $this->db->jdate($objp->date_line);
-					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->statut == ContratLigne::STATUS_OPEN && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
+					$dateline =$this->db->jdate($objp->date_line);
+					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->statut == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
 
 					// Multilangs
 					if (!empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
