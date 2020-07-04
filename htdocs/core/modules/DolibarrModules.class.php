@@ -360,10 +360,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      *                          - 'noboxes' = Do not insert boxes -
      *                          'newboxdefonly' = For boxes, insert def of
      *                          boxes only and not boxes activation
+     * @param  int $force_entity     Force current entity
      *
      * @return int                         1 if OK, 0 if KO
      */
-    protected function _init($array_sql, $options = '')
+    protected function _init($array_sql, $options = '', $force_entity = null)
     {
         // phpcs:enable
         global $conf;
@@ -378,42 +379,42 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         // Insert new pages for tabs (into llx_const)
         if (!$err) {
-            $err += $this->insert_tabs();
+        	$err += $this->insert_tabs($force_entity);
         }
 
         // Insert activation of module's parts
         if (!$err) {
-            $err += $this->insert_module_parts();
+        	$err += $this->insert_module_parts($force_entity);
         }
 
         // Insert constant defined by modules (into llx_const)
         if (!$err && !preg_match('/newboxdefonly/', $options)) {
-            $err += $this->insert_const(); // Test on newboxdefonly to avoid to erase value during upgrade
+        	$err += $this->insert_const($force_entity); // Test on newboxdefonly to avoid to erase value during upgrade
         }
 
         // Insert boxes def into llx_boxes_def and boxes setup (into llx_boxes)
         if (!$err && !preg_match('/noboxes/', $options)) {
-            $err += $this->insert_boxes($options);
+        	$err += $this->insert_boxes($options, $force_entity);
         }
 
         // Insert cron job entries (entry in llx_cronjobs)
         if (!$err) {
-            $err += $this->insert_cronjobs();
+        	$err += $this->insert_cronjobs($force_entity);
         }
 
         // Insert permission definitions of module into llx_rights_def. If user is admin, grant this permission to user.
         if (!$err) {
-            $err += $this->insert_permissions(1, null, 1);
+        	$err += $this->insert_permissions(1, $force_entity, 1);
         }
 
         // Insert specific menus entries into database
         if (!$err) {
-            $err += $this->insert_menus();
+        	$err += $this->insert_menus($force_entity);
         }
 
         // Create module's directories
         if (!$err) {
-            $err += $this->create_dirs();
+        	$err += $this->create_dirs($force_entity);
         }
 
         // Execute addons requests
@@ -429,7 +430,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     $ignoreerror = $val['ignoreerror'];
                 }
                 // Add current entity id
-                $sql = str_replace('__ENTITY__', $conf->entity, $sql);
+                $sql = str_replace('__ENTITY__', (! empty($force_entity) ? (int) $force_entity : $conf->entity), $sql);
 
                 dol_syslog(get_class($this)."::_init ignoreerror=".$ignoreerror."", LOG_DEBUG);
                 $result = $this->db->query($sql, $ignoreerror);
@@ -966,9 +967,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     /**
      * Insert constants for module activation
      *
+     * @param  int $force_entity     Force current entity
      * @return int Error count (0 if OK)
      */
-    protected function _active()
+    protected function _active($force_entity = null)
     {
         // phpcs:enable
         global $conf, $user;
@@ -976,7 +978,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         $err = 0;
 
         // Common module
-        $entity = ((!empty($this->always_enabled) || !empty($this->core_enabled)) ? 0 : $conf->entity);
+        $entity = ((! empty($this->always_enabled) || ! empty($this->core_enabled)) ? 0 : (! empty($force_entity) ? (int) $force_entity : $conf->entity));
 
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
         $sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
@@ -2283,7 +2285,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      */
     public function init($options = '')
     {
-        return $this->_init(array(), $options);
+    	return $this->_init(array(), $options);
     }
 
     /**
