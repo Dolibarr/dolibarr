@@ -68,7 +68,7 @@ function facturefourn_prepare_head($object)
 			if ($obj) $nbStandingOrders = $obj->nb;
 		}
 		else dol_print_error($db);
-		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&mode=bank-transfer';
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer';
 		$head[$h][1] = $langs->trans('BankTransfer');
 		if ($nbStandingOrders > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
 		$head[$h][2] = 'standingorders';
@@ -232,8 +232,6 @@ function supplierorder_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
 	$head[$h][2] = 'supplierorderdet';
 	$h++;
-
-
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");

@@ -1289,9 +1289,10 @@ class Propal extends CommonObject
 	 *
 	 *      @param	    User	$user		    User making the clone
 	 *		@param		int		$socid			Id of thirdparty
+	 *		@param		int		$forceentity	Entity id to force
 	 * 	 	@return		int						New id of clone
 	 */
-    public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null)
 	{
 		global $conf, $hookmanager;
 
@@ -1345,6 +1346,7 @@ class Propal extends CommonObject
 
 		$object->id = 0;
 		$object->ref = '';
+		$object->entity = (! empty($forceentity) ? $forceentity : $object->entity);
 		$object->statut = self::STATUS_DRAFT;
 
 		// Clear fields

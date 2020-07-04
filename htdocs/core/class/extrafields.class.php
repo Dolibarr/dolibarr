@@ -1960,28 +1960,26 @@ class ExtraFields
 					}
 				}
 
-				if (in_array($key_type, array('date')))
-				{
+				if (in_array($key_type, array('date'))) {
 					// Clean parameters
 					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key = dol_mktime(0, 0, 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
-				} elseif (in_array($key_type, array('datetime')))
-				{
+				} elseif (in_array($key_type, array('datetime'))) {
 					// Clean parameters
 					// TODO GMT date in memory must be GMT so we should add gm=true in parameters
 					$value_key = dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]);
-				} elseif (in_array($key_type, array('checkbox', 'chkbxlst')))
-				{
+				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
 					if (!empty($value_arr)) {
 						$value_key = implode($value_arr, ',');
 					} else {
 						$value_key = '';
 					}
-				} elseif (in_array($key_type, array('price', 'double')))
-				{
+				} elseif (in_array($key_type, array('price', 'double'))) {
 					$value_arr = GETPOST("options_".$key, 'alpha');
 					$value_key = price2num($value_arr);
+				} elseif (in_array($key_type, array('html'))) {
+					$value_key = GETPOST("options_".$key, 'alpha');
 				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';
