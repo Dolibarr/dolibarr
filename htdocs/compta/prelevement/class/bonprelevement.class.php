@@ -1563,9 +1563,7 @@ class BonPrelevement extends CommonObject
 						// TODO Write record into file
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					$result = -2;
 				}
 			} else {
@@ -1593,9 +1591,7 @@ class BonPrelevement extends CommonObject
 						// TODO Write record into file
 						$i++;
 					}
-				}
-				else
-				{
+				} else {
 					$result = -2;
 				}
 			}
