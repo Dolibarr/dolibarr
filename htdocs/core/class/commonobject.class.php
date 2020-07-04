@@ -8114,6 +8114,11 @@ abstract class CommonObject
 			if ($obj)
 			{
 				$this->setVarsFromFetchObj($obj);
+
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
+
 				return $this->id;
 			}
 			else
