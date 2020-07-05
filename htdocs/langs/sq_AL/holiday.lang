@@ -15,6 +15,7 @@ CancelCP=Anulluar
 RefuseCP=Refuzuar
 ValidatorCP=Approbator
 ListeCP=List of leave
+Leave=Kërkesë për leje
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
 UserID=User ID

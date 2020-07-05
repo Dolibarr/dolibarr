@@ -80,4 +80,3 @@ OrderPrinterToUse=Solicite impressora a ser usada
 MainTemplateToUse=Modelo principal a ser usado
 OrderTemplateToUse=Modelo de pedido a ser usado
 BarRestaurant=Bar Restaurante
-AutoOrder=Pedido automático do cliente

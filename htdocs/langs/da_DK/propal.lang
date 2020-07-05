@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Skabelon, der skal benyttes, når et tilbud lukkes (ude
 ProposalCustomerSignature=Skriftlig accept, firmastempel, dato og underskrift
 ProposalsStatisticsSuppliers=Forhandler forslagsstatistik
 CaseFollowedBy=Sag efterfulgt af
+SignedOnly=Kun underskrevet

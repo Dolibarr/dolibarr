@@ -15,6 +15,7 @@ CancelCP=Cancellato
 RefuseCP=Rifiutato
 ValidatorCP=Approvato da
 ListeCP=List of leave
+Leave=Richiesta di assenza
 LeaveId=Leave ID
 ReviewedByCP=Sarà approvato da
 UserID=ID utente

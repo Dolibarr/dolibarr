@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Oletus pohja suljettavalla tarjoukselle (laskuttamaton)
 ProposalCustomerSignature=Kirjallinen hyväksyntä, päivämäärä ja allekirjoitus
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Isporuka %s je obrisana
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Račun %s je potvrđen
 OrderDeliveredInDolibarr=Narudžbina %s označena kao dostavljena

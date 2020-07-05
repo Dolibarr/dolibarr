@@ -130,10 +130,10 @@ TicketNumberingModules=服務單編號模組
 TicketNotifyTiersAtCreation=建立時通知合作方
 TicketGroup=群組
 TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電子郵件
-TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
-TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
-TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
+TicketsPublicNotificationNewMessage=當有新訊息時寄送電子郵件
+TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
+TicketPublicNotificationNewMessageDefaultEmail=通知電子郵件寄送到（更新）
+TicketPublicNotificationNewMessageDefaultEmailHelp=如果沒有分配服務單或用戶沒有電子郵件，請通過電子郵件向此信箱寄送新消息通知。
 #
 # Index & list page
 #

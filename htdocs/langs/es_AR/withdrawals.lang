@@ -57,7 +57,6 @@ CreditDate=Acreditar en
 WithdrawalFileNotCapable=No se puede generar el archivo de comprobante de extracción para su país %s (su país no es compatible)
 ShowWithdraw=Mostrar orden de débito automático
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Sin embargo, si la factura tiene al menos una orden de pago por débito automático aún no procesada, no se establecerá como pagada para permitir la administración previa de extracciones.
-DoStandingOrdersBeforePayments=Esta pestaña le permite solicitar una orden de pago por débito automático. Una vez realizada, vaya al menú Banco-> Ordenes de débito automático para administrar la orden. Cuando se cierra la orden de pago, se registrará automáticamente en la factura y quedará cerrada si queda saldada.
 WithdrawalFile=Archivo de extracción
 SetToStatusSent=Colocar estado como "Archivo enviado"
 StatisticsByLineStatus=Estadísticas por estado de líneas

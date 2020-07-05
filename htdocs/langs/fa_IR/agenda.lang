@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=ارسال %s به‌عنوان صورت‌حس
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=ارسال %s به حالت پیش‌نویس بازگردانده شد
 ShipmentDeletedInDolibarr=ارسال %s حذف شد
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=سفارش %s ساخته شد
 OrderValidatedInDolibarr=سفارش %s تائید شد
 OrderDeliveredInDolibarr=سفارش %s تحویل شده طبقه‌بندی شد

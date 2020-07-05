@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Торговый представит�
 TypeContact_contrat_external_BILLING=Платежная заказчика контакт
 TypeContact_contrat_external_CUSTOMER=После деятельность заказчика контакт
 TypeContact_contrat_external_SALESREPSIGN=Подписание контракта заказчик контакт
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

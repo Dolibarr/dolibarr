@@ -262,5 +262,5 @@ RulesPurchaseTurnoverIn=- Il comprend tous les paiements effectifs des factures 
 RulesPurchaseTurnoverTotalPurchaseJournal=Il comprend toutes les lignes de débit du journal d'achat.
 ReportPurchaseTurnover=Chiffre d'affaires d'achat facturé
 ReportPurchaseTurnoverCollected=Chiffre d'affaires d'achat encaissé
-IncludeVarpaysInResults = Inclure divers paiements dans les rapports
+IncludeVarpaysInResults = Inclure les paiements divers dans les rapports
 IncludeLoansInResults = Inclure les prêts dans les rapports

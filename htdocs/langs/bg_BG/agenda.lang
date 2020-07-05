@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Пратка %s е фактурирана
 ShipmentUnClassifyCloseddInDolibarr=Пратка %s е активна отново
 ShipmentBackToDraftInDolibarr=Пратка %s е върната в статус чернова
 ShipmentDeletedInDolibarr=Пратка %s е изтрита
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Поръчка %s е създадена
 OrderValidatedInDolibarr=Поръчка %s е валидирана
 OrderDeliveredInDolibarr=Поръчка %s е класифицирана като доставена

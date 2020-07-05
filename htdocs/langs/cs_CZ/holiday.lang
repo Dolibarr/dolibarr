@@ -15,6 +15,7 @@ CancelCP=Zrušený
 RefuseCP=Odmínutý
 ValidatorCP=Schválil
 ListeCP=Seznam dovolených
+Leave=Nechat žádost
 LeaveId=Zanechte ID
 ReviewedByCP=Bude přezkoumána
 UserID=uživatelské ID

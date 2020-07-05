@@ -60,7 +60,6 @@ CreditDate=Crédito en
 WithdrawalFileNotCapable=No se puede generar un archivo de recibo de retiro para su país %s (Su país no es compatible)
 ShowWithdraw=Mostrar orden de débito directo
 IfInvoiceNeedOnWithdrawPaymentWontBeClosed=Sin embargo, si la factura tiene al menos una orden de pago por débito directo aún no procesada, no se establecerá como pagada para permitir la gestión previa de retiros.
-DoStandingOrdersBeforePayments=Esta pestaña le permite solicitar una orden de pago de débito directo. Una vez hecho esto, vaya al menú Bank-> Direct Debit orders para administrar la orden de pago de débito directo. Cuando se cierra la orden de pago, el pago en la factura se registrará automáticamente y la factura se cerrará si el resto para pagar es nulo.
 WithdrawalFile=Archivo de retiro
 SetToStatusSent=Establecer el estado "Archivo enviado"
 StatisticsByLineStatus=Estadísticas por estado de líneas

@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Kundekontakt faktura
 TypeContact_propal_external_CUSTOMER=Kundens tilbudsoppfølger
 TypeContact_propal_external_SHIPPING=Kundekontakt for levering
 # Document models
-DocModelAzurDescription=En komplett tilbudsmodell 
+DocModelAzurDescription=En komplett tilbudsmodell (gammel implementering av Cyan-mal)
 DocModelCyanDescription=En komplett tilbudsmodell
 DefaultModelPropalCreate=Standard modellbygging
 DefaultModelPropalToBill=Standardmal når du lukker et tilbud (som skal faktureres)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Standardmal når du lukker et tilbud (ufakturert)
 ProposalCustomerSignature=Skriftlig aksept, firmastempel, dato og signatur
 ProposalsStatisticsSuppliers=Leverandørs tilbudsstatistikk
 CaseFollowedBy=Sak fulgt av
+SignedOnly=Signed only

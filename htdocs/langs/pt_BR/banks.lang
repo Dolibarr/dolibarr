@@ -83,7 +83,6 @@ Reconciled=Conciliada
 SupplierInvoicePayment=Pagamento do fornecedores
 WithdrawalPayment=Pedido com pagamento por débito
 SocialContributionPayment=Pagamento de contribuição social
-BankTransfers=Transferências bancárias
 TransferDesc=Transferência de uma conta para outra, o Dolibarr vai escrever dois registros (um débito na conta de origem e um crédito na conta de destino). A mesma quantia (exceto sinal), rótulo e data serão usados para esta transação)
 TransferFromToDone=Uma transferência de <b>%s</b> para <b>%s</b> de <b>%s</b> %s foi registrado.
 ValidateCheckReceipt=Validar este comprovante de cheque?

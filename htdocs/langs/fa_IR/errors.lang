@@ -36,6 +36,7 @@ ErrorBadSupplierCodeSyntax=کد فروشنده اشتباه درج شده است
 ErrorSupplierCodeRequired=کدفروشنده الزامی است
 ErrorSupplierCodeAlreadyUsed=کدفروشنده قبلا استفاده شده است
 ErrorBadParameters=مقادیر اشتباه
+ErrorWrongParameters=Wrong or missing parameters
 ErrorBadValueForParameter=مقدار غلط '%s' برای مؤلفۀ '%s'
 ErrorBadImageFormat=حالت فایل تصویری قابل قبول نیست (PHP نصب شدۀ شما از توابعی که فایل را از این حالت تبدیل کنند، در خود ندارد)
 ErrorBadDateFormat=روش درج تاریخ مقدار '%s' اشتباه است
@@ -119,7 +120,7 @@ ErrorLoginHasNoEmail=کاربر هیچ نشانی رایانامه‌‌ای ن�
 ErrorBadValueForCode=مقدار نادرست برای کد امنیتی. با یک مقدار جدید امتحان کنید...
 ErrorBothFieldCantBeNegative=بخش‌های %s و %s نمی‌توانند هر دو منفی باشند
 ErrorFieldCantBeNegativeOnInvoice=Field <strong>%s</strong> cannot be negative on this type of invoice. If you need to add a discount line, just create the discount first (from field '%s' in thirdparty card) and apply it to the invoice.
-ErrorLinesCantBeNegativeForOneVATRate=Total of lines can't be negative for a given VAT rate.
+ErrorLinesCantBeNegativeForOneVATRate=Total of lines (net of tax) can't be negative for a given not null VAT rate (Found a negative total for VAT rate <b>%s</b>%%).
 ErrorLinesCantBeNegativeOnDeposits=Lines can't be negative in a deposit. You will face problems when you will need to consume the deposit in final invoice if you do so.
 ErrorQtyForCustomerInvoiceCantBeNegative=در صورت‌حساب مشتری تعداد برای یک سطر نمی‌‌تواند رقمی منفی باشد
 ErrorWebServerUserHasNotPermission=حساب کاربری <b>%s</b> برای اجرای یک سرور وب انتخاب شده اما مجوز آن را ندارد
@@ -183,6 +184,7 @@ ErrorBadDefinitionOfMenuArrayInModuleDescriptor=تعریف بد آرایۀ فه�
 ErrorSavingChanges=در هنگام ذخیرۀ تغییرات یک اشکال رخ داد
 ErrorWarehouseRequiredIntoShipmentLine=در این سطر برای ارسال یک انبار مورد نیاز است
 ErrorFileMustHaveFormat=فایل باید به شکل %s باشد
+ErrorFilenameCantStartWithDot=Filename can't start with a '.'
 ErrorSupplierCountryIsNotDefined=برای این فروشنده کشور تعریف نشده است. ابتدا این را تصحیح کنید.
 ErrorsThirdpartyMerge=امکان ادغام دو ردیف وجود نداشت. درخواست لغو شد.
 ErrorStockIsNotEnoughToAddProductOnOrder=موجودی برای محصول %s برای افزودن در سفارش جدید کافی نیست.
