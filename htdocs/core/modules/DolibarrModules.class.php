@@ -374,7 +374,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         // Insert activation module constant
         if (!$err) {
-            $err += $this->_active();
+        	$err += $this->_active($force_entity);
         }
 
         // Insert new pages for tabs (into llx_const)
