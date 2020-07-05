@@ -378,6 +378,7 @@ if ($action == 'new')
 	print '<span class="opacitymedium">'.$langs->trans("SelectChequeTransactionAndGenerate").'</span><br><br>'."\n";
 
 	print '<form class="nocellnopadd" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="new">';
 
 	dol_fiche_head();
