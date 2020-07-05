@@ -1912,7 +1912,9 @@ class ExtraFields
 	 *
 	 * @param   array	$extralabels    Deprecated (old $array of extrafields, now set this to null)
 	 * @param   object	$object         Object
-	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must set this to avoid to have other extrafields being reset.
+	 * @param	string	$onlykey		Only some keys are filled:$this
+	 *                                  'string' => When we make update of only one extrafield ($action = 'update_extras'), calling page can set this to avoid to have other extrafields being reset.
+	 *                                  '@GETPOSTISSET' => When we make update of extrafields ($action = 'update'), calling page can set this to avoid to have fields not into POST being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
 	public function setOptionalsFromPost($extralabels, &$object, $onlykey = '')
@@ -1929,7 +1931,8 @@ class ExtraFields
 			// Get extra fields
 			foreach ($extralabels as $key => $value)
 			{
-				if (!empty($onlykey) && $key != $onlykey) continue;
+				if (!empty($onlykey) && $onlykey != '@GETPOSTISSET' && $key != $onlykey) continue;
+				if (!empty($onlykey) && $onlykey == '@GETPOSTISSET' && ! GETPOSTISSET('options_'.$key)) continue;
 
 				$key_type = $this->attributes[$object->table_element]['type'][$key];
 				if ($key_type == 'separate') continue;

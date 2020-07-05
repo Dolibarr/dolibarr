@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Lepingu järelkajaga tegelev müügies
 TypeContact_contrat_external_BILLING=Kliendi kontakt, kuhu arve esitada
 TypeContact_contrat_external_CUSTOMER=Kliendi kontakt järelkaja jaoks
 TypeContact_contrat_external_SALESREPSIGN=Kliendi kontakt, kes allkirjastas lepingu
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

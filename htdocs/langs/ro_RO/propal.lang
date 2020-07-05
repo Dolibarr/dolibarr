@@ -76,11 +76,12 @@ TypeContact_propal_external_BILLING=Contact client  facturare propunere
 TypeContact_propal_external_CUSTOMER=Contact client urmărire ofertă
 TypeContact_propal_external_SHIPPING=Contactul clientului pentru livrare
 # Document models
-DocModelAzurDescription=A complete proposal model 
-DocModelCyanDescription=A complete proposal model
+DocModelAzurDescription=Un şablon complet pentru ofertă(vechea implementare a şablonului Cyan)
+DocModelCyanDescription=Un şablon complet pentru ofertă
 DefaultModelPropalCreate=Crează model implicit
 DefaultModelPropalToBill=Model implicit la închiderea unei oferte comerciale (de facturat)
 DefaultModelPropalClosed=Model implicit la închiderea unei oferte comerciale (nefacturat)
 ProposalCustomerSignature=Acceptarea scrisă, ștampila companiei, data și semnătura
 ProposalsStatisticsSuppliers=Statistici privind propunerile furnizorilor
-CaseFollowedBy=Case followed by
+CaseFollowedBy=Caz urmat de
+SignedOnly=Signed only

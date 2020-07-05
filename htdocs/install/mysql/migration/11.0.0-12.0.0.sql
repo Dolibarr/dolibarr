@@ -81,6 +81,8 @@ delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLE
 
 -- For v12
 
+ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
+
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
 ALTER TABLE llx_ecm_files MODIFY COLUMN src_object_type varchar(64);

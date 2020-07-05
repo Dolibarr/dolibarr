@@ -15,6 +15,7 @@ CancelCP=Anulada
 RefuseCP=Rexeitada
 ValidatorCP=Validador
 ListeCP=Listaxe de días libres
+Leave=Pedido de días libres
 LeaveId=ID Vacacións
 ReviewedByCP=Será revisada por
 UserID=User ID

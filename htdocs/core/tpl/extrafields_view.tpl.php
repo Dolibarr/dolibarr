@@ -143,8 +143,11 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'shipping')         $permok = $user->rights->expedition->creer;
 			if ($object->element == 'delivery')         $permok = $user->rights->expedition->livraison->creer;
 			if ($object->element == 'productlot')       $permok = $user->rights->stock->creer;
-			if ($object->element == 'facturerec') 	  $permok = $user->rights->facture->creer;
-			if (($object->statut == 0 || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
+			if ($object->element == 'facturerec') 	    $permok = $user->rights->facture->creer;
+			if ($object->element == 'mo') 	    		$permok = $user->rights->mrp->write;
+
+			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
+			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
 				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $key)
 			    && empty($extrafields->attributes[$object->table_element]['computed'][$key]))
 			{

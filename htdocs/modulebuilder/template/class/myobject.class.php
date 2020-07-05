@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class MyObject extends CommonObject
 {
 	/**
-	 * @var string ID to identify managed object
+	 * @var string ID to identify managed object.
 	 */
 	public $element = 'myobject';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'mymodule_myobject';
 

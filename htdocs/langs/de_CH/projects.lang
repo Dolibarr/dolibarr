@@ -2,7 +2,6 @@
 ProjectRef=Chance
 ProjectsArea=Projektbereiche
 PrivateProject=Projekt Kontakte
-ProjectsImContactFor=Projects for I am explicitly a contact
 AllProjects=Alle Projekte
 TasksOnProjectsPublicDesc=Diese Ansicht zeigt alle Projektaufgaben, die Sie Lesenberechtigt sind.
 TasksOnProjectsDesc=Es werden alle Projekteaufgaben aller Projekte angezeigt (Ihre Berechtigungen berechtigen Sie alles zu sehen).

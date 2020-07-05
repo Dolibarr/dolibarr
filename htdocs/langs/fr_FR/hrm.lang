@@ -11,7 +11,7 @@ CloseEtablishment=Etablissement fermé
 # Dictionary
 DictionaryPublicHolidays=GRH - Jours fériés
 DictionaryDepartment=GRH - Liste des départements
-DictionaryFunction=HRM - Postes à pourvoir
+DictionaryFunction=GRH - Liste des fonctions
 # Module
 Employees=Salariés
 Employee=Salarié

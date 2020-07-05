@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - cron
 # About page
 # Right
-Permission23101 = Read Scheduled job
-Permission23102 = Create/update Scheduled job
-Permission23103 = Delete Scheduled job
-Permission23104 = Execute Scheduled job
+Permission23101 = Consultar. Traballo programado
+Permission23102 = Crear/actualizar. Traballo programado
+Permission23103 = Borrar. Traballo Programado
+Permission23104 = Executar. Traballo programado
 # Admin
 CronSetup=Scheduled job management setup
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
@@ -22,7 +22,7 @@ EnabledAndDisabled=Enabled and disabled
 CronLastOutput=Latest run output
 CronLastResult=Latest result code
 CronCommand=Command
-CronList=Scheduled jobs
+CronList=Tarefas programadas
 CronDelete=Delete scheduled jobs
 CronConfirmDelete=Are you sure you want to delete these scheduled jobs?
 CronExecute=Launch scheduled job

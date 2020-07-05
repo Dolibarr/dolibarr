@@ -41,6 +41,11 @@ function bomAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
+	$head[$h][0] = dol_buildpath("/admin/bom_extrafields.php", 1);
+	$head[$h][1] = $langs->trans("ExtraFields");
+	$head[$h][2] = 'bom_extrafields';
+	$h++;
+
 	/*$head[$h][0] = DOL_URL_ROOT."/bom/admin/about.php";
 	$head[$h][1] = $langs->trans("About");
 	$head[$h][2] = 'about';

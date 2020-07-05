@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=الشحنة %sتم تصنيفها مدفوعة
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=الشحنة%sتم حذفها
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=الطلب %s تم إنشاؤة
 OrderValidatedInDolibarr=الطلب %s تم التحقق منه
 OrderDeliveredInDolibarr=الطلب %s مصنف تم التوصيل

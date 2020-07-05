@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Lô hàng %s được phân loại hóa đơn
 ShipmentUnClassifyCloseddInDolibarr=Lô hàng %s được phân loại mở lại
 ShipmentBackToDraftInDolibarr=Lô hàng %s trở lại trạng thái dự thảo
 ShipmentDeletedInDolibarr=Lô hàng %s đã bị xóa
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Đặt hàng %s đã tạo
 OrderValidatedInDolibarr=Thứ tự %s xác nhận
 OrderDeliveredInDolibarr=Đặt hàng %s được phân loại
