@@ -548,12 +548,13 @@ print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="other">';
+print '<input type="hidden" name="page_y" value="">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="right" width="60">'.$langs->trans("Value").'</td>'."\n";
-print '<td width="80">&nbsp;</td></tr>'."\n";
+print '</tr>'."\n";
 
 
 /*
@@ -583,8 +584,6 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule = 'PROD
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule = 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule", $select_pricing_rules, $current_rule);
-print '</td><td rowspan="'.$rowspan.'" class="nohover right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</td>';
 print '</tr>';
 
@@ -763,6 +762,10 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
 }
 
 print '</table>';
+
+print '<div class="center">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
+print '</div>';
 
 print '</form>';
 

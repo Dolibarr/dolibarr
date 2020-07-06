@@ -631,13 +631,16 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		if (empty($conf->global->MAIN_DISABLE_EDIT_PREDEF_PRICEHT) && empty($senderissupplier))
 		{
 			?>
-			var pbq = parseInt($('option:selected', this).attr('data-pbq'));
+			var pbq = parseInt($('option:selected', this).attr('data-pbq'));	/* If product was selected with a HTML select */
+			if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq'); } 		/* If product was selected with a HTML input with autocomplete */
+			//console.log(pbq);
+
 			if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
 			{
-				console.log("We are in a price per qty context, we do not call ajax/product");
+				console.log("We are in a price per qty context, we do not call ajax/product, init of fields is done few lines later");
 			} else {
 				<?php if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) { ?>
-					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we are not yet able to get the id of pbq from product combo list, so load of price may be 0 if product has differet prices"); }
+					if (isNaN(pbq)) { console.log("We use experimental option PRODUIT_CUSTOMER_PRICES_BY_QTY or PRODUIT_CUSTOMER_PRICES_BY_QTY but we could not get the id of pbq from product combo list, so load of price may be 0 if product has differet prices"); }
 				<?php } ?>
 				// Get the HT price for the product and display it
 				console.log("Load unit price without tax and set it into #price_ht for product id="+$(this).val()+" socid=<?php print $object->socid; ?>");
@@ -760,11 +763,16 @@ if (!empty($usemargins) && $user->rights->margins->creer)
 		?>
 
 		/* To process customer price per quantity (CUSTOMER_PRICE_PER_QTY works only if combo product is not an ajax after x key pressed) */
-		var pbq = parseInt($('option:selected', this).attr('data-pbq'));
+		var pbq = parseInt($('option:selected', this).attr('data-pbq'));				// When select is done from HTML select
+		if (isNaN(pbq)) { pbq = jQuery('#idprod').attr('data-pbq');	}					// When select is done from HTML input with autocomplete
 		var pbqup = parseFloat($('option:selected', this).attr('data-pbqup'));
+		if (isNaN(pbqup)) { pbqup = jQuery('#idprod').attr('data-pbqup');	}
 		var pbqbase = $('option:selected', this).attr('data-pbqbase');
+		if (isNaN(pbqbase)) { pbqbase = jQuery('#idprod').attr('data-pbqbase');	}
 		var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
+		if (isNaN(pbqqty)) { pbqqty = jQuery('#idprod').attr('data-pbqqty');	}
 		var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
+		if (isNaN(pbqpercent)) { pbqpercent = jQuery('#idprod').attr('data-pbqpercent');	}
 
 		if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && ! isNaN(pbq) && pbq > 0)
 		{
