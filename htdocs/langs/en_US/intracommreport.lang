@@ -19,6 +19,7 @@ MenuIntracommReportNew=New declaration
 MenuIntracommReportList=List
 
 # View
+NewDeclaration=New declaration
 Declaration=Declaration
 AnalysisPeriod=Analysis period
 TypeOfDeclaration=Type of declaration

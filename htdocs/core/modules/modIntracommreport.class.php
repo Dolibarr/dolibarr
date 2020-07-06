@@ -94,8 +94,8 @@ class modIntracommreport extends DolibarrModules
 		$this->dictionaries=array();
 
         // Permissions
-        $this->rights_class = 'intracommreport';
-        $this->rights = array(); // Permission array used by this module
+		$this->rights = array();
+		$this->rights_class = 'intracommreport';
         $r = 0;
 
         $r++;
@@ -112,12 +112,12 @@ class modIntracommreport extends DolibarrModules
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'write';
 
+		$r++;
         $this->rights[$r][0] = 68004;
         $this->rights[$r][1] = 'Delete intracomm report';
         $this->rights[$r][2] = 'd';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'delete';
-        $r++;
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add

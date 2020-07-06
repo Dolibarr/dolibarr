@@ -107,12 +107,8 @@ $isInEEC=isInEEC($mysoc);
 // Definition of fields for lists
 $arrayfields=array(
     'i.ref'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
-    //'pfi.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
     'i.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
     'i.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(! empty($conf->produit->enabled) && ! empty($conf->service->enabled))),
-    'i.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(! empty($conf->barcode->enabled))),
-    'i.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(! empty($conf->service->enabled))),
-    'i.weight'=>array('label'=>$langs->trans("Weight"), 'checked'=>0, 'enabled'=>(! empty($conf->produit->enabled))),
 );
 /*
 // Extra fields
@@ -152,11 +148,6 @@ if (empty($reshook))
         $sall="";
         $search_ref="";
         $search_label="";
-        $search_barcode="";
-        $search_categ=0;
-        $search_tosell="";
-        $search_tobuy="";
-        $search_tobatch='';
         //$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 
         $show_childproducts = '';
@@ -268,18 +259,15 @@ if ($resql)
     llxHeader('', $title, $helpurl, '');
 
     // Displays product removal confirmation
-    if (GETPOST('delprod'))	{
-        setEventMessages($langs->trans("ProductDeleted", GETPOST('delprod')), null, 'mesgs');
+    if (GETPOST('delreport'))	{
+        setEventMessages($langs->trans("IntracommReportDeleted", GETPOST('delreport')), null, 'mesgs');
     }
 
     $param='';
     if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
     if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
     if ($sall) $param.="&sall=".urlencode($sall);
-    if ($search_categ > 0) $param.="&search_categ=".urlencode($search_categ);
     if ($search_ref) $param="&search_ref=".urlencode($search_ref);
-    if ($search_ref_supplier) $param="&search_ref_supplier=".urlencode($search_ref_supplier);
-    if ($search_barcode) $param.=($search_barcode?"&search_barcode=".urlencode($search_barcode):"");
     if ($search_label) $param.="&search_label=".urlencode($search_label);
 
     // Add $param from extra fields
@@ -296,13 +284,9 @@ if ($resql)
     $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
     $newcardbutton='';
-    $rightskey='DEB';
-    if ($type == IntracommReport::TYPE_DES) $rightskey='DES';
-    if ($user->rights->{$rightskey}->creer)
+    if ($user->rights->intracommreport->write)
     {
-        $label='NewDEB';
-        if ($type == IntracommReport::TYPE_DES) $label = 'NewDES';
-        $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/intracommreport/card.php?action=create&amp;type='.$type);
+        $newcardbutton.= dolGetButtonTitle($langs->trans("NewDeclaration"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/intracommreport/card.php?action=create&amp;type='.$type);
     }
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
@@ -357,12 +341,6 @@ if ($resql)
         print '<input class="flat" type="text" name="search_ref" size="8" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
     }
-    if (! empty($arrayfields['pfi.ref_fourn']['checked']))
-    {
-        print '<td class="liste_titre left">';
-        print '<input class="flat" type="text" name="search_ref_supplier" size="8" value="'.dol_escape_htmltag($search_ref_supplier).'">';
-        print '</td>';
-    }
     if (! empty($arrayfields['i.label']['checked']))
     {
         print '<td class="liste_titre left">';
@@ -370,33 +348,23 @@ if ($resql)
         print '</td>';
     }
     // Type
-    if (! empty($arrayfields['i.fk_product_type']['checked']))
+	// Type (customer/prospect/supplier)
+	if (!empty($arrayfields['customerorsupplier']['checked']))
+	{
+		print '<td class="liste_titre maxwidthonsmartphone center">';
+		if ($type != '') print '<input type="hidden" name="type" value="'.$type.'">';
+		print $formcompany->selectProspectCustomerType($search_type, 'search_type', 'search_type', 'list');
+		print '</select></td>';
+	}
+
+	if (! empty($arrayfields['i.fk_product_type']['checked']))
     {
         print '<td class="liste_titre left">';
         $array=array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
         print $form->selectarray('search_type', $array, $search_type);
         print '</td>';
     }
-    // Barcode
-    if (! empty($arrayfields['i.barcode']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '<input class="flat" type="text" name="search_barcode" size="6" value="'.dol_escape_htmltag($search_barcode).'">';
-        print '</td>';
-    }
-    // Duration
-    if ((string) $type == '1' && ! empty($arrayfields['i.duration']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '</td>';
-    }
 
-    // Weight
-    if (! empty($arrayfields['i.weight']['checked']))
-    {
-        print '<td class="liste_titre">';
-        print '</td>';
-    }
     /*
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -434,15 +402,8 @@ if ($resql)
     if (! empty($arrayfields['i.fk_product_type']['checked'])) {
         print_liste_field_titre($arrayfields['i.fk_product_type']['label'], $_SERVER["PHP_SELF"], "i.fk_product_type", "", $param, "", $sortfield, $sortorder);
     }
-    if (! empty($arrayfields['i.barcode']['checked'])) {
-        print_liste_field_titre($arrayfields['i.barcode']['label'], $_SERVER["PHP_SELF"], "i.barcode", "", $param, "", $sortfield, $sortorder);
-    }
-    if ((string) $type == '1' && ! empty($arrayfields['i.duration']['checked'])) {
-        print_liste_field_titre($arrayfields['i.duration']['label'], $_SERVER["PHP_SELF"], "i.duration", "", $param, '', $sortfield, $sortorder, 'center ');
-    }
-    if (! empty($arrayfields['i.weight']['checked']))  print_liste_field_titre($arrayfields['i.weight']['label'], $_SERVER["PHP_SELF"], "i.weight", "", $param, '', $sortfield, $sortorder, 'center ');
 
-    /*
+	/*
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
     */
@@ -489,73 +450,18 @@ if ($resql)
             print "</td>\n";
             if (! $i) $totalarray['nbfield']++;
         }
-        // Ref supplier
-        if (! empty($arrayfields['pfi.ref_fourn']['checked']))
-        {
-            print '<td class="tdoverflowmax200">';
-            print $intracommreport_static->getNomUrl(1);
-            print "</td>\n";
-            if (! $i) $totalarray['nbfield']++;
-        }
         // Label
         if (! empty($arrayfields['i.label']['checked']))
         {
             print '<td class="tdoverflowmax200">'.dol_trunc($obj->label, 80).'</td>';
             if (! $i) $totalarray['nbfield']++;
         }
-
         // Type
         if (! empty($arrayfields['i.fk_product_type']['checked']))
         {
             print '<td>'.$obj->fk_product_type.'</td>';
             if (! $i) $totalarray['nbfield']++;
         }
-
-        // Barcode
-        if (! empty($arrayfields['i.barcode']['checked']))
-        {
-            print '<td>'.$obj->barcode.'</td>';
-            if (! $i) $totalarray['nbfield']++;
-        }
-
-        // Duration
-        if ((string) $type == '1' && ! empty($arrayfields['i.duration']['checked']))
-        {
-            print '<td class="center nowraponall">';
-
-            if (preg_match('/([^a-z]+)[a-z]$/i', $obj->duration))
-            {
-                $duration_value	= substr($obj->duration, 0, dol_strlen($obj->duration)-1);
-                $duration_unit	= substr($obj->duration, -1);
-
-                if ((float) $duration_value > 1)
-                {
-                    $dur=array("i"=>$langs->trans("Minutes"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-                }
-                elseif ((float) $duration_value > 0)
-                {
-                    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-                }
-                print $duration_value;
-                print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
-            }
-            else {
-                print $obj->duration;
-            }
-
-            print '</td>';
-            if (! $i) $totalarray['nbfield']++;
-        }
-
-        // Weight
-        if (! empty($arrayfields['i.weight']['checked']))
-        {
-            print '<td align="center">';
-            print $obj->weight;
-            print '</td>';
-            if (! $i) $totalarray['nbfield']++;
-        }
-
         // Action
         print '<td class="nowrap center">';
         if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
