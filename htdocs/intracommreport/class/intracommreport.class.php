@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
- * Copyright (C) 2019       Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +45,6 @@ class IntracommReport extends CommonObject
 
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-     *
      * @var int
      */
     public $ismultientitymanaged = 1;
@@ -54,6 +53,7 @@ class IntracommReport extends CommonObject
      * DEB - Product
      */
     const TYPE_DEB = 0;
+
     /**
      * DES - Service
      */
@@ -89,10 +89,13 @@ class IntracommReport extends CommonObject
 	}
 
 	/**
-	 * @param $mode O pour création, R pour régénération (apparemment toujours 0 dans la cadre des échanges XML selon la doc)
-	 * @param $type introduction ou expedition
+	 * Generate XML file
+	 *
+	 * @param int		$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
+	 * @param string	$type 				introduction or expedition
+	 * @param string	$period_reference	Period of reference
 	 */
-	function getXML($mode = 'O', $type = 'introduction', $periode_reference = '')
+	function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
 
 		global $db, $conf, $mysoc;
@@ -119,7 +122,7 @@ class IntracommReport extends CommonObject
 		$enveloppe->addChild('softwareUsed', 'Dolibarr');
 		$declaration = $enveloppe->addChild('Declaration');
 		$declaration->addChild('declarationId', $id_declaration);
-		$declaration->addChild('referencePeriod', $periode_reference);
+		$declaration->addChild('referencePeriod', $period_reference);
 		if($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') $psiId = $party_id;
 		else $psiId = 'NA';
 		$declaration->addChild('PSIId', $psiId);
@@ -131,7 +134,7 @@ class IntracommReport extends CommonObject
 		/********************************************************************/
 
 		/**************Ajout des lignes de factures**************************/
-		$res = self::addItemsFact($declaration, $type, $periode_reference);
+		$res = self::addItemsFact($declaration, $type, $period_reference);
 		/********************************************************************/
 
 		$this->errors = array_unique($this->errors);
@@ -148,7 +151,7 @@ class IntracommReport extends CommonObject
 		$e = new SimpleXMLElement('<?xml version="1.0" encoding="utf-8" ?><fichier_des></fichier_des>');
 
 		$declaration_des = $e->addChild('declaration_des');
-		$declaration_des->addChild('num_des', self::getNumeroDeclaration($this->numero_declaration));
+		$declaration_des->addChild('num_des', self::getDeclarationNumber($this->numero_declaration));
 		$declaration_des->addChild('num_tvaFr', $mysoc->tva_intra); // /^FR[a-Z0-9]{2}[0-9]{9}$/  // Doit faire 13 caractères
 		$declaration_des->addChild('mois_des', $period_month);
 		$declaration_des->addChild('an_des', $period_year);
@@ -163,14 +166,14 @@ class IntracommReport extends CommonObject
 		else return 0;
 	}
 
-	function addItemsFact(&$declaration, $type, $periode_reference, $exporttype = 'deb')
+	function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
 	{
 
 		global $db, $conf;
 
 		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
-		$sql = $this->getSQLFactLines($type, $periode_reference, $exporttype);
+		$sql = $this->getSQLFactLines($type, $period_reference, $exporttype);
 
 		$resql = $db->query($sql);
 
@@ -216,7 +219,7 @@ class IntracommReport extends CommonObject
 		return 1;
 	}
 
-	function getSQLFactLines($type, $periode_reference, $exporttype = 'deb')
+	function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
 	{
 
 		global $mysoc, $conf;
@@ -250,7 +253,7 @@ class IntracommReport extends CommonObject
 				AND l.product_type = '.($exporttype == 'des' ? 1 : 0).'
 				AND f.entity = '.$conf->entity.'
 				AND (s.fk_pays <> '.$mysoc->country_id.' OR s.fk_pays IS NULL)
-				AND f.datef BETWEEN "'.$periode_reference.'-01" AND "'.$periode_reference.'-'.date('t').'"';
+				AND f.datef BETWEEN "'.$period_reference.'-01" AND "'.$period_reference.'-'.date('t').'"';
 
 		return $sql;
 	}
@@ -327,7 +330,7 @@ class IntracommReport extends CommonObject
 							SELECT fk_product
 							FROM '.MAIN_DB_PREFIX.'categorie_product
 							WHERE fk_categorie = '.$categ_fraisdeport->id.'
-						) 
+						)
 					)';
 
 			$resql = $db->query($sql);
@@ -339,23 +342,38 @@ class IntracommReport extends CommonObject
 		}
 	}
 
-	function getNextNumeroDeclaration()
+	/**
+	 *      Return next reference of declaration not already used (or last reference)
+	 *
+	 *      @return    string					free ref or last ref
+	 */
+	public function getNextDeclarationNumber()
 	{
-
 		global $db;
+
 		$resql = $db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
 		if($resql) $res = $db->fetch_object($resql);
 
 		return ($res->max_numero_declaration + 1);
 	}
 
+	/**
+	 *	Verify declaration number. Positive integer of a maximum of 6 characters recommended by the documentation
+	 *
+	 *	@param     	int		$number		Number to verify / convert
+	 *	@return		int 				Number
+	 */
 	// La doc impose que le numéro soit un entier positif d'un maximum de 6 caractères
-	static function getNumeroDeclaration($numero)
+	static function getDeclarationNumber($number)
 	{
-
-		return str_pad($numero, 6, 0, STR_PAD_LEFT);
+		return str_pad($number, 6, 0, STR_PAD_LEFT);
 	}
 
+	/**
+	 *	Generate XML file
+	 *
+	 *	@return		void
+	 */
 	function generateXMLFile()
 	{
 

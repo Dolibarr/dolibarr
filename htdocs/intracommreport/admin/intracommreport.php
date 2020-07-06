@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2019      Open-DSI             <support@open-dsi.fr>
+ * Copyright (C) 2019-2020 Open-DSI             <support@open-dsi.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
-// Parameters ACCOUNTING_* and others
+// Parameters INTRACOMMREPORT_* and others
 $list_DEB = array (
     'INTRACOMMREPORT_NUM_AGREMENT',
 );

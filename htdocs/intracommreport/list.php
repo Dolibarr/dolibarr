@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015       ATM Consulting          <support@atm-consulting.fr>
- * Copyright (C) 2019       Open-DSI                <support@open-dsi.fr>
+ * Copyright (C) 2019-2020  Open-DSI                <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -297,11 +297,11 @@ if ($resql)
 
     $newcardbutton='';
     $rightskey='DEB';
-    if($type == IntracommReport::TYPE_DES) $rightskey='DES';
-    if($user->rights->{$rightskey}->creer)
+    if ($type == IntracommReport::TYPE_DES) $rightskey='DES';
+    if ($user->rights->{$rightskey}->creer)
     {
         $label='NewDEB';
-        if($type == IntracommReport::TYPE_DES) $label='NewDES';
+        if ($type == IntracommReport::TYPE_DES) $label = 'NewDES';
         $newcardbutton.= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/intracommreport/card.php?action=create&amp;type='.$type);
     }
 
@@ -326,7 +326,7 @@ if ($resql)
 
     if ($sall)
     {
-        foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+        foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ', $fieldstosearchall).'</div>';
     }
 
@@ -539,8 +539,7 @@ if ($resql)
                 print $duration_value;
                 print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
             }
-            else
-            {
+            else {
                 print $obj->duration;
             }
 
@@ -578,8 +577,7 @@ if ($resql)
     print "</div>";
     print '</form>';
 }
-else
-{
+else {
     dol_print_error($db);
 }
 
