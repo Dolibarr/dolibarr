@@ -152,8 +152,9 @@ if ($result) {
 		if (empty($compta_prod)) {
 			if ($obj->product_type == 0)
 				$compta_prod = (!empty($conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_PRODUCT_BUY_ACCOUNT : 'NotDefined';
-			else
+			else {
 				$compta_prod = (!empty($conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT)) ? $conf->global->ACCOUNTING_SERVICE_BUY_ACCOUNT : 'NotDefined';
+			}
 		}
 
 		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
@@ -226,8 +227,7 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 		{
 			$errorforinvoice[$key] = 'somelinesarenotbound';
 		}
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 //var_dump($errorforinvoice);exit;
 
@@ -301,7 +301,7 @@ if ($action == 'writebookkeeping') {
 				$bookkeeping->date_creation = $now;
 				$bookkeeping->doc_type = 'supplier_invoice';
 				$bookkeeping->fk_doc = $key;
-				$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
+				$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
 				$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
 				$bookkeeping->subledger_account = $tabcompany[$key]['code_compta_fournisseur'];
 				$bookkeeping->subledger_label = $tabcompany[$key]['name'];
@@ -310,7 +310,7 @@ if ($action == 'writebookkeeping') {
 				$accountingaccount->fetch(null, $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER, true);
 				$bookkeeping->label_compte = $accountingaccount->label;
 
-				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount");
+				$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("SubledgerAccount");
 				$bookkeeping->montant = $mt;
 				$bookkeeping->sens = ($mt >= 0) ? 'C' : 'D';
 				$bookkeeping->debit = ($mt <= 0) ? -$mt : 0;
@@ -329,14 +329,12 @@ if ($action == 'writebookkeeping') {
 					{
 						$error++;
 						$errorforline++;
-						$errorforinvoice[$key]='alreadyjournalized';
+						$errorforinvoice[$key] = 'alreadyjournalized';
 						//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-					}
-					else
-					{
+					} else {
 						$error++;
 						$errorforline++;
-						$errorforinvoice[$key]='other';
+						$errorforinvoice[$key] = 'other';
 						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 					}
 				}
@@ -344,128 +342,11 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Product / Service
-		if (! $errorforline)
+		if (!$errorforline)
 		{
 			foreach ($tabht[$key] as $k => $mt) {
 				// get compte id and label
 				if ($accountingaccount->fetch(null, $k, true)) {
-					$bookkeeping = new BookKeeping($db);
-					$bookkeeping->doc_date = $val["date"];
-					$bookkeeping->date_lim_reglement = $val["datereg"];
-					$bookkeeping->doc_ref = $val["refsologest"];
-					$bookkeeping->date_creation = $now;
-					$bookkeeping->doc_type = 'supplier_invoice';
-					$bookkeeping->fk_doc = $key;
-					$bookkeeping->fk_docdet = 0;	// Useless, can be several lines that are source of this record to add
-					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
-					$bookkeeping->subledger_account = '';
-					$bookkeeping->subledger_label = '';
-					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_compte = $accountingaccount->label;
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $accountingaccount->label;
-					$bookkeeping->montant = $mt;
-					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-					$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
-					$bookkeeping->code_journal = $journal;
-					$bookkeeping->journal_label = $journal_label;
-					$bookkeeping->fk_user_author = $user->id;
-					$bookkeeping->entity = $conf->entity;
-
-					$totaldebit += $bookkeeping->debit;
-					$totalcredit += $bookkeeping->credit;
-
-					$result = $bookkeeping->create($user);
-					if ($result < 0) {
-						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-						{
-							$error++;
-							$errorforline++;
-							$errorforinvoice[$key]='alreadyjournalized';
-							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-						}
-						else
-						{
-							$error++;
-							$errorforline++;
-							$errorforinvoice[$key]='other';
-							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-						}
-					}
-				}
-			}
-		}
-
-		// VAT
-		// var_dump($tabtva);
-		if (! $errorforline)
-		{
-			$listoftax=array(0, 1, 2);
-			foreach($listoftax as $numtax)
-			{
-				$arrayofvat = $tabtva;
-				if ($numtax == 1) $arrayofvat = $tablocaltax1;
-				if ($numtax == 2) $arrayofvat = $tablocaltax2;
-
-				foreach ($arrayofvat[$key] as $k => $mt) {
-					if ($mt) {
-						$bookkeeping = new BookKeeping($db);
-						$bookkeeping->doc_date = $val["date"];
-						$bookkeeping->date_lim_reglement = $val["datereg"];
-						$bookkeeping->doc_ref = $val["refsologest"];
-						$bookkeeping->date_creation = $now;
-						$bookkeeping->doc_type = 'supplier_invoice';
-						$bookkeeping->fk_doc = $key;
-						$bookkeeping->fk_docdet = 0;    // Useless, can be several lines that are source of this record to add
-						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
-						$bookkeeping->subledger_account = '';
-						$bookkeeping->subledger_label = '';
-						$bookkeeping->numero_compte = $k;
-
-						$accountingaccount->fetch($k, null, true);
-						$bookkeeping->label_compte = $accountingaccount->label;
-
-						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]) .' %' . ($numtax?' - Localtax '.$numtax:'');
-						$bookkeeping->montant = $mt;
-						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
-						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
-						$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
-						$bookkeeping->code_journal = $journal;
-						$bookkeeping->journal_label = $journal_label;
-						$bookkeeping->fk_user_author = $user->id;
-						$bookkeeping->entity = $conf->entity;
-
-						$totaldebit += $bookkeeping->debit;
-						$totalcredit += $bookkeeping->credit;
-
-						$result = $bookkeeping->create($user);
-						if ($result < 0) {
-							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
-							{
-								$error++;
-								$errorforline++;
-								$errorforinvoice[$key]='alreadyjournalized';
-								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
-							}
-							else
-							{
-								$error++;
-								$errorforline++;
-								$errorforinvoice[$key]='other';
-								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// Counterpart of VAT for VAT NPR
-		// var_dump($tabother);
-		if (! $errorforline && is_array($tabother[$key]))
-		{
-			foreach ($tabother[$key] as $k => $mt) {
-				if ($mt) {
 					$bookkeeping = new BookKeeping($db);
 					$bookkeeping->doc_date = $val["date"];
 					$bookkeeping->date_lim_reglement = $val["datereg"];
@@ -478,7 +359,8 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->subledger_account = '';
 					$bookkeeping->subledger_label = '';
 					$bookkeeping->numero_compte = $k;
-					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("VAT").' NPR';
+					$bookkeeping->label_compte = $accountingaccount->label;
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref_supplier.' - '.$accountingaccount->label;
 					$bookkeeping->montant = $mt;
 					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
 					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
@@ -499,9 +381,119 @@ if ($action == 'writebookkeeping') {
 							$errorforline++;
 							$errorforinvoice[$key] = 'alreadyjournalized';
 							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+						} else {
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'other';
+							setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
 						}
-						else
+					}
+				}
+			}
+		}
+
+		// VAT
+		// var_dump($tabtva);
+		if (!$errorforline)
+		{
+			$listoftax = array(0, 1, 2);
+			foreach ($listoftax as $numtax)
+			{
+				$arrayofvat = $tabtva;
+				if ($numtax == 1) $arrayofvat = $tablocaltax1;
+				if ($numtax == 2) $arrayofvat = $tablocaltax2;
+
+				foreach ($arrayofvat[$key] as $k => $mt) {
+					if ($mt) {
+						$bookkeeping = new BookKeeping($db);
+						$bookkeeping->doc_date = $val["date"];
+						$bookkeeping->date_lim_reglement = $val["datereg"];
+						$bookkeeping->doc_ref = $val["refsologest"];
+						$bookkeeping->date_creation = $now;
+						$bookkeeping->doc_type = 'supplier_invoice';
+						$bookkeeping->fk_doc = $key;
+						$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+						$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
+						$bookkeeping->subledger_account = '';
+						$bookkeeping->subledger_label = '';
+						$bookkeeping->numero_compte = $k;
+
+						$accountingaccount->fetch($k, null, true);
+						$bookkeeping->label_compte = $accountingaccount->label;
+
+						$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("VAT").' '.join(', ', $def_tva[$key][$k]).' %'.($numtax ? ' - Localtax '.$numtax : '');
+						$bookkeeping->montant = $mt;
+						$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+						$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+						$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
+						$bookkeeping->code_journal = $journal;
+						$bookkeeping->journal_label = $journal_label;
+						$bookkeeping->fk_user_author = $user->id;
+						$bookkeeping->entity = $conf->entity;
+
+						$totaldebit += $bookkeeping->debit;
+						$totalcredit += $bookkeeping->credit;
+
+						$result = $bookkeeping->create($user);
+						if ($result < 0) {
+							if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
+							{
+								$error++;
+								$errorforline++;
+								$errorforinvoice[$key] = 'alreadyjournalized';
+								//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+							} else {
+								$error++;
+								$errorforline++;
+								$errorforinvoice[$key] = 'other';
+								setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// Counterpart of VAT for VAT NPR
+		// var_dump($tabother);
+		if (!$errorforline && is_array($tabother[$key]))
+		{
+			foreach ($tabother[$key] as $k => $mt) {
+				if ($mt) {
+					$bookkeeping = new BookKeeping($db);
+					$bookkeeping->doc_date = $val["date"];
+					$bookkeeping->date_lim_reglement = $val["datereg"];
+					$bookkeeping->doc_ref = $val["refsologest"];
+					$bookkeeping->date_creation = $now;
+					$bookkeeping->doc_type = 'supplier_invoice';
+					$bookkeeping->fk_doc = $key;
+					$bookkeeping->fk_docdet = 0; // Useless, can be several lines that are source of this record to add
+					$bookkeeping->thirdparty_code = $companystatic->code_fournisseur;
+					$bookkeeping->subledger_account = '';
+					$bookkeeping->subledger_label = '';
+					$bookkeeping->numero_compte = $k;
+					$bookkeeping->label_operation = dol_trunc($companystatic->name, 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("VAT").' NPR';
+					$bookkeeping->montant = $mt;
+					$bookkeeping->sens = ($mt < 0) ? 'C' : 'D';
+					$bookkeeping->debit = ($mt > 0) ? $mt : 0;
+					$bookkeeping->credit = ($mt <= 0) ? -$mt : 0;
+					$bookkeeping->code_journal = $journal;
+					$bookkeeping->journal_label = $journal_label;
+					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
+
+					$totaldebit += $bookkeeping->debit;
+					$totalcredit += $bookkeeping->credit;
+
+					$result = $bookkeeping->create($user);
+					if ($result < 0) {
+						if ($bookkeeping->error == 'BookkeepingRecordAlreadyExists')	// Already exists
 						{
+							$error++;
+							$errorforline++;
+							$errorforinvoice[$key] = 'alreadyjournalized';
+							//setEventMessages('Transaction for ('.$bookkeeping->doc_type.', '.$bookkeeping->fk_doc.', '.$bookkeeping->fk_docdet.') were already recorded', null, 'warnings');
+						} else {
 							$error++;
 							$errorforline++;
 							$errorforinvoice[$key] = 'other';
@@ -513,7 +505,7 @@ if ($action == 'writebookkeeping') {
 		}
 
 		// Protection against a bug on lines before
-		if (!$errorforline && (price2num($totaldebit) != price2num($totalcredit)))
+		if (!$errorforline && (price2num($totaldebit, 'MT') != price2num($totalcredit, 'MT')))
 		{
 			$error++;
 			$errorforline++;
@@ -524,9 +516,7 @@ if ($action == 'writebookkeeping') {
 		if (!$errorforline)
 		{
 			$db->commit();
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 
 			if ($error >= 10)
@@ -541,13 +531,10 @@ if ($action == 'writebookkeeping') {
 
 	if (empty($error) && count($tabpay) > 0) {
 		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
-	}
-	elseif (count($tabpay) == $error)
+	} elseif (count($tabpay) == $error)
 	{
 		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
 	}
 
@@ -740,11 +727,10 @@ if (empty($action) || $action == 'view') {
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	}
 	print '<div class="tabsAction tabsActionNoBottom">';
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
+	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL) && $in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
 	if (($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == "") || $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER == '-1') {
 		print '<input type="button" class="butActionRefused classfortooltip" title="'.dol_escape_htmltag($langs->trans("SomeMandatoryStepsOfSetupWereNotDone")).'" value="'.$langs->trans("WriteBookKeeping").'" />';
-	}
-	else {
+	} else {
 		if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="'.$langs->trans("WriteBookKeeping").'" onclick="writebookkeeping();" />';
 		else print '<a href="#" class="butActionRefused classfortooltip" name="writebookkeeping">'.$langs->trans("WriteBookKeeping").'</a>';
 	}
@@ -863,16 +849,15 @@ if (empty($action) || $action == 'view') {
 		foreach ($tabttc[$key] as $k => $mt) {
 			print '<tr class="oddeven">';
 			print "<!-- Thirdparty -->";
-			print "<td>" . $date . "</td>";
-			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+			print "<td>".$date."</td>";
+			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
 			$accountoshow = length_accounta($conf->global->ACCOUNTING_ACCOUNT_SUPPLIER);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("MainAccountForSuppliersNotDefined").'</span>';
-			}
-			else print $accountoshow;
+			} else print $accountoshow;
 			print '</td>';
 			// Subledger account
 			print "<td>";
@@ -880,12 +865,11 @@ if (empty($action) || $action == 'view') {
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("ThirdpartyAccountNotDefined").'</span>';
-			}
-			else print $accountoshow;
+			} else print $accountoshow;
 			print '</td>';
-			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $langs->trans("SubledgerAccount") . "</td>";
-			print '<td class="right nowraponall">'. ($mt < 0 ? price(- $mt) : '') . "</td>";
-			print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
+			print "<td>".$companystatic->getNomUrl(0, 'supplier', 16).' - '.$invoicestatic->ref_supplier.' - '.$langs->trans("SubledgerAccount")."</td>";
+			print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
+			print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
 		}
 
@@ -896,25 +880,24 @@ if (empty($action) || $action == 'view') {
 
 			print '<tr class="oddeven">';
 			print "<!-- Product -->";
-			print "<td>" . $date . "</td>";
-			print "<td>" . $invoicestatic->getNomUrl(1) . "</td>";
+			print "<td>".$date."</td>";
+			print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 			// Account
 			print "<td>";
 			$accountoshow = length_accountg($k);
 			if (($accountoshow == "") || $accountoshow == 'NotDefined')
 			{
 				print '<span class="error">'.$langs->trans("ProductAccountNotDefined").'</span>';
-			}
-			else print $accountoshow;
+			} else print $accountoshow;
 			print "</td>";
 			// Subledger account
 			print "<td>";
 			print '</td>';
 			$companystatic->id = $tabcompany[$key]['id'];
 			$companystatic->name = $tabcompany[$key]['name'];
-			print "<td>" . $companystatic->getNomUrl(0, 'supplier', 16) . ' - ' . $invoicestatic->ref_supplier . ' - ' . $accountingaccount->label . "</td>";
-			print '<td class="right nowraponall">' . ($mt >= 0 ? price($mt) : '') . "</td>";
-			print '<td class="right nowraponall">' . ($mt < 0 ? price(- $mt) : '') . "</td>";
+			print "<td>".$companystatic->getNomUrl(0, 'supplier', 16).' - '.$invoicestatic->ref_supplier.' - '.$accountingaccount->label."</td>";
+			print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
+			print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print "</tr>";
 		}
 
@@ -936,9 +919,8 @@ if (empty($action) || $action == 'view') {
 					$accountoshow = length_accountg($k);
 					if (($accountoshow == "") || $accountoshow == 'NotDefined')
 					{
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')'.'</span>';
-					}
-					else print $accountoshow;
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("Purchase").')</span>';
+					} else print $accountoshow;
 					print "</td>";
 					// Subledger account
 					print "<td>";
@@ -959,17 +941,16 @@ if (empty($action) || $action == 'view') {
 			foreach ($tabother[$key] as $k => $mt) {
 				if ($mt) {
 					print '<tr class="oddeven">';
-					print "<!-- VAT counterpart NPR -->";
+					print '<!-- VAT counterpart NPR -->';
 					print "<td>".$date."</td>";
 					print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 					// Account
-					print "<td>";
+					print '<td>';
 					$accountoshow = length_accountg($k);
-					if (($accountoshow == "") || $accountoshow == 'NotDefined')
+					if ($accountoshow == '' || $accountoshow == 'NotDefined')
 					{
-						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account'.'</span>';
-					}
-					else print $accountoshow;
+						print '<span class="error">'.$langs->trans("VATAccountNotDefined").' ('.$langs->trans("NPR counterpart").'). Set ACCOUNTING_COUNTERPART_VAT_NPR to the subvention account</span>';
+					} else print $accountoshow;
 					print '</td>';
 					// Subledger account
 					print "<td>";

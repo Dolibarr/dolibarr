@@ -31,15 +31,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$type = GETPOST('type', 'aZ09');
+
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -52,7 +56,13 @@ $statut = GETPOST('statut', 'int');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
-$bon = new BonPrelevement($db, "");
+$bon = new BonPrelevement($db);
+$hookmanager->initHooks(array('withdrawalsreceiptslist'));
+
+$usercancreate = $user->rights->prelevement->bons->creer;
+if ($type == 'bank-transfer') {
+	$usercancreate = $user->rights->paymentbybanktransfer->create;
+}
 
 
 /*
@@ -75,6 +85,11 @@ llxHeader('', $langs->trans("WithdrawalsReceipts"));
 $sql = "SELECT p.rowid, p.ref, p.amount, p.statut, p.datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " WHERE p.entity IN (".getEntity('invoice').")";
+if ($type == 'bank-transfer') {
+	$sql .= " AND p.type = 'bank-transfer'";
+} else {
+	$sql .= " AND p.type = 'debit-order'";
+}
 if ($search_ref) $sql .= natural_search("p.ref", $search_ref);
 if ($search_amount) $sql .= natural_search("p.amount", $search_amount, 1);
 
@@ -101,12 +116,15 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    $urladd = "&amp;statut=".$statut;
+    $param = '';
+    if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+    $param .= "&statut=".urlencode($statut);
 
     $selectedfields = '';
 
     $newcardbutton = '';
-    if ($user->rights->prelevement->bons->creer)
+    if ($usercancreate)
     {
         $newcardbutton .= dolGetButtonTitle($langs->trans('NewStandingOrder'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php');
     }
@@ -119,10 +137,16 @@ if ($result)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+    $titlekey = "WithdrawalsReceipts";
+    $title = $langs->trans("WithdrawalsReceipts");
+    if ($type == 'bank-transfer') {
+    	$titlekey = "BankTransferReceipts";
+    	$title = $langs->trans("BankTransferReceipts");
+    }
+
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
     $moreforfilter = '';
 
@@ -141,53 +165,56 @@ if ($result)
     print '</tr>';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre("WithdrawalsReceipts", $_SERVER["PHP_SELF"], "p.ref", '', '', 'class="liste_titre"', $sortfield, $sortorder);
-    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", "", 'class="liste_titre" align="center"', $sortfield, $sortorder);
-    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", "", 'class="right"', $sortfield, $sortorder);
-    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", "", 'class="right"', $sortfield, $sortorder);
-    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+    print_liste_field_titre($titlekey, $_SERVER["PHP_SELF"], "p.ref", '', $param, '', $sortfield, $sortorder);
+    print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "p.datec", "", $param, '', $sortfield, $sortorder, 'center ');
+    print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "p.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+    print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+    print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'maxwidthsearch center ')."\n";
     print "</tr>\n";
 
     $directdebitorder = new BonPrelevement($db);
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+    if ($num) {
+	    while ($i < min($num, $limit))
+	    {
+	        $obj = $db->fetch_object($result);
 
-        $directdebitorder->id = $obj->rowid;
-        $directdebitorder->ref = $obj->ref;
-        $directdebitorder->datec = $obj->datec;
-        $directdebitorder->amount = $obj->amount;
-        $directdebitorder->statut = $obj->statut;
+	        $directdebitorder->id = $obj->rowid;
+	        $directdebitorder->ref = $obj->ref;
+	        $directdebitorder->datec = $obj->datec;
+	        $directdebitorder->amount = $obj->amount;
+	        $directdebitorder->statut = $obj->statut;
 
-        print '<tr class="oddeven">';
+	        print '<tr class="oddeven">';
 
-        print '<td>';
-        print $directdebitorder->getNomUrl(1);
-        print "</td>\n";
+	        print '<td>';
+	        print $directdebitorder->getNomUrl(1);
+	        print "</td>\n";
 
-        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
+	        print '<td class="center">'.dol_print_date($db->jdate($obj->datec), 'day')."</td>\n";
 
-        print '<td class="right">'.price($obj->amount)."</td>\n";
+	        print '<td class="right">'.price($obj->amount)."</td>\n";
 
-        print '<td class="right">';
-        print $bon->LibStatut($obj->statut, 3);
-        print '</td>';
+	        print '<td class="right">';
+	        print $bon->LibStatut($obj->statut, 3);
+	        print '</td>';
 
-        print '<td class="right"></td>'."\n";
+	        print '<td class="right"></td>'."\n";
 
-        print "</tr>\n";
-        $i++;
+	        print "</tr>\n";
+	        $i++;
+	    }
+    } else {
+    	print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
     }
+
     print "</table>";
     print '</div>';
 
     print '</form>';
 
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

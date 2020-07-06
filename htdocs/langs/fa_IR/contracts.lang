@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=قرارداد امضاشدۀ پیگی
 TypeContact_contrat_external_BILLING=طرف‌تماس حساب‌داری مشتری
 TypeContact_contrat_external_CUSTOMER=پیگیری‌کنندۀ حساب‌داری مشتری
 TypeContact_contrat_external_SALESREPSIGN=طرف‌تماس مشتری امضاکنندۀ قرارداد 
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

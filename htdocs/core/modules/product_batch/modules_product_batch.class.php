@@ -41,7 +41,7 @@ abstract class ModelePDFProductBatch extends CommonDocGenerator
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

@@ -33,6 +33,7 @@ $ref = GETPOST('ref', 'alpha');
 $weight_impact = GETPOST('weight_impact', 'alpha');
 $price_impact = GETPOST('price_impact', 'alpha');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
+$reference = GETPOST('reference', 'alpha');
 $form = new Form($db);
 
 $action = GETPOST('action', 'alpha');
@@ -41,6 +42,7 @@ $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $cancel = GETPOST('cancel', 'alpha');
+$delete_product = GETPOST('delete_product', 'alpha');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : $ref);
@@ -103,9 +105,11 @@ if ($_POST) {
 
 		if (!$features) {
 			setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
-		}
-		else
-		{
+		} else {
+			$reference = trim($reference);
+		    if (empty($reference)) {
+		        $reference = false;
+		    }
 			$weight_impact = price2num($weight_impact);
 			$price_impact = price2num($price_impact);
 			$sanit_features = array();
@@ -141,7 +145,7 @@ if ($_POST) {
 
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
-				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
+				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact, $reference);
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -160,8 +164,7 @@ if ($_POST) {
 
 			$db->rollback();
 		}
-	}
-	elseif (!empty($massaction))
+	} elseif (!empty($massaction))
 	{
 		$bulkaction = $massaction;
 		$error = 0;
@@ -214,8 +217,7 @@ if ($_POST) {
 			$db->commit();
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		}
-	}
-	elseif ($valueid > 0) {
+	} elseif ($valueid > 0) {
 		if ($prodcomb->fetch($valueid) < 0) {
 			dol_print_error($db, $langs->trans('ErrorRecordNotFound'));
 			exit();
@@ -242,7 +244,7 @@ if ($action === 'confirm_deletecombination') {
 	if ($prodcomb->fetch($valueid) > 0) {
 		$db->begin();
 
-		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
+		if ($prodcomb->delete($user) > 0 && (empty($delete_product) || ($delete_product == 'on' && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0))) {
 			$db->commit();
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
@@ -354,9 +356,7 @@ if (!empty($id) || !empty($ref))
 	if ($object->weight != '')
 	{
 		print $object->weight." ".measuringUnitString(0, "weight", $object->weight_units);
-	}
-	else
-	{
+	} else {
 		print '&nbsp;';
 	}
 	print "</td></tr>\n";
@@ -591,6 +591,10 @@ if (!empty($id) || !empty($ref))
 				</td>
 			</tr>
 			<tr>
+				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
+				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
+			</tr>
+			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
@@ -617,9 +621,7 @@ if (!empty($id) || !empty($ref))
 		<?php
 
         print '</form>';
-	}
-	else
-	{
+	} else {
 		if ($action === 'delete') {
 			if ($prodcomb->fetch($valueid) > 0) {
 				$prodstatic->fetch($prodcomb->fk_product_child);
@@ -629,7 +631,7 @@ if (!empty($id) || !empty($ref))
 					$langs->trans('Delete'),
 					$langs->trans('ProductCombinationDeleteDialog', $prodstatic->ref),
 					"confirm_deletecombination",
-					'',
+					array(array('label'=> $langs->trans('DeleteLinkedProduct'), 'type'=> 'checkbox', 'name' => 'delete_product', 'value' => false)),
 					0,
 					1
 				);
@@ -777,8 +779,8 @@ if (!empty($id) || !empty($ref))
     			print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
     			print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
     			print '<td class="right">';
-    			print '<a class="paddingleft paddingright" href="'.dol_buildpath('/variants/combinations.php?id='.$id.'&action=edit&valueid='.$currcomb->id, 2).'">'.img_edit().'</a>';
-    			print '<a class="paddingleft paddingright" href="'.dol_buildpath('/variants/combinations.php?id='.$id.'&action=delete&valueid='.$currcomb->id, 2).'">'.img_delete().'</a>';
+    			print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&valueid='.$currcomb->id.'">'.img_edit().'</a>';
+    			print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&valueid='.$currcomb->id.'">'.img_delete().'</a>';
     			print '</td>';
     			print '<td class="nowrap center">';
     			if ($productCombinations || $massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
@@ -790,9 +792,7 @@ if (!empty($id) || !empty($ref))
     			print '</td>';
     			print '</tr>';
 		    }
-		}
-		else
-		{
+		} else {
 		     print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		print '</table>';

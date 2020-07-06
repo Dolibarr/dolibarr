@@ -100,9 +100,9 @@ class Events // extends CommonObject
 		array('id'=>'USER_NEW_PASSWORD', 'test'=>1),
 		array('id'=>'USER_ENABLEDISABLE', 'test'=>1),
 		array('id'=>'USER_DELETE', 'test'=>1),
-		array('id'=>'GROUP_CREATE', 'test'=>1),
-		array('id'=>'GROUP_MODIFY', 'test'=>1),
-		array('id'=>'GROUP_DELETE', 'test'=>1),
+		array('id'=>'USERGROUP_CREATE', 'test'=>1),
+		array('id'=>'USERGROUP_MODIFY', 'test'=>1),
+		array('id'=>'USERGROUP_DELETE', 'test'=>1),
 	);
 
 
@@ -173,9 +173,7 @@ class Events // extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."events");
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -260,9 +258,7 @@ class Events // extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  *      \brief      Description and activation file for module ECM
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -58,7 +58,7 @@ class modECM extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module
-		$this->picto='dir';
+		$this->picto = 'folder';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/ecm/temp");
@@ -67,12 +67,12 @@ class modECM extends DolibarrModules
 		$this->config_page_url = array('ecm.php');
 
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 
 		// Constants
-		$this->const = array();			// List of parameters
-		$r=0;
+		$this->const = array(); // List of parameters
+		$r = 0;
 
 		$this->const[$r][0] = "ECM_AUTO_TREE_ENABLED";
 		$this->const[$r][1] = "chaine";
@@ -81,8 +81,8 @@ class modECM extends DolibarrModules
 		$this->const[$r][4] = 0;
 
 		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+		$this->boxes = array(); // List of boxes
+		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
@@ -92,26 +92,26 @@ class modECM extends DolibarrModules
     	//$r++;
 
 		// Permissions
-		$this->rights_class = 'ecm';	// Permission key
-		$this->rights = array();		// Permission array used by this module
+		$this->rights_class = 'ecm'; // Permission key
+		$this->rights = array(); // Permission array used by this module
 
 		$r++;
 		$this->rights[$r][0] = 2501;
-		$this->rights[$r][1] = 'Consulter/Télécharger les documents';
+		$this->rights[$r][1] = 'Read or download documents';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 
 		$r++;
 		$this->rights[$r][0] = 2503;
-		$this->rights[$r][1] = 'Soumettre ou supprimer des documents';
+		$this->rights[$r][1] = 'Upload a document';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'upload';
 
 		$r++;
 		$this->rights[$r][0] = 2515;
-		$this->rights[$r][1] = 'Administrer les rubriques de documents';
+		$this->rights[$r][1] = 'Administer directories of documents';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'setup';
@@ -119,11 +119,11 @@ class modECM extends DolibarrModules
 
         // Menus
 		//------
-		$this->menus = array();			// List of menus to add
-		$r=0;
+		$this->menus = array(); // List of menus to add
+		$r = 0;
 
 		// Top menu
-		$this->menu[$r]=array('fk_menu'=>0,
+		$this->menu[$r] = array('fk_menu'=>0,
 							  'type'=>'top',
 							  'titre'=>'MenuECM',
 							  'mainmenu'=>'ecm',
@@ -133,11 +133,11 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload || $user->rights->ecm->setup',
 							  'enabled'=>'$conf->ecm->enabled',
 							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		// Left menu linked to top menu
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=ecm',
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=ecm',
 							  'type'=>'left',
 							  'titre'=>'ECMArea',
 							  'mainmenu'=>'ecm',
@@ -148,10 +148,10 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
 							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
 							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
 							  'type'=>'left',
 							  'titre'=>'ECMSectionsManual',
 							  'mainmenu'=>'ecm',
@@ -162,10 +162,10 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
 							  'enabled'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
 							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
+		$this->menu[$r] = array('fk_menu'=>'fk_mainmenu=ecm,fk_leftmenu=ecm',
 							  'type'=>'left',
 							  'titre'=>'ECMSectionsAuto',
 							  'mainmenu'=>'ecm',
@@ -175,7 +175,7 @@ class modECM extends DolibarrModules
 							  'perms'=>'$user->rights->ecm->read || $user->rights->ecm->upload',
 							  'enabled'=>'($user->rights->ecm->read || $user->rights->ecm->upload) && ! empty($conf->global->ECM_AUTO_TREE_ENABLED)',
 							  'target'=>'',
-							  'user'=>2);			// 0=Menu for internal users, 1=external users, 2=both
+							  'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 	}
 }

@@ -159,7 +159,7 @@ class CommentParser
                     $addNewline = true;
                 }
                 continue;
-            } elseif ($line{0} == '@') {
+            } elseif ($line[0] == '@') {
                 $mode = 2;
                 $newParam = true;
             }
@@ -353,7 +353,7 @@ class CommentParser
                     $data = $format->decode($str);
                 }
             } else { // auto detect
-                if ($str{0} == '{') {
+                if ($str[0] == '{') {
                     $d = json_decode($str, true);
                     if (json_last_error() != JSON_ERROR_NONE) {
                         throw new Exception('Error parsing embedded JSON data'
@@ -445,7 +445,7 @@ class CommentParser
     {
         $r = array();
         $email = end($value);
-        if ($email{0} == '<') {
+        if ($email[0] == '<') {
             $email = substr($email, 1, -1);
             array_pop($value);
             $r['email'] = $email;
@@ -470,7 +470,7 @@ class CommentParser
         $data = array_shift($value);
         if (empty($data)) {
             $r['type'] = 'mixed';
-        } elseif ($data{0} == '$') {
+        } elseif ($data[0] == '$') {
             $r['name'] = substr($data, 1);
             $r['type'] = 'mixed';
         } else {
@@ -478,7 +478,7 @@ class CommentParser
             $r['type'] = count($data) == 1 ? $data[0] : $data;
 
             $data = array_shift($value);
-            if (!empty($data) && $data{0} == '$') {
+            if (!empty($data) && $data[0] == '$') {
                 $r['name'] = substr($data, 1);
             }
         }
@@ -498,7 +498,7 @@ class CommentParser
         $data = array_shift($value);
         if (empty($data)) {
             $r['type'] = 'mixed';
-        } elseif ($data{0} == '$') {
+        } elseif ($data[0] == '$') {
             $r['name'] = substr($data, 1);
             $r['type'] = 'mixed';
         } else {

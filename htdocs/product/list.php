@@ -11,6 +11,7 @@
  * Copyright (C) 2013       Adolfo segura           <adolfo.segura@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
+ * Copyright (C) 2020	    Alexandre Spangaro		<aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (!empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -68,6 +70,8 @@ $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell", 'alpha')
 $search_accountancy_code_sell_intra = GETPOST("search_accountancy_code_sell_intra", 'alpha');
 $search_accountancy_code_sell_export = GETPOST("search_accountancy_code_sell_export", 'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy", 'alpha');
+$search_accountancy_code_buy_intra = GETPOST("search_accountancy_code_buy_intra", 'alpha');
+$search_accountancy_code_buy_export = GETPOST("search_accountancy_code_buy_export", 'alpha');
 $optioncss = GETPOST('optioncss', 'alpha');
 $type = GETPOST("type", "int");
 
@@ -83,8 +87,8 @@ $diroutputmassaction = $conf->product->dir_output.'/temp/massgeneration/'.$user-
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = (GETPOST("page", 'int') ?GETPOST("page", 'int') : 0);
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -125,7 +129,12 @@ else $result = restrictedArea($user, 'produit|service', '', '', '', '', '', $obj
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical = 0;
-if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT) || !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER) || !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION))
+if (!empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT_CLOSE)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION)
+	|| !empty($conf->global->STOCK_CALCULATE_ON_RECEPTION_CLOSE)
+	|| !empty($conf->mrp->enabled))
 {
 	$virtualdiffersfromphysical = 1; // According to increase/decrease stock options, virtual and physical stock may differs.
 }
@@ -172,7 +181,8 @@ $arrayfields = array(
 	'p.fk_product_type'=>array('label'=>$langs->trans("Type"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && !empty($conf->service->enabled)), 'position'=>11),
 	'p.barcode'=>array('label'=>$langs->trans("Gencod"), 'checked'=>1, 'enabled'=>(!empty($conf->barcode->enabled)), 'position'=>12),
 	'p.duration'=>array('label'=>$langs->trans("Duration"), 'checked'=>($contextpage != 'productlist'), 'enabled'=>(!empty($conf->service->enabled) && (string) $type == '1'), 'position'=>13),
-    'p.weight'=>array('label'=>$langs->trans('Weight'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>20),
+	'p.finished'=>array('label'=>$langs->trans("Nature"), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>19),
+	'p.weight'=>array('label'=>$langs->trans('Weight'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>20),
 	'p.weight_units'=>array('label'=>$langs->trans('WeightUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && $type != '1'), 'position'=>21),
     'p.length'=>array('label'=>$langs->trans('Length'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>22),
 	'p.length_units'=>array('label'=>$langs->trans('LengthUnits'), 'checked'=>0, 'enabled'=>(!empty($conf->product->enabled) && empty($conf->global->PRODUCT_DISABLE_SIZE) && $type != '1'), 'position'=>23),
@@ -191,7 +201,7 @@ $arrayfields = array(
     'p.tva_tx'=>array('label'=>$langs->trans("VATRate"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>43),
     'p.pmp'=>array('label'=>$langs->trans("PMPValueShort"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>44),
 	'p.seuil_stock_alerte'=>array('label'=>$langs->trans("StockLimit"), 'checked'=>0, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>50),
-	'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'),'position'=>51),
+	'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>51),
 	'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>52),
 	'stock_virtual'=>array('label'=>$langs->trans("VirtualStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service' && $virtualdiffersfromphysical), 'position'=>53),
 	'p.tobatch'=>array('label'=>$langs->trans("ManageLotSerial"), 'checked'=>0, 'enabled'=>(!empty($conf->productbatch->enabled)), 'position'=>60),
@@ -199,11 +209,30 @@ $arrayfields = array(
     'p.accountancy_code_sell_intra'=>array('label'=>$langs->trans("ProductAccountancySellIntraCode"), 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>401),
     'p.accountancy_code_sell_export'=>array('label'=>$langs->trans("ProductAccountancySellExportCode"), 'checked'=>0, 'position'=>402),
     'p.accountancy_code_buy'=>array('label'=>$langs->trans("ProductAccountancyBuyCode"), 'checked'=>0, 'position'=>403),
+    'p.accountancy_code_buy_intra'=>array('label'=>$langs->trans("ProductAccountancyBuyIntraCode"), 'checked'=>0, 'enabled'=>$isInEEC, 'position'=>404),
+    'p.accountancy_code_buy_export'=>array('label'=>$langs->trans("ProductAccountancyBuyExportCode"), 'checked'=>0, 'position'=>405),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.tosell'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Sell").')', 'checked'=>1, 'position'=>1000),
 	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000)
 );
+
+// MultiPrices
+if ($conf->global->PRODUIT_MULTIPRICES){
+	for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+	{
+		$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
+		if (!empty($conf->global->$keyforlabel)) {
+			$labelp = $i.' - '.$langs->trans($conf->global->$keyforlabel);
+		} else {
+			$labelp = $langs->trans("SellingPrice")." ".$i;
+		}
+		$arrayfields['p.sellprice'.$i] = array('label'=>$labelp, 'checked'=>1, 'enabled'=>$conf->global->PRODUIT_MULTIPRICES, 'position'=>40);
+		$arraypricelevel[$i] = array($i);
+	}
+}
+
+//var_dump($arraypricelevel);
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
@@ -254,6 +283,8 @@ if (empty($reshook))
 		$search_accountancy_code_sell_intra = '';
 		$search_accountancy_code_sell_export = '';
 		$search_accountancy_code_buy = '';
+		$search_accountancy_code_buy_intra = '';
+		$search_accountancy_code_buy_export = '';
 		$search_array_options = array();
 	}
 
@@ -282,20 +313,17 @@ if ($search_type != '' && $search_type != '-1')
 	if ($search_type == 1)
 	{
 		$texte = $langs->trans("Services");
-	}
-	else
-	{
+	} else {
 		$texte = $langs->trans("Products");
 	}
-}
-else
-{
+} else {
 	$texte = $langs->trans("ProductsAndServices");
 }
 
 $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type, p.entity,';
-$sql .= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-$sql .= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,';
+$sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
+$sql .= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
+$sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,';
 $sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ' p.fk_unit, cu.label as cu_label,';
@@ -321,7 +349,7 @@ if (!empty($conf->global->MAIN_MULTILANGS)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX
 if (!empty($conf->variants->enabled) && (!empty($conf->global->PRODUIT_ATTRIBUTES_HIDECHILD) && !$show_childproducts)) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac.fk_product_child = p.rowid";
 }
-if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_units cu ON cu.rowid = p.fk_unit";
+if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_units cu ON cu.rowid = p.fk_unit";
 
 
 $sql .= ' WHERE p.entity IN ('.getEntity('product').')';
@@ -376,6 +404,8 @@ if ($search_accountancy_code_sell)        $sql .= natural_search('p.accountancy_
 if ($search_accountancy_code_sell_intra)  $sql .= natural_search('p.accountancy_code_sell_intra', $search_accountancy_code_sell_intra);
 if ($search_accountancy_code_sell_export) $sql .= natural_search('p.accountancy_code_sell_export', $search_accountancy_code_sell_export);
 if ($search_accountancy_code_buy)         $sql .= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
+if ($search_accountancy_code_buy_intra)   $sql .= natural_search('p.accountancy_code_buy_intra', $search_accountancy_code_buy_intra);
+if ($search_accountancy_code_buy_export)  $sql .= natural_search('p.accountancy_code_buy_export', $search_accountancy_code_buy_export);
 
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -384,8 +414,9 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
-$sql .= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-$sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp, p.stock,';
+$sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
+$sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
+$sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.pmp, p.stock,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ', p.fk_unit, cu.label';
 
@@ -439,8 +470,7 @@ if ($resql)
 		if ($search_type == 0)
 		{
 			$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
-		}
-		elseif ($search_type == 1)
+		} elseif ($search_type == 1)
 		{
 			$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 		}
@@ -479,6 +509,8 @@ if ($resql)
 	if ($search_accountancy_code_sell_intra) $param = "&search_accountancy_code_sell_intra=".urlencode($search_accountancy_code_sell_intra);
 	if ($search_accountancy_code_sell_export) $param = "&search_accountancy_code_sell_export=".urlencode($search_accountancy_code_sell_export);
 	if ($search_accountancy_code_buy) $param = "&search_accountancy_code_buy=".urlencode($search_accountancy_code_buy);
+	if ($search_accountancy_code_buy_intra) $param = "&search_accountancy_code_buy_intra=".urlencode($search_accountancy_code_buy_intra);
+	if ($search_accountancy_code_buy_export) $param = "&search_accountancy_code_buy_export=".urlencode($search_accountancy_code_buy_export);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -488,11 +520,11 @@ if ($resql)
 	    //'builddoc'=>$langs->trans("PDFMerge"),
 	    //'presend'=>$langs->trans("SendByMail"),
 	);
-    $rightskey='produit';
-	if ($type == Product::TYPE_SERVICE) $rightskey='service';
+    $rightskey = 'produit';
+	if ($type == Product::TYPE_SERVICE) $rightskey = 'service';
 	if ($user->rights->{$rightskey}->supprimer) $arrayofmassactions['predelete'] = "<span class='fa fa-trash paddingrightonly'></span>".$langs->trans("Delete");
-	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions=array();
-	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton = '';
 	if ($type === "") $perm = ($user->rights->produit->creer || $user->rights->service->creer);
@@ -521,11 +553,14 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
+	//print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 	if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'products', 0, $newcardbutton, '', $limit);
+	$picto = 'product';
+	if ($type == 1) $picto = 'service';
+
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "Information";
 	$modelmail = "product";
@@ -630,6 +665,12 @@ if ($resql)
 		print '</td>';
 	}
 
+	// Finished
+	if (!empty($arrayfields['p.finished']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '</td>';
+	}
 	// Weight
 	if (!empty($arrayfields['p.weight']['checked']))
 	{
@@ -709,6 +750,19 @@ if ($resql)
 		print '<td class="liste_titre right">';
 		print '</td>';
 	}
+
+	// Multiprice
+	if ($conf->global->PRODUIT_MULTIPRICES){
+		foreach ($arraypricelevel as $key => $value)
+		{
+			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+			{
+				print '<td class="liste_titre right">';
+				print '</td>';
+			}
+		}
+	}
+
 	// Minimum buying Price
 	if (!empty($arrayfields['p.minbuyprice']['checked']))
 	{
@@ -762,7 +816,9 @@ if ($resql)
 	if (!empty($arrayfields['p.accountancy_code_sell_intra']['checked']))  print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell_intra" value="'.dol_escape_htmltag($search_accountancy_code_sell_intra).'"></td>';
 	if (!empty($arrayfields['p.accountancy_code_sell_export']['checked'])) print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_sell_export" value="'.dol_escape_htmltag($search_accountancy_code_sell_export).'"></td>';
 	// Accountancy code buy
-	if (!empty($arrayfields['p.accountancy_code_buy']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" name="search_accountancy_code_buy" size="6" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
+	if (!empty($arrayfields['p.accountancy_code_buy']['checked']))		   print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy" value="'.dol_escape_htmltag($search_accountancy_code_buy).'"></td>';
+	if (!empty($arrayfields['p.accountancy_code_buy_intra']['checked']))   print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy_intra" value="'.dol_escape_htmltag($search_accountancy_code_buy_intra).'"></td>';
+	if (!empty($arrayfields['p.accountancy_code_buy_export']['checked']))  print '<td class="liste_titre"><input class="flat maxwidth75" type="text" name="search_accountancy_code_buy_export" value="'.dol_escape_htmltag($search_accountancy_code_buy_export).'"></td>';
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 	// Fields from hook
@@ -819,6 +875,10 @@ if ($resql)
     if (!empty($arrayfields['p.duration']['checked'])) {
         print_liste_field_titre($arrayfields['p.duration']['label'], $_SERVER["PHP_SELF"], "p.duration", "", $param, '', $sortfield, $sortorder, 'center ');
     }
+	if (!empty($arrayfields['p.finished']['checked'])) {
+        print_liste_field_titre($arrayfields['p.finished']['label'], $_SERVER["PHP_SELF"], "p.finished", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+
 	if (!empty($arrayfields['p.weight']['checked']))  		print_liste_field_titre($arrayfields['p.weight']['label'], $_SERVER['PHP_SELF'], 'p.weight', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.weight_units']['checked']))  print_liste_field_titre($arrayfields['p.weight_units']['label'], $_SERVER['PHP_SELF'], 'p.weight_units', '', $param, '', $sortfield, $sortorder, 'center ');
 	if (!empty($arrayfields['p.length']['checked']))  		print_liste_field_titre($arrayfields['p.length']['label'], $_SERVER['PHP_SELF'], 'p.length', '', $param, '', $sortfield, $sortorder, 'center ');
@@ -835,6 +895,18 @@ if ($resql)
     if (!empty($arrayfields['p.sellprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.sellprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
+
+	// Multiprices
+	if ($conf->global->PRODUIT_MULTIPRICES){
+		foreach ($arraypricelevel as $key => $value)
+		{
+			if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+			{
+				print_liste_field_titre($arrayfields['p.sellprice'.$key]['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+			}
+		}
+	}
+
     if (!empty($arrayfields['p.minbuyprice']['checked'])) {
         print_liste_field_titre($arrayfields['p.minbuyprice']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
@@ -874,6 +946,12 @@ if ($resql)
     if (!empty($arrayfields['p.accountancy_code_buy']['checked'])) {
         print_liste_field_titre($arrayfields['p.accountancy_code_buy']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_buy", "", $param, '', $sortfield, $sortorder);
     }
+	if (!empty($arrayfields['p.accountancy_code_buy_intra']['checked'])) {
+		print_liste_field_titre($arrayfields['p.accountancy_code_buy_intra']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_buy_intra", "", $param, '', $sortfield, $sortorder);
+	}
+	if (!empty($arrayfields['p.accountancy_code_buy_export']['checked'])) {
+		print_liste_field_titre($arrayfields['p.accountancy_code_buy_export']['label'], $_SERVER["PHP_SELF"], "p.accountancy_code_buy_export", "", $param, '', $sortfield, $sortorder);
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -927,6 +1005,7 @@ if ($resql)
 		$product_static->ref_fourn = $obj->ref_supplier; // deprecated
 		$product_static->ref_supplier = $obj->ref_supplier;
 		$product_static->label = $obj->label;
+		$product_static->finished = $obj->finished;
 		$product_static->type = $obj->fk_product_type;
 		$product_static->status_buy = $obj->tobuy;
 		$product_static->status     = $obj->tosell;
@@ -937,6 +1016,8 @@ if ($resql)
 		$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
 		$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
 		$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
+		$product_static->accountancy_code_buy_intra = $obj->accountancy_code_buy_intra;
+		$product_static->accountancy_code_buy_export = $obj->accountancy_code_buy_export;
 		$product_static->length = $obj->length;
 		$product_static->length_units = $obj->length_units;
 		$product_static->width = $obj->width;
@@ -1021,19 +1102,26 @@ if ($resql)
 				if ((float) $duration_value > 1)
 				{
 				    $dur = array("i"=>$langs->trans("Minutes"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-				}
-				elseif ((float) $duration_value > 0)
+				} elseif ((float) $duration_value > 0)
 				{
 				    $dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 				}
 				print $duration_value;
 				print ((!empty($duration_unit) && isset($dur[$duration_unit]) && $duration_value != '') ? ' '.$langs->trans($dur[$duration_unit]) : '');
-			}
-			elseif (!preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
+			} elseif (!preg_match('/^[a-z]$/i', $obj->duration))		// If duration is a simple char (like 's' of 'm'), we do not show value
 			{
 				print $obj->duration;
 			}
 
+			print '</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+
+		// Finished
+		if (!empty($arrayfields['p.finished']['checked']))
+		{
+			print '<td class="center">';
+			print $product_static->getLibFinished();
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1152,6 +1240,40 @@ if ($resql)
 			if (!$i) $totalarray['nbfield']++;
 		}
 
+
+		// Multiprices
+		if ($conf->global->PRODUIT_MULTIPRICES){
+			foreach ($arraypricelevel as $key => $value)
+			{
+				if (!empty($arrayfields['p.sellprice'.$key]['checked']))
+				{
+					print '<td class="right nowraponall">';
+					if ($obj->tosell)
+					{
+						// TODO Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
+						// then reuse the cache array if we need prices for other price levels
+						$resultp = "SELECT p.rowid, p.fk_product, p.price, p.price_ttc, p.price_level, p.date_price";
+						$resultp .= " FROM ".MAIN_DB_PREFIX."product_price as p";
+						$resultp .= " WHERE fk_product = ".$obj->rowid;
+						$resultp .= " AND p.price_level = ".$key;
+						$resultp .= " ORDER BY p.date_price DESC, p.rowid DESC, p.price_level ASC";
+						$resultp = $db->query($resultp);
+						if ($resultp)
+						{
+							$objp = $db->fetch_object($resultp);
+								if ($obj->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+							else print price($objp->price).' '.$langs->trans("HT");
+								$db->free($resultp);
+						} else {
+							dol_print_error($db);
+						}
+					}
+					print '</td>';
+					if (!$i) $totalarray['nbfield']++;
+				}
+			}
+		}
+
 		// Better buy price
 		if (!empty($arrayfields['p.minbuyprice']['checked']))
 		{
@@ -1167,8 +1289,7 @@ if ($resql)
 						{
 							$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
 							print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent / 100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"), $htmltext);
-						}
-						else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
+						} else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
 					}
 				}
 			}
@@ -1284,10 +1405,20 @@ if ($resql)
 			print '<td>'.$obj->accountancy_code_buy.'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
+		if (!empty($arrayfields['p.accountancy_code_buy_intra']['checked']))
+		{
+			print '<td>'.$obj->accountancy_code_buy_intra.'</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
+		if (!empty($arrayfields['p.accountancy_code_buy_export']['checked']))
+		{
+			print '<td>'.$obj->accountancy_code_buy_export.'</td>';
+			if (!$i) $totalarray['nbfield']++;
+		}
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -1352,9 +1483,7 @@ if ($resql)
 	print "</table>";
 	print "</div>";
 	print '</form>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

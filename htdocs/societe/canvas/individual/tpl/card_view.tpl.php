@@ -16,7 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -42,7 +42,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td colspan="3"><?php echo $this->control->tpl['showrefnav']; ?></td>
 </tr>
 
-<?php if (! empty($conf->global->SOCIETE_USEPREFIX)) { ?>
+<?php if (!empty($conf->global->SOCIETE_USEPREFIX)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Prefix'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['prefix_comm']; ?></td>
@@ -71,7 +71,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 </tr>
 <?php } ?>
 
-<?php if (! empty($conf->barcode->enabled)) { ?>
+<?php if (!empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['barcode']; ?></td>
@@ -119,14 +119,14 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 	<td colspan="3"><?php echo $this->control->tpl['tva_assuj']; ?></td>
 </tr>
 
-<?php if(!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
+<?php if (!empty($this->control->tpl['localtax'])) echo $this->control->tpl['localtax']; ?>
 
 <tr>
 	<td><?php echo $langs->trans("Type"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['typent']; ?></td>
 </tr>
 
-<?php if (! empty($conf->global->MAIN_MULTILANGS)) { ?>
+<?php if (!empty($conf->global->MAIN_MULTILANGS)) { ?>
 <tr>
 	<td><?php echo $langs->trans("DefaultLang"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['default_lang']; ?></td>
@@ -166,10 +166,10 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 		</tr>
 	</table>
 	</td>
-	<td colspan="3"><?php echo $this->control->tpl['sales_representatives'];	?></td>
+	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (! empty($conf->adherent->enabled)) { ?>
+<?php if (!empty($conf->adherent->enabled)) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>
@@ -188,7 +188,7 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 <?php if ($user->rights->societe->supprimer) { ?>
 	<?php if ($conf->use_javascript_ajax) { ?>
 		<span id="action-delete" class="butActionDelete"><?php echo $langs->trans('Delete'); ?></span>
-	<?php }	else { ?>
+	<?php } else { ?>
 		<a class="butActionDelete" href="<?php echo $_SERVER["PHP_SELF"].'?socid='.$this->control->tpl['id'].'&amp;action=delete&amp;canvas='.$canvas; ?>"><?php echo $langs->trans('Delete'); ?></a>
 	<?php } ?>
 <?php } ?>
@@ -202,10 +202,10 @@ if ($this->control->tpl['action_delete']) echo $this->control->tpl['action_delet
 /*
  * Documents generes
  */
-$filedir=$conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
-$urlsource=$_SERVER["PHP_SELF"]."?socid=".$socid;
-$genallowed=$user->rights->societe->lire;
-$delallowed=$user->rights->societe->creer;
+$filedir = $conf->societe->multidir_output[$this->control->tpl['entity']].'/'.$socid;
+$urlsource = $_SERVER["PHP_SELF"]."?socid=".$socid;
+$genallowed = $user->rights->societe->lire;
+$delallowed = $user->rights->societe->creer;
 
 print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $objcanvas->control->object->default_lang);
 ?>
@@ -219,12 +219,12 @@ print $formfile->showdocuments('company', $socid, $filedir, $urlsource, $genallo
 
 <?php
 // Subsidiaries list
-$result=show_subsidiaries($conf, $langs, $db, $object);
+$result = show_subsidiaries($conf, $langs, $db, $object);
 
 // Contacts list
-$result=show_contacts($conf, $langs, $db, $object);
+$result = show_contacts($conf, $langs, $db, $object);
 
 // Projects list
-$result=show_projects($conf, $langs, $db, $object);
+$result = show_projects($conf, $langs, $db, $object);
 
 print "<!-- END PHP TEMPLATE -->\n";

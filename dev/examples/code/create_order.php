@@ -66,8 +66,9 @@ $com = new Commande($db);
 
 $com->ref            = 'ABCDE';
 $com->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$com->date_commande  = mktime();
-$com->note           = 'A comment';
+$com->date           = dol_now();
+$com->note_public    = 'A public comment';
+$com->note_private   = 'A private comment';
 $com->source         = 1;
 $com->remise_percent = 0;
 
@@ -84,14 +85,11 @@ if ($idobject > 0)
 	// Change status to validated
 	$result=$com->valid($user);
 	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
+	else {
 		$error++;
 		dol_print_error($db, $com->error);
 	}
-}
-else
-{
+} else {
 	$error++;
 	dol_print_error($db, $com->error);
 }
@@ -103,9 +101,7 @@ if (! $error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

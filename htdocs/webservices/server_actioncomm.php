@@ -153,8 +153,8 @@ $server->wsdl->addComplexType(
 	'sequence',
 	'',
 	array(
-	'code' => array('name'=>'code', 'type'=>'xsd:string'),
-	'libelle' => array('name'=>'libelle', 'type'=>'xsd:string')
+		'code' => array('name'=>'code', 'type'=>'xsd:string'),
+		'libelle' => array('name'=>'libelle', 'type'=>'xsd:string')
 	)
 );
 
@@ -164,7 +164,7 @@ $server->wsdl->addComplexType(
 	'array',
 	'sequence',
 	'',
-	 array(
+	array(
         'actioncommtype' => array(
             'name' => 'actioncommtype',
             'type' => 'tns:actioncommtype',
@@ -300,7 +300,7 @@ function getActionComm($authentication, $id)
 			        	'fulldayevent'=> $actioncomm->fulldayevent,
 			        	'location'=> $actioncomm->location,
 			        	'socid'=> $actioncomm->socid,
-			        	'contactid'=> $actioncomm->contactid,
+			        	'contactid'=> $actioncomm->contact_id,
 			        	'projectid'=> $actioncomm->fk_project,
 			        	'fk_element'=> $actioncomm->fk_element,
 			        	'elementtype'=> $actioncomm->elementtype
@@ -328,14 +328,12 @@ function getActionComm($authentication, $id)
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'actioncomm'=>$actioncomm_result_fields);
             }
-            else
-            {
+            else {
                 $error++;
                 $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
         }
@@ -388,15 +386,11 @@ function getListActionCommType($authentication)
 				 $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'actioncommtypes'=>$resultarray);
-			}
-			else
-			{
+			} else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -444,7 +438,7 @@ function createActionComm($authentication, $actioncomm)
 		$newobject->socid = $actioncomm['socid'];
 		$newobject->fk_project = $actioncomm['projectid'];
 		$newobject->note = $actioncomm['note'];
-		$newobject->contactid = $actioncomm['contactid'];
+		$newobject->contact_id = $actioncomm['contactid'];
 		$newobject->userownerid = $actioncomm['userownerid'];
 		$newobject->label = $actioncomm['label'];
 		$newobject->percentage = $actioncomm['percentage'];
@@ -482,8 +476,7 @@ function createActionComm($authentication, $actioncomm)
 			$db->commit();
 			$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id);
 		}
-		else
-		{
+		else {
 			$db->rollback();
 			$error++;
 			$errorcode = 'KO';
@@ -508,77 +501,77 @@ function createActionComm($authentication, $actioncomm)
  */
 function updateActionComm($authentication, $actioncomm)
 {
-	global $db,$conf,$langs;
+	global $db, $conf, $langs;
 
-	$now=dol_now();
+	$now = dol_now();
 
 	dol_syslog("Function: updateActionComm login=".$authentication['login']);
 
-	if ($authentication['entity']) $conf->entity=$authentication['entity'];
+	if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
 	// Init and check authentication
-	$objectresp=array();
-	$errorcode='';$errorlabel='';
-	$error=0;
-	$fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+	$objectresp = array();
+	$errorcode = ''; $errorlabel = '';
+	$error = 0;
+	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
-	if (empty($actioncomm['id']))	{
-		$error++; $errorcode='KO'; $errorlabel="Actioncomm id is mandatory.";
+	if (empty($actioncomm['id'])) {
+		$error++; $errorcode = 'KO'; $errorlabel = "Actioncomm id is mandatory.";
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$objectfound=false;
+		$objectfound = false;
 
-		$object=new ActionComm($db);
-		$result=$object->fetch($actioncomm['id']);
+		$object = new ActionComm($db);
+		$result = $object->fetch($actioncomm['id']);
 
 		if (!empty($object->id)) {
-			$objectfound=true;
+			$objectfound = true;
 
-			$object->datep=$actioncomm['datep'];
-			$object->datef=$actioncomm['datef'];
-			$object->type_code=$actioncomm['type_code'];
-			$object->socid=$actioncomm['socid'];
-			$object->contactid=$actioncomm['contactid'];
-			$object->fk_project=$actioncomm['projectid'];
-			$object->note=$actioncomm['note'];
-			$object->userownerid=$actioncomm['userownerid'];
-			$object->label=$actioncomm['label'];
-			$object->percentage=$actioncomm['percentage'];
-			$object->priority=$actioncomm['priority'];
-			$object->fulldayevent=$actioncomm['fulldayevent'];
-			$object->location=$actioncomm['location'];
-			$object->fk_element=$actioncomm['fk_element'];
-			$object->elementtype=$actioncomm['elementtype'];
+			$object->datep = $actioncomm['datep'];
+			$object->datef = $actioncomm['datef'];
+			$object->type_code = $actioncomm['type_code'];
+			$object->socid = $actioncomm['socid'];
+			$object->contact_id = $actioncomm['contactid'];
+			$object->fk_project = $actioncomm['projectid'];
+			$object->note = $actioncomm['note'];
+			$object->userownerid = $actioncomm['userownerid'];
+			$object->label = $actioncomm['label'];
+			$object->percentage = $actioncomm['percentage'];
+			$object->priority = $actioncomm['priority'];
+			$object->fulldayevent = $actioncomm['fulldayevent'];
+			$object->location = $actioncomm['location'];
+			$object->fk_element = $actioncomm['fk_element'];
+			$object->elementtype = $actioncomm['elementtype'];
 
 			$elementtype = 'actioncomm';
 
 			//Retreive all extrafield for actioncomm
 			// fetch optionals attributes and labels
-			$extrafields=new ExtraFields($db);
+			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype, true);
 			if (is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label']))
 			{
-				foreach($extrafields->attributes[$elementtype]['label'] as $key=>$label)
+				foreach ($extrafields->attributes[$elementtype]['label'] as $key=>$label)
 				{
-					$key='options_'.$key;
-					$object->array_options[$key]=$actioncomm[$key];
+					$key = 'options_'.$key;
+					$object->array_options[$key] = $actioncomm[$key];
 				}
 			}
 
 			$db->begin();
 
-			$result=$object->update($fuser);
+			$result = $object->update($fuser);
 			if ($result <= 0) {
 				$error++;
 			}
 		}
 
-		if ((! $error) && ($objectfound))
+		if ((!$error) && ($objectfound))
 		{
 			$db->commit();
-			$objectresp=array(
+			$objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'id'=>$object->id
 			);

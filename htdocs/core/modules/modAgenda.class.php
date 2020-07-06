@@ -97,9 +97,7 @@ class modAgenda extends DolibarrModules
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
 		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 		    }
-		}
-		else
-		{
+		} else {
 		    dol_print_error($this->db->lasterror());
 		}
 

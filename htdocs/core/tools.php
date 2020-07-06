@@ -25,11 +25,11 @@
 require '../main.inc.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","other"));
+$langs->loadLangs(array("companies", "other"));
 
 // Security check
-$socid=0;
-if ($user->socid > 0) $socid=$user->socid;
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
 
 
 
@@ -46,7 +46,7 @@ $text = $langs->trans("Tools");
 print load_fiche_titre($text, '', 'wrench');
 
 // Show description of content
-print '<div class="justify">'.$langs->trans("ToolsDesc").'</div><br><br>';
+print '<div class="justify opacitymedium">'.$langs->trans("ToolsDesc").'</div><br><br>';
 
 
 // Show logo

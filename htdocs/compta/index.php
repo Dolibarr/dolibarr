@@ -87,7 +87,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("", $langs->trans("AccountancyTreasuryArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'invoicing');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -101,7 +101,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     	$listofsearchfields['search_invoice'] = array('text'=>'CustomerInvoice');
     }
     // Search supplier invoices
-    if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
     {
     	$listofsearchfields['search_supplier_invoice'] = array('text'=>'SupplierInvoice');
     }
@@ -214,16 +214,12 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -231,7 +227,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 /**
  * Draft suppliers invoices
  */
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier";
 	$sql .= ", s.nom as name";
@@ -302,16 +298,12 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -348,7 +340,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql .= " GROUP BY f.rowid, f.ref, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql .= " s.nom, s.rowid, s.code_client, s.code_compta, s.email,";
 	$sql .= " cc.rowid, cc.code";
-	$sql .= " ORDER BY f.tms DESC ";
+	$sql .= " ORDER BY f.tms DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$resql = $db->query($sql);
@@ -428,18 +420,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			$colspan = 5;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -447,7 +435,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 
 // Last modified supplier invoices
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$langs->load("boxes");
 	$facstatic = new FactureFournisseur($db);
@@ -455,7 +443,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 	$sql = "SELECT ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_tva, ff.total_ttc, ff.tms, ff.paye";
 	$sql .= ", s.nom as name";
     $sql .= ", s.rowid as socid";
-    $sql .= ", s.code_fournisseur, s.code_compta_fournisseur";
+    $sql .= ", s.code_fournisseur, s.code_compta_fournisseur, s.email";
 	$sql .= ", SUM(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
@@ -503,10 +491,14 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 
 				$thirdpartystatic->id = $obj->socid;
 				$thirdpartystatic->name = $obj->name;
+				$thirdpartystatic->email = $obj->email;
+				$thirdpartystatic->country_id = 0;
+				$thirdpartystatic->country_code = '';
+				$thirdpartystatic->client = 0;
 				$thirdpartystatic->fournisseur = 1;
-				//$thirdpartystatic->code_client = $obj->code_client;
+				$thirdpartystatic->code_client = '';
 				$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
-				//$thirdpartystatic->code_compta = $obj->code_compta;
+				$thirdpartystatic->code_compta = '';
 				$thirdpartystatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
 
 				print '<tr class="oddeven nowraponall"><td>';
@@ -525,25 +517,21 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 				$totalam += $obj->am;
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			$colspan = 5;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
 
 
 
-// Last donations
-if (!empty($conf->don->enabled) && $user->rights->societe->lire)
+// Latest donations
+if (!empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
@@ -604,14 +592,11 @@ if (!empty($conf->don->enabled) && $user->rights->societe->lire)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table></div><br>';
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 /**
@@ -682,16 +667,12 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				print '<td class="right"></td>';
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
-			}
-			else
-			{
+			} else {
 				print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			print "</table></div><br>";
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -741,7 +722,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
             print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 			print "<tr class=\"liste_titre\">";
-			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
+			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("ToBill").'</th>';
@@ -811,9 +792,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 			print '</table></div><br>';
 		}
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -935,18 +914,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			$colspan = 6;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -954,7 +929,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 /*
  * Unpayed supplier invoices
  */
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$facstatic = new FactureFournisseur($db);
 
@@ -1045,17 +1020,13 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			$colspan = 6;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

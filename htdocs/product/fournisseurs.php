@@ -10,6 +10,7 @@
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
+ * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,9 +127,7 @@ if (empty($reshook))
 			{
 				setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 		        $action = '';
-			}
-			else
-			{
+			} else {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -170,6 +169,7 @@ if (empty($reshook))
 		$supplier_description = GETPOST('supplier_description', 'alpha');
         $barcode = GETPOST('barcode', 'alpha');
         $fk_barcode_type = GETPOST('fk_barcode_type', 'int');
+		$packaging = GETPOST('packaging', 'int');
 
 		if ($tva_tx == '')
 		{
@@ -208,9 +208,7 @@ if (empty($reshook))
 				$error++;
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Price")), null, 'errors');
-			}
-			else
-			{
+			} else {
 				$_POST["price"] = 0;
 			}
 		}
@@ -232,6 +230,12 @@ if (empty($reshook))
             }
         }
 
+		if (empty($packaging)) $packaging = 1;
+
+		if ($packaging < $quantity) $packaging = $quantity;
+
+		$object->packaging = $packaging;
+
 		if (!$error)
 		{
 			$db->begin();
@@ -247,8 +251,7 @@ if (empty($reshook))
 					$productLink = $object->getNomUrl(1, 'supplier');
 
 					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct", $productLink), null, 'errors');
-				}
-				elseif ($ret < 0)
+				} elseif ($ret < 0)
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -266,25 +269,25 @@ if (empty($reshook))
 				$extralabels = $extrafields->fetch_name_optionals_label("product_fournisseur_price");
 				$extrafield_values = $extrafields->getOptionalsFromPost("product_fournisseur_price");
 				if (!empty($extrafield_values)) {
-                    $resql = $db->query("SELECT fk_object FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields WHERE fk_object = " . $object->product_fourn_price_id);
+                    $resql = $db->query("SELECT fk_object FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields WHERE fk_object = ".$object->product_fourn_price_id);
                     // Insert a new extrafields row, if none exists
                     if ($db->num_rows($resql) != 1) {
-                        $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields (fk_object, ";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields (fk_object, ";
                         foreach ($extrafield_values as $key => $value) {
-                            $sql .= str_replace('options_', '', $key) . ', ';
+                            $sql .= str_replace('options_', '', $key).', ';
                         }
-                        $sql = substr($sql, 0, strlen($sql) - 2) . ") VALUES (" . $object->product_fourn_price_id . ", ";
+                        $sql = substr($sql, 0, strlen($sql) - 2).") VALUES (".$object->product_fourn_price_id.", ";
                         foreach ($extrafield_values as $key => $value) {
-                            $sql .= '"' . $value . '", ';
+                            $sql .= '"'.$value.'", ';
                         }
-                        $sql = substr($sql, 0, strlen($sql) - 2) . ')';
-                    } // else update the existing one
-                    else {
-                        $sql = "UPDATE " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields SET ";
+                        $sql = substr($sql, 0, strlen($sql) - 2).')';
+                    } else {
+                        // update the existing one
+                        $sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields SET ";
                         foreach ($extrafield_values as $key => $value) {
-                            $sql .= str_replace('options_', '', $key) . ' = "' . $value . '", ';
+                            $sql .= str_replace('options_', '', $key).' = "'.$value.'", ';
                         }
-                        $sql = substr($sql, 0, strlen($sql) - 2) . ' WHERE fk_object = ' . $object->product_fourn_price_id;
+                        $sql = substr($sql, 0, strlen($sql) - 2).' WHERE fk_object = '.$object->product_fourn_price_id;
                     }
 
                     // Execute the sql command from above
@@ -307,9 +310,7 @@ if (empty($reshook))
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
-				}
-				else
-				{
+				} else {
 					if (!empty($conf->dynamicprices->enabled) && $price_expression !== '')
 					{
 						//Check the expression validity by parsing it
@@ -338,14 +339,10 @@ if (empty($reshook))
 			{
 				$db->commit();
 				$action = '';
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'add_price';
 		}
 	}
@@ -444,9 +441,7 @@ if ($id > 0 || $ref)
 				{
 					$object->fetch_product_fournisseur_price($rowid, 1); //Ignore the math expression when getting the price
 					print load_fiche_titre($langs->trans("ChangeSupplierPrice"));
-				}
-				else
-				{
+				} else {
 					print load_fiche_titre($langs->trans("AddSupplierPrice"));
 				}
 
@@ -469,9 +464,7 @@ if ($id > 0 || $ref)
 					print '<input type="hidden" name="ref_fourn_price_id" value="'.$rowid.'">';
 					print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 					print '<input type="hidden" name="socid" value="'.$socid.'">';
-				}
-				else
-				{
+				} else {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
 					print $form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', 'fournisseur=1', 'SelectThirdParty', 0, 0, $events);
@@ -494,9 +487,7 @@ if ($id > 0 || $ref)
 				{
                     print '<input type="hidden" name="ref_fourn_old" value="'.$object->ref_supplier.'">';
                     print '<input class="flat" name="ref_fourn" size="12" value="'.$object->ref_supplier.'">';
-				}
-				else
-				{
+				} else {
 					print '<input class="flat" name="ref_fourn" size="12" value="'.(GETPOST("ref_fourn") ?GETPOST("ref_fourn") : '').'">';
 				}
 				print '</td>';
@@ -520,9 +511,7 @@ if ($id > 0 || $ref)
 				{
 					print '<input type="hidden" name="qty" value="'.$object->fourn_qty.'">';
 					print $object->fourn_qty;
-				}
-				else
-				{
+				} else {
 					print '<input class="flat" name="qty" size="5" value="'.$quantity.'">';
 				}
                 // Units
@@ -555,9 +544,7 @@ if ($id > 0 || $ref)
 				    $tmpproductsupplier->fetch_product_fournisseur_price($rowid, 1);
 					$default_vat = $tmpproductsupplier->fourn_tva_tx;
 					$default_npr = $tmpproductsupplier->fourn_tva_npr;
-				}
-				else
-				{
+				} else {
                     if (empty($default_vat))
                     {
                         $default_vat = $object->tva_tx;
@@ -772,23 +759,35 @@ SCRIPT;
                     if (empty($rowid)) {
                         foreach ($extralabels as $key => $value) {
                             if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-                                print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>'.$langs->trans($value).'</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : '', '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
+                                if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+
+                                print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+                                if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
+                                else print $langs->trans($value);
+                                print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : '', '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
                             }
                         }
                     } else {
                         $sql  = "SELECT";
                         $sql .= " fk_object";
                         foreach ($extralabels as $key => $value) {
-                            $sql .= ", " . $key;
+                            $sql .= ", ".$key;
                         }
-                        $sql .= " FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields";
-                        $sql .= " WHERE fk_object = " . $rowid;
+                        $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
+                        $sql .= " WHERE fk_object = ".$rowid;
                         $resql = $db->query($sql);
                         if ($resql) {
                             $obj = $db->fetch_object($resql);
                             foreach ($extralabels as $key => $value) {
                                 if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && ($extrafields->attributes["product_fournisseur_price"]['list'][$key] == 1 || $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 3 || ($action == "update_price" && $extrafields->attributes["product_fournisseur_price"]['list'][$key] == 4))) {
-                                    print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>'.$langs->trans($value).'</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_' . $key) ? $extrafield_values['options_' . $key] : $obj->{$key}, '', '', '', '', 0, 'product_fournisseur_price').'</td></tr>';
+                                    if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+
+                                    print '<tr><td'.($extrafields->attributes["product_fournisseur_price"]['required'][$key] ? ' class="fieldrequired"' : '').'>';
+                                    if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) print $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
+                                    else print $langs->trans($value);
+                                    print '</td><td>'.$extrafields->showInputField($key, GETPOSTISSET('options_'.$key) ? $extrafield_values['options_'.$key] : $obj->{$key}, '', '', '', '', 0, 'product_fournisseur_price');
+
+                                    print '</td></tr>';
                                 }
                             }
                             $db->free($resql);
@@ -882,6 +881,7 @@ SCRIPT;
                     print_liste_field_titre("BarcodeValue", $_SERVER["PHP_SELF"], "pfp.barcode", "", $param, '', $sortfield, $sortorder, 'center ');
                     print_liste_field_titre("BarcodeType", $_SERVER["PHP_SELF"], "pfp.fk_barcode_type", "", $param, '', $sortfield, $sortorder, 'center ');
                 }
+				if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING)) print_liste_field_titre("PackagingForThisProduct", $_SERVER["PHP_SELF"], "pfp.packaging", "", $param, 'align="center"', $sortfield, $sortorder);
 				print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "pfp.tms", "", $param, '', $sortfield, $sortorder, 'right ');
 
 				// fetch optionals attributes and labels
@@ -891,7 +891,10 @@ SCRIPT;
 					foreach ($extralabels as $key => $value) {
 						// Show field if not hidden
 						if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
-							print_liste_field_titre($value, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
+                            if (!empty($extrafields->attributes["product_fournisseur_price"]['langfile'][$key])) $langs->load($extrafields->attributes["product_fournisseur_price"]['langfile'][$key]);
+                            if (!empty($extrafields->attributes["product_fournisseur_price"]['help'][$key])) $extratitle = $form->textwithpicto($langs->trans($value), $langs->trans($extrafields->attributes["product_fournisseur_price"]['help'][$key]));
+                            else $extratitle = $langs->trans($value);
+							print_liste_field_titre($extratitle, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ');
 						}
 					}
 				}
@@ -920,9 +923,7 @@ SCRIPT;
 						if ($usercancreate) // change required right here
 						{
 							print '<td class="left">'.$productfourn->getNomUrl().'</td>';
-						}
-						else
-						{
+						} else {
 							print '<td class="left">'.$productfourn->fourn_ref.'</td>';
 						}
 
@@ -1012,6 +1013,14 @@ SCRIPT;
                             print '</td>';
 						}
 
+						// Packaging
+						if (!empty($conf->global->PRODUCT_USE_SUPPLIER_PACKAGING))
+						{
+							print '<td align="center">';
+							print price2num($productfourn->packaging);
+							print '</td>';
+						}
+
 						// Date
 						print '<td align="right">';
 						print dol_print_date(($productfourn->fourn_date_modification ? $productfourn->fourn_date_modification : $productfourn->date_modification), "dayhour");
@@ -1022,10 +1031,10 @@ SCRIPT;
                             $sql  = "SELECT";
                             $sql .= " fk_object";
                             foreach ($extralabels as $key => $value) {
-                                $sql .= ", " . $key;
+                                $sql .= ", ".$key;
                             }
-                            $sql .= " FROM " . MAIN_DB_PREFIX . "product_fournisseur_price_extrafields";
-                            $sql .= " WHERE fk_object = " . $productfourn->product_fourn_price_id;
+                            $sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price_extrafields";
+                            $sql .= " WHERE fk_object = ".$productfourn->product_fourn_price_id;
                             $resql = $db->query($sql);
                             if ($resql) {
                                 if ($db->num_rows($resql) != 1) {
@@ -1054,6 +1063,7 @@ SCRIPT;
 
 						// Modify-Remove
 						print '<td class="center nowraponall">';
+
 						if ($usercancreate)
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=update_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
@@ -1065,9 +1075,7 @@ SCRIPT;
 
 						print '</tr>';
 					}
-				}
-				else
-				{
+				} else {
 				    dol_print_error($db);
 				}
 
@@ -1076,9 +1084,7 @@ SCRIPT;
 			}
 		}
 	}
-}
-else
-{
+} else {
 	print $langs->trans("ErrorUnknown");
 }
 

@@ -41,9 +41,7 @@ InterventionsArea=Interventies onderdeel
 DraftFichinter=Concept-interventies
 LastModifiedInterventions=Laatste %s aangepaste interventies
 FichinterToProcess=Interventies om te verwerken
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Nabehandeling afnemerscontact
-# Modele numérotation
 PrintProductsOnFichinter=Print ook regels van het type "product" (niet alleen diensten) op de interventiekaart
 PrintProductsOnFichinterDetails=Interventies gegenereerd op basis van bestellingen
 UseServicesDurationOnFichinter=Gebruik de duur van de services voor interventies die zijn gegenereerd op basis van bestellingen
@@ -53,7 +51,6 @@ InterventionStatistics=Interventie statistieken
 NbOfinterventions=Aantal interventiekaarten
 NumberOfInterventionsByMonth=Aantal interventiekaarten per maand (datum van validatie)
 AmountOfInteventionNotIncludedByDefault=Het bedrag voor interventie is niet standaard opgenomen in de winst (in de meeste gevallen worden de urenstaten gebruikt om de bestede tijd te tellen). Voeg optie PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT toe aan 1 in home-setup-diversen om ze op te nemen.
-##### Exports #####
 InterId=Interventie-ID
 InterRef=Interventie ref.
 InterDateCreation=Aanmaakdatum interventie
@@ -65,3 +62,5 @@ InterLineId=Regel ID-interventie
 InterLineDate=Datum regel interventie
 InterLineDuration=Duur regel interventie
 InterLineDesc=Opmerking regel interventie
+RepeatableIntervention=Sjabloon voor interventie
+ToCreateAPredefinedIntervention=Als u een vooraf gedefinieerde of terugkerende interventie wilt maken, maakt u een gemeenschappelijke interventie en converteert u deze naar een interventiesjabloon

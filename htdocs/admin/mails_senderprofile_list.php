@@ -48,7 +48,7 @@ $id = GETPOST('id', 'int');
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -108,9 +108,9 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
 			$arrayfields["ef.".$key] = array(
 				'label'=>$extrafields->attributes[$object->table_element]['label'][$key],
-				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1),
+				'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
 				'position'=>$extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key])
+				'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
 			);
 		}
 	}
@@ -171,8 +171,7 @@ if (empty($reshook))
 		$resql = $db->query($sql);
 		if ($resql) {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		}
-		else {
+		} else {
 			setEventMessages($langs->trans("Error").' '.$db->lasterror(), null, 'errors');
 		}
 	}
@@ -281,9 +280,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && ($limit > $nbtotalofrecords || empty($limit)))
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	if ($limit) $sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -450,8 +447,7 @@ foreach ($object->fields as $key => $val)
 		if (is_array($val['arrayofkeyval'])) print $form->selectarray('search_'.$key, $val['arrayofkeyval'], $search[$key], $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth75');
 		elseif (strpos($val['type'], 'integer:') === 0) {
 			print $object->showInputField($val, $key, $search[$key], '', '', 'search_', 'maxwidth150', 1);
-		}
-		elseif (! preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
+		} elseif (!preg_match('/^(date|timestamp)/', $val['type'])) print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag($search[$key]).'">';
 		print '</td>';
 	}
 }
@@ -555,10 +551,10 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	// Action column
 	print '<td class="nowrap center">';
 	$url = $_SERVER["PHP_SELF"].'?action=list&id='.$obj->rowid;
-	if ($limit) $url.='&limit='.urlencode($limit);
-	if ($page) $url.='&page='.urlencode($page);
-	if ($sortfield) $url.='&sortfield='.urlencode($sortfield);
-	if ($sortorder) $url.='&page='.urlencode($sortorder);
+	if ($limit) $url .= '&limit='.urlencode($limit);
+	if ($page) $url .= '&page='.urlencode($page);
+	if ($sortfield) $url .= '&sortfield='.urlencode($sortfield);
+	if ($sortorder) $url .= '&page='.urlencode($sortorder);
 	//print '<a class="reposition" href="'.$url.'&action=edit">'.img_edit().'</a>';
 	//print ' &nbsp; ';
 	print '<a href="'.$url.'&action=delete">'.img_delete().'</a>  &nbsp; ';

@@ -65,7 +65,7 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 		$sql .= " WHERE active > 0";
 		$sql .= " ORDER BY sortorder";
-		dol_syslog(get_class($this).'::multiselectProspectionStatus sql='.$sql, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -111,7 +111,6 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " WHERE active = 1 AND code<>''";
 		$sql .= " ORDER BY code ASC";
 
-		dol_syslog(get_class($this)."::select_country sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -260,7 +259,6 @@ class FormAdvTargetEmailing extends Form
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
-			dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
 				$num = $this->db->num_rows($resql);
@@ -297,7 +295,7 @@ class FormAdvTargetEmailing extends Form
 		$sql = "SELECT rowid, code, label as civilite, active FROM ".MAIN_DB_PREFIX."c_civility";
 		$sql .= " WHERE active = 1";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -316,9 +314,7 @@ class FormAdvTargetEmailing extends Form
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -344,83 +340,16 @@ class FormAdvTargetEmailing extends Form
     }
 
 	/**
-	 *  Return combo list with customer categories
-	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 *  @return	string HTML combo
-	 */
-	public function multiselectCustomerCategories($htmlname = 'cust_cat', $selected_array = array())
-	{
-		return $this->multiselectCategories($htmlname, $selected_array, 2);
-	}
-
-	/**
-	 *  Return combo list with customer contact
-	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 *  @return	string HTML combo
-	 */
-	public function multiselectContactCategories($htmlname = 'contact_cat', $selected_array = array())
-	{
-		return $this->multiselectCategories($htmlname, $selected_array, 4);
-	}
-
-	/**
-	 *  Return combo list of categories
-	 *
-	 *  @param  string	$htmlname  		Name of categorie
-	 * 	@param	array	$selected_array	Value selected
-	 * 	@param	int		$type			Type
-	 *  @return	string 					HTML combo
-	 */
-	public function multiselectCategories($htmlname = '', $selected_array = array(), $type = 0)
-	{
-		global $conf, $langs, $user;
-		$langs->load("dict");
-
-		$options_array = array();
-
-		$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE type=".$type;
-
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($resql);
-
-					$options_array[$obj->rowid] = $obj->label;
-
-					$i++;
-				}
-			}
-		}
-		else
-		{
-			dol_print_error($this->db);
-		}
-
-		return $this->advMultiselectarray($htmlname, $options_array, $selected_array);
-	}
-
-	/**
 	 * Return a combo list to select emailing target selector
 	 *
 	 * @param	string 		$htmlname 		control name
 	 * @param	integer 	$selected  		defaut selected
 	 * @param	integer 	$showempty 		empty lines
 	 * @param	string		$type_element	Type element. Example: 'mailing'
+	 * @param	string		$morecss		More CSS
 	 * @return	string 						HTML combo
 	 */
-    public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing')
+    public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
     {
 		global $conf, $user, $langs;
 
@@ -431,10 +360,10 @@ class FormAdvTargetEmailing extends Form
 		$sql .= " WHERE type_element='$type_element'";
 		$sql .= " ORDER BY c.name";
 
-		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$out .= '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
+			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($showempty)
 				$out .= '<option value=""></option>';
 			$num = $this->db->num_rows($resql);

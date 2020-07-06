@@ -66,8 +66,9 @@ $obj = new Facture($db);
 
 $obj->ref            = 'ABCDE';
 $obj->socid          = 4;	// Put id of third party (rowid in llx_societe table)
-$obj->date           = mktime();
-$obj->note           = 'A comment';
+$obj->date           = dol_now();
+$obj->note_public    = 'A public comment';
+$obj->note_private   = 'A private comment';
 $obj->cond_reglement_id = 1;
 
 $line1=new FactureLigne($db);
@@ -86,14 +87,11 @@ if ($idobject > 0)
 	// Change status to validated
 	$result=$obj->validate($user);
 	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
+	else {
 		$error++;
 		dol_print_error($db, $obj->error);
 	}
-}
-else
-{
+} else {
 	$error++;
 	dol_print_error($db, $obj->error);
 }
@@ -105,9 +103,7 @@ if (! $error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

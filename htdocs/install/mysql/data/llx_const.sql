@@ -97,3 +97,9 @@ insert into llx_const (name, value, type, visible, entity) VALUES ('CONTRACT_ADD
 insert into llx_const (name, value, type, visible, entity) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, 1);
 insert into llx_const (name, value, type, visible, entity) VALUES ('USER_ADDON_PDF_ODT_PATH',      'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, 1);
 
+
+--
+-- PRODUCTS
+--
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRICE_BASE_TYPE', 0, 'HT', 'string', 0);
+

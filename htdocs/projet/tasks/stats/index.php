@@ -67,7 +67,7 @@ llxHeader('', $langs->trans('Tasks'));
 $title = $langs->trans("TasksStatistics");
 $dir = $conf->projet->dir_output.'/temp';
 
-print load_fiche_titre($title, '', 'project');
+print load_fiche_titre($title, '', 'projecttask');
 
 dol_mkdir($dir);
 
@@ -139,6 +139,7 @@ dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1, '');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
@@ -198,8 +199,7 @@ print '</div>';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $stringtoshow .= '<table class="border centpercent"><tr class="pair nohover"><td class="center">';
-if ($mesg) { print $mesg; }
-else {
+if ($mesg) { print $mesg; } else {
 	$stringtoshow .= $px1->show();
 	$stringtoshow .= "<br>\n";
 }

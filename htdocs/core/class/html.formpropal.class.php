@@ -35,7 +35,7 @@ class FormPropal
     /**
      * @var string Error code (or message)
      */
-    public $error='';
+    public $error = '';
 
 
     /**
@@ -64,13 +64,13 @@ class FormPropal
     {
         global $langs;
 
-        $prefix='';
-        $listofstatus=array();
+        $prefix = '';
+        $listofstatus = array();
         if ($mode == 'supplier') {
-            $prefix='SupplierProposalStatus';
+            $prefix = 'SupplierProposalStatus';
 
             $langs->load("supplier_proposal");
-            $listofstatus=array(
+            $listofstatus = array(
                 0=>array('id'=>0, 'code'=>'PR_DRAFT'),
                 1=>array('id'=>1, 'code'=>'PR_OPEN'),
                 2=>array('id'=>2, 'code'=>'PR_SIGNED'),
@@ -78,12 +78,12 @@ class FormPropal
                 4=>array('id'=>4, 'code'=>'PR_CLOSED')
             );
         } else {
-            $prefix="PropalStatus";
+            $prefix = "PropalStatus";
 
             $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
             $sql .= " WHERE active = 1";
             dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
-            $resql=$this->db->query($sql);
+            $resql = $this->db->query($sql);
             if ($resql)
             {
                 $num = $this->db->num_rows($resql);
@@ -93,13 +93,11 @@ class FormPropal
                     while ($i < $num)
                     {
                         $obj = $this->db->fetch_object($resql);
-                        $listofstatus[$obj->id]=array('id'=>$obj->id,'code'=>$obj->code,'label'=>$obj->label);
+                        $listofstatus[$obj->id] = array('id'=>$obj->id, 'code'=>$obj->code, 'label'=>$obj->label);
                         $i++;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 dol_print_error($this->db);
             }
         }
@@ -107,7 +105,7 @@ class FormPropal
         print '<select class="flat" name="'.$htmlname.'">';
         if ($showempty) print '<option value="-1">&nbsp;</option>';
 
-        foreach($listofstatus as $key => $obj)
+        foreach ($listofstatus as $key => $obj)
         {
             if ($excludedraft)
             {
@@ -120,22 +118,18 @@ class FormPropal
             if ($selected != '' && $selected == $obj['id'])
             {
                 print '<option value="'.$obj['id'].'" selected>';
-            }
-            else
-            {
+            } else {
                 print '<option value="'.$obj['id'].'">';
             }
-            $key=$obj['code'];
-            if ($langs->trans($prefix.$key.($short?'Short':'')) != $prefix.$key.($short?'Short':''))
+            $key = $obj['code'];
+            if ($langs->trans($prefix.$key.($short ? 'Short' : '')) != $prefix.$key.($short ? 'Short' : ''))
             {
-                print $langs->trans($prefix.$key.($short?'Short':''));
-            }
-            else
-            {
-                $conv_to_new_code=array('PR_DRAFT'=>'Draft','PR_OPEN'=>'Validated','PR_CLOSED'=>'Closed','PR_SIGNED'=>'Signed','PR_NOTSIGNED'=>'NotSigned','PR_FAC'=>'Billed');
-                if (! empty($conv_to_new_code[$obj['code']])) $key=$conv_to_new_code[$obj['code']];
+                print $langs->trans($prefix.$key.($short ? 'Short' : ''));
+            } else {
+                $conv_to_new_code = array('PR_DRAFT'=>'Draft', 'PR_OPEN'=>'Validated', 'PR_CLOSED'=>'Closed', 'PR_SIGNED'=>'Signed', 'PR_NOTSIGNED'=>'NotSigned', 'PR_FAC'=>'Billed');
+                if (!empty($conv_to_new_code[$obj['code']])) $key = $conv_to_new_code[$obj['code']];
 
-                print ($langs->trans($prefix.$key.($short?'Short':''))!=$prefix.$key.($short?'Short':''))?$langs->trans($prefix.$key.($short?'Short':'')):($obj['label']?$obj['label']:$obj['code']);
+                print ($langs->trans($prefix.$key.($short ? 'Short' : '')) != $prefix.$key.($short ? 'Short' : '')) ? $langs->trans($prefix.$key.($short ? 'Short' : '')) : ($obj['label'] ? $obj['label'] : $obj['code']);
             }
             print '</option>';
             $i++;

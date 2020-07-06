@@ -32,6 +32,7 @@ class Translate
 	public $dir; // Directories that contains /langs subdirectory
 
 	public $defaultlang; // Current language for current user
+	public $shortlang; // Short language for current user
 	public $charset_output = 'UTF-8'; // Codage used by "trans" method outputs
 
 	public $tab_translate = array(); // Array of all translations key=>value
@@ -94,8 +95,7 @@ class Translate
 			$langpref = str_replace("-", "_", $langpref);
 			$langlist = preg_split("/[;,]/", $langpref);
 			$codetouse = preg_replace('/[^_a-zA-Z]/', '', $langlist[0]);
-		}
-		else $codetouse = $srclang;
+		} else $codetouse = $srclang;
 
 		// We redefine $srclang
 		$langpart = explode("_", $codetouse);
@@ -110,10 +110,8 @@ class Translate
 				$srclang = strtolower($langpart[0])."_".strtoupper($langpart[1]);
 				$longforlong = array('no_nb'=>'nb_NO');
 				if (isset($longforlong[strtolower($srclang)])) $srclang = $longforlong[strtolower($srclang)];
-			}
-			else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
-		}
-		else {						// If it's for a codetouse that is a short code xx
+			} else $srclang = strtolower($langpart[0])."_".strtoupper($langpart[0]);
+		} else {						// If it's for a codetouse that is a short code xx
     	    // Array to convert short lang code into long code.
 	        $longforshort = array('ar'=>'ar_SA', 'el'=>'el_GR', 'ca'=>'ca_ES', 'en'=>'en_US', 'nb'=>'nb_NO', 'no'=>'nb_NO');
 			if (isset($longforshort[strtolower($langpart[0])])) $srclang = $longforshort[strtolower($langpart[0])];
@@ -122,6 +120,7 @@ class Translate
 		}
 
 		$this->defaultlang = $srclang;
+		$this->shortlang = substr($srclang, 0, 2);
 		//print 'this->defaultlang='.$this->defaultlang;
 	}
 
@@ -282,7 +281,7 @@ class Translate
 						 * and split the rest until a line feed.
 						 * This is more efficient than fgets + explode + trim by a factor of ~2.
 						 */
-						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n]"))
+						while ($line = fscanf($fp, "%[^= ]%*[ =]%[^\n\r]"))
 						{
 							if (isset($line[1]))
 							{
@@ -300,13 +299,11 @@ class Translate
 												$tabtranslatedomain[$key] = $value;
 											}
 										}
-									}
-									elseif ($key[0] == '#')
+									} elseif ($key[0] == '#')
 									{
 									    continue;
-									}
-									else {
-										// Convert some strings: Parse and render carriage returns. Also, change '\\s' int '\s' because transifex sync pull the string '\s' into string '\\s'
+									} else {
+										// Convert some strings: Parse and render carriage returns. Also, change '\\s' into '\s' because transifex sync pull the string '\s' into string '\\s'
 										$this->tab_translate[$key] = str_replace(array('\\n', '\\\\s'), array("\n", '\s'), $value);
 										if ($usecachekey) {
 											$tabtranslatedomain[$key] = $value;
@@ -513,9 +510,7 @@ class Translate
     					}
     				}
     			}
-		    }
-		    else
-		    {
+		    } else {
 		        dol_print_error($db);
 		    }
 		}
@@ -550,24 +545,19 @@ class Translate
 	    if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_civility', 'code', 'label');
-        }
-		elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg))
+        } elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg))
 		{
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_currencies', 'code_iso', 'label');
-		}
-		elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg))
+		} elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg))
 		{
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_shipment_mode', 'code', 'libelle');
-		}
-        elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i', $key, $reg))
+		} elseif (preg_match('/^PaymentTypeShort([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_paiement', 'code', 'libelle', '', 1);
-        }
-        elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg))
+        } elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg))
         {
             $newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
-        }
-        elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg))
+        } elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg))
         {
         	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
@@ -634,8 +624,7 @@ class Translate
             $str = str_replace(array('__lt__', '__gt__', '__quot__'), array('<', '>', '"',), $str);
 
 			return $str;
-		}
-		else								// Translation is not available
+		} else // Translation is not available
 		{
 		    //if ($key[0] == '$') { return dol_eval($key,1); }
 			return $this->getTradFromKey($key);
@@ -705,9 +694,7 @@ class Translate
             }
 
             return $str;
-		}
-		else
-		{
+		} else {
 		    if ($key[0] == '$') { return dol_eval($key, 1); }
 			return $this->getTradFromKey($key);
 		}
@@ -764,35 +751,70 @@ class Translate
 	 * 	@param	string	$langdir		Directory to scan
 	 *  @param  integer	$maxlength   	Max length for each value in combo box (will be truncated)
 	 *  @param	int		$usecode		1=Show code instead of country name for language variant, 2=Show only code
+	 *  @param	int		$mainlangonly   1=Show only main languages ('fr_FR' no' fr_BE', 'es_ES' not 'es_MX', ...)
 	 *  @return array     				List of languages
 	 */
-    public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0)
+	public function get_available_languages($langdir = DOL_DOCUMENT_ROOT, $maxlength = 0, $usecode = 0, $mainlangonly = 0)
     {
         // phpcs:enable
 		global $conf;
+
+		$this->load("languages");
 
 		// We scan directory langs to detect available languages
 		$handle = opendir($langdir."/langs");
 		$langs_available = array();
 		while ($dir = trim(readdir($handle)))
 		{
-			if (preg_match('/^[a-z]+_[A-Z]+/i', $dir))
+			$regs = array();
+			if (preg_match('/^([a-z]+)_([A-Z]+)/i', $dir, $regs))
 			{
-				$this->load("languages");
-
+				// We must keep only main languages
+				if ($mainlangonly) {
+					$arrayofspecialmainlanguages = array(
+						'en'=>'en_US',
+						'sq'=>'sq_AL',
+						'ar'=>'ar_SA',
+						'eu'=>'eu_ES',
+						'bn'=>'bn_DB',
+						'bs'=>'bs_BA',
+						'ca'=>'ca_ES',
+						'zh'=>'zh_TW',
+						'cs'=>'cs_CZ',
+						'da'=>'da_DK',
+						'et'=>'et_EE',
+						'ka'=>'ka_GE',
+						'el'=>'el_GR',
+						'he'=>'he_IL',
+						'kn'=>'kn_IN',
+						'km'=>'km_KH',
+						'ko'=>'ko_KR',
+						'lo'=>'lo_LA',
+						'nb'=>'nb_NO',
+						'fa'=>'fa_IR',
+						'sr'=>'sr_RS',
+						'sl'=>'sl_SI',
+						'uk'=>'uk_UA',
+						'vi'=>'vi_VN'
+					);
+					if (strtolower($regs[1]) != strtolower($regs[2]) && !in_array($dir, $arrayofspecialmainlanguages)) continue;
+				}
+				// We must keep only languages into MAIN_LANGUAGES_ALLOWED
 				if (!empty($conf->global->MAIN_LANGUAGES_ALLOWED) && !in_array($dir, explode(',', $conf->global->MAIN_LANGUAGES_ALLOWED))) continue;
 
 				if ($usecode == 2)
 				{
 				    $langs_available[$dir] = $dir;
 				}
+
 				if ($usecode == 1 || !empty($conf->global->MAIN_SHOW_LANGUAGE_CODE))
 				{
 				    $langs_available[$dir] = $dir.': '.dol_trunc($this->trans('Language_'.$dir), $maxlength);
-				}
-				else
-				{
+				} else {
 					$langs_available[$dir] = $this->trans('Language_'.$dir);
+				}
+				if ($mainlangonly) {
+					$langs_available[$dir] = str_replace(' (United States)', '', $langs_available[$dir]);
 				}
 			}
 		}
@@ -917,9 +939,7 @@ class Translate
 
 			$db->free($resql);
 			return $this->cache_labels[$tablename][$key];
-		}
-		else
-		{
+		} else {
 			$this->error = $db->lasterror();
 			return -1;
 		}
@@ -1017,9 +1037,7 @@ class Translate
 			array_multisort($label, SORT_ASC, $this->cache_currencies);
 			//var_dump($this->cache_currencies);	$this->cache_currencies is now sorted onto label
 			return $num;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 			return -1;
 		}

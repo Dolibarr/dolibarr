@@ -2,7 +2,7 @@
 #----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
 # \brief        Dolibarr package builder (tgz, zip, rpm, deb, exe, aps)
-# \author       (c)2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+# \author       (c)2004-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This is list of constant you can set to have generated packages moved into a specific dir: 
 #DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'
@@ -19,7 +19,7 @@ use Term::ANSIColor;
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
 $PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/dolibarr.org/httpdocs/files";
+$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -430,12 +430,14 @@ if ($nboftargetok) {
 				$ret=`git tag -a -f -m "$MAJOR.$MINOR.$BUILD" "$MAJOR.$MINOR.$BUILD"`;
 				print 'Run git push -f --tags'."\n";
 				$ret=`git push -f --tags`;
+				#$ret=`git push -f origin "$MAJOR.$MINOR.$BUILD"`;
 			}
 		}
 		else
 		{
 			print 'Run git push --tags'."\n";
 			$ret=`git push --tags`;
+			#$ret=`git push origin "$MAJOR.$MINOR.$BUILD"`;
 		}
 		chdir("$olddir");
 	}
@@ -1065,7 +1067,7 @@ if ($nboftargetok) {
      		print "Remove target $NEWDESTI/$FILENAMEEXEDOLIWAMP.exe...\n";
     		unlink "$NEWDESTI/$FILENAMEEXEDOLIWAMP.exe";
  
- 			print "Check that in your Wine setup, you create a Z: drive that point to your / directory.\n";
+ 			print "Check that in your Wine setup, you have created a Z: drive that point to your / directory.\n";
 
  			$SOURCEBACK=$SOURCE;
  			$SOURCEBACK =~ s/\//\\/g;

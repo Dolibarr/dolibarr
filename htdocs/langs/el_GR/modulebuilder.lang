@@ -27,7 +27,7 @@ DangerZone=Επικίνδυνη ζώνη
 BuildPackage=Δημιουργία πακέτου
 BuildPackageDesc=Μπορείτε να δημιουργήσετε ένα πακέτο zip της αίτησής σας έτσι ώστε να είστε έτοιμοι να το διανείμετε σε οποιοδήποτε Dolibarr. Μπορείτε επίσης να το διανείμετε ή να το πουλήσετε στην αγορά όπως το <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Δημιουργία εγγράφων
-ModuleIsNotActive=Αυτή η ενότητα δεν έχει ενεργοποιηθεί ακόμα. Μεταβείτε στο %s για να το κάνετε ζωντανό ή κάντε κλικ εδώ:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=Αυτή η ενότητα έχει ενεργοποιηθεί. Οποιαδήποτε αλλαγή μπορεί να σπάσει ένα τρέχον ζωντανό χαρακτηριστικό.
 DescriptionLong=Μεγάλη περιγραφή
 EditorName=Όνομα του συντάκτη
@@ -83,7 +83,9 @@ ListOfDictionariesEntries=Λίστα καταχωρήσεων λεξικών
 ListOfPermissionsDefined=Λίστα καθορισμένων δικαιωμάτων
 SeeExamples=Δείτε παραδείγματα εδώ
 EnabledDesc=Προϋπόθεση να είναι ενεργό αυτό το πεδίο (Παραδείγματα: 1 ή $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
-VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). Using a negative value means field is not shown by default on list but can be selected for viewing). It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Εμφανίστε αυτό το πεδίο σε συμβατά έγγραφα PDF, μπορείτε να διαχειριστείτε τη θέση με το πεδίο "Θέση". <br/> Επί του παρόντος, γνωστά μοντέλα συμβατούς PDF είναι: Ερατοσθένης ο Κυρηναίος (σειρά), espadon (πλοίο), σφουγγάρι (τιμολόγια), κυανό (propal / εισαγωγικά), cornas (αύξων προμηθευτή) <br/> <br/> <strong> Για εγγράφου: </strong> <br/> 0 = δεν εμφανίζονται <br/> 1 = οθόνη <br/> 2 = εμφανιστεί μόνο αν δεν αδειάσει <br/> <br/> <strong> Για τις γραμμές εγγράφου: </strong> <br/> 0 = δεν εμφανίζονται <br/> 1 = εμφανίζονται σε μια στήλη <br/> 3 = οθόνη στη στήλη περιγραφή γραμμή μετά την περιγραφή <br/> 4 = οθόνη στη στήλη περιγραφή μετά την περιγραφή μόνο αν δεν είναι άδεια
+DisplayOnPdf=Εμφάνιση σε PDF
 IsAMeasureDesc=Μπορεί η τιμή του πεδίου να συσσωρευτεί για να πάρει ένα σύνολο σε λίστα; (Παραδείγματα: 1 ή 0)
 SearchAllDesc=Χρησιμοποιείται το πεδίο για την αναζήτηση από το εργαλείο γρήγορης αναζήτησης; (Παραδείγματα: 1 ή 0)
 SpecDefDesc=Εισαγάγετε εδώ όλη την τεκμηρίωση που θέλετε να παράσχετε με τη λειτουργική σας μονάδα, η οποία δεν έχει ήδη καθοριστεί από άλλες καρτέλες. Μπορείτε να χρησιμοποιήσετε το .md ή καλύτερα, την πλούσια σύνταξη .asciidoc.
@@ -93,7 +95,7 @@ DictionariesDefDesc=Καθορίστε εδώ τα λεξικά που παρέ�
 PermissionsDefDesc=Καθορίστε εδώ τα νέα δικαιώματα που παρέχονται από την ενότητα σας
 MenusDefDescTooltip=Τα μενού που παρέχονται από την ενότητα / εφαρμογή σας καθορίζονται στα αρχεία <strong>$ this-&gt; menus</strong> στο αρχείο περιγραφής του module. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br><br> Σημείωση: Αφού οριστεί (και η ενότητα ενεργοποιηθεί εκ νέου), τα μενού είναι επίσης ορατά στον επεξεργαστή μενού που είναι διαθέσιμος στους χρήστες διαχειριστή στο %s.
 DictionariesDefDescTooltip=Τα λεξικά που παρέχονται από την υπομονάδα / εφαρμογή σας καθορίζονται στη συστοιχία <strong>$ this-&gt; λεξικά</strong> στο αρχείο περιγραφής του module. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br><br> Σημείωση: Αφού οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα λεξικά είναι επίσης ορατά στην περιοχή εγκατάστασης σε χρήστες διαχειριστή στο %s.
-PermissionsDefDescTooltip=The permissions provided by your module/application are defined into the array <strong>$this->rights</strong> into the module descriptor file. You can edit manually this file or use the embedded editor.<br><br>Note: Once defined (and module re-activated), permissions are visible into the default permissions setup %s.
+PermissionsDefDescTooltip=Τα δικαιώματα που παρέχονται από την ενότητα/εφαρμογή σας καθορίζονται στη συστοιχία <strong> $ this-> rights </strong> στην ενότητα περιγραφής αρχείου. Μπορείτε να επεξεργαστείτε χειροκίνητα αυτό το αρχείο ή να χρησιμοποιήσετε τον ενσωματωμένο επεξεργαστή. <br> <br> Σημείωση: Μόλις οριστεί (και ενεργοποιηθεί ξανά η ενότητα), τα δικαιώματα είναι ορατά στην προεπιλεγμένη ρύθμιση %s.
 HooksDefDesc=Ορίστε στην <b>ιδιότητα module_parts [&#39;hooks&#39;]</b> , στον περιγραφέα της μονάδας, το πλαίσιο των άγκιστρων που θέλετε να διαχειριστείτε (η λίστα των πλαισίων μπορεί να βρεθεί από μια αναζήτηση στο &#39; <b>initHooks</b> &#39; <b>(</b> &#39;in core code). <br> Επεξεργαστείτε το αρχείο αγκίστρου για να προσθέσετε τον κώδικα των αγκιστρωμένων λειτουργιών σας (οι συναρπαστικές λειτουργίες μπορούν να βρεθούν με μια αναζήτηση στο &#39; <b>executeHooks</b> &#39; στον βασικό κώδικα).
 TriggerDefDesc=Ορίστε στο αρχείο σκανδάλης τον κώδικα που θέλετε να εκτελέσετε για κάθε εκδήλωση που εκτελείται.
 SeeIDsInUse=Δείτε τα αναγνωριστικά που χρησιμοποιούνται στην εγκατάσταση σας
@@ -135,3 +137,6 @@ CSSClass=CSS Class
 NotEditable=Δεν είναι δυνατή η επεξεργασία
 ForeignKey=Ξένο κλειδί
 TypeOfFieldsHelp=Τύπος πεδίων: <br> varchar (99), διπλό (24,8), πραγματικό, κείμενο, html, datetime, timestamp, ακέραιος, ακέραιος: ClassName: relativepath / to / classfile.class.php [: 1 [: filter] προσθέτουμε ένα κουμπί + μετά το σύνθετο για να δημιουργήσουμε την εγγραφή, το &#39;φίλτρο&#39; μπορεί να είναι &#39;status = 1 AND fk_user = __USER_ID ΚΑΙ η οντότητα IN (__SHARED_ENTITIES__)&#39; για παράδειγμα)
+AsciiToHtmlConverter=Μεταροπέας από Ascii σε HTML
+AsciiToPdfConverter=Μεταροπέας από Ascii σε PDF
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

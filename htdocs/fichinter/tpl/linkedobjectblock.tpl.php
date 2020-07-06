@@ -16,7 +16,7 @@
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -36,12 +36,12 @@ $langs->load("interventions");
 $linkedObjectBlock = dol_sort_array($linkedObjectBlock, 'date', 'desc', 0, 0, 1);
 
 $ilink = 0;
-foreach($linkedObjectBlock as $key => $objectlink)
+foreach ($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
-    $trclass='oddeven';
-    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
+    $trclass = 'oddeven';
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass .= ' liste_sub_total';
 	?>
     <tr class="<?php echo $trclass; ?>">
 		<td><?php echo $langs->trans("Intervention"); ?></td>

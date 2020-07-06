@@ -25,18 +25,18 @@
  */
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
-$path = __DIR__ . '/';
+$path = __DIR__.'/';
 
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
-	echo "Error: You are using PHP for CGI. To execute " . $script_file . " from command line, you must use PHP for CLI mode.\n";
-	exit(- 1);
+	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
+	exit(-1);
 }
 
-require_once $path . "../../htdocs/master.inc.php";
-require_once DOL_DOCUMENT_ROOT . "/contact/class/contact.class.php";
-require_once DOL_DOCUMENT_ROOT . "/user/class/user.class.php";
-require_once DOL_DOCUMENT_ROOT . "/core/class/ldap.class.php";
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 
 // Global variables
 $version = DOL_VERSION;
@@ -48,12 +48,12 @@ $confirmed = 0;
  */
 
 @set_time_limit(0);
-print "***** " . $script_file . " (" . $version . ") pid=" . dol_getmypid() . " *****\n";
-dol_syslog($script_file . " launched with arg " . join(',', $argv));
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+dol_syslog($script_file." launched with arg ".join(',', $argv));
 
-if (! isset($argv[1]) || ! $argv[1]) {
+if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: $script_file now [-y]\n";
-	exit(- 1);
+	exit(-1);
 }
 
 foreach ($argv as $key => $val) {
@@ -67,22 +67,22 @@ print "Mails sending disabled (useless in batch mode)\n";
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1; // On bloque les mails
 print "\n";
 print "----- Synchronize all records from Dolibarr database:\n";
-print "type=" . $conf->db->type . "\n";
-print "host=" . $conf->db->host . "\n";
-print "port=" . $conf->db->port . "\n";
-print "login=" . $conf->db->user . "\n";
+print "type=".$conf->db->type."\n";
+print "host=".$conf->db->host."\n";
+print "port=".$conf->db->port."\n";
+print "login=".$conf->db->user."\n";
 // print "pass=".preg_replace('/./i','*',$conf->db->password)."\n"; // Not defined for security reasons
-print "database=" . $conf->db->name . "\n";
+print "database=".$conf->db->name."\n";
 print "\n";
 print "----- To LDAP database:\n";
-print "host=" . $conf->global->LDAP_SERVER_HOST . "\n";
-print "port=" . $conf->global->LDAP_SERVER_PORT . "\n";
-print "login=" . $conf->global->LDAP_ADMIN_DN . "\n";
-print "pass=" . preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS) . "\n";
-print "DN target=" . $conf->global->LDAP_CONTACT_DN . "\n";
+print "host=".$conf->global->LDAP_SERVER_HOST."\n";
+print "port=".$conf->global->LDAP_SERVER_PORT."\n";
+print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "pass=".preg_replace('/./i', '*', $conf->global->LDAP_ADMIN_PASS)."\n";
+print "DN target=".$conf->global->LDAP_CONTACT_DN."\n";
 print "\n";
 
-if (! $confirmed) {
+if (!$confirmed) {
 	print "Press a key to confirm...\n";
 	$input = trim(fgets(STDIN));
 	print "Warning, this operation may result in data loss if it failed.\n";
@@ -100,7 +100,7 @@ if (! $confirmed) {
  */
 
 $sql = "SELECT rowid";
-$sql .= " FROM " . MAIN_DB_PREFIX . "socpeople";
+$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -119,7 +119,7 @@ if ($resql) {
 		$contact->id = $obj->rowid;
 		$contact->fetch($contact->id);
 
-		print $langs->trans("UpdateContact") . " rowid=" . $contact->id . " " . $contact->getFullName($langs);
+		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->getFullName($langs);
 
 		$oldobject = $contact;
 
@@ -132,14 +132,14 @@ if ($resql) {
 		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
-			print " - " . $langs->trans("OK");
+			print " - ".$langs->trans("OK");
 		} else {
-			$error ++;
-			print " - " . $langs->trans("KO") . ' - ' . $ldap->error;
+			$error++;
+			print " - ".$langs->trans("KO").' - '.$ldap->error;
 		}
 		print "\n";
 
-		$i ++;
+		$i++;
 	}
 
 	$ldap->unbind();

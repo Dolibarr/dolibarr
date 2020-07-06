@@ -24,6 +24,10 @@
  *		\brief      Script example to inject random proposals (for load tests)
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -206,16 +210,12 @@ while ($i < GEN_NUMBER_PROPAL && $result >= 0)
 		{
 		    $db->commit();
 		    print " OK with ref ".$object->ref."\n";
-		}
-		else
-		{
+		} else {
 		    print " KO\n";
 		    $db->rollback();
 		    dol_print_error($db, $object->error);
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

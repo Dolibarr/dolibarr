@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", "alpha");
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $page = is_numeric($page) ? $page : 0;
 $page = $page == -1 ? 0 : $page;
 if (!$sortfield) $sortfield = "a.datep,a.id";
@@ -52,9 +52,7 @@ if (GETPOST('actioncode', 'array'))
 {
 	$actioncode = GETPOST('actioncode', 'array', 3);
 	if (!count($actioncode)) $actioncode = '0';
-}
-else
-{
+} else {
 	$actioncode = GETPOST("actioncode", "alpha", 3) ?GETPOST("actioncode", "alpha", 3) : (GETPOST("actioncode") == '0' ? '0' : (empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT) ? '' : $conf->global->AGENDA_DEFAULT_FILTER_TYPE_FOR_OBJECT));
 }
 $search_agenda_label = GETPOST('search_agenda_label');

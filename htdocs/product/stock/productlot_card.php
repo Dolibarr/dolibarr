@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('stock', 'other', 'productbatch'));
+$langs->loadLangs(array('stocks', 'other', 'productbatch'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -180,12 +180,10 @@ if (empty($reshook))
 			{
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else  setEventMessages($object->error, null, 'errors');
+			else setEventMessages($object->error, null, 'errors');
 				$action = 'create';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'create';
 		}
 	}
@@ -217,17 +215,13 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				$action = 'view';
-			}
-			else
-			{
+			} else {
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 				else setEventMessages($object->error, null, 'errors');
 				$action = 'edit';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'edit';
 		}
 	}
@@ -242,9 +236,7 @@ if (empty($reshook))
 			setEventMessages("RecordDeleted", null, 'mesgs');
 			header("Location: ".dol_buildpath('/stock/list.php', 1));
 			exit;
-		}
-		else
-		{
+		} else {
 			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 			else setEventMessages($object->error, null, 'errors');
 		}

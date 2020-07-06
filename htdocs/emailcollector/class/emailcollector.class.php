@@ -100,8 +100,9 @@ class EmailCollector extends CommonObject
         'ref'           => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'help'=>'Example: MyCollector1'),
         'label'         => array('type'=>'varchar(255)', 'label'=>'Label', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>'Example: My Email collector'),
         'description'   => array('type'=>'text', 'label'=>'Description', 'visible'=>-1, 'enabled'=>1, 'position'=>60, 'notnull'=>-1),
-        'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
-        'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
+        'host'          => array('type'=>'varchar(255)', 'label'=>'EMailHost', 'visible'=>1, 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'searchall'=>1, 'comment'=>"IMAP server", 'help'=>'Example: imap.gmail.com'),
+    	'hostcharset'   => array('type'=>'varchar(16)', 'label'=>'HostCharset', 'visible'=>-1, 'enabled'=>1, 'position'=>91, 'notnull'=>0, 'searchall'=>0, 'comment'=>"IMAP server charset", 'help'=>'Example: "UTF-8" (May be "US-ASCII" with some Office365)'),
+    	'login'         => array('type'=>'varchar(128)', 'label'=>'Login', 'visible'=>1, 'enabled'=>1, 'position'=>101, 'notnull'=>-1, 'index'=>1, 'comment'=>"IMAP login", 'help'=>'Example: myaccount@gmail.com'),
         'password'      => array('type'=>'password', 'label'=>'Password', 'visible'=>-1, 'enabled'=>1, 'position'=>102, 'notnull'=>-1, 'comment'=>"IMAP password", 'help'=>'WithGMailYouCanCreateADedicatedPassword'),
         'source_directory' => array('type'=>'varchar(255)', 'label'=>'MailboxSourceDirectory', 'visible'=>-1, 'enabled'=>1, 'position'=>103, 'notnull'=>1, 'default' => 'Inbox', 'help'=>'Example: INBOX'),
         //'filter' => array('type'=>'text', 'label'=>'Filter', 'visible'=>1, 'enabled'=>1, 'position'=>105),
@@ -173,6 +174,7 @@ class EmailCollector extends CommonObject
 
 
     public $host;
+    public $hostcharset;
     public $login;
     public $password;
     public $source_directory;
@@ -476,8 +478,7 @@ class EmailCollector extends CommonObject
              $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
              if ($reshook > 0) $linkclose = $hookmanager->resPrint;
              */
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
@@ -583,9 +584,7 @@ class EmailCollector extends CommonObject
             }
 
             $this->db->free($result);
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -627,8 +626,7 @@ class EmailCollector extends CommonObject
                 $i++;
             }
             $this->db->free($resql);
-        }
-        else dol_print_error($this->db);
+        } else dol_print_error($this->db);
 
         return 1;
     }
@@ -659,8 +657,7 @@ class EmailCollector extends CommonObject
                 $i++;
             }
             $this->db->free($resql);
-        }
-        else dol_print_error($this->db);
+        } else dol_print_error($this->db);
     }
 
 
@@ -711,8 +708,7 @@ class EmailCollector extends CommonObject
 	    		$this->error = "error: is not possible to encode this string '".$str."'";
 	     		return false;
 	    	}
-    	}
-    	else {
+    	} else {
     		return $str;
     	}
     }
@@ -770,9 +766,7 @@ class EmailCollector extends CommonObject
             {
                 $tmpclass = $tmparray[0];
                 $tmpproperty = $tmparray[1];
-            }
-            else
-            {
+            } else {
                 $tmpproperty = $tmparray[0];
             }
             if ($tmpclass && ($tmpclass != $object->element)) continue; // Property is for another type of object
@@ -790,8 +784,7 @@ class EmailCollector extends CommonObject
                     $sourcefield = $regforregex[1];
                     $regexstring = $regforregex[2];
                     //$transofrmationstring=$regforregex[3];
-                }
-                elseif (preg_match('/^EXTRACT:([a-zA-Z0-9]+):(.*)$/', $valueforproperty, $regforregex))
+                } elseif (preg_match('/^EXTRACT:([a-zA-Z0-9]+):(.*)$/', $valueforproperty, $regforregex))
                 {
                     $sourcefield = $regforregex[1];
                     $regexstring = $regforregex[2];
@@ -812,25 +805,20 @@ class EmailCollector extends CommonObject
                         //var_dump($tmpproperty.' - '.$regexstring.' - '.$regexoptions.' - '.$sourcestring);
                         if (preg_match('/'.$regexstring.'/'.$regexoptions, $sourcestring, $regforval))
                         {
-                            //var_dump($regforval[1]);exit;
+                            //var_dump($regforval[count($regforval)-1]);exit;
                             // Overwrite param $tmpproperty
-                            $object->$tmpproperty = isset($regforval[1]) ?trim($regforval[1]) : null;
-                        }
-                        else
-                        {
+                            $object->$tmpproperty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
+                        } else {
                             // Regex not found
                             $object->$tmpproperty = null;
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // Nothing can be done for this param
                         $errorforthisaction++;
                         $this->error = 'The extract rule to use has on an unknown source (must be HEADER, SUBJECT or BODY)';
                         $this->errors[] = $this->error;
                     }
-                }
-                elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $regforregex))
+                } elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $regforregex))
                 {
                     $valuecurrent = '';
                     if (preg_match('/^options_/', $tmpproperty)) $valuecurrent = $object->array_options[preg_replace('/^options_/', '', $tmpproperty)];
@@ -860,9 +848,7 @@ class EmailCollector extends CommonObject
                         if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $valuetouse;
                         else $object->$tmpproperty = $valuetouse;
                     }
-                }
-                else
-                {
+                } else {
                     $errorforthisaction++;
                     $this->error = 'Bad syntax for description of action parameters: '.$actionparam;
                     $this->errors[] = $this->error;
@@ -935,8 +921,8 @@ class EmailCollector extends CommonObject
         }
         imap_errors(); // Clear stack of errors.
 
-        // $conf->global->MAIL_PREFIX_FOR_EMAIL_ID must be defined
         $host = dol_getprefix('email');
+		//$host = '123456';
 
         // Define the IMAP search string
         // See https://tools.ietf.org/html/rfc3501#section-6.4.4 for IMAPv4 (PHP not yet compatible)
@@ -985,9 +971,10 @@ class EmailCollector extends CommonObject
         $nbemailprocessed = 0;
         $nbemailok = 0;
         $nbactiondone = 0;
+        $charset = ($this->hostcharset ? $this->hostcharset : "UTF-8");
 
         // Scan IMAP inbox
-        $arrayofemail = imap_search($connection, $search, null, "UTF-8");
+        $arrayofemail = imap_search($connection, $search, null, $charset);
         if ($arrayofemail === false)
         {
             // Nothing found or search string not understood
@@ -1078,6 +1065,7 @@ class EmailCollector extends CommonObject
 
             dol_syslog("Start of loop on email", LOG_INFO, 1);
 
+            $i = 0;
             foreach ($arrayofemail as $imapemail)
             {
                 if ($nbemailprocessed > 1000)
@@ -1085,11 +1073,16 @@ class EmailCollector extends CommonObject
                     break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect
                 }
 
+                $i++;
+
                 $header = imap_fetchheader($connection, $imapemail, 0);
+                $header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
                 $matches = array();
                 preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
                 $headers = array_combine($matches[1], $matches[2]);
                 //var_dump($headers);
+
+                dol_syslog("** Process email ".$i." References: ".$headers['References']);
 
                 // If there is a filter on trackid
                 if ($searchfilterdoltrackid > 0)
@@ -1126,26 +1119,29 @@ class EmailCollector extends CommonObject
                 // GET Email meta datas
                 $overview = imap_fetch_overview($connection, $imapemail, 0);
 
-                dol_syslog("** Process email - msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
+                dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
 
                 // Decode $overview[0]->subject according to RFC2047
                 // Can use also imap_mime_header_decode($str)
                 // Can use also mb_decode_mimeheader($str)
                 // Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
-                if (function_exists('imap_mime_header_decode')) {
+                if (function_exists('iconv_mime_decode')) {
+                	$overview[0]->subject = iconv_mime_decode($overview[0]->subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
+                } elseif (function_exists('imap_mime_header_decode')) {
                 	$elements = imap_mime_header_decode($overview[0]->subject);
                 	$newstring = '';
-                	if (! empty($elements)) {
+                	if (!empty($elements)) {
                         $num = count($elements);
 	                	for ($i = 0; $i < $num; $i++) {
 	                		$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
 	                	}
 	                	$overview[0]->subject = $newstring;
                 	}
-                }
-                elseif (function_exists('mb_decode_mimeheader')) {
+                } elseif (function_exists('mb_decode_mimeheader')) {
                 	$overview[0]->subject = mb_decode_mimeheader($overview[0]->subject);
                 }
+                // Removed emojis
+                $overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
 
                 // Parse IMAP email structure
                 global $htmlmsg, $plainmsg, $charset, $attachments;
@@ -1153,6 +1149,9 @@ class EmailCollector extends CommonObject
 
                 //$htmlmsg,$plainmsg,$charset,$attachments
                 $messagetext = $plainmsg ? $plainmsg : dol_string_nohtmltag($htmlmsg, 0);
+                // Removed emojis
+                $messagetext = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $messagetext);
+
                 /*var_dump($plainmsg);
                 var_dump($htmlmsg);
                 var_dump($messagetext);*/
@@ -1221,9 +1220,7 @@ class EmailCollector extends CommonObject
                 {
                     $from = $reg[2];
                     $fromtext = $reg[1];
-                }
-                else
-                {
+                } else {
                     $from = $fromstring;
                     $fromtext = '';
                 }
@@ -1236,41 +1233,42 @@ class EmailCollector extends CommonObject
                 // References: <1542377954.SMTPs-dolibarr-tic649@8f6014fde11ec6cdec9a822234fc557e>
                 // References: <1542377954.SMTPs-dolibarr-abc649@8f6014fde11ec6cdec9a822234fc557e>
                 $trackid = '';
+                $objectid = 0;
+                $objectemail = null;
+
                 $reg = array();
                 if (!empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
                 {
                     $trackid = $reg[1].$reg[2];
 
-                    $objectid = 0;
-                    $objectemail = null;
-                    if ($reg[0] == 'inv')
+                    if ($reg[1] == 'inv')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Facture($this->db);
                     }
-                    if ($reg[0] == 'proj')
+                    if ($reg[1] == 'proj')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Project($this->db);
                     }
-                    if ($reg[0] == 'con')
+                    if ($reg[1] == 'con')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Contact($this->db);
                     }
-                    if ($reg[0] == 'thi')
+                    if ($reg[1] == 'thi')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Societe($this->db);
                     }
-                    if ($reg[0] == 'use')
+                    if ($reg[1] == 'use')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new User($this->db);
                     }
-                    if ($reg[0] == 'tic')
+                    if ($reg[1] == 'tic')
                     {
-                        $objectid = $reg[1];
+                        $objectid = $reg[2];
                         $objectemail = new Ticket($this->db);
                     }
 
@@ -1295,8 +1293,7 @@ class EmailCollector extends CommonObject
                     {
                         $result = $projectstatic->fetch($projectid);
                         if ($result <= 0) $projectstatic->id = 0;
-                        else
-                        {
+                        else {
                             $projectid = $projectstatic->id;
                             $projectfoundby = 'trackid ('.$trackid.')';
                             if (empty($contactid)) $contactid = $projectstatic->fk_contact;
@@ -1308,8 +1305,7 @@ class EmailCollector extends CommonObject
                     {
                         $result = $contactstatic->fetch($contactid);
                         if ($result <= 0) $contactstatic->id = 0;
-                        else
-                        {
+                        else {
                             $contactid = $contactstatic->id;
                             $contactfoundby = 'trackid ('.$trackid.')';
                             if (empty($thirdpartyid)) $thirdpartyid = $contactstatic->fk_soc;
@@ -1320,8 +1316,7 @@ class EmailCollector extends CommonObject
                     {
                         $result = $thirdpartystatic->fetch($thirdpartyid);
                         if ($result <= 0) $thirdpartystatic->id = 0;
-                        else
-                        {
+                        else {
                             $thirdpartyid = $thirdpartystatic->id;
                             $thirdpartyfoundby = 'trackid ('.$trackid.')';
                         }
@@ -1390,9 +1385,7 @@ class EmailCollector extends CommonObject
                             $errorforactions++;
                             $this->error = "Action loadthirdparty or loadandcreatethirdparty has empty parameter. Must be 'SET:xxx' or 'EXTRACT:(body|subject):regex' to define how to extract data";
                             $this->errors[] = $this->error;
-                        }
-                        else
-                        {
+                        } else {
                             $actionparam = $operation['actionparam'];
                             $nametouseforthirdparty = '';
 
@@ -1423,33 +1416,26 @@ class EmailCollector extends CommonObject
                                         //var_dump($regexstring);var_dump($sourcestring);
                                         if (preg_match('/'.$regexstring.'/ms', $sourcestring, $regforval))
                                         {
-                                            //var_dump($regforval[1]);exit;
+                                            //var_dump($regforval[count($regforval)-1]);exit;
                                             // Overwrite param $tmpproperty
-                                            $nametouseforthirdparty = isset($regforval[1]) ?trim($regforval[1]) : null;
-                                        }
-                                        else
-                                        {
+                                            $nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
+                                        } else {
                                             // Regex not found
                                             $nametouseforthirdparty = null;
                                         }
                                         //var_dump($object->$tmpproperty);exit;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         // Nothing can be done for this param
                                         $errorforactions++;
                                         $this->error = 'The extract rule to use to load thirdparty has on an unknown source (must be HEADER, SUBJECT or BODY)';
                                         $this->errors[] = $this->error;
                                     }
-                                }
-                                elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg))
+                                } elseif (preg_match('/^(SET|SETIFEMPTY):(.*)$/', $valueforproperty, $reg))
                                 {
                                     //if (preg_match('/^options_/', $tmpproperty)) $object->array_options[preg_replace('/^options_/', '', $tmpproperty)] = $reg[1];
                                     //else $object->$tmpproperty = $reg[1];
                                     $nametouseforthirdparty = $reg[2];
-                                }
-                                else
-                                {
+                                } else {
                                     $errorforactions++;
                                     $this->error = 'Bad syntax for description of action parameters: '.$actionparam;
                                     $this->errors[] = $this->error;
@@ -1466,8 +1452,7 @@ class EmailCollector extends CommonObject
                                     $this->error = 'Error when getting thirdparty with name '.$nametouseforthirdparty.' (may be 2 record exists with same name ?)';
                                     $this->errors[] = $this->error;
                                     break;
-                                }
-                                elseif ($result == 0)
+                                } elseif ($result == 0)
                                 {
                                     if ($operation['type'] == 'loadthirdparty')
                                     {
@@ -1476,8 +1461,7 @@ class EmailCollector extends CommonObject
                                         $errorforactions++;
                                         $this->error = 'ErrorFailedToLoadThirdParty';
                                         $this->errors[] = 'ErrorFailedToLoadThirdParty';
-                                    }
-                                    elseif ($operation['type'] == 'loadandcreatethirdparty')
+                                    } elseif ($operation['type'] == 'loadandcreatethirdparty')
                                     {
                                         dol_syslog("Third party with name ".$nametouseforthirdparty." was not found. We try to create it.");
 
@@ -1492,9 +1476,7 @@ class EmailCollector extends CommonObject
                                         if ($errorforthisaction)
                                         {
                                             $errorforactions++;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             $result = $thirdpartystatic->create($user);
                                             if ($result <= 0)
                                             {
@@ -1551,7 +1533,7 @@ class EmailCollector extends CommonObject
 	                        $actioncomm->datef       = $date;
 	                        $actioncomm->percentage  = -1; // Not applicable
 	                        $actioncomm->socid       = $thirdpartystatic->id;
-	                        $actioncomm->contactid   = $contactstatic->id;
+	                        $actioncomm->contact_id   = $contactstatic->id;
 		                    $actioncomm->socpeopleassigned = (!empty($contactstatic->id) ? array($contactstatic->id => '') : array());
 	                        $actioncomm->authorid    = $user->id; // User saving action
 	                        $actioncomm->userownerid = $user->id; // Owner of action
@@ -1579,9 +1561,7 @@ class EmailCollector extends CommonObject
 	                        if ($errorforthisaction)
 	                        {
 	                            $errorforactions++;
-	                        }
-	                        else
-	                        {
+	                        } else {
 	                            $result = $actioncomm->create($user);
 	                            if ($result <= 0)
 	                            {
@@ -1666,8 +1646,7 @@ class EmailCollector extends CommonObject
                                         $errorforactions++;
                                         setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
                                     }
-                                }
-                                else {
+                                } else {
                                     if ($projecttocreate->socid > 0)
                                     {
                                         $thirdpartystatic->fetch($projecttocreate->socid);
@@ -1682,16 +1661,12 @@ class EmailCollector extends CommonObject
                         if ($errorforthisaction)
                         {
                             $errorforactions++;
-                        }
-                        else
-                        {
+                        } else {
                             if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
                             {
                                 $errorforactions++;
                                 $this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
-                            }
-                            else
-                            {
+                            } else {
                                 // Create project
                                 $result = $projecttocreate->create($user);
                                 if ($result <= 0)
@@ -1781,8 +1756,7 @@ class EmailCollector extends CommonObject
                                         $errorforactions++;
                                         setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
                                     }
-                                }
-                                else {
+                                } else {
                                     if ($tickettocreate->socid > 0)
                                     {
                                         $thirdpartystatic->fetch($tickettocreate->socid);
@@ -1793,20 +1767,49 @@ class EmailCollector extends CommonObject
                             }
                             $tickettocreate->ref = $defaultref;
                         }
+						 // Create event specific on hook
+						// this code action is hook..... for support this call
+						elseif (substr($operation['type'], 0, 4) == 'hook') {
+							global $hookmanager;
+
+							if (!is_object($hookmanager))
+							$hookmanager->initHooks(array('emailcollectorcard'));
+
+							$parameters = array(
+							'connection'=>  $connection,
+							'imapemail'=>$imapemail,
+							'overview'=>$overview,
+
+							'from' => $from,
+							'fromtext' => $fromtext,
+
+							'actionparam'=>  $operation['actionparam'],
+
+
+
+							'thirdpartyid' => $thirdpartyid,
+							'objectid'=> $objectid,
+							'objectemail'=> $objectemail,
+
+							'messagetext'=>$messagetext,
+							'subject'=>$subject,
+							'header'=>$header,
+							);
+							$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+
+							if ($res < 0)
+							 $this->error = $hookmanager->resPrint;
+						}
 
                         if ($errorforthisaction)
                         {
                             $errorforactions++;
-                        }
-                        else
-                        {
+                        } else {
                             if (is_numeric($tickettocreate->ref) && $tickettocreate->ref <= 0)
                             {
                                 $errorforactions++;
                                 $this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
-                            }
-                            else
-                            {
+                            } else {
                                 // Create project
                                 $result = $tickettocreate->create($user);
                                 if ($result <= 0)
@@ -1838,14 +1841,10 @@ class EmailCollector extends CommonObject
                             $this->errors[] = $this->error;
                             dol_syslog(imap_last_error());
                         }
-                    }
-                    else
-                    {
+                    } else {
                         dol_syslog("EmailCollector::doCollectOneCollector message ".$imapemail." to ".$connectstringtarget." was set to read", LOG_DEBUG);
                     }
-                }
-                else
-                {
+                } else {
                     $errorforemail++;
                 }
 
@@ -1869,9 +1868,7 @@ class EmailCollector extends CommonObject
                         dol_syslog("EmailCollect::doCollectOneCollector We reach maximum of ".$nbemailok." collected with success, so we stop this collector now.");
                         break;
                     }
-                }
-                else
-                {
+                } else {
                     $error++;
 
                     $this->db->rollback();
@@ -1881,9 +1878,7 @@ class EmailCollector extends CommonObject
             $output = $langs->trans('XEmailsDoneYActionsDone', $nbemailprocessed, $nbemailok, $nbactiondone);
 
             dol_syslog("End of loop on emails", LOG_INFO, -1);
-        }
-        else
-        {
+        } else {
             $output = $langs->trans('NoNewEmailToProcess');
         }
 
@@ -2013,12 +2008,14 @@ class EmailCollector extends CommonObject
 
         // TEXT
         if ($p->type == 0 && $data) {
+			if (!empty($params['charset'])) {
+                $data = $this->convertStringEncoding($data, $params['charset']);
+            }
             // Messages may be split in different parts because of inline attachments,
             // so append parts together with blank row.
             if (strtolower($p->subtype) == 'plain')
                 $plainmsg .= trim($data)."\n\n";
-            else
-                $htmlmsg .= $data."<br><br>";
+            else $htmlmsg .= $data."<br><br>";
             $charset = $params['charset']; // assume all parts are same charset
         }
 
@@ -2028,6 +2025,9 @@ class EmailCollector extends CommonObject
         // There are no PHP functions to parse embedded messages,
         // so this just appends the raw source to the main message.
         elseif ($p->type == 2 && $data) {
+			if (!empty($params['charset'])) {
+                $data = $this->convertStringEncoding($data, $params['charset']);
+            }
             $plainmsg .= $data."\n\n";
         }
 
@@ -2039,4 +2039,28 @@ class EmailCollector extends CommonObject
             }
         }
     }
+
+	/**
+	 * Converts a string from one encoding to another.
+	 *
+	 * @param string $string		String to convert
+	 * @param string $fromEncoding	String encoding
+	 * @param string $toEncoding	String return encoding
+	 * @return string 				Converted string if conversion was successful, or the original string if not
+	 * @throws Exception
+	 */
+	protected function convertStringEncoding($string, $fromEncoding, $toEncoding = 'UTF-8')
+	{
+  		if (!$string || $fromEncoding == $toEncoding) {
+  			return $string;
+  		}
+  		$convertedString = function_exists('iconv') ? @iconv($fromEncoding, $toEncoding.'//IGNORE', $string) : null;
+  		if (!$convertedString && extension_loaded('mbstring')) {
+  			$convertedString = @mb_convert_encoding($string, $toEncoding, $fromEncoding);
+  		}
+  		if (!$convertedString) {
+  			throw new Exception('Mime string encoding conversion failed');
+  		}
+  		return $convertedString;
+  	}
 }

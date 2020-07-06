@@ -35,7 +35,7 @@ function holiday_prepare_head($object)
 	$head = array();
 
     $head[$h][0] = DOL_URL_ROOT.'/holiday/card.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Card");
+    $head[$h][1] = $langs->trans("Leave");
     $head[$h][2] = 'card';
     $h++;
 
@@ -44,10 +44,10 @@ function holiday_prepare_head($object)
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks=Link::count($db, $object->element, $object->id);
+    $nbLinks = Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/holiday/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
-    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+    if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
     $head[$h][2] = 'documents';
     $h++;
 

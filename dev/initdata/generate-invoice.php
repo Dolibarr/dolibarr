@@ -23,6 +23,10 @@
  *		\brief      Script example to inject random customer invoices (for load tests)
  */
 
+$sapi_type = php_sapi_name();
+$script_file = basename(__FILE__);
+$path=dirname(__FILE__).'/';
+
 // Test si mode batch
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
@@ -175,14 +179,10 @@ while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 		if ($result)
 		{
 			print " OK with ref ".$object->ref."\n";;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db, $object->error);
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

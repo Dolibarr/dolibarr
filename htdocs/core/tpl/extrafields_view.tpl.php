@@ -52,8 +52,12 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 {
 	$lastseparatorkeyfound = '';
     $extrafields_collapse_num = '';
+    $extrafields_collapse_num_old = '';
+    $i = 0;
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
+		$i++;
+
 		// Discard if extrafield is a hidden field on form
 
 		$enabled = 1;
@@ -65,6 +69,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		{
 			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
 		}
+
 		$perms = 1;
 		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
 		{
@@ -73,7 +78,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		//print $key.'-'.$enabled.'-'.$perms.'-'.$label.$_POST["options_" . $key].'<br>'."\n";
 
 		if (empty($enabled)) continue; // 0 = Never visible field
-		if (abs($enabled) != 1 && abs($enabled) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+		if (abs($enabled) != 1 && abs($enabled) != 3 && abs($enabled) != 5 && abs($enabled) != 4) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list <> 4 = not visible at the creation
 		if (empty($perms)) continue; // 0 = Not visible
 
 		// Load language if required
@@ -81,12 +86,12 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if ($action == 'edit_extras')
 		{
 			$value = (isset($_POST["options_".$key]) ? $_POST["options_".$key] : $object->array_options["options_".$key]);
-		}
-		else
-		{
+		} else {
 			$value = $object->array_options["options_".$key];
 			//var_dump($key.' - '.$value);
 		}
+
+		// Print line tr of extra field
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
             $extrafields_collapse_num = '';
@@ -106,16 +111,21 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print $extrafields->showSeparator($key, $object);
 
 			$lastseparatorkeyfound = $key;
-		}
-		else
-		{
-            print '<tr class="trextrafields_collapse'.$extrafields_collapse_num.'">';
+		} else {
+			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num;
+			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
+				print ' trextrafields_collapse_new';
+			}*/
+			if ($extrafields_collapse_num && $i == count($extrafields->attributes[$object->table_element]['label'])) {
+				print ' trextrafields_collapse_last';
+			}
+			print '">';
+			$extrafields_collapse_num_old = $extrafields_collapse_num;
 			print '<td class="titlefield">';
 			print '<table class="nobordernopadding centpercent">';
 			print '<tr>';
-			print '<td class="';
-			//var_dump($action);exit;
 
+			print '<td class="';
 			if ((!empty($action) && ($action == 'create' || $action == 'edit')) && !empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
 			print '">';
 			if (!empty($extrafields->attributes[$object->table_element]['help'][$key])) print $form->textwithpicto($langs->trans($label), $langs->trans($extrafields->attributes[$object->table_element]['help'][$key]));
@@ -133,9 +143,12 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'shipping')         $permok = $user->rights->expedition->creer;
 			if ($object->element == 'delivery')         $permok = $user->rights->expedition->livraison->creer;
 			if ($object->element == 'productlot')       $permok = $user->rights->stock->creer;
-			if ($object->element == 'facturerec') 	  $permok = $user->rights->facture->creer;
-			if (($object->statut == 0 || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
-				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key)
+			if ($object->element == 'facturerec') 	    $permok = $user->rights->facture->creer;
+			if ($object->element == 'mo') 	    		$permok = $user->rights->mrp->write;
+
+			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
+			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
+				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $key)
 			    && empty($extrafields->attributes[$object->table_element]['computed'][$key]))
 			{
 			    $fieldid = 'id';
@@ -161,6 +174,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				//print 'x'.$object->array_options['options_' . $key].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
 				$value = isset($_POST["options_".$key]) ? dol_mktime($_POST["options_".$key."hour"], $_POST["options_".$key."min"], 0, $_POST["options_".$key."month"], $_POST["options_".$key."day"], $_POST["options_".$key."year"]) : $datenotinstring;
 			}
+
 			//TODO Improve element and rights detection
 			if ($action == 'edit_extras' && $permok && GETPOST('attribute', 'none') == $key)
 			{
@@ -176,9 +190,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
-			}
-			else
-			{
+			} else {
 				//var_dump($key.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}

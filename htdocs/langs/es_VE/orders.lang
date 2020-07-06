@@ -1,2 +1,14 @@
 # Dolibarr language file - Source file is en_US - orders
 StatusOrderDeliveredShort=Emitido
+PDFEinsteinDescription=A complete order model
+StatusSupplierOrderDraftShort=A validar
+StatusSupplierOrderValidatedShort=Validada
+StatusSupplierOrderDelivered=Emitido
+StatusSupplierOrderDeliveredShort=Emitido
+StatusSupplierOrderToBillShort=Emitido
+StatusSupplierOrderApprovedShort=Aprovado
+StatusSupplierOrderRefusedShort=Devuelta
+StatusSupplierOrderValidated=Validada
+StatusSupplierOrderToBill=Emitido
+StatusSupplierOrderApproved=Aprovado
+StatusSupplierOrderRefused=Devuelta

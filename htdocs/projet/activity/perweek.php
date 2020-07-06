@@ -104,15 +104,12 @@ if (empty($search_usertoprocessid) || $search_usertoprocessid == $user->id)
 {
 	$usertoprocess = $user;
 	$search_usertoprocessid = $usertoprocess->id;
-}
-elseif ($search_usertoprocessid > 0)
+} elseif ($search_usertoprocessid > 0)
 {
 	$usertoprocess = new User($db);
 	$usertoprocess->fetch($search_usertoprocessid);
 	$search_usertoprocessid = $usertoprocess->id;
-}
-else
-{
+} else {
 	$usertoprocess = new User($db);
 }
 
@@ -162,7 +159,9 @@ $search_array_options_task = $extrafields->getOptionalsFromPost('projet_task', '
 /*
  * Actions
  */
-
+$parameters = array('id' => $id, 'taskid' => $taskid, 'projectid' => $projectid);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 // Purge criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 {
@@ -203,9 +202,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 	{
 		$result = $object->fetch($taskid, $ref);
 		if ($result < 0) $error++;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Task")), '', 'errors');
 		$error++;
 	}
@@ -242,9 +239,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 						$result = $project->add_contact($idfortaskuser, $typeforprojectcontact, 'internal');
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
 		}
@@ -257,9 +252,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('assigntask')
 		{
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorTaskAlreadyAssigned"), null, 'warnings');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -279,9 +272,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 	if (empty($timetoadd))
 	{
 		setEventMessages($langs->trans("ErrorTimeSpentIsEmpty"), null, 'errors');
-	}
-	else
-	{
+	} else {
 		foreach ($timetoadd as $taskid => $value)     // Loop on each task
 		{
 			$updateoftaskdone = 0;
@@ -307,6 +298,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 						$object->timespent_fk_user = $usertoprocess->id;
 						$object->timespent_date = dol_time_plus_duree($firstdaytoshow, $key, 'd');
 						$object->timespent_datehour = $object->timespent_date;
+						$object->timespent_note = $object->description;
 
 						$result = $object->addTimeSpent($user);
 						if ($result < 0)
@@ -456,9 +448,10 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $nav = '<a class="inline-block valignmiddle" href="?year='.$prev_year."&month=".$prev_month."&day=".$prev_day.$param.'">'.img_previous($langs->trans("Previous"))."</a>\n";
 $nav .= " <span id=\"month_name\">".dol_print_date(dol_mktime(0, 0, 0, $first_month, $first_day, $first_year), "%Y").", ".$langs->trans("WeekShort")." ".$week." </span>\n";
 $nav .= '<a class="inline-block valignmiddle" href="?year='.$next_year."&month=".$next_month."&day=".$next_day.$param.'">'.img_next($langs->trans("Next"))."</a>\n";
-$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&month=".$nowmonth."&day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
-$nav .= '<br>'.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 0).' ';
-$nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+//$nav .= " &nbsp; (<a href=\"?year=".$nowyear."&month=".$nowmonth."&day=".$nowday.$param."\">".$langs->trans("Today")."</a>)";
+$nav .= ' '.$form->selectDate(-1, '', 0, 0, 2, "addtime", 1, 1).' ';
+//$nav .= ' <input type="submit" name="submitdateselect" class="button" value="'.$langs->trans("Refresh").'">';
+$nav .= ' <button type="submit" name="submitdateselect" value="x" class="bordertransp"><span class="fa fa-search"></span></button>';
 
 $picto = 'calendarweek';
 
@@ -478,8 +471,7 @@ dol_fiche_head($head, 'inputperweek', $langs->trans('TimeSpent'), -1, 'task');
 // Show description of content
 print '<div class="hideonsmartphone opacitymedium">';
 if ($mine || ($usertoprocess->id == $user->id)) print $langs->trans("MyTasksDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
-else
-{
+else {
 	if (empty($usertoprocess->id) || $usertoprocess->id < 0)
 	{
 		if ($user->rights->projet->all->lire && !$socid) print $langs->trans("ProjectsDesc").'.'.($onlyopenedproject ? ' '.$langs->trans("OnlyOpenedProject") : '').'<br>';
@@ -489,9 +481,7 @@ else
 if ($mine || ($usertoprocess->id == $user->id))
 {
 	print $langs->trans("OnlyYourTaskAreVisible").'<br>';
-}
-else
-{
+} else {
 	print $langs->trans("AllTaskVisibleButEditIfYouAreAssigned").'<br>';
 }
 print '</div>';
@@ -500,18 +490,18 @@ dol_fiche_end();
 
 print '<div class="floatright right'.($conf->dol_optimize_smallscreen ? ' centpercent' : '').'">'.$nav.'</div>'; // We move this before the assign to components so, the default submit button is not the assign to.
 
-print '<div class="colorback float valignmiddle">';
+print '<div class="colorbacktimesheet float valignmiddle">';
 $titleassigntask = $langs->transnoentities("AssignTaskToMe");
 if ($usertoprocess->id != $user->id) $titleassigntask = $langs->transnoentities("AssignTaskToUser", $usertoprocess->getFullName($langs));
 print '<div class="taskiddiv inline-block">';
-$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, 1, 1, 0, 0, '', '', 'all', $usertoprocess);
+$formproject->selectTasks($socid ? $socid : -1, $taskid, 'taskid', 32, 0, '-- '.$langs->trans("ChooseANotYetAssignedTask").' --', 1, 0, 0, '', '', 'all', $usertoprocess);
 print '</div>';
 print ' ';
 print $formcompany->selectTypeContact($object, '', 'type', 'internal', 'rowid', 0, 'maxwidth150onsmartphone');
 print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
-print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
+print '<div class="clearboth" style="padding-bottom: 20px;"></div>';
 
 
 $startday = dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
@@ -657,8 +647,8 @@ if (!empty($arrayfields['t.progress']['checked']))
 /*print '<td class="maxwidth75 right">'.$langs->trans("TimeSpent").'</td>';
  if ($usertoprocess->id == $user->id) print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByYou").'</td>';
  else print '<td class="maxwidth75 right">'.$langs->trans("TimeSpentByUser").'</td>';*/
-print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</th>';
-print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br>('.dol_trunc($usertoprocess->firstname, 10).')' : '').'</th>';
+print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").'<br><span class="opacitymedium">'.$langs->trans("Everybody").'</span></th>';
+print '<th class="maxwidth75 right">'.$langs->trans("TimeSpent").($usertoprocess->firstname ? '<br><span class="opacitymedium">'.dol_trunc($usertoprocess->firstname, 10).'</span>' : '').'</th>';
 
 for ($idw = 0; $idw < 7; $idw++)
 {
@@ -833,9 +823,7 @@ if (count($tasksarray) > 0)
                 print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
-}
-else
-{
+} else {
 	print '<tr><td colspan="15"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
 }
 print "</table>";

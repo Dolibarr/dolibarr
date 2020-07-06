@@ -51,7 +51,7 @@ $id = GETPOST('id', 'int');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) {
     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
     $page = 0;
@@ -509,8 +509,7 @@ while ($i < min($num, $limit)) {
             else print $object->showOutputField($val, $key, $obj->$key, '');
             print '</td>';
             if (!$i) $totalarray['nbfield']++;
-            if (!empty($val['isameasure']))
-            {
+            if (!empty($val['isameasure'])) {
                 if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 't.'.$key;
                 $totalarray['val']['t.'.$key] += $obj->$key;
             }
@@ -519,7 +518,7 @@ while ($i < min($num, $limit)) {
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
     // Fields from hook
-    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+    $parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
     $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     // Action column

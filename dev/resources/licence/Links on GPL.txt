@@ -1,7 +1,7 @@
-* Page with licence compatibility
+* Page with license compatibility
 https://www.gnu.org/licenses/quick-guide-gplv3.fr.html
 
-* FAQ on GPL licence
+* FAQ on GPL license
 https://www.fsf.org/licensing/licenses/gpl-faq.html
 
 * Questions/Answers on Fork for using Dolibarr as a SaaS

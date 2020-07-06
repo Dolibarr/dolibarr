@@ -26,19 +26,19 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","bills","loan"));
+$langs->loadLangs(array("compta", "bills", "loan"));
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'aZ09');
+$id = GETPOST('id', 'int');
+$action = GETPOST('action', 'aZ09');
 
 // Security check
 $socid = GETPOST('socid', 'int');
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'loan', $id, '', '');
 
 

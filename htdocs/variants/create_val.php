@@ -24,9 +24,9 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $value = GETPOST('value', 'alpha');
 
-$action=GETPOST('action', 'alpha');
-$cancel=GETPOST('cancel', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -43,9 +43,9 @@ if ($object->fetch($id) < 1) {
 
 if ($cancel)
 {
-    $action='';
-    header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
-    exit();
+	$action = '';
+	header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
+	exit();
 }
 
 // None
@@ -81,9 +81,9 @@ $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label))
 
 llxHeader('', $title);
 
-$h=0;
+$h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 

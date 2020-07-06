@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 /*
  progress style is based on boostrap and admin lte framework
@@ -123,7 +123,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     width: 3px;
 }
 .progress-group .progress-text {
-    font-weight: 600;
+    /* font-weight: 600; */
 }
 .progress-group .progress-number {
     float: right;
@@ -145,16 +145,21 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
 }
-.progress-bar-green,
-.progress-bar-success {
+.progress-bar-green, .progress-bar-success {
     background-color: <?php echo $badgeSuccess ?>;
 }
-.progress-striped .progress-bar-green,
-.progress-striped .progress-bar-success {
+.progress-striped .progress-bar-green, .progress-striped .progress-bar-success {
     background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
 }
+body[class*="colorblind-"] .progress-bar-green, body[class*="colorblind-"] .progress-bar-success {
+    background-color: <?php echo $colorblind_deuteranopes_badgeSuccess ?>;
+}
+body[class*="colorblind-"] .progress-bar-red, body[class*="colorblind-"] .progress-bar-danger {
+    background-color: <?php echo $colorblind_deuteranopes_badgeDanger ?>;
+}
+
 .progress-bar-aqua,
 .progress-bar-info {
     background-color: #00c0ef;

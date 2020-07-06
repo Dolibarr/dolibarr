@@ -103,12 +103,12 @@ $view = GETPOST("view", 'alpha');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $userid = GETPOST('userid', 'int');
 $begin = GETPOST('begin');
 if (!$sortorder) $sortorder = "ASC";
 if (!$sortfield) $sortfield = "p.lastname";
-if (empty($page) || $page < 0) { $page = 0; }
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) { $page = 0; }
 $offset = $limit * $page;
 
 $titre = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
@@ -123,14 +123,12 @@ if ($type == "c")
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactcustomerlist';
 	$titre .= '  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche = "card.php";
-}
-elseif ($type == "f")
+} elseif ($type == "f")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactsupplierlist';
 	$titre .= ' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche = "card.php";
-}
-elseif ($type == "o")
+} elseif ($type == "o")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactotherlist';
 	$titre .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
@@ -154,6 +152,9 @@ $fieldstosearchall = array(
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
 	'p.phone'=>"Phone",
+	'p.phone_perso'=>"PhonePerso",
+	'p.phone_mobile'=>"PhoneMobile",
+	'p.fax'=>"Fax",
     'p.note_public'=>"NotePublic",
     'p.note_private'=>"NotePrivate",
 );
@@ -290,7 +291,7 @@ $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("C
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
-$sql .= " p.socialnetworks,";
+$sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
@@ -323,9 +324,7 @@ if (!empty($userid))    // propre au commercial
 if ($search_priv != '0' && $search_priv != '1')
 {
 	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
-}
-else
-{
+} else {
 	if ($search_priv == '0') $sql .= " AND p.priv='0'";
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
@@ -355,7 +354,6 @@ if (strlen($search_fax))            $sql .= natural_search('p.fax', $search_fax)
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_{$key})) {
-			//$sql.= natural_search("p.socialnetworks->'$.".$key."'", $search_{$key});
 			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
 		}
 	}
@@ -373,16 +371,13 @@ if ($search_import_key)             $sql .= natural_search("p.import_key", $sear
 if ($type == "o")        // filtre sur type
 {
 	$sql .= " AND p.fk_soc IS NULL";
-}
-elseif ($type == "f")        // filtre sur type
+} elseif ($type == "f")        // filtre sur type
 {
 	$sql .= " AND s.fournisseur = 1";
-}
-elseif ($type == "c")        // filtre sur type
+} elseif ($type == "c")        // filtre sur type
 {
 	$sql .= " AND s.client IN (1, 3)";
-}
-elseif ($type == "p")        // filtre sur type
+} elseif ($type == "p")        // filtre sur type
 {
 	$sql .= " AND s.client IN (2, 3)";
 }
@@ -400,9 +395,7 @@ $sql .= $hookmanager->resPrint;
 if ($view == "recent")
 {
 	$sql .= $db->order("p.datec", "DESC");
-}
-else
-{
+} else {
 	$sql .= $db->order($sortfield, $sortorder);
 }
 
@@ -497,11 +490,11 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
+//print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "contact";
@@ -786,7 +779,6 @@ while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($result);
 
-	print '<tr class="oddeven">';
 	$arraysocialnetworks = (array) json_decode($obj->socialnetworks, true);
 	$contactstatic->lastname = $obj->lastname;
 	$contactstatic->firstname = '';
@@ -802,6 +794,9 @@ while ($i < min($num, $limit))
 	$contactstatic->socialnetworks = $arraysocialnetworks;
 	$contactstatic->country = $obj->country;
 	$contactstatic->country_code = $obj->country_code;
+	$contactstatic->photo = $obj->photo;
+
+	print '<tr class="oddeven">';
 
 	// ID
 	if (!empty($arrayfields['p.rowid']['checked']))
@@ -917,9 +912,7 @@ while ($i < min($num, $limit))
 		    $objsoc = new Societe($db);
 		    $objsoc->fetch($obj->socid);
 		    print $objsoc->getNomUrl(1);
-		}
-		else
-			print '&nbsp;';
+		} else print '&nbsp;';
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
@@ -934,7 +927,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation

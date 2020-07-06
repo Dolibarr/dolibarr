@@ -35,9 +35,9 @@ include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class box_produits_alerte_stock extends ModeleBoxes
 {
-    public $boxcode="productsalertstock";
-    public $boximg="object_product";
-    public $boxlabel="BoxProductsAlertStock";
+    public $boxcode = "productsalertstock";
+    public $boximg = "object_product";
+    public $boxlabel = "BoxProductsAlertStock";
     public $depends = array("produit");
 
 	/**
@@ -59,13 +59,13 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 */
 	public function __construct($db, $param = '')
 	{
-	    global $conf,$user;
+	    global $conf, $user;
 
 	    $this->db = $db;
 
-	    $listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
-	    $showmode=isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $tmpentry = array('enabled'=>((!empty($conf->product->enabled) || !empty($conf->service->enabled)) && !empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
+	    $showmode = isVisibleToUserType(($user->socid > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
 	    $this->hidden = ($showmode != 1);
 	}
 
@@ -79,34 +79,38 @@ class box_produits_alerte_stock extends ModeleBoxes
 	{
 		global $user, $langs, $conf, $hookmanager;
 
-		$this->max=$max;
+		$this->max = $max;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		$productstatic=new Product($this->db);
+		$productstatic = new Product($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
 
 		if (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire)
 		{
-			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity,";
-			$sql.= " SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
-			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
-			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
-			$sql.= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
-			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
-			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
+			$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
+			$sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+			$sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,";
+			$sql .= " SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") as total_stock";
+			$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
+			$sql .= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
+			$sql .= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
+			if (empty($user->rights->produit->lire)) $sql .= ' AND p.fk_product_type != 0';
+			if (empty($user->rights->service->lire)) $sql .= ' AND p.fk_product_type != 1';
 			// Add where from hooks
     		if (is_object($hookmanager))
     		{
-			    $parameters=array('boxproductalertstocklist'=>1);
-    		    $reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters);    // Note that $action and $object may have been modified by hook
-    		    $sql.=$hookmanager->resPrint;
+			    $parameters = array('boxproductalertstocklist'=>1);
+    		    $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+    		    $sql .= $hookmanager->resPrint;
     		}
-		    $sql.= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.seuil_stock_alerte, p.entity";
-			$sql.= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
-			$sql.= $this->db->order('p.seuil_stock_alerte', 'DESC');
-			$sql.= $this->db->plimit($max, 0);
+		    $sql .= " GROUP BY p.rowid, p.ref, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.barcode, p.seuil_stock_alerte, p.entity,";
+		    $sql .= " p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,";
+		    $sql .= " p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export";
+		    $sql .= " HAVING SUM(".$this->db->ifsql("s.reel IS NULL", "0", "s.reel").") < p.seuil_stock_alerte";
+			$sql .= $this->db->order('p.seuil_stock_alerte', 'DESC');
+			$sql .= $this->db->plimit($max, 0);
 
 			$result = $this->db->query($sql);
 			if ($result)
@@ -116,18 +120,18 @@ class box_produits_alerte_stock extends ModeleBoxes
 				$line = 0;
                 while ($line < $num) {
 					$objp = $this->db->fetch_object($result);
-					$datem=$this->db->jdate($objp->tms);
+					$datem = $this->db->jdate($objp->tms);
                     $price = '';
                     $price_base_type = '';
 
 					// Multilangs
-					if (! empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+					if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
 					{
 						$sqld = "SELECT label";
-						$sqld.= " FROM ".MAIN_DB_PREFIX."product_lang";
-						$sqld.= " WHERE fk_product=".$objp->rowid;
-						$sqld.= " AND lang='". $langs->getDefaultLang() ."'";
-						$sqld.= " LIMIT 1";
+						$sqld .= " FROM ".MAIN_DB_PREFIX."product_lang";
+						$sqld .= " WHERE fk_product=".$objp->rowid;
+						$sqld .= " AND lang='".$langs->getDefaultLang()."'";
+						$sqld .= " LIMIT 1";
 
 						$resultd = $this->db->query($sqld);
 						if ($resultd)
@@ -142,6 +146,15 @@ class box_produits_alerte_stock extends ModeleBoxes
                     $productstatic->type = $objp->fk_product_type;
                     $productstatic->label = $objp->label;
 					$productstatic->entity = $objp->entity;
+					$productstatic->barcode = $objp->barcode;
+					$productstatic->status = $objp->tosell;
+					$productstatic->status_buy = $objp->tobuy;
+					$productstatic->accountancy_code_sell = $objp->accountancy_code_sell;
+					$productstatic->accountancy_code_sell_intra = $objp->accountancy_code_sell_intra;
+					$productstatic->accountancy_code_sell_export = $objp->accountancy_code_sell_export;
+					$productstatic->accountancy_code_buy = $objp->accountancy_code_buy;
+					$productstatic->accountancy_code_buy_intra = $objp->accountancy_code_buy_intra;
+					$productstatic->accountancy_code_buy_export = $objp->accountancy_code_buy_export;
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
@@ -156,10 +169,9 @@ class box_produits_alerte_stock extends ModeleBoxes
 
                     if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression))
                     {
-                        $price_base_type=$langs->trans($objp->price_base_type);
-                        $price=($objp->price_base_type == 'HT')?price($objp->price):$price=price($objp->price_ttc);
-	                }
-	                else //Parse the dynamic price
+                        $price_base_type = $langs->trans($objp->price_base_type);
+                        $price = ($objp->price_base_type == 'HT') ?price($objp->price) : $price = price($objp->price_ttc);
+	                } else //Parse the dynamic price
 	               	{
 						$productstatic->fetch($objp->rowid, '', '', 1);
 	                    $priceparser = new PriceParser($this->db);
@@ -167,14 +179,12 @@ class box_produits_alerte_stock extends ModeleBoxes
 	                    if ($price_result >= 0) {
 							if ($objp->price_base_type == 'HT')
 							{
-								$price_base_type=$langs->trans("HT");
-							}
-							else
-							{
+								$price_base_type = $langs->trans("HT");
+							} else {
 								$price_result = $price_result * (1 + ($productstatic->tva_tx / 100));
-								$price_base_type=$langs->trans("TTC");
+								$price_base_type = $langs->trans("TTC");
 							}
-							$price=price($price_result);
+							$price = price($price_result);
 	                    }
 	               	}
 
@@ -190,7 +200,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 					$this->info_box_contents[$line][] = array(
 					    'td' => 'class="center"',
-                        'text' => $objp->total_stock . ' / '.$objp->seuil_stock_alerte,
+                        'text' => $objp->total_stock.' / '.$objp->seuil_stock_alerte,
                         'text2'=>img_warning($langs->transnoentitiesnoconv("StockLowerThanLimit", $objp->seuil_stock_alerte)),
                     );
 
@@ -208,24 +218,21 @@ class box_produits_alerte_stock extends ModeleBoxes
 
                     $line++;
                 }
-                if ($num==0)
+                if ($num == 0)
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center"',
                         'text'=>$langs->trans("NoTooLowStockProducts"),
                     );
 
 				$this->db->free($result);
-			}
-			else
-			{
+			} else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
                     'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
-		}
-		else {
+		} else {
             $this->info_box_contents[0][0] = array(
                 'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

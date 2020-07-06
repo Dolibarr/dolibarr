@@ -43,13 +43,28 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 
-$page = GETPOST('page', 'int');
+$type = GETPOST('type', 'aZ09');
+
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortorder = GETPOST('sortorder', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+if ($page == -1 || $page == null) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if ($sortorder == "") $sortorder = "DESC";
+if ($sortfield == "") $sortfield = "pl.fk_soc";
+
+
+/*
+ * Actions
+ */
 
 if ($action == 'confirm_rejet')
 {
-	if ( GETPOST("confirm") == 'yes')
+	if (GETPOST("confirm") == 'yes')
 	{
 		if (GETPOST('remonth', 'int'))
 		{
@@ -60,9 +75,7 @@ if ($action == 'confirm_rejet')
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
-		}
-
-		elseif ($daterej > dol_now())
+		} elseif ($daterej > dol_now())
 		{
 			$error++;
 			$langs->load("error");
@@ -75,9 +88,9 @@ if ($action == 'confirm_rejet')
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefusedReason")), null, 'errors');
 		}
 
-		if ( ! $error )
+		if (!$error)
 		{
-			$lipre = new LignePrelevement($db, $user);
+			$lipre = new LignePrelevement($db);
 
 			if ($lipre->fetch($id) == 0)
 
@@ -89,14 +102,10 @@ if ($action == 'confirm_rejet')
 				header("Location: line.php?id=".$id);
 				exit;
 			}
+		} else {
+			$action = "rejet";
 		}
-		else
-		{
-			$action="rejet";
-		}
-	}
-	else
-	{
+	} else {
 		header("Location: line.php?id=".$id);
 		exit;
 	}
@@ -107,34 +116,45 @@ if ($action == 'confirm_rejet')
  * View
  */
 
-$invoicestatic=new Facture($db);
+$invoicestatic = new Facture($db);
 
-llxHeader('', $langs->trans("StandingOrder"));
+$title = $langs->trans("WithdrawalsLine");
+if ($type == 'bank-transfer') {
+	$title = $langs->trans("CreditTransferLine");
+}
+
+llxHeader('', $title);
+
+$head = array();
 
 $h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $title;
 $hselected = $h;
 $h++;
 
 if ($id)
 {
-	$lipre = new LignePrelevement($db, $user);
+	$lipre = new LignePrelevement($db);
 
-	if ($lipre->fetch($id) == 0)
+	if ($lipre->fetch($id) >= 0)
 	{
 		$bon = new BonPrelevement($db);
 		$bon->fetch($lipre->bon_rowid);
 
-		dol_fiche_head($head, $hselected, $langs->trans("StandingOrder"));
+		dol_fiche_head($head, $hselected, $title);
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
-		print '<tr><td width="20%">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
+		print $id.'</td></tr>';
+
+		print '<tr><td class="titlefield">'.$langs->trans("WithdrawalsReceipts").'</td><td>';
 		print $bon->getNomUrl(1).'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
-		print '<tr><td width="20%">'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->statut, 1).'</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Date").'</td><td>'.dol_print_date($bon->datec, 'day').'</td></tr>';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($lipre->amount).'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$lipre->LibStatut($lipre->statut, 1).'</td></tr>';
 
 		if ($lipre->statut == 3)
 		{
@@ -142,31 +162,25 @@ if ($id)
 			$resf = $rej->fetch($lipre->id);
 			if ($resf == 0)
 			{
-				print '<tr><td width="20%">'.$langs->trans("RefusedReason").'</td><td>'.$rej->motif.'</td></tr>';
-				print '<tr><td width="20%">'.$langs->trans("RefusedData").'</td><td>';
+				print '<tr><td>'.$langs->trans("RefusedReason").'</td><td>'.$rej->motif.'</td></tr>';
+				print '<tr><td>'.$langs->trans("RefusedData").'</td><td>';
 				if ($rej->date_rejet == 0)
 				{
 					/* Historique pour certaines install */
 					print $langs->trans("Unknown");
-				}
-				else
-				{
+				} else {
 					print dol_print_date($rej->date_rejet, 'day');
 				}
 				print '</td></tr>';
-				print '<tr><td width="20%">'.$langs->trans("RefusedInvoicing").'</td><td>'.$rej->invoicing.'</td></tr>';
-			}
-			else
-			{
-				print '<tr><td width="20%">'.$resf.'</td></tr>';
+				print '<tr><td>'.$langs->trans("RefusedInvoicing").'</td><td>'.$rej->invoicing.'</td></tr>';
+			} else {
+				print '<tr><td>'.$resf.'</td></tr>';
 			}
 		}
 
 		print '</table>';
 		dol_fiche_end();
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -182,7 +196,7 @@ if ($id)
 		print '<form name="confirm_rejet" method="post" action="line.php?id='.$id.'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="confirm_rejet">';
-		print '<table class="border centpercent">';
+		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("WithdrawalRefused").'</td></tr>';
@@ -202,13 +216,13 @@ if ($id)
 		//Reason
 		print '<tr><td class="fieldrequired valid">'.$langs->trans("RefusedReason").'</td>';
 		print '<td class="valid">';
-		print $form->selectarray("motif", $rej->motifs);
+		print $form->selectarray("motif", $rej->motifs, GETPOSTISSET('motif') ? GETPOST('motif', 'int') : '');
 		print '</td></tr>';
 
 		//Facturer
 		print '<tr><td class="valid">'.$langs->trans("RefusedInvoicing").'</td>';
 		print '<td class="valid" colspan="2">';
-		print $form->selectarray("facturer", $rej->facturer);
+		print $form->selectarray("facturer", $rej->facturer, GETPOSTISSET('facturer') ? GETPOST('facturer', 'int') : '');
 		print '</td></tr>';
 		print '</table><br>';
 
@@ -227,56 +241,43 @@ if ($id)
 
 	if ($action == '')
 	{
-		if ($bon->statut == 2 && $lipre->statut == 2)
+		if ($bon->statut == BonPrelevement::STATUS_CREDITED)
 		{
-			if ($user->rights->prelevement->bons->credit)
-			{
-	  			print "<a class=\"butAction\" href=\"line.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("StandingOrderReject")."</a>";
+			if ($lipre->statut == 2) {
+				if ($user->rights->prelevement->bons->credit)
+				{
+					print '<a class="butActionDelete" href="line.php?action=rejet&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
+				} else {
+					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
+				}
 			}
-			else
-			{
-				print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotAllowed")."\">".$langs->trans("StandingOrderReject")."</a>";
-			}
-		}
-		else
-		{
-			print "<a class=\"butActionRefused classfortooltip\" href=\"#\" title=\"".$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine")."\">".$langs->trans("StandingOrderReject")."</a>";
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotPossibleForThisStatusOfWithdrawReceiptORLine").'">'.$langs->trans("StandingOrderReject").'</a>';
 		}
 	}
 
 	print "</div>";
 
-
-
-	if ($page == -1 || $page == null) { $page = 0 ; }
-
-	$offset = $conf->liste_limit * $page ;
-	$pageprev = $page - 1;
-	$pagenext = $page + 1;
-
-	if ($sortorder == "") $sortorder="DESC";
-	if ($sortfield == "") $sortfield="pl.fk_soc";
-
 	/*
 	 * List of invoices
 	 */
 	$sql = "SELECT pf.rowid";
-	$sql.= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
-	$sql.= " , s.rowid as socid, s.nom as name";
-	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-	$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql.= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
-	$sql.= " , ".MAIN_DB_PREFIX."facture as f";
-	$sql.= " , ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE pf.fk_prelevement_lignes = pl.rowid";
-	$sql.= " AND pl.fk_prelevement_bons = p.rowid";
-	$sql.= " AND f.fk_soc = s.rowid";
-	$sql.= " AND pf.fk_facture = f.rowid";
-	$sql.= " AND f.entity IN (".getEntity('invoice').")";
-	$sql.= " AND pl.rowid=".$id;
-	if ($socid)	$sql.= " AND s.rowid = ".$socid;
-	$sql.= " ORDER BY $sortfield $sortorder ";
-	$sql.= $db->plimit($conf->liste_limit+1, $offset);
+	$sql .= " ,f.rowid as facid, f.ref as ref, f.total_ttc, f.paye, f.fk_statut";
+	$sql .= " , s.rowid as socid, s.nom as name";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
+	$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+	$sql .= " AND f.fk_soc = s.rowid";
+	$sql .= " AND pf.fk_facture = f.rowid";
+	$sql .= " AND f.entity IN (".getEntity('invoice').")";
+	$sql .= " AND pl.rowid=".$id;
+	if ($socid)	$sql .= " AND s.rowid = ".$socid;
+	$sql .= " ORDER BY $sortfield $sortorder ";
+	$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 
 	$result = $db->query($sql);
 
@@ -310,7 +311,7 @@ if ($id)
 			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
-			print img_object($langs->trans("ShowCompany"), "company"). ' '.$obj->name."</a></td>\n";
+			print img_object($langs->trans("ShowCompany"), "company").' '.$obj->name."</a></td>\n";
 
 			print '<td class="right">'.price($obj->total_ttc)."</td>\n";
 
@@ -327,9 +328,7 @@ if ($id)
 		print "</table>";
 
 		$db->free($result);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

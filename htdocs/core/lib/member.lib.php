@@ -38,12 +38,12 @@ function member_prepare_head(Adherent $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/card.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Member");
 	$head[$h][2] = 'general';
 	$h++;
 
-	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_ACTIVE))
-		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
+	if ((!empty($conf->ldap->enabled) && !empty($conf->global->LDAP_MEMBER_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || !empty($user->admin)))
 	{
 		$langs->load("ldap");
 
@@ -53,13 +53,13 @@ function member_prepare_head(Adherent $object)
 		$h++;
 	}
 
-	if (! empty($user->rights->adherent->cotisation->lire))
+	if (!empty($user->rights->adherent->cotisation->lire))
 	{
-		$nbSubscription = is_array($object->subscriptions)?count($object->subscriptions):0;
+		$nbSubscription = is_array($object->subscriptions) ?count($object->subscriptions) : 0;
 		$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription.php?rowid='.$object->id;
 		$head[$h][1] = $langs->trans("Subscriptions");
 		$head[$h][2] = 'subscription';
-		if ($nbSubscription > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbSubscription.'</span>';
+		if ($nbSubscription > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbSubscription.'</span>';
 		$h++;
 	}
 
@@ -70,13 +70,13 @@ function member_prepare_head(Adherent $object)
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'member');
 
     $nbNote = 0;
-    if(!empty($object->note)) $nbNote++;
-    if(!empty($object->note_private)) $nbNote++;
-    if(!empty($object->note_public)) $nbNote++;
+    if (!empty($object->note)) $nbNote++;
+    if (!empty($object->note_private)) $nbNote++;
+    if (!empty($object->note_public)) $nbNote++;
     $head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
-    if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+    if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	$h++;
 
     // Attachments
@@ -84,22 +84,22 @@ function member_prepare_head(Adherent $object)
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->adherent->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, 'member');
     $nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
-    $nbLinks=Link::count($db, $object->element, $object->id);
+    $nbLinks = Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT.'/adherents/document.php?id='.$object->id;
     $head[$h][1] = $langs->trans('Documents');
-    if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
+    if (($nbFiles + $nbLinks) > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.($nbFiles + $nbLinks).'</span>';
     $head[$h][2] = 'document';
     $h++;
 
 	// Show agenda tab
-	if (! empty($conf->agenda->enabled))
+	if (!empty($conf->agenda->enabled))
 	{
 	    $head[$h][0] = DOL_URL_ROOT."/adherents/agenda.php?id=".$object->id;
 	    $head[$h][1] = $langs->trans("Events");
-	    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+	    if (!empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read)))
 	    {
-	        $head[$h][1].= '/';
-	        $head[$h][1].= $langs->trans("Agenda");
+	        $head[$h][1] .= '/';
+	        $head[$h][1] .= $langs->trans("Agenda");
 	    }
 	    $head[$h][2] = 'agenda';
 	    $h++;
@@ -120,16 +120,16 @@ function member_type_prepare_head(AdherentType $object)
 {
 	global $langs, $conf, $user;
 
-	$h=0;
+	$h = 0;
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/type.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("MemberType");
 	$head[$h][2] = 'card';
 	$h++;
 
 	// Multilangs
-	if (! empty($conf->global->MAIN_MULTILANGS))
+	if (!empty($conf->global->MAIN_MULTILANGS))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/adherents/type_translation.php?rowid=".$object->id;
 		$head[$h][1] = $langs->trans("Translation");
@@ -137,8 +137,8 @@ function member_type_prepare_head(AdherentType $object)
 		$h++;
 	}
 
-	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
-		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
+	if ((!empty($conf->ldap->enabled) && !empty($conf->global->LDAP_MEMBER_TYPE_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || !empty($user->admin)))
 	{
 		$langs->load("ldap");
 
@@ -276,7 +276,7 @@ function subscription_prepare_head(Subscription $object)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/subscription/card.php?rowid='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Subscription");
 	$head[$h][2] = 'general';
 	$h++;
 

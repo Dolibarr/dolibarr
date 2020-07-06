@@ -102,11 +102,14 @@ ALTER TABLE llx_emailcollector_emailcollectoraction ADD COLUMN position integer 
 
 -- For v11
 
+
 ALTER TABLE llx_product_price MODIFY COLUMN tva_tx double(6,3) DEFAULT 0 NOT NULL;
 
 ALTER TABLE llx_facturedet MODIFY COLUMN situation_percent real DEFAULT 100;
 UPDATE llx_facturedet SET situation_percent = 100 WHERE situation_percent IS NULL AND fk_prev_id IS NULL;
 
+-- Set country to null for deprecated accounting system (there is now one per country)
+UPDATE llx_accounting_system SET fk_country = NULL, active = 0 WHERE pcg_version = 'SYSCOHADA';
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
 
 ALTER TABLE llx_c_action_trigger MODIFY COLUMN elementtype varchar(64) NOT NULL;
@@ -249,7 +252,9 @@ ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_c_type_co
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_contacts ADD CONSTRAINT fk_societe_contacts_fk_socpeople FOREIGN KEY (fk_socpeople)  REFERENCES llx_socpeople(rowid);
 
-ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
+-- VMYSQL4.3 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint AUTO_INCREMENT;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account MODIFY COLUMN rowid bigint;
+
 
 
 ALTER TABLE llx_supplier_proposaldet ADD COLUMN  date_start	datetime   DEFAULT NULL;
@@ -619,4 +624,15 @@ create table llx_commande_fournisseur_dispatch_extrafields
 )ENGINE=innodb;
 
 ALTER TABLE llx_commande_fournisseur_dispatch_extrafields ADD INDEX idx_commande_fournisseur_dispatch_extrafields (fk_object);
+
+
+create table llx_facturedet_rec_extrafields
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_object        integer NOT NULL,    -- object id
+  import_key       varchar(14)      	-- import key
+)ENGINE=innodb;
+
+ALTER TABLE llx_facturedet_rec_extrafields ADD INDEX idx_facturedet_rec_extrafields (fk_object);
 

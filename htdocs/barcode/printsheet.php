@@ -161,9 +161,7 @@ if ($action == 'builddoc')
 					setEventMessages('Failed to generate image file of barcode for code='.$code.' encoding='.$encoding.' file='.basename($barcodeimage), null, 'errors');
 					setEventMessages($module->error, null, 'errors');
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				setEventMessages("Error, encoding ".$encoding." is not supported by encoder ".$generator.'. You must choose another barcode type or install a barcode generation engine that support '.$encoding, null, 'errors');
 			}
@@ -267,7 +265,7 @@ llxHeader('', $langs->trans("BarCodePrintsheet"));
 print load_fiche_titre($langs->trans("BarCodePrintsheet"), '', 'barcode');
 print '<br>';
 
-print $langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'<br>';
+print '<span class="opacitymedium">'.$langs->trans("PageToGenerateBarCodeSheets", $langs->transnoentitiesnoconv("BuildPageToPrint")).'</span><br>';
 print '<br>';
 
 dol_htmloutput_errors($mesg);
@@ -278,6 +276,7 @@ dol_htmloutput_errors($mesg);
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="mode" value="label">';
 print '<input type="hidden" name="action" value="builddoc">';
+print '<input type="hidden" name="token" value="'.newtoken().'">';
 
 print '<div class="tagtable">';
 

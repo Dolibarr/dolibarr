@@ -110,8 +110,7 @@ if ($action == 'edit') {
         print '<div class="tabsAction">';
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
         print '</div>';
-    } else
-    {
+    } else {
         print '<br>'.$langs->trans("NothingToSetup");
     }
 }

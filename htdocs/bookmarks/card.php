@@ -31,21 +31,21 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 $langs->loadLangs(array('bookmarks', 'other'));
 
 // Security check
-if (! $user->rights->bookmark->lire) {
+if (!$user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 
-$id=GETPOST("id", 'int');
-$action=GETPOST("action", "alpha");
-$title=GETPOST("title", "alpha");
-$url=GETPOST("url", "alpha");
-$urlsource=GETPOST("urlsource", "alpha");
-$target=GETPOST("target", "alpha");
-$userid=GETPOST("userid", "int");
-$position=GETPOST("position", "int");
-$backtopage=GETPOST('backtopage', 'alpha');
+$id = GETPOST("id", 'int');
+$action = GETPOST("action", "alpha");
+$title = GETPOST("title", "alpha");
+$url = GETPOST("url", "alpha");
+$urlsource = GETPOST("urlsource", "alpha");
+$target = GETPOST("target", "alpha");
+$userid = GETPOST("userid", "int");
+$position = GETPOST("position", "int");
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$object=new Bookmark($db);
+$object = new Bookmark($db);
 
 
 /*
@@ -64,59 +64,53 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 	if (GETPOST('cancel', 'alpha'))
 	{
-		if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+		if (empty($backtopage)) $backtopage = ($urlsource ? $urlsource : ((!empty($url) && !preg_match('/^http/i', $url)) ? $url : DOL_URL_ROOT.'/bookmarks/list.php'));
 		header("Location: ".$backtopage);
 		exit;
 	}
 
 	if ($action == 'update') $object->fetch(GETPOST("id", 'int'));
 	// Check if null because user not admin can't set an user and send empty value here.
-	if(!empty($userid))
-		$object->fk_user=$userid;
-	$object->title=$title;
-	$object->url=$url;
-	$object->target=$target;
-	$object->position=$position;
+	if (!empty($userid))
+		$object->fk_user = $userid;
+	$object->title = $title;
+	$object->url = $url;
+	$object->target = $target;
+	$object->position = $position;
 
-	if (! $title) {
+	if (!$title) {
 		$error++;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("BookmarkTitle")), null, 'errors');
 	}
 
-	if (! $url) {
+	if (!$url) {
 		$error++;
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->trans("UrlOrLink")), null, 'errors');
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$object->favicon='none';
+		$object->favicon = 'none';
 
-		if ($action == 'update') $res=$object->update();
-		else $res=$object->create();
+		if ($action == 'update') $res = $object->update();
+		else $res = $object->create();
 
 		if ($res > 0)
 		{
-			if (empty($backtopage)) $backtopage=($urlsource?$urlsource:((! empty($url) && ! preg_match('/^http/i', $url))?$url:DOL_URL_ROOT.'/bookmarks/list.php'));
+			if (empty($backtopage)) $backtopage = ($urlsource ? $urlsource : ((!empty($url) && !preg_match('/^http/i', $url)) ? $url : DOL_URL_ROOT.'/bookmarks/list.php'));
 			header("Location: ".$backtopage);
 			exit;
-		}
-		else
-		{
+		} else {
 			if ($object->errno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				$langs->load("errors");
 				setEventMessages($langs->transnoentities("WarningBookmarkAlreadyExists"), null, 'warnings');
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 			$action = $invertedaction;
 		}
-	}
-	else
-	{
+	} else {
 		$action = $invertedaction;
 	}
 }
@@ -128,18 +122,18 @@ if ($action == 'add' || $action == 'addproduct' || $action == 'update')
 
 llxHeader();
 
-$form=new Form($db);
+$form = new Form($db);
 
 
 $head = array();
-$h=1;
+$h = 1;
 
-$head[$h][0] = $_SERVER["PHP_SELF"].($object->id?'id='.$object->id:'');
-$head[$h][1] = $langs->trans("Card");
+$head[$h][0] = $_SERVER["PHP_SELF"].($object->id ? 'id='.$object->id : '');
+$head[$h][1] = $langs->trans("Bookmark");
 $head[$h][2] = 'card';
 $h++;
 
-$hselected='card';
+$hselected = 'card';
 
 
 if ($action == 'create')
@@ -166,18 +160,18 @@ if ($action == 'create')
 
 	// Target
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
-	$liste=array(0=>$langs->trans("ReplaceWindow"),1=>$langs->trans("OpenANewWindow"));
+	$liste = array(0=>$langs->trans("ReplaceWindow"), 1=>$langs->trans("OpenANewWindow"));
 	print $form->selectarray('target', $liste, 1);
 	print '</td><td class="hideonsmartphone">'.$langs->trans("ChooseIfANewWindowMustBeOpenedOnClickOnBookmark").'</td></tr>';
 
 	// Owner
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
-	print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:$user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print img_picto('', 'user').' '.$form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : $user->id, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
-	print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$object->position).'">';
+	print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"]) ? $_POST["position"] : $object->position).'">';
 	print '</td><td class="hideonsmartphone">&nbsp;</td></tr>';
 
 	print '</table>';
@@ -193,7 +187,7 @@ if ($action == 'create')
 }
 
 
-if ($id > 0 && ! preg_match('/^add/i', $action))
+if ($id > 0 && !preg_match('/^add/i', $action))
 {
 	/*
 	 * Fact bookmark mode or visually edition
@@ -243,7 +237,7 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
 	}
 
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat minwidth200" name="title" value="'.(isset($_POST["title"])?GETPOST("title", '', 2):$object->title).'">';
+	if ($action == 'edit') print '<input class="flat minwidth200" name="title" value="'.(isset($_POST["title"]) ?GETPOST("title", '', 2) : $object->title).'">';
 	else print $object->title;
 	print '</td></tr>';
 
@@ -256,18 +250,16 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
 		print '</span>';
 	}
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"])?$_POST["url"]:$object->url).'">';
-	else print '<a href="'.(preg_match('/^http/i', $object->url)?$object->url:DOL_URL_ROOT.$object->url).'"'.($object->target?' target="_blank"':'').'>'.$object->url.'</a>';
+	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"]) ? $_POST["url"] : $object->url).'">';
+	else print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>'.$object->url.'</a>';
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("BehaviourOnClick").'</td><td>';
 	if ($action == 'edit')
 	{
-		$liste=array(1=>$langs->trans("OpenANewWindow"),0=>$langs->trans("ReplaceWindow"));
-		print $form->selectarray('target', $liste, isset($_POST["target"])?$_POST["target"]:$object->target);
-	}
-	else
-	{
+		$liste = array(1=>$langs->trans("OpenANewWindow"), 0=>$langs->trans("ReplaceWindow"));
+		print $form->selectarray('target', $liste, isset($_POST["target"]) ? $_POST["target"] : $object->target);
+	} else {
 		if ($object->target == 0) print $langs->trans("ReplaceWindow");
 		if ($object->target == 1) print $langs->trans("OpenANewWindow");
 	}
@@ -276,18 +268,14 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
 	print '<tr><td>'.$langs->trans("Owner").'</td><td>';
 	if ($action == 'edit' && $user->admin)
 	{
-		print $form->select_dolusers(isset($_POST['userid'])?$_POST['userid']:($object->fk_user?$object->fk_user:''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
-	}
-	else
-	{
-		if ($object->fk_user)
+		print img_picto('', 'user').' '.$form->select_dolusers(isset($_POST['userid']) ? $_POST['userid'] : ($object->fk_user ? $object->fk_user : ''), 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	} else {
+		if ($object->fk_user > 0)
 		{
-			$fuser=new User($db);
+			$fuser = new User($db);
 			$fuser->fetch($object->fk_user);
 			print $fuser->getNomUrl(1);
-		}
-		else
-		{
+		} else {
 			print $langs->trans("Public");
 		}
 	}
@@ -295,7 +283,7 @@ if ($id > 0 && ! preg_match('/^add/i', $action))
 
 	// Position
 	print '<tr><td>'.$langs->trans("Position").'</td><td>';
-	if ($action == 'edit') print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"])?$_POST["position"]:$object->position).'">';
+	if ($action == 'edit') print '<input class="flat" name="position" size="5" value="'.(isset($_POST["position"]) ? $_POST["position"] : $object->position).'">';
 	else print $object->position;
 	print '</td></tr>';
 

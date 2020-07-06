@@ -38,14 +38,16 @@ $langs->loadLangs(array('banks', 'categories', 'companies', 'withdrawals', 'bill
 if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
-$prev_id = GETPOST('id', 'int');
+$id = GETPOST('id', 'int');
 $socid = GETPOST('socid', 'int');
 $ref = GETPOST('ref', 'alpha');
+
+$type = GETPOST('type', 'aZ09');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -53,7 +55,7 @@ $pagenext = $page + 1;
 if (!$sortfield) $sortfield = 'p.ref';
 if (!$sortorder) $sortorder = 'DESC';
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
 
 
@@ -66,9 +68,9 @@ $thirdpartytmp = new Societe($db);
 
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
-if ($prev_id > 0 || $ref)
+if ($id > 0 || $ref)
 {
-  	if ($object->fetch($prev_id, $ref) >= 0)
+  	if ($object->fetch($id, $ref) >= 0)
     {
     	$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
@@ -134,9 +136,7 @@ if ($prev_id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-    }
-  	else
-    {
+    } else {
       	dol_print_error($db);
     }
 }
@@ -181,7 +181,7 @@ if ($result)
   	$num = $db->num_rows($result);
   	$i = 0;
 
-  	$param = "&amp;id=".$prev_id;
+  	$param = "&id=".$id;
 
 	// Lines of title fields
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -193,7 +193,7 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	print '<input type="hidden" name="id" value="'.$id.'">';
 
 	$massactionbutton = '';
 
@@ -246,12 +246,10 @@ if ($result)
       	if ($obj->statut == 0)
 		{
 	  		print '-';
-		}
-      	elseif ($obj->statut == 2)
+		} elseif ($obj->statut == 2)
 		{
 	  		print $langs->trans("StatusCredited");
-		}
-      	elseif ($obj->statut == 3)
+		} elseif ($obj->statut == 3)
 		{
 	  		print '<b>'.$langs->trans("StatusRefused").'</b>';
 		}
@@ -289,9 +287,7 @@ if ($result)
   	print '</div>';
 
   	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -77,7 +77,7 @@ class FormOther
         $sql .= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql .= " WHERE type = '".$this->db->escape($type)."'";
 		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
-        $sql .= " ORDER BY rowid";
+        $sql .= " ORDER BY label";
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -96,8 +96,7 @@ class FormOther
                 $label = $obj->label;
                 if ($obj->fk_user == 0) {
                 	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-                }
-                elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                } elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
                 	$tmpuser = new User($this->db);
                 	$tmpuser->fetch($obj->fk_user);
                 	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
@@ -106,9 +105,7 @@ class FormOther
                 if ($selected == $obj->rowid)
                 {
                     print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
                 }
                 print $label;
@@ -117,8 +114,7 @@ class FormOther
             }
             print "</select>";
             print ajax_combobox($htmlname);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -163,8 +159,7 @@ class FormOther
                 $label = $obj->label;
                 if ($obj->fk_user == 0) {
                 	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-                }
-                elseif (! empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                } elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
                 	$tmpuser = new User($this->db);
                 	$tmpuser->fetch($obj->fk_user);
                 	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
@@ -173,9 +168,7 @@ class FormOther
                 if ($selected == $obj->rowid)
                 {
                     print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
                 }
                 print $label;
@@ -184,8 +177,7 @@ class FormOther
             }
             print "</select>";
             print ajax_combobox($htmlname);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -226,9 +218,7 @@ class FormOther
                     if ($selected && $selected == $obj->rowid)
                     {
                         print '<option value="'.$obj->rowid.'" selected>';
-                    }
-                    else
-                    {
+                    } else {
                         print '<option value="'.$obj->rowid.'">';
                         //print '<option onmouseover="showtip(\''.$obj->label.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
                     }
@@ -240,9 +230,7 @@ class FormOther
             }
             print '</select>';
             return 0;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return 1;
         }
@@ -286,9 +274,7 @@ class FormOther
     				if (($selected && $selected == $obj->taux) || $num == 1)
     				{
     					$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
-    				}
-    				else
-    				{
+    				} else {
     					$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
     					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
     				}
@@ -299,9 +285,7 @@ class FormOther
     		}
     		$out .= '</select>';
     		return $out;
-    	}
-    	else
-    	{
+    	} else {
     		dol_print_error($this->db);
     		return '';
     	}
@@ -332,9 +316,7 @@ class FormOther
             if ($selected != '' && (int) $selected == $i)
             {
                 $return .= '<option value="'.$i.'" selected>';
-            }
-            else
-            {
+            } else {
                 $return .= '<option value="'.$i.'">';
             }
             $return .= $i.' % ';
@@ -424,7 +406,7 @@ class FormOther
     public function select_salesrepresentatives($selected, $htmlname, $user, $showstatus = 0, $showempty = 1, $morecss = '', $norepresentative = 0)
     {
         // phpcs:enable
-        global $conf, $langs;
+        global $conf, $langs, $hookmanager;
 
         $langs->load('users');
 
@@ -432,61 +414,67 @@ class FormOther
         // Enhance with select2
         if ($conf->use_javascript_ajax)
         {
-            include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+            include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
             $comboenhancement = ajax_combobox($htmlname);
             if ($comboenhancement)
             {
-            	$out.=$comboenhancement;
+            	$out .= $comboenhancement;
             }
         }
+
+	    $reshook = $hookmanager->executeHooks('addSQLWhereFilterOnSelectSalesRep', array(), $this, $action);
+
         // Select each sales and print them in a select input
-        $out.='<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'">';
-        if ($showempty) $out.='<option value="0">&nbsp;</option>';
+        $out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" id="'.$htmlname.'" name="'.$htmlname.'">';
+        if ($showempty) $out .= '<option value="0">&nbsp;</option>';
 
         // Get list of users allowed to be viewed
         $sql_usr = "SELECT u.rowid, u.lastname, u.firstname, u.statut, u.login";
-        $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u";
+        $sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u";
 
-        if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+        if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
         {
-        	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-        		$sql_usr.= " WHERE u.entity IS NOT NULL"; // Show all users
+        	if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+        		$sql_usr .= " WHERE u.entity IS NOT NULL"; // Show all users
         	} else {
-        		$sql_usr.= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
-        		$sql_usr.= " OR u.entity = 0"; // Show always superadmin
+        		$sql_usr .= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
+        		$sql_usr .= " OR u.entity = 0"; // Show always superadmin
         	}
-        }
-        else
-        {
-        	$sql_usr.= " WHERE u.entity IN (".getEntity('user').")";
+        } else {
+        	$sql_usr .= " WHERE u.entity IN (".getEntity('user').")";
         }
 
-        if (empty($user->rights->user->user->lire)) $sql_usr.=" AND u.rowid = ".$user->id;
-        if (! empty($user->socid)) $sql_usr.=" AND u.fk_soc = ".$user->socid;
+        if (empty($user->rights->user->user->lire)) $sql_usr .= " AND u.rowid = ".$user->id;
+        if (!empty($user->socid)) $sql_usr .= " AND u.fk_soc = ".$user->socid;
+
+	    //Add hook to filter on user (for exemple on usergroup define in custom modules)
+	    if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[0];
+
         // Add existing sales representatives of thirdparty of external user
         if (empty($user->rights->user->user->lire) && $user->socid)
         {
-            $sql_usr.=" UNION ";
-            $sql_usr.= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
-            $sql_usr.= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+            $sql_usr .= " UNION ";
+            $sql_usr .= "SELECT u2.rowid, u2.lastname, u2.firstname, u2.statut, u2.login";
+            $sql_usr .= " FROM ".MAIN_DB_PREFIX."user as u2, ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 
-            if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+            if (!empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
             {
-            	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-            		$sql_usr.= " WHERE u2.entity IS NOT NULL"; // Show all users
+            	if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+            		$sql_usr .= " WHERE u2.entity IS NOT NULL"; // Show all users
             	} else {
-            		$sql_usr.= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
+            		$sql_usr .= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
             	}
-            }
-            else
-            {
-            	$sql_usr.= " WHERE u2.entity IN (".getEntity('user').")";
+            } else {
+            	$sql_usr .= " WHERE u2.entity IN (".getEntity('user').")";
             }
 
-            $sql_usr.= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+            $sql_usr .= " AND u2.rowid = sc.fk_user AND sc.fk_soc=".$user->socid;
+
+	        //Add hook to filter on user (for exemple on usergroup define in custom modules)
+	        if (!empty($reshook)) $sql_usr .= $hookmanager->resArray[1];
         }
-	    $sql_usr.= " ORDER BY statut DESC, lastname ASC";  // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
+	    $sql_usr .= " ORDER BY statut DESC, lastname ASC"; // Do not use 'ORDER BY u.statut' here, not compatible with the UNION.
         //print $sql_usr;exit;
 
         $resql_usr = $this->db->query($sql_usr);
@@ -494,49 +482,47 @@ class FormOther
         {
             while ($obj_usr = $this->db->fetch_object($resql_usr))
             {
-                $out.='<option value="'.$obj_usr->rowid.'"';
+                $out .= '<option value="'.$obj_usr->rowid.'"';
 
-                if ($obj_usr->rowid == $selected) $out.=' selected';
+                if ($obj_usr->rowid == $selected) $out .= ' selected';
 
-                $out.='>';
-                $out.=dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
+                $out .= '>';
+                $out .= dolGetFirstLastname($obj_usr->firstname, $obj_usr->lastname);
                 // Complete name with more info
-                $moreinfo=0;
-                if (! empty($conf->global->MAIN_SHOW_LOGIN))
+                $moreinfo = 0;
+                if (!empty($conf->global->MAIN_SHOW_LOGIN))
                 {
-                    $out.=($moreinfo?' - ':' (').$obj_usr->login;
+                    $out .= ($moreinfo ? ' - ' : ' (').$obj_usr->login;
                     $moreinfo++;
                 }
                 if ($showstatus >= 0)
                 {
 					if ($obj_usr->statut == 1 && $showstatus == 1)
 					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Enabled');
+						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 	                	$moreinfo++;
 					}
 					if ($obj_usr->statut == 0)
 					{
-						$out.=($moreinfo?' - ':' (').$langs->trans('Disabled');
+						$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
                 		$moreinfo++;
 					}
 				}
-				$out.=($moreinfo?')':'');
-                $out.='</option>';
+				$out .= ($moreinfo ? ')' : '');
+                $out .= '</option>';
             }
             $this->db->free($resql_usr);
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
 
         if ($norepresentative)
         {
         	$langs->load("companies");
-        	$out.='<option value="-2"'.($selected == -2 ? ' selected':'').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
+        	$out .= '<option value="-2"'.($selected == -2 ? ' selected' : '').'>- '.$langs->trans("NoSalesRepresentativeAffected").' -</option>';
         }
 
-        $out.='</select>';
+        $out .= '</select>';
 
         return $out;
     }
@@ -575,9 +561,7 @@ class FormOther
             print '</select>';
 
             print ajax_combobox($htmlname);
-        }
-        else
-        {
+        } else {
             print '<div class="warning">'.$langs->trans("NoProject").'</div>';
         }
     }
@@ -603,8 +587,6 @@ class FormOther
         $numlines = count($lines);
         for ($i = 0; $i < $numlines; $i++) {
             if ($lines[$i]->fk_parent == $parent) {
-                $var = !$var;
-
                 //var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
                 // Break on a new project
@@ -620,9 +602,7 @@ class FormOther
                         if (empty($lines[$i]->public))
                         {
                             print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
-                        }
-                        else
-                        {
+                        } else {
                             print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
                         }
                         //print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
@@ -655,9 +635,7 @@ class FormOther
                     if (empty($lines[$i]->public))
                     {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
-                    }
-                    else
-                    {
+                    } else {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
                     }
                     if ($lines[$i]->id) print ' > ';
@@ -742,7 +720,7 @@ class FormOther
         if (!is_array($arrayofcolors) || count($arrayofcolors) < 1)
         {
             $langs->load("other");
-            if (empty($conf->dol_use_jmobile))
+            if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
             {
 	            $out .= '<link rel="stylesheet" media="screen" type="text/css" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/css/jPicker-1.1.6.css" />';
 	            $out .= '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jpicker/jpicker-1.1.6.js"></script>';
@@ -785,10 +763,9 @@ class FormOther
 	             </script>';
             }
             $out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
-        }
-        else  // In most cases, this is not used. We used instead function with no specific list of colors
+        } else // In most cases, this is not used. We used instead function with no specific list of colors
         {
-            if (empty($conf->dol_use_jmobile))
+        	if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
             {
 	        	$out .= '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.css" type="text/css" media="screen" />';
 	            $out .= '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/colorpicker/jquery.colorpicker.js" type="text/javascript"></script>';
@@ -891,9 +868,7 @@ class FormOther
             if ($selected == $key)
             {
                 $select_week .= '<option value="'.$key.'" selected>';
-            }
-            else
-            {
+            } else {
                 $select_week .= '<option value="'.$key.'">';
             }
             $select_week .= $val;
@@ -934,9 +909,7 @@ class FormOther
             if ($selected == $key)
             {
                 $select_month .= '<option value="'.$key.'" selected>';
-            }
-            else
-            {
+            } else {
                 $select_month .= '<option value="'.$key.'">';
             }
             $select_month .= $val;
@@ -1005,9 +978,7 @@ class FormOther
                 if ($selected > 0 && $y == $selected) $selected_html = ' selected';
                 $out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
             }
-        }
-        else
-        {
+        } else {
             for ($y = $min_year; $y <= $max_year; $y++)
             {
                 $selected_html = '';
@@ -1280,9 +1251,7 @@ class FormOther
                     if ($selected == $obj->rowid || $selected == $obj->$keyfield)
                     {
                         print '<option value="'.$obj->$keyfield.'" selected>';
-                    }
-                    else
-                    {
+                    } else {
                         print '<option value="'.$obj->$keyfield.'">';
                     }
                     print $obj->$labelfield;
@@ -1293,8 +1262,7 @@ class FormOther
             } else {
                 print $langs->trans("DictionaryEmpty");
             }
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -1328,14 +1296,130 @@ class FormOther
 		{
 			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
-		}
-		else
-	    {
-	   		$selected=(($useempty && $value != '0' && $value != 'manual')?'':' selected');
+		} else {
+	   		$selected = (($useempty && $value != '0' && $value != 'manual') ? '' : ' selected');
 			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";
 		}
 		$resultautomanual .= '</select>'."\n";
 		return $resultautomanual;
+	}
+
+
+	/**
+	 * Return HTML select list to select a group by field
+	 *
+	 * @param 	mixed	$object				Object analyzed
+	 * @param	array	$search_groupby		Array of preselected fields
+	 * @param	array	$arrayofgroupby		Array of groupby to fill
+	 * @return string						HTML string component
+	 */
+	public function selectGroupByField($object, $search_groupby, &$arrayofgroupby)
+	{
+		global $langs, $extrafields, $form;
+
+		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
+		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
+		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
+		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
+		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
+		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+
+		foreach ($object->fields as $key => $val) {
+			if (!$val['measure']) {
+				if (in_array($key, array(
+					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
+				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
+				if (preg_match('/^pass/', $key)) continue;
+				if (in_array($val['type'], array('html', 'text'))) continue;
+				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
+					$arrayofgroupby['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
+					$arrayofgroupby['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
+					$arrayofgroupby['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+				} else {
+					$arrayofgroupby['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
+				}
+			}
+		}
+		// Add extrafields to Group by
+		if ($object->isextrafieldmanaged) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+				$arrayofgroupby['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+			}
+		}
+
+		$arrayofgroupby = dol_sort_array($arrayofgroupby, 'position', 'asc', 0, 0, 1);
+		$arrayofgroupbylabel = array();
+		foreach ($arrayofgroupby as $key => $val) {
+			$arrayofgroupbylabel[$key] = $val['label'];
+		}
+		$result = $form->selectarray('search_groupby', $arrayofgroupbylabel, $search_groupby, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+
+		return $result;
+	}
+
+	/**
+	 * Return HTML select list to select a group by field
+	 *
+	 * @param 	mixed	$object				Object analyzed
+	 * @param	array	$search_xaxis		Array of preselected fields
+	 * @param	array	$arrayofxaxis		Array of groupby to fill
+	 * @return string						HTML string component
+	 */
+	public function selectXAxisField($object, $search_xaxis, &$arrayofxaxis)
+	{
+		global $langs, $extrafields, $form;
+
+		$YYYY = substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1).substr($langs->trans("Year"), 0, 1);
+		$MM = substr($langs->trans("Month"), 0, 1).substr($langs->trans("Month"), 0, 1);
+		$DD = substr($langs->trans("Day"), 0, 1).substr($langs->trans("Day"), 0, 1);
+		$HH = substr($langs->trans("Hour"), 0, 1).substr($langs->trans("Hour"), 0, 1);
+		$MI = substr($langs->trans("Minute"), 0, 1).substr($langs->trans("Minute"), 0, 1);
+		$SS = substr($langs->trans("Second"), 0, 1).substr($langs->trans("Second"), 0, 1);
+
+
+		foreach ($object->fields as $key => $val) {
+			if (!$val['measure']) {
+				if (in_array($key, array(
+					'id', 'ref_int', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
+					'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) continue;
+				if (isset($val['enabled']) && !dol_eval($val['enabled'], 1)) continue;
+				if (isset($val['visible']) && !dol_eval($val['visible'], 1)) continue;
+				if (preg_match('/^fk_/', $key) && !preg_match('/^fk_statu/', $key)) continue;
+				if (preg_match('/^pass/', $key)) continue;
+				if (in_array($val['type'], array('html', 'text'))) continue;
+				if (in_array($val['type'], array('timestamp', 'date', 'datetime'))) {
+					$arrayofxaxis['t.'.$key.'-year'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.')', 'position' => $val['position'].'-y');
+					$arrayofxaxis['t.'.$key.'-month'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.')', 'position' => $val['position'].'-m');
+					$arrayofxaxis['t.'.$key.'-day'] = array('label' => $langs->trans($val['label']).' ('.$YYYY.'-'.$MM.'-'.$DD.')', 'position' => $val['position'].'-d');
+				} else {
+					$arrayofxaxis['t.'.$key] = array('label' => $langs->trans($val['label']), 'position' => (int) $val['position']);
+				}
+			}
+		}
+
+		// Add extrafields to X-Axis
+		if ($object->isextrafieldmanaged) {
+			foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+				if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate') continue;
+				if (!empty($extrafields->attributes[$object->table_element]['totalizable'][$key])) continue;
+				$arrayofxaxis['te.'.$key] = array('label' => $langs->trans($extrafields->attributes[$object->table_element]['label'][$key]), 'position' => 1000 + (int) $extrafields->attributes[$object->table_element]['pos'][$key]);
+			}
+		}
+
+		$arrayofxaxis = dol_sort_array($arrayofxaxis, 'position', 'asc', 0, 0, 1);
+
+		$arrayofxaxislabel = array();
+		foreach ($arrayofxaxis as $key => $val) {
+			$arrayofxaxislabel[$key] = $val['label'];
+		}
+		$result = $form->selectarray('search_xaxis', $arrayofxaxislabel, $search_xaxis, 1, 0, 0, '', 0, 0, 0, '', 'minwidth250', 1);
+
+		return $result;
 	}
 }

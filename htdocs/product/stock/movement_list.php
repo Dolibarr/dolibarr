@@ -54,8 +54,11 @@ $ref = GETPOST('ref', 'alpha');
 $msid = GETPOST('msid', 'int');
 $product_id = GETPOST("product_id", 'int');
 $action = GETPOST('action', 'aZ09');
+$massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
+$confirm    = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $cancel = GETPOST('cancel', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'movementlist';
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 
 // Security check
 //$result=restrictedArea($user, 'stock', $id, 'entrepot&stock');
@@ -76,7 +79,7 @@ $search_qty = trim(GETPOST("search_qty"));
 $search_type_mouvement = GETPOST('search_type_mouvement', 'int');
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -123,14 +126,18 @@ if (!$user->rights->stock->mouvement->lire) {
 	accessforbidden();
 }
 
+$permissiontoread = $user->rights->stock->mouvement->lire;
+$permissiontoadd = $user->rights->stock->mouvement->creer;
+$permissiontodelete = $user->rights->stock->mouvement->creer; // There is no deletion permission for stock movement as we shoul dnever delete
+
+$usercanread = $user->rights->stock->mouvement->lire;
+$usercancreate = $user->rights->stock->mouvement->creer;
+$usercandelete = $user->rights->stock->mouvement->creer;
+
 
 /*
  * Actions
  */
-
-$usercanread = (($user->rights->stock->mouvement->lire));
-$usercancreate = (($user->rights->stock->mouvement->creer));
-$usercandelete = (($user->rights->stock->mouvement->supprimer));
 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
@@ -139,26 +146,35 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
-// Do we click on purge search criteria ?
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
+if (empty($reshook))
 {
-    $year = '';
-    $month = '';
-    $search_ref = '';
-    $search_movement = "";
-    $search_type_mouvement = "";
-    $search_inventorycode = "";
-    $search_product_ref = "";
-    $search_product = "";
-    $search_warehouse = "";
-    $search_user = "";
-    $search_batch = "";
-    $search_qty = '';
-    $sall = "";
-	$toselect = '';
-    $search_array_options = array();
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+	// Do we click on purge search criteria ?
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // Both test are required to be compatible with all browsers
+	{
+	    $year = '';
+	    $month = '';
+	    $search_ref = '';
+	    $search_movement = "";
+	    $search_type_mouvement = "";
+	    $search_inventorycode = "";
+	    $search_product_ref = "";
+	    $search_product = "";
+	    $search_warehouse = "";
+	    $search_user = "";
+	    $search_batch = "";
+	    $search_qty = '';
+	    $sall = "";
+		$toselect = '';
+	    $search_array_options = array();
+	}
+
+	// Mass actions
+	$objectclass = 'MouvementStock';
+	$objectlabel = 'MouvementStock';
+	$uploaddir = $conf->stock->dir_output;
+	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
 // Correct stock
@@ -214,9 +230,7 @@ if ($action == "correct_stock")
 	        	$origin_element,
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
-        }
-        else
-		{
+        } else {
 			$result = $product->correct_stock(
 	            $user,
 	            $id,
@@ -234,9 +248,7 @@ if ($action == "correct_stock")
         {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
-        }
-        else
-        {
+        } else {
             $error++;
             setEventMessages($product->error, $product->errors, 'errors');
             $action = 'correction';
@@ -319,15 +331,11 @@ if ($action == "transfert_stock" && !$cancel)
                         $batch = $pdluo->batch;
                         $eatby = $pdluo->eatby;
                         $sellby = $pdluo->sellby;
-                    }
-                    else
-                    {
+                    } else {
                         setEventMessages($pdluo->error, $pdluo->errors, 'errors');
                         $error++;
                     }
-                }
-                else
-                {
+                } else {
                     $srcwarehouseid = $id;
                     $batch = GETPOST('batch_number', 'alphanohtml');
                     $eatby = $d_eatby;
@@ -359,9 +367,7 @@ if ($action == "transfert_stock" && !$cancel)
                     	GETPOST('inventorycode', 'alphanohtml')
                         );
                 }
-            }
-            else
-            {
+            } else {
                 // Remove stock
                 $result1 = $product->correct_stock(
                     $user,
@@ -392,15 +398,11 @@ if ($action == "transfert_stock" && !$cancel)
                 {
                     header("Location: ".$backtopage);
                     exit;
-                }
-                else
-                {
+                } else {
                     header("Location: movement_list.php?id=".$object->id);
                     exit;
                 }
-            }
-            else
-            {
+            } else {
                 setEventMessages($product->error, $product->errors, 'errors');
                 $db->rollback();
                 $action = 'transfert';
@@ -462,6 +464,7 @@ if (!empty($search_product))       $sql .= natural_search('p.label', $search_pro
 if ($search_warehouse != '' && $search_warehouse != '-1')          $sql .= natural_search('e.rowid', $search_warehouse, 2);
 if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
 if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
+if (!empty($product_id))           $sql .= natural_search('p.rowid', $product_id);
 if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
 if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 // Add where from extra fields
@@ -487,9 +490,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (empty($search_inventorycode))
 {
 	$sql .= $db->plimit($limit + 1, $offset);
-}
-else
-{
+} else {
 	$limit = 0;
 }
 
@@ -525,8 +526,7 @@ if ($resql)
     $i = 0;
     $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
-	else
-	{
+	else {
 		$texte = $langs->trans("ListOfStockMovements");
 		if ($id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 	}
@@ -558,7 +558,7 @@ if ($resql)
         print '<div class="fichehalfleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         print '<tr>';
 
@@ -586,7 +586,7 @@ if ($resql)
         print '<div class="ficheaddleft">';
         print '<div class="underbanner clearboth"></div>';
 
-        print '<table class="border centpercent">';
+        print '<table class="border centpercent tableforfield">';
 
         // Value
         print '<tr><td class="titlefield">'.$langs->trans("EstimatedStockValueShort").'</td><td>';
@@ -600,11 +600,9 @@ if ($resql)
         $resqlbis = $db->query($sql);
         if ($resqlbis)
         {
-            $obj = $db->fetch_object($resqlbis);
-            $lastmovementdate = $db->jdate($obj->datem);
-        }
-        else
-        {
+            $objbis = $db->fetch_object($resqlbis);
+            $lastmovementdate = $db->jdate($objbis->datem);
+        } else {
             dol_print_error($db);
         }
 
@@ -612,9 +610,7 @@ if ($resql)
         if ($lastmovementdate)
         {
             print dol_print_date($lastmovementdate, 'dayhour');
-        }
-        else
-        {
+        } else {
             print $langs->trans("None");
         }
         print "</td></tr>";
@@ -694,8 +690,9 @@ if ($resql)
 	//    'presend'=>$langs->trans("SendByMail"),
 	//    'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	//if ($user->rights->stock->supprimer) $arrayofmassactions['predelete']='<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
+	// By default, we should never accept deletion of stock movement.
+	if (!empty($conf->global->STOCK_ALLOW_DELETE_OF_MOVEMENT) && $permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -705,13 +702,19 @@ if ($resql)
     print '<input type="hidden" name="action" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
     if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 
-    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, '', '', $limit);
-    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, '', '', $limit);
+    if ($id > 0) print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+    else print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, '', '', $limit, 0, 0, 1);
+
+    // Add code for pre mass action (confirmation or email presend form)
+    $topicmail = "SendStockMovement";
+    $modelmail = "movementstock";
+    $objecttmp = new MouvementStock($db);
+    $trackid = 'mov'.$object->id;
+    include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 	if ($sall)
     {
@@ -961,6 +964,8 @@ if ($resql)
 
     $arrayofuniqueproduct = array();
 
+    $i = 0;
+    $totalarray = array();
     while ($i < min($num, $limit))
     {
         $objp = $db->fetch_object($resql);
@@ -987,7 +992,6 @@ if ($resql)
 
         $warehousestatic->id = $objp->entrepot_id;
         $warehousestatic->ref = $objp->warehouse_ref;
-        $warehousestatic->libelle = $objp->warehouse_ref; // deprecated
         $warehousestatic->label = $objp->warehouse_ref;
         $warehousestatic->lieu = $objp->lieu;
         $warehousestatic->fk_parent = $objp->fk_parent;
@@ -1061,15 +1065,11 @@ if ($resql)
         if (!empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.'<a href="'
-								.DOL_URL_ROOT.'/product/stock/movement_card.php'
-								.'?id='.$objp->entrepot_id
-								.'&amp;search_inventorycode='.$objp->inventorycode
-							    .'&amp;search_type_mouvement='.$objp->type_mouvement
-						.'">'
-							.$objp->inventorycode
-						.'</a>'
-					.'</td>';
+	        print '<td><a href="'
+						.DOL_URL_ROOT.'/product/stock/movement_card.php?id='.urlencode($objp->entrepot_id)
+						.'&search_inventorycode='.urlencode($objp->inventorycode)
+					    .'&search_type_mouvement='.urlencode($objp->type_mouvement)
+						.'">'.$objp->inventorycode.'</a></td>';
         }
         if (!empty($arrayfields['m.label']['checked']))
         {
@@ -1126,8 +1126,8 @@ if ($resql)
         if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
         {
             $selected = 0;
-    		if (in_array($obj->rowid, $arrayofselected)) $selected = 1;
-    		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+    		if (in_array($objp->mid, $arrayofselected)) $selected = 1;
+    		print '<input id="cb'.$objp->mid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$objp->mid.'"'.($selected ? ' checked="checked"' : '').'>';
         }
         print '</td>';
         if (!$i) $totalarray['nbfield']++;
@@ -1172,9 +1172,7 @@ if ($resql)
     	print "<br>\n";
     	//print '</td></tr>';
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

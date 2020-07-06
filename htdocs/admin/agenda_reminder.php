@@ -30,7 +30,7 @@ if (!$user->admin)
     accessforbidden();
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","other","agenda"));
+$langs->loadLangs(array("admin", "other", "agenda"));
 
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
@@ -48,29 +48,25 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
-	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
+	$code = $reg[1];
+	$value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
 
 if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-	$code=$reg[1];
+	$code = $reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -80,24 +76,23 @@ if ($action == 'set')
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
-}
-elseif ($action == 'specimen')  // For orders
+} elseif ($action == 'specimen')  // For orders
 {
-    $modele=GETPOST('module', 'alpha');
+    $modele = GETPOST('module', 'alpha');
 
     $commande = new CommandeFournisseur($db);
     $commande->initAsSpecimen();
-    $commande->thirdparty=$specimenthirdparty;
+    $commande->thirdparty = $specimenthirdparty;
 
     // Search template files
-    $file=''; $classname=''; $filefound=0;
-    $dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
-    foreach($dirmodels as $reldir)
+    $file = ''; $classname = ''; $filefound = 0;
+    $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+    foreach ($dirmodels as $reldir)
     {
-    	$file=dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
+    	$file = dol_buildpath($reldir."core/modules/action/doc/pdf_".$modele.".modules.php", 0);
     	if (file_exists($file))
     	{
-    		$filefound=1;
+    		$filefound = 1;
     		$classname = "pdf_".$modele;
     		break;
     	}
@@ -113,15 +108,11 @@ elseif ($action == 'specimen')  // For orders
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
     		return;
-    	}
-    	else
-    	{
+    	} else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
-    }
-    else
-    {
+    } else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -132,9 +123,7 @@ elseif ($action == 'setmodel')
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -166,21 +155,21 @@ elseif ($action == 'setdoc')
  * View
  */
 
-$formactions=new FormActions($db);
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$formactions = new FormActions($db);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"), $linkback, 'title_setup');
 
 
 
-$head=agenda_prepare_head();
+$head = agenda_prepare_head();
 
 dol_fiche_head($head, 'reminders', $langs->trans("Agenda"), -1, 'action');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
-print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";

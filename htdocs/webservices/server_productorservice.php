@@ -342,30 +342,30 @@ $server->register(
  */
 function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = '', $lang = '')
 {
-    global $db,$conf,$langs;
+    global $db, $conf, $langs;
 
     dol_syslog("Function: getProductOrService login=".$authentication['login']." id=".$id." ref=".$ref." ref_ext=".$ref_ext);
 
-    $langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    $langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
     $langs->setDefaultLang($langcode);
 
-    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
     // Init and check authentication
-    $objectresp=array();
-    $errorcode='';$errorlabel='';
-    $error=0;
-    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+    $objectresp = array();
+    $errorcode = ''; $errorlabel = '';
+    $error = 0;
+    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
-    if (! $error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
+    if (!$error && (($id && $ref) || ($id && $ref_ext) || ($ref && $ref_ext)))
     {
         $error++;
-        $errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
+        $errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
     }
 
-    if (! $error)
+    if (!$error)
     {
-    	$langcode=($lang?$lang:(empty($conf->global->MAIN_LANG_DEFAULT)?'auto':$conf->global->MAIN_LANG_DEFAULT));
+    	$langcode = ($lang ? $lang : (empty($conf->global->MAIN_LANG_DEFAULT) ? 'auto' : $conf->global->MAIN_LANG_DEFAULT));
     	$langs->setDefaultLang($langcode);
 
         $fuser->getrights();
@@ -450,14 +450,12 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
 			        'product'=>$productorservice_result_fields
                 );
             }
-            else
-            {
+            else {
                 $error++;
                 $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
         }
@@ -481,54 +479,54 @@ function getProductOrService($authentication, $id = '', $ref = '', $ref_ext = ''
  */
 function createProductOrService($authentication, $product)
 {
-    global $db,$conf,$langs;
+    global $db, $conf, $langs;
 
-    $now=dol_now();
+    $now = dol_now();
 
     dol_syslog("Function: createProductOrService login=".$authentication['login']);
 
-    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
     // Init and check authentication
-    $objectresp=array();
-    $errorcode='';$errorlabel='';
-    $error=0;
-    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+    $objectresp = array();
+    $errorcode = ''; $errorlabel = '';
+    $error = 0;
+    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
-    if ($product['price_net'] > 0) $product['price_base_type']='HT';
-    if ($product['price'] > 0)     $product['price_base_type']='TTC';
+    if ($product['price_net'] > 0) $product['price_base_type'] = 'HT';
+    if ($product['price'] > 0)     $product['price_base_type'] = 'TTC';
 
     if ($product['price_net'] > 0 && $product['price'] > 0)
     {
-        $error++; $errorcode='KO'; $errorlabel="You must choose between price or price_net to provide price.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must choose between price or price_net to provide price.";
     }
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
+        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
 
 
-    if (! $error)
+    if (!$error)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-        $newobject=new Product($db);
-        $newobject->ref=$product['ref'];
-        $newobject->ref_ext=$product['ref_ext'];
-        $newobject->type=$product['type'];
-        $newobject->label=$product['label'];
-        $newobject->description=$product['description'];
-        $newobject->note_public=$product['note_public'];
-        $newobject->note_private=$product['note_private'];
-        $newobject->status=$product['status_tosell'];
-        $newobject->status_buy=$product['status_tobuy'];
-        $newobject->price=$product['price_net'];
-        $newobject->price_ttc=$product['price'];
-        $newobject->tva_tx=$product['vat_rate'];
-        $newobject->price_base_type=$product['price_base_type'];
-        $newobject->date_creation=$now;
+        $newobject = new Product($db);
+        $newobject->ref = $product['ref'];
+        $newobject->ref_ext = $product['ref_ext'];
+        $newobject->type = $product['type'];
+        $newobject->label = $product['label'];
+        $newobject->description = $product['description'];
+        $newobject->note_public = $product['note_public'];
+        $newobject->note_private = $product['note_private'];
+        $newobject->status = $product['status_tosell'];
+        $newobject->status_buy = $product['status_tobuy'];
+        $newobject->price = $product['price_net'];
+        $newobject->price_ttc = $product['price'];
+        $newobject->tva_tx = $product['vat_rate'];
+        $newobject->price_base_type = $product['price_base_type'];
+        $newobject->date_creation = $now;
 
 		if ($product['barcode'])
 		{
@@ -613,8 +611,7 @@ function createProductOrService($authentication, $product)
 							$newobject->error = 'You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
 						}
 					}
-					else
-					{
+					else {
 						$error++;
 						$newobject->error = 'You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
 					}
@@ -627,8 +624,7 @@ function createProductOrService($authentication, $product)
             $db->commit();
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
         }
-        else
-        {
+        else {
             $db->rollback();
             $error++;
             $errorcode = 'KO';
@@ -654,54 +650,54 @@ function createProductOrService($authentication, $product)
  */
 function updateProductOrService($authentication, $product)
 {
-    global $db,$conf,$langs;
+    global $db, $conf, $langs;
 
-    $now=dol_now();
+    $now = dol_now();
 
     dol_syslog("Function: updateProductOrService login=".$authentication['login']);
 
-    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
     // Init and check authentication
-    $objectresp=array();
-    $errorcode='';$errorlabel='';
-    $error=0;
-    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+    $objectresp = array();
+    $errorcode = ''; $errorlabel = '';
+    $error = 0;
+    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
-    if ($product['price_net'] > 0) $product['price_base_type']='HT';
-    if ($product['price'] > 0)     $product['price_base_type']='TTC';
+    if ($product['price_net'] > 0) $product['price_base_type'] = 'HT';
+    if ($product['price'] > 0)     $product['price_base_type'] = 'TTC';
 
     if ($product['price_net'] > 0 && $product['price'] > 0)
     {
-        $error++; $errorcode='KO'; $errorlabel="You must choose between price or price_net to provide price.";
+        $error++; $errorcode = 'KO'; $errorlabel = "You must choose between price or price_net to provide price.";
     }
 
 
     if ($product['barcode'] && !$product['barcode_type'])
     {
-        $errror++; $errorcode='KO' ; $errorlabel="You must set a barcode type when setting a barcode.";
+        $errror++; $errorcode = 'KO'; $errorlabel = "You must set a barcode type when setting a barcode.";
     }
 
-    if (! $error)
+    if (!$error)
     {
         include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-        $newobject=new Product($db);
+        $newobject = new Product($db);
         $newobject->fetch($product['id']);
 
-        if (isset($product['ref']))     $newobject->ref=$product['ref'];
-        if (isset($product['ref_ext'])) $newobject->ref_ext=$product['ref_ext'];
-        $newobject->type=$product['type'];
-        $newobject->label=$product['label'];
-        $newobject->description=$product['description'];
-        $newobject->note=$product['note'];
-        $newobject->status=$product['status_tosell'];
-        $newobject->status_buy=$product['status_tobuy'];
-        $newobject->price=$product['price_net'];
-        $newobject->price_ttc=$product['price'];
-        $newobject->tva_tx=$product['vat_rate'];
-        $newobject->price_base_type=$product['price_base_type'];
-        $newobject->date_creation=$now;
+        if (isset($product['ref']))     $newobject->ref = $product['ref'];
+        if (isset($product['ref_ext'])) $newobject->ref_ext = $product['ref_ext'];
+        $newobject->type = $product['type'];
+        $newobject->label = $product['label'];
+        $newobject->description = $product['description'];
+        $newobject->note = $product['note'];
+        $newobject->status = $product['status_tosell'];
+        $newobject->status_buy = $product['status_tobuy'];
+        $newobject->price = $product['price_net'];
+        $newobject->price_ttc = $product['price'];
+        $newobject->tva_tx = $product['vat_rate'];
+        $newobject->price_base_type = $product['price_base_type'];
+        $newobject->date_creation = $now;
 
         if ($product['barcode'])
         {
@@ -754,8 +750,7 @@ function updateProductOrService($authentication, $product)
         {
             $error++;
         }
-        else
-		{
+        else {
         	// Update stock if stock count is provided and differs from database after creation or update
 			if (isset($product['stock_real']) && $product['stock_real'] != '' && !empty($conf->global->stock->enabled))
 			{
@@ -785,8 +780,7 @@ function updateProductOrService($authentication, $product)
 							$newobject->error = 'You set a different value for stock, but correction of stock count (before='.$getstockreal.', after='.$savstockreal.') fails with error '.$newobject->error;
 						}
 					}
-					else
-					{
+					else {
 						$error++;
 						$newobject->error = 'You set a different value for stock but we failed to find warehouse '.$product['warehouse_ref'].' to make correction.';
 					}
@@ -819,8 +813,7 @@ function updateProductOrService($authentication, $product)
             $db->commit();
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
         }
-        else
-		{
+        else {
             $db->rollback();
             $error++;
             $errorcode = 'KO';
@@ -890,8 +883,7 @@ function deleteProductOrService($authentication, $listofidstring)
 		        $firsterror = 'Product or service with id '.$id.' not found';
 		        break;
 	        }
-	        else
-			{
+	        else {
 		        $result = $newobject->delete($user);
 		        if ($result <= 0)
 		        {
@@ -910,8 +902,7 @@ function deleteProductOrService($authentication, $listofidstring)
             //$objectresp=array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'listofid'=>$listofiddeleted);
             $objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'nbdeleted'=>count($listofiddeleted));
 	    }
-	    else
-	    {
+	    else {
 	    	$db->rollback();
 	        $error++;
 	        $errorcode = 'KO';
@@ -943,51 +934,50 @@ function deleteProductOrService($authentication, $listofidstring)
  */
 function getListOfProductsOrServices($authentication, $filterproduct)
 {
-    global $db,$conf,$langs;
+    global $db, $conf, $langs;
 
-    $now=dol_now();
+    $now = dol_now();
 
     dol_syslog("Function: getListOfProductsOrServices login=".$authentication['login']);
 
-    if ($authentication['entity']) $conf->entity=$authentication['entity'];
+    if ($authentication['entity']) $conf->entity = $authentication['entity'];
 
     // Init and check authentication
-    $objectresp=array();
-    $arrayproducts=array();
-    $errorcode='';$errorlabel='';
-    $error=0;
-    $fuser=check_authentication($authentication, $error, $errorcode, $errorlabel);
+    $objectresp = array();
+    $arrayproducts = array();
+    $errorcode = ''; $errorlabel = '';
+    $error = 0;
+    $fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
     // Check parameters
 
-    if (! $error)
+    if (!$error)
     {
-        $sql ="SELECT rowid, ref, ref_ext";
-        $sql.=" FROM ".MAIN_DB_PREFIX."product";
-        $sql.=" WHERE entity=".$conf->entity;
-        foreach($filterproduct as $key => $val)
+        $sql = "SELECT rowid, ref, ref_ext";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product";
+        $sql .= " WHERE entity=".$conf->entity;
+        foreach ($filterproduct as $key => $val)
         {
-		    if ($key == 'type' && $val >= 0) $sql.=" AND fk_product_type = ".$db->escape($val);
-		    if ($key == 'status_tosell') $sql.=" AND tosell = ".$db->escape($val);
-		    if ($key == 'status_tobuy') $sql.=" AND tobuy = ".$db->escape($val);
+		    if ($key == 'type' && $val >= 0) $sql .= " AND fk_product_type = ".$db->escape($val);
+		    if ($key == 'status_tosell') $sql .= " AND tosell = ".$db->escape($val);
+		    if ($key == 'status_tobuy') $sql .= " AND tobuy = ".$db->escape($val);
         }
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
         if ($resql)
         {
-         	$num=$db->num_rows($resql);
+         	$num = $db->num_rows($resql);
 
-         	$i=0;
+         	$i = 0;
          	while ($i < $num)
          	{
-         		$obj=$db->fetch_object($resql);
-         		$arrayproducts[]=array('id'=>$obj->rowid,'ref'=>$obj->ref,'ref_ext'=>$obj->ref_ext);
+         		$obj = $db->fetch_object($resql);
+         		$arrayproducts[] = array('id'=>$obj->rowid, 'ref'=>$obj->ref, 'ref_ext'=>$obj->ref_ext);
          		$i++;
          	}
         }
-        else
-        {
+        else {
             $error++;
-            $errorcode=$db->lasterrno();
-            $errorlabel=$db->lasterror();
+            $errorcode = $db->lasterrno();
+            $errorlabel = $db->lasterror();
         }
     }
 
@@ -997,9 +987,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
 			'result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel),
         	'products'=>$arrayproducts
         );
-    }
-    else
-    {
+    } else {
         $objectresp = array(
 			'result'=>array('result_code' => 'OK', 'result_label' => ''),
         	'products'=>$arrayproducts
@@ -1015,7 +1003,7 @@ function getListOfProductsOrServices($authentication, $filterproduct)
  *
  * @param	array		$authentication		Array of authentication information
  * @param	array		$id					Category id
- * @param	$lang		$lang				Force lang
+ * @param	Translate	$lang				Force lang
  * @return	array							Array result
  */
 function getProductsForCategory($authentication, $id, $lang = '')
@@ -1139,21 +1127,18 @@ function getProductsForCategory($authentication, $id, $lang = '')
 					'products'=> $products
 					);
 				}
-				else
-				{
+				else {
 					$errorcode = 'NORECORDS_FOR_ASSOCIATION'; $errorlabel = 'No products associated'.$sql;
 					$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
 					dol_syslog("getProductsForCategory:: ".$errorcode, LOG_DEBUG);
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}

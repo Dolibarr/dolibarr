@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Η αποστολή %s ταξινομείται
 ShipmentUnClassifyCloseddInDolibarr=Η αποστολή %s ταξινομήθηκε εκ νέου
 ShipmentBackToDraftInDolibarr=Η αποστολή %s επιστρέφει στην κατάσταση του σχεδίου
 ShipmentDeletedInDolibarr=Η αποστολή %s διαγράφηκε
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Παραγγελία %s
 OrderValidatedInDolibarr=Η παραγγελία %s επικυρώθηκε
 OrderDeliveredInDolibarr=Παραγγελία %s κατατάσσεται παραδοτέα
@@ -84,13 +85,14 @@ InterventionSentByEMail=Η παρέμβαση %s στάλθηκε με ηλεκ�
 ProposalDeleted=Η προσφορά διαγράφηκε
 OrderDeleted=Η παραγγελία διαγράφηκε
 InvoiceDeleted=Το τιμολόγιο διαγράφηκε
+DraftInvoiceDeleted=Το πρόχειρο τιμολόγιο διαγράφηκε
 PRODUCT_CREATEInDolibarr=Το προϊόν %s δημιουργήθηκε
 PRODUCT_MODIFYInDolibarr=Το προϊόν %s τροποποιήθηκε
 PRODUCT_DELETEInDolibarr=Το προϊόν %s διαγράφηκε
 HOLIDAY_CREATEInDolibarr=Αίτηση για άδεια %s δημιουργήθηκε
 HOLIDAY_MODIFYInDolibarr=Αίτηση για άδεια %s τροποποιήθηκε
 HOLIDAY_APPROVEInDolibarr=Η αίτηση για άδεια %s εγκρίθηκε
-HOLIDAY_VALIDATEDInDolibarr=Αίτηση άδειας %s επικυρώθηκε
+HOLIDAY_VALIDATEInDolibarr=Το αίτημα άδειας %s επικυρώθηκε
 HOLIDAY_DELETEInDolibarr=Αίτηση άδειας %s διαγράφηκε
 EXPENSE_REPORT_CREATEInDolibarr=Αναφορά εξόδων %s δημιουργήθηκε
 EXPENSE_REPORT_VALIDATEInDolibarr=Έκθεση δαπανών %s επικυρωθεί
@@ -110,9 +112,11 @@ BOM_UNVALIDATEInDolibarr=Το BOM δεν έχει εγκριθεί
 BOM_CLOSEInDolibarr=Το BOM είναι απενεργοποιημένο
 BOM_REOPENInDolibarr=Ανοίξτε ξανά το BOM
 BOM_DELETEInDolibarr=Το BOM διαγράφηκε
-MRP_MO_VALIDATEInDolibarr=MO validated
-MRP_MO_PRODUCEDInDolibarr=MO produced
-MRP_MO_DELETEInDolibarr=MO deleted
+MRP_MO_VALIDATEInDolibarr=Το ΜΟ επικυρώθηκε
+MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
+MRP_MO_PRODUCEDInDolibarr=Το ΜΟ παράχθηκε
+MRP_MO_DELETEInDolibarr=Το MO διαγράφηκε
+MRP_MO_CANCELInDolibarr=MO canceled
 ##### End agenda events #####
 AgendaModelModule=Πρότυπα εγγράφων για συμβάν
 DateActionStart=Ημερομηνία έναρξης
@@ -123,6 +127,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s</b> για να περιορίσετε 
 AgendaUrlOptions4=<b>logint = %s</b> για να περιορίσετε την έξοδο σε ενέργειες που έχουν εκχωρηθεί στο χρήστη <b>%s</b> (ιδιοκτήτης και άλλοι).
 AgendaUrlOptionsProject=<b>project = __ PROJECT_ID__</b> για να περιορίσετε την έξοδο σε ενέργειες που σχετίζονται με το έργο <b>__PROJECT_ID__</b> .
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> για την εξαίρεση αυτόματων συμβάντων.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> για να συμπεριλάβετε εκδηλώσεις διακοπών.
 AgendaShowBirthdayEvents=Εμφάνιση γενεθλίων των επαφών
 AgendaHideBirthdayEvents=Απόκρυψη γενεθλίων των επαφών
 Busy=Απασχολ.
@@ -150,3 +155,6 @@ EveryMonth=Μηνιαίο
 DayOfMonth=Ημέρα του Μήνα
 DayOfWeek=Ημέρα της εβδομάδας
 DateStartPlusOne=Έναρξη ημέρας + 1 ώρα
+SetAllEventsToTodo=Set all events to todo
+SetAllEventsToInProgress=Set all events to in progress
+SetAllEventsToFinished=Set all events to finished

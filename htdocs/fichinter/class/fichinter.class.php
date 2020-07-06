@@ -36,6 +36,35 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
  */
 class Fichinter extends CommonObject
 {
+
+	public $fields = array(
+	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+	'fk_soc' =>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+	'fk_projet' =>array('type'=>'integer:Project:projet/class/project.class.php:1:fk_statut=1', 'label'=>'Fk projet', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+	'fk_contrat' =>array('type'=>'integer', 'label'=>'Fk contrat', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+	'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>30),
+	'ref_ext' =>array('type'=>'varchar(255)', 'label'=>'Ref ext', 'enabled'=>1, 'visible'=>0, 'position'=>35),
+	'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>40, 'index'=>1),
+	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>45),
+	'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+	'date_valid' =>array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+	'datei' =>array('type'=>'date', 'label'=>'Datei', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+	'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fk user author', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+	'fk_user_modif' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>70),
+	'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+	'fk_statut' =>array('type'=>'smallint(6)', 'label'=>'Fk statut', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+	'dateo' =>array('type'=>'date', 'label'=>'Dateo', 'enabled'=>1, 'visible'=>-1, 'position'=>85),
+	'datee' =>array('type'=>'date', 'label'=>'Datee', 'enabled'=>1, 'visible'=>-1, 'position'=>90),
+	'datet' =>array('type'=>'date', 'label'=>'Datet', 'enabled'=>1, 'visible'=>-1, 'position'=>95),
+	'duree' =>array('type'=>'double', 'label'=>'Duree', 'enabled'=>1, 'visible'=>-1, 'position'=>100),
+	'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-1, 'position'=>105, 'showoncombobox'=>1),
+	'note_private' =>array('type'=>'text', 'label'=>'NotePublic', 'enabled'=>1, 'visible'=>0, 'position'=>110),
+	'note_public' =>array('type'=>'text', 'label'=>'NotePrivate', 'enabled'=>1, 'visible'=>0, 'position'=>115),
+	'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'visible'=>0, 'position'=>120),
+	'last_main_doc' =>array('type'=>'varchar(255)', 'label'=>'Last main doc', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
+	'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'position'=>130),
+	'extraparams' =>array('type'=>'varchar(255)', 'label'=>'Extraparams', 'enabled'=>1, 'visible'=>-1, 'position'=>135),
+	);
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -173,13 +202,11 @@ class Fichinter extends CommonObject
 		{
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$this->nb["fichinters"] = $obj->nb;
+				$this->nb["interventions"] = $obj->nb;
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
@@ -276,7 +303,7 @@ class Fichinter extends CommonObject
 				if (!$resql) $error++;
 			}
 
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -305,17 +332,13 @@ class Fichinter extends CommonObject
 			{
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				$this->error = join(',', $this->errors);
 				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -356,7 +379,7 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -375,9 +398,7 @@ class Fichinter extends CommonObject
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -402,8 +423,7 @@ class Fichinter extends CommonObject
 		if ($ref) {
 			$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 			$sql .= " AND f.ref='".$this->db->escape($ref)."'";
-		}
-		else $sql .= " WHERE f.rowid=".$rowid;
+		} else $sql .= " WHERE f.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -451,9 +471,7 @@ class Fichinter extends CommonObject
 				$this->db->free($resql);
 				return 1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -506,9 +524,7 @@ class Fichinter extends CommonObject
 			    $this->db->rollback();
 			    return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -539,12 +555,10 @@ class Fichinter extends CommonObject
 			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 			{
 				$num = $this->getNextNumRef($this->thirdparty);
-			}
-			else
-			{
+			} else {
 				$num = $this->ref;
 			}
-			$this->newref = $num;
+			$this->newref = dol_sanitizeFileName($num);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
 			$sql .= " SET fk_statut = 1";
@@ -626,9 +640,7 @@ class Fichinter extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::setValid ".$this->error, LOG_ERR);
 				return -1;
@@ -700,7 +712,7 @@ class Fichinter extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut((isset($this->statut) ? $this->statut : $this->status), $mode);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -753,8 +765,10 @@ class Fichinter extends CommonObject
 		$result = '';
 
 		$label = '<u>'.$langs->trans("ShowIntervention").'</u>';
-		if (!empty($this->ref))
-			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->status)) {
+			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
+		}
 
 		$url = DOL_URL_ROOT.'/fichinter/card.php?id='.$this->id;
 
@@ -846,15 +860,11 @@ class Fichinter extends CommonObject
 			if ($numref != "")
 			{
 				return $numref;
-			}
-			else
-			{
+			} else {
 				dol_print_error($db, "Fichinter::getNextNumRef ".$obj->error);
 				return "";
 			}
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
 			return "";
@@ -912,9 +922,7 @@ class Fichinter extends CommonObject
 				}
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -962,6 +970,16 @@ class Fichinter extends CommonObject
 		}
 
 		if (!$error)
+                {
+				$main = MAIN_DB_PREFIX.'fichinterdet';
+				$ef = $main."_extrafields";
+				$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".$this->id.")";
+
+				$resql = $this->db->query($sql);
+				if (!$resql) $error++;
+		}
+
+		if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet";
 			$sql .= " WHERE fk_fichinter = ".$this->id;
@@ -970,7 +988,7 @@ class Fichinter extends CommonObject
 			if (!$resql) $error++;
 		}
 
-		if ((!$error) && (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))) // For avoid conflicts if trigger used
+		if (!$error)
 		{
 			// Remove extrafields
 			$res = $this->deleteExtraFields();
@@ -1023,9 +1041,7 @@ class Fichinter extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1055,9 +1071,7 @@ class Fichinter extends CommonObject
 			{
 				$this->date_delivery = $date_delivery;
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_date_delivery Erreur SQL");
 				return -1;
@@ -1089,9 +1103,7 @@ class Fichinter extends CommonObject
 			{
 				$this->description = $description;
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				dol_syslog("Fichinter::set_description Erreur SQL");
 				return -1;
@@ -1123,9 +1135,7 @@ class Fichinter extends CommonObject
 			{
 				$this->fk_contrat = $contractid;
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				return -1;
 			}
@@ -1152,7 +1162,7 @@ class Fichinter extends CommonObject
 
 		// get extrafields so they will be clone
 		foreach ($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
+			$line->fetch_optionals();
 
 		// Load source object
 		$objFrom = clone $this;
@@ -1215,9 +1225,7 @@ class Fichinter extends CommonObject
 		{
 			$this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -1261,9 +1269,7 @@ class Fichinter extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				$this->db->rollback();
 				return -1;
@@ -1354,9 +1360,7 @@ class Fichinter extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1459,9 +1463,7 @@ class FichinterLigne extends CommonObjectLine
 
 			$this->db->free($result);
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error().' sql='.$sql;
 			return -1;
 		}
@@ -1495,9 +1497,7 @@ class FichinterLigne extends CommonObjectLine
 			{
 				$obj = $this->db->fetch_object($resql);
 				$rangToUse = $obj->max + 1;
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db);
 				$this->db->rollback();
 				return -1;
@@ -1521,7 +1521,7 @@ class FichinterLigne extends CommonObjectLine
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
 			$this->rowid = $this->id;
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -1549,15 +1549,11 @@ class FichinterLigne extends CommonObjectLine
 			if (!$error) {
 				$this->db->commit();
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
@@ -1592,7 +1588,7 @@ class FichinterLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -1617,16 +1613,12 @@ class FichinterLigne extends CommonObjectLine
 			{
 				$this->db->commit();
 				return $result;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -1670,16 +1662,12 @@ class FichinterLigne extends CommonObjectLine
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error();
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -1704,6 +1692,13 @@ class FichinterLigne extends CommonObjectLine
 			dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
 			$this->db->begin();
 
+                        $result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+				$this->db->rollback();
+				return -1;
+			}
+
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->id;
 			$resql = $this->db->query($sql);
 
@@ -1722,22 +1717,16 @@ class FichinterLigne extends CommonObjectLine
 
 					$this->db->commit();
 					return $result;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			return -2;
 		}
 	}

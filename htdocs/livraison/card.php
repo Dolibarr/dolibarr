@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/livraison/card.php
  *	\ingroup    livraison
- *	\brief      Fiche descriptive d'un bon de livraison=reception
+ *	\brief      Page to describe a delivery receipt
  */
 
 require '../main.inc.php';
@@ -34,30 +34,30 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/sendings.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
+if (!empty($conf->product->enabled) || !empty($conf->service->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-if (! empty($conf->expedition_bon->enabled))
+if (!empty($conf->expedition_bon->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-if (! empty($conf->stock->enabled))
+if (!empty($conf->stock->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-if (! empty($conf->projet->enabled)) {
+if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
+$langs->loadLangs(array("sendings", "bills", 'deliveries', 'orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 // Security check
 $id = GETPOST('id', 'int');
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'expedition', $id, 'livraison', 'livraison');
 
 $object = new Livraison($db);
 $extrafields = new ExtraFields($db);
@@ -118,18 +118,14 @@ if ($action == 'add')
 		$db->commit();
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 
 		$_GET["commande_id"] = $_POST["commande_id"];
 		$action = 'create';
 	}
-}
-
-elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
+} elseif ($action == 'confirm_valid' && $confirm == 'yes' &&
     ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison->creer))
     || (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->expedition->livraison_advance->validate)))
 )
@@ -166,9 +162,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 		if (!empty($backtopage)) header("Location: ".$backtopage);
 		else header("Location: ".DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1');
 		exit;
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -247,49 +241,8 @@ $upload_dir = $conf->expedition->dir_output.'/receipt';
 $permissiontoadd = $user->rights->expedition->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-
-/*
- * Build document
- */
-/*
-if ($action == 'builddoc')	// En get ou en post
-{
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	if (! empty($newlang))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
-	}
-    $ret=$object->fetch($id);    // Reload to get new records
-	$result= $object->generateDocument($object->modelpdf, $outputlangs);
-	if ($result < 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
-	}
-}
-
-// Delete file in doc form
-elseif ($action == 'remove_file')
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$upload_dir =	$conf->expedition->dir_output . "/receipt";
-	$file =	$upload_dir	. '/' .	GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-}
-*/
-
 include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
+
 
 /*
  *	View
@@ -300,20 +253,9 @@ llxHeader('', $langs->trans('Delivery'), 'Livraison');
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-/*********************************************************************
- *
- * Mode creation
- *
- *********************************************************************/
-if ($action == 'create')    // Seems to no be used
+if ($action == 'create')    // Create. Seems to no be used
 {
-}
-else
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
+} else // View
 {
 	if ($object->id > 0)
 	{
@@ -503,9 +445,7 @@ else
 				print $form->selectDate($object->date_delivery ? $object->date_delivery : -1, 'liv_', 1, 1, '', "setdate_livraison", 1, 1);
 				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
 				print '</form>';
-			}
-			else
-			{
+			} else {
 				print $object->date_delivery ? dol_print_date($object->date_delivery, 'dayhour') : '&nbsp;';
 			}
 			print '</td>';
@@ -526,9 +466,7 @@ else
 				if ($action != 'editincoterm')
 				{
 					print $form->textwithpicto($object->display_incoterms(), $object->label_incoterms, 1);
-				}
-				else
-				{
+				} else {
 					print $form->select_incoterms((!empty($object->fk_incoterms) ? $object->fk_incoterms : ''), (!empty($object->location_incoterms) ? $object->location_incoterms : ''), $_SERVER['PHP_SELF'].'?id='.$object->id);
 				}
 		        print '</td></tr>';
@@ -566,9 +504,8 @@ else
 			// Other attributes
 			if ($action == 'create_delivery') {
 				// copy from expedition
-				$expeditionExtrafields = new Extrafields($db);
-				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id) > 0) {
+				$extrafields->fetch_name_optionals_label($expedition->table_element);
+				if ($expedition->fetch_optionals() > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
@@ -626,9 +563,7 @@ else
 							}
 
 							$label = (!empty($product->multilangs[$outputlangs->defaultlang]["label"])) ? $product->multilangs[$outputlangs->defaultlang]["label"] : $object->lines[$i]->product_label;
-						}
-						else
-						{
+						} else {
 							$label = (!empty($object->lines[$i]->label) ? $object->lines[$i]->label : $object->lines[$i]->product_label);
 						}
 
@@ -648,9 +583,7 @@ else
 						{
 							print (!empty($object->lines[$i]->description) && $object->lines[$i]->description != $object->lines[$i]->product_label) ? '<br>'.dol_htmlentitiesbr($object->lines[$i]->description) : '';
 						}
-					}
-					else
-					{
+					} else {
 						print "<td>";
 						if ($object->lines[$i]->fk_product_type == 1) $text = img_object($langs->trans('Service'), 'service');
 						else $text = img_object($langs->trans('Product'), 'product');
@@ -676,12 +609,14 @@ else
 						$colspan = 2;
 						$mode = ($object->statut == 0) ? 'edit' : 'view';
 
-						$object->lines[$i]->fetch_optionals($object->lines[$i]->id);
+						$object->lines[$i]->fetch_optionals();
+
 						if ($action == 'create_delivery') {
 							$srcLine = new ExpeditionLigne($db);
 
 							$extrafields->fetch_name_optionals_label($srcLine->table_element);
-							$srcLine->fetch_optionals($expedition->lines[$i]->id);
+							$srcLine->id = $expedition->lines[$i]->id;
+							$srcLine->fetch_optionals();
 
 							$object->lines[$i]->array_options = array_merge($object->lines[$i]->array_options, $srcLine->array_options);
 						}
@@ -724,9 +659,7 @@ else
 					if ($conf->expedition_bon->enabled)
 					{
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;expid='.$object->origin_id.'&amp;action=delete&amp;backtopage='.urlencode(DOL_URL_ROOT.'/expedition/card.php?id='.$object->origin_id).'">'.$langs->trans("Delete").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 					}
 				}
@@ -769,15 +702,11 @@ else
 			// Rien a droite
 
 			print '</td></tr></table>';
-		}
-		else
-		{
+		} else {
 			/* Expedition non trouvee */
 			print "Expedition inexistante ou acces refuse";
 		}
-	}
-	else
-	{
+	} else {
 		/* Expedition non trouvee */
 		print "Expedition inexistante ou acces refuse";
 	}
