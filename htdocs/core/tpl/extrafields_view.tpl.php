@@ -86,9 +86,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		if ($action == 'edit_extras')
 		{
 			$value = (isset($_POST["options_".$key]) ? $_POST["options_".$key] : $object->array_options["options_".$key]);
-		}
-		else
-		{
+		} else {
 			$value = $object->array_options["options_".$key];
 			//var_dump($key.' - '.$value);
 		}
@@ -113,9 +111,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print $extrafields->showSeparator($key, $object);
 
 			$lastseparatorkeyfound = $key;
-		}
-		else
-		{
+		} else {
 			print '<tr class="trextrafields_collapse'.$extrafields_collapse_num;
 			/*if ($extrafields_collapse_num && $extrafields_collapse_num_old && $extrafields_collapse_num != $extrafields_collapse_num_old) {
 				print ' trextrafields_collapse_new';
@@ -147,8 +143,11 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			if ($object->element == 'shipping')         $permok = $user->rights->expedition->creer;
 			if ($object->element == 'delivery')         $permok = $user->rights->expedition->livraison->creer;
 			if ($object->element == 'productlot')       $permok = $user->rights->stock->creer;
-			if ($object->element == 'facturerec') 	  $permok = $user->rights->facture->creer;
-			if (($object->statut == 0 || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
+			if ($object->element == 'facturerec') 	    $permok = $user->rights->facture->creer;
+			if ($object->element == 'mo') 	    		$permok = $user->rights->mrp->write;
+
+			$isdraft = ((isset($object->statut) && $object->statut == 0) || (isset($object->status) && $object->status == 0));
+			if (($isdraft || !empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
 				&& $permok && $enabled != 5 && ($action != 'edit_extras' || GETPOST('attribute') != $key)
 			    && empty($extrafields->attributes[$object->table_element]['computed'][$key]))
 			{
@@ -191,9 +190,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
-			}
-			else
-			{
+			} else {
 				//var_dump($key.'-'.$value.'-'.$object->table_element);
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}

@@ -98,14 +98,11 @@ if ($search_status != '')
 	$tmp = explode('&', $search_status);
 	$mode = $tmp[0];
 	if (empty($tmp[1])) $filter = '';
-	else
-	{
+	else {
 		if ($tmp[1] == 'filter=notexpired') $filter = 'notexpired';
 		if ($tmp[1] == 'filter=expired') $filter = 'expired';
 	}
-}
-else
-{
+} else {
 	$search_status = $mode;
 	if ($filter == 'expired') $search_status .= '&filter=expired';
 	if ($filter == 'notexpired') $search_status .= '&filter=notexpired';
@@ -597,9 +594,7 @@ while ($i < min($num, $limit))
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
 			if (!empty($obj->description) && !empty($conf->global->PRODUCT_DESC_IN_LIST)) print '<br>'.dol_nl2br($obj->description);
-		}
-		else
-		{
+		} else {
 			if ($obj->type == 0) print img_object($obj->description, 'product').' '.dol_trunc($obj->description, 24);
 			if ($obj->type == 1) print img_object($obj->description, 'service').' '.dol_trunc($obj->description, 24);
 		}
@@ -682,8 +677,7 @@ while ($i < min($num, $limit))
 			$warning_delay = $conf->contrat->services->expires->warning_delay / 3600 / 24;
 			$textlate = $langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($warning_delay) >= 0 ? '+' : '').ceil($warning_delay).' '.$langs->trans("days");
 			print img_warning($textlate);
-		}
-		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
+		} else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '</td>';
         if (!$i) $totalarray['nbfield']++;
 	}
@@ -724,9 +718,7 @@ while ($i < min($num, $limit))
 	    {
 			// If contract is draft, we say line is also draft
 		    print $contractstatic->LibStatut(0, 5);
-	    }
-	    else
-	    {
+	    } else {
 		    print $staticcontratligne->LibStatut($obj->statut, 5, ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now) ? 1 : 0);
 	    }
 	    print '</td>';

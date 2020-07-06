@@ -128,21 +128,15 @@ if (empty($reshook))
                 if ($result2)
                 {
                     $db->commit();
-                }
-                else
-                {
+                } else {
                     $error = $nuser->error; $errors = $nuser->errors;
                     $db->rollback();
                 }
-            }
-            else
-            {
+            } else {
                 $error = $nuser->error; $errors = $nuser->errors;
                 $db->rollback();
             }
-        }
-        else
-        {
+        } else {
             $error = $object->error; $errors = $object->errors;
         }
     }
@@ -155,9 +149,7 @@ if (empty($reshook))
 		if ($object->setstatus(0) < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 			exit;
 		}
@@ -170,9 +162,7 @@ if (empty($reshook))
 		if ($object->setstatus(1) < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
 			exit;
 		}
@@ -277,9 +267,7 @@ if (empty($reshook))
             else $url = 'card.php?id='.$id;
             header("Location: ".$url);
             exit;
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
     }
@@ -299,15 +287,11 @@ if (empty($reshook))
         	{
         		header("Location: ".$backtopage);
         		exit;
-        	}
-        	else
-        	{
+        	} else {
         		header("Location: ".DOL_URL_ROOT.'/contact/list.php');
         		exit;
         	}
-        }
-        else
-        {
+        } else {
             setEventMessages($object->error, $object->errors, 'errors');
         }
     }
@@ -350,23 +334,17 @@ if (empty($reshook))
                         if (!$result > 0)
                         {
                             $errors[] = "ErrorFailedToSaveFile";
-                        }
-                        else
-                        {
+                        } else {
                             $object->photo = dol_sanitizeFileName($_FILES['photo']['name']);
 
     					    // Create thumbs
     					    $object->addThumbs($newfile);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     $errors[] = "ErrorBadImageFormat";
                 }
-            }
-            else
-            {
+            } else {
                 switch ($_FILES['photo']['error'])
                 {
                     case 1: //uploaded file exceeds the upload_max_filesize directive in php.ini
@@ -452,9 +430,7 @@ if (empty($reshook))
 	    							$resql = $db->query($sql);
 	    						}
 	    					}
-	    				}
-	    				else
-	    				{
+	    				} else {
 	    					$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$db->escape($object->email)."' AND entity = ".$db->escape(getEntity('mailing', 0));
 	    					$resql = $db->query($sql);
 	    				}
@@ -465,9 +441,7 @@ if (empty($reshook))
     				$object->old_lastname = '';
     				$object->old_firstname = '';
     				$action = 'view';
-    			}
-    			else
-    			{
+    			} else {
     				setEventMessages($object->error, $object->errors, 'errors');
     				$action = 'edit';
     			}
@@ -526,9 +500,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
  	}
    	$objcanvas->assign_values($action, $object->id, $object->ref); // Set value for templates
     $objcanvas->display_canvas($action); // Show template
-}
-else
-{
+} else {
     // -----------------------------------------
     // When used in standard mode
     // -----------------------------------------
@@ -647,8 +619,7 @@ else
                     print '</td>';
                     print '<input type="hidden" name="socid" id="socid" value="'.$objsoc->id.'">';
                     print '</td></tr>';
-                }
-                else {
+                } else {
                     print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                     print $form->select_company($socid, 'socid', '', 'SelectThirdParty');
                     print '</td></tr>';
@@ -703,18 +674,14 @@ else
                 if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
                     print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-                }
-                else
-                {
+                } else {
                     print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
                 }
 
                 if ($object->country_id)
                 {
                     print $formcompany->select_state(GETPOST("state_id", 'alpha') ? GETPOST("state_id", 'alpha') : $object->state_id, $object->country_code, 'state_id');
-                }
-                else
-                {
+                } else {
                     print $countrynotdefined;
                 }
                 print '</td></tr>';
@@ -871,9 +838,7 @@ else
             if ($object->birthday)
             {
                 print $form->selectDate($object->birthday, 'birthday', 0, 0, 0, "perso", 1, 0);
-            }
-            else
-            {
+            } else {
                 print $form->selectDate('', 'birthday', 0, 0, 1, "perso", 1, 0);
             }
             print '</td>';
@@ -882,9 +847,7 @@ else
             if ($object->birthday_alert)
             {
                 print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked>';
-            }
-            else
-            {
+            } else {
                 print '<input type="checkbox" name="birthday_alert" id="birthday_alert">';
             }
             print '</td>';
@@ -900,17 +863,14 @@ else
             {
                 print ' &nbsp; &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-            }
-            else
-            {
+            } else {
                 print ' &nbsp; &nbsp; ';
                 print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
             }
             print '</div>';
 
             print "</form>";
-        }
-        elseif ($action == 'edit' && !empty($id))
+        } elseif ($action == 'edit' && !empty($id))
         {
             /*
              * Fiche en mode edition
@@ -1031,9 +991,7 @@ else
                 if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && ($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1 || $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 2))
                 {
                     print '<tr><td><label for="state_id">'.$langs->trans('Region-State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
-                }
-                else
-                {
+                } else {
                     print '<tr><td><label for="state_id">'.$langs->trans('State').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
                 }
 
@@ -1070,9 +1028,7 @@ else
                 $langs->load("mails");
                 print '<td class="nowrap">'.$langs->trans("NbOfEMailingsSend").'</td>';
                 print '<td>'.$object->getNbOfEMailings().'</td>';
-            }
-            else
-			{
+            } else {
 				print '<td colspan="2"></td>';
             }
             print '</tr>';
@@ -1096,9 +1052,7 @@ else
 
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 	            print '<td>'.$form->selectyesno('no_email', (GETPOSTISSET("no_email") ?GETPOST("no_email", 'alpha') : $noemail), 1).'</td>';
-            }
-            else
-			{
+            } else {
 				print '<td colspan="2"></td>';
 			}
             print '</tr>';
@@ -1243,8 +1197,7 @@ else
                 $dolibarr_user = new User($db);
                 $result = $dolibarr_user->fetch($object->user_id);
                 print $dolibarr_user->getLoginUrl(1);
-            }
-            else print $langs->trans("NoDolibarrAccess");
+            } else print $langs->trans("NoDolibarrAccess");
             print '</td></tr>';
 
             // Photo
@@ -1419,8 +1372,7 @@ else
         if (!empty($conf->commande->enabled) || !empty($conf->expedition->enabled))
         {
             print '<tr><td>';
-            if (!empty($conf->expedition->enabled)) { print $langs->trans("ContactForOrdersOrShipments"); }
-            else print $langs->trans("ContactForOrders");
+            if (!empty($conf->expedition->enabled)) { print $langs->trans("ContactForOrdersOrShipments"); } else print $langs->trans("ContactForOrders");
             print '</td><td colspan="3">';
             $none = $langs->trans("NoContactForAnyOrder");
             if (!empty($conf->expedition->enabled)) { $none = $langs->trans("NoContactForAnyOrderOrShipments"); }
@@ -1448,8 +1400,7 @@ else
             $dolibarr_user = new User($db);
             $result = $dolibarr_user->fetch($object->user_id);
             print $dolibarr_user->getLoginUrl(1);
-        }
-        else print $langs->trans("NoDolibarrAccess");
+        } else print $langs->trans("NoDolibarrAccess");
         print '</td></tr>';
 
         print '<tr><td>';
@@ -1479,9 +1430,7 @@ else
 				{
 					$langs->load("mails");
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
-				}
-				else
-				{
+				} else {
 					$langs->load("mails");
 					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
 				}

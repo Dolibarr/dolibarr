@@ -160,9 +160,7 @@ if ($resql)
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
 
 	print "</table></div><br>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -226,9 +224,7 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_T
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 	$sql .= " OR u.entity = 0)"; // Show always superadmin
-}
-else
-{
+} else {
 	$sql .= " WHERE (u.entity IN (".getEntity('user')."))";
 }
 $sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
@@ -269,9 +265,7 @@ if ($resql)
 	}
 	print "</table></div><br>";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -344,8 +338,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*

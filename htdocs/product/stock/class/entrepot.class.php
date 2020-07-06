@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2008 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,11 @@ class Entrepot extends CommonObject
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'stock';
-	public $ismultientitymanaged = 1; // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+
+    /**
+     * @var int 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+     */
+	public $ismultientitymanaged = 1;
 
 	/**
 	 * @var string	Label
@@ -165,9 +169,7 @@ class Entrepot extends CommonObject
 		{
 			$this->statuts[self::STATUS_OPEN_ALL] = 'OpenAll';
 			$this->statuts[self::STATUS_OPEN_INTERNAL] = 'OpenInternal';
-		}
-		else
-		{
+		} else {
 			$this->statuts[self::STATUS_OPEN_ALL] = 'Opened';
 		}
 	}
@@ -184,11 +186,10 @@ class Entrepot extends CommonObject
 
 		$error = 0;
 
-		if (empty($this->label)) $this->label = $this->libelle; // For backward compatibility
+		$this->label = trim(!empty($this->label) ? $this->label : $this->libelle);
 
-		$this->label = trim($this->label);
-		if ($this->label == '')
-		{
+		// Error if label not defined
+		if ($this->label == '') {
 			$this->error = "ErrorFieldRequired";
 			return 0;
 		}
@@ -235,22 +236,17 @@ class Entrepot extends CommonObject
 				{
 					$this->db->commit();
 					return $id;
-				}
-				else
-				{
+				} else {
 					dol_syslog(get_class($this)."::create return -3");
 					$this->db->rollback();
 					return -3;
 				}
-			}
-			else {
+			} else {
 				$this->error = "Failed to get insert id";
 				dol_syslog(get_class($this)."::create return -2");
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			dol_syslog(get_class($this)."::create Error ".$this->db->error());
 			$this->db->rollback();
@@ -286,7 +282,8 @@ class Entrepot extends CommonObject
 			}
 		}
 
-		$this->label = trim($this->label);
+		$this->label = trim(!empty($this->label) ? $this->label : $this->libelle);
+
 		$this->description = trim($this->description);
 
 		$this->lieu = trim($this->lieu);
@@ -425,9 +422,7 @@ class Entrepot extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -460,9 +455,7 @@ class Entrepot extends CommonObject
 		if ($id)
 		{
 			$sql .= " WHERE rowid = '".$id."'";
-		}
-		else
-		{
+		} else {
 			$sql .= " WHERE entity = ".$conf->entity;
 			if ($ref) $sql .= " AND ref = '".$this->db->escape($ref)."'";
 		}
@@ -499,15 +492,11 @@ class Entrepot extends CommonObject
 				$this->country_code = $tmp['code'];
 
 				return 1;
-			}
-			else
-			{
+			} else {
                 $this->error = "Record Not Found";
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -553,9 +542,7 @@ class Entrepot extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 	        dol_print_error($this->db);
 		}
 	}
@@ -618,9 +605,7 @@ class Entrepot extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			$ret['nb'] = $obj->nb;
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -653,9 +638,7 @@ class Entrepot extends CommonObject
 			$ret['nb'] = $obj->nb;
 			$ret['value'] = $obj->value;
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -747,7 +730,7 @@ class Entrepot extends CommonObject
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-        if ($withpicto != 2) $result .= ($showfullpath ? $this->get_full_arbo() : (empty($this->label) ? $this->libelle : $this->label));
+        if ($withpicto != 2) $result .= (($showfullpath || !empty($conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO)) ? $this->get_full_arbo() : (empty($this->label)?$this->libelle:$this->label));
         $result .= $linkend;
 
         global $action;
@@ -822,10 +805,8 @@ class Entrepot extends CommonObject
                 	$warehousetmp->fetch($parentid);
                 	$TArbo[] = $warehousetmp->label;
                  	$parentid = $objarbo->fk_parent;
-                }
-                else break;
-            }
-            else dol_print_error($this->db);
+                } else break;
+            } else dol_print_error($this->db);
 
             $i++;
         }

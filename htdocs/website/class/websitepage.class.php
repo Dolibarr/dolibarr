@@ -268,8 +268,7 @@ class WebsitePage extends CommonObject
 		{
 			$sql .= ' AND t.rowid = '.$id;
 		}
-		else
-		{
+		else {
 			if ($id < 0) $sql .= ' AND t.rowid <> '.abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '".$this->db->escape($website_id)."'";
@@ -389,7 +388,7 @@ class WebsitePage extends CommonObject
 				} elseif ($key == 'lang' || $key == 't.lang') {
 					$listoflang = array();
 					$foundnull = 0;
-					foreach(explode(',', $value) as $tmpvalue) {
+					foreach (explode(',', $value) as $tmpvalue) {
 						if ($tmpvalue == 'null') {
 							$foundnull++;
 							continue;
@@ -782,6 +781,21 @@ class WebsitePage extends CommonObject
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
 	}
 
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Deletes object from existing categories not supplied.
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param 	int[]|int 	$categories 	Category ID or array of Categories IDs
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return $this->setCategoriesCommon($categories, Categorie::TYPE_WEBSITE_PAGE);
+	}
 
 	/**
 	 * Initialise object with example values

@@ -49,8 +49,7 @@ $tab = (!empty($_SESSION['poscart']) ? $_SESSION['poscart'] : array());
 
 $tab_size = count($tab);
 if ($tab_size <= 0) print '<div class="center">'.$langs->trans("NoArticle").'</div><br>';
-else
-{
+else {
     for ($i = 0; $i < $tab_size; $i++)
     {
         echo ('<div class="cadre_article">'."\n");

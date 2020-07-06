@@ -155,3 +155,6 @@ EveryMonth=Every month
 DayOfMonth=Day of month
 DayOfWeek=Day of week
 DateStartPlusOne=Date start + 1 hour
+SetAllEventsToTodo=Set all events to todo
+SetAllEventsToInProgress=Set all events to in progress
+SetAllEventsToFinished=Set all events to finished

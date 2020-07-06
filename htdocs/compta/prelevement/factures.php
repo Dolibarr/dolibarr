@@ -136,9 +136,7 @@ if ($id > 0 || $ref)
 		print '</div>';
 
 		dol_fiche_end();
-    }
-  	else
-    {
+    } else {
       	dol_print_error($db);
     }
 }
@@ -248,12 +246,10 @@ if ($result)
       	if ($obj->statut == 0)
 		{
 	  		print '-';
-		}
-      	elseif ($obj->statut == 2)
+		} elseif ($obj->statut == 2)
 		{
 	  		print $langs->trans("StatusCredited");
-		}
-      	elseif ($obj->statut == 3)
+		} elseif ($obj->statut == 3)
 		{
 	  		print '<b>'.$langs->trans("StatusRefused").'</b>';
 		}
@@ -291,9 +287,7 @@ if ($result)
   	print '</div>';
 
   	$db->free($result);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

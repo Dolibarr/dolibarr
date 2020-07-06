@@ -74,4 +74,4 @@ ProductsToConsume=消耗的產品
 ProductsToProduce=生產的產品
 UnitCost=單位成本
 TotalCost=總計花費
-BOMTotalCost=The cost to produce this BOM based on cost of each quantity and product to consume (use Cost price if defined, else Average Weighted Price if defined, else the Best purchase price)
+BOMTotalCost=根據每個要消耗的數量和產品的成本產生此BOM的成本（如果定義則使用“成本價”，如果定義則使用“平均加權價格”，否則使用“最佳採購價”）

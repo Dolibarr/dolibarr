@@ -91,8 +91,7 @@ if (empty($reshook))
 		if ($result < 0)
 		{
 			setEventMessages($bprev->error, $bprev->errors, 'errors');
-		}
-		elseif ($result == 0)
+		} elseif ($result == 0)
 		{
 			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 			setEventMessages($mesg, null, 'errors');
@@ -101,9 +100,7 @@ if (empty($reshook))
 			{
 				$mesg .= '<span class="warning">'.$val."</span><br>\n";
 			}
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
 
 			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$bprev->id);
@@ -191,7 +188,8 @@ print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
-        print $form->selectDate();
+        $datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        print $form->selectDate($datere, 're');
 
         if ($mysoc->isInEEC()) {
         	$title = $langs->trans("CreateForSepa");
@@ -200,7 +198,10 @@ if ($nb) {
         	}
 
         	if ($type != 'bank-transfer') {
-            	print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
+            	print '<select name="format">';
+            	print '<option value="FRST"'.(GETPOST('format', 'aZ09') == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
+            	print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
+            	print '</select>';
         	}
             print '<input class="butAction" type="submit" value="'.$title.'"/>';
         } else {
@@ -210,9 +211,7 @@ if ($nb) {
         	}
         	print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
-	}
-	else
-	{
+	} else {
 		if ($mysoc->isInEEC())
 		{
 			$title = $langs->trans("CreateForSepaFRST");
@@ -225,9 +224,7 @@ if ($nb) {
 				$title = $langs->trans("CreateForSepaRCUR");
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
 			}
-		}
-		else
-		{
+		} else {
 			$title = $langs->trans("CreateAll");
 			if ($type == 'bank-transfer') {
 				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
@@ -235,9 +232,7 @@ if ($nb) {
 			print '<a class="butActionRefused classfortooltip" href="#">'.$title."</a>\n";
 		}
 	}
-}
-else
-{
+} else {
 	$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
 	$title = $langs->trans("CreateAll");
 	if ($type == 'bank-transfer') {
@@ -388,17 +383,13 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
 	print "</form>";
 	print "<br>\n";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

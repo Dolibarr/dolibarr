@@ -181,9 +181,7 @@ if ($action == 'add')
 		{
 			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$res);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -196,9 +194,7 @@ if ($action == 'confirm_delete' && GETPOST("confirm") == "yes" && $user->rights-
     {
         header("Location: index.php");
         exit;
-    }
-    else
-    {
+    } else {
         dol_syslog($object->error, LOG_DEBUG);
         setEventMessages($object->error, $object->errors, 'errors');
     }
@@ -212,8 +208,7 @@ if ($action == 'valid_promesse')
 
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
-	}
-    else {
+	} else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -224,8 +219,7 @@ if ($action == 'set_cancel')
     {
         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
         exit;
-    }
-    else {
+    } else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
 }
@@ -236,12 +230,10 @@ if ($action == 'set_paid')
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
 		exit;
-	}
-    else {
+	} else {
 	    setEventMessages($object->error, $object->errors, 'errors');
     }
-}
-elseif ($action == 'classin' && $user->rights->don->creer)
+} elseif ($action == 'classin' && $user->rights->don->creer)
 {
 	$object->fetch($id);
 	$object->setProject($projectid);
@@ -355,9 +347,7 @@ if ($action == 'create')
 			}
 			print ')';
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td colspan="2">';
 			print $form->select_company($soc->id, 'socid', '(s.client = 1 OR s.client = 3) AND status=1', 'SelectThirdParty', 0, 0, null, 0, 'minwidth300');
 			// Option to reload page to retrieve customer informations. Note, this clear other input
@@ -520,9 +510,7 @@ if (!empty($id) && $action == 'edit')
 	if ($object->statut == 0)
 	{
 		print "<tr>".'<td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.price($object->amount).'"> '.$langs->trans("Currency".$conf->currency).'</td></tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print price($object->amount, 0, $langs, 0, 0, -1, $conf->currency);
 		print '</td></tr>';
@@ -777,9 +765,7 @@ if (!empty($id) && $action != 'edit')
 		}
 		print "</table>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -815,9 +801,7 @@ if (!empty($id) && $action != 'edit')
 		if ($remaintopay == 0)
 		{
 			print '<div class="inline-block divButAction"><span class="butActionRefused classfortooltip" title="'.$langs->trans("DisabledBecauseRemainderToPayIsZero").'">'.$langs->trans('DoPayment').'</span></div>';
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/don/payment/payment.php?rowid='.$object->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a></div>';
 		}
 	}
@@ -834,14 +818,10 @@ if (!empty($id) && $action != 'edit')
 		if ($object->statut == -1 || $object->statut == 0)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="card.php?rowid='.$object->id.'&action=delete">'.$langs->trans("Delete")."</a></div>";
-		}
-		else
-		{
+		} else {
 			print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
 		}
-	}
-	else
-	{
+	} else {
 		print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#">'.$langs->trans("Delete")."</a></div>";
 	}
 

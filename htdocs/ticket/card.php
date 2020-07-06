@@ -987,8 +987,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		print '<td>';
 		if (GETPOST('set', 'alpha') == 'properties' && $user->rights->ticket->write) {
 			print '<input class="button" type="submit" name="btn_update_ticket_prop" value="'.$langs->trans("Modify").'" />';
-		}
-		else {
+		} else {
 			//    Button to edit Properties
 			if ($object->fk_statut < 5 && $user->rights->ticket->write) {
 				print '<a class="editfielda" href="card.php?track_id='.$object->track_id.'&action=view&set=properties">'.img_edit($langs->trans('Modify')).'</a>';
@@ -1207,9 +1206,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 				}
 			}
 			print '</div>'."\n";
-		}
-		else
-		{
+		} else {
 			print '<br>';
 		}
 

@@ -120,8 +120,7 @@ if (!empty($morelogincontent)) {
 				echo $option;
 			}
 		}
-	}
-	else {
+	} else {
 		echo '<!-- Option by hook -->';
 		echo $morelogincontent;
 	}
@@ -220,8 +219,7 @@ if (!empty($morelogincontent) && is_array($morelogincontent)) {
 			echo $option."\n";
 		}
 	}
-}
-elseif (!empty($moreloginextracontent)) {
+} elseif (!empty($moreloginextracontent)) {
 	echo '<!-- Javascript by hook -->';
 	echo $moreloginextracontent;
 }
@@ -231,7 +229,7 @@ elseif (!empty($moreloginextracontent)) {
 if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AN_ID))
 {
 	$tmptagarray = explode(',', $conf->global->MAIN_GOOGLE_AN_ID);
-	foreach($tmptagarray as $tmptag) {
+	foreach ($tmptagarray as $tmptag) {
 		print "\n";
 		print "<!-- JS CODE TO ENABLE for google analtics tag -->\n";
 		print "

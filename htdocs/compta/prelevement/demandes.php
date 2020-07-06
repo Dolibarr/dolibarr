@@ -89,15 +89,13 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  */
 
 if ($type != 'bank-transfer') {
-	if (!$status)
-	{
+	if (!$status) {
 		$title = $langs->trans("RequestStandingOrderToTreat");
 	} else {
 		$title = $langs->trans("RequestStandingOrderTreated");
 	}
 } else {
-	if (!$status)
-	{
+	if (!$status) {
 		$title = $langs->trans("RequestPaymentsByBankTransferToTreat");
 	} else {
 		$title = $langs->trans("RequestPaymentsByBankTransferTreated");

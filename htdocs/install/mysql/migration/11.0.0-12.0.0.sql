@@ -50,8 +50,8 @@ create table llx_c_shipment_package_type
     rowid        integer  AUTO_INCREMENT PRIMARY KEY,
     label        varchar(50) NOT NULL,  -- Short name
     description	 varchar(255), -- Description
-    active       integer DEFAULT 1 NOT NULL, -- Active or not	
-    entity       integer DEFAULT 1 NOT NULL -- Multi company id 
+    active       integer DEFAULT 1 NOT NULL, -- Active or not
+    entity       integer DEFAULT 1 NOT NULL -- Multi company id
 )ENGINE=innodb;
 
 create table llx_facturedet_rec_extrafields
@@ -80,6 +80,8 @@ ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
 delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;
 
 -- For v12
+
+ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
 
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
@@ -110,7 +112,7 @@ UPDATE llx_website_page SET lang = 'it' WHERE lang like 'it_%';
 UPDATE llx_website_page SET lang = 'pt' WHERE lang like 'pt_%';
 
 ALTER TABLE llx_website ADD COLUMN lang varchar(8);
-ALTER TABLE llx_website ADD COLUMN otherlang varchar(255); 
+ALTER TABLE llx_website ADD COLUMN otherlang varchar(255);
 
 ALTER TABLE llx_website_page ADD COLUMN author_alias varchar(64);
 
@@ -277,6 +279,7 @@ ALTER TABLE llx_commande_fournisseur_dispatch MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_stock_mouvement MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY COLUMN batch varchar(128);
 ALTER TABLE llx_mrp_production MODIFY qty real NOT NULL DEFAULT 1;
+ALTER TABLE llx_expeditiondet_batch MODIFY COLUMN batch varchar(128);
 
 create table llx_categorie_website_page
 (
@@ -292,7 +295,7 @@ ALTER TABLE llx_categorie_website_page ADD INDEX idx_categorie_website_page_fk_w
 ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
 ALTER TABLE llx_categorie_website_page ADD CONSTRAINT fk_categorie_website_page_website_page_rowid FOREIGN KEY (fk_website_page) REFERENCES llx_website_page (rowid);
 
-ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime; 
+ALTER TABLE llx_categorie ADD COLUMN date_creation	datetime;
 ALTER TABLE llx_categorie ADD COLUMN tms     		timestamp;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_creat	integer;
 ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
@@ -310,7 +313,7 @@ ALTER TABLE llx_prelevement_facture ADD COLUMN fk_facture_fourn INTEGER NULL;
 
 ALTER TABLE llx_menu MODIFY COLUMN module varchar(255);
 
-UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG'; 
+UPDATE llx_actioncomm SET fk_action = 50 where fk_action = 40 AND code = 'TICKET_MSG';
 
 ALTER TABLE llx_emailcollector_emailcollector ADD COLUMN hostcharset varchar(16) DEFAULT 'UTF-8';
 

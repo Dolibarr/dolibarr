@@ -105,9 +105,7 @@ class box_external_rss extends ModeleBoxes
         	if ($rssparser->error) $errormessage .= " - ".$rssparser->error;
         	$title .= " ".img_error($errormessage);
             $this->info_box_head = array('text' => $title, 'limit' => 0);
-        }
-        else
-        {
+        } else {
             $this->info_box_head = array(
                 'text' => $title,
                 'sublink' => $link,

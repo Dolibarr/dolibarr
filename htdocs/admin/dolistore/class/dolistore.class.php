@@ -101,8 +101,7 @@ class Dolistore
 	        $trace = $e->getTrace();
 	        if ($trace[0]['args'][0] == 404) die('Bad ID');
 	        elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
-	        else
-	        {
+	        else {
 	            print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
 	            print $e->getMessage();
 	        }
@@ -183,8 +182,7 @@ class Dolistore
 			$trace = $e->getTrace();
 			if ($trace[0]['args'][0] == 404) die('Bad ID');
 			elseif ($trace[0]['args'][0] == 401) die('Bad auth key');
-			else
-			{
+			else {
 				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
 				print $e->getMessage();
 			}

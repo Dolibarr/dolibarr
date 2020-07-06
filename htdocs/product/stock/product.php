@@ -255,9 +255,7 @@ if ($action == "correct_stock" && !$cancel)
 					$origin_element,
 					$origin_id
 				); // We do not change value of stock for a correction
-			}
-			else
-			{
+			} else {
 				$result = $object->correct_stock(
 		    		$user,
 		    		GETPOST("id_entrepot"),
@@ -277,15 +275,11 @@ if ($action == "correct_stock" && !$cancel)
 				{
 					header("Location: ".$backtopage);
 					exit;
-				}
-				else
-				{
+				} else {
 	            	header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 			    setEventMessages($object->error, $object->errors, 'errors');
 			    $action = 'correction';
 			}
@@ -356,15 +350,11 @@ if ($action == "transfert_stock" && !$cancel)
 						$batch = $pdluo->batch;
 						$eatby = $pdluo->eatby;
 						$sellby = $pdluo->sellby;
-					}
-					else
-					{
+					} else {
 						setEventMessages($pdluo->error, $pdluo->errors, 'errors');
 						$error++;
 					}
-				}
-				else
-				{
+				} else {
 					$srcwarehouseid = GETPOST('id_entrepot', 'int');
 					$batch = $batchnumber;
 					$eatby = $d_eatby;
@@ -401,9 +391,7 @@ if ($action == "transfert_stock" && !$cancel)
 					);
 					if ($result2 < 0) $error++;
 				}
-			}
-			else
-			{
+			} else {
 				if (!$error)
 				{
     			    // Remove stock
@@ -443,15 +431,11 @@ if ($action == "transfert_stock" && !$cancel)
 				{
 					header("Location: ".$backtopage);
 					exit;
-				}
-				else
-				{
+				} else {
 					header("Location: product.php?id=".$object->id);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$db->rollback();
 				$action = 'transfert';
@@ -472,9 +456,7 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
         {
             if ((!GETPOST("sellby")) && (!GETPOST("eatby")) && (!$batchnumber)) {
                 setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("atleast1batchfield")), null, 'errors');
-            }
-            else
-            {
+            } else {
                 $d_eatby = dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
                 $d_sellby = dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
                 $pdluo->batch = $batchnumber;
@@ -486,14 +468,10 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans('Save'))
                     setEventMessages($pdluo->error, $pdluo->errors, 'errors');
                 }
             }
-        }
-        else
-        {
+        } else {
             setEventMessages($langs->trans('BatchInformationNotfound'), null, 'errors');
         }
-    }
-    else
-    {
+    } else {
         setEventMessages($pdluo->error, null, 'errors');
     }
     header("Location: product.php?id=".$id);
@@ -753,9 +731,7 @@ if ($id > 0 || $ref)
 		include DOL_DOCUMENT_ROOT.'/product/stock/tpl/stocktransfer.tpl.php';
 		print '<br><br>';
 	}
-}
-else
-{
+} else {
 	dol_print_error();
 }
 
@@ -779,14 +755,10 @@ if (empty($reshook))
 		{
 			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
-			}
-			else
-			{
+			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("CorrectStock").'</a>';
 			}
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
 		}
 
@@ -795,14 +767,10 @@ if (empty($reshook))
 		{
 			if (!$variants || !empty($conf->global->VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PARENT)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=transfert">'.$langs->trans("TransferStock").'</a>';
-			}
-			else
-			{
+			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("ActionAvailableOnVariantProductOnly").'">'.$langs->trans("TransferStock").'</a>';
 			}
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans("CorrectStock").'</a>';
 		}
 
@@ -867,7 +835,6 @@ if (!$variants) {
 
 			$entrepotstatic->id = $obj->rowid;
 			$entrepotstatic->ref = $obj->ref;
-			$entrepotstatic->libelle = $obj->ref;
 			$entrepotstatic->label = $obj->ref;
 			$entrepotstatic->lieu = $obj->lieu;
 			$entrepotstatic->fk_parent = $obj->fk_parent;
@@ -1094,9 +1061,7 @@ if (!$variants) {
 			print '<td class="right">'.$stock_total.'</td>';
 			print '<td></td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 		?>

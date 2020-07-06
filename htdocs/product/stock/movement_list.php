@@ -230,9 +230,7 @@ if ($action == "correct_stock")
 	        	$origin_element,
 	        	$origin_id
 	        ); // We do not change value of stock for a correction
-        }
-        else
-		{
+        } else {
 			$result = $product->correct_stock(
 	            $user,
 	            $id,
@@ -250,9 +248,7 @@ if ($action == "correct_stock")
         {
             header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
             exit;
-        }
-        else
-        {
+        } else {
             $error++;
             setEventMessages($product->error, $product->errors, 'errors');
             $action = 'correction';
@@ -335,15 +331,11 @@ if ($action == "transfert_stock" && !$cancel)
                         $batch = $pdluo->batch;
                         $eatby = $pdluo->eatby;
                         $sellby = $pdluo->sellby;
-                    }
-                    else
-                    {
+                    } else {
                         setEventMessages($pdluo->error, $pdluo->errors, 'errors');
                         $error++;
                     }
-                }
-                else
-                {
+                } else {
                     $srcwarehouseid = $id;
                     $batch = GETPOST('batch_number', 'alphanohtml');
                     $eatby = $d_eatby;
@@ -375,9 +367,7 @@ if ($action == "transfert_stock" && !$cancel)
                     	GETPOST('inventorycode', 'alphanohtml')
                         );
                 }
-            }
-            else
-            {
+            } else {
                 // Remove stock
                 $result1 = $product->correct_stock(
                     $user,
@@ -408,15 +398,11 @@ if ($action == "transfert_stock" && !$cancel)
                 {
                     header("Location: ".$backtopage);
                     exit;
-                }
-                else
-                {
+                } else {
                     header("Location: movement_list.php?id=".$object->id);
                     exit;
                 }
-            }
-            else
-            {
+            } else {
                 setEventMessages($product->error, $product->errors, 'errors');
                 $db->rollback();
                 $action = 'transfert';
@@ -478,6 +464,7 @@ if (!empty($search_product))       $sql .= natural_search('p.label', $search_pro
 if ($search_warehouse != '' && $search_warehouse != '-1')          $sql .= natural_search('e.rowid', $search_warehouse, 2);
 if (!empty($search_user))          $sql .= natural_search('u.login', $search_user);
 if (!empty($search_batch))         $sql .= natural_search('m.batch', $search_batch);
+if (!empty($product_id))           $sql .= natural_search('p.rowid', $product_id);
 if ($search_qty != '')				$sql .= natural_search('m.value', $search_qty, 1);
 if ($search_type_mouvement != '' && $search_type_mouvement != '-1')	$sql .= natural_search('m.type_mouvement', $search_type_mouvement, 2);
 // Add where from extra fields
@@ -503,9 +490,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (empty($search_inventorycode))
 {
 	$sql .= $db->plimit($limit + 1, $offset);
-}
-else
-{
+} else {
 	$limit = 0;
 }
 
@@ -541,8 +526,7 @@ if ($resql)
     $i = 0;
     $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
     if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
-	else
-	{
+	else {
 		$texte = $langs->trans("ListOfStockMovements");
 		if ($id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 	}
@@ -618,9 +602,7 @@ if ($resql)
         {
             $objbis = $db->fetch_object($resqlbis);
             $lastmovementdate = $db->jdate($objbis->datem);
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
@@ -628,9 +610,7 @@ if ($resql)
         if ($lastmovementdate)
         {
             print dol_print_date($lastmovementdate, 'dayhour');
-        }
-        else
-        {
+        } else {
             print $langs->trans("None");
         }
         print "</td></tr>";
@@ -1012,7 +992,6 @@ if ($resql)
 
         $warehousestatic->id = $objp->entrepot_id;
         $warehousestatic->ref = $objp->warehouse_ref;
-        $warehousestatic->libelle = $objp->warehouse_ref; // deprecated
         $warehousestatic->label = $objp->warehouse_ref;
         $warehousestatic->lieu = $objp->lieu;
         $warehousestatic->fk_parent = $objp->fk_parent;
@@ -1193,9 +1172,7 @@ if ($resql)
     	print "<br>\n";
     	//print '</td></tr>';
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

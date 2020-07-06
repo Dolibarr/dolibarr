@@ -25,7 +25,7 @@ FieldsTitle=Fields title
 FieldTitle=Field title
 NowClickToGenerateToBuildExportFile=Now, select the file format in the combo box and click on "Generate" to build the export file...
 AvailableFormats=Available Formats
-LibraryShort=Library
+LibraryShort=Librería
 ExportCsvSeparator=Csv caracter separator
 ImportCsvSeparator=Csv caracter separator
 Step=Step
@@ -59,7 +59,7 @@ ChooseFileToImport=Upload file then click on the %s icon to select file as sourc
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
 FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
-Field=Field
+Field=Campo
 NoFields=No fields
 MoveField=Move field column number %s
 ExampleOfImportFile=Example_of_import_file

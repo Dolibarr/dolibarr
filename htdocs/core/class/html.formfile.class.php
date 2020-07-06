@@ -101,9 +101,7 @@ class FormFile
 			// TODO: This does not support option savingdocmask
 			// TODO: This break feature to upload links too
 			return $this->_formAjaxFileUpload($object);
-		}
-		else
-	   	{
+		} else {
 			//If there is no permission and the option to hide unauthorized actions is enabled, then nothing is printed
 			if (!$perm && !empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
 				return 1;
@@ -197,9 +195,7 @@ class FormFile
 					$out .= ' ';
 					$out .= info_admin($langs->trans("ThisLimitIsDefinedInSetup", $max, $maxphptoshow), 1);
 				}
-			}
-			else
-			{
+			} else {
 				$out .= ' ('.$langs->trans("UploadDisabled").')';
 			}
 			$out .= "</td></tr>";
@@ -425,252 +421,196 @@ class FormFile
 			{
 				$showempty = 1;
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 					$modellist = ModeleThirdPartyDoc::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'propal')
+			} elseif ($modulepart == 'propal')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 					$modellist = ModelePDFPropales::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'supplier_proposal')
+			} elseif ($modulepart == 'supplier_proposal')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
 					$modellist = ModelePDFSupplierProposal::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'commande')
+			} elseif ($modulepart == 'commande')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 					$modellist = ModelePDFCommandes::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'expedition')
+			} elseif ($modulepart == 'expedition')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 					$modellist = ModelePDFExpedition::liste_modeles($this->db);
 				}
-			}
-            elseif ($modulepart == 'reception')
+			} elseif ($modulepart == 'reception')
             {
                 if (is_array($genallowed)) $modellist = $genallowed;
-                else
-                {
+                else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 					$modellist = ModelePdfReception::liste_modeles($this->db);
 				}
-            }
-			elseif ($modulepart == 'livraison')
+            } elseif ($modulepart == 'livraison')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/livraison/modules_livraison.php';
 					$modellist = ModelePDFDeliveryOrder::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'ficheinter')
+			} elseif ($modulepart == 'ficheinter')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
 					$modellist = ModelePDFFicheinter::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'facture')
+			} elseif ($modulepart == 'facture')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 					$modellist = ModelePDFFactures::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'contract')
+			} elseif ($modulepart == 'contract')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 					$modellist = ModelePDFContract::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'project')
+			} elseif ($modulepart == 'project')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
 					$modellist = ModelePDFProjects::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'project_task')
+			} elseif ($modulepart == 'project_task')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 					$modellist = ModelePDFTask::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'product')
+			} elseif ($modulepart == 'product')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
 					$modellist = ModelePDFProduct::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'product_batch')
+			} elseif ($modulepart == 'product_batch')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
 					$modellist = ModelePDFProductBatch::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'stock')
+			} elseif ($modulepart == 'stock')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.php';
 					$modellist = ModelePDFStock::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'movement')
+			} elseif ($modulepart == 'movement')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_movement.php';
 					$modellist = ModelePDFMovement::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'export')
+			} elseif ($modulepart == 'export')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 					$modellist = ModeleExports::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order')
+			} elseif ($modulepart == 'commande_fournisseur' || $modulepart == 'supplier_order')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 					$modellist = ModelePDFSuppliersOrders::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
+			} elseif ($modulepart == 'facture_fournisseur' || $modulepart == 'supplier_invoice')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
 					$modellist = ModelePDFSuppliersInvoices::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'supplier_payment')
+			} elseif ($modulepart == 'supplier_payment')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
 					$modellist = ModelePDFSuppliersPayments::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'remisecheque')
+			} elseif ($modulepart == 'remisecheque')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php';
 					$modellist = ModeleChequeReceipts::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'donation')
+			} elseif ($modulepart == 'donation')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/dons/modules_don.php';
 					$modellist = ModeleDon::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'member')
+			} elseif ($modulepart == 'member')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
 					$modellist = ModelePDFCards::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'agenda' || $modulepart == 'actions')
+			} elseif ($modulepart == 'agenda' || $modulepart == 'actions')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/action/modules_action.php';
 					$modellist = ModeleAction::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'expensereport')
+			} elseif ($modulepart == 'expensereport')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
 					$modellist = ModeleExpenseReport::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'unpaid')
+			} elseif ($modulepart == 'unpaid')
 			{
 				$modellist = '';
-			}
-			elseif ($modulepart == 'user')
+			} elseif ($modulepart == 'user')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/user/modules_user.class.php';
 					$modellist = ModelePDFUser::liste_modeles($this->db);
 				}
-			}
-			elseif ($modulepart == 'usergroup')
+			} elseif ($modulepart == 'usergroup')
 			{
 				if (is_array($genallowed)) $modellist = $genallowed;
-				else
-				{
+				else {
 					include_once DOL_DOCUMENT_ROOT.'/core/modules/usergroup/modules_usergroup.class.php';
 					$modellist = ModelePDFUserGroup::liste_modeles($this->db);
 				}
-			}
-			else
-			{
+			} else {
 			    $submodulepart = $modulepart;
 
 			    // modulepart = 'nameofmodule' or 'nameofmodule:NameOfObject'
@@ -697,9 +637,7 @@ class FormFile
 				if (class_exists($class))
 				{
 					$modellist = call_user_func($class.'::liste_modeles', $this->db);
-				}
-				else
-				{
+				} else {
 					dol_print_error($this->db, "Bad value for modulepart '".$modulepart."' in showdocuments");
 					return -1;
 				}
@@ -743,9 +681,7 @@ class FormFile
 				{
 					$out .= ajax_combobox('model');
 				}
-			}
-			else
-			{
+			} else {
 				$out .= '<div class="float">'.$langs->trans("Files").'</div>';
 			}
 
@@ -758,9 +694,7 @@ class FormFile
 				$morecss = 'maxwidth150';
 				if ($conf->browser->layout == 'phone') $morecss = 'maxwidth100';
 				$out .= $formadmin->select_language($defaultlang, 'lang_id', 0, null, 0, 0, 0, $morecss);
-			}
-			else
-			{
+			} else {
 				$out .= '&nbsp;';
 			}
 
@@ -896,9 +830,7 @@ class FormFile
 						{
 							$out .= $hookmanager->resPrint; // Complete line
 							$out .= '</tr>';
-						}
-						else
-						{
+						} else {
 							$out = $hookmanager->resPrint; // Replace all $out
 						}
 			  		}
@@ -984,9 +916,7 @@ class FormFile
 		if (!empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP))
 		{
 			$filterforfilesearch = preg_quote(basename($modulesubdir), '/');
-		}
-		else
-		{
+		} else {
 			$filterforfilesearch = preg_quote(basename($modulesubdir), '/').'[^\-]+';
 		}
 		$file_list = dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$'); // We also discard .meta and .png preview
@@ -1053,9 +983,7 @@ class FormFile
     			</dl>';
 
 			if (!$found) $out = '';
-		}
-		else
-		{
+		} else {
 			// TODO Add link to regenerate doc ?
 			//$out.= '<div id="gen_pdf_'.$modulesubdir.'" class="linkobject hideobject">'.img_picto('', 'refresh').'</div>'."\n";
 		}
@@ -1153,9 +1081,7 @@ class FormFile
 		if (isset($reshook) && $reshook != '') // null or '' for bypass
 		{
 			return $reshook;
-		}
-		else
-		{
+		} else {
 			if (!is_object($form))
 			{
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php'; // The compoent may be included into ajax page that does not include the Form class
@@ -1276,9 +1202,7 @@ class FormFile
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
 						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
 						$editline = 1;
-					}
-					else
-					{
+					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
 						print dol_trunc($filenametoshow, 200);
 						print '</a>';
@@ -1311,10 +1235,8 @@ class FormFile
 						{
 						    if ($useinecm == 5 || $useinecm == 6)
 						    {
-						        $smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
-						    }
-						    else
-						    {
+						    	$smallfile = getImageFileNameForSize($file['name'], ''); // There is no thumb for ECM module and Media filemanager, so we use true image. TODO Change this it is slow on image dir.
+						    } else {
 						        $smallfile = getImageFileNameForSize($file['name'], '_small'); // For new thumbs using same ext (in lower case however) than original
 						    }
 						    if (!dol_is_file($file['path'].'/'.$smallfile)) $smallfile = getImageFileNameForSize($file['name'], '_small', '.png'); // For backward compatibility of old thumbs that were created with filename in lower case and with .png extension
@@ -1329,8 +1251,7 @@ class FormFile
 							}
 							print '<img class="photo maxwidth200" height="'.(($useinecm == 4 || $useinecm == 5 || $useinecm == 6) ? '12' : $maxheightmini).'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.(!empty($object->entity) ? $object->entity : $conf->entity).'&file='.urlencode($relativepath.$smallfile).'" title="">';
 							print '</a>';
-						}
-						else print '&nbsp;';
+						} else print '&nbsp;';
 						print '</td>';
 					}
 
@@ -1342,9 +1263,7 @@ class FormFile
 						{
 							print $langs->trans("FileSharedViaALink").' ';
 							print '<input class="inline-block" type="checkbox" name="shareenabled"'.($file['share'] ? ' checked="checked"' : '').' /> ';
-						}
-						else
-						{
+						} else {
 							if ($file['share'])
 							{
 								// Define $urlwithroot
@@ -1362,9 +1281,7 @@ class FormFile
 
 								print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
 								print '<input type="text" class="quatrevingtpercent minwidth200imp" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
-							}
-							else
-							{
+							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}
 						}
@@ -1432,15 +1349,12 @@ class FormFile
 									print '<a class="lineupdown" href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=down&amp;rowid='.$line->id.'">'.img_down('default', 0, 'imgdownforline').'</a>';
 								}
 								print '</td>';
-							}
-							else {
+							} else {
 							   	print '<td'.(($conf->browser->layout != 'phone' && empty($disablemove)) ? ' class="linecolmove tdlineupdown center"' : ' class="linecolmove center"').'>';
 							   	print '</td>';
 							}
 					    }
-					}
-					else
-					{
+					} else {
 						print '<td class="right">';
 						print '<input type="hidden" name="ecmfileid" value="'.$filearray[$key]['rowid'].'">';
 						print '<input type="submit" class="button" name="renamefilesave" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
@@ -1556,78 +1470,63 @@ class FormFile
 		{
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$object_instance = new Societe($this->db);
-		}
-		elseif ($modulepart == 'invoice')
+		} elseif ($modulepart == 'invoice')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$object_instance = new Facture($this->db);
-		}
-		elseif ($modulepart == 'invoice_supplier')
+		} elseif ($modulepart == 'invoice_supplier')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$object_instance = new FactureFournisseur($this->db);
-		}
-		elseif ($modulepart == 'propal')
+		} elseif ($modulepart == 'propal')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$object_instance = new Propal($this->db);
-		}
-		elseif ($modulepart == 'supplier_proposal')
+		} elseif ($modulepart == 'supplier_proposal')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 			$object_instance = new SupplierProposal($this->db);
-		}
-		elseif ($modulepart == 'order')
+		} elseif ($modulepart == 'order')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$object_instance = new Commande($this->db);
-		}
-		elseif ($modulepart == 'order_supplier')
+		} elseif ($modulepart == 'order_supplier')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 			$object_instance = new CommandeFournisseur($this->db);
-		}
-		elseif ($modulepart == 'contract')
+		} elseif ($modulepart == 'contract')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 			$object_instance = new Contrat($this->db);
-		}
-		elseif ($modulepart == 'product')
+		} elseif ($modulepart == 'product')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$object_instance = new Product($this->db);
-		}
-		elseif ($modulepart == 'tax')
+		} elseif ($modulepart == 'tax')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 			$object_instance = new ChargeSociales($this->db);
-		}
-		elseif ($modulepart == 'project')
+		} elseif ($modulepart == 'project')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$object_instance = new Project($this->db);
-		}
-		elseif ($modulepart == 'fichinter')
+		} elseif ($modulepart == 'fichinter')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 			$object_instance = new Fichinter($this->db);
-		}
-		elseif ($modulepart == 'user')
+		} elseif ($modulepart == 'user')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			$object_instance = new User($this->db);
-		}
-		elseif ($modulepart == 'expensereport')
+		} elseif ($modulepart == 'expensereport')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 			$object_instance = new ExpenseReport($this->db);
-		}
-		elseif ($modulepart == 'holiday')
+		} elseif ($modulepart == 'holiday')
 		{
 			include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 			$object_instance = new Holiday($this->db);
-		}
-		elseif ($modulepart == 'banque')
+		} elseif ($modulepart == 'banque')
 		{
 		    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		    $object_instance = new Account($this->db);
@@ -1647,15 +1546,11 @@ class FormFile
 				$id = 0; $ref = ''; $label = '';
 
 				// To show ref or specific information according to view to show (defined by $module)
-				if ($modulepart == 'company' || $modulepart == 'tax') { preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); }
-				elseif ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) { $id = $ref; $ref = ''; } }	// $ref may be also id with old supplier invoices
-				elseif ($modulepart == 'user' || $modulepart == 'holiday') { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); }
-                elseif (in_array($modulepart, array('invoice', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'project', 'fichinter', 'expensereport', 'banque')))
+				if ($modulepart == 'company' || $modulepart == 'tax') { preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); } elseif ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) { $id = $ref; $ref = ''; } }	// $ref may be also id with old supplier invoices
+				elseif ($modulepart == 'user' || $modulepart == 'holiday') { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); } elseif (in_array($modulepart, array('invoice', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'project', 'fichinter', 'expensereport', 'banque')))
 				{
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : '');
-				}
-				else
-				{
+				} else {
 				    //print 'Error: Value for modulepart = '.$modulepart.' is not yet implemented in function list_of_autoecmfiles'."\n";
 				}
 
@@ -1664,9 +1559,7 @@ class FormFile
 				if (!empty($this->cache_objects[$modulepart.'_'.$id.'_'.$ref]))
 				{
 					$found = 1;
-				}
-				else
-				{
+				} else {
 					//print 'Fetch '.$id." - ".$ref.'<br>';
 
 					if ($id) {
@@ -1887,9 +1780,7 @@ class FormFile
 				print '<input type="submit" name="save" class="button" value="'.dol_escape_htmltag($langs->trans('Save')).'">';
 				print '<input type="submit" name="cancel" class="button" value="'.dol_escape_htmltag($langs->trans('Cancel')).'">';
 				print '</td>';
-			}
-			else
-			{
+			} else {
 				print '<td>';
 				print img_picto('', 'globe').' ';
 				print '<a data-ajax="false" href="'.$link->url.'" target="_blank">';
@@ -1950,8 +1841,7 @@ class FormFile
 				{
 					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
 					$out .= '<span class="fa fa-search-plus" style="color: gray"></span>';
-				}
-				else $out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
+				} else $out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name']);
 				$out .= '</a>';
 			}
 		}

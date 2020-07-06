@@ -105,16 +105,12 @@ if ($action == 'update')
 			$action = "";
 			$transkey = "";
 			$transvalue = "";
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
 				setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
-			}
-			else
-			{
+			} else {
 				setEventMessages($db->lasterror(), null, 'errors');
 			}
 			$action = '';
@@ -154,16 +150,12 @@ if ($action == 'add')
 			$action = "";
 			$transkey = "";
 			$transvalue = "";
-		}
-		else
-		{
+		} else {
 		    $db->rollback();
 		    if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		    {
 		        setEventMessages($langs->trans("WarningAnEntryAlreadyExistForTransKey"), null, 'warnings');
-		    }
-		    else
-		    {
+		    } else {
 		        setEventMessages($db->lasterror(), null, 'errors');
             }
 			$action = '';
@@ -179,9 +171,7 @@ if ($action == 'delete')
 	if ($result >= 0)
 	{
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -210,9 +200,7 @@ if (empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
     $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=1'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Disabled"), 'switch_off');
     $enabledisablehtml .= '</a>';
-}
-else
-{
+} else {
     // Button on, click to disable
     $enabledisablehtml .= '<a class="reposition valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=setMAIN_ENABLE_OVERWRITE_TRANSLATION&value=0'.$param.'">';
     $enabledisablehtml .= img_picto($langs->trans("Activated"), 'switch_on');
@@ -347,9 +335,7 @@ if ($mode == 'overwrite')
     		if ($action == 'edit' && $obj->rowid == GETPOST('rowid', 'int'))
     		{
     			print '<input type="text" class="quatrevingtpercent" name="transvalue" value="'.dol_escape_htmltag($obj->transvalue).'">';
-    		}
-    		else
-    		{
+    		} else {
     			print dol_escape_htmltag($obj->transvalue);
     		}
     		print '</td>';
@@ -361,9 +347,7 @@ if ($mode == 'overwrite')
     			print '<input type="submit" class="button buttongen" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
     			print ' &nbsp; ';
     			print '<input type="submit" class="button buttongen" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
-    		}
-    		else
-    		{
+    		} else {
     			print '<a class="reposition editfielda paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=edit'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_edit().'</a>';
 				print ' &nbsp; ';
     			print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$obj->entity.'&action=delete'.((empty($user->entity) && $debug) ? '&debug=1' : '').'">'.img_delete().'</a>';
@@ -406,9 +390,7 @@ if ($mode == 'searchkey')
     if ($action == 'search' && ($nbempty > 999))    // 999 to disable this
     {
         setEventMessages($langs->trans("WarningAtLeastKeyOrTranslationRequired"), null, 'warnings');
-    }
-    else
-    {
+    } else {
         // Search into dir of modules (the $modulesdir is already a list that loop on $conf->file->dol_document_root)
         $i = 0;
         foreach ($modulesdir as $keydir => $tmpsearchdir)
@@ -536,8 +518,7 @@ if ($mode == 'searchkey')
                 print '&nbsp;&nbsp;';
                 $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
                 print $form->textwithpicto('', $htmltext, 1, 'info');
-            }
-            elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
+            } elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
             {
             	//print $key.'-'.$val;
                 print '<a class="reposition paddingrightonly" href="'.$_SERVER['PHP_SELF'].'?mode=overwrite&amp;langcode='.$langcode.'&amp;transkey='.$key.'">'.img_edit_add($langs->trans("Overwrite")).'</a>';
@@ -551,9 +532,7 @@ if ($mode == 'searchkey')
 
             	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'globe').'</a>';
             }
-        }
-        else
-        {
+        } else {
             $htmltext = $langs->trans("TransKeyWithoutOriginalValue", $key);
             print $form->textwithpicto('', $htmltext, 1, 'warning');
         }

@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Prdstavnik prodaje koji kontroliše ug
 TypeContact_contrat_external_BILLING=Kontakt kupca za naplatu
 TypeContact_contrat_external_CUSTOMER=Kontakt kupca za kontrolu ugovora
 TypeContact_contrat_external_SALESREPSIGN=Kontakt kupca za potpisivanje ugovora
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

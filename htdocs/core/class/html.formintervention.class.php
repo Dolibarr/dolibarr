@@ -96,16 +96,12 @@ class FormIntervention
 					if ($socid > 0 && (empty($obj->fk_soc) || $obj->fk_soc == $socid) && !$user->rights->societe->lire)
 					{
 						// Do nothing
-					}
-					else
-					{
+					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
-						}
-						else
-						{
+						} else {
 							$disabled = 0;
 							if (!$obj->fk_statut > 0)
 							{
@@ -121,9 +117,7 @@ class FormIntervention
 							if ($hideunselectables && $disabled)
 							{
 								$resultat = '';
-							}
-							else
-							{
+							} else {
 								$resultat = '<option value="'.$obj->rowid.'"';
 								if ($disabled) $resultat .= ' disabled';
 								$resultat .= '>'.$labeltoshow;
@@ -138,9 +132,7 @@ class FormIntervention
 			$out .= '</select>';
 			$db->free($resql);
 			return $out;
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 			return '';
 		}

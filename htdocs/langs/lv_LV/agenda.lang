@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Sūtījums %s, kas klasificēts kā rēķins
 ShipmentUnClassifyCloseddInDolibarr=Sūtījums %s klasificēts atkārtoti atvērts
 ShipmentBackToDraftInDolibarr=Sūtījums %s dodas atpakaļ uz melnraksta statusu
 ShipmentDeletedInDolibarr=Sūtījums %s dzēsts
+ReceptionValidatedInDolibarr=Reģistrācija %s validēta
 OrderCreatedInDolibarr=Pasūtījums %s izveidots
 OrderValidatedInDolibarr=Pasūtījums %s pārbaudīts
 OrderDeliveredInDolibarr=Pasūtījums %s klasificēts piegādāts

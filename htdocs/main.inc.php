@@ -131,17 +131,13 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type))
 			{
 				//$var[$key] = $value;	// This is useless
-			}
-			else
-			{
+			} else {
 				print 'Access refused by SQL/Script injection protection in main.inc.php (type='.htmlentities($type).' key='.htmlentities($key).' value='.htmlentities($value).' page='.htmlentities($_SERVER["REQUEST_URI"]).')';
 				exit;
 			}
 		}
 		return true;
-	}
-	else
-	{
+	} else {
 		return (testSqlAndScriptInject($var, $type) <= 0);
 	}
 }
@@ -269,14 +265,11 @@ if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERV
 			{
 				$newurl = preg_replace('/^http:/i', 'https:', $_SERVER["SCRIPT_URI"]);
 			}
-		}
-		else	// Check HTTPS environment variable (Apache/mod_ssl only)
-		{
+		} else {
+			// Check HTTPS environment variable (Apache/mod_ssl only)
 			$newurl = preg_replace('/^http:/i', 'https:', DOL_MAIN_URL_ROOT).$_SERVER["REQUEST_URI"];
 		}
-	}
-	else
-	{
+	} else {
 		// Check HTTPS environment variable (Apache/mod_ssl only)
 		$newurl = $conf->file->main_force_https.$_SERVER["REQUEST_URI"];
 	}
@@ -287,9 +280,7 @@ if (!empty($conf->file->main_force_https) && (empty($_SERVER["HTTPS"]) || $_SERV
 		dol_syslog("main.inc: dolibarr_main_force_https is on, we make a redirect to ".$newurl);
 		header("Location: ".$newurl);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_syslog("main.inc: dolibarr_main_force_https is on but we failed to forge new https url so no redirect is done", LOG_WARNING);
 	}
 }
@@ -430,9 +421,7 @@ if (!defined('NOLOGIN'))
 	if (defined('MAIN_AUTHENTICATION_MODE'))
 	{
 		$dolibarr_main_authentication = constant('MAIN_AUTHENTICATION_MODE');
-	}
-	else
-	{
+	} else {
 		// Authentication mode
 		if (empty($dolibarr_main_authentication)) $dolibarr_main_authentication = 'http,dolibarr';
 		// Authentication mode: forceuser
@@ -656,9 +645,7 @@ if (!defined('NOLOGIN'))
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
 		}
-	}
-	else
-	{
+	} else {
 		// We are already into an authenticated session
 		$login = $_SESSION["dol_login"];
 		$entity = $_SESSION["dol_entity"];
@@ -708,9 +695,7 @@ if (!defined('NOLOGIN'))
 			if (GETPOST('lang', 'aZ09'))       $paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
-		}
-		else
-		{
+		} else {
 		    // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 		    $hookmanager->initHooks(array('main'));
 
@@ -812,9 +797,7 @@ if (!defined('NOLOGIN'))
 			session_destroy();
 			dol_print_error($db, 'Error in some triggers USER_LOGIN or in some hooks afterLogin');
 			exit;
-		}
-		else
-		{
+		} else {
 			$db->commit();
 		}
 
@@ -978,9 +961,7 @@ if (empty($conf->browser->firefox))
 	define('ROWS_7', 7);
 	define('ROWS_8', 8);
 	define('ROWS_9', 9);
-}
-else
-{
+} else {
 	define('ROWS_1', 0);
 	define('ROWS_2', 1);
 	define('ROWS_3', 2);
@@ -1000,9 +981,8 @@ if (!defined('NOREQUIREMENU'))
 	if (empty($user->socid))    // If internal user or not defined
 	{
 		$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
-	}
-	else                        // If external user
-	{
+	} else {
+		// If external user
 		$conf->standard_menu = (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENUFRONT_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 	}
 
@@ -1145,8 +1125,7 @@ function top_httphead($contenttype = 'text/html', $forcenocache = 0)
 			// default-src http: https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'
 			header("Content-Security-Policy: ".$contentsecuritypolicy);
 		}
-	}
-	elseif (constant('FORCECSP'))
+	} elseif (constant('FORCECSP'))
 	{
 		header("Content-Security-Policy: ".constant('FORCECSP'));
 	}
@@ -1325,9 +1304,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			    if (preg_match('/^(http|\/\/)/i', $cssfile))
 			    {
 			        $urltofile = $cssfile;
-			    }
-			    else
-			    {
+			    } else {
 			        $urltofile = dol_buildpath($cssfile, 1);
 			    }
 				print '<!-- Includes CSS added by page -->'."\n".'<link rel="stylesheet" type="text/css" title="default" href="'.$urltofile;
@@ -1353,49 +1330,16 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			else print '<script src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			if (!defined('DISABLE_JQUERY_TABLEDND')) print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/tablednd/jquery.tablednd.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			// jQuery jnotify
-			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY'))
-			{
+			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
-			// Flot
-			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'jflot')
-			{
-				if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT'))
-				{
-					if (constant('JS_JQUERY_FLOT'))
-					{
-						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					}
-					else
-					{
-						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						/* Test for jflot 4.2 -> not better than current
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
-						*/
-					}
-				}
-			}
 			// Chart
-			if ($conf->global->MAIN_JS_GRAPH == 'chart')
-			{
+			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') {
 				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
 			// jQuery jeditable for Edit In Place features
-			if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !defined('DISABLE_JQUERY_JEDITABLE'))
-			{
+			if (!empty($conf->global->MAIN_USE_JQUERY_JEDITABLE) && !defined('DISABLE_JQUERY_JEDITABLE')) {
 				print '<!-- JS to manage editInPlace feature -->'."\n";
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ui-datepicker.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
@@ -1414,28 +1358,26 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jeditable/jquery.jeditable.ckeditor.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
             // jQuery Timepicker
-            if (!empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER'))
-            {
+            if (!empty($conf->global->MAIN_USE_JQUERY_TIMEPICKER) || defined('REQUIRE_JQUERY_TIMEPICKER')) {
             	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/timepicker/jquery-ui-timepicker-addon.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
             	print '<script src="'.DOL_URL_ROOT.'/core/js/timepicker.js.php?lang='.$langs->defaultlang.($ext ? '&amp;'.$ext : '').'"></script>'."\n";
             }
-            if (!defined('DISABLE_SELECT2') && (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT')))     // jQuery plugin "mutiselect", "multiple-select", "select2", ...
-            {
+            if (!defined('DISABLE_SELECT2') && (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))) {
+                // jQuery plugin "mutiselect", "multiple-select", "select2", ...
             	$tmpplugin = empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) ?constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
             	print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/'.$tmpplugin.'/dist/js/'.$tmpplugin.'.full.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n"; // We include full because we need the support of containerCssClass
             }
 		}
 
-        if (!$disablejs && !empty($conf->use_javascript_ajax))
-        {
+        if (!$disablejs && !empty($conf->use_javascript_ajax)) {
             // CKEditor
         	if ((!empty($conf->fckeditor->enabled) && (empty($conf->global->FCKEDITOR_EDITORNAME) || $conf->global->FCKEDITOR_EDITORNAME == 'ckeditor') && !defined('DISABLE_CKEDITOR')) || defined('FORCE_CKEDITOR'))
             {
                 print '<!-- Includes JS for CKEditor -->'."\n";
                 $pathckeditor = DOL_URL_ROOT.'/includes/ckeditor/ckeditor/';
                 $jsckeditor = 'ckeditor.js';
-                if (constant('JS_CKEDITOR'))	// To use external ckeditor 4 js lib
-                {
+                if (constant('JS_CKEDITOR')) {
+                    // To use external ckeditor 4 js lib
                 	$pathckeditor = constant('JS_CKEDITOR');
                 }
                 print '<script><!-- enable ckeditor by main.inc.php -->';
@@ -1449,9 +1391,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                 if (GETPOST('mode', 'aZ09') == 'Full_inline')
                 {
                 	print 'CKEDITOR.disableAutoInline = false;'."\n";
-                }
-                else
-                {
+                } else {
                 	print 'CKEDITOR.disableAutoInline = true;'."\n";
                 }
                 print '</script>'."\n";
@@ -1497,9 +1437,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
                     if (preg_match('/^(http|\/\/)/i', $jsfile))
                     {
                         print '<script src="'.$jsfile.'"></script>'."\n";
-                    }
-                    else
-                    {
+                    } else {
                         print '<script src="'.dol_buildpath($jsfile, 1).'"></script>'."\n";
                     }
                 }
@@ -1580,10 +1518,8 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			if (preg_match('/\d\.\d/', $appli))
 			{
 				if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-			}
-			else $appli .= " ".DOL_VERSION;
-		}
-		else $appli .= " ".DOL_VERSION;
+			} else $appli .= " ".DOL_VERSION;
+		} else $appli .= " ".DOL_VERSION;
 
 		if (!empty($conf->global->MAIN_FEATURES_LEVEL)) $appli .= "<br>".$langs->trans("LevelOfFeature").': '.$conf->global->MAIN_FEATURES_LEVEL;
 
@@ -1598,9 +1534,7 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 				$logouttext .= '<a accesskey="l" href="'.DOL_URL_ROOT.'/user/logout.php">';
 				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin');
 				$logouttext .= '</a>';
-			}
-			else
-			{
+			} else {
 				$logouthtmltext .= $langs->trans("NoLogoutProcessWithAuthMode", $_SESSION["dol_authmode"]);
 				$logouttext .= img_picto($langs->trans('Logout'), 'sign-out', '', false, 0, 0, '', 'atoplogin opacitymedium');
 			}
@@ -1617,11 +1551,10 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 		{
 			if ($result == 0)
 				$toprightmenu .= $hookmanager->resPrint; // add
-			else
+			else {
 				$toprightmenu = $hookmanager->resPrint; // replace
-		}
-		else
-		{
+			}
+		} else {
 			$toprightmenu .= $result; // For backward compatibility
 		}
 
@@ -1715,6 +1648,11 @@ function top_menu($head, $title = '', $target = '', $disablejs = 0, $disablehead
 			$toprightmenu .= top_menu_search();
 		}
 
+		if (!empty($conf->global->MAIN_USE_TOP_MENU_QUICKADD_DROPDOWN)) {
+			// Add search dropdown
+			$toprightmenu .= top_menu_quickadd();
+		}
+
 		// Add bookmark dropdown
 		$toprightmenu .= top_menu_bookmark();
 
@@ -1758,8 +1696,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     {
         $userImage          = Form::showphoto('userphoto', $user, 0, 0, 0, 'photouserphoto userphoto', 'small', 0, 1);
         $userDropDownImage  = Form::showphoto('userphoto', $user, 0, 0, 0, 'dropdown-user-image', 'small', 0, 1);
-    }
-    else {
+    } else {
         $nophoto = '/public/theme/common/user_anonymous.png';
         if ($user->gender == 'man') $nophoto = '/public/theme/common/user_man.png';
         if ($user->gender == 'woman') $nophoto = '/public/theme/common/user_woman.png';
@@ -1812,8 +1749,7 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     {
         if ($result == 0) {
             $dropdownBody .= $hookmanager->resPrint; // add
-        }
-        else {
+        } else {
             $dropdownBody = $hookmanager->resPrint; // replace
         }
     }
@@ -1839,10 +1775,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     	if (preg_match('/\d\.\d/', $appli))
     	{
     		if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-    	}
-    	else $appli .= " ".DOL_VERSION;
-    }
-    else $appli .= " ".DOL_VERSION;
+    	} else $appli .= " ".DOL_VERSION;
+    } else $appli .= " ".DOL_VERSION;
 
     if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
 	    $btnUser = '<!-- div for user link -->
@@ -1927,6 +1861,224 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
     return $btnUser;
 }
 
+/**
+ * Build the tooltip on top menu quick add
+ *
+ * @return  string                  HTML content
+ */
+function top_menu_quickadd()
+{
+	global $langs, $conf, $db, $hookmanager, $user;
+	global $menumanager;
+	$html = '';
+	// Define $dropDownQuickAddHtml
+	$dropDownQuickAddHtml = '<div class="dropdown-header bookmark-header center">';
+	$dropDownQuickAddHtml.= $langs->trans('QuickAdd');
+	$dropDownQuickAddHtml.= '</div>';
+
+	$dropDownQuickAddHtml.= '<div class="quickadd-body dropdown-body">';
+	$dropDownQuickAddHtml.= '<div class="quickadd">';
+	if (! empty($conf->societe->enabled) && $user->rights->societe->creer) {
+		$langs->load("companies");
+		$dropDownQuickAddHtml.= '
+                <!-- Thirdparty link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/societe/card.php?action=create" title="'.$langs->trans("MenuNewThirdParty").'">
+                        <i class="fa fa-building"></i><br>
+                        '.$langs->trans("ThirdParty").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->societe->enabled) && $user->rights->societe->contact->creer) {
+		$langs->load("companies");
+		$dropDownQuickAddHtml.= '
+                <!-- Contact link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/contact/card.php?action=create" title="'.$langs->trans("NewContactAddress").'">
+                        <i class="fa fa-address-book"></i><br>
+                        '.$langs->trans("Contact").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->propal->enabled) && $user->rights->propale->creer) {
+		$langs->load("propal");
+		$dropDownQuickAddHtml.= '
+                <!-- Propal link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create" title="'.$langs->trans("NewPropal").'">
+                        <i class="fa fa-suitcase"></i><br>
+                        '.$langs->trans("Proposal").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->commande->enabled) && $user->rights->commande->creer) {
+		$langs->load("orders");
+		$dropDownQuickAddHtml.= '
+                <!-- Order link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
+                        <i class="fa fa-file-alt"></i><br>
+                        '.$langs->trans("Order").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->facture->enabled) && $user->rights->facture->creer) {
+		$langs->load("bills");
+		$dropDownQuickAddHtml.= '
+                <!-- Invoice link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
+                        <i class="fa fa-coins"></i><br>
+                        '.$langs->trans("Bill").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->contrat->enabled) && $user->rights->contrat->creer) {
+		$langs->load("contracts");
+		$dropDownQuickAddHtml.= '
+                <!-- Contract link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewContractSubscription").'">
+                        <i class="fa fa-file-contract"></i><br>
+                        '.$langs->trans("Contract").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->creer) {
+		$langs->load("supplier_proposal");
+		$dropDownQuickAddHtml.= '
+                <!-- Supplier proposal link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create" title="'.$langs->trans("NewAskPrice").'">
+                        <i class="fa fa-suitcase"></i><br>
+                        '.$langs->trans("AskPrice").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->creer) {
+		$langs->load("orders");
+		$dropDownQuickAddHtml.= '
+                <!-- Supplier order link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
+                        <i class="fa fa-file-alt"></i><br>
+                        '.$langs->trans("SupplierOrder").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->creer) {
+		$langs->load("bills");
+		$dropDownQuickAddHtml.= '
+                <!-- Supplier invoice link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
+                        <i class="fa fa-coins"></i><br>
+                        '.$langs->trans("SupplierBill").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->product->enabled) && $user->rights->produit->creer) {
+		$langs->load("products");
+		$dropDownQuickAddHtml.= '
+                <!-- Product link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0" title="'.$langs->trans("NewProduct").'">
+                        <i class="fa fa-cube"></i><br>
+                        '.$langs->trans("Product").'
+                    </a>
+                </div>
+                ';
+	}
+
+	if (! empty($conf->service->enabled) && $user->rights->service->creer) {
+		$langs->load("products");
+		$dropDownQuickAddHtml .= '
+                <!-- Service link -->
+                <div class="quickaddblock center">
+                    <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=1" title="'.$langs->trans("NewService").'">
+                        <i class="fa fa-concierge-bell"></i><br>
+                        '.$langs->trans("Service").'
+                    </a>
+                </div>
+                ';
+	}
+
+	// Execute hook printTopRightMenu (hooks should output string like '<div class="login"><a href="">mylink</a></div>')
+	$parameters = array();
+	$result = $hookmanager->executeHooks('printQuickAddBlock', $parameters); // Note that $action and $object may have been modified by some hooks
+	if (is_numeric($result)) {
+		if ($result == 0) {
+			$dropDownQuickAddHtml.= $hookmanager->resPrint; // add
+		} else {
+			$dropDownQuickAddHtml = $hookmanager->resPrint; // replace
+		}
+	} else {
+		$dropDownQuickAddHtml .= $result; // For backward compatibility
+	}
+
+	$dropDownQuickAddHtml .= '</div>';
+	$dropDownQuickAddHtml .= '</div>';
+
+	$html.= '<!-- div for quick add link -->
+    <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
+        <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$langs->trans('QuickAddMenuShortCut').')">
+            <i class="fa fa-plus-circle" ></i>
+        </a>
+
+        <div class="dropdown-menu">
+            '.$dropDownQuickAddHtml.'
+        </div>
+    </div>';
+	$html .= '
+        <!-- Code to show/hide the user drop-down -->
+        <script>
+        $( document ).ready(function() {
+            $(document).on("click", function(event) {
+                if (!$(event.target).closest("#topmenu-quickadd-dropdown").length) {
+                    // Hide the menus.
+                    $("#topmenu-quickadd-dropdown").removeClass("open");
+                }
+            });
+            $("#topmenu-quickadd-dropdown .dropdown-toggle").on("click", function(event) {
+                openQuickAddDropDown();
+            });
+            // Key map shortcut
+            $(document).keydown(function(e){
+                  if( e.which === 76 && e.ctrlKey && e.shiftKey ){
+                     console.log(\'control + shift + l : trigger open quick add dropdown\');
+                     openQuickAddDropDown();
+                  }
+            });
+
+
+            var openQuickAddDropDown = function() {
+                event.preventDefault();
+                $("#topmenu-quickadd-dropdown").toggleClass("open");
+                //$("#top-quickadd-search-input").focus();
+            }
+        });
+        </script>
+        ';
+	return $html;
+}
 
 /**
  * Build the tooltip on top menu bookmark
@@ -2233,10 +2385,8 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 				if (preg_match('/\d\.\d/', $appli))
 				{
 					if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
-				}
-				else $appli .= " ".DOL_VERSION;
-			}
-			else $appli .= " ".DOL_VERSION;
+				} else $appli .= " ".DOL_VERSION;
+			} else $appli .= " ".DOL_VERSION;
 			print '<div id="blockvmenuhelpapp" class="blockvmenuhelp">';
 			if ($doliurl) print '<a class="help" target="_blank" rel="noopener" href="'.$doliurl.'">';
 			else print '<span class="help">';
@@ -2290,8 +2440,7 @@ function left_menu($menu_array_before, $helppagename = '', $notused = '', $menu_
 			if (empty($reshook))
 			{
 				$bugbaseurl .= $hookmanager->resPrint;
-			}
-			else $bugbaseurl = $hookmanager->resPrint;
+			} else $bugbaseurl = $hookmanager->resPrint;
 
 			$bugbaseurl .= urlencode("\n");
 			$bugbaseurl .= urlencode("## Report\n");
@@ -2355,8 +2504,9 @@ function main_area($title = '')
             print '<table class="centpercent div-table-responsive">'."\n";
             print '<tbody>';
             print '<tr><td rowspan="0" class="width20p">';
-            if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO))
+            if ($conf->global->MAIN_SHOW_LOGO && empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($conf->global->MAIN_INFO_SOCIETE_LOGO)) {
                 print '<img id="mysoc-info-header-logo" style="max-width:100%" alt="" src="'.DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_LOGO)).'">';
+            }
             print '</td><td  rowspan="0" class="width50p"></td></tr>'."\n";
             print '<tr><td class="titre bold">'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_NOM).'</td></tr>'."\n";
             print '<tr><td>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ADDRESS).'<br>'.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_ZIP).' '.dol_escape_htmltag($conf->global->MAIN_INFO_SOCIETE_TOWN).'</td></tr>'."\n";
@@ -2391,9 +2541,7 @@ function getHelpParamFor($helppagename, $langs)
 		$helpbaseurl = '%s';
 		$helppage = $helppagename;
 		$mode = 'local';
-	}
-	else
-	{
+	} else {
 		// If WIKI URL
 		$reg = array();
 		if (preg_match('/^es/i', $langs->defaultlang))
@@ -2531,10 +2679,8 @@ if (!function_exists("llxFooter"))
 			{
 				$title = img_warning().' '.$langs->trans('CoreErrorTitle');
 				print ajax_dialog($title, $langs->trans('CoreErrorMessage'));
-			}
-			// html version
-			else
-			{
+			} else {
+				// html version
 				$msg = img_warning().' '.$langs->trans('CoreErrorMessage');
 				print '<div class="error">'.$msg.'</div>';
 			}
@@ -2614,8 +2760,7 @@ if (!function_exists("llxFooter"))
 				// No ping done if we are into an alpha version
 				if (strpos('alpha', DOL_VERSION) > 0 && !$forceping) {
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It is an alpha version -->\n";
-				}
-				elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping)	// Cookie is set when we uncheck the checkbox in the installation wizard.
+				} elseif (empty($_COOKIE['DOLINSTALLNOPING_'.$hash_unique_id]) || $forceping)	// Cookie is set when we uncheck the checkbox in the installation wizard.
 				{
 					// MAIN_LAST_PING_KO_DATE
 					// Disable ping if MAIN_LAST_PING_KO_DATE is set and is recent
@@ -2676,9 +2821,7 @@ if (!function_exists("llxFooter"))
 			    			</script>
 						<?php
 					}
-				}
-				else
-				{
+				} else {
 					$now = dol_now();
 					print "\n<!-- NO JS CODE TO ENABLE the anonymous Ping. It was disabled -->\n";
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=This tool must be used only by experienced users or developers. It provides utilities to build or edit your own module. Documentation for alternative <a href="%s" target="_blank">manual development is here</a>.
-EnterNameOfModuleDesc=Enter name of the module/application to create with no spaces. Use uppercase to separate words (For example: MyModule, EcommerceForShop, SyncWithMySystem...)
+ModuleBuilderDesc=Bu araç yalnızca deneyimli kullanıcılar veya geliştiriciler tarafından kullanılmalıdır. Kendi modülünüzü oluşturmak veya düzenlemek için yardımcı programlar sağlar. Alternatif <a href="%s" target="_blank"> manuel geliştirme belgeleri burada </a>.
+EnterNameOfModuleDesc=Oluşturulacak modül/uygulamanın adını boşluksuz girin. Kelimeleri ayırmak için büyük harf kullanın (Örneğin: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Path where modules are generated/edited (first directory for external modules defined into %s): <strong>%s</strong>
-ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
+ModuleBuilderDesc3=Bulunan oluşturulmuş/düzenlenebilir modüller: <strong> %s </strong>
 ModuleBuilderDesc4=A module is detected as 'editable' when the file <strong>%s</strong> exists in root of module directory
 NewModule=Yeni modül
 NewObjectInModulebuilder=Yeni nesne

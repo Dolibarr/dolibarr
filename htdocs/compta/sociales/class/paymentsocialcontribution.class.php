@@ -194,14 +194,11 @@ class PaymentSocialContribution extends CommonObject
 							if ($remaintopay == 0)
 							{
 								$result = $contrib->set_paid($user);
-							}
-							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -215,9 +212,7 @@ class PaymentSocialContribution extends CommonObject
             $this->total = $totalamount; // deprecated
 		    $this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -286,9 +281,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -358,9 +351,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -414,9 +405,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -465,9 +454,7 @@ class PaymentSocialContribution extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -580,9 +567,7 @@ class PaymentSocialContribution extends CommonObject
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -591,9 +576,7 @@ class PaymentSocialContribution extends CommonObject
         if (!$error)
         {
             return 1;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -616,9 +599,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}

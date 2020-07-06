@@ -1037,5 +1037,5 @@ DeleteFileText=您確定要刪除檔案嗎？
 ShowOtherLanguages=顯示其他語言
 SwitchInEditModeToAddTranslation=切換到編輯模式以添加該語言的翻譯
 NotUsedForThisCustomer=未用於此客戶
-AmountMustBePositive=Amount must be positive
-ByStatus=By status
+AmountMustBePositive=金額必須為正
+ByStatus=依狀態

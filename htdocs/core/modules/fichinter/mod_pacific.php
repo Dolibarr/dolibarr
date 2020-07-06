@@ -106,9 +106,7 @@ class mod_pacific extends ModeleNumRefFicheinter
 		if (!$fayymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $fayymm))
 		{
 			return true;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;

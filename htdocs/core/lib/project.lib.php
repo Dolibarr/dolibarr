@@ -77,8 +77,7 @@ function project_prepare_head($object)
 		{
 			$obj = $db->fetch_object($resql);
 			if ($obj) $nbTimeSpent = 1;
-		}
-		else dol_print_error($db);
+		} else dol_print_error($db);
 
 		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$object->id;
 		$head[$h][1] = $langs->trans("TimeSpent");
@@ -191,8 +190,7 @@ function task_prepare_head($object)
 	{
 		$obj = $db->fetch_object($resql);
 		if ($obj) $nbTimeSpent = 1;
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
 	$head[$h][1] = $langs->trans("TimeSpent");
@@ -418,15 +416,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 					if ($foundtaskforuserdeeper > 0)
 					{
 						$showlineingray = 1; // We will show line but in gray
-					}
-					else
-					{
+					} else {
 						$showline = 0; // No reason to show line
 					}
 				}
-			}
-			else
-			{
+			} else {
 				// Caller did not ask to filter on tasks of a specific user (this probably means he want also tasks of all users, into public project
 				// or into all other projects if user has permission to).
 				if (empty($user->rights->projet->all->lire))
@@ -681,9 +675,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				if ($lines[$i]->planned_workload) $total_projectlinesa_spent_if_planned += $lines[$i]->duration;
                 if ($lines[$i]->planned_workload) $total_projectlinesa_declared_if_planned += $lines[$i]->planned_workload * $lines[$i]->progress / 100;
 			}
-		}
-		else
-		{
+		} else {
 			//$level--;
 		}
 	}
@@ -1264,8 +1256,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
 					print '</a>';
-				}
-				else print '--:--';
+				} else print '--:--';
 				print "</td>\n";
 
 				// Time spent by user
@@ -1379,9 +1370,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				//var_dump($totalforeachday);
 			}
 			$level--;
-		}
-		else
-		{
+		} else {
 			//$level--;
 		}
 	}
@@ -1640,8 +1629,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
 					print '</a>';
-				}
-				else print '--:--';
+				} else print '--:--';
 				print "</td>\n";
 
 				// Time spent by user
@@ -1744,9 +1732,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				//var_dump($totalforeachday);
 			}
 			$level--;
-		}
-		else
-		{
+		} else {
 			//$level--;
 		}
 	}
@@ -1909,8 +1895,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 					print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.'">';
 					print convertSecondToTime($lines[$i]->duration, 'allhourmin');
 					print '</a>';
-				}
-				else print '--:--';
+				} else print '--:--';
 				print "</td>\n";
 
 				// Time spent by user
@@ -2005,9 +1990,7 @@ function projectLinesPerMonth(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &
 				//var_dump($totalforeachday);
 			}
 			$level--;
-		}
-		else
-		{
+		} else {
 			//$level--;
 		}
 	}
@@ -2109,9 +2092,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		$sql .= ", ".MAIN_DB_PREFIX."projet_task as t";
 		$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 		$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc";
-	}
-	else
-	{
+	} else {
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
 	$sql .= " WHERE p.entity IN (".getEntity('project').")";
@@ -2159,8 +2140,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 			$arrayidofprojects[$objp->projectid] = $objp->projectid;
 			$i++;
 		}
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 	if (empty($arrayidofprojects)) $arrayidofprojects[0] = -1;
 
 	// Get list of project with calculation on tasks
@@ -2339,9 +2319,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 		print '</tr>';
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 
@@ -2405,13 +2383,11 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
             $progressBarClass = 'progress-bar-danger';
             $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress - $progressCalculated).' '.$langs->trans("point"));
             $diff = '<span class="text-danger classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-down"></i> '.($task->progress - $progressCalculated).'%</span>';
-        }
-        elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
+        } elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
             $progressBarClass = 'progress-bar-warning';
             $title = $langs->trans('TheReportedProgressIsLessThanTheCalculatedProgressionByX', abs($task->progress - $progressCalculated).' '.$langs->trans("point"));
             $diff = '<span class="text-warning classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-left"></i> '.($task->progress - $progressCalculated).'%</span>';
-        }
-        else {
+        } else {
             $progressBarClass = 'progress-bar-success';
             $title = $langs->trans('TheReportedProgressIsMoreThanTheCalculatedProgressionByX', ($task->progress - $progressCalculated).' '.$langs->trans("point"));
             $diff = '<span class="text-success classfortooltip paddingrightonly" title="'.dol_htmlentities($title.$diffTitle).'" ><i class="fa fa-caret-up"></i> '.($task->progress - $progressCalculated).'%</span>';
@@ -2426,8 +2402,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 
         if ($label !== true) {
             $out .= $label; // replace label by param
-        }
-        else {
+        } else {
             $out .= $task->getNomUrl(1).' '.dol_htmlentities($task->label);
         }
         $out .= '    </span>';
@@ -2439,8 +2414,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
         $out .= '    <span class="progress-number">';
         if ($progressNumber !== true) {
             $out .= $progressNumber; // replace label by param
-        }
-        else {
+        } else {
             if ($task->hasDelay()) $out .= img_warning($langs->trans("Late")).' ';
 
 			$url = DOL_URL_ROOT.'/projet/tasks/time.php?id='.$task->id;
@@ -2475,9 +2449,7 @@ function getTaskProgressView($task, $label = true, $progressNumber = true, $hide
 			$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated / $task->progress * 100).'%" title="'.doubleval($progressCalculated).'%"></div>';
 		}
     	$out .= '        </div>';
-    }
-    else
-    {
+    } else {
     	// bad
     	$out .= '        <div class="progress-bar progress-bar-consumed" style="width: '.doubleval($progressCalculated).'%" title="'.doubleval($progressCalculated).'%">';
     	$out .= '        <div class="progress-bar '.$progressBarClass.'" style="width: '.($task->progress ? doubleval($task->progress / $progressCalculated * 100).'%' : '1px').'" title="'.doubleval($task->progress).'%"></div>';
@@ -2518,12 +2490,10 @@ function getTaskProgressBadge($task, $label = '', $tooltip = '')
             if (doubleval($progressCalculated) > doubleval($task->progress * $warningRatio)) {
                 $badgeClass .= 'badge-danger';
                 if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
-            }
-            elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
+            } elseif (doubleval($progressCalculated) > doubleval($task->progress)) { // warning if close at 10%
                 $badgeClass .= 'badge-warning';
                 if (empty($tooltip)) $tooltip = $task->progress.'% < '.$langs->trans("Expected").' '.$progressCalculated.'%';
-            }
-            else {
+            } else {
                 $badgeClass .= 'badge-success';
                 if (empty($tooltip)) $tooltip = $task->progress.'% >= '.$langs->trans("Expected").' '.$progressCalculated.'%';
             }

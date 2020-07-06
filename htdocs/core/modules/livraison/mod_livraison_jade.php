@@ -142,9 +142,7 @@ class mod_livraison_jade extends ModeleNumRefDeliveryOrder
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 

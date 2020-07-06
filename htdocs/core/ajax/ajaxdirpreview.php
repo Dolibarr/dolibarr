@@ -86,8 +86,7 @@ if (!isset($mode) || $mode != 'noajax')    // For ajax call
         }
 
         $relativepath = $ecmdir->getRelativePath(); // Example   'mydir/'
-    }
-	elseif (GETPOST('section_dir'))
+    } elseif (GETPOST('section_dir'))
 	{
 		$relativepath = GETPOST('section_dir');
 	}
@@ -235,8 +234,7 @@ if ($type == 'directory')
         $formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
     }
     // Manual list
-    else
-    {
+    else {
     	if ($module == 'medias')
     	{
     		/*
@@ -260,9 +258,7 @@ if ($type == 'directory')
 	    		if (!preg_match('/pageid=/', $param)) $param .= '&pageid='.urlencode(GETPOST('pageid', 'int'));
 	    		//if (!preg_match('/backtopage=/',$param)) $param.='&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid);
 	    	}
-    	}
-    	else
-    	{
+    	} else {
         	$relativepath = $ecmdir->getRelativePath();
         	$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
     	}
@@ -271,9 +267,7 @@ if ($type == 'directory')
 		if (($section === '0' || empty($section)) && ($module != 'medias'))
         {
             $filearray = array();
-        }
-        else
-        {
+        } else {
         	$filearray = dol_dir_list($upload_dir, "files", 0, '', array('^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^CVS$'), $sortfield, $sorting, 1);
         }
 
@@ -283,13 +277,11 @@ if ($type == 'directory')
         	if (isset($search_doc_ref) && $search_doc_ref != '') $param .= '&search_doc_ref='.$search_doc_ref;
 
             $textifempty = $langs->trans('NoFileFound');
-        }
-        elseif ($section === '0')
+        } elseif ($section === '0')
         {
         	if ($module == 'ecm') $textifempty = '<br><div class="center"><font class="warning">'.$langs->trans("DirNotSynchronizedSyncFirst").'</font></div><br>';
         	else $textifempty = $langs->trans('NoFileFound');
-        }
-        else $textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
+        } else $textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 
         if ($module == 'medias')
         {
@@ -297,8 +289,7 @@ if ($type == 'directory')
             $modulepart = 'medias';
             $perm = ($user->rights->website->write || $user->rights->emailing->creer);
             $title = 'none';
-        }
-        elseif ($module == 'ecm') // DMS/ECM -> manual structure
+        } elseif ($module == 'ecm') // DMS/ECM -> manual structure
         {
             if ($user->rights->ecm->read)
             {
@@ -321,9 +312,7 @@ if ($type == 'directory')
             $perm = $user->rights->ecm->upload;
             $modulepart = 'ecm';
             $title = ''; // Use default
-        }
-        else
-        {
+        } else {
             $useinecm = 5;
             $modulepart = 'ecm';
             $perm = $user->rights->ecm->upload;

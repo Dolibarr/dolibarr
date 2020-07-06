@@ -127,25 +127,20 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	{
 		// Si le fichier n'a pas ete indique
 		return 'Bad parameter file';
-	}
-	elseif (!file_exists($file))
+	} elseif (!file_exists($file))
 	{
 		// Si le fichier passe en parametre n'existe pas
 		return $langs->trans("ErrorFileNotFound", $file);
-	}
-	elseif (image_format_supported($file) < 0)
+	} elseif (image_format_supported($file) < 0)
 	{
 		return 'This filename '.$file.' does not seem to be an image filename.';
-	}
-	elseif (!is_numeric($newWidth) && !is_numeric($newHeight))
+	} elseif (!is_numeric($newWidth) && !is_numeric($newHeight))
 	{
 		return 'Wrong value for parameter newWidth or newHeight';
-	}
-	elseif ($mode == 0 && $newWidth <= 0 && $newHeight <= 0)
+	} elseif ($mode == 0 && $newWidth <= 0 && $newHeight <= 0)
 	{
 		return 'At least newHeight or newWidth must be defined for resizing';
-	}
-	elseif ($mode == 1 && ($newWidth <= 0 || $newHeight <= 0))
+	} elseif ($mode == 1 && ($newWidth <= 0 || $newHeight <= 0))
 	{
 		return 'Both newHeight or newWidth must be defined for croping';
 	}
@@ -231,9 +226,7 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x = 0, 
 	{
 		// Compatibilite image GIF
 		$imgThumb = imagecreate($newWidth, $newHeight);
-	}
-	else
-	{
+	} else {
 		$imgThumb = imagecreatetruecolor($newWidth, $newHeight);
 	}
 
@@ -367,17 +360,14 @@ function correctExifImageOrientation($fileSource, $fileDest, $quality = 95)
 						$img = imagerotate($img, $deg, imageColorAllocateAlpha($img, 0, 0, 0, 127));
 						imagealphablending($img, false);
 						imagesavealpha($img, true);
-					}
-					else {
+					} else {
 						$img = imagerotate($img, $deg, 0);
 					}
 				}
 				// then rewrite the rotated image back to the disk as $fileDest
 				if ($fileDest === false) {
 					return $img;
-				}
-				else
-				{
+				} else {
 					// In fact there exif is only for JPG but just in case
 					// Create image on disk
 					$image = false;
@@ -442,24 +432,20 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	{
 		// Si le fichier n'a pas ete indique
 		return 'ErrorBadParameters';
-	}
-	elseif (!file_exists($file))
+	} elseif (!file_exists($file))
 	{
 		// Si le fichier passe en parametre n'existe pas
         dol_syslog($langs->trans("ErrorFileNotFound", $file), LOG_ERR);
 	    return $langs->trans("ErrorFileNotFound", $file);
-	}
-	elseif (image_format_supported($file) < 0)
+	} elseif (image_format_supported($file) < 0)
 	{
         dol_syslog('This file '.$file.' does not seem to be an image format file name.', LOG_WARNING);
 	    return 'ErrorBadImageFormat';
-	}
-	elseif (!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
+	} elseif (!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < -1) {
 		// Si la largeur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxWidth', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxWidth';
-	}
-	elseif (!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
+	} elseif (!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < -1) {
 		// Si la hauteur max est incorrecte (n'est pas numerique, est vide, ou est inferieure a 0)
         dol_syslog('Wrong value for parameter maxHeight', LOG_ERR);
 	    return 'Error: Wrong value for parameter maxHeight';
@@ -587,8 +573,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 			$rotated = imagerotate($img, $exifAngle, imageColorAllocateAlpha($img, 0, 0, 0, 127));
 			imagealphablending($rotated, false);
 			imagesavealpha($rotated, true);
-		}
-    	else {
+		} else {
 			$rotated = imagerotate($img, $exifAngle, 0);
 		}
 
@@ -613,9 +598,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 		// Si largeur determinante
 		$thumbWidth  = $maxWidth;
 		$thumbHeight = $thumbWidth / $imgWhFact;
-	}
-	else
-	{
+	} else {
 		// Si hauteur determinante
 		$thumbHeight = $maxHeight;
 		$thumbWidth  = $thumbHeight * $imgWhFact;
@@ -631,9 +614,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName = '_small',
 	{
 		// Compatibilite image GIF
 		$imgThumb = imagecreate($thumbWidth, $thumbHeight);
-	}
-	else
-	{
+	} else {
 		$imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
 	}
 

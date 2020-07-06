@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=銷售代表跟進合約
 TypeContact_contrat_external_BILLING=帳單客戶聯絡人
 TypeContact_contrat_external_CUSTOMER=後續客戶聯絡人
 TypeContact_contrat_external_SALESREPSIGN=簽訂合約客戶聯絡方式
+HideClosedServiceByDefault=預設隱藏已關閉的服務
+ShowClosedServices=顯示已關閉的服務
+HideClosedServices=隱藏已關閉的服務

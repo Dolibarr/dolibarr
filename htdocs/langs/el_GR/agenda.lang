@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Η αποστολή %s ταξινομείται
 ShipmentUnClassifyCloseddInDolibarr=Η αποστολή %s ταξινομήθηκε εκ νέου
 ShipmentBackToDraftInDolibarr=Η αποστολή %s επιστρέφει στην κατάσταση του σχεδίου
 ShipmentDeletedInDolibarr=Η αποστολή %s διαγράφηκε
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Παραγγελία %s
 OrderValidatedInDolibarr=Η παραγγελία %s επικυρώθηκε
 OrderDeliveredInDolibarr=Παραγγελία %s κατατάσσεται παραδοτέα

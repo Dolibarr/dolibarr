@@ -85,13 +85,10 @@ $arrayphpminversionwarning = array(5, 6, 0);
 if (versioncompare(versionphparray(), $arrayphpminversionerror) < 0)
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));
-}
-elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
+} elseif (versioncompare(versionphparray(), $arrayphpminversionwarning) < 0)
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionwarning));
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.versiontostring(versionphparray());
 }
 
@@ -102,9 +99,7 @@ if (!isset($_GET["testget"]) && !isset($_POST["testpost"]) && !isset($_GET["main
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("PHPSupportPOSTGETKo");
 	print ' (<a href="'.$_SERVER["PHP_SELF"].'?testget=ok">'.$langs->trans("Recheck").'</a>)';
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk");
 }
 
@@ -114,9 +109,7 @@ print '<tr><td>Sessions support</td><td>';
 if (!function_exists("session_id"))
 {
 	print '<img src="'.$ErrorPicturePath.'" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions");
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportSessions");
 }
 
@@ -126,9 +119,7 @@ print '<tr><td>UTF-8 support</td><td>';
 if (!function_exists("utf8_encode"))
 {
 	print '<img src="'.$WarningPicturePath.'" alt="Warning"> '.$langs->trans("ErrorPHPDoesNotSupportUTF8");
-}
-else
-{
+} else {
 	print '<img src="'.$OkayPicturePath.'" alt="Ok"> '.$langs->trans("PHPSupportUTF8");
 }
 
@@ -228,9 +219,7 @@ foreach ($phparray as $key => $value)
 			print $valtoshow;
 			print '</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven">';
 			print '<td>'.$keyparam.'</td>';
 			$i = 0;
@@ -348,9 +337,7 @@ function getTableColumn($name, array $list)
 	{
 		if ($name == 'xdebug') $html .= '<img src="../../theme/eldy/img/warning.png" title="'.$langs->trans("ModuleActivated", "xdebug").'">';
 		else $html .= '<img src="../../theme/eldy/img/tick.png" title="Ok">';
-	}
-	else
-	{
+	} else {
 		if ($name == 'xdebug') $html .= yn(0);
 		else $html .= '<img src="../../theme/eldy/img/warning.png" title="Warning">';
 	}
@@ -385,9 +372,7 @@ function getTableColumnFunction(array $functions)
 	if ($result)
 	{
 		$html .= '<img src="../../theme/eldy/img/tick.png" alt="Ok">';
-	}
-	else
-	{
+	} else {
 		$html .= '<img src="../../theme/eldy/img/warning.png" alt="Warning">';
 	}
 

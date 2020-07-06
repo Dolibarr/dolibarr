@@ -129,8 +129,14 @@ class BookKeeping extends CommonObject
 
     /**
      * @var float FEC:Amount (Not necessary)
+     * @deprecated Use $amount
      */
 	public $montant;
+
+	/**
+	 * @var float FEC:Amount (Not necessary)
+	 */
+	public $amount;
 
     /**
      * @var string FEC:Sens (Not necessary)
@@ -258,9 +264,7 @@ class BookKeeping extends CommonObject
 			if (in_array($this->doc_type, array('bank', 'expense_report')))
 			{
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
-			}
-			else
-			{
+			} else {
 				//$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
 				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
 				if ($this->subledger_account && $this->subledger_account != $this->numero_compte)
@@ -477,8 +481,7 @@ class BookKeeping extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';

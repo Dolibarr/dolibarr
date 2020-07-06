@@ -430,9 +430,7 @@ if ($sql_select)
 		if ($type_element == 'contract')
 		{
 			print $documentstaticline->getLibStatut(2);
-		}
-		else
-		{
+		} else {
 			print $documentstatic->getLibStatut(2);
 		}
 		print '</td>';
@@ -474,9 +472,7 @@ if ($sql_select)
 				}
 
 				$label = (!empty($prod->multilangs[$outputlangs->defaultlang]["label"])) ? $prod->multilangs[$outputlangs->defaultlang]["label"] : $objp->product_label;
-			}
-			else
-			{
+			} else {
 				$label = $objp->product_label;
 			}
 
@@ -510,29 +506,23 @@ if ($sql_select)
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
-				}
-				elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+				} elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
 				{
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
-				}
-				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
+				} elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{
 					$discount = new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
 					// Add date of deposit
 					if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec).')';
-				}
-				else
-				{
+				} else {
 					echo ($txt ? ' - ' : '').dol_htmlentitiesbr($objp->description);
 				}
 			}
-		}
-		else
-		{
+		} else {
 			if ($objp->fk_product > 0) {
 				echo $form->textwithtooltip($text, $description, 3, '', '', $i, 0, '');
 
@@ -610,8 +600,7 @@ if ($sql_select)
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
 	}
 	$db->free($resql);
-}
-elseif (empty($type_element) || $type_element == -1)
+} elseif (empty($type_element) || $type_element == -1)
 {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
@@ -628,8 +617,7 @@ elseif (empty($type_element) || $type_element == -1)
 	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
 
 	print "</table>";
-}
-else {
+} else {
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, '', '');
 
     print '<table class="liste centpercent">'."\n";

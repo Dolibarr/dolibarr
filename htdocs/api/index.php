@@ -205,14 +205,11 @@ if (!empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $
                                     {
                                         //dol_syslog("Found API by index.php: classname=".$classname."Api for module ".$dir." into ".$dir_part.$file_searched);
                                         $listofapis[strtolower($classname.'Api')] = $classname.'Api';
-                                    }
-                                    elseif (class_exists($classname))
+                                    } elseif (class_exists($classname))
                                     {
                                         //dol_syslog("Found API by index.php: classname=".$classname." for module ".$dir." into ".$dir_part.$file_searched);
                                         $listofapis[strtolower($classname)] = $classname;
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         dol_syslog("We found an api_xxx file (".$file_searched.") but class ".$classname." does not exists after loading file", LOG_WARNING);
                                     }
                                 }

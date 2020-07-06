@@ -16,7 +16,7 @@ WEBSITE_ROBOT=Robot檔案（robots.txt）
 WEBSITE_HTACCESS=網站 .htaccess 檔案
 WEBSITE_MANIFEST_JSON=網站 manifest.json 檔案
 WEBSITE_README=README.md 檔案
-WEBSITE_KEYWORDSDesc=Use a comma to separate values
+WEBSITE_KEYWORDSDesc=使用逗號分隔值
 EnterHereLicenseInformation=在此處輸入meta data或許可證資訊以填入README.md檔案。如果您以模板型式發佈網站，則檔案將包含在模板軟體包中。
 HtmlHeaderPage=HTML標頭（僅用於此頁面）
 PageNameAliasHelp=頁面的名稱或別名。 <br>當從Web伺服器的虛擬主機（如Apacke，Nginx等）執行網站時，此別名還用於偽造SEO網址。使用按鈕“ <strong>%s</strong> ”編輯此別名。
@@ -58,7 +58,10 @@ NoPageYet=暫無頁面
 YouCanCreatePageOrImportTemplate=您可以建立一個新頁面或匯入完整的網站模板
 SyntaxHelp=有關特定語法提示的幫助
 YouCanEditHtmlSourceckeditor=您可以使用編輯器中的“Source”按鈕來編輯HTML源代碼。
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br><br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> 您可以使用標籤將PHP代碼包含到此源中<strong>&lt;?php ?&gt;</strong>. 以下全域變數可用: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs.<br><br><span class="fa fa-bug"></span> 您還可以使用以下語法包含另一個頁面/容器的內容:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> 您可以使用以下語法重新定向到另一個頁面/容器（注意：重新定向之前請勿輸出任何內容）:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> 要增加到另一個頁面的連結，請使用以下語法:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> 要包含一個 <strong>連結</strong> 下載儲存到 <strong>文件</strong>資料夾, 使用<strong>document.php</strong>打包器:<br>例如, 一個檔案要儲存到documents/ecm (需要紀錄)中, 語法為:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>檔案要儲存到documents/medias (公共權限的資料夾)中, 語法為:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>對於使用共用連結共享的檔案(使用檔案的共用hash鍵進行開放訪問), 語法為:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> 要包含一個<strong>影像</strong> 檔案且儲存到<strong>documents</strong>目錄中, 使用 <strong>viewimage.php</strong> 打包器:<br>例如, 儲存影像到documents/medias (公共權限的資料夾), 語法為:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>.
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=使用有分享連結的影像 (使用檔案的Hash key開啟), 語法為:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>您可以在<a href="%s" target="_blank">Wiki文件</a>中找到更多HTML或是動態編碼的範例<br>
 ClonePage=複製頁面/容器
 CloneSite=複製網站
 SiteAdded=網站已增加
@@ -121,7 +124,7 @@ ShowSubContainersOnOff=執行“動態內容”的模式為%s
 GlobalCSSorJS=網站的全域CSS / JS / Header檔案
 BackToHomePage=返回首頁...
 TranslationLinks=翻譯連結
-YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
+YouTryToAccessToAFileThatIsNotAWebsitePage=您嘗試訪問的頁面不可用。 <br>（ref = %s，type = %s，status = %s）
 UseTextBetween5And70Chars=為了獲得良好的SEO實踐，請使用5到70個字元的文字
 MainLanguage=主要語言
 OtherLanguages=其他語言
@@ -130,5 +133,5 @@ PublicAuthorAlias=公共作者別名
 AvailableLanguagesAreDefinedIntoWebsiteProperties=可用語言已定義到網站屬性中
 ReplacementDoneInXPages=在%s頁面或容器中已完成替換
 RSSFeed=RSS 訂閱
-RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
-PagesRegenerated=%s page(s)/container(s) regenerated
+RSSFeedDesc=您可以使用此網址獲得類型為“ blogpost”的最新文章RSS feed。
+PagesRegenerated=已重新產生%s頁面/容器

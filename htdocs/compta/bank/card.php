@@ -99,9 +99,7 @@ if ($action == 'add')
 	if (empty($account_number) || $account_number == '-1')
 	{
 		$object->account_number = '';
-	}
-	else
-	{
+	} else {
 		$object->account_number = $account_number;
 	}
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
@@ -155,8 +153,7 @@ if ($action == 'add')
 			$_GET["id"] = $id; // Force chargement page en mode visu
 
 			$action = '';
-		}
-		else {
+		} else {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 
@@ -167,9 +164,7 @@ if ($action == 'add')
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -205,9 +200,7 @@ if ($action == 'update')
 	if (empty($account_number) || $account_number == '-1')
 	{
 		$object->account_number = '';
-	}
-	else
-	{
+	} else {
 		$object->account_number = $account_number;
 	}
 	$fk_accountancy_journal  = GETPOST('fk_accountancy_journal', 'int');
@@ -259,9 +252,7 @@ if ($action == 'update')
 			$object->setCategories($categories);
 
 			$_GET["id"] = $_POST["id"]; // Force chargement page en mode visu
-		}
-		else
-		{
+		} else {
 			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit'; // Force chargement page edition
@@ -271,9 +262,7 @@ if ($action == 'update')
 	if (!$error)
 	{
 		$db->commit();
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 	}
 }
@@ -290,9 +279,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == "yes" && $user->rights->
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		header("Location: ".DOL_URL_ROOT."/compta/bank/list.php");
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = '';
 	}
@@ -383,8 +370,7 @@ if ($action == 'create')
 	if (isset($_POST["account_country_id"]))
 	{
 		$selectedcode = $_POST["account_country_id"] ? $_POST["account_country_id"] : $object->country_code;
-	}
-	elseif (empty($selectedcode)) $selectedcode = $mysoc->country_code;
+	} elseif (empty($selectedcode)) $selectedcode = $mysoc->country_code;
 	$object->country_code = getCountry($selectedcode, 2); // Force country code on account to have following field on bank fields matching country rules
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("BankAccountCountry").'</td>';
@@ -398,9 +384,7 @@ if ($action == 'create')
 	if ($selectedcode)
 	{
 		$formcompany->select_departement(isset($_POST["account_state_id"]) ? $_POST["account_state_id"] : '', $selectedcode, 'account_state_id');
-	}
-	else
-	{
+	} else {
 		print $countrynotdefined;
 	}
 	print '</td></tr>';
@@ -544,9 +528,7 @@ if ($action == 'create')
 		print '<td>';
 		print $formaccounting->select_account($object->account_number, 'account_number', 1, '', 1, 1);
 		print '</td></tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr><td class="'.$fieldrequired.'titlefieldcreate">'.$langs->trans("AccountancyCode").'</td>';
 		print '<td><input type="text" name="account_number" value="'.(GETPOST("account_number") ?GETPOST('account_number', 'alpha') : $object->account_number).'"></td></tr>';
 	}
@@ -571,16 +553,14 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-}
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
-else
-{
-	if (($_GET["id"] || $_GET["ref"]) && $action != 'edit')
-	{
+} else {
+	/* ************************************************************************** */
+	/*                                                                            */
+	/* Visu et edition                                                            */
+	/*                                                                            */
+	/* ************************************************************************** */
+
+	if (($_GET["id"] || $_GET["ref"]) && $action != 'edit') {
 		$object = new Account($db);
 		if ($_GET["id"])
 		{
@@ -886,9 +866,7 @@ else
 		if ($selectedcode)
 		{
 			print $formcompany->select_state(isset($_POST["account_state_id"]) ? $_POST["account_state_id"] : $object->state_id, $selectedcode, 'account_state_id');
-		}
-		else
-		{
+		} else {
 			print $countrynotdefined;
 		}
 		print '</td></tr>';

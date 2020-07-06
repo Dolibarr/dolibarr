@@ -2,6 +2,17 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 13.0.0 compared to 12.0.0 *****
+For users:
+
+
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Properties ->contactid has been renamed into ->contact_id
+
+
 
 ***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For users:

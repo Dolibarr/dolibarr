@@ -304,8 +304,7 @@ if ($massaction == 'makepayment'){
 
 	header('Location: '.$loc);
 	exit;
-}
-elseif ($massaction == 'withdrawrequest')
+} elseif ($massaction == 'withdrawrequest')
 {
 	$langs->load("withdrawals");
 
@@ -313,9 +312,7 @@ elseif ($massaction == 'withdrawrequest')
 	{
 		$error++;
 		setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
-	}
-	else
-	{
+	} else {
 		//Checking error
 		$error = 0;
 
@@ -363,12 +360,10 @@ elseif ($massaction == 'withdrawrequest')
 				if ($numprlv > 0) {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
-				}
-				elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
+				} elseif (!empty($objecttmp->mode_reglement_code) && $objecttmp->mode_reglement_code != 'PRE') {
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
-				}
-				else {
+				} else {
 					$listofbills[] = $objecttmp; // $listofbills will only contains invoices with good payment method and no request already done
 				}
 			}
@@ -386,9 +381,7 @@ elseif ($massaction == 'withdrawrequest')
 				{
 					$db->commit();
 					$nbwithdrawrequestok++;
-				}
-				else
-				{
+				} else {
 					$db->rollback();
 					setEventMessages($aBill->error, $aBill->errors, 'errors');
 				}
@@ -516,9 +509,7 @@ if ($search_status != '-1' && $search_status != '')
 		if ($search_status == '1') $sql .= " AND f.fk_statut = 1"; // unpayed
 		if ($search_status == '2') $sql .= " AND f.fk_statut = 2"; // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
 		if ($search_status == '3') $sql .= " AND f.fk_statut = 3"; // abandonned
-	}
-	else
-	{
+	} else {
 		$sql .= " AND f.fk_statut IN (".$db->escape($search_status).")"; // When search_status is '1,2' for example
 	}
 }
@@ -565,9 +556,7 @@ if (!$sall)
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 	}
-}
-else
-{
+} else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $sall);
 }
 
@@ -676,8 +665,7 @@ if ($resql)
 	if ($user->rights->facture->supprimer) {
 		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
         	$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
-		}
-        elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
+		} elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
             $arrayofmassactions['predelete'] = $langs->trans("Delete");
         }
     }
@@ -1221,9 +1209,7 @@ if ($resql)
                 if ($contextpage == 'poslist')
                 {
                     print $obj->ref;
-                }
-                else
-                {
+                } else {
                     print $facturestatic->getNomUrl(1, '', 200, 0, '', 0, 1);
                 }
 
@@ -1318,9 +1304,7 @@ if ($resql)
 		        if ($contextpage == 'poslist')
 				{
 				    print $thirdpartystatic->name;
-				}
-				else
-				{
+				} else {
 				    print $thirdpartystatic->getNomUrl(1, 'customer');
 				}
 				print '</td>';
@@ -1621,9 +1605,7 @@ if ($resql)
 	$title = '';
 
 	print $formfile->showdocuments('massfilesarea_invoices', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

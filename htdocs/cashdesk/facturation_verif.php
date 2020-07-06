@@ -50,8 +50,7 @@ switch ($action)
 			if ($_POST['hdnSource'] == 'LISTE')
 			{
 				$sql .= " AND p.rowid = ".((int) GETPOST('selProduit', 'int'));
-			}
-			elseif ($_POST['hdnSource'] == 'REF')
+			} elseif ($_POST['hdnSource'] == 'REF')
 			{
 				$sql .= " AND p.ref = '".$db->escape(GETPOST('txtRef', 'alpha'))."'";
 			}
@@ -101,8 +100,7 @@ switch ($action)
 					        if (isset($prod->multiprices_tva_tx[$societe->price_level])) $tva_tx = $prod->multiprices_tva_tx[$societe->price_level];
 					        if (isset($prod->multiprices_recuperableonly[$societe->price_level])) $tva_npr = $prod->multiprices_recuperableonly[$societe->price_level];
 					    }
-					}
-					elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
+					} elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 					{
 					    require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 
@@ -123,9 +121,7 @@ switch ($action)
 					            $tva_npr = $prodcustprice->lines[0]->recuperableonly;
 					            if (empty($tva_tx)) $tva_npr = 0;
 					        }
-					    }
-					    else
-					    {
+					    } else {
 					        setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
 					    }
 					}
@@ -162,35 +158,26 @@ switch ($action)
 					if ($_POST['hdnSource'] == 'LISTE')
 					{
 						$filtre = $ret['ref'];
-					}
-					elseif ($_POST['hdnSource'] == 'REF')
+					} elseif ($_POST['hdnSource'] == 'REF')
 					{
 						$filtre = $_POST['txtRef'];
 					}
 
 					$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$filtre;
-				}
-				else
-				{
+				} else {
 					$obj_facturation->raz();
 
 					if ($_POST['hdnSource'] == 'REF')
 					{
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation&filtre='.$_POST['txtRef'];
-					}
-					else
-					{
+					} else {
 						$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 					}
 				}
-			}
-			else
-			{
+			} else {
 				dol_print_error($db);
 			}
-		}
-		else
-		{
+		} else {
 			$redirection = DOL_URL_ROOT.'/cashdesk/affIndex.php?menutpl=facturation';
 		}
 

@@ -409,9 +409,7 @@ class MultiCurrency extends CommonObject
 		{
 			$this->rate = $currencyRate;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->rate = null;
 			$this->errors = $currencyRate->errors;
 			return -1;
@@ -533,8 +531,7 @@ class MultiCurrency extends CommonObject
 		$resql = $db->query($sql1.$sql2.$sql3);
 
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
-		else
-		{
+		else {
 			if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE))
 			{
 				$resql = $db->query($sql1.$sql3);
@@ -562,8 +559,7 @@ class MultiCurrency extends CommonObject
         {
             if ($way == 'dolibarr') return $amount * $multicurrency_tx;
             else return $amount / $multicurrency_tx;
-        }
-        else return $amount;
+        } else return $amount;
     }
 
 	/**
@@ -658,8 +654,7 @@ class MultiCurrency extends CommonObject
 					if ($obj->fetch(null, $code) > 0)
 					{
 						$obj->updateRate($rate);
-					}
-					elseif ($addifnotfound)
+					} elseif ($addifnotfound)
 					{
 						self::addRateFromDolibarr($code, $rate);
 					}
@@ -667,9 +662,7 @@ class MultiCurrency extends CommonObject
 			}
 
 			return 1;
-        }
-		else
-		{
+        } else {
 		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 

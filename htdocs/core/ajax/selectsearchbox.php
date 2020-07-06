@@ -152,8 +152,7 @@ $reshook = $hookmanager->executeHooks('addSearchEntry', $parameters);
 if (empty($reshook))
 {
 	$arrayresult = array_merge($arrayresult, $hookmanager->resArray);
-}
-else $arrayresult = $hookmanager->resArray;
+} else $arrayresult = $hookmanager->resArray;
 
 // This allow to keep a search entry to the top
 if (!empty($conf->global->DEFAULT_SEARCH_INTO_MODULE)) {

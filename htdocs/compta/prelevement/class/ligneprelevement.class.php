@@ -96,17 +96,13 @@ class LignePrelevement
 				$this->statut          = $obj->statut;
 				$this->bon_ref         = $obj->ref;
 				$this->bon_rowid       = $obj->bon_rowid;
-			}
-			else
-			{
+			} else {
 				$error++;
 				dol_syslog("LignePrelevement::Fetch rowid=$rowid numrows=0");
 			}
 
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			$error++;
 			dol_syslog("LignePrelevement::Fetch rowid=$rowid");
 			dol_syslog($this->db->error());
@@ -142,20 +138,17 @@ class LignePrelevement
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]); // Waiting
 			elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]); // Credited
 			elseif ($status == 3) return img_picto($langs->trans($this->statuts[$status]), 'statut8').' '.$langs->trans($this->statuts[$status]); // Refused
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts[$status]), 'statut1');
 			elseif ($status == 2) return img_picto($langs->trans($this->statuts[$status]), 'statut6');
 			elseif ($status == 3) return img_picto($langs->trans($this->statuts[$status]), 'statut8');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut1');
 			elseif ($status == 2) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts[$status]), 'statut6');

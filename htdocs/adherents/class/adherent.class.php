@@ -660,8 +660,7 @@ class Adherent extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error)
-			{
+			if (!$error) {
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
@@ -704,8 +703,7 @@ class Adherent extends CommonObject
 				}
 			}
 
-			if (!$error && $nbrowsaffected) // If something has change in main data
-			{
+			if (!$error && $nbrowsaffected) { // If something has change in main data
 				// Update information on linked user if it is an update
 				if (!$error && $this->user_id > 0 && !$nosyncuser) {
 					require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -1282,10 +1280,11 @@ class Adherent extends CommonObject
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_code;
-				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)
+				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
 					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
-				else
+				} else {
 					$this->country = $obj->country;
+				}
 
 				$this->phone = $obj->phone;
 				$this->phone_perso = $obj->phone_perso;
@@ -1554,8 +1553,7 @@ class Adherent extends CommonObject
 			$customer = new Societe($this->db);
 
 			if (!$error) {
-				if (!($this->fk_soc > 0)) // If not yet linked to a company
-				{
+				if (!($this->fk_soc > 0)) { // If not yet linked to a company
 					if ($autocreatethirdparty) {
 						// Create a linked thirdparty to member
 						$companyalias = '';
@@ -2037,12 +2035,13 @@ class Adherent extends CommonObject
 		if ($withpictoimg > -2 && $withpictoimg != 2) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
-			if ($mode == 'login')
+			if ($mode == 'login') {
 				$result .= dol_trunc($this->login, $maxlen);
-			elseif ($mode == 'ref')
+			} elseif ($mode == 'ref') {
 				$result .= $this->id;
-			else
+			} else {
 				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : -1), $maxlen);
+			}
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result .= '</span>';
 		}
 		if ($withpictoimg) $result .= '</div>';
@@ -2418,8 +2417,7 @@ class Adherent extends CommonObject
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		} // Set LDAP password if possible
-		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-		{
+		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') { // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
@@ -2618,8 +2616,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (empty($conf->adherent->enabled)) // Should not happen. If module disabled, cron job should not be visible.
-		{
+		if (empty($conf->adherent->enabled)) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -2638,8 +2635,7 @@ class Adherent extends CommonObject
 		$listofmembersko = array();
 
 		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
-		foreach ($arraydaysbeforeend as $daysbeforeend) // Loop on each delay
-		{
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
 			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
 
 			if (!is_numeric($daysbeforeend)) {
@@ -2751,7 +2747,7 @@ class Adherent extends CommonObject
 								$actioncomm->datef = $now;
 								$actioncomm->percentage = -1; // Not applicable
 								$actioncomm->socid = $adherent->thirdparty->id;
-								$actioncomm->contactid = 0;
+								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is en email (content should be added into note)
@@ -2803,10 +2799,11 @@ class Adherent extends CommonObject
 						$listofids .= ', ...';
 						break;
 					}
-					if (empty($listofids))
+					if (empty($listofids)) {
 						$listofids .= ' [';
-					else
+					} else {
 						$listofids .= ', ';
+					}
 					$listofids .= $idmember;
 					$i++;
 				}
@@ -2823,10 +2820,11 @@ class Adherent extends CommonObject
 							$listofids .= ', ...';
 							break;
 						}
-						if (empty($listofids))
+						if (empty($listofids)) {
 							$listofids .= ' [';
-						else
+						} else {
 							$listofids .= ', ';
+						}
 						$listofids .= $idmember;
 						$i++;
 					}

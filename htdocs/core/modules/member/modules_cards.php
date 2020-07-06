@@ -99,13 +99,10 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		if (!empty($conf->global->ADHERENT_CARDS_ADDON_PDF))
 		{
 			$code = $conf->global->ADHERENT_CARDS_ADDON_PDF;
-		}
-		else
-		{
+		} else {
 			$code = $modele;
 		}
-	}
-	else $code = $modele;
+	} else $code = $modele;
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
 	$tmp = explode(':', $template, 2);
@@ -113,8 +110,7 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 	{
 		$template = $tmp[0];
 		$srctemplatepath = $tmp[1];
-	}
-	else $srctemplatepath = $code;
+	} else $srctemplatepath = $code;
 
 	// Search template files
 	$file = ''; $classname = ''; $filefound = 0;
@@ -153,17 +149,12 @@ function members_card_pdf_create($db, $arrayofmembers, $modele, $outputlangs, $o
 		{
 			$outputlangs->charset_output = $sav_charset_output;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "members_card_pdf_create Error: ".$obj->error);
 			return -1;
 		}
-	}
-
-	else
-	{
+	} else {
 		dol_print_error('', $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file));
 		return -1;
 	}

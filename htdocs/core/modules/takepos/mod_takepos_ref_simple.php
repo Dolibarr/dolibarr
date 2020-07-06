@@ -164,12 +164,10 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
             if ($resql) {
                 $obj = $db->fetch_object($resql);
                 if ($obj) $ref = $obj->ref;
-            }
-            else dol_print_error($db);
+            } else dol_print_error($db);
 
             return $ref;
-        }
-        elseif ($mode == 'next')
+        } elseif ($mode == 'next')
         {
             $date = $invoice->date; // This is invoice date (not creation date)
             $yymm = strftime("%y%m", $date);
@@ -179,8 +177,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 
             dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$pos_source.'-'.$yymm.'-'.$num);
             return $this->prefix.$pos_source.'-'.$yymm.'-'.$num;
-        }
-        else dol_print_error('', 'Bad parameter for getNextValue');
+        } else dol_print_error('', 'Bad parameter for getNextValue');
     }
 
     /**

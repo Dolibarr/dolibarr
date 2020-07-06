@@ -144,17 +144,14 @@ foreach ($modulesdir as $dir)
 
                 if ($modName)
                 {
-		            try
-		            {
+		            try {
                         include_once $dir.$file;
                         $objMod = new $modName($db);
 
                         if ($objMod->numero > 0)
                         {
                             $j = $objMod->numero;
-                        }
-                        else
-                        {
+                        } else {
                             $j = 1000 + $i;
                         }
 
@@ -175,8 +172,7 @@ foreach ($modulesdir as $dir)
                             $j++;
                             $i++;
                         }
-		            }
-                    catch (Exception $e)
+		            } catch (Exception $e)
                     {
                         dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
                     }
@@ -380,9 +376,7 @@ foreach ($demoprofiles as $profilearray)
                 {
                     print "\n".'<!-- Module '.$modulekeyname.' hidden and always checked -->';
                     print '<input type="hidden" name="'.$modulekeyname.'" value="1">';
-                }
-                else
-                {
+                } else {
                     $modulo = ($j % $nbcolsmod);
         		    //if ($modulo == 0) print '<tr>';
                     print '<!-- id='.$val->numero.' -->';
@@ -434,9 +428,7 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIEN
 		print 'src="http://pagead2.googlesyndication.com/pagead/show_ads.js">'."\n";
 		print '</script>'."\n";
 		print '</div>'."\n";
-	}
-	else
-	{
+	} else {
 		print '<!-- google js advert tag disabled with jmobile -->'."\n";
 	}
 }

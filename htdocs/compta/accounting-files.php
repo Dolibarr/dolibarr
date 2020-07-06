@@ -334,9 +334,7 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 		                    $nofile['sens'] = $objd->sens;
 
 		                    $filesarray[$nofile['item'].'_'.$nofile['id']] = $nofile;
-		                }
-		                else
-		                {
+		                } else {
 		                    foreach ($files as $key => $file)
 		                    {
 		                    	$file['id'] = $objd->id;
@@ -383,15 +381,12 @@ if (($action == 'searchfiles' || $action == 'dl')) {
 
 		            $i++;
 		        }
-		    }
-		    else
-		    {
+		    } else {
 		        dol_print_error($db);
 		    }
 
 		    $db->free($resd);
-		}
-		else {
+		} else {
 			setEventMessages($langs->trans("ErrorSelectAtLeastOne"), null, 'errors');
 			$error++;
 		}
@@ -491,9 +486,7 @@ if ($result && $action == "dl" && !$error)
         dol_delete_file($zipname);
 
         exit();
-    }
-    else
-    {
+    } else {
     	setEventMessages($langs->trans("FailedToOpenFile", $zipname), null, 'errors');
     }
 }
@@ -625,9 +618,7 @@ if (!empty($date_start) && !empty($date_stop))
         if (empty($TData))
         {
             print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoItem").'</td></tr>';
-        }
-        else
-        {
+        } else {
             // Sort array by date ASC to calculate balance
 
             $totalET_debit = 0;
@@ -712,11 +703,11 @@ if (!empty($date_start) && !empty($date_stop))
                 print '<td aling="left">'.$data['paid'].'</td>';
 
                 // Total ET
-                print '<td align="right">'.price($data['sens']?$data['amount_ht']:-$data['amount_ht'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_ht'] : -$data['amount_ht'])."</td>\n";
                 // Total IT
-                print '<td align="right">'.price($data['sens']?$data['amount_ttc']:-$data['amount_ttc'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_ttc'] : -$data['amount_ttc'])."</td>\n";
                 // Total VAT
-                print '<td align="right">'.price($data['sens']?$data['amount_vat']:-$data['amount_vat'])."</td>\n";
+                print '<td align="right">'.price($data['sens'] ? $data['amount_vat'] : -$data['amount_vat'])."</td>\n";
 
                 print '<td>'.$data['thirdparty_name']."</td>\n";
 
@@ -758,9 +749,9 @@ if (!empty($date_start) && !empty($date_stop))
             // Balance
             print '<tr class="liste_total">';
             print '<td colspan="6" class="right">'.$langs->trans('Total').'</td>';
-            print '<td align="right">'.price(price2num($totalET_credit+$totalET_debit, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalIT_credit+$totalIT_debit, 'MT')).'</td>';
-            print '<td align="right">'.price(price2num($totalVAT_credit+$totalVAT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalET_credit + $totalET_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalIT_credit + $totalIT_debit, 'MT')).'</td>';
+            print '<td align="right">'.price(price2num($totalVAT_credit + $totalVAT_debit, 'MT')).'</td>';
             print '<td colspan="4"></td>';
             print "</tr>\n";
         }

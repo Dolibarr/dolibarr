@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Wysyłka %s sklasyfikowana jako rozliczona
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Przesyłka %s usunięta
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Zamówienie %s utworzone
 OrderValidatedInDolibarr=Zatwierdzenie zamówienia %s
 OrderDeliveredInDolibarr=Zamówienie %s sklasyfikowanych dostarczonych.

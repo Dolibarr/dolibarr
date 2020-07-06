@@ -2,7 +2,7 @@
 /* Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
  * Copyright (C) 2007-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,9 +118,7 @@ if ($action == 'up')
 	$sql .= " WHERE m.rowid = ".$previous['rowid']; // Descend celui du dessus
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'down')
+} elseif ($action == 'down')
 {
 	$current = array();
 	$next = array();
@@ -174,9 +172,7 @@ elseif ($action == 'down')
 	$sql .= " WHERE m.rowid = ".$next['rowid'];
 	dol_syslog("admin/menus/index.php ".$sql);
 	$db->query($sql);
-}
-
-elseif ($action == 'confirm_delete' && $confirm == 'yes')
+} elseif ($action == 'confirm_delete' && $confirm == 'yes')
 {
 	$db->begin();
 
@@ -191,9 +187,7 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 
 		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit;
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 
 		$reload = 0;
@@ -408,9 +402,7 @@ if ($conf->use_javascript_ajax)
 	}
 
 	print '</div>';
-}
-else
-{
+} else {
 	$langs->load("errors");
 	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }

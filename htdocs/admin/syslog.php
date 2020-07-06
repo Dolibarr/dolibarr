@@ -126,9 +126,7 @@ if ($action == 'set')
 	{
 		$db->commit();
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		$db->rollback();
 		setEventMessages($error, $errors, 'errors');
 	}
@@ -155,9 +153,7 @@ if ($action == 'setlevel')
 	if (!$error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -230,8 +226,7 @@ foreach ($syslogModules as $moduleName)
 		    {
     			if (isset($_POST[$tmpoption])) $value = $_POST[$tmpoption];
     			elseif (!empty($conf->global->$tmpoption)) $value = $conf->global->$tmpoption;
-		    }
-			else $value = (isset($option['default']) ? $option['default'] : '');
+		    } else $value = (isset($option['default']) ? $option['default'] : '');
 
 			print $option['name'].': <input type="text" class="flat" name="'.$option['constant'].'" value="'.$value.'"'.(isset($option['attr']) ? ' '.$option['attr'] : '').'>';
 			if (!empty($option['example'])) print '<br>'.$langs->trans("Example").': '.$option['example'];

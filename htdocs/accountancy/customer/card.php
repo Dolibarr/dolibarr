@@ -59,9 +59,7 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write)
 		$resql = $db->query($sql);
 		if (!$resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
-		}
-		else
-		{
+		} else {
 		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		    if ($backtopage)
 		    {

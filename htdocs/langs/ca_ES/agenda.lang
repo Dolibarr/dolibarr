@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Expedició %s classificada com a facturada
 ShipmentUnClassifyCloseddInDolibarr=Enviament %s classificat com a re-obert
 ShipmentBackToDraftInDolibarr=Enviament %s retornat a l'estat d'esborrany
 ShipmentDeletedInDolibarr=Expedició %s eliminada
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Comanda %s creada
 OrderValidatedInDolibarr=Comanda %s validada
 OrderDeliveredInDolibarr=Comanda %s classificada com a enviada
