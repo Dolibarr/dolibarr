@@ -512,7 +512,6 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql.= " WHERE cs.fk_type = c.id";
-		$sql.= " AND c.deductible = 0";
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 	}
@@ -531,7 +530,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 	$sql.= " AND cs.entity = ".$conf->entity;
 	$sql.= " GROUP BY c.libelle, dm";
 
-	dol_syslog("get social contributions deductible=0 ", LOG_DEBUG);
+	dol_syslog("get social contributions", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
