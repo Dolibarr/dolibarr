@@ -501,8 +501,7 @@ if ($object->id > 0)
         {
             $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'fk_transport_mode', 1);
         }
-        else
-        {
+        else {
             $form->formSelectTransportMode($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->fk_transport_mode, 'none');
         }
         print "</td>";
