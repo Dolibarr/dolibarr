@@ -412,7 +412,6 @@ class CMailFile
 					{
 						$result = $this->message->setFrom($this->getArrayAddress($from));
 					}
-
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
