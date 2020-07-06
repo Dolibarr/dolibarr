@@ -2661,8 +2661,7 @@ if ($action == 'create')
         {
             $form->formTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'transport_mode_id', 1, 1);
         }
-        else
-        {
+        else {
             $form->formTransportMode($_SERVER['PHP_SELF'].'?id='.$object->id, $object->transport_mode_id, 'none');
         }
         print '</td></tr>';

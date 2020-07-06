@@ -53,14 +53,12 @@ if ($user->rights->intracommreport->delete && $action == 'confirm_delete' && $co
             header("Location: ".$backtopage);
             exit;
         }
-        else
-        {
+        else {
             header("Location: list.php");
             exit;
         }
     }
-    else
-    {
+    else {
         $errmesg=$object->error;
     }
 }
@@ -100,14 +98,12 @@ if ($action == 'add' && $user->rights->intracommreport->write) {
             header("Location: ".$_SERVER["PHP_SELF"]);
             exit;
         }
-        else
-        {
+        else {
             setEventMessages($object->error, $object->errors, 'errors');
             $action = 'create';
         }
     }
-    else
-    {
+    else {
         $action = 'create';
     }
 }

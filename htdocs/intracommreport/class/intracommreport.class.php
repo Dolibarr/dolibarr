@@ -94,8 +94,9 @@ class IntracommReport extends CommonObject
 	 * @param int		$mode 				O for create, R for regenerate (Look always 0 ment toujours 0 within the framework of XML exchanges according to documentation)
 	 * @param string	$type 				introduction or expedition
 	 * @param string	$period_reference	Period of reference
+	 * @return void
 	 */
-	function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
+	public function getXML($mode = 'O', $type = 'introduction', $period_reference = '')
 	{
 
 		global $db, $conf, $mysoc;
@@ -123,7 +124,7 @@ class IntracommReport extends CommonObject
 		$declaration = $enveloppe->addChild('Declaration');
 		$declaration->addChild('declarationId', $id_declaration);
 		$declaration->addChild('referencePeriod', $period_reference);
-		if($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') $psiId = $party_id;
+		if ($conf->global->INTRACOMMREPORT_TYPE_ACTEUR === 'PSI') $psiId = $party_id;
 		else $psiId = 'NA';
 		$declaration->addChild('PSIId', $psiId);
 		$function = $declaration->addChild('Function');
@@ -139,12 +140,12 @@ class IntracommReport extends CommonObject
 
 		$this->errors = array_unique($this->errors);
 
-		if(!empty($res)) return $e->asXML();
+		if (!empty($res)) return $e->asXML();
 		else return 0;
 	}
 
 	// $type_declaration tjrs = "expedition" à voir si ça évolue
-	function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
+	public function getXMLDes($period_year, $period_month, $type_declaration = 'expedition')
 	{
 		global $db, $conf, $mysoc;
 
@@ -162,11 +163,11 @@ class IntracommReport extends CommonObject
 
 		$this->errors = array_unique($this->errors);
 
-		if(!empty($res)) return $e->asXML();
+		if (!empty($res)) return $e->asXML();
 		else return 0;
 	}
 
-	function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
+	public function addItemsFact(&$declaration, $type, $period_reference, $exporttype = 'deb')
 	{
 
 		global $db, $conf;
@@ -177,15 +178,15 @@ class IntracommReport extends CommonObject
 
 		$resql = $db->query($sql);
 
-		if($resql) {
+		if ($resql) {
 			$i=1;
 
-			if(empty($resql->num_rows)) {
+			if (empty($resql->num_rows)) {
 				$this->errors[] = 'Aucune donnée pour cette période';
 				return 0;
 			}
 
-			if($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
+			if ($exporttype == 'deb' && $conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0) {
 				$categ_fraisdeport = new Categorie($db);
 				$categ_fraisdeport->fetch($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT);
 				$TLinesFraisDePort = array();
@@ -198,11 +199,11 @@ class IntracommReport extends CommonObject
 				}
 				else
 				{
-					if(empty($res->fk_pays)) {
+					if (empty($res->fk_pays)) {
 						// On n'arrête pas la boucle car on veut savoir quels sont tous les tiers qui n'ont pas de pays renseigné
 						$this->errors[] = 'Pays non renseigné pour le tiers <a href="'.dol_buildpath('/societe/soc.php', 1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
 					} else {
-						if($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
+						if ($conf->global->INTRACOMMREPORT_CATEG_FRAISDEPORT > 0 && $categ_fraisdeport->containsObject('product', $res->id_prod)) {
 							$TLinesFraisDePort[] = $res;
 						} else $this->addItemXMl($declaration, $res, '', $i);
 					}
@@ -211,20 +212,20 @@ class IntracommReport extends CommonObject
 				$i++;
 			}
 
-			if(!empty($TLinesFraisDePort)) $this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
+			if (!empty($TLinesFraisDePort)) $this->addItemFraisDePort($declaration, $TLinesFraisDePort, $type, $categ_fraisdeport, $i);
 
-			if(count($this->errors) > 0) return 0;
+			if (count($this->errors) > 0) return 0;
 		}
 
 		return 1;
 	}
 
-	function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
+	public function getSQLFactLines($type, $period_reference, $exporttype = 'deb')
 	{
 
 		global $mysoc, $conf;
 
-		if($type=='expedition' || $exporttype=='des') {
+		if ($type=='expedition' || $exporttype=='des') {
 			$sql = 'SELECT f.facnumber, f.total as total_ht';
 			$table = 'facture';
 			$table_extraf = 'facture_extrafields';
@@ -258,16 +259,16 @@ class IntracommReport extends CommonObject
 		return $sql;
 	}
 
-	function addItemXMl(&$declaration, &$res, $code_douane_spe = '', $i)
+	public function addItemXMl(&$declaration, &$res, $code_douane_spe = '', $i)
 	{
 
 		$item = $declaration->addChild('Item');
 		$item->addChild('ItemNumber', $i);
 		$cn8 = $item->addChild('CN8');
-		if(empty($code_douane_spe)) $code_douane = $res->customcode;
+		if (empty($code_douane_spe)) $code_douane = $res->customcode;
 		else $code_douane = $code_douane_spe;
 		$cn8->addChild('CN8Code', $code_douane);
-		if(!empty($res->tva_intra)) $item->addChild('partnerId', $res->tva_intra);
+		if (!empty($res->tva_intra)) $item->addChild('partnerId', $res->tva_intra);
 		$item->addChild('MSConsDestCode', $res->code); // code iso pays client
 		$item->addChild('netMass', $res->weight * $res->qty); // Poids du produit
 		$item->addChild('quantityInSU', $res->qty); // Quantité de produit dans la ligne
@@ -281,7 +282,7 @@ class IntracommReport extends CommonObject
 		$item->addChild('regionCode', substr($res->zip, 0, 2));
 	}
 
-	function addItemXMlDes($declaration, &$res, $code_douane_spe = '', $i)
+	public function addItemXMlDes($declaration, &$res, $code_douane_spe = '', $i)
 	{
 		$item = $declaration->addChild('ligne_des');
 		$item->addChild('numlin_des', $i);
@@ -292,12 +293,12 @@ class IntracommReport extends CommonObject
 	/**
 	 * Cette fonction ajoute un item en récupérant le code douane du produit ayant le plus haut montant dans la facture
 	 */
-	function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
+	public function addItemFraisDePort(&$declaration, &$TLinesFraisDePort, $type, &$categ_fraisdeport, $i)
 	{
 
 		global $db, $conf;
 
-		if($type=='expedition') {
+		if ($type=='expedition') {
 			$table = 'facture';
 			$tabledet = 'facturedet';
 			$field_link = 'fk_facture';
@@ -310,7 +311,7 @@ class IntracommReport extends CommonObject
 			$more_sql = 'f.ref_supplier';
 		}
 
-		foreach($TLinesFraisDePort as $res) {
+		foreach ($TLinesFraisDePort as $res) {
 			$sql = 'SELECT p.customcode
 					FROM '.MAIN_DB_PREFIX.$tabledet.' d
 					INNER JOIN '.MAIN_DB_PREFIX.$table.' f ON (f.rowid = d.'.$field_link.')
@@ -352,7 +353,7 @@ class IntracommReport extends CommonObject
 		global $db;
 
 		$resql = $db->query('SELECT MAX(numero_declaration) as max_numero_declaration FROM '.$this->get_table().' WHERE exporttype="'.$this->exporttype.'"');
-		if($resql) $res = $db->fetch_object($resql);
+		if ($resql) $res = $db->fetch_object($resql);
 
 		return ($res->max_numero_declaration + 1);
 	}

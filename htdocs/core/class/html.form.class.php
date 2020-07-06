@@ -71,7 +71,7 @@ class Form
 	// Cache arrays
 	public $cache_types_paiements = array();
 	public $cache_conditions_paiements = array();
-	public $cache_transport_mode=array();
+	public $cache_transport_mode = array();
 	public $cache_availability = array();
 	public $cache_demand_reason = array();
 	public $cache_types_fees = array();
@@ -3608,8 +3608,7 @@ class Form
 
             return $num;
         }
-        else
-        {
+        else {
             dol_print_error($this->db);
             return -1;
         }
@@ -3638,7 +3637,7 @@ class Form
 
         print '<select id="select'.$htmlname.'" class="flat selectmodetransport'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'">';
         if ($empty) print '<option value="">&nbsp;</option>';
-        foreach($this->cache_transport_mode as $id => $arraytypes)
+        foreach ($this->cache_transport_mode as $id => $arraytypes)
         {
             // If not good status
             if ($active >= 0 && $arraytypes['active'] != $active) continue;
@@ -4721,8 +4720,7 @@ class Form
             print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
             print '</form>';
         }
-        else
-        {
+        else {
             if ($selected)
             {
                 $this->load_cache_transport_mode();
