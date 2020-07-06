@@ -251,7 +251,7 @@ class BOM extends CommonObject
 	    if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
 
 	    // Get lines so they will be clone
-	    //foreach($object->lines as $line)
+	    //foreach ($object->lines as $line)
 	    //	$line->fetch_optionals();
 
 	    // Reset some properties
