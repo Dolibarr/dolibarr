@@ -401,14 +401,10 @@ class CMailFile
 						$regexp = '/([a-z0-9_\.\-\+])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i'; // This regular expression extracts all emails from a string
 						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
 						$adressEmailFrom = reset($adressEmailFrom);
-						if($emailMatchs !== false
-							&& filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL)
-							&& $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom)
+						if ($emailMatchs !== false && filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL) && $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom)
 						{
 							$result = $this->message->setFrom($conf->global->MAIN_MAIL_SMTPS_ID);
-						}
-						else
-						{
+						} else {
 							$result = $this->message->setFrom($this->getArrayAddress($from));
 						}
 					} else {
