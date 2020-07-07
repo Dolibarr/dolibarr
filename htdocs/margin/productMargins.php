@@ -241,7 +241,7 @@ if ($result)
   	} else {
   		print_liste_field_titre("ProductService", $_SERVER["PHP_SELF"], "p.ref", "", "&amp;id=".$id, '', $sortfield, $sortorder);
   	}
-	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "product_qty", "", "&amp;id=".$id, '', $sortfield, $sortorder,'center ');
+	print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "product_qty", "", "&amp;id=".$id, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("SellingPrice", $_SERVER["PHP_SELF"], "selling_price", "", "&amp;id=".$id, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre($labelcostprice, $_SERVER["PHP_SELF"], "buying_price", "", "&amp;id=".$id, '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre("Margin", $_SERVER["PHP_SELF"], "marge", "", "&amp;id=".$id, '', $sortfield, $sortorder, 'right ');
