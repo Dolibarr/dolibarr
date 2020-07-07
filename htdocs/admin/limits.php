@@ -34,6 +34,10 @@ if (!$user->admin) accessforbidden();
 $action = GETPOST('action', 'alpha');
 $currencycode = GETPOST('currencycode', 'alpha');
 
+if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
+}
+
 $mainmaxdecimalsunit = 'MAIN_MAX_DECIMALS_UNIT'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainmaxdecimalstot = 'MAIN_MAX_DECIMALS_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainmaxdecimalsshown = 'MAIN_MAX_DECIMALS_SHOWN'.(!empty($currencycode) ? '_'.$currencycode : '');
@@ -94,7 +98,6 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("LimitsSetup"), '', 'title_setup');
 
-$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
 $aCurrencies = array($conf->currency); // Default currency always first position
 
 if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY))
