@@ -425,6 +425,7 @@ if ($action == "delete") {
 			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql3 = $db->query($sql);
 
+			$invoice->update_price(1);
             if ($resql1 && $resql2 && $resql3)
             {
             	$db->commit();
@@ -845,7 +846,10 @@ print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
-print '<span style="font-size:120%;" class="right">';
+// In phone version only show when it is invoice page
+if ($mobilepage == "invoice" || $mobilepage == "") {
+	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
+}
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
     $sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
@@ -858,25 +862,28 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
     }
 	// In phone version only show when is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
-		print $langs->trans('Place')." <b>".$label."</b> - ";
-		print $langs->trans('Floor')." <b>".$floor."</b> - ";
+		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".$label."</b><br>";
+		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".$floor."</b>";
 	}
 	elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) print $mysoc->name;
 	elseif ($mobilepage == "cats") print $langs->trans('Category');
 	elseif ($mobilepage == "products") print $langs->trans('Label');
+} else {
+	print $langs->trans("Products");
 }
-// In phone version only show when is invoice page
-if ($mobilepage == "invoice" || $mobilepage == "") {
-	print $langs->trans('TotalTTC');
-	print ' : <b>'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</b></span>';
-	print '<br><input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
-	print '</td>';
-}
+print '</td>';
 if ($_SESSION["basiclayout"] != 1)
 {
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	print '<td class="linecolht right nowraponall">'.$langs->trans('TotalTTCShort').'</td>';
+	print '<td class="linecolht right nowraponall">';
+	print '<span class="opacitymedium small">'.$langs->trans('TotalTTCShort').'</span><br>';
+	// In phone version only show when it is invoice page
+	if ($mobilepage == "invoice" || $mobilepage == "") {
+		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
+		print '</td>';
+	}
+	print '</td>';
 }
 elseif ($mobilepage == "invoice") print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 print "</tr>\n";

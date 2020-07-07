@@ -467,6 +467,7 @@ function New() {
 		}
 
 		if (r == true) {
+			// Reload section with invoice lines
 			$("#poslines").load("invoice.php?action=delete&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});

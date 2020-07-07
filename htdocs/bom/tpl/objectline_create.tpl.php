@@ -58,7 +58,6 @@ if ($nolinesbefore) {
     }
     print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
-	// echo $langs->trans("FreeZone");
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if ($conf->global->PRODUCT_USE_UNITS)
