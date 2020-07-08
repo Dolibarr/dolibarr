@@ -431,7 +431,7 @@ function CloseBill() {
 }
 
 function Floors() {
-	console.log("Open box to select floor");
+	console.log("Open box to select floor place="+place);
 	$.colorbox({href:"floors.php?place="+place, width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Floors"); ?>"});
 }
 
@@ -467,6 +467,7 @@ function New() {
 		}
 
 		if (r == true) {
+			// Reload section with invoice lines
 			$("#poslines").load("invoice.php?action=delete&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
@@ -928,7 +929,13 @@ if ($resql)
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('ActionButtons');
 if (!empty($reshook)) {
-    $menus[$r++] = $reshook;
+	if (is_array($reshook) && !isset($reshook['title'])) {
+		foreach ($reshook as $reshook) {
+			$menus[$r++] = $reshook;
+		}
+	} else {
+		$menus[$r++] = $reshook;
+	}
 }
 
 if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
@@ -982,7 +989,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
 				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
 				} else {
-				    echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+				    if (!$conf->global->TAKEPOS_HIDE_CATEGORY_IMAGES) echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
 				}
 				?>
 				<?php if ($count != ($MAXCATEG - 2) && $count != ($MAXCATEG - 1)) { ?>
@@ -1015,7 +1022,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
     				} else {
     					print '<div class="" id="proprice'.$count.'"></div>';
-    					print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+    					if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
     				}
     				?>
 					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1)) { ?>

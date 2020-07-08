@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=%s referans no'lu sevkiyat faturalandı olarak 
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=%s referans no'lu sevkiyat taslak durumuna geri döndürüldü
 ShipmentDeletedInDolibarr=%s referans no'lu sevkiyat silindi
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=%s referans no'lu sipariş oluşturuldu
 OrderValidatedInDolibarr=%s referans no'lu sipariş doğrulandı
 OrderDeliveredInDolibarr=%s referans no'lu sipariş sevkedildi olarak sınıflandırıldı

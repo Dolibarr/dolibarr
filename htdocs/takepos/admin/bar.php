@@ -66,12 +66,14 @@ if (GETPOST('action', 'alpha') == 'set')
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("CashDeskSetup"));
+$arrayofcss = array("/takepos/css/colorbox.css");
+
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_prepare_head();
-dol_fiche_head($head, 'bar', 'TakePOS', -1);
+dol_fiche_head($head, 'bar', 'TakePOS', -1, 'cash-register');
 print '<br>';
 
 
@@ -79,6 +81,20 @@ print '<br>';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
+
+?>
+<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/takepos/js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
+<script type="text/javascript">
+function Floors() {
+	console.log("Open box to select floor");
+	$.colorbox({href:"<?php echo DOL_URL_ROOT ?>/takepos/floors.php?mode=edit&place=0", width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Floors"); ?>"});
+}
+</script>
+
+<?php
+
+print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
+print '<br><br>';
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
@@ -138,8 +154,8 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_QR_MENU", array(), $conf->entity, 0, 0, 1, 0);
 print '</td></tr>';
 
-
 print '</table>';
+
 
 if ($conf->global->TAKEPOS_AUTO_ORDER)
 {
@@ -167,6 +183,7 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
 
 	print '</table>';
 }
+
 
 if ($conf->global->TAKEPOS_QR_MENU)
 {

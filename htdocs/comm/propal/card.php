@@ -192,7 +192,7 @@ if (empty($reshook))
 					}
 				}
 
-				$result = $object->createFromClone($user, $socid);
+				$result = $object->createFromClone($user, $socid, (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : null));
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit();
@@ -775,8 +775,16 @@ if (empty($reshook))
 				}
 			}
 		}
-	} // Add line
-	elseif ($action == 'addline' && $usercancreate) {
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha')) {
+		// Define vat_rate
+		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
+		foreach ($object->lines as $line) {
+			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+		}
+	} elseif ($action == 'addline' && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
@@ -1085,6 +1093,9 @@ if (empty($reshook))
 							$outputlangs->setDefaultLang($newlang);
 						}
 						$ret = $object->fetch($id); // Reload to get new records
+						if ($ret > 0) {
+							$object->fetch_thirdparty();
+						}
 						$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 
@@ -1747,9 +1758,8 @@ if ($action == 'create')
 
 		print '<tr><td class="tdtop"><input type="radio" name="createmode" value="empty" checked></td>';
 		print '<td valign="top" colspan="2">'.$langs->trans("CreateEmptyPropal").'</td></tr>';
+		print '</table>';
 	}
-
-	if (!empty($conf->global->PROPAL_CLONE_ON_CREATE_PAGE)) print '</table>';
 
 	dol_fiche_end();
 
@@ -1793,11 +1803,11 @@ if ($action == 'create')
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array(
-							// 'text' => $langs->trans("ConfirmClone"),
-							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' =>
-							// 1),
-							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)')));
+			// 'text' => $langs->trans("ConfirmClone"),
+			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=2 OR s.client=3)'))
+		);
 		if (!empty($conf->global->PROPAL_CLONE_DATE_DELIVERY) && !empty($object->date_livraison)) {
 			$formquestion[] = array('type' => 'date', 'name' => 'date_delivery', 'label' => $langs->trans("DeliveryDate"), 'value' => $object->date_livraison);
 		}

@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Lieferung %s als verrechnet markiert
 ShipmentUnClassifyCloseddInDolibarr=Lieferung %s als wiedereröffnet markieren
 ShipmentBackToDraftInDolibarr=Sendung %s zurück zum Entwurfsstatus
 ShipmentDeletedInDolibarr=Lieferung %s gelöscht
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr= Auftragserteilung %s erstellt
 OrderValidatedInDolibarr=Auftrag %s freigegeben
 OrderDeliveredInDolibarr=Bestellung %s als geliefert markieren

@@ -158,9 +158,9 @@ DisplayCompanyManagers=Namen van beheerders weergeven
 DisplayCompanyInfoAndManagers=Bedrijfsadres en namen van managers weergeven
 ModuleCompanyCodePanicum=Retourneer een lege boekhoudcode.
 Module40Name=Verkoper
-Module56Desc=Management of payment by credit transfer orders. It includes generation of SEPA file for European countries.
 Module1780Name=Labels/Categorien
 Module1780Desc=Label/categorie maken (producten, klanten, leveranciers, contacten of leden)
+Permission221=Bekijk EMailings
 Permission1004=Bekijk voorraadmutaties
 Permission1005=Creëren / wijzigen voorraadmutaties
 InfoWebServer=Over webserver
@@ -174,5 +174,4 @@ AddBoxes=Widgets toevoegen
 OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 GeneralOptions=Algemene opties
 ExportSetup=Installatie van module Exporteren
-EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set a value here to use this feature. Note that you must also use a read/write login account.
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

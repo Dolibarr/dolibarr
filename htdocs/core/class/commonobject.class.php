@@ -2525,10 +2525,11 @@ abstract class CommonObject
 	/**
 	 * 	Get children of line
 	 *
-	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of children lines id
+	 * 	@param	int		$id		            Id of parent line
+	 * 	@param	int		$includealltree		0 = 1st level child, 1 = All level child
+	 * 	@return	array			            Array with list of children lines id
 	 */
-	public function getChildrenOfLine($id)
+	public function getChildrenOfLine($id, $includealltree = 0)
 	{
 		$rows = array();
 
@@ -2541,16 +2542,13 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$i = 0;
-			$num = $this->db->num_rows($resql);
-			while ($i < $num)
-			{
-				$row = $this->db->fetch_row($resql);
-				$rows[$i] = $row[0];
-				$i++;
+			if ($this->db->num_rows($resql) > 0) {
+				while ($row = $this->db->fetch_row($resql)) {
+					$rows[] = $row[0];
+					if (!empty($includealltree)) $rows = array_merge($rows, $this->getChildrenOfLine($row[0]), $includealltree);
+				}
 			}
 		}
-
 		return $rows;
 	}
 
@@ -5608,7 +5606,7 @@ abstract class CommonObject
 	 *	Update an extra field value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
-	 *  @param  string      $key    		Key of the extrafield (without starting 'options_')
+	 *  @param  string      $key    		Key of the extrafield to update (without starting 'options_')
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
@@ -6834,8 +6832,6 @@ abstract class CommonObject
 
 					$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
 
-					$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
-
 					if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan = '0'; }
 
 					if ($action == 'selectlines') { $colspan++; }
@@ -6865,6 +6861,7 @@ abstract class CommonObject
 					$labeltoshow = $langs->trans($label);
 					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 
+					$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
 					$out .= '<td class="';
 					//$out .= "titlefield";
 					//if (GETPOST('action', 'none') == 'create') $out.='create';
@@ -7758,6 +7755,11 @@ abstract class CommonObject
 			if ($obj)
 			{
 				$this->setVarsFromFetchObj($obj);
+
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
+
 				return $this->id;
 			} else {
 				return 0;

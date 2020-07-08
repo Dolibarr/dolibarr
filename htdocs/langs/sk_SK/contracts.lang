@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Obchodný zástupca nasledujúce-up zm
 TypeContact_contrat_external_BILLING=Fakturačný kontakt so zákazníkom
 TypeContact_contrat_external_CUSTOMER=Nadväzujúce kontakt so zákazníkom
 TypeContact_contrat_external_SALESREPSIGN=Podpísanie kontraktu kontakt so zákazníkom
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

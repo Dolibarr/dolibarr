@@ -5243,6 +5243,28 @@ class Form
     }
 
     /**
+     *  Show 2 HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
+     *  Fields are preselected with :
+     *              - set_time date (must be a local PHP server timestamp or string date with format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM')
+     *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
+     *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
+     *
+     *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+     *  @param  integer     $set_time_end       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+     *  @param	string		$prefix			Prefix for fields name
+     *  @param	string		$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+     * 	@return string                      Html for selectDate
+     *  @see    form_date(), select_month(), select_year(), select_dayofweek()
+     */
+    public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0)
+    {
+        $ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty);
+        $ret .= '<br/>';
+        $ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty);
+        return $ret;
+    }
+
+    /**
      *  Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
 	 *  Fields are preselected with :
 	 *              - set_time date (must be a local PHP server timestamp or string date with format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM')

@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Saadetise %s arveldatud
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Saadetis %s on muudetud mustandiks
 ShipmentDeletedInDolibarr=Saadetis %s kustutatud
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Tellimus %s loodud
 OrderValidatedInDolibarr=Tellimus %s on kinnitatud
 OrderDeliveredInDolibarr=Tellimus %s tarnitud

@@ -64,6 +64,7 @@ ToClone=Clonar
 NoCloneOptionsSpecified=No se definió información a clonar.
 Run=Ejecutar
 ShowCardHere=Ver la ficha
+Valid=Válido
 ToLink=Vínculo
 NoUserGroupDefined=Ningún grupo definido por el usuario
 NoteSomeFeaturesAreDisabled=Atención, muchas funciones/módulos están deshabilitadas en esta demostración.

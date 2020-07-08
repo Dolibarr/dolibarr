@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Expediere %s clasificată facturată
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Expedierea %s revine la starea de proiect
 ShipmentDeletedInDolibarr=Livrare %s ştearsă
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Comanda %s a fost creată
 OrderValidatedInDolibarr=Comanda %s validată
 OrderDeliveredInDolibarr=Comanda livrată %s  clasificată

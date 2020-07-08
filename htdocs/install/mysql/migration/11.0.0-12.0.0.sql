@@ -81,6 +81,8 @@ delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLE
 
 -- For v12
 
+ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
+
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
 ALTER TABLE llx_ecm_files MODIFY COLUMN src_object_type varchar(64);
@@ -322,3 +324,6 @@ UPDATE llx_prelevement_facture_demande SET entity = 1 WHERE entity IS NULL;
 
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
+
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);

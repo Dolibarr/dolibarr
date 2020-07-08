@@ -15,6 +15,7 @@ CancelCP=Анулирана
 RefuseCP=Отхвърлена
 ValidatorCP=Одобряващ
 ListeCP=Списък с молби за отпуск
+Leave=Молба за отпуск
 LeaveId=Идентификатор на молба за отпуск
 ReviewedByCP=Ще бъде одобрена от
 UserID=Потребител

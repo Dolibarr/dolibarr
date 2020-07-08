@@ -285,6 +285,7 @@ if ($search_gender != '' && $search_gender != '-1') $sql .= " AND d.gender = '".
 if ($search_login) $sql .= natural_search("d.login", $search_login);
 if ($search_company) $sql .= natural_search("s.nom", $search_company);
 if ($search_email) $sql .= natural_search("d.email", $search_email);
+if ($search_address) $sql .= natural_search("d.address", $search_address);
 if ($search_town)     $sql .= natural_search("d.town", $search_town);
 if ($search_zip)      $sql .= natural_search("d.zip", $search_zip);
 if ($search_state)    $sql .= natural_search("state.nom", $search_state);

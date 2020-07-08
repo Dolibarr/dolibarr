@@ -85,7 +85,7 @@ if ($nolinesbefore) {
 			<td class="linecolnum center"></td>
 		<?php } ?>
 		<td class="linecoldescription minwidth500imp">
-			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span><?php // echo $langs->trans("FreeZone"); ?>
+			<div id="add"></div><span class="hideonsmartphone"><?php echo $langs->trans('AddNewLine'); ?></span>
 		</td>
 		<?php
 		if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines

@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Értékesítési képviselő a szerző
 TypeContact_contrat_external_BILLING=Számlázandó ügyfél
 TypeContact_contrat_external_CUSTOMER=Ügyfél kapcsolat tartó
 TypeContact_contrat_external_SALESREPSIGN=A szerződést aláíró személy
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

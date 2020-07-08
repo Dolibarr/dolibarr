@@ -86,6 +86,10 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 9
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 93,  9,    '3','0','VAT super reduced rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 94,  9,   '17','0','VAT standard rate',1);
 
+-- CONGO = REPUBLIQUE DU CONGO (id country=72)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
+
 -- CYPRUS (id country=78)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (781, 78,    '0','0','VAT Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (782, 78,    '9','0','VAT Rate 9',1);

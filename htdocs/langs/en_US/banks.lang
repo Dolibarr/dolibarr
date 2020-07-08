@@ -37,6 +37,7 @@ IbanValid=BAN valid
 IbanNotValid=BAN not valid
 StandingOrders=Direct debit orders
 StandingOrder=Direct debit order
+PaymentByDirectDebit=Payment by direct debit
 PaymentByBankTransfers=Payments by credit transfer
 PaymentByBankTransfer=Payment by credit transfer
 AccountStatement=Account statement

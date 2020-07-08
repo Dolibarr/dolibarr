@@ -15,6 +15,7 @@ CancelCP=Cancelado
 RefuseCP=Recusou
 ValidatorCP=Aprovador
 ListeCP=Lista de licença
+Leave=Pedido de licença
 LeaveId=ID da licença
 ReviewedByCP=Será aprovado por
 UserID=User ID

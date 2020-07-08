@@ -15,6 +15,7 @@ CancelCP=ألغيت
 RefuseCP=رفض
 ValidatorCP=Approbator
 ListeCP=List of leave
+Leave=ترك الطلب
 LeaveId=Leave ID
 ReviewedByCP=سيتم مراجعتها من قبل
 UserID=User ID
