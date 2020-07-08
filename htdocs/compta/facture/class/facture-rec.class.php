@@ -1333,7 +1333,7 @@ class FactureRec extends CommonInvoice
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowInvoice").'</u>';
+		$label = '<u>'.$langs->trans("RepeatableInvoice").'</u>';
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}

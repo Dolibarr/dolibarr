@@ -2208,7 +2208,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			  var hiddenInput2 = document.createElement('input');
 			  hiddenInput2.setAttribute('type', 'hidden');
 			  hiddenInput2.setAttribute('name', 'token');
-              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+              hiddenInput2.setAttribute('value', '<?php echo newToken(); ?>');
 			  form.appendChild(hiddenInput2);
 
     	      // Submit the form
@@ -2232,7 +2232,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			  var hiddenInput2 = document.createElement('input');
 			  hiddenInput2.setAttribute('type', 'hidden');
 			  hiddenInput2.setAttribute('name', 'token');
-              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+              hiddenInput2.setAttribute('value', '<?php echo newToken(); ?>');
 			  form.appendChild(hiddenInput2);
 
     		  // Submit the form
