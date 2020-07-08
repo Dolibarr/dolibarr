@@ -128,10 +128,11 @@ class modHRM extends DolibarrModules
 	 * (defined in constructor) into Dolibarr database.
 	 * It also creates data directories
 	 *
-	 * @param string $options Enabling module ('', 'noboxes')
-	 * @return int if OK, 0 if KO
+	 * @param  string  $options        Enabling module ('', 'noboxes')
+	 * @param  int     $force_entity   Force current entity
+	 * @return int                     if OK, 0 if KO
 	 */
-	public function init($options = '')
+	public function init($options = '', $force_entity = null)
 	{
 		// Permissions
 		$this->remove($options);

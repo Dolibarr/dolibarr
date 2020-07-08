@@ -2217,14 +2217,15 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
      * The init function adds tabs, constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      * It also creates data directories
      *
-     * @param  string $options Options when enabling module ('', 'newboxdefonly', 'noboxes')
-     *                         'noboxes' = Do not insert boxes 'newboxdefonly' = For boxes,
-     *                         insert def of boxes only and not boxes activation
-     * @return int                1 if OK, 0 if KO
+     * @param  string $options       Options when enabling module ('', 'newboxdefonly', 'noboxes')
+     *                               'noboxes' = Do not insert boxes 'newboxdefonly' = For boxes,
+     *                               insert def of boxes only and not boxes activation
+     * @param  int    $force_entity	 Force current entity
+     * @return int                   1 if OK, 0 if KO
      */
-    public function init($options = '')
+    public function init($options = '', $force_entity = null)
     {
-    	return $this->_init(array(), $options);
+    	return $this->_init(array(), $options, $force_entity);
     }
 
     /**

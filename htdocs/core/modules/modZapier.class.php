@@ -323,10 +323,11 @@ class modZapier extends DolibarrModules
      *  The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
      *  It also creates data directories
      *
-     *  @param      string  $options    Options when enabling module ('', 'noboxes')
-     *  @return     int                 1 if OK, 0 if KO
+     *  @param      string  $options        Options when enabling module ('', 'noboxes')
+     *  @param      int     $force_entity	Force current entity
+     *  @return     int                     1 if OK, 0 if KO
      */
-    public function init($options = '')
+    public function init($options = '', $force_entity = null)
     {
         $result = $this->_load_tables('/zapier/sql/');
         if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
