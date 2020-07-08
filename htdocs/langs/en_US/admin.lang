@@ -1240,6 +1240,7 @@ WarningAtLeastKeyOrTranslationRequired=A search criteria is required at least fo
 NewTranslationStringToShow=New translation string to show
 OriginalValueWas=The original translation is overwritten. Original value was:<br><br>%s
 TransKeyWithoutOriginalValue=You forced a new translation for the translation key '<strong>%s</strong>' that does not exist in any language files
+TitleNumberOfActivatedModules=Activated application|modules
 TotalNumberOfActivatedModules=Activated application/modules: <b>%s</b> / <b>%s</b>
 YouMustEnableOneModule=You must at least enable 1 module
 ClassNotFoundIntoPathWarning=Class %s not found in PHP path

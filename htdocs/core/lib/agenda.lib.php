@@ -191,6 +191,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	if ($conf->browser->layout == 'phone') print '</div>';
 	else print '</td>';
 
+	/*
 	if ($conf->browser->layout == 'phone') print '<div class="fichehalfright">';
 	else print '<td class="center nowrap" valign="middle">';
 
@@ -202,7 +203,9 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 	print '</table>';
 
 	if ($conf->browser->layout == 'phone') print '</div>';
-	else print '</td></tr></table>';
+	else print '</td>';
+	*/
+	if ($conf->browser->layout != 'phone') print '</tr></table>';
 
 	print '</div>'; // Close fichecenter
 	print '<div style="clear:both"></div>';
@@ -520,7 +523,7 @@ function calendars_prepare_head($param)
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php'.($param ? '?'.$param : '');
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/list.php?action=show_list'.($param ? '&'.$param : '');
     $head[$h][1] = $langs->trans("ViewList");
     $head[$h][2] = 'cardlist';
     $h++;
