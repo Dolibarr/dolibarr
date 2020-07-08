@@ -759,7 +759,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     	    		print '<tr>';
     	    		print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
-    	    		print '<td class="right">';
+    	    		print '<td class="right nowraponall">';
     	    		$help = '';
     	    		if ($line->qty_frozen) $help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("QuantityFrozen").'</strong>: '.yn(1).' ('.$langs->trans("QuantityConsumedInvariable").')';
     	    		if ($line->disable_stock_change) $help .= ($help ? '<br>' : '').'<strong>'.$langs->trans("DisableStockChange").'</strong>: '.yn(1).' ('.(($tmpproduct->type == Product::TYPE_SERVICE && empty($conf->global->STOCK_SUPPORTS_SERVICES)) ? $langs->trans("NoStockChangeOnServices") : $langs->trans("DisableStockChangeHelp")).')';
@@ -808,7 +808,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    			print '</td>';
     	    			print '<td></td>';
     	    			print '<td class="right">'.$line2['qty'].'</td>';
-    	    			print '<td>';
+    	    			print '<td class="tdoverflowmax150">';
     	    			if ($line2['fk_warehouse'] > 0) {
     	    				$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
     	    				if ($result > 0) print $tmpwarehouse->getNomUrl(1);
@@ -921,7 +921,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     				print '<tr>';
     				print '<td>'.$tmpproduct->getNomUrl(1).'</td>';
     				print '<td class="right">'.$line->qty.'</td>';
-    				print '<td class="right">';
+    				print '<td class="right nowraponall">';
     				if ($alreadyproduced) {
     					print '<script>';
     					print 'jQuery(document).ready(function() {
@@ -957,7 +957,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     					print '</td>';
     					print '<td></td>';
     					print '<td class="right">'.$line2['qty'].'</td>';
-    					print '<td>';
+    					print '<td class="tdoverflowmax150">';
     					if ($line2['fk_warehouse'] > 0) {
     						$result = $tmpwarehouse->fetch($line2['fk_warehouse']);
     						if ($result > 0) print $tmpwarehouse->getNomUrl(1);
