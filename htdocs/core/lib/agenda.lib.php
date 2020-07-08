@@ -150,6 +150,7 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<td class="nowrap">';
 		print $langs->trans("Status");
 		print ' &nbsp;</td><td class="nowraponall">';
+		print img_picto('', 'setup', 'class="fawidth30 inline-block"');
 		$formactions->form_select_status_action('formaction', $status, 1, 'search_status', 1, 2, 'minwidth100');
 		print '</td></tr>';
 	}
@@ -160,7 +161,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("VisibleTimeRange").'</td>';
 		print "<td class='nowrap'>";
-		print '<div class="ui-grid-a"><div class="ui-block-a">';
+		print img_picto('', 'clock', 'class="fawidth30 inline-block"');
+		print "\n".'<div class="ui-grid-a inline-block"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
 		else print '</div><div class="ui-block-b">';
@@ -173,7 +175,8 @@ function print_actions_filter($form, $canedit, $status, $year, $month, $day, $sh
 		print '<tr>';
 		print '<td class="nowrap">'.$langs->trans("VisibleDaysRange").'</td>';
 		print "<td class='nowrap'>";
-		print '<div class="ui-grid-a"><div class="ui-block-a">';
+		print img_picto('', 'clock', 'class="fawidth30 inline-block"');
+		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a">';
 		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
 		if (empty($conf->dol_use_jmobile)) print ' - ';
 		else print '</div><div class="ui-block-b">';
