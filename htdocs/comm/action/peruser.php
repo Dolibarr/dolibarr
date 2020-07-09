@@ -326,10 +326,6 @@ $head = calendars_prepare_head($paramnoaction);
 
 print '<form method="POST" id="searchFormList" class="listactionsfilter" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 
-//dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-//print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, $listofextcals, $actioncode, $usergroup, '', $resourceid);
-//dol_fiche_end();
-
 $showextcals = $listofextcals;
 // Legend
 if ($conf->use_javascript_ajax)
@@ -430,7 +426,7 @@ if ($user->rights->agenda->myactions->create || $user->rights->agenda->allaction
     $newcardbutton .= dolGetButtonTitle($langs->trans("AddAction"), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
 }
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 $link = '';
 //print load_fiche_titre('', $link.' &nbsp; &nbsp; '.$nav.' '.$newcardbutton, '');
@@ -916,7 +912,7 @@ jQuery(document).ready(function() {
 		else if (ids.indexOf(",") > -1)	/* There is several events */
 		{
 			/* alert(\'several events\'); */
-			url = "'.DOL_URL_ROOT.'/comm/action/list.php?filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
+			url = "'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&filtert="+userid+"&dateselectyear="+year+"&dateselectmonth="+month+"&dateselectday="+day;
 			window.location.href = url;
 		}
 		else	/* One event */

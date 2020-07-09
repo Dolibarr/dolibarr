@@ -1580,7 +1580,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 		if ($donetodo)
 		{
             $tmp = '';
-            if (get_class($filterobj) == 'Societe') $tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?socid='.$filterobj->id.'&amp;status=done">';
+            if (get_class($filterobj) == 'Societe') $tmp .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&socid='.$filterobj->id.'&status=done">';
             $tmp .= ($donetodo != 'done' ? $langs->trans("ActionsToDoShort") : '');
             $tmp .= ($donetodo != 'done' && $donetodo != 'todo' ? ' / ' : '');
             $tmp .= ($donetodo != 'todo' ? $langs->trans("ActionsDoneShort") : '');

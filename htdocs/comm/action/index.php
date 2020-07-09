@@ -150,6 +150,7 @@ if (GETPOST("viewlist", 'alpha') || $action == 'show_list')
             $param .= '&'.$key.'='.urlencode($val);
         }
     }
+    if (! preg_match('/action=/', $param)) $param .= ($param ? '&' : '').'action=show_list';
     //print $param;
     header("Location: ".DOL_URL_ROOT.'/comm/action/list.php?'.$param);
     exit;
@@ -533,9 +534,6 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
     else $link .= $langs->trans("AgendaHideBirthdayEvents");
     $link .= '</a>';
 }
-
-//print load_fiche_titre($s, $link.' &nbsp; &nbsp; '.$nav, '', 0, 0, 'tablelistofcalendars');
-
 
 // Load events from database into $eventarray
 $eventarray = array();
@@ -1156,7 +1154,7 @@ if (is_readable($color_file))
 if (!is_array($theme_datacolor)) $theme_datacolor = array(array(120, 130, 150), array(200, 160, 180), array(190, 190, 220));
 
 
-print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
+print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1, 'object_action', 0, $nav.'<span class="marginleftonly"></span>'.$newcardbutton, '', $limit, 1, 0, 1, $viewmode);
 
 print $s;
 
