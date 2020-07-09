@@ -332,7 +332,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
     $producttmp = new Product($db);
     $producttmp->fetch($object->fk_product);
-    print $producttmp->getNomUrl(1, 'stock');
+    print $producttmp->getNomUrl(1, 'stock'). " - " . $producttmp->label;
     print '</td></tr>';
 
     // Eat by
