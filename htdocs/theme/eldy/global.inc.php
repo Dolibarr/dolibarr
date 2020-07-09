@@ -4432,7 +4432,7 @@ table.cal_month td:last-child   { border-right: 0px; }
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
-table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; filter: saturate(0.8); }
+table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; filter: saturate(0.8); border-radius: 3px; }
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }

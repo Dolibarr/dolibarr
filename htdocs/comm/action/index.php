@@ -1174,9 +1174,9 @@ if (empty($action) || $action == 'show_month')      // View by month
     $newparam = preg_replace('/showbirthday_=/i', 'showbirthday=', $newparam); // Restore correct parameter
     $newparam .= '&viewcal=1';
 
-    print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+    print '<div class="liste_titre liste_titre_bydiv centpercent">';
     print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-    print '</div></div>';
+    print '</div>';
 
     print '<div class="div-table-responsive-no-min">';
     print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
