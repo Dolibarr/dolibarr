@@ -698,7 +698,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo $langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7));
+		echo '<span class="opacitymedium spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day');
 		else print dol_print_date($currentdaytoshow, 'day');
