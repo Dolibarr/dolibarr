@@ -485,6 +485,7 @@ Categories=Tags/categories
 Category=Tag/category
 By=By
 From=From
+FromDate=From
 FromLocation=From
 to=to
 To=to

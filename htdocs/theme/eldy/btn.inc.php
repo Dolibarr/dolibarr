@@ -7,8 +7,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
             --btncolorbg: #fbfbfb;
             --btncolorborderhover: none;
             --btncolorborder: #FFF;
-            --butactionbg:rgb(218, 235, 225);
             --butactiondeletebg: rgb(234,228,225);
+            /* tertiary color */
+            --butactionbg:rgb(218, 235, 225);
+            /* --butactionbg:rgb(228, 218, 235); */
 }
 
 <?php
