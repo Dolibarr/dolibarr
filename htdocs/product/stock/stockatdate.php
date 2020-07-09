@@ -394,7 +394,7 @@ print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', ''
 if ($mode == 'future') {
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
-	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 } else {
 	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
