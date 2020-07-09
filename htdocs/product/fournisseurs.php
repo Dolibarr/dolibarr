@@ -413,19 +413,7 @@ if ($id > 0 || $ref)
             print '<div class="underbanner clearboth"></div>';
             print '<table class="border tableforfield" width="100%">';
 
-			// Minimum Price
-			print '<tr><td class="titlefield">'.$langs->trans("BuyingPriceMin").'</td>';
-            print '<td colspan="2">';
-			$product_fourn = new ProductFournisseur($db);
-			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
-			{
-			    if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur();
-			    else print $langs->trans("NotDefined");
-			}
-            print '</td></tr>';
-
 			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
-            // Accountancy sell code
             print '<tr><td>';
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
@@ -435,7 +423,25 @@ if ($id > 0 || $ref)
             print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
             print '</td></tr>';
 
-			print '</table>';
+            // PMP
+            print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
+            print '<td>';
+            if ($object->pmp > 0) print price($object->pmp).' '.$langs->trans("HT");
+            print '</td>';
+            print '</tr>';
+
+            // Best buying Price
+            print '<tr><td class="titlefield">'.$langs->trans("BuyingPriceMin").'</td>';
+            print '<td colspan="2">';
+            $product_fourn = new ProductFournisseur($db);
+            if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0)
+            {
+            	if ($product_fourn->product_fourn_price_id > 0) print $product_fourn->display_price_product_fournisseur();
+            	else print $langs->trans("NotDefined");
+            }
+            print '</td></tr>';
+
+            print '</table>';
 
             print '</div>';
             print '<div style="clear:both"></div>';
