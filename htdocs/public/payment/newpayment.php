@@ -2079,7 +2079,9 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
         			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
         			        	    <?php if ($object->thirdparty->country_code) { ?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php } ?>
         			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
+        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+        			        	    }
+        			        	<?php } ?>
         			        }
               			},
               			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
