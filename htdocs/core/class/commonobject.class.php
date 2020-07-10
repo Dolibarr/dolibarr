@@ -6715,12 +6715,12 @@ abstract class CommonObject
 
 		if (!is_object($form)) $form = new Form($db);
 
+		$out = '';
+
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('showOptionals',$parameters,$this,$action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
-			$out = '';
-
 			if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0)
 			{
 				$out .= "\n";
@@ -6942,11 +6942,15 @@ abstract class CommonObject
 							setListDependencies();
 					    });
 					</script>'."\n";
-					$out .= '<!-- /showOptionalsInput --> '."\n";
 				}
+
+				$out .= '<!-- /showOptionalsInput --> '."\n";
 			}
-			return $out;
-		} // end of hook manager
+		}
+
+		$out .= $hookmanager->resPrint;
+
+		return $out;
 	}
 
 
