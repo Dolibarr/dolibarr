@@ -2077,7 +2077,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
         			        	<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) { ?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php } ?>
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
         			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
-        			        	    country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',
+        			        	    <?php if ($object->thirdparty->country_code) { ?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php } ?>
         			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
         			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
         			        }

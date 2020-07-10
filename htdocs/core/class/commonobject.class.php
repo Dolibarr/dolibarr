@@ -7792,6 +7792,9 @@ abstract class CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
 		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
 		if ($morewhere)   $sql .= $morewhere;
+		if (isset($objectline->fields['position'])) {
+			$sql .= $this->db->order('position', 'ASC');
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql)
