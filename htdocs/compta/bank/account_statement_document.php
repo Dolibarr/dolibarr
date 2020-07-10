@@ -41,12 +41,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $num = (GETPOST('num', 'alpha') ? GETPOST('num', 'alpha') : GETPOST('sectionid', 'alpha'));
-
-$mesg = '';
-if (isset($_SESSION['DolMessage'])) {
-	$mesg = $_SESSION['DolMessage'];
-	unset($_SESSION['DolMessage']);
-}
+$numref = $num;
 
 // Security check
 if ($user->socid) {
@@ -74,6 +69,55 @@ $object = new Account($db);
 if ($id > 0 || !empty($ref)) $object->fetch($id, $ref);
 
 $result = restrictedArea($user, 'banque', $object->id, 'bank_account', '', '');
+
+// Define number of receipt to show (current, previous or next one ?)
+$found = false;
+if ($_GET["rel"] == 'prev')
+{
+	// Recherche valeur pour num = numero releve precedent
+	$sql = "SELECT DISTINCT(b.num_releve) as num";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql .= " WHERE b.num_releve < '".$db->escape($numref)."'";
+	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " ORDER BY b.num_releve DESC";
+
+	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$numrows = $db->num_rows($resql);
+		if ($numrows > 0)
+		{
+			$obj = $db->fetch_object($resql);
+			$numref = $obj->num;
+			$found = true;
+		}
+	}
+} elseif ($_GET["rel"] == 'next')
+{
+	// Recherche valeur pour num = numero releve precedent
+	$sql = "SELECT DISTINCT(b.num_releve) as num";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql .= " WHERE b.num_releve > '".$db->escape($numref)."'";
+	$sql .= " AND b.fk_account = ".$object->id;
+	$sql .= " ORDER BY b.num_releve ASC";
+
+	dol_syslog("htdocs/compta/bank/releve.php", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$numrows = $db->num_rows($resql);
+		if ($numrows > 0)
+		{
+			$obj = $db->fetch_object($resql);
+			$numref = $obj->num;
+			$found = true;
+		}
+	}
+} else {
+	// On veut le releve num
+	$found = true;
+}
 
 
 /*
@@ -115,8 +159,15 @@ if ($id > 0 || !empty($ref)) {
 			$totalsize += $file['size'];
 		}
 
+		$morehtmlright = '';
+		$morehtmlright .= '<div class="pagination"><ul>';
+		$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=prev&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+		$morehtmlright .= '<li class="pagination"><span class="active">'.$langs->trans("AccountStatement")." ".$numref.'</span></li>';
+		$morehtmlright .= '<li class="pagination"><a class="paginationnext" href="'.$_SERVER["PHP_SELF"].'?rel=next&amp;num='.$numref.'&amp;ve='.$ve.'&amp;account='.$object->id.'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+		$morehtmlright .= '</ul></div>';
+
 		$title = $langs->trans("AccountStatement").' '.$num.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-		print load_fiche_titre($title, '', '');
+		print load_fiche_titre($title,$morehtmlright, '');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
