@@ -4062,6 +4062,9 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
+input#cardholder-name {
+    font-size: 1em;
+}
 
 .divmainbodylarge { margin-left: 40px; margin-right: 40px; }
 #divsubscribe { max-width: 900px; }
