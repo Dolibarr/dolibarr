@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Säljare som följer upp avtal
 TypeContact_contrat_external_BILLING=Fakturering kundkontakt
 TypeContact_contrat_external_CUSTOMER=Uppföljning kundkontakt
 TypeContact_contrat_external_SALESREPSIGN=Undertecknande kontrakt kundkontakt
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

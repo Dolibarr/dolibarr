@@ -54,7 +54,7 @@ if (!empty($conf->variants->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadlangs(array('products', 'orders', 'bills', 'stocks', 'sendings'));
+$langs->loadlangs(array('products', 'suppliers', 'orders', 'bills', 'stocks', 'sendings', 'margins'));
 if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -564,8 +564,18 @@ if ($id > 0 || $ref)
 				print '</td></tr>';
 			}
 
+			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
+			print '<tr><td>';
+			$textdesc = $langs->trans("CostPriceDescription");
+			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
+			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
+			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			print '</td><td colspan="2">';
+			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			print '</td></tr>';
+
 			// PMP
-			print '<tr><td class="titlefield">'.$langs->trans("AverageUnitPricePMP").'</td>';
+			print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 			print '<td>';
 			if ($object->pmp > 0) print price($object->pmp).' '.$langs->trans("HT");
 			print '</td>';
@@ -822,7 +832,7 @@ if (!$variants) {
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">'.$langs->trans("Warehouse").'</td>';
 	print '<td class="right">'.$langs->trans("NumberOfUnit").'</td>';
-	print '<td class="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
+	print '<td class="right">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 	print '<td class="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
 	print '<td class="right">'.$langs->trans("SellPriceMin").'</td>';
 	print '<td class="right">'.$langs->trans("EstimatedStockValueSellShort").'</td>';

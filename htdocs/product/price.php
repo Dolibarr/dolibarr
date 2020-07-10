@@ -453,7 +453,13 @@ if (empty($reshook))
 				$sql .= $priceid.','.$price.','.$unitPrice.','.$quantity.','.$remise_percent.','.$remise.')';
 
 				$result = $db->query($sql);
-				if (!$result) dol_print_error($db);
+				if (!$result) {
+					if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+						setEventMessages($langs->trans("DuplicateRecord"), null, 'errors');
+					} else {
+						dol_print_error($db);
+					}
+				}
 			}
 		}
 	}
@@ -899,13 +905,14 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					{
 						if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer)) {
 							print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+							print '<input type="hidden" name="token" value="'.newToken().'">';
 							print '<input type="hidden" name="action" value="update_price_by_qty">';
 							print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[$i].'">';
 							print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">';
 							print '<tr class="'.($ii % 2 == 0 ? 'pair' : 'impair').'">';
 							print '<td><input size="5" type="text" value="'.$prices['quantity'].'" name="quantity"></td>';
 							print '<td class="right" colspan="2"><input size="10" type="text" value="'.price2num($prices['price'], 'MU').'" name="price">&nbsp;'.$object->price_base_type.'</td>';
-							print '<td class="right"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent">&nbsp;%</td>';
+							print '<td class="right nowraponall"><input size="5" type="text" value="'.$prices['remise_percent'].'" name="remise_percent"> %</td>';
 							print '<td class="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
 							print '</tr>';
 							print '</form>';
@@ -917,9 +924,9 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 							print '<td class="right">'.price($prices['remise_percent']).' %</td>';
 							print '<td class="center">';
 							if (($user->rights->produit->creer || $user->rights->service->creer)) {
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+								print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 								print img_edit().'</a>';
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+								print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 								print img_delete().'</a>';
 							} else {
 								print '&nbsp;';
@@ -930,6 +937,7 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 					}
 					if ($action != 'edit_price_by_qty' && ($user->rights->produit->creer || $user->rights->service->creer)) {
 						print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="action" value="update_price_by_qty">';
 						print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[$i].'">'; // id in product_price
 						print '<input type="hidden" value="0" name="rowid">'; // id in product_price
@@ -937,17 +945,17 @@ if (!empty($conf->global->PRODUIT_MULTIPRICES) || !empty($conf->global->PRODUIT_
 						print '<td><input size="5" type="text" value="1" name="quantity"></td>';
 						print '<td class="right" class="nowrap"><input size="10" type="text" value="0" name="price">&nbsp;'.$object->price_base_type.'</td>';
 						print '<td class="right">&nbsp;</td>';
-						print '<td class="right" class="nowrap"><input size="5" type="text" value="0" name="remise_percent">&nbsp;%</td>';
+						print '<td class="right" class="nowraponall"><input size="5" type="text" value="0" name="remise_percent"> %</td>';
 						print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td>';
 						print '</tr>';
 						print '</form>';
 					}
 
 					print '</table>';
-					print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable_price_by_qty&level='.$i.'">('.$langs->trans("DisablePriceByQty").')</a>';
+					print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=disable_price_by_qty&level='.$i.'">('.$langs->trans("DisablePriceByQty").')</a>';
 				} else {
 					print $langs->trans("No");
-					print '&nbsp; <a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level='.$i.'">('.$langs->trans("Activate").')</a>';
+					print '&nbsp; <a class="marginleftonly marginrightonly" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=activate_price_by_qty&level='.$i.'">('.$langs->trans("Activate").')</a>';
 				}
 				print '</td></tr>';
 			}
@@ -1019,6 +1027,7 @@ else
 			if ($action != 'edit_price_by_qty')
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">'; // FIXME a form into a table is not allowed
+				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="action" value="update_price_by_qty">';
 				print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[0].'">'; // id in product_price
 				print '<input type="hidden" value="0" name="rowid">'; // id in product_price_by_qty
@@ -1030,7 +1039,7 @@ else
 				//print $object->price_base_type;
 				print '</td>';
 				print '<td class="right">&nbsp;</td>';
-				print '<td class="right"><input type="text" class="width50 right" value="0" name="remise_percent">&nbsp;%</td>';
+				print '<td class="right nowraponall"><input type="text" class="width50 right" value="0" name="remise_percent"> %</td>';
 				print '<td class="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td>';
 				print '</tr>';
 
@@ -1041,6 +1050,7 @@ else
 				if ($action == 'edit_price_by_qty' && $rowid == $prices['rowid'] && ($user->rights->produit->creer || $user->rights->service->creer))
 				{
 					print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
 					print '<input type="hidden" name="action" value="update_price_by_qty">';
 					print '<input type="hidden" name="priceid" value="'.$object->prices_by_qty_id[0].'">'; // id in product_price
 					print '<input type="hidden" value="'.$prices['rowid'].'" name="rowid">'; // id in product_price_by_qty
@@ -1052,7 +1062,7 @@ else
 					print $prices['price_base_type'];
 					print '</td>';
 					print '<td class="right">&nbsp;</td>';
-					print '<td class="right"><input class="width50 right" type="text" value="'.$prices['remise_percent'].'" name="remise_percent">&nbsp;%</td>';
+					print '<td class="right nowraponall"><input class="width50 right" type="text" value="'.$prices['remise_percent'].'" name="remise_percent"> %</td>';
 					print '<td class="center"><input type="submit" value="'.$langs->trans("Modify").'" class="button"></td>';
 					print '</tr>';
 					print '</form>';
@@ -1069,9 +1079,9 @@ else
 					print '<td class="center">';
 					if (($user->rights->produit->creer || $user->rights->service->creer))
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print '<a class="editfielda marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 						print img_edit().'</a>';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
+						print '<a class="marginleftonly marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete_price_by_qty&amp;rowid='.$prices["rowid"].'">';
 						print img_delete().'</a>';
 					} else {
 						print '&nbsp;';
@@ -1862,6 +1872,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		if (count($prodcustprice->lines) > 0)
 		{
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 			print '<table class="noborder centpercent">';
@@ -1983,6 +1994,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 		print_barre_liste($langs->trans('PriceByCustomer'), $page, $_SERVER ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, 'title_accountancy.png');
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 		print '<table class="noborder centpercent">';

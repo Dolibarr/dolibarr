@@ -2,9 +2,9 @@
 InstallEasy=Abbiamo cercato di semplificare al massimo l' installazione di Dolibarr. Basta seguire le istruzioni passo per passo.
 MiscellaneousChecks=Verificare prerequisiti
 ConfFileExists=Il file di configurazione <b>%s</b> esiste.
-ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not exist and could not be created!
+ConfFileDoesNotExistsAndCouldNotBeCreated=Il file di configurazione <b>%s</b> non esiste e non può essere creato!
 ConfFileCouldBeCreated=Il file <b>%s</b> può essere creato.
-ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
+ConfFileIsNotWritable=Il file di configurazione <b>%s</b> non è scrivibile, bisogna controllare i permessi. Nella fase di prima installazione, il server web deve poter scrivere questo file durante il processo di configurazione (come ad esempio "chmod 644" in un OS Unix like).
 ConfFileIsWritable=Il file di configurazione <b>%s</b> è scrivibile.
 ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
 ConfFileReload=Reloading parameters from configuration file.

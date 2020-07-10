@@ -701,6 +701,7 @@ MenuECM=Documents
 MenuAWStats=AWStats
 MenuMembers=Members
 MenuAgendaGoogle=Google agenda
+MenuTaxesAndSpecialExpenses=Taxes | Special expenses
 ThisLimitIsDefinedInSetup=Dolibarr limit (Menu home-setup-security): %s Kb, PHP limit: %s Kb
 NoFileFound=No documents saved in this directory
 CurrentUserLanguage=Current language

@@ -2142,9 +2142,11 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
         			        	<?php if (is_object($object) && is_object($object->thirdparty) && !empty($object->thirdparty->phone)) { ?>, phone: '<?php echo dol_escape_js($object->thirdparty->phone); ?>'<?php } ?>
         			        	<?php if (is_object($object) && is_object($object->thirdparty)) { ?>, address: {
         			        	    city: '<?php echo dol_escape_js($object->thirdparty->town); ?>',
-        			        	    country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',
+        			        	    <?php if ($object->thirdparty->country_code) { ?>country: '<?php echo dol_escape_js($object->thirdparty->country_code); ?>',<?php } ?>
         			        	    line1: '<?php echo dol_escape_js(preg_replace('/\s\s+/', ' ', $object->thirdparty->address)); ?>',
-        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'}<?php } ?>
+        			        	    postal_code: '<?php echo dol_escape_js($object->thirdparty->zip); ?>'
+        			        	    }
+        			        	<?php } ?>
         			        }
               			},
               			save_payment_method: <?php if ($stripecu) { print 'true'; } else { print 'false'; } ?>	/* true when a customer was provided when creating payment intent. true ask to save the card */
@@ -2275,7 +2277,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			  var hiddenInput2 = document.createElement('input');
 			  hiddenInput2.setAttribute('type', 'hidden');
 			  hiddenInput2.setAttribute('name', 'token');
-              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+              hiddenInput2.setAttribute('value', '<?php echo newToken(); ?>');
 			  form.appendChild(hiddenInput2);
 
     	      // Submit the form
@@ -2299,7 +2301,7 @@ if (preg_match('/^dopayment/', $action))			// If we choosed/click on the payment
 			  var hiddenInput2 = document.createElement('input');
 			  hiddenInput2.setAttribute('type', 'hidden');
 			  hiddenInput2.setAttribute('name', 'token');
-              hiddenInput2.setAttribute('value', '<?php echo $_SESSION["newtoken"]; ?>');
+              hiddenInput2.setAttribute('value', '<?php echo newToken(); ?>');
 			  form.appendChild(hiddenInput2);
 
     		  // Submit the form

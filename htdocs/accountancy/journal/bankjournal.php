@@ -254,6 +254,8 @@ if ($result) {
 		} else {
 			$tabpay[$obj->rowid]["lib"] = dol_trunc($obj->label, 60);
 		}
+
+		// Load of url links to the line into llx_bank
 		$links = $object->get_url($obj->rowid); // Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
 
 		//var_dump($i);
@@ -320,6 +322,7 @@ if ($result) {
 					$chargestatic->ref = $links[$key]['url_id'];
 
 					$tabpay[$obj->rowid]["lib"] .= ' '.$chargestatic->getNomUrl(2);
+					$reg = array();
 					if (preg_match('/^\((.*)\)$/i', $links[$key]['label'], $reg)) {
 						if ($reg[1] == 'socialcontribution')
 							$reg[1] = 'SocialContribution';
@@ -331,11 +334,13 @@ if ($result) {
 					$tabpay[$obj->rowid]["soclib"] = $chargestatic->getNomUrl(1, 30);
 					$tabpay[$obj->rowid]["paymentscid"] = $chargestatic->id;
 
+					// Retreive the accounting code of the social contribution of the payment from link of payment.
+					// Note: We have the social contribution id, it can be faster to get accounting code from social contribution id.
 					$sqlmid = 'SELECT cchgsoc.accountancy_code';
-					$sqlmid .= " FROM ".MAIN_DB_PREFIX."c_chargesociales cchgsoc ";
+					$sqlmid .= " FROM ".MAIN_DB_PREFIX."c_chargesociales cchgsoc";
 					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."chargesociales as chgsoc ON chgsoc.fk_type=cchgsoc.id";
 					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."paiementcharge as paycharg ON paycharg.fk_charge=chgsoc.rowid";
-					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."bank_url as bkurl ON bkurl.url_id=paycharg.rowid";
+					$sqlmid .= " INNER JOIN ".MAIN_DB_PREFIX."bank_url as bkurl ON bkurl.url_id=paycharg.rowid AND bkurl.type = 'payment_sc'";
 					$sqlmid .= " WHERE bkurl.fk_bank=".$obj->rowid;
 
 					dol_syslog("accountancy/journal/bankjournal.php:: sqlmid=".$sqlmid, LOG_DEBUG);

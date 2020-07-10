@@ -15,6 +15,7 @@ CancelCP=Отменено
 RefuseCP=Отказано
 ValidatorCP=Утвердивший
 ListeCP=List of leave
+Leave=Оставить запрос
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
 UserID=User ID

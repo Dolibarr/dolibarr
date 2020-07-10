@@ -465,6 +465,7 @@ while ($j < $numlt)
 
 
 // Payment Salary
+/*
 if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 {
     if (!$mode || $mode != 'sconly')
@@ -575,6 +576,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
         }
     }
 }
+*/
 
 print '</form>';
 

@@ -111,6 +111,7 @@ $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+
 /*
  * Actions
  */
@@ -317,7 +318,7 @@ if (empty($reshook) && $action == 'add')
 		if (GETPOST("doneby") > 0) $object->userdoneid = GETPOST("doneby", "int");
 	}
 
-	$object->note_private = trim(GETPOST("note"));
+	$object->note_private = trim(GETPOST("note", "none"));
 
 	if (isset($_POST["contactid"])) $object->contact = $contact;
 
@@ -465,7 +466,7 @@ if (empty($reshook) && $action == 'update')
             $object->contactid = key($object->socpeopleassigned);
         }
 		$object->fk_project  = GETPOST("projectid", 'int');
-		$object->note_private = GETPOST("note", "none");
+		$object->note_private = trim(GETPOST("note", "none"));
 		$object->fk_element	 = GETPOST("fk_element", "int");
 		$object->elementtype = GETPOST("elementtype", "alphanohtml");
 
@@ -1056,14 +1057,13 @@ if ($action == 'create')
 	// Project
 	if (!empty($conf->projet->enabled))
 	{
-		// Projet associe
 		$langs->load("projects");
 
 		$projectid = GETPOST('projectid', 'int');
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td id="project-input-container" >';
 
-		$numproject = $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1);
+		$numproject = $formproject->select_projects((!empty($societe->id) ? $societe->id : -1), $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth500');
 
 		print ' <a href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$societe->id.'&action=create"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProject").'"></span></a>';
 		$urloption = '?action=create&donotclearsession=1';
@@ -1118,7 +1118,7 @@ if ($action == 'create')
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ?GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 

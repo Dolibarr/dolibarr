@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Referent za sledenje pogodbe
 TypeContact_contrat_external_BILLING=Kontakt v računovodstvu kupca
 TypeContact_contrat_external_CUSTOMER=Kontakt pri kupcu za sledenje pogodbe
 TypeContact_contrat_external_SALESREPSIGN=Kontakt pri kupcu za podpis pogodbe
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

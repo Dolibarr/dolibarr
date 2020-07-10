@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Отправка %sотмечена "оплач
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Отправка %s удалена
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Заказ %s создан
 OrderValidatedInDolibarr=Заказ %s проверен
 OrderDeliveredInDolibarr=Заказ %s  доставлен

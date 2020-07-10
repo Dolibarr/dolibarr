@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - users
 HRMArea=Personalmanagment - Übersicht
-UserCard=Benutzer - Karte
-GroupCard=Gruppe - Karte
+UserCard=Benutzer - Übersicht
+GroupCard=Gruppe - Übersicht
 Permission=Berechtigung
 Permissions=Berechtigungen
 EditPassword=Passwort bearbeiten

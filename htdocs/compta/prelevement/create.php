@@ -191,7 +191,8 @@ print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
-        print $form->selectDate();
+        $datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        print $form->selectDate($datere, 're');
 
         if ($mysoc->isInEEC()) {
         	$title = $langs->trans("CreateForSepa");
@@ -200,7 +201,10 @@ if ($nb) {
         	}
 
         	if ($type != 'bank-transfer') {
-            	print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
+            	print '<select name="format">';
+            	print '<option value="FRST"'.(GETPOST('format', 'aZ09') == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
+            	print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
+            	print '</select>';
         	}
             print '<input class="butAction" type="submit" value="'.$title.'"/>';
         } else {

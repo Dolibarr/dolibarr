@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Sales reprezentative următoarele-up c
 TypeContact_contrat_external_BILLING=Contact client facturare contract
 TypeContact_contrat_external_CUSTOMER=Contact client urmărire contract
 TypeContact_contrat_external_SALESREPSIGN=Contact client semnarecontract
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

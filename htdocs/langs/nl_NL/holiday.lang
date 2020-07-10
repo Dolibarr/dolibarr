@@ -15,6 +15,7 @@ CancelCP=Geannuleerd
 RefuseCP=Geweigerd
 ValidatorCP=Gevolmachtigde voor goedkeuring
 ListeCP=Lijst van verlof
+Leave=Verlof aanvraag
 LeaveId=Laat ID achter
 ReviewedByCP=Zal worden goedgekeurd door
 UserID=gebruikersnaam

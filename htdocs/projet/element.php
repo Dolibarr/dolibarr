@@ -592,7 +592,7 @@ if (!$showdatefilter)
 {
 	print '<div class="center centpercent">';
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<table class="center"><tr>';
@@ -884,7 +884,7 @@ foreach ($listofreferent as $key => $value)
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element))
        	{
-			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300', -2, !empty($project_field) ? $project_field : 'fk_projet');
+			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, !empty($project_field) ? $project_field : 'fk_projet');
 			if ($selectList < 0)
 			{
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
@@ -894,14 +894,14 @@ foreach ($listofreferent as $key => $value)
 				// Define form with the combo list of elements to link
 			    $addform .= '<div class="inline-block valignmiddle">';
 			    $addform .= '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			    $addform .= '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+			    $addform .= '<input type="hidden" name="token" value="'.newToken().'">';
 			    $addform .= '<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform .= '<input type="hidden" name="action" value="addelement">';
 				$addform .= '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
-				$addform .= '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform .= '<table><tr><td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
+				$addform .= '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';
@@ -910,9 +910,9 @@ foreach ($listofreferent as $key => $value)
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
 		{
 			$addform .= '<div class="inline-block valignmiddle">';
-			if ($testnew) $addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+			if ($testnew) $addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
             $addform .= '<div>';
 		}
@@ -920,6 +920,7 @@ foreach ($listofreferent as $key => $value)
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print "\n".'<!-- Table for tablename = '.$tablename.' -->'."\n";
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -1038,7 +1039,7 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Ref
-				print '<td class="left nowrap">';
+				print '<td class="left nowraponall">';
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getNomUrl(1);
@@ -1375,6 +1376,7 @@ foreach ($listofreferent as $key => $value)
 			}
 		}
 		print "</table>";
+		print '</div>';
 		print "<br>\n";
 	}
 }

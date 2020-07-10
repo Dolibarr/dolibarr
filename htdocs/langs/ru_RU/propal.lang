@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=свяжитесь со счета
 TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Создание модели по умолчанию
 DefaultModelPropalToBill=Шаблон по умолчанию, когда закрывается коммерческое предложение (для создания счёта)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Шаблон по умолчанию, когда зак
 ProposalCustomerSignature=Письменное подтверждение, печать компании, дата и подпись
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

@@ -875,7 +875,7 @@ Calendar=Calendario
 GroupBy=Raggruppa per...
 ViewFlatList=Vedi lista semplice
 RemoveString=Rimuovi la stringa '%s'
-SomeTranslationAreUncomplete=Alcune traduzioni potrebbero essere incomplete, o contenere errori. In questi casi, registrandoti su <a href=\\'https://transifex.com/projects/p/dolibarr/\\' target=\\'_blank\\'>transifex.com/projects/p/dolibarr/</a>, avrai la possibilità di proporre modifiche, contribuendo così al miglioramento di Dolibarr.
+SomeTranslationAreUncomplete=Alcune traduzioni potrebbero essere incomplete, o contenere errori. In questi casi, registrandoti su <a href="https://transifex.com/projects/p/dolibarr/" target="_blank">transifex.com/projects/p/dolibarr/</a>, avrai la possibilità di proporre modifiche, contribuendo così al miglioramento di Dolibarr.
 DirectDownloadLink=Link diretto per il download (pubblico/esterno)
 DirectDownloadInternalLink=Link per il download diretto (richiede accesso e permessi validi)
 Download=Download

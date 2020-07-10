@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Une erreur est survenu lors du processus de migration,
 YouTryInstallDisabledByDirLock=L'application essaie de se mettre à jour, mais les pages d'installation / mise à jour ont été désactivées pour des raisons de sécurité (répertoire renommé avec le suffixe .lock). <br>
 YouTryInstallDisabledByFileLock=L'application a tenté de se mettre à niveau automatiquement, mais les pages d'installation / de mise à niveau ont été désactivées pour des raisons de sécurité (grâce à l'existence d'un fichier de verrouillage <strong> install.lock </strong> dans le répertoire de documents dolibarr). <br>
 ClickHereToGoToApp=Cliquez ici pour aller sur votre application
-ClickOnLinkOrRemoveManualy=Si une mise à niveau est en cours, veuillez patienter. Sinon, cliquez sur le lien suivant. Si vous voyez toujours cette même page, vous devez supprimer/renommer le fichier install.lock dans le répertoire documents.
+ClickOnLinkOrRemoveManualy=Si une mise à niveau est en cours, veuillez patienter. Si non, cliquez sur le lien suivant. Si vous atteignez toujours cette page, vous devez supprimer manuellement le fichier install.lock dans le répertoire documents
 Loaded=Chargé
 FunctionTest=Fonction test

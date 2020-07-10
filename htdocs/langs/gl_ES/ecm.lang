@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - ecm
 ECMNbOfDocs=No. of documents in directory
-ECMSection=Directory
+ECMSection=Directorio
 ECMSectionManual=Manual directory
 ECMSectionAuto=Automatic directory
 ECMSectionsManual=Manual tree
