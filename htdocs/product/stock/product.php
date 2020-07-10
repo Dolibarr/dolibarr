@@ -631,6 +631,8 @@ if ($id > 0 || $ref)
 			print '</td>';
 			print '<td>'.price2num($object->stock_reel, 'MS');
 			if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit", $object->seuil_stock_alerte));
+
+			print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/stockatdate.php?productid='.$object->id.'">'.$langs->trans("StockAtDate").'</a>';
 			print '</td>';
 			print '</tr>';
 
@@ -694,6 +696,7 @@ if ($id > 0 || $ref)
 			//print (empty($stocktheo)?0:$stocktheo);
 			print $form->textwithpicto((empty($stocktheo) ? 0 : $stocktheo), $helpondiff);
 			if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit", $object->seuil_stock_alerte));
+			print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/stockatdate.php?mode=future&productid='.$object->id.'">'.$langs->trans("VirtualStockAtDate").'</a>';
 			print '</td>';
 			print '</tr>';
 
@@ -713,7 +716,7 @@ if ($id > 0 || $ref)
 				print '<tr><td class="tdtop">'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
 					print dol_print_date($lastmovementdate, 'dayhour').' ';
-					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$object->id.'">'.$langs->trans("FullList").'</a>)';
+					print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$object->id.'">'.$langs->trans("FullList").'</a>';
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$object->id.'">'.$langs->trans("None").'</a>';
 				}
