@@ -170,7 +170,7 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlright .= '</ul></div>';
 
 		$title = $langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
-		print load_fiche_titre($title,$morehtmlright, '');
+		print load_fiche_titre($title, $morehtmlright, '');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
