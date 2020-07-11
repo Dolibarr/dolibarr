@@ -61,10 +61,10 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
      */
     public $type;
 
-   /**
-     * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.6 = array(5, 6)
-     */
+	/**
+	  * @var array Minimum version of PHP required by module.
+	  * e.g.: PHP ≥ 5.6 = array(5, 6)
+	  */
 	public $phpmin = array(5, 6);
 
 	/**
