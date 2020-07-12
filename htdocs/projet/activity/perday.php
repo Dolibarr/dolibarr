@@ -285,7 +285,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		foreach ($timespent_duration as $key => $val)
 		{
 			$object->fetch($key);
-
+			$taskid = $object->id;
 			if (GETPOSTISSET($taskid.'progress')) $object->progress = GETPOST($taskid.'progress', 'int');
 			else unset($object->progress);
 
