@@ -441,6 +441,7 @@ class Entrepot extends CommonObject
 		}
 
 		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql .= " , entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id)
 		{
@@ -460,6 +461,7 @@ class Entrepot extends CommonObject
 				$obj=$this->db->fetch_object($result);
 
 				$this->id             = $obj->rowid;
+				$this->entity         = $obj->entity;
 				$this->fk_parent      = $obj->fk_parent;
 				$this->ref            = $obj->label;
 				$this->label          = $obj->label;
