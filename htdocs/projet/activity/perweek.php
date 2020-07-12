@@ -292,7 +292,6 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			   			$object->fetch($taskid);
 
 			   			if (GETPOSTISSET($taskid.'progress')) $object->progress = GETPOST($taskid.'progress', 'int');
-			   			else unset($object->progress);
 
 						$object->timespent_duration = $newduration;
 						$object->timespent_fk_user = $usertoprocess->id;
