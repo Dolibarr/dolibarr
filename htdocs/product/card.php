@@ -1054,7 +1054,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         if ($type != 1)	// Nature, Weight and volume only applies to products and not to services
         {
             // Nature
-            print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
+        	print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td colspan="3">';
             $statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
             print $form->selectarray('finished', $statutarray, GETPOST('finished', 'alpha'), 1);
             print '</td></tr>';
@@ -1470,7 +1470,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                 print '</td></tr>';
             } else {
                 // Nature
-                print '<tr><td>'.$langs->trans("Nature").'</td><td colspan="3">';
+            	print '<tr><td>'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td colspan="3">';
                 $statutarray = array('-1'=>'&nbsp;', '1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
                 print $form->selectarray('finished', $statutarray, $object->finished);
                 print '</td></tr>';
@@ -1946,7 +1946,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                 print '</td></tr>';
             } else {
                 // Nature
-                print '<tr><td class="titlefield">'.$langs->trans("Nature").'</td><td colspan="2">';
+                print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("NatureOfProductShort"), $langs->trans("NatureOfProductDesc")).'</td><td colspan="2">';
                 print $object->getLibFinished();
                 print '</td></tr>';
 

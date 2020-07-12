@@ -1173,6 +1173,7 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissio
     }
 }
 
+//var_dump($_POST);var_dump($massaction);exit;
 
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)

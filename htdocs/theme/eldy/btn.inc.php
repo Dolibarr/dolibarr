@@ -7,8 +7,10 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
             --btncolorbg: #fbfbfb;
             --btncolorborderhover: none;
             --btncolorborder: #FFF;
-            --butactionbg:rgb(218, 235, 225);
             --butactiondeletebg: rgb(234,228,225);
+            /* tertiary color */
+            --butactionbg:rgb(218, 235, 225);
+            /* --butactionbg:rgb(228, 218, 235); */
 }
 
 <?php
@@ -195,7 +197,7 @@ TITLE BUTTON
 
 .btnTitle, a.btnTitle {
     display: inline-block;
-    padding: 4px 12px 4px 12px;
+    padding: 4px 4px 4px 4px;
     font-weight: 400;
     /* line-height: 1; */
     text-align: center;
@@ -211,8 +213,8 @@ TITLE BUTTON
     box-shadow: var(--btncolorbg);
     text-decoration: none;
     position: relative;
-    margin: 0 0 0 10px;
-    min-width: 80px;
+    /* margin: 0 0 0 8px; */
+    min-width: 72px;
     text-align: center;
     color: var(--btncolortext);
     border: none;
@@ -239,7 +241,6 @@ a.btnTitle.btnTitleSelected {
 	border: 1px solid #bbb;
     border-radius: 3px;
     position: relative;
-    margin: 0 0 0 10px;
     text-align: center;
     /* color: #ffffff;
     background-color: rgb(<?php print $colortextlink; ?>); */

@@ -54,7 +54,7 @@ if (!empty($conf->variants->enabled)) {
 }
 
 // Load translation files required by the page
-$langs->loadlangs(array('products', 'orders', 'bills', 'stocks', 'sendings'));
+$langs->loadlangs(array('products', 'suppliers', 'orders', 'bills', 'stocks', 'sendings', 'margins'));
 if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -542,8 +542,18 @@ if ($id > 0 || $ref)
 				print '</td></tr>';
 			}
 
+			// Cost price. Can be used for margin module for option "calculate margin on explicit cost price
+			print '<tr><td>';
+			$textdesc = $langs->trans("CostPriceDescription");
+			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
+			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
+			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			print '</td><td colspan="2">';
+			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			print '</td></tr>';
+
 			// PMP
-			print '<tr><td class="titlefield">'.$langs->trans("AverageUnitPricePMP").'</td>';
+			print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 			print '<td>';
 			if ($object->pmp > 0) print price($object->pmp).' '.$langs->trans("HT");
 			print '</td>';
@@ -621,6 +631,8 @@ if ($id > 0 || $ref)
 			print '</td>';
 			print '<td>'.price2num($object->stock_reel, 'MS');
 			if ($object->seuil_stock_alerte != '' && ($object->stock_reel < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit", $object->seuil_stock_alerte));
+
+			print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/stockatdate.php?productid='.$object->id.'">'.$langs->trans("StockAtDate").'</a>';
 			print '</td>';
 			print '</tr>';
 
@@ -684,6 +696,7 @@ if ($id > 0 || $ref)
 			//print (empty($stocktheo)?0:$stocktheo);
 			print $form->textwithpicto((empty($stocktheo) ? 0 : $stocktheo), $helpondiff);
 			if ($object->seuil_stock_alerte != '' && ($object->stock_theorique < $object->seuil_stock_alerte)) print ' '.img_warning($langs->trans("StockLowerThanLimit", $object->seuil_stock_alerte));
+			print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/stockatdate.php?mode=future&productid='.$object->id.'">'.$langs->trans("VirtualStockAtDate").'</a>';
 			print '</td>';
 			print '</tr>';
 
@@ -703,7 +716,7 @@ if ($id > 0 || $ref)
 				print '<tr><td class="tdtop">'.$langs->trans("LastMovement").'</td><td>';
 				if ($lastmovementdate) {
 					print dol_print_date($lastmovementdate, 'dayhour').' ';
-					print '(<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$object->id.'">'.$langs->trans("FullList").'</a>)';
+					print ' &nbsp; &nbsp;<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$object->id.'">'.$langs->trans("FullList").'</a>';
 				} else {
 					print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$object->id.'">'.$langs->trans("None").'</a>';
 				}
@@ -790,7 +803,7 @@ if (!$variants) {
 	print '<tr class="liste_titre">';
 	print '<td colspan="4">'.$langs->trans("Warehouse").'</td>';
 	print '<td class="right">'.$langs->trans("NumberOfUnit").'</td>';
-	print '<td class="right">'.$langs->trans("AverageUnitPricePMPShort").'</td>';
+	print '<td class="right">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 	print '<td class="right">'.$langs->trans("EstimatedStockValueShort").'</td>';
 	print '<td class="right">'.$langs->trans("SellPriceMin").'</td>';
 	print '<td class="right">'.$langs->trans("EstimatedStockValueSellShort").'</td>';

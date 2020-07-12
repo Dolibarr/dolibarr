@@ -207,6 +207,7 @@ class HookManager
 				'restrictedArea',
 				'sendMail',
 				'sendMailAfter',
+				'showOptionals',
 				'showLinkToObjectBlock',
 				'setContentSecurityPolicy',
 				'setHtmlTitle',
