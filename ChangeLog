@@ -14,6 +14,42 @@ Following changes may create regressions for some external modules, but were nec
 
 
 
+***** ChangeLog for 12.0.1 compared to 12.0.0 *****
+FIX: reposition was broken if url end with #anchor
+FIX: $_POST must be GETPOST
+FIX: 10.0 - fatal with postgreSQL
+FIX: #14109
+FIX: #14112
+FIX: #14142
+FIX: all extrafields cleared after update of one of them
+FIX: Avoid warning when creating a module with already existing files
+FIX: change selected fields on company card
+FIX: Correct ModuleBuilder left menu
+FIX: create a deposit with amount using comma didn't work
+FIX: CSS
+FIX: Entry from stripe intent were reported into SEPA payments
+FIX: Filter on status, closing opening status
+FIX: html lost on html extrafield
+FIX: Label of popup on thirdparty
+FIX: missing possibility to change entity when propal cloning
+FIX: missing setup of extrafields for MO
+FIX: Missing the tooltip when creating bank account
+FIX: Missing token
+FIX: non numeric value on comm/card.php
+FIX: SQL Problem in customer invoice list
+FIX: SQL Problem in social contribution list
+FIX: SQL Problem in supplier invoice list
+FIX: SQL syntax error when editing extrafields
+FIX: Sql type
+FIX: takepos 12 hook
+FIX: Update form erased extrafields that were hidden
+FIX: Update of extrafields date
+FIX: Update of extrafiels on draft object
+FIX: upload documents into manual ECM was reported a permission error
+FIX: Use of office365 TLS with SMTPs method.
+FIX: wrong origin
+FIX: Permission error during import
+
 ***** ChangeLog for 12.0.0 compared to 11.0.0 *****
 For users:
 

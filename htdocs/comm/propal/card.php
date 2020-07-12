@@ -253,6 +253,9 @@ if (empty($reshook))
 				}
 				$model = $object->modelpdf;
 				$ret = $object->fetch($id); // Reload to get new records
+				if ($ret > 0) {
+					$object->fetch_thirdparty();
+				}
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}

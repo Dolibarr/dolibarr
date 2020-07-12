@@ -313,7 +313,7 @@ if (!$ret) {
 			dol_fiche_head($head, 'resources', $langs->trans("Action"), -1, 'action');
 
 			$linkback = img_picto($langs->trans("BackToList"), 'object_list', 'class="hideonsmartphone pictoactionview"');
-			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback .= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list">'.$langs->trans("BackToList").'</a>';
 
 			// Link to other agenda views
 			$out = '';

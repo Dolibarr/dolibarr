@@ -61,7 +61,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 	$script .= '<script>'."\n";
 	$script .= '$(document).ready(function() {
 					var autoselect = '.$autoselect.';
-					var options = '.json_encode($ajaxoptions).';
+					var options = '.json_encode($ajaxoptions).'; /* Option of actions to do after keyup, or after select */
 
 					/* Remove selected id as soon as we type or delete a char (it means old selection is wrong). Use keyup/down instead of change to avoid loosing the product id. This is needed only for select of predefined product */
 					$("input#search_'.$htmlname.'").keydown(function(e) {
@@ -131,7 +131,9 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 												textarea[key] = item[value];
 											});
 										}
-										return { label: label, value: item.value, id: item.key, update: update, textarea: textarea, disabled: item.disabled }
+										return { label: label, value: item.value, id: item.key, disabled: item.disabled,
+												 update: update, textarea: textarea,
+												 pbq: item.pbq, type: item.type, qty: item.qty, discount: item.discount, pricebasetype: item.pricebasetype, price_ht: item.price_ht, price_ttc: item.price_ttc }
 									}));
 								}
 								else console.error("Error: Ajax url '.$url.($urloption ? '?'.$urloption : '').' has returned an empty page. Should be an empty json array.");
@@ -142,6 +144,14 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
     					select: function( event, ui ) {		// Function ran once new value has been selected into javascript combo
     						console.log("Call change on input '.$htmlname.' because of select definition of autocomplete select call on input#search_'.$htmlname.'");
     					    console.log("Selected id = "+ui.item.id+" - If this value is null, it means you select a record with key that is null so selection is not effective");
+
+							//console.log(ui.item);
+							$("#'.$htmlname.'").attr("data-pbq", ui.item.pbq);
+							$("#'.$htmlname.'").attr("data-pbqup", ui.item.price_ht);
+							$("#'.$htmlname.'").attr("data-pbqbase", ui.item.pricebasetype);
+							$("#'.$htmlname.'").attr("data-pbqqty", ui.item.qty);
+							$("#'.$htmlname.'").attr("data-pbqpercent", ui.item.discount);
+
     						$("#'.$htmlname.'").val(ui.item.id).trigger("change");	// Select new value
     						// Disable an element
     						if (options.option_disabled) {

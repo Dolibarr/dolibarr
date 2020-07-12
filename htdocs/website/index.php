@@ -288,7 +288,7 @@ if ($action == 'replacesiteconfirm') {
 		$otherfilters['category'] = GETPOST('optioncategory', 'int');
 	}
 
-	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
+	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
 }
 
 $usercanedit = $user->rights->website->write;
@@ -424,7 +424,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 		$db->commit();
 	}
 	// Now we reload list
-	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
+	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
 }
 
 // Replacement of string into pages
@@ -3557,6 +3557,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	if ($action != 'createcontainer')
 	{
+		print '<!-- Status of page -->'."\n";
 		print '<tr><td>';
 		print $langs->trans('Status');
 		print '</td><td>';
@@ -3829,7 +3830,6 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
-			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -3859,7 +3859,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
 
-					// Categories
+					// Categories - Tags
 					print '<td>';
 					if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
 					{
@@ -3868,7 +3868,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 						if (is_array($existing)) {
 							foreach ($existing as $tmpcategory) {
 								//var_dump($tmpcategory);
-								print '<span class="categorysquarre marginrightonly" style="background-color: #'.($tmpcategory->color != '' ? $tmpcategory->color : '888').'" title="'.dol_escape_htmltag($langs->trans("Category").' '.$tmpcategory->label).'"></span>';
+								print img_object($langs->trans("Category").' : '.$tmpcategory->label, 'category', 'style="padding-left: 2px; padding-right: 2px; color: #'.($tmpcategory->color != '' ? $tmpcategory->color : '888').'"');
 							}
 						}
 					}
@@ -3886,30 +3886,37 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
 					$param .= '&searchstring='.urlencode($searchkey);
 
-					// Edit properties
+					// Language
 					print '<td>';
+					print $answerrecord->lang;
+					print '</td>';
+
+					// Edit properties, HTML sources, status
+					print '<td class="tdwebsitesearchresult right nowraponall">';
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
-					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
-					print '</td>';
+					print '<a class="editfielda marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
 
-					// Edit HTML source
-					print '<td>';
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
-					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
+					print '<a class="editfielda  marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
+
+					print '<span class="marginleftonly marginrightonly"></span>'.ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled');
+
 					print '</td>';
 
 					// Action column
 					print '<td class="nowrap center">';
+
+					print '<!-- Status of page -->'."\n";
 					if ($massactionbutton || $massaction)
 					{
 						$selected = 0;
@@ -3956,10 +3963,11 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 
+					// Language
 					print '<td>';
 					print '</td>';
 
-					print '<td class="tdoverflow100">';
+					print '<td>';
 					print '</td>';
 
 					// Action column
@@ -3974,7 +3982,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print '<br>';
 		}
 		else {
-			print $listofpages['message'];
+			print '<div class="warning">'.$listofpages['message'].'</div>';
 		}
 
 		print '</div>';

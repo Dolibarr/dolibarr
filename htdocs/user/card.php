@@ -1085,73 +1085,6 @@ if ($action == 'create' || $action == 'adduserldap')
 			}
 		}
 	}
-	// // Skype
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_skype))
-	// 	{
-	// 		print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
-	// 		print $ldap_skype;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-	// // Twitter
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_twitter))
-	// 	{
-	// 		print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
-	// 		print $ldap_twitter;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-	// // Facebook
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_facebook))
-	// 	{
-	// 		print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
-	// 		print $ldap_facebook;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-    // // LinkedIn
-    // if (! empty($conf->socialnetworks->enabled))
-    // {
-    //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-    //     print '<td>';
-    //     if (! empty($ldap_linkedin))
-    //     {
-    //         print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
-    //         print $ldap_linkedin;
-    //     }
-    //     else
-    //     {
-    //         print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
-    //     }
-    //     print '</td></tr>';
-    // }
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -1661,16 +1594,22 @@ if ($action == 'create' || $action == 'adduserldap')
 			print "</tr>\n";
 
 			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+			print '<tr><td>'.$langs->trans("DateOfEmployment").'</td>';
 			print '<td>';
-			print dol_print_date($object->dateemployment, 'day');
-			print '</td>';
-			print "</tr>\n";
+			if ($object->dateemployment) {
+				print '<span class="opacitymedium">'.$langs->trans("FromDate ").'</span>';
+				print dol_print_date($object->dateemployment, 'day');
+			}
+			//print '</td>';
+			//print "</tr>\n";
 
 			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
-			print '<td>';
-			print dol_print_date($object->dateemploymentend);
+			//print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			//print '<td>';
+			if ($object->dateemploymentend) {
+				print '<span class="opacitymedium"> - '.$langs->trans("To ").'</span>';
+				print dol_print_date($object->dateemploymentend, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 

@@ -323,7 +323,7 @@ if ($resql)
 	        }
 	    }
 	}
-	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ');
+	if ($virtualdiffersfromphysical) print_liste_field_titre("VirtualStock", $_SERVER["PHP_SELF"], "", $param, "", '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
     // Units
     if (!empty($conf->global->PRODUCT_USE_UNITS)) {
         print_liste_field_titre("Unit", $_SERVER["PHP_SELF"], "unit_short", $param, "", 'align="right"', $sortfield, $sortorder);
