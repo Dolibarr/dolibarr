@@ -329,9 +329,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     // Eat by
 	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 		print '<tr><td>';
-		print $form->editfieldkey( $langs->trans( 'EatByDate' ), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker' );
+		print $form->editfieldkey($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval( $langs->trans( 'EatByDate' ), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker' );
+		print $form->editfieldval($langs->trans('EatByDate'), 'eatby', $object->eatby, $object, $user->rights->stock->creer, 'datepicker');
 		print '</td>';
 		print '</tr>';
 	}
@@ -339,9 +339,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     // Sell by
 	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 		print '<tr><td>';
-		print $form->editfieldkey( $langs->trans( 'SellByDate' ), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker' );
+		print $form->editfieldkey($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
 		print '</td><td>';
-		print $form->editfieldval( $langs->trans( 'SellByDate' ), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker' );
+		print $form->editfieldval($langs->trans('SellByDate'), 'sellby', $object->sellby, $object, $user->rights->stock->creer, 'datepicker');
 		print '</td>';
 		print '</tr>';
 	}

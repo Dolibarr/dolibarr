@@ -910,8 +910,8 @@ if ($id > 0 || !empty($ref)) {
 							print '</td>';
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								print '<td class="nowraponall">';
-								$dlcdatesuffix = dol_mktime( 0, 0, 0, GETPOST( 'dlc' . $suffix . 'month' ), GETPOST( 'dlc' . $suffix . 'day' ), GETPOST( 'dlc' . $suffix . 'year' ) );
-								print $form->selectDate( $dlcdatesuffix, 'dlc' . $suffix, '', '', 1, '' );
+								$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc' . $suffix . 'month'), GETPOST('dlc' . $suffix . 'day'), GETPOST('dlc' . $suffix . 'year'));
+								print $form->selectDate($dlcdatesuffix, 'dlc' . $suffix, '', '', 1, '');
 								print '</td>';
 							}
 							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
@@ -1135,10 +1135,10 @@ if ($id > 0 || !empty($ref)) {
 			if (!empty($conf->productbatch->enabled)) {
 				print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
 				if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-					print '<td class="dispatch_dluo_title">' . $langs->trans( "EatByDate" ) . '</td>';
+					print '<td class="dispatch_dluo_title">' . $langs->trans("EatByDate") . '</td>';
 				}
 				if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-					print '<td class="dispatch_dlc_title">' . $langs->trans( "SellByDate" ) . '</td>';
+					print '<td class="dispatch_dlc_title">' . $langs->trans("SellByDate") . '</td>';
 				}
 			}
 			print '<td class="right">'.$langs->trans("QtyDispatched").'</td>';
@@ -1195,10 +1195,10 @@ if ($id > 0 || !empty($ref)) {
 						$lot->fetch(0, $objp->pid, $objp->batch);
 						print '<td class="dispatch_batch_number">'.$lot->getNomUrl(1).'</td>';
 						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
-							print '<td class="dispatch_dluo">' . dol_print_date( $lot->eatby, 'day' ) . '</td>';
+							print '<td class="dispatch_dluo">' . dol_print_date($lot->eatby, 'day') . '</td>';
 						}
 						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
-							print '<td class="dispatch_dlc">' . dol_print_date( $lot->sellby, 'day' ) . '</td>';
+							print '<td class="dispatch_dlc">' . dol_print_date($lot->sellby, 'day') . '</td>';
 						}
 					} else {
 						print '<td class="dispatch_batch_number"></td>';
