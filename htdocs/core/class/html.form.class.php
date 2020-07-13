@@ -6122,7 +6122,7 @@ class Form
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
-		$options=array();
+
 		if (!empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
 		{
 			$tmpfieldstoshow = '';
