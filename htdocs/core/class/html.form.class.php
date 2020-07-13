@@ -6122,7 +6122,7 @@ class Form
 		$prefixforautocompletemode = $objecttmp->element;
 		if ($prefixforautocompletemode == 'societe') $prefixforautocompletemode = 'company';
 		$confkeyforautocompletemode = strtoupper($prefixforautocompletemode).'_USE_SEARCH_TO_SELECT'; // For example COMPANY_USE_SEARCH_TO_SELECT
-
+		$options=array();
 		if (!empty($objecttmp->fields))	// For object that declare it, it is better to use declared fields (like societe, contact, ...)
 		{
 			$tmpfieldstoshow = '';
@@ -6222,8 +6222,8 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
 					$tmparray = explode(',', $fieldstoshow);
-					foreach ($tmparray as $key => $val)
-					{
+
+					foreach ($tmparray as $key => $val) {
 						$val = preg_replace('/t\./', '', $val);
 						$label .= (($label && $obj->$val) ? ' - ' : '').$obj->$val;
 					}
