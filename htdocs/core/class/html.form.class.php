@@ -6222,7 +6222,6 @@ class Form
 					$obj = $this->db->fetch_object($resql);
 					$label = '';
 					$tmparray = explode(',', $fieldstoshow);
-
 					foreach ($tmparray as $key => $val)
 					{
 						$val = preg_replace('/t\./', '', $val);
