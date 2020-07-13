@@ -6223,7 +6223,8 @@ class Form
 					$label = '';
 					$tmparray = explode(',', $fieldstoshow);
 
-					foreach ($tmparray as $key => $val) {
+					foreach ($tmparray as $key => $val)
+					{
 						$val = preg_replace('/t\./', '', $val);
 						$label .= (($label && $obj->$val) ? ' - ' : '').$obj->$val;
 					}
