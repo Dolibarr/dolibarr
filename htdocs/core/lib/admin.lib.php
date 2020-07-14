@@ -1588,12 +1588,12 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 	                		$moreonlabel = '';
 	                		if (!empty($arrayofmessagename[$modelmail->label])) $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
 	                		// The 'label' is the key that is unique if we exclude the language
-	                		$arrayofmessagename[$modelmail->label.':'.$tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	                		$arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
 	                	}
                 	}
                 	//var_dump($arraydefaultmessage);
                 	//var_dump($arrayofmessagename);
-                	print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+                	print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value, 'None', 0, 0, '', 0, 0, 0, '', '', 1);
                 }
                 else	// type = 'string' ou 'chaine'
                 {
