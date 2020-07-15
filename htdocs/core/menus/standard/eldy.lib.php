@@ -272,7 +272,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'loadLangs' => array("commercial"),
 		'submenus' => array(),
 	);
-	var_dump($onlysupplierorder,$showmode);
 
 	// Billing - Financial
 	$tmpentry = array(
