@@ -224,6 +224,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	);
 
 	// Commercial
+
+	$onlysupplierorder = ! empty($user->rights->fournisseur->commande->lire) &&
+		empty($user->rights->propal->lire) &&
+		empty($user->rights->commande->lire) &&
+		empty($user->rights->supplier_order->lire) &&
+		empty($user->rights->supplier_proposal->lire) &&
+		empty($user->rights->contrat->lire) &&
+		empty($user->rights->ficheinter->lire);
+
 	$tmpentry = array(
 	    'enabled'=>(!empty($conf->propal->enabled) ||
 	        !empty($conf->commande->enabled) ||
@@ -239,18 +248,11 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 				  !empty($user->rights->supplier_proposal->lire) ||
 				  !empty($user->rights->supplier_order->lire) ||
 				  !empty($user->rights->contrat->lire) ||
-				  !empty($user->rights->ficheinter->lire)
+				  !empty($user->rights->ficheinter->lire ||
+					  $onlysupplierorder)
 			),
 	    'module'=>'propal|commande|supplier_proposal|supplier_order|contrat|ficheinter'
 	);
-
-	$onlysupplierorder = ! empty($user->rights->fournisseur->commande->lire) &&
-		empty($user->rights->propal->lire) &&
-		empty($user->rights->commande->lire) &&
-		empty($user->rights->supplier_order->lire) &&
-		empty($user->rights->supplier_proposal->lire) &&
-		empty($user->rights->contrat->lire) &&
-		empty($user->rights->ficheinter->lire);
 
 	$menu_arr[] = array(
 		'name' => 'Commercial',
@@ -270,6 +272,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'loadLangs' => array("commercial"),
 		'submenus' => array(),
 	);
+	var_dump($onlysupplierorder,$showmode);
 
 	// Billing - Financial
 	$tmpentry = array(
