@@ -108,6 +108,7 @@ DisabledInMonoUserMode=Disabled in maintenance mode
 UserAccountancyCode=User accounting code
 UserLogoff=User logout
 UserLogged=User logged
+DateOfEmployment=Employment date
 DateEmployment=Employment Start Date
 DateEmploymentEnd=Employment End Date
 CantDisableYourself=You can't disable your own user record
