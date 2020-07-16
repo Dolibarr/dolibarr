@@ -31,6 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'widthdrawals'));
 
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'contractlist'; // To manage different context of search
+
 // Security check
 $socid = GETPOST('socid', 'int');
 if ($user->socid) $socid=$user->socid;
@@ -102,7 +104,9 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
-    $urladd = "&amp;statut=".$statut;
+    $param = '';
+    $param .= "&statut=".$statut;
+    if ($limit != $conf->liste_limit) $param .= '&limit=' . $limit;
 
     $selectedfields = '';
 
@@ -123,7 +127,7 @@ if ($result)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+    print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
     $moreforfilter = '';
 

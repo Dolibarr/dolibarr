@@ -209,8 +209,10 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave', 'alpha'))
 
 	            if (empty($reshook))
 	            {
-	            	if (! file_exists($destpath))
-	            	{
+	            	if (preg_match('/^\./', $filenameto)) {
+	            		$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	            		setEventMessages($langs->trans("ErrorFilenameCantStartWithDot", $filenameto), null, 'errors');
+	            	} elseif (! file_exists($destpath)) {
 	            		$result = dol_move($srcpath, $destpath);
 			            if ($result)
 			            {

@@ -138,7 +138,7 @@ class EcmFiles extends CommonObject
 			 $this->entity = trim($this->entity);
 		}
 		if (isset($this->filename)) {
-			 $this->filename = trim($this->filename);
+			 $this->filename = preg_replace('/\.noexe$/', '', trim($this->filename));
 		}
 		if (isset($this->filepath)) {
 			 $this->filepath = trim($this->filepath);
@@ -346,12 +346,13 @@ class EcmFiles extends CommonObject
 		$sql .= " t.src_object_id";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		$sql.= ' WHERE 1 = 1';
-		/* Fetching this table depends on filepath+filename, it must not depends on entity
+		/* Fetching this table depends on filepath+filename, it must not depends on entity because filesystem on disk does not know what is Dolibarr entities
 		if (! empty($conf->multicompany->enabled)) {
 		    $sql .= " AND entity IN (" . getEntity('ecmfiles') . ")";
 		}*/
 		if ($relativepath) {
-			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($relativepath)) . "' AND t.filename = '".$this->db->escape(basename($relativepath))."'";
+			$relativepathwithnoexe = preg_replace('/\.noexe$/', '', $relativepath);		// We must never have the .noexe into the database
+			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($relativepath)) . "' AND t.filename = '".$this->db->escape(basename($relativepathwithnoexe))."'";
 			$sql .= " AND t.entity = ".$conf->entity;				// unique key include the entity so each company has its own index
 		}
 		elseif (! empty($ref)) {		// hash of file path
@@ -552,46 +553,47 @@ class EcmFiles extends CommonObject
 		// Clean parameters
 
 		if (isset($this->ref)) {
-			 $this->ref = trim($this->ref);
+			$this->ref = trim($this->ref);
 		}
 		if (isset($this->label)) {
-			 $this->label = trim($this->label);
+			$this->label = trim($this->label);
 		}
 		if (isset($this->share)) {
-			 $this->share = trim($this->share);
+			$this->share = trim($this->share);
 		}
 		if (isset($this->entity)) {
-			 $this->entity = trim($this->entity);
+			$this->entity = trim($this->entity);
 		}
 		if (isset($this->filename)) {
-			 $this->filename = trim($this->filename);
+			$this->filename = preg_replace('/\.noexe$/', '', trim($this->filename));
 		}
 		if (isset($this->filepath)) {
-			 $this->filepath = trim($this->filepath);
+			$this->filepath = trim($this->filepath);
+			$this->filepath = preg_replace('/[\\/]+$/', '', $this->filepath);		// Remove last /
 		}
 		if (isset($this->fullpath_orig)) {
-			 $this->fullpath_orig = trim($this->fullpath_orig);
+			$this->fullpath_orig = trim($this->fullpath_orig);
 		}
 		if (isset($this->description)) {
-			 $this->description = trim($this->description);
+			$this->description = trim($this->description);
 		}
 		if (isset($this->keywords)) {
-			 $this->keywords = trim($this->keywords);
+			$this->keywords = trim($this->keywords);
 		}
 		if (isset($this->cover)) {
-			 $this->cover = trim($this->cover);
+			$this->cover = trim($this->cover);
 		}
 		if (isset($this->gen_or_uploaded)) {
-			 $this->gen_or_uploaded = trim($this->gen_or_uploaded);
+			$this->gen_or_uploaded = trim($this->gen_or_uploaded);
 		}
 		if (isset($this->extraparams)) {
-			 $this->extraparams = trim($this->extraparams);
+			$this->extraparams = trim($this->extraparams);
 		}
 		if (isset($this->fk_user_m)) {
-			 $this->fk_user_m = trim($this->fk_user_m);
+			$this->fk_user_m = trim($this->fk_user_m);
 		}
 		if (isset($this->acl)) {
-			 $this->acl = trim($this->acl);
+			$this->acl = trim($this->acl);
 		}
 		if (isset($this->src_object_type)) {
 			$this->src_object_type = trim($this->src_object_type);

@@ -41,9 +41,8 @@ if (! GETPOST('transkey', 'alphanohtml') && ! GETPOST('transphrase', 'alphanohtm
 }
 else
 {
-    $langs->load("error");
-    $langs->load("other");
+    $langs->loadLangs(array("error", "other"));
 
-    if (GETPOST('transphrase', 'alphanohtml')) print GETPOST('transphrase', 'alphanohtml');
-    if (GETPOST('transkey', 'alphanohtml')) print $langs->trans(GETPOST('transkey', 'alphanohtml'));
+    if (GETPOST('transphrase', 'alphanohtml')) print dol_escape_htmltag(GETPOST('transphrase', 'alphanohtml'));
+    elseif (GETPOST('transkey', 'alphanohtml')) print dol_escape_htmltag($langs->trans(GETPOST('transkey', 'alphanohtml')));
 }

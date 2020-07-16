@@ -129,11 +129,11 @@ if ($cancel)
 if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
     $error = 0;
 
-    if (!GETPOST("subject", 'alpha')) {
+    if (!GETPOST("subject", 'alphanohtml')) {
         $error++;
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")), null, 'errors');
         $action = 'create';
-    } elseif (!GETPOST("message", 'alpha')) {
+    } elseif (!GETPOST("message", 'restricthtml')) {
         $error++;
         setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
         $action = 'create';
@@ -142,10 +142,10 @@ if (GETPOST('add', 'alpha') && $user->rights->ticket->write) {
     if (!$error) {
         $db->begin();
 
-        $object->ref = GETPOST("ref", 'alpha');
+        $object->ref = GETPOST("ref", 'alphanohtml');
         $object->fk_soc = GETPOST("socid", 'int') > 0 ? GETPOST("socid", 'int') : 0;
-        $object->subject = GETPOST("subject", 'alpha');
-        $object->message = GETPOST("message", 'none');
+        $object->subject = GETPOST("subject", 'alphanohtml');
+        $object->message = GETPOST("message", 'restricthtml');
 
         $object->type_code = GETPOST("type_code", 'alpha');
         $object->category_code = GETPOST("category_code", 'alpha');
@@ -274,7 +274,7 @@ if (GETPOST('update', 'alpha') && GETPOST('id', 'int') && $user->rights->ticket-
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")));
         $action = 'edit';
-    } elseif (!GETPOST("subject")) {
+    } elseif (!GETPOST("subject", 'alphanohtml')) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
         $action = 'edit';
@@ -284,7 +284,7 @@ if (GETPOST('update', 'alpha') && GETPOST('id', 'int') && $user->rights->ticket-
         $db->begin();
 
         $object->label = GETPOST("label", 'alphanohtml');
-        $object->description = GETPOST("description", 'none');
+        $object->description = GETPOST("description", 'restricthtml');
 
         //...
         $ret = $object->update($user);
@@ -459,7 +459,7 @@ if ($action == 'set_progression' && $user->rights->ticket->write) {
 if ($action == 'setsubject') {
     if ($object->fetch(GETPOST('id', 'int'))) {
         if ($action == 'setsubject') {
-            $object->subject = trim(GETPOST('subject', 'alpha'));
+            $object->subject = trim(GETPOST('subject', 'alphanohtml'));
         }
 
         if ($action == 'setsubject' && empty($object->subject)) {
@@ -512,7 +512,7 @@ elseif ($action == 'setcontract' && $user->rights->ticket->write) {
     if (!GETPOST('cancel')) {
         $object->fetch('', '', GETPOST('track_id', 'alpha'));
         $oldvalue_message = $object->message;
-        $fieldtomodify = GETPOST('message_initial');
+        $fieldtomodify = GETPOST('message_initial', 'restricthtml');
 
         $object->message = $fieldtomodify;
         $ret = $object->update($user);

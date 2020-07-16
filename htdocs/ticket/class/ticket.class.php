@@ -2455,8 +2455,9 @@ class Ticket extends CommonObject
         	// If destination file already exists, we add a suffix to avoid to overwrite
         	if (is_file($destfile))
         	{
-        		$now = dol_now();
-        		$destfile .= '.'.dol_print_date($now, 'dayhourlog');
+				$pathinfo = pathinfo($filename[$i]);
+				$now = dol_now();
+				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
         	}
 
         	$res = dol_move($filepath[$i], $destfile, 0, 1);
