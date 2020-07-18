@@ -272,6 +272,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		{
 			if (intval($time) > 0)
 			{
+			    $matches = array();
 				// Hours or minutes of duration
 				if (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches))
 				{
