@@ -34,6 +34,10 @@ if (!$user->admin) accessforbidden();
 $action = GETPOST('action', 'alpha');
 $currencycode = GETPOST('currencycode', 'alpha');
 
+if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
+	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
+}
+
 $mainmaxdecimalsunit = 'MAIN_MAX_DECIMALS_UNIT'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainmaxdecimalstot = 'MAIN_MAX_DECIMALS_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainmaxdecimalsshown = 'MAIN_MAX_DECIMALS_SHOWN'.(!empty($currencycode) ? '_'.$currencycode : '');
@@ -94,7 +98,6 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("LimitsSetup"), '', 'title_setup');
 
-$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
 $aCurrencies = array($conf->currency); // Default currency always first position
 
 if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY))
@@ -162,9 +165,7 @@ if ($action == 'edit')
 
     print '</form>';
     print '<br>';
-}
-else
-{
+} else {
     print '<table class="noborder centpercent">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -203,9 +204,7 @@ if (empty($mysoc->country_code))
 	$langs->load("errors");
 	$warnpicto = img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
-}
-else
-{
+} else {
 	// Show examples
 	print load_fiche_titre($langs->trans("ExamplesWithCurrentSetup"), '', '');
 
@@ -252,8 +251,7 @@ else
 	            $vat_rates[$i] = $obj->vat_rate;
 	        }
 	    }
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 
 	if (count($vat_rates))
 	{
@@ -269,9 +267,7 @@ else
 	            print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 	        }
 	    }
-	}
-	else
-	{
+	} else {
 	    // More examples if not specific vat rate found
 	    // This example must be kept for test purpose with current value because value used (2/7, 10/3, and vat 0, 10)
 	    // were calculated to show all possible cases of rounding. If we change this, examples becomes useless or show the same rounding rule.
