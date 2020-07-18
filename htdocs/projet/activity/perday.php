@@ -292,7 +292,6 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 
 	if (count($timespent_duration) > 0)
 	{
-
 		foreach ($timespent_duration as $key => $val)
 		{
 			$object->fetch($key);
@@ -304,9 +303,9 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			$object->timespent_duration = $val;
 			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
-			if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
+			if (GETPOST($key."hour", 'int') != '' && GETPOST($key."hour", 'int') >= 0)	// If hour was entered
 			{
-				$object->timespent_datehour = dol_mktime(GETPOST($key."hour"), GETPOST($key."min"), 0, $monthofday, $dayofday, $yearofday);
+				$object->timespent_datehour = dol_mktime(GETPOST($key."hour", 'int'), GETPOST($key."min", 'int'), 0, $monthofday, $dayofday, $yearofday);
 				$object->timespent_withhour = 1;
 			}
 			else
