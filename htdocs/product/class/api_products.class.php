@@ -1592,8 +1592,6 @@ class Products extends DolibarrApi
         // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
-        unset($object->db);
-
         unset($object->regeximgext);
         unset($object->price_by_qty);
         unset($object->prices_by_qty_id);
