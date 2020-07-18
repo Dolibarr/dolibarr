@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2007-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  *
@@ -35,7 +35,8 @@ $action = GETPOST('action', 'alpha');
 $currencycode = GETPOST('currencycode', 'alpha');
 
 if (!empty($conf->multicurrency->enabled) && !empty($conf->global->MULTICURRENCY_USE_LIMIT_BY_CURRENCY)) {
-	$currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
+    // When MULTICURRENCY_USE_LIMIT_BY_CURRENCY is on, we use always a defined currency code instead of '' even for default.
+    $currencycode = (!empty($currencycode) ? $currencycode : $conf->currency);
 }
 
 $mainmaxdecimalsunit = 'MAIN_MAX_DECIMALS_UNIT'.(!empty($currencycode) ? '_'.$currencycode : '');
