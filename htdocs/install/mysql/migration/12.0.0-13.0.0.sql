@@ -74,3 +74,5 @@ ALTER TABLE llx_user DROP COLUMN whatsapp;
 ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
 ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
 
+ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
+
