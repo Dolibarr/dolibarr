@@ -625,7 +625,7 @@ if (empty($action) || $action == 'view') {
 			else print $accountoshow;
 			print '</td>';
 			print "<td>".$userstatic->getNomUrl(0, 'user', 16).' - '.$langs->trans("SubledgerAccount")."</td>";
-			print '<td class="right nowraponall">'.($mt < 0 ? -price(-$mt) : '')."</td>";
+			print '<td class="right nowraponall">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
 		}
