@@ -1083,7 +1083,7 @@ abstract class CommonDocGenerator
             'curY' => &$curY,
             'columnText' => $columnText,
             'colKey' => $colKey,
-            'pdf' => $pdf,
+            'pdf' => &$pdf,
         );
         $reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
         if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
