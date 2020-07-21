@@ -541,7 +541,7 @@ abstract class CommonDocGenerator
 			'line_up_locale'=>price($line->subprice, 0, $outputlangs),
 			'line_total_up'=>price2num($line->subprice * $line->qty),
 			'line_total_up_locale'=>price($line->subprice * $line->qty, 0, $outputlangs),
-			'line_qty'=>$line->qty,
+			'line_qty'=>price($line->qty, 0, '', 0, 0), // Yes, it is a quantity, not a price, but we just want the formating role of function price
 			'line_discount_percent'=>($line->remise_percent ? $line->remise_percent.'%' : ''),
 			'line_price_ht'=>price2num($line->total_ht),
 			'line_price_ttc'=>price2num($line->total_ttc),
