@@ -326,3 +326,18 @@ ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_de
 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
+
+UPDATE llx_c_email_templates SET label = '(SendingEmailOnAutoSubscription):member' WHERE module='adherent' AND type_template='member' AND label='(SendingEmailOnAutoSubscription)';
+UPDATE llx_const SET value='(SendingEmailOnAutoSubscription):member' WHERE name='ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER' AND value ='(SendingEmailOnAutoSubscription)';
+
+UPDATE llx_c_email_templates SET label = '(SendingEmailOnCancelation):member' WHERE module='adherent' AND type_template='member' AND label='(SendingEmailOnCancelation)';
+UPDATE llx_const SET value='(SendingEmailOnCancelation):member' WHERE name='ADHERENT_EMAIL_TEMPLATE_CANCELATION' AND value ='(SendingEmailOnCancelation)';
+
+UPDATE llx_c_email_templates SET label = '(SendingEmailOnMemberValidation):member' WHERE module='adherent' AND type_template='member' AND label='(SendingEmailOnMemberValidation)';
+UPDATE llx_const SET value='(SendingEmailOnMemberValidation):member' WHERE name='ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION' AND value ='(SendingEmailOnMemberValidation)';
+
+UPDATE llx_c_email_templates SET label = '(SendingReminderForExpiredSubscription):member' WHERE module='adherent' AND type_template='member' AND label='(SendingReminderForExpiredSubscription)';
+UPDATE llx_const SET value='(SendingReminderForExpiredSubscription):member' WHERE name='ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' AND value ='(SendingReminderForExpiredSubscription)';
+
+UPDATE llx_c_email_templates SET label = '(SendingEmailOnNewSubscription):member' WHERE module='adherent' AND type_template='member' AND label='(SendingEmailOnNewSubscription)';
+UPDATE llx_const SET value='(SendingEmailOnNewSubscription):member' WHERE name='ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION' AND value ='(SendingEmailOnNewSubscription)';
