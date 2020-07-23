@@ -1286,7 +1286,7 @@ abstract class CommonDocGenerator
         {
             // Sort extrafields by rank
             uasort($fields, function ($a, $b) {
-                return  ($a->rank > $b->rank) ? -1 : 1;
+                return  ($a->rank > $b->rank) ? 1 : -1;
 			});
 
             // define some HTML content with style
