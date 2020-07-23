@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2020 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,6 +32,10 @@ $langs->load("admin");
 if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
+
+if (! in_array('clicktodial', $conf->modules)) {
+	accessforbidden($langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
+}
 
 
 /*
