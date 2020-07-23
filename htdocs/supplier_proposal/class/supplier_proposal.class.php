@@ -891,7 +891,7 @@ class SupplierProposal extends CommonObject
         }
 
         // Multicurrency
-        if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+        if (!empty($this->multicurrency_code)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
         if (empty($this->fk_multicurrency))
         {
             $this->multicurrency_code = $conf->currency;
