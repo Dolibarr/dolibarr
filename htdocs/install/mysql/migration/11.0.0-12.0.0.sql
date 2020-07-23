@@ -329,3 +329,5 @@ ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_de
 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;
