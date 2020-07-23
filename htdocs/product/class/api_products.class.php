@@ -808,7 +808,8 @@ class Products extends DolibarrApi
     			foreach($product_fourn_list as $tmpobj) {
     				$this->_cleanObjectDatas($tmpobj);
     			}
-    				//var_dump($product_fourn_list->db);exit;
+
+   				//var_dump($product_fourn_list->db);exit;
     			$obj_ret[$obj->rowid] = $product_fourn_list;
 
     			$i++;
@@ -833,7 +834,7 @@ class Products extends DolibarrApi
      * @param  string $ref              Ref of element
      * @param  string $ref_ext          Ref ext of element
      * @param  string $barcode          Barcode of element
-     * @return array|mixed                 Data without useless information
+     * @return array|mixed              Data without useless information
      *
      * @url GET {id}/purchase_prices
      *
@@ -863,9 +864,15 @@ class Products extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
+        $product_fourn_list = array();
+
         if ($result) {
             $product_fourn = new ProductFournisseur($this->db);
             $product_fourn_list = $product_fourn->list_product_fournisseur_price($this->product->id, '', '', 0, 0);
+        }
+
+        foreach($product_fourn_list as $tmpobj) {
+            $this->_cleanObjectDatas($tmpobj);
         }
 
         return $this->_cleanObjectDatas($product_fourn_list);

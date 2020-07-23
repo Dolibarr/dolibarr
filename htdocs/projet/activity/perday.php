@@ -272,6 +272,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		{
 			if (intval($time) > 0)
 			{
+			    $matches = array();
 				// Hours or minutes of duration
 				if (preg_match("/([0-9]+)duration(hour|min)/", $key, $matches))
 				{
@@ -294,6 +295,7 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 		foreach ($timespent_duration as $key => $val)
 		{
 			$object->fetch($key);
+			$taskid = $object->id;
 
 			if (GETPOSTISSET($taskid.'progress')) $object->progress = GETPOST($taskid.'progress', 'int');
 			else unset($object->progress);
@@ -301,9 +303,9 @@ if ($action == 'addtime' && $user->rights->projet->lire && GETPOST('formfilterac
 			$object->timespent_duration = $val;
 			$object->timespent_fk_user = $usertoprocess->id;
 			$object->timespent_note = GETPOST($key.'note');
-			if (GETPOST($key."hour") != '' && GETPOST($key."hour") >= 0)	// If hour was entered
+			if (GETPOST($key."hour", 'int') != '' && GETPOST($key."hour", 'int') >= 0)	// If hour was entered
 			{
-				$object->timespent_datehour = dol_mktime(GETPOST($key."hour"), GETPOST($key."min"), 0, $monthofday, $dayofday, $yearofday);
+				$object->timespent_datehour = dol_mktime(GETPOST($key."hour", 'int'), GETPOST($key."min", 'int'), 0, $monthofday, $dayofday, $yearofday);
 				$object->timespent_withhour = 1;
 			}
 			else
