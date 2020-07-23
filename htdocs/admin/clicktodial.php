@@ -33,7 +33,7 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
-if (empty($conf->modules['clicktodial'])) {
+if (! in_array('clicktodial', $conf->modules)) {
 	accessforbidden($langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
 }
 
