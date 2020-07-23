@@ -707,14 +707,14 @@ function translation_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-    $head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
-    $head[$h][2] = 'overwrite';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
     $head[$h][1] = $langs->trans("TranslationKeySearch");
     $head[$h][2] = 'searchkey';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
+    $head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+    $head[$h][2] = 'overwrite';
     $h++;
 
     complete_head_from_modules($conf, $langs, null, $head, $h, 'translation_admin');
