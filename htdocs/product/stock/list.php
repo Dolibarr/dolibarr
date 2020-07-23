@@ -226,13 +226,13 @@ if (!empty($conf->categorie->enabled))
 }
 foreach ($search as $key => $val)
 {
-	if ($key == 'status' && $search[$key] == -1) continue;
+	if (($key == 'status' && $search[$key] == -1) || $key=='entity') continue;
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if (strpos($object->fields[$key]['type'], 'integer:') === 0) {
 		if ($search[$key] == '-1') $search[$key] = '';
 		$mode_search = 2;
 	}
-	if ($search[$key] != '') $sql .= natural_search($key, $search[$key], (($key == 'status') ? 2 : $mode_search));
+	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : $key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
