@@ -40,7 +40,7 @@ $transkey = GETPOST('transkey', 'alphanohtml');
 $transvalue = GETPOST('transvalue', 'none');
 
 
-$mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'overwrite';
+$mode = GETPOST('mode', 'aZ09') ?GETPOST('mode', 'aZ09') : 'searchkey';
 
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -514,7 +514,7 @@ if ($mode == 'searchkey')
         if ($i > ($offset + $limit)) break;
         print '<tr class="oddeven"><td>'.$langcode.'</td><td>'.$key.'</td><td>';
         print dol_escape_htmltag($val);
-        print '</td><td class="right">';
+        print '</td><td class="right nowraponall">';
         if (!empty($newlangfileonly->tab_translate[$key]))
         {
             if ($val != $newlangfileonly->tab_translate[$key])
@@ -534,7 +534,7 @@ if ($mode == 'searchkey')
                 print ' ';
                 print '<a href="'.$_SERVER['PHP_SELF'].'?rowid='.$obj->rowid.'&entity='.$conf->entity.'&action=delete">'.img_delete().'</a>';
                 print '&nbsp;&nbsp;';
-                $htmltext = $langs->trans("OriginalValueWas", $newlangfileonly->tab_translate[$key]);
+                $htmltext = $langs->trans("OriginalValueWas", '<i>'.$newlangfileonly->tab_translate[$key].'</i>');
                 print $form->textwithpicto('', $htmltext, 1, 'info');
             }
             elseif (!empty($conf->global->MAIN_ENABLE_OVERWRITE_TRANSLATION))
@@ -549,7 +549,7 @@ if ($mode == 'searchkey')
             	//$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
             	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
 
-            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'globe').'</a>';
+            	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto($langs->trans('FixOnTransifex'), 'globe').'</a>';
             }
         }
         else
