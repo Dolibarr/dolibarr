@@ -866,7 +866,7 @@ class Products extends DolibarrApi
             $product_fourn_list = $product_fourn->list_product_fournisseur_price($this->product->id, '', '', 0, 0);
         }
 
-        foreach($product_fourn_list as $tmpobj) {
+        foreach ($product_fourn_list as $tmpobj) {
             $this->_cleanObjectDatas($tmpobj);
         }
 
