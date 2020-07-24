@@ -83,6 +83,7 @@ if ($action == 'update')
 
     dolibarr_set_const($db, "PDF_USE_ALSO_LANGUAGE_CODE", GETPOST('PDF_USE_ALSO_LANGUAGE_CODE', 'alpha'), 'chaine', 0, '', $conf->entity);
 
+	setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
