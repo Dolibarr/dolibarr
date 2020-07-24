@@ -254,7 +254,7 @@ $myTmpObjects = array();
 $myTmpObjects['RecruitmentJobPosition']=array('includerefgeneration'=>1, 'includedocgeneration'=>1);
 
 
-foreach($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
+foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectArray['includerefgeneration']) {
 		/*
 		 * Orders Numbering model
