@@ -1747,18 +1747,19 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 	$ret = '';
 	$regs = array();
 
-	// If we ask an resource form external module (instead of default path)
+	// If we ask a resource form external module (instead of default path)
 	if (preg_match('/^([^@]+)@([^@]+)$/i', $objecttype, $regs)) {
 		$myobject = $regs[1];
 		$module = $regs[2];
 	}
-
-	// Parse $objecttype (ex: project_task)
-	$module = $myobject = $objecttype;
-	if (preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
-	{
-		$module = $regs[1];
-		$myobject = $regs[2];
+	else {
+		// Parse $objecttype (ex: project_task)
+		$module = $myobject = $objecttype;
+		if (preg_match('/^([^_]+)_([^_]+)/i', $objecttype, $regs))
+		{
+			$module = $regs[1];
+			$myobject = $regs[2];
+		}
 	}
 
 	// Generic case for $classpath
@@ -1821,7 +1822,7 @@ function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 
 	// Generic case for $classfile and $classname
 	$classfile = strtolower($myobject); $classname = ucfirst($myobject);
-	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname;
+	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement." classfile=".$classfile." classname=".$classname." classpath=".$classpath;
 
 	if ($objecttype == 'invoice_supplier') {
 		$classfile = 'fournisseur.facture';
