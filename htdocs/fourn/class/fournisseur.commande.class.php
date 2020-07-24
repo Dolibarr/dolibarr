@@ -1271,11 +1271,15 @@ class CommandeFournisseur extends CommonOrder
 		$error = 0;
         $now = dol_now();
 
+		// $date_commande is deprecated
+		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
+		if(empty($date)) $date = $now;
+
         // Clean parameters
         if (empty($this->source)) $this->source = 0;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
