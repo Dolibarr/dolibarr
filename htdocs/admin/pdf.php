@@ -120,9 +120,41 @@ $arraydetailsforpdffoot = array(
 	3 => $langs->transnoentitiesnoconv('DisplayCompanyInfoAndManagers')
 );
 
+$s = $langs->trans("LibraryToBuildPDF")."<br>";
+$i = 0;
+$pdf = pdf_getInstance('A4');
+if (class_exists('FPDF') && !class_exists('TCPDF'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'FPDF';
+	$s .= ' ('.@constant('FPDF_PATH').')';
+	$i++;
+}
+if (class_exists('TCPDF'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'TCPDF';
+	$s .= ' ('.@constant('TCPDF_PATH').')';
+	$i++;
+}
+if (class_exists('FPDI'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'FPDI';
+	$s .= ' ('.@constant('FPDI_PATH').')';
+	$i++;
+}
+if (class_exists('TCPDI'))
+{
+	if ($i) $s .= ' + ';
+	$s .= 'TCPDI';
+	$s .= ' ('.@constant('TCPDI_PATH').')';
+	$i++;
+}
+
 print load_fiche_titre($langs->trans("PDF"), '', 'title_setup');
 
-print '<span class="opacitymedium">'.$langs->trans("PDFDesc")."</span><br>\n";
+print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("PDFDesc"), $s)."</span><br>\n";
 print "<br>\n";
 
 $noCountryCode = (empty($mysoc->country_code) ? true : false);
@@ -315,62 +347,6 @@ print '</td></tr>';
 
 print '</table>';
 print '</div>';
-
-
-/*
- *  Library
- */
-
-print '<br>';
-print load_fiche_titre($langs->trans("Library"), '', '');
-
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">'."\n";
-
-print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Name").'</td>'."\n";
-print '<td>'.$langs->trans("Value").'</td>'."\n";
-print "</tr>\n";
-
-print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("LibraryToBuildPDF").'</td>'."\n";
-print '<td>';
-$i = 0;
-$pdf = pdf_getInstance('A4');
-if (class_exists('FPDF') && !class_exists('TCPDF'))
-{
-	if ($i) print ' + ';
-	print 'FPDF';
-	print ' ('.@constant('FPDF_PATH').')';
-	$i++;
-}
-if (class_exists('TCPDF'))
-{
-	if ($i) print ' + ';
-	print 'TCPDF';
-	print ' ('.@constant('TCPDF_PATH').')';
-	$i++;
-}
-if (class_exists('FPDI'))
-{
-	if ($i) print ' + ';
-	print 'FPDI';
-	print ' ('.@constant('FPDI_PATH').')';
-	$i++;
-}
-if (class_exists('TCPDI'))
-{
-	if ($i) print ' + ';
-	print 'TCPDI';
-	print ' ('.@constant('TCPDI_PATH').')';
-	$i++;
-}
-print '</td>'."\n";
-print '</tr>'."\n";
-
-print "</table>\n";
-print '</div>';
-
 
 print '<br><div class="center">';
 print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
