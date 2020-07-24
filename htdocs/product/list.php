@@ -798,7 +798,7 @@ if ($resql)
 		print '<td class="liste_titre">';
 		print '&nbsp;';
 		print '</td>';
-	}	
+	}
 	// Limit for alert
 	if (!empty($arrayfields['p.seuil_stock_alerte']['checked']))
 	{
