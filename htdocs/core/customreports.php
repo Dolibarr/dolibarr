@@ -288,9 +288,17 @@ if (is_array($search_groupby) && count($search_groupby)) {
 
 		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
 			$langs->load("errors");
+			if (strpos($fieldtocount, 'te.') === 0) {
+                //if (!empty($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix])) {
+                //      $langs->load($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix]);
+                //}
+                $keyforlabeloffield = $extrafields->attributes[$object->table_element]['label'][$gvalwithoutprefix];
+            } else {
+                $keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+            }
 			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix);
 			$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
-			$labeloffield = $langs->transnoentitiesnoconv($object->fields[$gvalwithoutprefix]['label']);
+			$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
 			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
