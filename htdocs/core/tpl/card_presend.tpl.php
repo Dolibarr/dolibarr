@@ -139,7 +139,7 @@ if ($action == 'presend')
 	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
 		$formmail->fromname = '';
-		$formmail->fromtype = 'special';
+		$formmail->fromtype = 'special'; 
 	}
 	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
 		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
