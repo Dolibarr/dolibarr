@@ -705,11 +705,17 @@ body[class*="colorblind-"] .text-success{
 	float: none !important;
 }
 
+span.fa.fa-plus-circle.paddingleft {
+    padding-right: 4px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+}
+
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
- {
+{
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
