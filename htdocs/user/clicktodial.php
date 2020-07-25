@@ -159,7 +159,7 @@ if ($id > 0)
         	    $langs->load("errors");
         	    print '<font class="error">'.$langs->trans("ErrorModuleSetupNotComplete", $langs->transnoentitiesnoconv("ClickToDial")).'</font>';
         	} else {
-        		print $form->textwithpicto((empty($object->clicktodial_url) ? $langs->trans("DefaultLink").': ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
+        		print $form->textwithpicto((empty($object->clicktodial_url) ? '<span class="opacitymedium">'.$langs->trans("DefaultLink").':</span> ' : '').$url, $langs->trans("ClickToDialUrlDesc"));
         	}
         	print '</td>';
         	print '</tr>';

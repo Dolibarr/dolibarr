@@ -2415,7 +2415,7 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 * @param	int		$batch_rule		[=0] 0 not decrement batch, else batch rule to use
+	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use
 	 *                                 	1=take in batches ordered by sellby and eatby dates
      * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
