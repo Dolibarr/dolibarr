@@ -165,7 +165,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
     outline: none;
     margin: 0px 0px 0px 0px;
-    border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+    border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 }
 
 input {
@@ -392,7 +392,16 @@ input.removedfile {
 	border: 0px !important;
 	vertical-align: text-bottom;
 }
-input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
+input[type=file ]    {
+	background-color: transparent;
+	box-shadow: none;
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	<?php } ?>
+    border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+}
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
@@ -5180,16 +5189,18 @@ span#select2-taskid-container[title^='--'] {
 }
 
 span.select2.select2-container.select2-container--default {
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
     border-left: none;
     border-top: none;
     border-right: none;
+    <?php } ?>
 }
 input.select2-input {
 	border-bottom: none ! important;
 }
 .select2-choice {
 	border: none;
-	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
+	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
@@ -5261,10 +5272,14 @@ input.select2-input {
 .select2-container--default .select2-selection--single
 {
 	outline: none;
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	<?php } ?>
+
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
