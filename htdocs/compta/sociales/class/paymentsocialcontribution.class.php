@@ -683,7 +683,7 @@ class PaymentSocialContribution extends CommonObject
 		$result = '';
 
 		if (empty($this->ref)) $this->ref = $this->lib;
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+        $label = $langs->trans("Payment").': '.$this->ref;
 
         if (!empty($this->id)) {
             $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
