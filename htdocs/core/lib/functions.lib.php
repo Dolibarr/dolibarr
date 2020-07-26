@@ -3172,7 +3172,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'setup', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'preview', 'project', 'projectpub', 'supplier_invoice', 'hrm', 'members', 'ticket', 'generic',
+        		'home', 'hrm', 'companies', 'products', 'commercial', 'invoicing', 'pencil-ruler', 'preview', 'project', 'projectpub', 'supplier_invoice', 'members', 'ticket', 'generic',
         		'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
@@ -3195,7 +3195,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
-		    	'hrm'=>'umbrella-beach', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+		    	'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 		    	'email'=>'at',
 		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'info-circle',
 		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
