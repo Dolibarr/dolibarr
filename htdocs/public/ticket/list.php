@@ -18,7 +18,7 @@
 /**
  *       \file       htdocs/public/ticket/list.php
  *       \ingroup    ticket
- *       \brief      Public file to add and manage ticket
+ *       \brief      Public file to list tickets
  */
 
 if (!defined('NOCSRFCHECK')) {

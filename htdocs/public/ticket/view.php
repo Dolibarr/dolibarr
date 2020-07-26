@@ -19,7 +19,7 @@
 /**
  *       \file       htdocs/public/ticket/view.php
  *       \ingroup    ticket
- *       \brief      Public file to add and manage ticket
+ *       \brief      Public file to show one ticket
  */
 
 if (!defined('NOCSRFCHECK')) {
