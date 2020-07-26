@@ -1954,7 +1954,7 @@ elseif ($id || $ref)
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Sending method
 		print '<tr><td height="10">';
