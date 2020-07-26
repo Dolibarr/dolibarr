@@ -6965,7 +6965,7 @@ function verifCond($strRights)
  * @param 	string	$s				String to evaluate
  * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     1=Hide errors
- * @return	mixed					Nothing or return of eval
+ * @return	mixed					Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 {

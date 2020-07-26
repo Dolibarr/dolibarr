@@ -6500,7 +6500,7 @@ class Form
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
-		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage;
+		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage;	// To get list of saved seleteced properties
 		if (!empty($user->conf->$tmpvar))
 		{
 			$tmparray = explode(',', $user->conf->$tmpvar);
