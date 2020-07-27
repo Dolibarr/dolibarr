@@ -1314,6 +1314,7 @@ class Societe extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
+			$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
 			$sql .= " WHERE rowid = ".(int) $id;
 
 			$resql = $this->db->query($sql);
@@ -1491,7 +1492,7 @@ class Societe extends CommonObject
 		$sql .= ', st.libelle as stcomm';
 		$sql .= ', te.code as typent_code';
 		$sql .= ', i.libelle as label_incoterms';
-		$sql .= ', sr.remise_client';
+		$sql .= ', sr.remise_client, model_pdf';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -1652,6 +1653,7 @@ class Societe extends CommonObject
 				// multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->multicurrency_code = $obj->multicurrency_code;
+				$this->model_pdf = $obj->model_pdf;
 
 				$result = 1;
 
