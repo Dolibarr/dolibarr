@@ -77,6 +77,7 @@ print '<form method="post" action="clicktodial.php">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -109,6 +110,7 @@ print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print '<div class="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
