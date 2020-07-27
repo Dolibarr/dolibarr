@@ -517,6 +517,7 @@ class MultiCurrency extends CommonObject
 		global $conf;
 
 	 	$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
+
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
 		$sql1 .= " WHERE m.code = '".$db->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
@@ -525,7 +526,7 @@ class MultiCurrency extends CommonObject
 			$tmparray = dol_getdate($date_document);
 			$sql2 .= " AND mc.date_sync <= '".$db->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
 		}
-		$sql3 .= ' ORDER BY mc.date_sync DESC LIMIT 1';
+		$sql3 = ' ORDER BY mc.date_sync DESC LIMIT 1';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql1.$sql2.$sql3);

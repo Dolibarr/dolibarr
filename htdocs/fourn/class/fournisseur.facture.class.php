@@ -359,7 +359,7 @@ class FactureFournisseur extends CommonInvoice
         $remise = $this->remise;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
@@ -485,7 +485,7 @@ class FactureFournisseur extends CommonInvoice
                             $idligne,
                             $this->lines[$i]->description,
                             $this->lines[$i]->pu_ht,
-                            $this->lines[$i]->tva_tx,
+                        	$this->lines[$i]->tva_tx.($this->lines[$i]->vat_src_code ? ' ('.$this->lines[$i]->vat_src_code.')' : ''),
                             $this->lines[$i]->localtax1_tx,
                             $this->lines[$i]->localtax2_tx,
                             $this->lines[$i]->qty,
@@ -1885,6 +1885,8 @@ class FactureFournisseur extends CommonInvoice
 
         $localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
+        $reg = array();
+
         // Clean vat code
         $vat_src_code = '';
         if (preg_match('/\((.*)\)/', $vatrate, $reg))
@@ -2569,6 +2571,8 @@ class FactureFournisseur extends CommonInvoice
         $object->fetch($fromid);
         $object->id = 0;
         $object->statut = self::STATUS_DRAFT;
+
+        $object->fetch_thirdparty();	// We need it to recalculate VAT localtaxes according to main sale taxes and vendor
 
         // Clear fields
         $object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);

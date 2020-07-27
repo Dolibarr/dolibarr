@@ -283,6 +283,7 @@ class BonPrelevement extends CommonObject
 		$sql .= ", p.method_trans, p.fk_user_trans";
 		$sql .= ", p.date_credit as date_credit";
 		$sql .= ", p.fk_user_credit";
+		$sql .= ", p.type";
 		$sql .= ", p.statut as status";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " WHERE p.entity IN (".getEntity('invoice').")";
@@ -309,6 +310,8 @@ class BonPrelevement extends CommonObject
 
 				$this->date_credit    = $this->db->jdate($obj->date_credit);
 				$this->user_credit    = $obj->fk_user_credit;
+
+				$this->type           = $obj->type;
 
 				$this->status         = $obj->status;
 				$this->statut         = $obj->status;	// For backward compatibility
@@ -883,14 +886,14 @@ class BonPrelevement extends CommonObject
 				foreach ($factures as $key => $fac)
 				{
 					if ($type != 'bank-transfer') {
-						$fact = new Facture($this->db);
+						$tmpinvoice = new Facture($this->db);
 					} else {
-						$fact = new FactureFournisseur($this->db);
+						$tmpinvoice = new FactureFournisseur($this->db);
 					}
-					$resfetch = $fact->fetch($fac[0]);
+					$resfetch = $tmpinvoice->fetch($fac[0]);
 					if ($resfetch >= 0)		// Field 0 of $fac is rowid of invoice
 					{
-						if ($soc->fetch($fact->socid) >= 0)
+						if ($soc->fetch($tmpinvoice->socid) >= 0)
 						{
 							$bac = new CompanyBankAccount($this->db);
 							$bac->fetch(0, $soc->id);
@@ -914,9 +917,9 @@ class BonPrelevement extends CommonObject
 								$i++;
 								//dol_syslog(__METHOD__."::RIB is ok", LOG_DEBUG);
 							} else {
-								dol_syslog(__METHOD__."::Check BAN Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$fact->socid." ".$soc->name, LOG_WARNING);
-								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
-								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice ".$fact->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
+								dol_syslog(__METHOD__."::Check BAN Error on default bank number IBAN/BIC for thirdparty reported by verif() ".$tmpinvoice->socid." ".$soc->name, LOG_WARNING);
+								$this->invoice_in_error[$fac[0]] = "Error on default bank number IBAN/BIC for invoice ".$tmpinvoice->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
+								$this->thirdparty_in_error[$soc->id] = "Error on default bank number IBAN/BIC for invoice ".$tmpinvoice->getNomUrl(0)." for thirdparty ".$soc->getNomUrl(0);
 							}
 						} else {
 							dol_syslog(__METHOD__."::Check BAN Failed to read company", LOG_WARNING);
@@ -1081,7 +1084,7 @@ class BonPrelevement extends CommonObject
 				 * Create file of direct debit order or credit transfer into a XML file
 				 */
 
-				dol_syslog(__METHOD__."::Init direct debit file for ".count($factures_prev)." invoices", LOG_DEBUG);
+				dol_syslog(__METHOD__."::Init direct debit or credit transfer file for ".count($factures_prev)." invoices", LOG_DEBUG);
 
 				if (count($factures_prev) > 0)
 				{
@@ -1107,8 +1110,8 @@ class BonPrelevement extends CommonObject
 					$this->factures = $factures_prev_id;
 					$this->context['factures_prev'] = $factures_prev;
 
-					// Generation of SEPA file $this->filename
-					// This also the the property $this->total that is included into file
+					// Generation of direct debit or credti transfer file $this->filename (May be a SEPA file for european countries)
+					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
 				}
 				dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
@@ -1425,8 +1428,110 @@ class BonPrelevement extends CommonObject
 			$found++;
 
 			if ($type == 'bank-transfer') {
-				print 'TODO';
-				exit;
+				/**
+				 * SECTION CREATION FICHIER SEPA - CREDIT TRANSFER
+				 */
+				// SEPA Initialisation
+				$CrLf = "\n";
+
+				$now = dol_now();
+
+				$dateTime_ECMA = dol_print_date($now, '%Y-%m-%dT%H:%M:%S');
+
+				$date_actu = $now;
+				if (!empty($executiondate)) $date_actu = $executiondate;
+
+				$dateTime_YMD = dol_print_date($date_actu, '%Y%m%d');
+				$dateTime_YMDHMS = dol_print_date($date_actu, '%Y%m%d%H%M%S');
+				$fileCrediteurSection = '';
+				$fileEmetteurSection = '';
+				$i = 0;
+
+				/*
+				 * Section Creditor (sepa Crediteurs bloc lines)
+				 */
+
+				$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
+				$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
+				$sql .= " f.ref as fac, pf.fk_facture as idfac, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
+				$sql .= " FROM";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
+				$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
+				$sql .= " ".MAIN_DB_PREFIX."prelevement_facture as pf,";
+				$sql .= " ".MAIN_DB_PREFIX."societe as soc,";
+				$sql .= " ".MAIN_DB_PREFIX."c_country as c,";
+				$sql .= " ".MAIN_DB_PREFIX."societe_rib as rib";
+				$sql .= " WHERE pl.fk_prelevement_bons = ".$this->id;
+				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
+				$sql .= " AND pf.fk_facture_fourn = f.rowid";
+				$sql .= " AND soc.fk_pays = c.rowid";
+				$sql .= " AND soc.rowid = f.fk_soc";
+				$sql .= " AND rib.fk_soc = f.fk_soc";
+				$sql .= " AND rib.default_rib = 1";
+				$sql .= " AND rib.type = 'ban'";
+				//print $sql;
+
+				// Define $fileCrediteurSection. One section DrctDbtTxInf per invoice.
+				$resql = $this->db->query($sql);
+				if ($resql)
+				{
+					$num = $this->db->num_rows($resql);
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
+						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum);
+						$this->total = $this->total + $obj->somme;
+						$i++;
+					}
+					$nbtotalDrctDbtTxInf = $i;
+				}
+				else
+				{
+					fputs($this->file, 'ERROR CREDITOR '.$sql.$CrLf); // CREDITORS = Suppliers
+					$result = -2;
+				}
+
+				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
+				if ($result != -2)
+				{
+					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format);
+				}
+
+				/**
+				 * SECTION CREATION SEPA FILE - CREDTI TRANSFER - ISO200022
+				 */
+				// SEPA File Header
+				fputs($this->file, '<'.'?xml version="1.0" encoding="UTF-8" standalone="yes"?'.'>'.$CrLf);
+				fputs($this->file, '<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">'.$CrLf);
+				fputs($this->file, '	<CstmrCdtTrfInitn>'.$CrLf);
+				// SEPA Group header
+				fputs($this->file, '		<GrpHdr>'.$CrLf);
+				fputs($this->file, '			<MsgId>'.('CREDTRANS'.$dateTime_YMD.'/REF'.$this->id).'</MsgId>'.$CrLf);
+				fputs($this->file, '			<CreDtTm>'.$dateTime_ECMA.'</CreDtTm>'.$CrLf);
+				fputs($this->file, '			<NbOfTxs>'.$i.'</NbOfTxs>'.$CrLf);
+				fputs($this->file, '			<CtrlSum>'.$this->total.'</CtrlSum>'.$CrLf);
+				fputs($this->file, '			<InitgPty>'.$CrLf);
+				fputs($this->file, '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf);
+				fputs($this->file, '				<Id>'.$CrLf);
+				fputs($this->file, '				    <PrvtId>'.$CrLf);
+				fputs($this->file, '					<Othr>'.$CrLf);
+				fputs($this->file, '						<Id>'.$conf->global->PRELEVEMENT_ICS.'</Id>'.$CrLf);
+				fputs($this->file, '					</Othr>'.$CrLf);
+				fputs($this->file, '				    </PrvtId>'.$CrLf);
+				fputs($this->file, '				</Id>'.$CrLf);
+				fputs($this->file, '			</InitgPty>'.$CrLf);
+				fputs($this->file, '		</GrpHdr>'.$CrLf);
+				// SEPA File Emetteur (mycompany)
+				if ($result != -2)
+				{	fputs($this-> file, $fileEmetteurSection); }
+				// SEPA File Creditors
+				if ($result != -2)
+				{	fputs($this-> file, $fileCrediteurSection); }
+				// SEPA FILE FOOTER
+				fputs($this->file, '		</PmtInf>'.$CrLf);
+				fputs($this->file, '	</CstmrCdtTrfInitn>'.$CrLf);
+				fputs($this->file, '</Document>'.$CrLf);
 			} else {
 				/**
 				 * SECTION CREATION FICHIER SEPA
@@ -1490,16 +1595,14 @@ class BonPrelevement extends CommonObject
 					$result = -2;
 				}
 
-				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all DrctDbtTxInf
+				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2)
 				{
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format);
-				} else {
-					fputs($this->file, 'ERROR CREDITOR'.$CrLf); // CREDITOR = My company
 				}
 
 				/**
-				 * SECTION CREATION SEPA FILE
+				 * SECTION CREATION SEPA FILE - ISO200022
 				 */
 				// SEPA File Header
 				fputs($this->file, '<'.'?xml version="1.0" encoding="UTF-8" standalone="yes"?'.'>'.$CrLf);

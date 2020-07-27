@@ -455,6 +455,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+	    min-width: 315px;
+	    max-width: 315px;
+	}
+}
+@media only screen and (max-width: 767px) {
+	.info-box-module {
+		min-width: 260px;
+	}
+}
+
 .info-box-module .info-box-content {
 	height: 6.3em;
 }
