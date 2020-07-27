@@ -60,6 +60,8 @@ if ($action == 'setvalue' && $user->admin)
  * View
  */
 
+$form = new Form($db);
+
 $user->fetch_clicktodial();
 
 $wikihelp = 'EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
