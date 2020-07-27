@@ -192,6 +192,14 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $param = '';
 
+$label = 'NewStandingOrder';
+$typefilter = '';
+if ($type == 'bank-transfer') {
+	$label = 'NewPaymentByBankTransfer';
+	$typefilter = 'type='.$type;
+}
+$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/prelevement/create.php'.($typefilter ? '?'.$typefilter : ''));
+
 print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
 
 print '<table class="liste centpercent">';
