@@ -1485,9 +1485,7 @@ class BonPrelevement extends CommonObject
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
-				}
-				else
-				{
+				} else {
 					fputs($this->file, 'ERROR CREDITOR '.$sql.$CrLf); // CREDITORS = Suppliers
 					$result = -2;
 				}

@@ -1246,7 +1246,7 @@ class CommandeFournisseur extends CommonOrder
 
 		// $date_commande is deprecated
 		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
-		if(empty($date)) $date = $now;
+		if (empty($date)) $date = $now;
 
         // Clean parameters
         if (empty($this->source)) $this->source = 0;
