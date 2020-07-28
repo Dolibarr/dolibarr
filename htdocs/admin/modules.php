@@ -460,8 +460,9 @@ asort($orders);
 //var_dump($modules);
 
 $nbofactivatedmodules = count($conf->modules);
-$moreinfo = $langs->trans("TotalNumberOfActivatedModules", ($nbofactivatedmodules - 1), count($modules));
-if ($nbofactivatedmodules <= 1) $moreinfo .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
+$moreinfo = $langs->trans("TitleNumberOfActivatedModules");
+$moreinfo2 = ($nbofactivatedmodules - 1)." / ".count($modules);
+if ($nbofactivatedmodules <= 1) $moreinfo2 .= ' '.img_warning($langs->trans("YouMustEnableOneModule"));
 
 print load_fiche_titre($langs->trans("ModulesSetup"), '', 'title_setup');
 
@@ -496,6 +497,14 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	dol_fiche_head($head, $newmode, '', -1);
 
 	$moreforfilter = '<div class="valignmiddle">';
+
+	$moreforfilter .= '<div class="floatright right pagination"><ul><li>';
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
+	$moreforfilter .= '</li></ul></div>';
+
+	$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="">'.$moreinfo.'</span><br><b class="largenumber">'.$moreinfo2.'</b></div>';
+
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$moreforfilter .= $langs->trans('Keyword').': <input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'">';
@@ -523,13 +532,6 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$moreforfilter .= '<input type="submit" name="buttonreset" class="button" value="'.dol_escape_htmltag($langs->trans("Reset")).'">';
 	$moreforfilter .= '</div>';
 	$moreforfilter .= '</div>';
-
-	$moreforfilter .= '<div class="floatright right">';
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=commonkanban'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'common' ? '' : ' btnTitleSelected')));
-	$moreforfilter .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.$param, '', 1, array('morecss'=>'reposition'.($mode == 'commonkanban' ? '' : ' btnTitleSelected')));
-	$moreforfilter .= '</div>';
-
-	$moreforfilter .= '<div class="floatright right margintoponly marginrightonly" style="padding-top: 3px">'.$moreinfo.'</div>';
 
 	$moreforfilter .= '</div>';
 

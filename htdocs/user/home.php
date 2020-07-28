@@ -102,7 +102,6 @@ $sql .= ", u.ldap_sid";
 $sql .= ", u.photo";
 $sql .= ", u.admin";
 $sql .= ", u.email";
-$sql .= ", u.skype";
 $sql .= ", s.nom as name";
 $sql .= ", s.code_client";
 $sql .= ", s.canvas";
@@ -144,7 +143,6 @@ if ($resql)
 		$fuserstatic->photo = $obj->photo;
 		$fuserstatic->admin = $obj->admin;
 		$fuserstatic->email = $obj->email;
-		$fuserstatic->skype = $obj->skype;
 		$fuserstatic->socid = $obj->fk_soc;
 
 		$companystatic->id = $obj->fk_soc;

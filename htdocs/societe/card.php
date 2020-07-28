@@ -849,6 +849,11 @@ if (empty($reshook))
     $id = $socid;
     $object->fetch($socid);
 
+	// Selection of new fields
+	if (!empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD) && (empty($conf->global->SOCIETE_DISABLE_CONTACTS) || !empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT))) {
+		include DOL_DOCUMENT_ROOT . '/core/actions_changeselectedfields.inc.php';
+	}
+
     // Actions to send emails
     $triggersendname = 'COMPANY_SENTBYMAIL';
     $paramname = 'socid';
@@ -1985,7 +1990,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                     print '</span>';
                 }
                 print '</td>';
-                if ($conf->browser->layout == 'phone') print '</tr><tr>';
+                print '</tr><tr>';
                 print '<td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td>';
                 print $form->selectyesno('localtax2assuj_value', $object->localtax2_assuj, 1);
                 if (!isOnlyOneLocalTax(2))

@@ -22,9 +22,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
 }
-.info-box.info-box-sm{
+.info-box.info-box-sm {
     min-height: 80px;
     margin-bottom: 10px;
+}
+.opened-dash-board-wrap .info-box.info-box-sm {
+    border-radius: 0 0 0 20px;
 }
 .info-box-more {
     float: right;
@@ -81,6 +84,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     width: 80px;
     font-size: 25px;
     line-height: 92px;
+}
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
+    border-radius: 0 20px 0 20px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
@@ -392,12 +398,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	height: 0;
 }
 
+.info-box-title {
+	width: calc(100% - 20px);
+}
 .info-box-module {
 	min-width: 350px;
     max-width: 350px;
 }
-.info-box-title {
-	width: calc(100% - 20px);
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+	    min-width: 315px;
+	    max-width: 315px;
+	}
 }
 @media only screen and (max-width: 767px) {
 	.info-box-module {

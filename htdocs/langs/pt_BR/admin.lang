@@ -1509,7 +1509,6 @@ SmallerThan=Menor que
 LargerThan=Maior que
 IfTrackingIDFoundEventWillBeLinked=Observe que, se um ID de rastreamento for encontrado no e-mail recebido, o evento será automaticamente vinculado aos objetos relacionados.
 WithGMailYouCanCreateADedicatedPassword=Com uma conta do GMail, se você ativou a validação de 2 etapas, é recomendável criar uma segunda senha dedicada para o aplicativo, em vez de usar sua própria senha da conta em https://myaccount.google.com/.
-EmailCollectorTargetDir=Pode ser um comportamento desejado mover o e-mail para outra tag / diretório quando o mesmo foi processado com êxito. Basta definir um valor aqui para usar este recurso. Observe que você também deve usar uma conta de logon de leitura / gravação.
 EmailCollectorLoadThirdPartyHelp=Você pode usar esta ação para usar o conteúdo de email para localizar e carregar uma terceira parte existente em seu banco de dados. A terceira parte encontrada (ou criada) será usada para seguir as ações que precisam dela. No campo de parâmetro, você pode usar, por exemplo, 'EXTRACT: BODY: Name: \\ s ([^ \\ s] *)' se desejar extrair o nome da terceira parte de uma cadeia de caracteres 'Name: name to find' encontrada na corpo.
 EndPointFor=Ponto final para %s : %s
 DeleteEmailCollector=Excluir coletor de e-mail

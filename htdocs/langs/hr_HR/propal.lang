@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Kontakt osoba pri kupcu za račun
 TypeContact_propal_external_CUSTOMER=Kontakt osoba pri kupcu za ponudu
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Izrada osnovnog modela
 DefaultModelPropalToBill=Osnovni predložak prilikom zatvaranja poslovne ponude (za naplatu)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Osnovni predložak prilikom zatvaranja poslovne ponude 
 ProposalCustomerSignature=Potvrda narudžbe; pečat tvrtke, datum i potpis
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

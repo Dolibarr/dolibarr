@@ -576,7 +576,7 @@ while ($i < min($num, $limit))
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked']))
 	{
-		print '<td>';
+		print '<td class="nowraponall">';
 		print $contractstatic->getNomUrl(1, 16);
 		print '</td>';
         if (!$i) $totalarray['nbfield']++;

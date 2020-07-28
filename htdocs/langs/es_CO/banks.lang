@@ -6,5 +6,4 @@ StandingOrder=Orden de domiciliación bancaria
 StatusAccountOpened=Activo
 StatusAccountClosed=Cerrado
 SocialContributionPayment=Pago de impuestos sociales / fiscales
-BankTransfer=transferencia bancaria
 TransferTo=A

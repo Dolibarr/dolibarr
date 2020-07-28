@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Sändning %s märkt fakturerad
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Leverans %s gå tillbaka till utkast status
 ShipmentDeletedInDolibarr=Frakten %s raderad
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Order %s skapad
 OrderValidatedInDolibarr=Order %s bekräftades
 OrderDeliveredInDolibarr=Order %s märkt levererad 

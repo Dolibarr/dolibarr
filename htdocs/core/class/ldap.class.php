@@ -474,7 +474,7 @@ class Ldap
 
 		//print_r($info);
 
-    // For better compatibility with Samba4 AD
+    	// For better compatibility with Samba4 AD
 		if ($this->serverType == "activedirectory") {
 			unset($info['cn']); // For avoid error : Operation not allowed on RDN (Code 67)
 		}

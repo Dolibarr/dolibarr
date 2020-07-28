@@ -272,6 +272,10 @@ table.postablelines tr td {
     background-color: var(--colorbacklineimpair1);
 }
 
+.postablelines td.linecolht {
+    line-height: 1.3em !important;
+}
+
 div.paymentbordline
 {
 	width:calc(50% - 16px);
@@ -429,7 +433,7 @@ p.description_content{
 div.description_content {
 	display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW;?>;
     overflow: hidden;
     padding-left: 2px;
     padding-right: 2px;

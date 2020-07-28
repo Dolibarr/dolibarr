@@ -1333,33 +1333,8 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 			if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
 				print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jnotify/jquery.jnotify.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
-			// Flot
-			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'jflot') {
-				if (empty($conf->global->MAIN_DISABLE_JQUERY_FLOT) && !defined('DISABLE_JQUERY_FLOT')) {
-					if (constant('JS_JQUERY_FLOT')) {
-						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.JS_JQUERY_FLOT.'jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-					} else {
-						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						print '<script src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
-						/* Test for jflot 4.2 -> not better than current
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.canvaswrapper.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.colorhelpers.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.pie.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.stack.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.saturated.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.browser.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.drawSeries.js"></script>'."\n";
-						print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/flot/jquery.flot.uiConstants.js"></script>'."\n";
-						*/
-					}
-				}
-			}
 			// Chart
-			if ($conf->global->MAIN_JS_GRAPH == 'chart') {
+			if (empty($conf->global->MAIN_JS_GRAPH) || $conf->global->MAIN_JS_GRAPH == 'chart') {
 				print '<script src="'.DOL_URL_ROOT.'/includes/nnnick/chartjs/dist/Chart.min.js'.($ext ? '?'.$ext : '').'"></script>'."\n";
 			}
 
@@ -1909,7 +1884,7 @@ function top_menu_quickadd()
                 <!-- Thirdparty link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/societe/card.php?action=create" title="'.$langs->trans("MenuNewThirdParty").'">
-                        <i class="fal fa-building fa-2x"></i><br>
+                        <i class="fa fa-building"></i><br>
                         '.$langs->trans("ThirdParty").'
                     </a>
                 </div>
@@ -1922,7 +1897,7 @@ function top_menu_quickadd()
                 <!-- Contact link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/contact/card.php?action=create" title="'.$langs->trans("NewContactAddress").'">
-                        <i class="fal fa-address-book fa-2x"></i><br>
+                        <i class="fa fa-address-book"></i><br>
                         '.$langs->trans("Contact").'
                     </a>
                 </div>
@@ -1935,7 +1910,7 @@ function top_menu_quickadd()
                 <!-- Propal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create" title="'.$langs->trans("NewPropal").'">
-                        <i class="fal fa-suitcase fa-2x"></i><br>
+                        <i class="fa fa-suitcase"></i><br>
                         '.$langs->trans("Proposal").'
                     </a>
                 </div>
@@ -1948,7 +1923,7 @@ function top_menu_quickadd()
                 <!-- Order link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
-                        <i class="fal fa-file-alt fa-2x"></i><br>
+                        <i class="fa fa-file-alt"></i><br>
                         '.$langs->trans("Order").'
                     </a>
                 </div>
@@ -1961,7 +1936,7 @@ function top_menu_quickadd()
                 <!-- Invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                        <i class="fal fa-coins fa-2x"></i><br>
+                        <i class="fa fa-coins"></i><br>
                         '.$langs->trans("Bill").'
                     </a>
                 </div>
@@ -1974,7 +1949,7 @@ function top_menu_quickadd()
                 <!-- Contract link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create" title="'.$langs->trans("NewContractSubscription").'">
-                        <i class="fal fa-file-contract fa-2x"></i><br>
+                        <i class="fa fa-file-contract"></i><br>
                         '.$langs->trans("Contract").'
                     </a>
                 </div>
@@ -1987,7 +1962,7 @@ function top_menu_quickadd()
                 <!-- Supplier proposal link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create" title="'.$langs->trans("NewAskPrice").'">
-                        <i class="fal fa-suitcase fa-2x"></i><br>
+                        <i class="fa fa-suitcase"></i><br>
                         '.$langs->trans("AskPrice").'
                     </a>
                 </div>
@@ -2000,7 +1975,7 @@ function top_menu_quickadd()
                 <!-- Supplier order link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create" title="'.$langs->trans("NewOrder").'">
-                        <i class="fal fa-file-alt fa-2x"></i><br>
+                        <i class="fa fa-file-alt"></i><br>
                         '.$langs->trans("SupplierOrder").'
                     </a>
                 </div>
@@ -2013,7 +1988,7 @@ function top_menu_quickadd()
                 <!-- Supplier invoice link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create" title="'.$langs->trans("NewBill").'">
-                        <i class="fal fa-coins fa-2x"></i><br>
+                        <i class="fa fa-coins"></i><br>
                         '.$langs->trans("SupplierBill").'
                     </a>
                 </div>
@@ -2026,7 +2001,7 @@ function top_menu_quickadd()
                 <!-- Product link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=0" title="'.$langs->trans("NewProduct").'">
-                        <i class="fal fa-cube fa-2x"></i><br>
+                        <i class="fa fa-cube"></i><br>
                         '.$langs->trans("Product").'
                     </a>
                 </div>
@@ -2039,7 +2014,7 @@ function top_menu_quickadd()
                 <!-- Service link -->
                 <div class="quickaddblock center">
                     <a class="quickadddropdown-icon-link" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type=1" title="'.$langs->trans("NewService").'">
-                        <i class="fal fa-concierge-bell fa-2x"></i><br>
+                        <i class="fa fa-concierge-bell"></i><br>
                         '.$langs->trans("Service").'
                     </a>
                 </div>
@@ -2065,7 +2040,7 @@ function top_menu_quickadd()
 	$html.= '<!-- div for quick add link -->
     <div id="topmenu-quickadd-dropdown" class="atoplogin dropdown inline-block">
         <a class="dropdown-toggle login-dropdown-a" data-toggle="dropdown" href="#" title="'.$langs->trans('QuickAdd').' ('.$langs->trans('QuickAddMenuShortCut').')">
-            <i class="fal fa-plus-circle" ></i>
+            <i class="fa fa-plus-circle" ></i>
         </a>
 
         <div class="dropdown-menu">

@@ -81,6 +81,8 @@ delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLE
 
 -- For v12
 
+ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
+
 ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-order';
 
 ALTER TABLE llx_ecm_files MODIFY COLUMN src_object_type varchar(64);
@@ -248,7 +250,10 @@ INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, desc
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
 
-ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable DROP DEFAULT;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer USING printable::integer;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable SET DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
 UPDATE llx_const SET name = 'INVOICE_USE_RETAINED_WARRANTY' WHERE name = 'INVOICE_USE_SITUATION_RETAINED_WARRANTY';
@@ -322,3 +327,8 @@ UPDATE llx_prelevement_facture_demande SET entity = 1 WHERE entity IS NULL;
 
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
+
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;

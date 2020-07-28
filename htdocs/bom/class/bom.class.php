@@ -251,7 +251,7 @@ class BOM extends CommonObject
 	    if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
 
 	    // Get lines so they will be clone
-	    //foreach($object->lines as $line)
+	    //foreach ($object->lines as $line)
 	    //	$line->fetch_optionals();
 
 	    // Reset some properties
@@ -333,8 +333,10 @@ class BOM extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
+
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		$this->calculateCosts();
+
 		return $result;
 	}
 

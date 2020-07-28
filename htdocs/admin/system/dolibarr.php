@@ -317,7 +317,6 @@ $configfileparameters = array(
 		'?dolibarr_js_CKEDITOR' => 'dolibarr_js_CKEDITOR',
 		'?dolibarr_js_JQUERY' => 'dolibarr_js_JQUERY',
 		'?dolibarr_js_JQUERY_UI' => 'dolibarr_js_JQUERY_UI',
-		'?dolibarr_js_JQUERY_FLOT' => 'dolibarr_js_JQUERY_FLOT',
 		'?dolibarr_font_DOL_DEFAULT_TTF' => 'dolibarr_font_DOL_DEFAULT_TTF',
 		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 		'separator4' => '',

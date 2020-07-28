@@ -721,7 +721,18 @@ class Project extends CommonObject
 			}
 		}
 
+		if (!$error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_extrafields";
+			$sql .= " WHERE fk_object=".$this->id;
 
+			$resql = $this->db->query($sql);
+			if (!$resql)
+			{
+				$this->errors[] = $this->db->lasterror();
+				$error++;
+			}
+		}
 
 		// Delete project
 		if (!$error)
@@ -737,18 +748,7 @@ class Project extends CommonObject
 			}
 		}
 
-		if (!$error)
-		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."projet_extrafields";
-			$sql .= " WHERE fk_object=".$this->id;
 
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$this->errors[] = $this->db->lasterror();
-				$error++;
-			}
-		}
 
 		if (empty($error)) {
 			// We remove directory

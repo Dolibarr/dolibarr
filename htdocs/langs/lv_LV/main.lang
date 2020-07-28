@@ -1037,5 +1037,5 @@ DeleteFileText=Vai tiešām vēlaties izdzēst šo failu?
 ShowOtherLanguages=Rādīt citas valodas
 SwitchInEditModeToAddTranslation=Pārslēdzieties rediģēšanas režīmā, lai šai valodai pievienotu tulkojumus
 NotUsedForThisCustomer=Nav izmantots šim klientam
-AmountMustBePositive=Amount must be positive
-ByStatus=By status
+AmountMustBePositive=Summai jābūt pozitīvai
+ByStatus=Pēc statusa

@@ -72,7 +72,7 @@ Deleted=Deleted
 
 # Dict
 Type=Tipo
-Category=Analytic code
+Category=Código analítico
 Severity=Severity
 
 # Email templates
@@ -162,7 +162,7 @@ CreatedBy=Created by
 NewTicket=New Ticket
 SubjectAnswerToTicket=Ticket answer
 TicketTypeRequest=Request type
-TicketCategory=Analytic code
+TicketCategory=Código analítico
 SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on

@@ -48,13 +48,12 @@ $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
 $action = GETPOST('action', 'alpha');
 $type = GETPOST('type', 'aZ09');
-$mode = GETPOST('mode', 'aZ09');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
-if ($mode == 'bank-transfer') {
+if ($type == 'bank-transfer') {
 	$object = new FactureFournisseur($db);
 } else {
 	$object = new Facture($db);
@@ -94,6 +93,7 @@ if (empty($reshook))
             $sourcetype = 'facture';
             if ($type == 'bank-transfer') {
             	$sourcetype = 'supplier_invoice';
+            	$newtype = 'bank-transfer';
             }
 
             $result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
@@ -117,7 +117,7 @@ if (empty($reshook))
             $result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
             if ($result == 0)
             {
-                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&mode='.$mode);
+                header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&type='.$type);
                 exit;
             }
         }
@@ -133,7 +133,7 @@ $form = new Form($db);
 
 $now = dol_now();
 
-if ($mode == 'bank-transfer') {
+if ($type == 'bank-transfer') {
 	$title = $langs->trans('InvoiceSupplier')." - ".$langs->trans('CreditTransfer');
 	$helpurl = "";
 } else {
@@ -168,7 +168,7 @@ if ($object->id > 0)
 	if ($object->paye) $resteapayer = 0;
 	$resteapayeraffiche = $resteapayer;
 
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		if (!empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {	// Never use this
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
@@ -202,7 +202,7 @@ if ($object->id > 0)
 		$author->fetch($object->user_author);
 	}
 
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		$head = facturefourn_prepare_head($object);
 	} else {
 		$head = facture_prepare_head($object);
@@ -211,7 +211,7 @@ if ($object->id > 0)
 	dol_fiche_head($head, 'standingorders', $title, -1, 'bill');
 
 	// Invoice content
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 	} else {
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -219,7 +219,7 @@ if ($object->id > 0)
 
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 	} else {
@@ -228,7 +228,7 @@ if ($object->id > 0)
 	}
 	// Thirdparty
 	$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
 	} else {
 		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
@@ -288,7 +288,7 @@ if ($object->id > 0)
 	}
 	if ($object->type == $object::TYPE_REPLACEMENT)
 	{
-		if ($mode == 'bank-transfer') {
+		if ($type == 'bank-transfer') {
 			$facreplaced = new FactureFournisseur($db);
 		} else {
 			$facreplaced = new Facture($db);
@@ -298,7 +298,7 @@ if ($object->id > 0)
 	}
 	if ($object->type == $object::TYPE_CREDIT_NOTE)
 	{
-		if ($mode == 'bank-transfer') {
+		if ($type == 'bank-transfer') {
 			$facusing = new FactureFournisseur($db);
 		} else {
 			$facusing = new Facture($db);
@@ -316,7 +316,7 @@ if ($object->id > 0)
 		{
 			if ($i == 0) print ' ';
 			else print ',';
-			if ($mode == 'bank-transfer') {
+			if ($type == 'bank-transfer') {
 				$facavoir = new FactureFournisseur($db);
 			} else {
 				$facavoir = new Facture($db);
@@ -339,7 +339,7 @@ if ($object->id > 0)
 	// Discounts
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		//$societe = new Fournisseur($db);
 		//$result = $societe->fetch($object->socid);
 		$thirdparty = $object->thirdparty;
@@ -355,7 +355,7 @@ if ($object->id > 0)
 	print '</td></tr>';
 
 	// Label
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		print '<tr>';
 		print '<td>'.$form->editfieldkey("Label", 'label', $object->label, $object, 0).'</td>';
 		print '<td>'.$form->editfieldval("Label", 'label', $object->label, $object, 0).'</td>';
@@ -417,7 +417,7 @@ if ($object->id > 0)
 	if ($object->type != $object::TYPE_CREDIT_NOTE)
 	{
 		$duedate = $object->date_lim_reglement;
-		if ($mode == 'bank-transfer') {
+		if ($type == 'bank-transfer') {
 			$duedate = $object->date_echeance;
 		}
 
@@ -470,7 +470,7 @@ if ($object->id > 0)
 	print '</tr>';
 
 	$title = 'CustomerIBAN';
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		$title = 'SupplierIBAN';
 	}
 	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
@@ -627,7 +627,7 @@ if ($object->id > 0)
 	print "\n<div class=\"tabsAction\">\n";
 
 	$buttonlabel = $langs->trans("MakeWithdrawRequest");
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		$buttonlabel = $langs->trans("MakeBankTransferOrder");
 	}
 
@@ -643,6 +643,7 @@ if ($object->id > 0)
     			print '<form method="POST" action="">';
     			print '<input type="hidden" name="token" value="'.newToken().'" />';
     			print '<input type="hidden" name="id" value="'.$object->id.'" />';
+    			print '<input type="hidden" name="type" value="'.$type.'" />';
     			print '<input type="hidden" name="action" value="new" />';
     			print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
     			print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
@@ -667,7 +668,7 @@ if ($object->id > 0)
 	print "</div><br>\n";
 
 
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments").'</div><br>';
 	} else {
 		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments").'</div><br>';
@@ -684,7 +685,7 @@ if ($object->id > 0)
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td class="center">'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
-	if ($mode == 'bank-transfer') {
+	if ($type == 'bank-transfer') {
 		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
 		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
@@ -696,7 +697,7 @@ if ($object->id > 0)
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
 	$sql .= " pfd.date_traite as date_traite, pfd.amount,";
-	$sql .= " u.rowid as user_id, u.lastname, u.firstname, u.login";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
@@ -716,14 +717,29 @@ if ($object->id > 0)
 	{
 		$i = 0;
 
+		$tmpuser = new User($db);
+
 		$num = $db->num_rows($result);
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
 
+			$tmpuser->id = $obj->user_id;
+			$tmpuser->login = $obj->login;
+			$tmpuser->ref = $obj->login;
+			$tmpuser->email = $obj->email;
+			$tmpuser->lastname = $obj->lastname;
+			$tmpuser->firstname = $obj->firstname;
+			$tmpuser->statut = $obj->user_status;
+
 			print '<tr class="oddeven">';
+
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'dayhour')."</td>\n";
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
+
+			print '<td align="center">';
+			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
+			print '</td>';
+
 			print '<td class="center">'.price($obj->amount).'</td>';
 			print '<td align="center">-</td>';
 			print '<td>&nbsp;</td>';
@@ -731,7 +747,7 @@ if ($object->id > 0)
 			print '<td class="center">'.$langs->trans("OrderWaiting").'</td>';
 
 			print '<td class="right">';
-			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&did='.$obj->rowid.'&mode='.$mode.'">';
+			print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete&did='.$obj->rowid.'&type='.$type.'">';
 			print img_delete();
 			print '</a></td>';
 
@@ -749,7 +765,7 @@ if ($object->id > 0)
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql .= " pb.ref,";
-	$sql .= " u.rowid as user_id, u.lastname, u.firstname, u.login";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
@@ -769,15 +785,27 @@ if ($object->id > 0)
 		$numclosed = $num;
 		$i = 0;
 
+		$tmpuser = new User($db);
+
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
+
+			$tmpuser->id = $obj->user_id;
+			$tmpuser->login = $obj->login;
+			$tmpuser->ref = $obj->login;
+			$tmpuser->email = $obj->email;
+			$tmpuser->lastname = $obj->lastname;
+			$tmpuser->firstname = $obj->firstname;
+			$tmpuser->statut = $obj->user_status;
 
 			print '<tr class="oddeven">';
 
 			print '<td class="left">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
 
-			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"), 'user').' '.$obj->login.'</a></td>';
+			print '<td align="center">';
+			print $tmpuser->getNomUrl(1, '', 0, 0, 0, 0, 'login');
+			print '</td>';
 
 			print '<td class="center">'.price($obj->amount).'</td>';
 

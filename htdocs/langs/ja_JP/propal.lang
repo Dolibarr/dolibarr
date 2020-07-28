@@ -76,11 +76,12 @@ TypeContact_propal_external_BILLING=顧客の請求書の連絡先
 TypeContact_propal_external_CUSTOMER=顧客の連絡先フォローアップ提案
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Default model creation
 DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
 DefaultModelPropalClosed=Default template when closing a business proposal (unbilled)
-ProposalCustomerSignature=Written acceptance, company stamp, date and signature
+ProposalCustomerSignature=承諾書、会社印、日付、署名
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

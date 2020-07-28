@@ -154,10 +154,10 @@ if (empty($reshook))
 	$arrayresult = array_merge($arrayresult, $hookmanager->resArray);
 } else $arrayresult = $hookmanager->resArray;
 
-// This allow to keep a search entry to the top
+// This pushes a search entry to the top
 if (!empty($conf->global->DEFAULT_SEARCH_INTO_MODULE)) {
     $key = 'searchinto'.$conf->global->DEFAULT_SEARCH_INTO_MODULE;
-    if (array_key_exists($key, $arrayresult)) $arrayresult[$key]['position'] = -10;
+    if (array_key_exists($key, $arrayresult)) $arrayresult[$key]['position'] = -1000;
 }
 
 // Sort on position

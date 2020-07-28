@@ -725,6 +725,8 @@ class Societe extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->client = 0;
@@ -735,6 +737,13 @@ class Societe extends CommonObject
 		$this->forme_juridique_code = 0;
 		$this->tva_assuj = 1;
 		$this->status = 1;
+
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$this->fields['address']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			$this->fields['zip']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			$this->fields['town']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			//$this->fields['fk_pays']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+		}
 	}
 
 
@@ -2070,11 +2079,13 @@ class Societe extends CommonObject
 	/**
 	 *  Return array of sales representatives
 	 *
-	 *  @param	User	$user		Object user
-	 *  @param	int		$mode		0=Array with properties, 1=Array of id.
-	 *  @return array       		Array of sales representatives of third party
+	 *  @param	User		$user			Object user
+	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
+	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 *  @return array       				Array of sales representatives of third party
 	 */
-    public function getSalesRepresentatives(User $user, $mode = 0)
+    public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
 		global $conf;
 
@@ -2091,6 +2102,11 @@ class Societe extends CommonObject
 		} else $sql .= " WHERE entity in (0, ".$conf->entity.")";
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".$this->id;
+		if (empty($sortfield) && empty($sortorder)) {
+			$sortfield = 'u.lastname,u.firstname';
+			$sortorder = 'ASC,ASC';
+		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2332,37 +2348,37 @@ class Societe extends CommonObject
 
 		$label .= '<div class="centpercent">';
 
-		if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
+		if ($option == 'customer' || $option == 'compta' || $option == 'category')
 		{
-		    $label .= '<u>'.$langs->trans("ShowCustomer").'</u>';
+		    $label .= '<u>'.$langs->trans("Customer").'</u>';
 		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			$label .= '<u>'.$langs->trans("ShowProspect").'</u>';
+			$label .= '<u>'.$langs->trans("Prospect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
-		} elseif ($option == 'supplier')
+		} elseif ($option == 'supplier' || $option == 'category_supplier')
 		{
-			$label .= '<u>'.$langs->trans("ShowSupplier").'</u>';
+			$label .= '<u>'.$langs->trans("Supplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		} elseif ($option == 'agenda')
 		{
-			$label .= '<u>'.$langs->trans("ShowAgenda").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		} elseif ($option == 'project')
 		{
-			$label .= '<u>'.$langs->trans("ShowProject").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		} elseif ($option == 'margin')
 		{
-			$label .= '<u>'.$langs->trans("ShowMargin").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		} elseif ($option == 'contact')
 		{
-			$label .= '<u>'.$langs->trans("ShowContacts").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		} elseif ($option == 'ban')
 		{
-			$label .= '<u>'.$langs->trans("ShowBan").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 

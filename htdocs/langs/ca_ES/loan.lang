@@ -23,6 +23,9 @@ AddLoan=Crea un préstec
 FinancialCommitment=Compromís financer
 InterestAmount=Interessos
 CapitalRemain=Capital restant
+TermPaidAllreadyPaid = This term is allready paid
+CantUseScheduleWithLoanStartedToPaid = Can't use scheduler for a loan with payment started
+CantModifyInterestIfScheduleIsUsed = You can't modify interest if you use schedule
 # Admin
 ConfigLoan=Configuració del mòdul de préstecs
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable del capital per defecte

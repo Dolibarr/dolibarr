@@ -39,12 +39,6 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 
-$mesg = '';
-if (isset($_SESSION['DolMessage'])) {
-    $mesg = $_SESSION['DolMessage'];
-    unset($_SESSION['DolMessage']);
-}
-
 // Security check
 if ($user->socid) {
     $action = '';

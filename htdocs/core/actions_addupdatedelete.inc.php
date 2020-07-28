@@ -94,6 +94,12 @@ if ($action == 'add' && !empty($permissiontoadd))
 		}
 	}
 
+	// Fill array 'array_options' with data from add form
+	if (!$error) {
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		if ($ret < 0) $error++;
+	}
+
 	if (!$error)
 	{
 		$result = $object->create($user);
@@ -165,6 +171,12 @@ if ($action == 'update' && !empty($permissiontoadd))
 		}
 	}
 
+	// Fill array 'array_options' with data from add form
+	if (!$error) {
+		$ret = $extrafields->setOptionalsFromPost(null, $object, '@GETPOSTISSET');
+		if ($ret < 0) $error++;
+	}
+
 	if (!$error)
 	{
 		$result = $object->update($user);
@@ -188,7 +200,14 @@ if ($action == "update_extras" && !empty($permissiontoadd))
 
 	$attributekey = GETPOST('attribute', 'alpha');
 	$attributekeylong = 'options_'.$attributekey;
-	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
+
+	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
+		// This is properties of a date
+		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
+		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
+	} else {
+		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
+	}
 
 	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
 	if ($result > 0)

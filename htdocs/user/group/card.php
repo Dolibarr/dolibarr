@@ -125,7 +125,7 @@ if (empty($reshook)) {
 	{
 		if ($caneditperms)
 		{
-			if (!$_POST["nom"]) {
+			if (! GETPOST("nom", "nohtml")) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
