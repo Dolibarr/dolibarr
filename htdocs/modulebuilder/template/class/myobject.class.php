@@ -1060,11 +1060,24 @@ class MyObject extends CommonObject
 	}
 }
 
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class MyObjectLine
+class MyObjectLine extends CommonObjectLine
 {
 	// To complete with content of an object MyObjectLine
 	// We should have a field rowid, fk_myobject and position
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
 }

@@ -884,18 +884,7 @@ class RecruitmentJobPosition extends CommonObject
 	{
 		$this->lines = array();
 
-		$objectline = new RecruitmentJobPositionLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_recruitmentjobposition = '.$this->id));
-
-		if (is_numeric($result))
-		{
-			$this->error = $this->error;
-			$this->errors = $this->errors;
-			return $result;
-		} else {
-			$this->lines = $result;
-			return $this->lines;
-		}
+		return $this->lines;
 	}
 
 	/**
@@ -1025,13 +1014,4 @@ class RecruitmentJobPosition extends CommonObject
 
 		return $error;
 	}
-}
-
-/**
- * Class RecruitmentJobPositionLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class RecruitmentJobPositionLine
-{
-	// To complete with content of an object RecruitmentJobPositionLine
-	// We should have a field rowid, fk_recruitmentjobposition and position
 }
