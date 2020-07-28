@@ -114,7 +114,7 @@ if (!$base)
 				print '<td>'.$obj->Engine.'</td>';
 				if (isset($obj->Engine) && $obj->Engine == "MyISAM")
 				{
-				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDB</a></td>';
+				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDb</a></td>';
 				} else {
 					print '<td>&nbsp;</td>';
 				}
