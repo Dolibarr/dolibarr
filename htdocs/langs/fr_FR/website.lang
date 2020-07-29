@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Fichier robot (robots.txt)
 WEBSITE_HTACCESS=Fichier .htaccess du site web
 WEBSITE_MANIFEST_JSON=Fichier manifest.json de site Web
 WEBSITE_README=Fichier README.md
+WEBSITE_KEYWORDSDesc=Utiliser une virgule pour séparer les valeurs
 EnterHereLicenseInformation=Entrez ici les métadonnées ou les informations de licence pour créer un fichier README.md. Si vous distribuez votre site Web en tant que modèle, le fichier sera inclus dans le package.
 HtmlHeaderPage=En-tête HTML (spécifique pour la page uniquement)
 PageNameAliasHelp=Nom ou alias de la page. <br>Cet alias est également utilisé pour forger une URL SEO lorsque le site Web est exécuté à partir d'un hôte virtuel d'un serveur Web (comme Apache, Nginx, ...). Utilisez le bouton "<strong>%s</strong>" pour modifier cet alias.
@@ -42,7 +43,8 @@ ViewPageInNewTab=Pré-visualiser la page dans un nouvel onglet
 SetAsHomePage=Définir comme page d'accueil
 RealURL=URL réelle
 ViewWebsiteInProduction=Pré-visualiser le site web en utilisant l'URL de la page d'accueil
-SetHereVirtualHost=<u> Utilisation avec Apache/NGinx/...</u> <br> Si vous pouvez créer sur votre serveur Web (Apache, Nginx, ...) un hôte virtuel dédié avec PHP activé et un répertoire racine sur <br> <strong> %s </strong> <br> alors entrez le nom de l'hôte virtuel que vous avez créé dans les propriétés du site, ainsi l'aperçu pourra être fait en utilisant cette URL pour un accès via le serveur Web dédié plutôt que via le serveur interne Dolibarr.
+SetHereVirtualHost=<u> Utilisation avec Apache/NGinx/...</u> <br> Créez sur votre serveur Web (Apache, Nginx, ...) un hôte virtuel dédié avec PHP activé et un répertoire racine sur <br> <strong> %s </strong>
+ExampleToUseInApacheVirtualHostConfig=Exemple à utiliser dans la configuration de l'hôte virtuel Apache:
 YouCanAlsoTestWithPHPS=<u> Utilisation avec un serveur PHP incorporé </u> <br> Sous environnement de développement, vous pouvez préférer tester le site avec le serveur Web PHP intégré (PHP 5.5 requis) en exécutant <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
 YouCanAlsoDeployToAnotherWHP=<u>Exécutez votre site Web avec un autre fournisseur d'hébergement Dolibarr</u> <br> Si vous ne disposez pas d'un serveur Web tel qu'Apache ou NGinx sur Internet, vous pouvez exporter et importer votre site Web vers une autre instance de Dolibarr fournie par un autre fournisseur d'hébergement Dolibarr offrant une intégration complète avec le module de site Web. Vous pouvez trouver une liste de certains hébergeurs Dolibarr sur <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Vérifiez également que le virtual host a la permission <strong> %s </strong> sur les fichiers dans <strong> %s </strong>
@@ -56,7 +58,10 @@ NoPageYet=Pas de page pour l'instant
 YouCanCreatePageOrImportTemplate=Vous pouvez créer une nouvelle page ou importer un modèle de site Web complet.
 SyntaxHelp=Aide sur quelques astuces spécifiques de syntaxe 
 YouCanEditHtmlSourceckeditor=Vous pouvez éditer le code source en activant l'éditeur HTML avec le bouton "Source".
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Vous pouvez inclure du code PHP dans le source en utilisant le tags <strong>&lt;?php ?&gt;</strong>. Les variables globales suivantes sont disponibles: $conf, $langs, $db, $mysoc, $user, $website, $websitepage, $weblang.<br><br><span class="fa fa-bug"></span> Vous pouvez aussi inclure le contenu d'une autre page/containeur avec la syntaxe suivante:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> Vous pouvez faire une redirection sur une autre Page/Containeur avec la syntax (Note: N'afficher pas de contenu avant un redirect): <br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> Pour ajouter un lien vers une autre page, utilisez la syntax <br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> Pour inclure un <strong>lien pour télécharger</strong> un fichier stocké dans le répertoire <strong>documents</strong>utilisez le wrapper <strong>documents.php</strong>:<br>Example, pour un fichier dans documents/ecm (besoin d'être loggué), la syntaxe est:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br> Pour un fichier dans documents/mdedias (répertoire ouvert au publique), la syntaxe est:<br><strong> &lt;a href="/document.php?modulepart=medias&file=[relative_dir]/filename.ext"&gt;.</strong><br> Pour un fichier partagé avec un lien de partage (accès ouvert en utilisant la clé de partage du fichier), la syntaxe est:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> Pour inclure une <strong>image</strong> stockée dans le répertoire <strong></strong>documents, utilisez le wrapper <strong>viewimage.php</strong>:<br> Example, pour une image dans documents/medias (accès ouvert), la syntax est: <br><strong>&lt;img src="/viewimage.php?cache=1&modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Vous pouvez inclure du code PHP dans cette source en utilisant les balises <strong>&lt;?php ?&gt;</strong>. Les variables globales suivantes sont disponibles: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs. <br><br><span class="fa fa-bug"></span> Vous pouvez également inclure le contenu d'une autre page / conteneur avec la syntaxe suivante: <br> <strong>&lt;?php includeContainer ('alias_of_container_to_include'); ?&gt;</strong> <br><br><span class="fa fa-bug"></span> Vous pouvez créer une redirection vers une autre page / conteneur avec la syntaxe suivante (Remarque: ne pas afficher de contenu avant une redirection): <br> <strong>&lt;?php redirectToContainer ('alias_of_container_to_redirect_to'); ?&gt;</strong> <br><br><span class="fa fa-link"></span> Pour ajouter un lien vers une autre page, utilisez la syntaxe: <br> <strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> Pour inclure un <strong>lien pour télécharger</strong> un fichier stocké dans le répertoire des <strong>documents</strong> , utilisez l'encapsuleur <strong>document.php</strong> : <br> Exemple, pour un fichier dans documents/ecm (besoin d'être loggué), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=ecm&amp;file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier dans des documents/medias (répertoire ouvert pour accès public), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier partagé avec un lien de partage (accès ouvert en utilisant la clé de partage du fichier), la syntaxe est la suivante: <br> <strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br><br><span class="fa fa-picture-o"></span> Pour inclure une <strong>image</strong> stockée dans le répertoire <strong>documents</strong>, utilisez le wrapper <strong>viewimage.php</strong> : <br> Exemple, pour une image dans des documents/medias (répertoire ouvert), la syntaxe est: <br> <strong>&lt;img src = "/viewimage.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=Pour une image partagée avec un lien de partage (accès ouvert à l'aide de la clé de partage du fichier), la syntaxe est la suivante: <br> <strong> &lt;img src = "/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br> Plus d'exemples de code HTML ou dynamique disponibles sur <a href="%s" target="_blank"> la documentation wiki </a> <br>.
 ClonePage=Cloner la page/container
 CloneSite=Cloner le site
 SiteAdded=Site web ajouté
@@ -76,7 +81,7 @@ BlogPost=Article de Blog
 WebsiteAccount=Compte de site Web
 WebsiteAccounts=Comptes de site web
 AddWebsiteAccount=Créer un compte de site web
-BackToListOfThirdParty=Retour à la liste pour le Tiers
+BackToListForThirdParty=Retour à la liste pour le tiers
 DisableSiteFirst=Désactiver le site Web d'abord
 MyContainerTitle=Titre de mon site web
 AnotherContainer=Voici comment inclure le contenu d'une autre page/conteneur (vous pouvez avoir une erreur ici si vous activez le code dynamique car le sous-conteneur incorporé peut ne pas exister)
@@ -84,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Désolé, ce site est actuellement hors ligne. Me
 WEBSITE_USE_WEBSITE_ACCOUNTS=Activer la table des comptes du site Web
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activer la table pour stocker les comptes de site Web (login / pass) pour chaque site web / tiers
 YouMustDefineTheHomePage=Vous devez d'abord définir la page d'accueil par défaut
-OnlyEditionOfSourceForGrabbedContentFuture=Avertissement: La création d'une page Web en important une page Web externe est réservée à un utilisateur expérimenté. Selon la complexité de la page source, le résultat de l'importation peut différer une fois importé de l'original. De même, si la page source utilise un style CSS commun ou un code JavaScript non compatible, cela peut casser l'apparence ou les fonctionnalités de l'éditeur de site Web lorsque vous travaillez sur cette page. Cette méthode est un moyen plus rapide d’avoir une page, mais il est recommandé de créer votre nouvelle page à partir de rien ou à partir d’un modèle de page suggéré. <br> Notez également que seule l’édition de la source HTML sera possible lorsqu’un contenu de page aura été initialisé par une capture d'une page externe (l'éditeur "en ligne" ne sera PAS disponible)
+OnlyEditionOfSourceForGrabbedContentFuture=Avertissement: La création d'une page Web en important une page Web externe est réservée aux utilisateurs expérimentés. Selon la complexité de la page source, le résultat de l'importation peut différer une fois importé de l'original. De même, si la page source utilise un style CSS en conflit ou un code JavaScript non compatible, cela peut casser l'apparence ou les fonctionnalités de l'éditeur de site Web lorsque vous travaillez sur cette page. Cette méthode est un moyen plus rapide de créer une nouvelle page, mais il est recommandé de créer votre nouvelle page à partir de rien ou à partir d’un modèle de page suggéré. <br> Notez également que seule l’éditeur en ligne peut ne pas fonctionner correctement quand il est utilisé sur une page créée par aspiration.
 OnlyEditionOfSourceForGrabbedContent=Seule l'édition de source HTML est possible lorsque le contenu a été aspiré depuis un site externe
 GrabImagesInto=Aspirer aussi les images trouvées dans les css et la page.
 ImagesShouldBeSavedInto=Les images doivent être sauvegardées dans le répertoire
@@ -114,3 +119,19 @@ CSSContentTooltipHelp=Entrez ici le contenu CSS. Pour éviter tout conflit avec 
 LinkAndScriptsHereAreNotLoadedInEditor=Avertissement: Ce contenu est affiché uniquement lorsque le site est accessible depuis un serveur. Il n'est pas utilisé en mode édition. Par conséquent, si vous devez charger des fichiers javascript également en mode édition, ajoutez simplement la balise 'script src=...' dans la page.
 Dynamiccontent=Exemple de page à contenu dynamique
 ImportSite=Importer modèle de site web
+EditInLineOnOff=Mode 'Modifier en ligne' est %s
+ShowSubContainersOnOff=Mode 'exécution dynamique' est %s
+GlobalCSSorJS=Fichier CSS/JS/Header global du site Web
+BackToHomePage=Retour à la page d'accueil...
+TranslationLinks=Liens de traduction
+YouTryToAccessToAFileThatIsNotAWebsitePage=Vous essayez d’accéder à une page qui n’est pas disponible.<br>(ref=%s, type=%s, status=%s)
+UseTextBetween5And70Chars=Pour les bonnes pratiques de référencement, utilisez un texte de 5 à 70 caractères
+MainLanguage=Langage principal
+OtherLanguages=Autres langues
+UseManifest=Fournir un fichier manifest.json
+PublicAuthorAlias=Alias publique de l'auteur
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Les langues disponibles sont définies dans les propriétés du site Web
+ReplacementDoneInXPages=Remplacement effectué dans %s pages ou des conteneurs
+RSSFeed=Flux RSS
+RSSFeedDesc=Vous pouvez obtenir un flux RSS des derniers articles de type 'blogpost' en utilisant cette URL
+PagesRegenerated=%s page(s)/conteneur(s) régénéré(s)

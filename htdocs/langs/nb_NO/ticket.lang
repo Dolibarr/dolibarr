@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=Se billetter til alle tredjeparter (ikke effektive for eksterne 
 TicketDictType=Billett - Typer
 TicketDictCategory=Billett - Grupper
 TicketDictSeverity=Billett - Alvorlighetsgrader
+TicketDictResolution=Billett - Løsning
 TicketTypeShortBUGSOFT=Programvarefeil
 TicketTypeShortBUGHARD=Hardwarefeil
 TicketTypeShortCOM=Prisforespørsel
-TicketTypeShortINCIDENT=Be om hjelp
+
+TicketTypeShortHELP=Be om funksjonell hjelp
+TicketTypeShortISSUE=Problem eller feil
+TicketTypeShortREQUEST=Endring- eller forbedringsforespørsel
 TicketTypeShortPROJET=Prosjekt
 TicketTypeShortOTHER=Annet
 
@@ -126,10 +130,14 @@ TicketNumberingModules=Supportseddel nummereringsmodul
 TicketNotifyTiersAtCreation=Varsle tredjepart ved opprettelse
 TicketGroup=Gruppe
 TicketsDisableCustomerEmail=Slå alltid av e-post når en billett er opprettet fra det offentlige grensesnittet
+TicketsPublicNotificationNewMessage=Send e-post(er) når en ny melding legges til
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Supportsedler - hjem
+TicketsIndex=Billettområde
 TicketList=Liste over supportsedler
 TicketAssignedToMeInfos=Denne siden viser Supportseddel-liste som er tilordnet gjeldende bruker
 NoTicketsFound=Ingen supportseddel funnet
@@ -137,6 +145,10 @@ NoUnreadTicketsFound=Ingen ulest billett funnet
 TicketViewAllTickets=Se alle supportsedler
 TicketViewNonClosedOnly=Se bare åpne supportsedler
 TicketStatByStatus=Supportsedler etter status
+OrderByDateAsc=Sorter etter stigende dato
+OrderByDateDesc=Sorter etter synkende dato
+ShowAsConversation=Vis som samtaleliste
+MessageListViewType=Vis som tabell
 
 #
 # Ticket card
@@ -222,6 +234,9 @@ TicketConfirmChangeStatus=Bekreft statusendringen: %s?
 TicketLogStatusChanged=Status endret: %s til %s
 TicketNotNotifyTiersAtCreate=Ikke gi beskjed til firmaet ved opprettelse
 Unread=Ulest
+TicketNotCreatedFromPublicInterface=Ikke tilgjengelig. Billett ble ikke opprettet fra offentlig grensesnitt.
+PublicInterfaceNotEnabled=Offentlig grensesnitt var ikke aktivert
+ErrorTicketRefRequired=Billettreferansenavn kreves
 
 #
 # Logs
@@ -241,9 +256,9 @@ ShowListTicketWithTrackId=Vis supportseddel-liste fra sporings-ID
 ShowTicketWithTrackId=Vis supportseddel fra sporings-ID
 TicketPublicDesc=Du kan opprette en supportseddel eller sjekke fra en eksisterende ID.
 YourTicketSuccessfullySaved=Supportseddelen har blitt lagret!
-MesgInfosPublicTicketCreatedWithTrackId=En ny supportseddel er opprettet med ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=En ny billett er opprettet med ID %s og Ref %s.
 PleaseRememberThisId=Vennligst ta vare på sporingsnummeret til senere bruk.
-TicketNewEmailSubject=Opprettelse av supportseddel bekreftet
+TicketNewEmailSubject=Bekreftelse av billettoppretting - Ref %s (offentlig billett-ID %s)
 TicketNewEmailSubjectCustomer=Ny supportseddel
 TicketNewEmailBody=Dette er en automatisk epost for å bekrefte at du har registrert en ny supportseddel .
 TicketNewEmailBodyCustomer=Dette er en automatisk epost for å bekrefte at en ny supportseddel nettopp er opprettet i kontoen din.
@@ -262,7 +277,7 @@ Subject=Subjekt
 ViewTicket=Vis supportseddel
 ViewMyTicketList=Se min supportseddel-liste
 ErrorEmailMustExistToCreateTicket=Feil: E-postadresse ikke funnet i vår database
-TicketNewEmailSubjectAdmin=Ny supportseddel opprettet
+TicketNewEmailSubjectAdmin=Ny billett opprettet - Ref %s (offentlig billett-ID %s)
 TicketNewEmailBodyAdmin=<p> Supportseddelen er nettopp opprettet med ID # %s, se informasjon: </p>
 SeeThisTicketIntomanagementInterface=Se supportseddel i administrasjonsgrensesnitt
 TicketPublicInterfaceForbidden=Det offentlige grensesnittet for supportsedlene ble ikke aktivert

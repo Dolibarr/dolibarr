@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * Path to WSDL is: http://localhost/dolibarr/webservices/server_productorservice.php?wsdl
  */
@@ -84,7 +84,11 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -92,7 +96,12 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
 
         print __METHOD__."\n";
     }
-    // tear down after class
+
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -179,7 +188,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -242,7 +251,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }
@@ -305,7 +314,7 @@ class WebservicesProductsTest extends PHPUnit\Framework\TestCase
         print __METHOD__." call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD, $parameters, $ns, '');
-        } catch(SoapFault $exception) {
+        } catch (SoapFault $exception) {
             echo $exception;
             $result=0;
         }

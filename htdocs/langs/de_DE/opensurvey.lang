@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - opensurvey
 Survey=Umfrage
 Surveys=Umfragen
-OrganizeYourMeetingEasily=Lassen Sie über Termine und andere Optionen ganz einfach abstimmen. Bitte wählen Sie zuerst den Umfragen-Typ:
+OrganizeYourMeetingEasily=Organisieren Sie Ihre Meetings und Umfragen ganz einfach. \nWählen Sie zuerst die Art der Umfrage ...
 NewSurvey=Neue Umfrage
 OpenSurveyArea=Umfragen-Übersicht
 AddACommentForPoll=Hier können Sie einen Kommentar zur Umfrage hinzufügen:

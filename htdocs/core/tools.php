@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,11 +25,11 @@
 require '../main.inc.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","other"));
+$langs->loadLangs(array("companies", "other"));
 
 // Security check
-$socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+$socid = 0;
+if ($user->socid > 0) $socid = $user->socid;
 
 
 
@@ -37,16 +37,16 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
  * View
  */
 
-$socstatic=new Societe($db);
+$socstatic = new Societe($db);
 
 llxHeader("", $langs->trans("Tools"), "");
 
-$text=$langs->trans("Tools");
+$text = $langs->trans("Tools");
 
-print load_fiche_titre($text);
+print load_fiche_titre($text, '', 'wrench');
 
 // Show description of content
-print '<div class="justify">'.$langs->trans("ToolsDesc").'</div><br><br>';
+print '<div class="justify opacitymedium">'.$langs->trans("ToolsDesc").'</div><br><br>';
 
 
 // Show logo

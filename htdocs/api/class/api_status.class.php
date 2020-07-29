@@ -12,10 +12,10 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
 
 /**
@@ -39,7 +39,7 @@ class Status
             'success' => array(
                 'code' => 200,
                 'dolibarr_version' => DOL_VERSION,
-                'access_locked' => (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED)?'0':$conf->global->MAIN_ONLY_LOGIN_ALLOWED),
+                'access_locked' => (empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED) ? '0' : $conf->global->MAIN_ONLY_LOGIN_ALLOWED),
             ),
         );
     }

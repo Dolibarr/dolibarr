@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -23,7 +23,7 @@
  *  \brief      File of class to manage contract numbering rules Magre
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/contract/modules_contract.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 
 /**
  *	Class to manage contract numbering rules Magre
@@ -46,14 +46,17 @@ class mod_contract_magre extends ModelNumRefContracts
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Magre';
+	public $nom = 'Magre';
 
 	/**
 	 * @var string name
 	 */
-	public $name='Magre';
+	public $name = 'Magre';
 
-	public $code_auto=1;
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto = 1;
 
 	/**
 	 *	Return default description of numbering model
@@ -62,31 +65,31 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
     public function info()
     {
-    	global $conf,$langs, $db;
+    	global $conf, $langs, $db;
 
 		$langs->load("bills");
 
 		$form = new Form($db);
 
 		$texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
-		$texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="updateMask">';
-		$texte.= '<input type="hidden" name="maskconstcontract" value="CONTRACT_MAGRE_MASK">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="updateMask">';
+		$texte .= '<input type="hidden" name="maskconstcontract" value="CONTRACT_MAGRE_MASK">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
 
-		$tooltip=$langs->trans("GenericMaskCodes", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
-		$tooltip.=$langs->trans("GenericMaskCodes2");
-		$tooltip.=$langs->trans("GenericMaskCodes3");
-		$tooltip.=$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
-		$tooltip.=$langs->trans("GenericMaskCodes5");
+		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
+		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Contract"), $langs->transnoentities("Contract"));
+		$tooltip .= $langs->trans("GenericMaskCodes5");
 
-		$texte.= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte.= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcontract" value="'.$conf->global->CONTRACT_MAGRE_MASK.'">', $tooltip, 1, 1).'</td>';
-		$texte.= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-		$texte.= '</tr>';
-		$texte.= '</table>';
-		$texte.= '</form>';
+		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskcontract" value="'.$conf->global->CONTRACT_MAGRE_MASK.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+		$texte .= '</tr>';
+		$texte .= '</table>';
+		$texte .= '</form>';
 
 		return $texte;
     }
@@ -98,14 +101,14 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
     public function getExample()
     {
-     	global $conf,$langs,$mysoc;
+     	global $conf, $langs, $mysoc;
 
-    	$old_code_client=$mysoc->code_client;
-    	$mysoc->code_client='CCCCCCCCCC';
+    	$old_code_client = $mysoc->code_client;
+    	$mysoc->code_client = 'CCCCCCCCCC';
      	$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client=$old_code_client;
+		$mysoc->code_client = $old_code_client;
 
-		if (! $numExample)
+		if (!$numExample)
 		{
 			$numExample = $langs->trans('NotConfigured');
 		}
@@ -121,19 +124,19 @@ class mod_contract_magre extends ModelNumRefContracts
 	 */
     public function getNextValue($objsoc, $contract)
     {
-		global $db,$conf;
+		global $db, $conf;
 
-		require_once DOL_DOCUMENT_ROOT .'/core/lib/functions2.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-		$mask=$conf->global->CONTRACT_MAGRE_MASK;
+		$mask = $conf->global->CONTRACT_MAGRE_MASK;
 
-		if (! $mask)
+		if (!$mask)
 		{
-			$this->error='NotConfigured';
+			$this->error = 'NotConfigured';
 			return 0;
 		}
 
-		$numFinal=get_next_value($db, $mask, 'contrat', 'ref', '', $objsoc, $contract->date_contrat);
+		$numFinal = get_next_value($db, $mask, 'contrat', 'ref', '', $objsoc, $contract->date_contrat);
 
 		return  $numFinal;
 	}

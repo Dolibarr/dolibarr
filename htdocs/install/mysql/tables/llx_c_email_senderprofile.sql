@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2001-2017 Laurent Destailleur <eldy@users.sourceforge.net>
+-- Copyright (C) 2001-2019 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- Table with templates of emails
 -- ===================================================================
@@ -21,7 +21,7 @@ create table llx_c_email_senderprofile
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
-  private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
+  private         smallint DEFAULT 0 NOT NULL,    -- Template public (0) or private (id of user)
   date_creation   datetime,
   tms             timestamp,
   label           varchar(255),					  -- Label of predefined email

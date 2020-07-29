@@ -12,18 +12,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 $objectUrl = $object->getNomUrl(0, '', 0, 1);
-if($object->element == 'propal')
+if ($object->element == 'propal')
 {
     $objectUrl = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
 }
@@ -35,13 +35,13 @@ if($object->element == 'propal')
 
 $(document).ready(function(){
 	$('.objectlinked_importbtn').click(function (e) {
-		
+
         e.preventDefault();
         var page = $(this).attr("href");
 
         var fromelement = $(this).attr("data-element");
         var fromelementid = $(this).attr("data-id");
-        
+
 		if( page != undefined && fromelement != undefined && fromelementid != undefined)
 		{
 	    	var windowWidth = $(window).width()*0.8; //retrieve current window width
@@ -52,13 +52,13 @@ $(document).ready(function(){
 	        	htmlLines = $(data).find('#tablelines') ;
 	        });
 
-	        
-	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl ; ?>"  method="post" ></form>')
+
+	        var $dialog = $('<form id="' + formId + '" action="<?php print $objectUrl; ?>"  method="post" ></form>')
 	        .load( page + " #tablelines", function() {
 
 	        	$("#" + formId + " #tablelines").prop("id", "ajaxloaded_tablelines"); // change id attribute
 
-	        	$("#" + formId + "  .linecheckbox,#" + formId + " .linecheckboxtoggle").prop("checked", true); // checked by default 
+	        	$("#" + formId + "  .linecheckbox,#" + formId + " .linecheckboxtoggle").prop("checked", true); // checked by default
 
 		        // reload checkbox toggle function
 	            $("#" + formId + " .linecheckboxtoggle").click(function(){
@@ -88,17 +88,17 @@ $(document).ready(function(){
 	                    }
 	            }
 	        });
-	        
+
 	        $dialog.dialog('open');
 		}
 		else
 		{
 			$.jnotify("<?php echo $langs->trans('ErrorNoUrl'); ?>", "error", true);
 		}
-		
+
     });
 
-	
+
 
 
 });

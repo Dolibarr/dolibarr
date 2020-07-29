@@ -9,12 +9,6 @@ YourEMail=Email pour recevoir la confirmation de paiement
 Creditor=Créancier
 YouWillBeRedirectedOnPayBox=Vous serez redirigé sur la page Paybox sécurisée pour vous inscrire les informations de votre carte de crédit
 Continue=Suivant
-ToOfferALinkForOnlinePayment=URL pour le paiement %s
-ToOfferALinkForOnlinePaymentOnInvoice=URL pour proposer une interface utilisateur de paiement en ligne %s pour une facture client
-ToOfferALinkForOnlinePaymentOnContractLine=URL pour proposer une interface utilisateur de paiement en ligne %s pour une ligne de contrat
-ToOfferALinkForOnlinePaymentOnFreeAmount=URL pour offrir une interface utilisateur de paiement en ligne %s pour un montant gratuit
-ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pour offrir une interface utilisateur de paiement en ligne %s pour un abonnement de membre
-YouCanAddTagOnUrl=Vous pouvez également ajouter le paramètre url <b> & tag = <i> valeur </ i> </ b> à l'un de ces URL (requis uniquement pour un paiement gratuit) pour ajouter votre propre étiquette de commentaire de paiement.
 YourPaymentHasBeenRecorded=Cette page confirme que votre paiement a été enregistré. Je vous remercie.
 InformationToFindParameters=Aidez-nous à trouver vos informations sur le compte %s
 PAYBOX_CGI_URL_V2=Url de Paybox CGI module de paiement

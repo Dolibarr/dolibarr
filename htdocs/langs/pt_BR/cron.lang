@@ -49,7 +49,6 @@ CronType_method=Chamar método de uma Classe PHP
 CronType_command=Comando Shell
 CronCannotLoadClass=Não é possível carregar o arquivo de classe %s (para usar a classe %s)
 CronCannotLoadObject=O arquivo de classe %s foi carregado, mas o objeto %s não foi encontrado nele
-UseMenuModuleToolsToAddCronJobs=Vá até o menu "Home >> Ferramentas administrativas >> Tarefas agendadas" para visualizar e editar as tarefas agendadas.
 JobDisabled=Tarefa desativada
 MakeLocalDatabaseDumpShort=Backup do banco de dados local
 MakeLocalDatabaseDump=Crie um despejo de banco de dados local. Os parâmetros são: compression ('gz' ou 'bz' ou 'none'), tipo de backup ('mysql', 'pgsql', 'auto'), 1, 'auto' ou nome de arquivo para construir, número de arquivos de backup para manter

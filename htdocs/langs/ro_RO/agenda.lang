@@ -60,9 +60,10 @@ MemberSubscriptionModifiedInDolibarr=Abonamentul %s pentru membrul %s a fost mod
 MemberSubscriptionDeletedInDolibarr=Abonamentul %s pentru membrul %s a fost eliminat
 ShipmentValidatedInDolibarr=Livrarea %s validata
 ShipmentClassifyClosedInDolibarr=Expediere %s clasificată facturată
-ShipmentUnClassifyCloseddInDolibarr=Expediere %s clasificată redeschisă
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Expedierea %s revine la starea de proiect
 ShipmentDeletedInDolibarr=Livrare %s ştearsă
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Comanda %s a fost creată
 OrderValidatedInDolibarr=Comanda %s validată
 OrderDeliveredInDolibarr=Comanda livrată %s  clasificată
@@ -76,6 +77,7 @@ ContractSentByEMail=Contractul %s a fost trimis prin e-mail
 OrderSentByEMail=Comanda vânzări %s a fost trimisă prin e-mail
 InvoiceSentByEMail=Factura clientului %s a fost trimisă prin e-mail
 SupplierOrderSentByEMail=Comanda de aprovizionare %s a fost trimisă prin e-mail
+ORDER_SUPPLIER_DELETEInDolibarr=Purchase order %s deleted
 SupplierInvoiceSentByEMail=Factura furnizorului%s a fost trimisă prin e-mail
 ShippingSentByEMail=Expedierea %s trimisă prin e-mail
 ShippingValidated= Livrarea %s validata
@@ -83,9 +85,15 @@ InterventionSentByEMail=Intervenția %s trimisă prin e-mail
 ProposalDeleted=Ofertă ştearsă
 OrderDeleted=Comandă ştearsă
 InvoiceDeleted=Factură ştearsă
+DraftInvoiceDeleted=Draft invoice deleted
 PRODUCT_CREATEInDolibarr=Produs%s creat
 PRODUCT_MODIFYInDolibarr=Produs %s modificat
 PRODUCT_DELETEInDolibarr=Produs %s sters
+HOLIDAY_CREATEInDolibarr=Request for leave %s created
+HOLIDAY_MODIFYInDolibarr=Request for leave %s modified
+HOLIDAY_APPROVEInDolibarr=Request for leave %s approved
+HOLIDAY_VALIDATEInDolibarr=Request for leave %s validated
+HOLIDAY_DELETEInDolibarr=Request for leave %s deleted
 EXPENSE_REPORT_CREATEInDolibarr=Raport cheltuieli %s creat
 EXPENSE_REPORT_VALIDATEInDolibarr=Raport cheltuieli  %s validat
 EXPENSE_REPORT_APPROVEInDolibarr=Raport cheltuieli %s aprobat
@@ -99,6 +107,16 @@ TICKET_MODIFYInDolibarr=Tichetul %s a fost modificat
 TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Tichetul %s a fost șters
+BOM_VALIDATEInDolibarr=BOM validated
+BOM_UNVALIDATEInDolibarr=BOM unvalidated
+BOM_CLOSEInDolibarr=BOM disabled
+BOM_REOPENInDolibarr=BOM reopen
+BOM_DELETEInDolibarr=BOM deleted
+MRP_MO_VALIDATEInDolibarr=MO validated
+MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
+MRP_MO_PRODUCEDInDolibarr=MO produced
+MRP_MO_DELETEInDolibarr=MO deleted
+MRP_MO_CANCELInDolibarr=MO canceled
 ##### End agenda events #####
 AgendaModelModule=Șabloane de documente pentru eveniment
 DateActionStart=Data începerii
@@ -109,6 +127,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​pentru a limita exportul de ac�
 AgendaUrlOptions4=<b>logint=%s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>%s</b>( proprietari sau altii).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </b> pentru a restricționa ieșirea la acțiunile legate de proiectul <b> __ PROJECT_ID __ </b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b> pentru a exclude evenimentele automate.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Afişează ziua de naştere a contactelor
 AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
 Busy=Ocupat
@@ -136,3 +155,6 @@ EveryMonth=Fiecare lună
 DayOfMonth=Zi a lunii
 DayOfWeek=Zi a saptamanii
 DateStartPlusOne=Dată început + 1 ora
+SetAllEventsToTodo=Set all events to todo
+SetAllEventsToInProgress=Set all events to in progress
+SetAllEventsToFinished=Set all events to finished

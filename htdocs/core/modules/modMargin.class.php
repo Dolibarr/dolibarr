@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**     \defgroup   margin     Module margin
@@ -22,7 +22,7 @@
  *      \ingroup    margin
  *      \brief      Description and activation file for module Margin
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -59,7 +59,7 @@ class modMargin extends DolibarrModules
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
-		$this->picto='margin';
+		$this->picto = 'margin';
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array('/margin/temp');
@@ -68,12 +68,12 @@ class modMargin extends DolibarrModules
 		$this->config_page_url = array("margin.php@margin");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array("modPropale", "modProduct");		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(3,2);	// Minimum version of Dolibarr required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array("modPropale", "modProduct"); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(3, 2); // Minimum version of Dolibarr required by module
 		$this->langfiles = array("margins");
 
 		// Constants
@@ -81,46 +81,46 @@ class modMargin extends DolibarrModules
 		// Example: $this->const=array(0=>array('MYMODULE_MYNEWCONST1','chaine','myvalue','This is a constant to add',1),
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
-		$this->const = array(0=>array('MARGIN_TYPE','chaine','costprice','Rule for margin calculation by default',0,'current',0));			// List of particular constants to add when module is enabled
+		$this->const = array(0=>array('MARGIN_TYPE', 'chaine', 'costprice', 'Rule for margin calculation by default', 0, 'current', 0)); // List of particular constants to add when module is enabled
 
 		// New pages on tabs
 		$this->tabs = array(
 				'product:+margin:Margins:margins:$user->rights->margins->liretous:/margin/tabs/productMargins.php?id=__ID__',
-				'thirdparty:+margin:Margins:margins:empty($user->societe_id) && $user->rights->margins->liretous && ($object->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
+				'thirdparty:+margin:Margins:margins:empty($user->socid) && $user->rights->margins->liretous && ($object->client > 0):/margin/tabs/thirdpartyMargins.php?socid=__ID__'
 		);
 
 
 		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+		$this->boxes = array(); // List of boxes
+		$r = 0;
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
-		$r=0;
+		$this->rights = array(); // Permission array used by this module
+		$r = 0;
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
+		$this->menu = array(); // List of menus to add
 		$r = 0;
 
 		// left menu entry
-		$this->menu[$r]=array(
-				'fk_menu'=>'fk_mainmenu=billing',			// Put 0 if this is a top menu
-    			'type'=>'left',			// This is a Top menu entry
-    			'titre'=>'Margins',
-    			'mainmenu'=>'billing',
-    			'leftmenu'=>'margins',
-    			'url'=>'/margin/index.php',
-    			'langs'=>'margins',	// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-    			'position'=>100,
-    			'enabled'=>'$conf->margin->enabled',			// Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
-    			'perms'=>'$user->rights->margins->liretous',	// Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
-    			'target'=>'',
-    			'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
+		$this->menu[$r] = array(
+				'fk_menu'=>'fk_mainmenu=billing', // Put 0 if this is a top menu
+				'type'=>'left', // This is a Top menu entry
+				'titre'=>'Margins',
+				'mainmenu'=>'billing',
+				'leftmenu'=>'margins',
+				'url'=>'/margin/index.php',
+				'langs'=>'margins', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+				'position'=>100,
+				'enabled'=>'$conf->margin->enabled', // Define condition to show or hide menu entry. Use '$conf->monmodule->enabled' if entry must be visible if module is enabled.
+				'perms'=>'$user->rights->margins->liretous', // Use 'perms'=>'$user->rights->monmodule->level1->level2' if you want your menu with a permission rules
+				'target'=>'',
+				'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 		$r++;
 
 		// Permissions
 		$this->rights = array();
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 59001; // id de la permission

@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Commercial
-CommercialArea=Commercial area
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Klienti
 Customers=Klientёt
 Prospect=Prospect
@@ -59,7 +59,7 @@ ActionAC_FAC=Dёrgo faturёrn klientit me email
 ActionAC_REL=Dёrgo faturёrn klientit me email (kujtesё)
 ActionAC_CLO=Mbyll
 ActionAC_EMAILING=Send mass email
-ActionAC_COM=Send customer order by mail
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Send shipping by mail
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

@@ -90,7 +90,7 @@ cui hai bisogno ed essere facile da usare.
 %{__install} -m 644 build/rpm/install.forced.php.opensuse $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/install.forced.php
 
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/pixmaps
-%{__install} -m 644 doc/images/dolibarr_48x48.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
+%{__install} -m 644 doc/images/appicon_64.png $RPM_BUILD_ROOT%{_datadir}/pixmaps/%{name}.png
 %{__mkdir} -p $RPM_BUILD_ROOT%{_datadir}/applications
 #desktop-file-install --delete-original --dir=$RPM_BUILD_ROOT%{_datadir}/applications build/rpm/%{name}.desktop
 %{__install} -m 644 build/rpm/dolibarr.desktop $RPM_BUILD_ROOT%{_datadir}/applications/%{name}.desktop
@@ -221,6 +221,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/public
 %_datadir/dolibarr/htdocs/reception
 %_datadir/dolibarr/htdocs/resource
+%_datadir/dolibarr/htdocs/salaries
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/supplier_proposal
@@ -232,6 +233,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/website
+%_datadir/dolibarr/htdocs/zapier
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php

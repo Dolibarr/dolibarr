@@ -4,7 +4,7 @@ How to contribute to Dolibarr
 Bug reports and feature requests
 --------------------------------
 
-<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](http://www.dolibarr.org/forum).
+<a name="not-a-support-forum"></a>*Note*: Issues are not a support forum. If you need help using the software, please use [the forums](https://www.dolibarr.org/forum).
 
 Issues are managed on [GitHub](https://github.com/Dolibarr/dolibarr/issues).
 
@@ -101,30 +101,35 @@ Long description (Can span accross multiple lines).
 </pre>
 
 ### Pull Requests
-When submitting a pull request, use same rule as [Commits](#commits) for the message.
+Pull Request (PR) process is the process to submit a change (enhancement, bug fix, ...) into the code of the project. There is some rules to know and 
+a process to follow to optimize the chance to have PRs merged efficiently...
 
-If your pull request only contains one commit, GitHub will be smart enough to fill it for you.
-Otherwise, please be a bit verbose about what you're providing.
+* A PR must be atomic. It means it must contains the lower possible changes for 1 need (1 bug fix or 1 new feature) without breaking usability of code. If a PR can be split into several PRs, it often means your PR is not atomic.
 
-Your Pull Request (PR) must pass the Continuous Integration checks.
+* Your Pull Request (PR) must pass the Continuous Integration checks and code quality checks.
+
+* When submitting a pull request, use same rule as [Commits](#commits) for the message. If your pull request only contains 1 commit, GitHub will be smart enough to fill it for you. Otherwise, please be a bit verbose about what you're providing.
+
 Also, some code changes need a prior approbation:
 
-* if you want to include a new external library (into htdocs/includes directory), please ask before to the project manager (@eldy) to see if such a library can be accepted.
+* if you want to include a new external library (into htdocs/includes directory), please ask before to the core project manager (mention @dolibarr-yoda in your issue) to see if such a library can be accepted.
 
-* if you add a new table, you must first create a page on http://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Than ask the project manager (@eldy) if the new data model you plan to add can be accepted as you suggest.
+* if you add a new table, you must first create a page on https://wiki.dolibarr.org/index.php/Category:Table_SQL (copy an existing page changing its name to see it into this index page). Then ask the project manager (@dolibarr-yoda) if the new data model you plan to add is compatible with curent and future works in progress and can be accepted as you suggest.
 
-Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR.
+Once a PR has been submitted, you may need to wait for its integration. It is common that the project leader let the PR open for a long delay to allow every developer discuss about the PR (A label is added in such a case).
+
+If the label of PR start with "Draft" or "WIP" (Work In Progress), it will not be analyzed for merging until you change the label of PR (but it can be analyzed for discussion).
 
 If your PR has errors reported by the Continuous Integration Platform, it means your PR is not valid and nothing will be done with it. It will be kept open to allow developers to fix this, or it may be closed several month later. Don't expect anything on your PR if you have such errors, you MUST first fix the Continuous Integration error to have it taken into consideration. 
 
 If the PR is valid, and is kept open for a long time, a tag will also be added on the PR to describe the status of your PR and why the PR is kept open. By putting your mouse on the tag, you will get a full explanation of the tag/status that explain why your PR has not been integrated yet.
-In most cases, it give you information of things you have to do to have the PR taken into consideration (for example a change is requested, a conflict is expected to be solved, some questions were asked). If you have a yellow, red flag of purple flag, don't expect to have your PR validated. You must first provide the answer the flag ask you. The majority of PR are waiting a developer action.
+In most cases, it gives you information of things you have to do to have the PR taken into consideration (for example a change is requested, a conflict is expected to be solved, some questions were asked). If you have a yellow, red flag of purple flag, don't expect to have your PR validated. You must first provide the answer the tag ask you. The majority of open PR are waiting an action of the author of the PR.
 
-Around 95% of submitted PR are reviewed and tagged. Even if this is one of the most important ratio of answered PR in Open Source world, don't expect the core team to reach the 100%. With the increasing popularity of Dolibarr, this ratio will probably decrease in future.
+Statistics on Dolibarr project shows that 95% of submitted PR are reviewed and tagged. Average answer delay is also one of the best among Open source projects (just few days before having the Answer Tag set). This is one of the most important ratio of answered PR in Open Source world for a major project. Don't expect the core team to reach the 100%. A so high ratio is very rare on a so popular project and with the increasing popularity of Dolibarr, this ratio will probably decrease in future to a more common level.
 
 
 ### Resources
-[Developer documentation](http://wiki.dolibarr.org/index.php/Developer_documentation)
+[Developer documentation](https://wiki.dolibarr.org/index.php/Developer_documentation)
 
 Translations
 ------------
@@ -140,11 +145,11 @@ to retreive all old translation of a source text, and restore the translation in
 
 
 ### Resources
-[Translator documentation](http://wiki.dolibarr.org/index.php/Translator_documentation)
+[Translator documentation](https://wiki.dolibarr.org/index.php/Translator_documentation)
 
 Documentation
 -------------
-The project's documentation is maintained on the [Wiki](http://wiki.dolibarr.org/index.php).
+The project's documentation is maintained on the [Wiki](https://wiki.dolibarr.org/index.php).
 
 *Note*: to help prevent spam, you need to create an account before being able to edit. Everybody is welcome to contribute to its content.
 

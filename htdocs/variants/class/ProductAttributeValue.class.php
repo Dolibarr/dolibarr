@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -85,12 +85,12 @@ class ProductAttributeValue
 			return -1;
 		}
 
-		$result = $this->db->fetch_object($query);
+		$obj = $this->db->fetch_object($query);
 
-		$this->id = $result->rowid;
-		$this->fk_product_attribute = $result->fk_product_attribute;
-		$this->ref = $result->ref;
-		$this->value = $result->value;
+		$this->id = $obj->rowid;
+		$this->fk_product_attribute = $obj->fk_product_attribute;
+		$this->ref = $obj->ref;
+		$this->value = $obj->value;
 
 		return 1;
 	}
@@ -129,7 +129,6 @@ class ProductAttributeValue
 		$query = $this->db->query($sql);
 
 		while ($result = $this->db->fetch_object($query)) {
-
 			$tmp = new ProductAttributeValue($this->db);
 			$tmp->fk_product_attribute = $result->fk_product_attribute;
 			$tmp->id = $result->rowid;

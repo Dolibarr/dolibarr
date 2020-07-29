@@ -12,6 +12,7 @@ FilesUpdated=Mettre à jour les fichiers
 FileCheckDolibarr=Vérifier l'intégrité des fichiers d'application
 XmlNotFound=Xml Integrity Fichier de l'application introuvable
 ConfirmPurgeSessions=Voulez-vous vraiment purger toutes les sessions? Cela déconnectera tous les utilisateurs (sauf vous).
+DBSortingCharset=Encodage base pour tri données
 ClientCharset=Encodage Client
 SetupArea=Paramétrage
 UploadNewTemplate=Télécharger un nouveau modèle (s)
@@ -38,6 +39,7 @@ CompatibleAfterUpdate=Ce module nécessite une mise à jour de votre Dolibarr %s
 SeeInMarkerPlace=Voir dans Market place
 Updated=Mis à jour
 AchatTelechargement=Acheter / Télécharger
+DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 DevelopYourModuleDesc=Quelques solutions pour développer votre propre module ...
 InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
@@ -89,7 +91,6 @@ WatermarkOnDraftExpenseReports=Filigrane sur les projets de rapports de dépense
 Module0Desc=Gestion des utilisateurs / employés et des groupes
 Module42Desc=Installations de journalisation (fichier, syslog, ...). Ces journaux sont à des fins techniques / de débogage.
 Module75Name=Notes de frais et déplacements
-Module600Name=Notifications on business event
 Module2400Name=Evénements / Agenda
 Module2600Name=services API / Web ( serveur SOAP )
 Module2600Desc=Active le serveur de Web Services de Dolibarr
@@ -153,6 +154,7 @@ HRMSetup=Configuration du module de GRH
 MustBeUnique=Doit être unique?
 MustBeInvoiceMandatory=Obligatoire de valider les factures?
 PaymentsPDFModules=Modèles de documents de paiement
+ForceInvoiceDate=Forcer la date de facturation à la date de validation
 PaymentsNumberingModule=Modèles de numérotation des paiements
 SupplierProposalSetup=Configuration du module de ​​demande de prix des fournisseurs
 SupplierProposalNumberingModules=Modèles de numérotation des demandes de prix des fournisseurs
@@ -199,9 +201,6 @@ DeleteFiscalYear=Supprimer la période comptable
 ConfirmDeleteFiscalYear=Êtes-vous sûr de supprimer cette période comptable?
 ShowFiscalYear=Afficher la période comptable
 SalariesSetup=Configuration du module salariés
-ListOfNotificationsPerUser=List of automatic notifications per user*
-ListOfNotificationsPerUserOrContact=List of possible automatic notifications (on business event) available per user* or per contact**
-ListOfFixedNotifications=List of automatic fixed notifications
 ConfFileMustContainCustom=L'installation ou la construction d'un module externe à partir de l'application doit sauvegarder les fichiers du module dans le répertoire <strong>%s</strong>. Pour que ce répertoire soit traité par Dolibarr, vous devez configurer votre <strong> conf / conf.php </strong> pour ajouter les 2 lignes de directive: <br><strong> $ dolibarr_main_url_root_alt = '/ custom'; </strong><br><strong> $ dolibarr_main_document_root_alt = '%s / custom'; </strong>
 HighlightLinesOnMouseHover=Mettez en surbrillance les lignes de table lorsque déplacement de la souris passe au-dessus
 PressF5AfterChangingThis=Appuyez sur CTRL + F5 sur le clavier ou effacez votre cache de navigateur après avoir changé cette valeur pour l'avoir efficace
@@ -249,5 +248,6 @@ LandingPage=Page d'atterrissage
 ModuleEnabledAdminMustCheckRights=Le module a été activé. Les autorisations pour les modules activés ont été données uniquement aux utilisateurs administratifs. Vous devrez peut-être accorder des autorisations aux autres utilisateurs ou groupes manuellement si nécessaire.
 BaseCurrency=Monnaie de référence de la société (entrer dans la configuration de l'entreprise pour modifier cela)
 FormatZip=Code postal
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 UseSearchToSelectResource=Utilisez un formulaire de recherche pour choisir une ressource (plutôt qu'une liste déroulante).
+EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

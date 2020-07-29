@@ -12,18 +12,19 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  * Module descriptor for ticket system
  */
 
 /**
  *     \defgroup    ticket    Module Ticket
+ *     \brief       Module for ticket and request management.
  *     \file        core/modules/modTicket.class.php
  *     \ingroup     ticket
  *     \brief       Description and activation file for module Ticket
  */
-require_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
 
 /**
@@ -66,7 +67,7 @@ class modTicket extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled
         // (where MYMODULE is value of property name of module in uppercase)
-        $this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
+        $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png
         // use this->picto='pictovalue'
@@ -80,8 +81,6 @@ class modTicket extends DolibarrModules
         $this->module_parts = array(
             // Set this to 1 if module has its own trigger directory
             'triggers' => 1,
-            // Set this to 1 if module has its own models directory
-            'models' => 1,
         );
 
         // Data directories to create when module is enabled.
@@ -93,11 +92,11 @@ class modTicket extends DolibarrModules
         $this->config_page_url = array("ticket.php");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array('modAgenda');		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array('modAgenda'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
         $this->langfiles = array("ticket");
 
         // Constants
@@ -115,22 +114,27 @@ class modTicket extends DolibarrModules
         );
 
         // Dictionaries
-        if (! isset($conf->ticket->enabled)) {
-            $conf->ticket=new stdClass();
-            $conf->ticket->enabled=0;
+        if (!isset($conf->ticket->enabled)) {
+            $conf->ticket = new stdClass();
+            $conf->ticket->enabled = 0;
         }
         $this->dictionaries = array(
             'langs' => 'ticket',
-            'tabname' => array(MAIN_DB_PREFIX . "c_ticket_type", MAIN_DB_PREFIX . "c_ticket_severity", MAIN_DB_PREFIX . "c_ticket_category"),
-            'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory"),
-            'tabsql' => array('SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_type as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_severity as f', 'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM ' . MAIN_DB_PREFIX . 'c_ticket_category as f'),
-            'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC"),
-            'tabfield' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-            'tabfieldvalue' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-            'tabfieldinsert' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
-            'tabrowid' => array("rowid", "rowid", "rowid"),
-            'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
-            'tabhelp' => array(array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))),
+        	'tabname' => array(MAIN_DB_PREFIX."c_ticket_type", MAIN_DB_PREFIX."c_ticket_severity", MAIN_DB_PREFIX."c_ticket_category", MAIN_DB_PREFIX."c_ticket_resolution"),
+        	'tablib' => array("TicketDictType", "TicketDictSeverity", "TicketDictCategory", "TicketDictResolution"),
+        	'tabsql' => array(
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_type as f',
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_severity as f',
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_category as f',
+        		'SELECT f.rowid as rowid, f.code, f.pos, f.label, f.active, f.use_default FROM '.MAIN_DB_PREFIX.'c_ticket_resolution as f'
+        	),
+        	'tabsqlsort' => array("pos ASC", "pos ASC", "pos ASC", "pos ASC"),
+        	'tabfield' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
+        	'tabfieldvalue' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
+        	'tabfieldinsert' => array("pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default", "pos,code,label,use_default"),
+            'tabrowid' => array("rowid", "rowid", "rowid", "rowid"),
+        	'tabcond' => array($conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled, $conf->ticket->enabled),
+        	'tabhelp' => array(array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1")), array('code'=>$langs->trans("EnterAnyCode"), 'use_default'=>$langs->trans("Enter0or1"))),
         );
 
         // Boxes
@@ -148,7 +152,7 @@ class modTicket extends DolibarrModules
         // Permissions
         $this->rights = array(); // Permission array used by this module
 
-        $r=0;
+        $r = 0;
         $this->rights[$r][0] = 56001; // id de la permission
         $this->rights[$r][1] = "Read ticket"; // libelle de la permission
         $this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)

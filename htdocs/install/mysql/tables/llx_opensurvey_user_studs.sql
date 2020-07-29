@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 -- ============================================================================
 
 CREATE TABLE llx_opensurvey_user_studs (
@@ -21,4 +21,4 @@ CREATE TABLE llx_opensurvey_user_studs (
     id_sondage VARCHAR(16) NOT NULL,
     reponses VARCHAR(100) NOT NULL,		-- Not used for 'F' surveys
     tms timestamp
-) ENGINE=InnoDB;
+) ENGINE=innodb;

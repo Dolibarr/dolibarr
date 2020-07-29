@@ -2,7 +2,7 @@
 Shortname=Código
 WebsiteSetupDesc=Cree aquí los sitios web que necesite. Entonces entre en el menú de sitios web para editarlos.
 DeleteWebsite=Eliminar sitio web
-ConfirmDeleteWebsite=Are you sure you want to delete this web site? All its pages and content will also be removed. The files uploaded (like into the medias directory, the ECM module, ...) will remain.
+ConfirmDeleteWebsite=¿Está seguro de querer eliminar este sitio web? Todas las páginas y contenido también sera eliminado. Los archivos cargados (como en el directorio de medios, el módulo GED ...) permanecerán.
 WEBSITE_TYPE_CONTAINER=Tipo de página/contenedor
 WEBSITE_PAGE_EXAMPLE=Página web para usar como ejemplo
 WEBSITE_PAGENAME=Nombre/alias página
@@ -14,9 +14,10 @@ WEBSITE_JS_INLINE=Contenido del archivo Javascript (común a todas las páginas)
 WEBSITE_HTML_HEADER=Adición en la parte inferior del encabezado HTML (común a todas las páginas)
 WEBSITE_ROBOT=Archivo de robots (robots.txt)
 WEBSITE_HTACCESS=Archivo .htaccess del sitio web
-WEBSITE_MANIFEST_JSON=Website manifest.json file
-WEBSITE_README=README.md file
-EnterHereLicenseInformation=Enter here meta data or license information to fille a README.md file. if you distribute your website as a template, the file will be included into the temptate package.
+WEBSITE_MANIFEST_JSON=Archivo manifest.json del sitio web
+WEBSITE_README=Archivo README.md
+WEBSITE_KEYWORDSDesc=Use a comma to separate values
+EnterHereLicenseInformation=Ingrese aquí metadatos o información de licencia para llenar un archivo README.md. si distribuye su sitio web como plantilla, el archivo se incluirá en el paquete template.
 HtmlHeaderPage=Encabezado HTML (específico de esta página solamente)
 PageNameAliasHelp=Nombre o alias de la página.<br>Este alias es utilizado también para construir una URL SEO cuando el website sea lanzado desde un Host Virtual de un servidor (como Apache, Nginx...). Usar el botón "<strong>%s</strong>" para editar este alias.
 EditTheWebSiteForACommonHeader=Nota: Si desea definir un encabezado personalizado para todas las páginas, edite el encabezado en el nivel del sitio en lugar de en la página/contenedor.
@@ -42,9 +43,10 @@ ViewPageInNewTab=Ver página en una pestaña nueva
 SetAsHomePage=Establecer como Página de inicio
 RealURL=URL Real
 ViewWebsiteInProduction=Ver sitio web usando la URL de inicio
-SetHereVirtualHost=Si puede crear, en su servidor web (Apache, Nginx...), un Host Virtual con PHP activado y un directorio Root en <br><strong>%s</strong> <br>introduzca aquí el nombre del host virtual que ha creado, así que la previsualización puede verse usando este acceso directo al servidor, y no solo usando el servidor de Dolibarr
+SetHereVirtualHost= <u>Usar con Apache/NGinx /...</u><br>Crea en su servidor web (Apache, Nginx, ...) de un host virtual dedicado con PHP habilitado y un directorio raíz en <br> <strong> %s </strong>
+ExampleToUseInApacheVirtualHostConfig=Ejemplo para usar en la configuración del host virtual Apache:
 YouCanAlsoTestWithPHPS=En el entorno de desarrollo, es posible que prefiera probar el sitio con el servidor web incrustado de PHP (se requiere PHP 5.5) ejecutando <br><strong> php -S 0.0.0.0:8080 -t %s</strong>
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site with another Dolibarr Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
+YouCanAlsoDeployToAnotherWHP=<u>Ejecute su sitio web con otro proveedor de alojamiento Dolibarr</u> <br> Si no tiene un servidor web como Apache o NGinx disponible en Internet, puede exportar e importar su sitio web a otra instancia de Dolibarr proporcionada por otro proveedor de alojamiento de Dolibarr que brinde una integración completa con el módulo del sitio web. Puede encontrar una lista de algunos proveedores de hosting Dolibarr en <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Compruebe también que el host virtual tiene <strong>%s</strong> en archivos en <strong>%s</strong>
 ReadPerm=Leido
 WritePerm=Escribir
@@ -56,7 +58,10 @@ NoPageYet=No hay páginas todavía
 YouCanCreatePageOrImportTemplate=Puede crear una nueva página o importar una plantilla de sitio web completa
 SyntaxHelp=Ayuda en la sintaxis del código
 YouCanEditHtmlSourceckeditor=Puede editar código fuente HTML utilizando el botón "Origen" en el editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Puede incluir código PHP en este fuente usando los tags <strong>&lt;?php ?&gt;</strong>. Dispone de estas variables globales: $conf, $langs, $db, $mysoc, $user, $website.<br><br><span class="fa fa-bug"></span> También puede incluir contenido de otra Página/Contenedor con la siguiente sintaxis:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-download"></span> Para incluir un <strong>enlace para descargar</strong> un archivo guardado en el directorio <strong>documents</strong>, use el wrapper <strong>document.php</strong> :<br>Por ejemplo, para un archivo de documents/ecm (es necesario estar logueado), la sintaxis:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un archivo de into documents/medias (directorio abierto para acceso público), la sintaxis es:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Para un archivo compartido mediante un enlace compartido (acceso abierto utilizando la clave hash para compartir del archivo), la sintaxis es:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> Para incluir una <strong>imagen</strong> guardada en el directorio <strong>documents</strong> , use el wrapper <strong>viewimage.php</strong> :<br>Ejemplo para una imagen de documents/medias (acceso abierto), la sintaxis es:<br><strong>&lt;a href="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Clonar página/contenedor
 CloneSite=Clonar sitio
 SiteAdded=Sitio web agregado
@@ -76,15 +81,15 @@ BlogPost=Entrada en el blog
 WebsiteAccount=Cuenta del sitio web
 WebsiteAccounts=Cuentas del sitio web
 AddWebsiteAccount=Crear cuenta de sitio web
-BackToListOfThirdParty=Volver a la lista de Terceros
+BackToListForThirdParty=Volver a la lista de terceros
 DisableSiteFirst=Deshabilite primero el sitio web
 MyContainerTitle=Título de mi sitio web
-AnotherContainer=This is how to include content of another page/container (you may have an error here if you enable dynamic code because the embedded subcontainer may not exists)
-SorryWebsiteIsCurrentlyOffLine=Sorry, this website is currently off line. Please comme back later...
+AnotherContainer=Así es como se incluye el contenido de otra página/contenedor (puede tener un error aquí si habilita el código dinámico porque el subcontenedor incrustado puede no existir)
+SorryWebsiteIsCurrentlyOffLine=Lo sentimos, este sitio web está actualmente fuera de línea. Vuelve más tarde...
 WEBSITE_USE_WEBSITE_ACCOUNTS=Habilitar tabla de cuentas del sitio web
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Habilitar tabla para almacenar cuentas del sitio web (inicio de sesión/contraseña) para cada sitio web/tercero
 YouMustDefineTheHomePage=Antes debe definir la página de inicio por defecto
-OnlyEditionOfSourceForGrabbedContentFuture=Atención: la creación de una página web mediante la importación de una página web externa está reservada para usuarios experimentados. Dependiendo de la complejidad de la página de origen, el resultado de la importación puede diferir una vez importado del original. Además, si la página de origen utiliza un estilo CSS común o un javascript no compatible, puede interrumpir el aspecto o las características del editor del sitio web al trabajar en esta página. Este método es una forma más rápida de tener una página, pero se recomienda crear su nueva página desde cero o desde una plantilla de página sugerida.<br>También tenga en cuenta que solo será posible la edición de código HTML cuando el contenido de una página se haya inicializado al agarrar desde una página externa (el editor "en línea" NO estará disponible)
+OnlyEditionOfSourceForGrabbedContentFuture=Advertencia: la creación de una página web mediante la importación de una página web externa está reservada para usuarios experimentados. Dependiendo de la complejidad de la página de origen, el resultado de la importación puede diferir del original. Además, si la página de origen usa estilos CSS comunes o JavaScript conflictivo, puede romper el aspecto o las características del editor del sitio web cuando se trabaja en esta página. Este método es una forma más rápida de crear una página, pero se recomienda crear su nueva página desde cero o desde una plantilla de página sugerida. <br> Tenga en cuenta también que el editor en línea puede no funcionar correctamente cuando se usa en una página externa capturada.
 OnlyEditionOfSourceForGrabbedContent=Nota: solo será posible editar una fuente HTML cuando el contenido de una página se integre utilizando una página externa
 GrabImagesInto=Obtener también imágenes encontradas en css y página.
 ImagesShouldBeSavedInto=Las imágenes deben guardarse en el directorio
@@ -94,8 +99,8 @@ AliasPageAlreadyExists=Ya existe el alias de página <strong>%s</strong>
 CorporateHomePage=Página de inicio corporativa
 EmptyPage=Página vacía
 ExternalURLMustStartWithHttp=La URL externa debe comenzar con http:// o https://
-ZipOfWebsitePackageToImport=Upload the Zip file of the website template package
-ZipOfWebsitePackageToLoad=or Choose an available embedded website template package
+ZipOfWebsitePackageToImport=Cargue el archivo Zip del paquete de plantilla del sitio web
+ZipOfWebsitePackageToLoad=o Elija un paquete de plantilla de sitio web incorporado disponible
 ShowSubcontainers=Incluir contenido dinámico
 InternalURLOfPage=URL interna de la página
 ThisPageIsTranslationOf=Esta página/contenedor es traducción de
@@ -108,9 +113,25 @@ ReplaceWebsiteContent=Buscar o reemplazar el contenido del sitio web
 DeleteAlsoJs=¿Eliminar también todos los archivos javascript específicos de este sitio web?
 DeleteAlsoMedias=¿Eliminar también todos los archivos de medios específicos de este sitio web?
 MyWebsitePages=Mis páginas web
-SearchReplaceInto=Search | Replace into
-ReplaceString=New string
-CSSContentTooltipHelp=Enter here CSS content. To avoid any conflict with the CSS of the application, be sure to prepend all declaration with the .bodywebsite class. For example:<br><br>#mycssselector, input.myclass:hover { ... }<br>must be<br>.bodywebsite #mycssselector, .bodywebsite input.myclass:hover { ... }<br><br>Note: If you have a large file without this prefix, you can use 'lessc' to convert it to append the .bodywebsite prefix everywhere.
-LinkAndScriptsHereAreNotLoadedInEditor=Warning: This content is output only when site is accessed from a server. It is not used in Edit mode so if you need to load javascript files also in edit mode, just add your tag 'script src=...' into the page.
-Dynamiccontent=Sample of a page with dynamic content
+SearchReplaceInto=Buscar | Reemplazar en
+ReplaceString=Nueva cadena
+CSSContentTooltipHelp=Ingrese aquí el contenido CSS. Para evitar cualquier conflicto con el CSS de la aplicación, asegúrese de anteponer todas las declaraciones con la clase .bodywebsite. Por ejemplo: <br><br> #mycssselector, input.myclass: hover {...} <br> debe ser <br> .bodywebsite #mycssselector, .bodywebsite input.myclass: hover {...} <br><br> Nota: Si tiene un archivo grande sin este prefijo, puede usar 'lessc' para convertirlo y agregar el prefijo .bodywebsite en todas partes.
+LinkAndScriptsHereAreNotLoadedInEditor=Advertencia: Este contenido se genera solo cuando se accede al sitio desde un servidor. No se usa en modo Edición, por lo que si necesita cargar archivos javascript también en modo edición, simplemente agregue su etiqueta 'script src=...' en la página.
+Dynamiccontent=Muestra de una página con contenido dinámico.
 ImportSite=Importar plantilla de sitio web
+EditInLineOnOff=El modo 'Edit inline' es %s
+ShowSubContainersOnOff=El modo para ejecutar 'dynamic content' es %s
+GlobalCSSorJS=Archivo global CSS/JS/Header del sitio web
+BackToHomePage=Volver a la página de inicio...
+TranslationLinks=Enlaces de traducción
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
+UseTextBetween5And70Chars=Para buenas prácticas de SEO, use un texto de entre 5 y 70 caracteres.
+MainLanguage=Lenguaje principal
+OtherLanguages=Otros idiomas
+UseManifest=Proporcionar un archivo manifest.json
+PublicAuthorAlias=Alias de autor público
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Los idiomas disponibles se definen en las propiedades del sitio web
+ReplacementDoneInXPages=Reemplazo realizado en páginas o contenedores %s
+RSSFeed=Hilos RSS
+RSSFeedDesc=Puede obtener una fuente RSS de los últimos artículos con el tipo 'blogpost' usando esta URL
+PagesRegenerated=%s page(s)/container(s) regenerated

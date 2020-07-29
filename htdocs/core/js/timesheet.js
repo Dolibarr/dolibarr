@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -120,7 +120,11 @@ function updateTotal(days,mode)
         total.setHours(0);
         total.setMinutes(0);
         var nbline = document.getElementById('numberOfLines').value;
-        for (var i=-1; i<nbline; i++)
+        var startline = 0;
+        if (document.getElementById('numberOfFirstLine')) {
+        	startline = parseInt(document.getElementById('numberOfFirstLine').value);
+        }
+        for (var i=-1; i < nbline; i++)
         {
             var id='timespent['+i+']['+days+']';
             var taskTime= new Date(0);
@@ -213,17 +217,27 @@ function updateTotal(days,mode)
         		console.log(total.getMinutes())
             }
         });
-
-        if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+days).addClass("bold");
-        else jQuery('.totalDay'+days).removeClass("bold");
-    	jQuery('.totalDay'+days).text(pad(total.getHours())+':'+pad(total.getMinutes()));
+        
+        var stringdays = days;
+        if (startline >= 1 && startline <= 9 && stringdays < 10) {
+        	stringdays = '0'+stringdays;
+        }
+        
+        if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+stringdays).addClass("bold");
+        else jQuery('.totalDay'+stringdays).removeClass("bold");
+    	jQuery('.totalDay'+stringdays).text(pad(total.getHours())+':'+pad(total.getMinutes()));
 
     	var totalhour = 0;
     	var totalmin = 0;
         for (var i=0; i<7; i++)
         {
+        	stringdays = (i + startline);
+            if (startline >= 1 && startline <= 9 && stringdays < 10) {
+            	stringdays = '0'+stringdays;
+            }
+
         	var taskTime= new Date(0);
-        	result=parseTime(jQuery('.totalDay'+i).text(),taskTime);
+       		result=parseTime(jQuery('.totalDay'+stringdays).text(),taskTime);
         	if (result >= 0)
         	{
         		totalhour = totalhour + taskTime.getHours();
@@ -273,8 +287,14 @@ function updateTotal(days,mode)
             }
         }
 
-        if (total) jQuery('.totalDay'+days).addClass("bold");
-        else jQuery('.totalDay'+days).removeClass("bold");
-    	jQuery('.totalDay'+days).text(total);
+        var stringdays = days;
+        if (startline >= 1 && startline <= 9 && stringdays < 10) {
+        	stringdays = '0'+stringdays;
+        	console.log(stringdays);
+        }
+        
+        if (total) jQuery('.totalDay'+stringdays).addClass("bold");
+        else jQuery('.totalDay'+stringdays).removeClass("bold");
+    	jQuery('.totalDay'+stringdays).text(total);
     }
 }

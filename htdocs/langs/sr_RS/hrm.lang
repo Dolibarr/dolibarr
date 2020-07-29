@@ -1,0 +1,18 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Email za blokiranje eksternog HR servisa
+Establishments=Ogranci
+Establishment=Ogranak
+NewEstablishment=Novi ogranak
+DeleteEstablishment=Obriši ogranak
+ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
+OpenEtablishment=Otvori ogranak
+CloseEtablishment=Zatvori ogranak
+# Dictionary
+DictionaryPublicHolidays=HRM - Public holidays
+DictionaryDepartment=HR - Lista odeljenja
+DictionaryFunction=HRM - Job positions
+# Module
+Employees=Zaposleni
+Employee=Zaposleni
+NewEmployee=Novi zaposleni

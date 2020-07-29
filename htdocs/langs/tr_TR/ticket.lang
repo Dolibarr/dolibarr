@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -21,19 +21,23 @@
 Module56000Name=Destek Bildirimleri
 Module56000Desc=Sorun veya istek yönetimi için destek bildirim sistemi
 
-Permission56001=Destek bildirimini gör
+Permission56001=Destek bildirimlerini gör
 Permission56002=Destek bildirimini değiştir
-Permission56003=Destek bildirimini sil
+Permission56003=Destek bildirimlerini sil
 Permission56004=Destek bildirimlerini yönet
 Permission56005=See tickets of all third parties (not effective for external users, always be limited to the third party they depend on)
 
 TicketDictType=Destek Bildirimi - Türler
 TicketDictCategory=Destek Bildirimi - Gruplar
 TicketDictSeverity=Destek Bildirimi - Önemler
+TicketDictResolution=Destek Bildirimi - Çözüm
 TicketTypeShortBUGSOFT=Yazılım arızası
 TicketTypeShortBUGHARD=Donanım arızası
 TicketTypeShortCOM=Ticari soru
-TicketTypeShortINCIDENT=Yardım talebi
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Proje
 TicketTypeShortOTHER=Diğer
 
@@ -80,7 +84,7 @@ MailToSendTicketMessage=Destek bildirim mesajından e-posta göndermek için
 TicketSetup=Destek bildirimi modülü kurulumu
 TicketSettings=Ayarlar
 TicketSetupPage=
-TicketPublicAccess=A public interface requiring no identification is available at the following url
+TicketPublicAccess=Kimlik gerektirmeyen herkese açık bir arayüz şu url'de adresinde mevcuttur
 TicketSetupDictionaries=Destek bildirimi, önem ve analitik kodlarının türleri sözlüklerden yapılandırılabilir
 TicketParamModule=Modül değişken kurulumu
 TicketParamMail=E-posta kurulumu
@@ -112,8 +116,8 @@ TicketsLogEnableEmailHelp=Her değişiklikte, destek bildirimi ile bağlantılı
 TicketParams=Parametreler
 TicketsShowModuleLogo=Genel arayüzde modülün logosunu görüntüle
 TicketsShowModuleLogoHelp=Genel arayüz sayfalarında logo modülünü gizlemek için bu seçeneği etkinleştirin
-TicketsShowCompanyLogo=Genel arayüzde şirketin logosunu göster 
-TicketsShowCompanyLogoHelp=Genel arayüz sayfalarında ana şirketin logosunu gizlemek için bu seçeneği etkinleştirin
+TicketsShowCompanyLogo=Genel arayüzde firmanın logosunu göster 
+TicketsShowCompanyLogoHelp=Genel arayüz sayfalarında ana firmanın logosunu gizlemek için bu seçeneği etkinleştirin
 TicketsEmailAlsoSendToMainAddress=Ayrıca ana e-posta adresine de bildirim gönder
 TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
 TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the third party they depend on)
@@ -126,10 +130,14 @@ TicketNumberingModules=Destek bildirimi numaralandırma modülü
 TicketNotifyTiersAtCreation=Oluşturunca üçüncü tarafa bildir
 TicketGroup=Grup
 TicketsDisableCustomerEmail=Bir destek bildirimi ortak arayüzden oluşturulduğunda e-postaları her zaman devre dışı bırak
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Destek bildirimi - giriş
+TicketsIndex=Destek bildirimleri alanı
 TicketList=Destek bildirimlerinin listesi
 TicketAssignedToMeInfos=Bu sayfa mevcut kullanıcı tarafından oluşturulan veya bu kullanıcıya atanmış destek bildirim listesini görüntüler
 NoTicketsFound=Destek bildirimi bulunamadı
@@ -137,6 +145,10 @@ NoUnreadTicketsFound=Okunmamış destek bildirimi bulunamadı
 TicketViewAllTickets=Tüm destek bildirimlerini görüntüle
 TicketViewNonClosedOnly=Sadece açık destek bildirimlerini görüntüle
 TicketStatByStatus=Duruma göre destek bildirimleri
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -172,7 +184,7 @@ Properties=Sınıflandırma
 LatestNewTickets=En yeni %s destek bildirimi (okunmamış)
 TicketSeverity=Önem seviyesi
 ShowTicket=Destek bildirimini gör
-RelatedTickets=İlgili destek bildirimi
+RelatedTickets=İlgili destek bildirimleri
 TicketAddIntervention=Müdahale oluştur
 CloseTicket=Destek bildirimini kapat
 CloseATicket=Bir destek bildirimini kapat
@@ -222,6 +234,9 @@ TicketConfirmChangeStatus=Durum değişikliğini onayla: %s?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Okunmamış
+TicketNotCreatedFromPublicInterface=Mevcut değil. Destek bildirimi genel arayüzden oluşturulmadı.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Destek bildirimi referans adı gerekli
 
 #
 # Logs
@@ -229,9 +244,9 @@ Unread=Okunmamış
 TicketLogMesgReadBy=%s destek bildirimi %s tarafından okundu
 NoLogForThisTicket=Bu destek bildirimi için henüz kayıt yok
 TicketLogAssignedTo=%s destek bildirimi şuna atandı: %s
-TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
+TicketLogPropertyChanged=%s destek bildirimi değiştirildi: %s'den %s'e sınıflandırma
 TicketLogClosedBy=Destek bildirimi %s, %s tarafından kapatıldı
-TicketLogReopen=Destek bildirimi %s yeniden açıldı
+TicketLogReopen=%s destek bildirimi tekrar açıldı
 
 #
 # Public pages
@@ -241,9 +256,9 @@ ShowListTicketWithTrackId=Takip numarasından destek bildirim listesini görünt
 ShowTicketWithTrackId=Takip numarasından destek bildirimi görüntüle
 TicketPublicDesc=Bir destek bildirimi oluşturabilir veya daha önce oluşturulmuş olanı kontrol edebilirsiniz.
 YourTicketSuccessfullySaved=Destek bildirimi başarıyla kaydedildi!
-MesgInfosPublicTicketCreatedWithTrackId=%s kimlik numaralı yeni bir destek bildirimi oluşturuldu.
+MesgInfosPublicTicketCreatedWithTrackId=%s Kimlik Numaralı ve %s Referanslı yeni bir bilet oluşturuldu.
 PleaseRememberThisId=Daha sonra sorma ihtimalimize karşı lütfen takip numarasını saklayın.
-TicketNewEmailSubject=Destek bildirimi oluşturma onayı
+TicketNewEmailSubject=Destek bildirimi oluşturma onayı  - Ref %s (genel bilet kimliği %s)
 TicketNewEmailSubjectCustomer=Yeni destek bildirimi
 TicketNewEmailBody=Yeni bir destek bildirim kaydınızı onaylamak için bu e-posta otomatik olarak gönderilmiştir.
 TicketNewEmailBodyCustomer=Bu, hesabınızda yeni bir destek bildiriminin oluşturulduğunu onaylamak için otomatik olarak gönderilen bir e-postadır.
@@ -262,7 +277,7 @@ Subject=Konu
 ViewTicket=Destek bildirimini görüntüle
 ViewMyTicketList=Destek bildirimi listemi görüntüle
 ErrorEmailMustExistToCreateTicket=Hata: e-posta adresi veritabanımızda bulunamadı
-TicketNewEmailSubjectAdmin=Yeni destek bildirimi oluşturuldu
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p>Destek bildirimi #%s kimlik numarası ile oluşturuldu, detaylı bilgi:</p>
 SeeThisTicketIntomanagementInterface=Yönetim arayüzünde destek bildirimini gör
 TicketPublicInterfaceForbidden=Destek bildirimi için genel arayüz etkin değil
@@ -288,7 +303,7 @@ BoxLastTicket=En son oluşturulan destek bildirimleri
 BoxLastTicketDescription=Oluşturulan son %s destek bildirimi
 BoxLastTicketContent=
 BoxLastTicketNoRecordedTickets=Okunmamış yeni bir destek bildirimi yok
-BoxLastModifiedTicket=Son değiştirilen destek bildirimleri
-BoxLastModifiedTicketDescription=En son değiştirilen %s destek bildirimi
+BoxLastModifiedTicket=En son değiştirilen destek bildirimleri
+BoxLastModifiedTicketDescription=Değiştirilen son %s destek bildirimi
 BoxLastModifiedTicketContent=
 BoxLastModifiedTicketNoRecordedTickets=Yakın zamanda değiştirilmiş destek bildirimi yok

@@ -21,6 +21,7 @@ QtyShipped=Quantità spedita
 QtyShippedShort=Qtà spedizione.
 QtyPreparedOrShipped=Q.ta preparata o spedita
 QtyToShip=Quantità da spedire
+QtyToReceive=Qtà da ricevere
 QtyReceived=Quantità ricevuta
 QtyInOtherShipments=Q.ta in altre spedizioni
 KeepToShip=Ancora da spedire
@@ -46,6 +47,7 @@ DateDeliveryPlanned=Data prevista di consegna
 RefDeliveryReceipt=Rif. ricevuta di consegna
 StatusReceipt=Stato ricevuta di consegna
 DateReceived=Data di consegna ricevuto
+ClassifyReception=Classifica ricevuto
 SendShippingByEMail=Invia spedizione via EMail
 SendShippingRef=Invio della spedizione %s
 ActionsOnShipping=Acions sulla spedizione
@@ -53,12 +55,12 @@ LinkToTrackYourPackage=Link a monitorare il tuo pacchetto
 ShipmentCreationIsDoneFromOrder=Per il momento, la creazione di una nuova spedizione viene effettuata dalla scheda dell'ordine.
 ShipmentLine=Filiera di spedizione
 ProductQtyInCustomersOrdersRunning=Product quantity into open customer orders
-ProductQtyInSuppliersOrdersRunning=Product quantity into open purchase orders
+ProductQtyInSuppliersOrdersRunning=Quantità prodotto inserita in ordini d'acquisto in corso
 ProductQtyInShipmentAlreadySent=Quantità prodotto dall'ordine cliente aperto già inviato
 ProductQtyInSuppliersShipmentAlreadyRecevied=Quantità prodotto dall'ordine fornitore aperto già ricevuto
 NoProductToShipFoundIntoStock=Nessun prodotto da spedire presente all'interno del magazzino <b>%s</b>
 WeightVolShort=Peso/Vol.
-ValidateOrderFirstBeforeShipment=È necessario convalidare l'ordine prima di poterlo spedire 
+ValidateOrderFirstBeforeShipment=È necessario convalidare l'ordine prima di poterlo spedire
 
 # Sending methods
 # ModelDocument

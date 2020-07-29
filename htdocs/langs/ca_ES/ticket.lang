@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=Veure els tiquets de tots els tercers (no efectiu per als usuari
 TicketDictType=Tiquet - Tipus
 TicketDictCategory=Tiquet - Grups
 TicketDictSeverity=Tiquet - Severitats
+TicketDictResolution=Tiquet - Resolució
 TicketTypeShortBUGSOFT=Disfunció de la lògica
 TicketTypeShortBUGHARD=Disfunció de matèries
 TicketTypeShortCOM=Qüestió comercial
-TicketTypeShortINCIDENT=Sol·licitud d'assistència
+
+TicketTypeShortHELP=Sol·licitud d'ajuda funcional
+TicketTypeShortISSUE=Incidència, error o problema
+TicketTypeShortREQUEST=Sol·licitud de canvi o millora
 TicketTypeShortPROJET=Projecte
 TicketTypeShortOTHER=Altres
 
@@ -86,7 +90,7 @@ TicketParamModule=Configuració del mòdul de variables
 TicketParamMail=Configuració de correu electrònic
 TicketEmailNotificationFrom=Notificació de correu electrònic procedent de
 TicketEmailNotificationFromHelp=S'utilitza en la resposta del tiquet per exemple
-TicketEmailNotificationTo=Notificacions de correu a 
+TicketEmailNotificationTo=Notificacions de correu electrònic a 
 TicketEmailNotificationToHelp=Enviar notificacions per correu electrònic a aquesta adreça.
 TicketNewEmailBodyLabel=Missatge de text enviat després de crear un bitllet
 TicketNewEmailBodyHelp=El text especificat aquí s'inserirà en el correu electrònic confirmant la creació d'un nou tiquet des de la interfície pública. La informació sobre la consulta del tiquet s'afegeix automàticament.
@@ -106,7 +110,7 @@ TicketPublicInterfaceTextHelpMessageHelpAdmin=Aquest text apareixerà a sobre de
 ExtraFieldsTicket=Extra atributs
 TicketCkEditorEmailNotActivated=L'editor HTML no està activat. Poseu FCKEDITOR_ENABLE_MAIL contingut a 1 per obtenir-lo.
 TicketsDisableEmail=No enviïs missatges de correu electrònic per a la creació de bitllets o la gravació de missatges
-TicketsDisableEmailHelp=De manera predeterminada, s'envien correus electrònics quan es creen nous tiquets o missatges. Activeu aquesta opció per desactivar totes les (*all*) notificacions per correu electrònic
+TicketsDisableEmailHelp=De manera predeterminada, s'envien correus electrònics quan es creen nous tiquets o missatges. Activeu aquesta opció per desactivar totes les *all* notificacions per correu electrònic
 TicketsLogEnableEmail=Activa el 'log' (registre d'activitat) per correu electrònic
 TicketsLogEnableEmailHelp=En cada canvi, s'enviarà un correu ** a cada contacte ** associat al tiquet.
 TicketParams=Paràmetres
@@ -126,10 +130,14 @@ TicketNumberingModules=Mòdul de numeració de tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
 TicketGroup=Grup
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
+TicketsPublicNotificationNewMessage=Enviar correu(s) electonic(s) quan s'afegeix un nou missatge
+TicketsPublicNotificationNewMessageHelp=Enviar correu(s) electrònic(s) quan un nou missatge s'afegeix des d'una interfície pública (cap a l'usuari assignat o la notificació del correu electrònic cap a (actualitzar) i/o les notificacions del correu electrònic cap a)
+TicketPublicNotificationNewMessageDefaultEmail=Notificar correu electrònic cap a (actualitzar)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Enviar un correu nou missatge de notificació cap a aquesta adreça si el tiquet no te usuari assignat o l'usuari no te correu electrònic.
 #
 # Index & list page
 #
-TicketsIndex=Tiquet - inici
+TicketsIndex=Àrea de tiquets
 TicketList=Llista de tiquets
 TicketAssignedToMeInfos=Aquesta pàgina mostra la llista de butlletes creada per o assignada a l'usuari actual
 NoTicketsFound=Tiquet no trobat
@@ -137,6 +145,10 @@ NoUnreadTicketsFound=No s’ha trobat cap bitllet sense llegir
 TicketViewAllTickets=Consultar tots els tiquets
 TicketViewNonClosedOnly=Mostra només els tiquets oberts
 TicketStatByStatus=Tiquets per estat
+OrderByDateAsc=Ordena per data ascendent
+OrderByDateDesc=Ordena per data descendent
+ShowAsConversation=Mostrar com a llista de converses
+MessageListViewType=Mostra com a llista de taula
 
 #
 # Ticket card
@@ -222,6 +234,9 @@ TicketConfirmChangeStatus=Confirmar el canvi d'estatus : %s ?
 TicketLogStatusChanged=Estatus canviat : %s a %s
 TicketNotNotifyTiersAtCreate=No es notifica a l'empresa a crear
 Unread=No llegit
+TicketNotCreatedFromPublicInterface=No disponible El tiquet no s'ha creat des de la interfície pública.
+PublicInterfaceNotEnabled=La interfície pública no s'ha activat
+ErrorTicketRefRequired=El nom de referència del tiquet és obligatori
 
 #
 # Logs
@@ -231,7 +246,7 @@ NoLogForThisTicket=Encara no hi ha 'log' per aquest tiquet
 TicketLogAssignedTo=Tiquet %s assignat a %s
 TicketLogPropertyChanged=Tiquet %s modificat: classificació de %s a %s
 TicketLogClosedBy=Tiquet %s tancat per %s
-TicketLogReopen=S'ha obert el tiquet %s
+TicketLogReopen=El tiquet %s s'ha re-obert
 
 #
 # Public pages
@@ -241,9 +256,9 @@ ShowListTicketWithTrackId=Mostra la llista d'entrades a partir de l'identificado
 ShowTicketWithTrackId=Mostra tiquets de l'identificador de traça 
 TicketPublicDesc=Podeu crear un tiquet d'assistència o consultar des d'una identificació (ID) existent.
 YourTicketSuccessfullySaved=S'ha desat el tiquet amb èxit!
-MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un nou tiquet amb ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=S'ha creat un nou tiquet amb l'ID %s i la ref. %s.
 PleaseRememberThisId=Guardeu el número de traça que us podríem demanar més tard.
-TicketNewEmailSubject=Confirmació de creació de tiquet
+TicketNewEmailSubject=Confirmació de la creació de tiquet - Ref %s (ID de l’entrada pública %s)
 TicketNewEmailSubjectCustomer=Nou tiquet de suport
 TicketNewEmailBody=Aquest és un correu electrònic automàtic per confirmar que heu registrat un nou tiquet.
 TicketNewEmailBodyCustomer=Aquest és un correu electrònic automàtic per confirmar que un nou tiquet acaba de ser creat al vostre compte.
@@ -262,7 +277,7 @@ Subject=Assumpte
 ViewTicket=Vista del tiquet
 ViewMyTicketList=Veure la meva llista de tiquets
 ErrorEmailMustExistToCreateTicket=Error: adreça de correu electrònic no trobada a la nostra base de dades
-TicketNewEmailSubjectAdmin=S'ha creat un nou tiquet
+TicketNewEmailSubjectAdmin=S'ha creat un nou tiquet: Ref %s (ID d'entrada pública %s)
 TicketNewEmailBodyAdmin=<p>S'ha creat una entrada amb ID #%s, veure informació :</p>
 SeeThisTicketIntomanagementInterface=Consulteu el tiquet a la interfície de gestió
 TicketPublicInterfaceForbidden=La interfície pública de les entrades no estava habilitada

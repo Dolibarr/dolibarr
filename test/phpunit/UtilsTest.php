@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -73,7 +73,11 @@ class UtilsTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -83,7 +87,11 @@ class UtilsTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -145,7 +153,7 @@ class UtilsTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($result['error'], '');
         //$this->assertEquals(preg_match('/phpunit/', $result['output']), 1);
 
-        print __METHOD__." result=".$result."\n";
+        print __METHOD__." result=".$result['result']."\n";
         return $result;
     }
 }

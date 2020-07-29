@@ -31,8 +31,8 @@ class DolLogsCollector extends MessagesCollector
 
 		parent::__construct($name);
 
-		$this->nboflines=0;
-		$this->maxnboflines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER;   // High number slows seriously output
+		$this->nboflines = 0;
+		$this->maxnboflines = empty($conf->global->DEBUGBAR_LOGS_LINES_NUMBER) ? 250 : $conf->global->DEBUGBAR_LOGS_LINES_NUMBER; // High number slows seriously output
 
 		$this->path = $path ?: $this->getLogsFile();
 	}
@@ -72,14 +72,12 @@ class DolLogsCollector extends MessagesCollector
 	{
 		global $conf;
 
-		$uselogfile=$conf->global->DEBUGBAR_USE_LOGFILE;
+		$uselogfile = $conf->global->DEBUGBAR_USE_LOGFILE;
 
 		if ($uselogfile)
 		{
     		$this->getStorageLogs($this->path);
-		}
-		else
-		{
+		} else {
     	    $log_levels = $this->getLevels();
 
     	    foreach ($conf->logbuffer as $line) {
@@ -107,7 +105,7 @@ class DolLogsCollector extends MessagesCollector
 	public function getLogsFile()
 	{
 	    // default dolibarr log file
-	    $path = DOL_DATA_ROOT . '/dolibarr.log';
+	    $path = DOL_DATA_ROOT.'/dolibarr.log';
 	    return $path;
 	}
 
@@ -119,7 +117,7 @@ class DolLogsCollector extends MessagesCollector
 	 */
 	public function getStorageLogs($path)
 	{
-	    if (! file_exists($path)) {
+	    if (!file_exists($path)) {
 	        return;
 	    }
 

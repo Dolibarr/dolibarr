@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,12 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("companies","members","bills","users"));
+$langs->loadLangs(array("companies", "members", "bills", "users"));
 
 if (!$user->rights->adherent->lire)
 	accessforbidden();
 
-$rowid=GETPOST("rowid", 'int');
+$rowid = GETPOST("rowid", 'int');
 
 
 

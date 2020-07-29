@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 $sapi_type = php_sapi_name();
@@ -149,9 +149,9 @@ foreach ($langstrings_3d AS $filename => $file)
 		$keys = array_keys($langstrings_full, $value);
 		if (count($keys)>1)
 		{
-				foreach ($keys AS $key) {
-					$dups[$value][$filename][$linenum] = trim($langstrings_3dtrans[$filename][$linenum]);
-				}
+			foreach ($keys AS $key) {
+				$dups[$value][$filename][$linenum] = trim($langstrings_3dtrans[$filename][$linenum]);
+			}
 		}
 	}
 }
@@ -360,16 +360,14 @@ if ((! empty($_REQUEST['unused']) && $_REQUEST['unused'] == 'true') || (isset($a
    			$unused[$value] = $line;
        		echo $line;        // $trad contains the \n
 		}
-		else
-		{
+		else {
 		    unset($output);
 		    //print 'X'.$output.'Y';
 		}
 	}
 
 	if (empty($unused)) print "No string not used found.\n";
-	else
-	{
+	else {
         $filetosave='/tmp/'.($argv[2]?$argv[2]:"").'notused.lang';
         print "Strings in en_US that are never used are saved into file ".$filetosave.":\n";
         file_put_contents($filetosave, implode("", $unused));

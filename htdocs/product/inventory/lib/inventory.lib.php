@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -50,7 +50,7 @@ function inventoryAdminPrepareHead()
     //$this->tabs = array(
     //	'entity:-tabname:Title:@inventory:/inventory/mypage.php?id=__ID__'
     //); // to remove a tab
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'inventory');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'inventory');
 
     return $head;
 }
@@ -69,7 +69,8 @@ function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
 	global $langs;
 
 	return array(
-		array(dol_buildpath('/product/inventory/card.php?id='.$inventory->id.$get, 1), $langs->trans($title),'inventory')
+		array(dol_buildpath('/product/inventory/card.php?id='.$inventory->id.$get, 1), $langs->trans('Card'), 'card'),
+		array(dol_buildpath('/product/inventory/inventory.php?id='.$inventory->id.$get, 1), $langs->trans('Inventory'), 'inventory')
 	);
 }
 
@@ -84,7 +85,7 @@ function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
  */
 function inventorySelectProducts(&$inventory)
 {
-	global $conf,$db,$langs;
+	global $conf, $db, $langs;
 
 	$except_product_id = array();
 
@@ -100,14 +101,14 @@ function inventorySelectProducts(&$inventory)
 	$TChildWarehouses = array($inventory->fk_warehouse);
 	$e = new Entrepot($db);
 	$e->fetch($inventory->fk_warehouse);
-	if(method_exists($e, 'get_children_warehouses')) $e->get_children_warehouses($e->id, $TChildWarehouses);
+	if (method_exists($e, 'get_children_warehouses')) $e->get_children_warehouses($e->id, $TChildWarehouses);
 
 	$Tab = array();
 	$sql = 'SELECT rowid, label
 			FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid IN('.implode(', ', $TChildWarehouses).')';
-	if(method_exists($e, 'get_children_warehouses')) $sql.= ' ORDER BY fk_parent';
+	if (method_exists($e, 'get_children_warehouses')) $sql .= ' ORDER BY fk_parent';
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) {
+	while ($res = $db->fetch_object($resql)) {
 		$Tab[$res->rowid] = $res->label;
 	}
 	print '&nbsp;&nbsp;&nbsp;';

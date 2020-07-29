@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Forsendelse %s klassifisert fakturert
 ShipmentUnClassifyCloseddInDolibarr=Forsendelse %s klassifisert gjenåpnet
 ShipmentBackToDraftInDolibarr=Sett levering %s tilbake til utkaststatus
 ShipmentDeletedInDolibarr=Leveranse %s slettet
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Ordre %s opprettet
 OrderValidatedInDolibarr=Ordre %s validert
 OrderDeliveredInDolibarr=Ordre %s klassifisert som levert
@@ -76,6 +77,7 @@ ContractSentByEMail=Kontrakt %s sendt med epost
 OrderSentByEMail=Salgsordre %s sendt via epost
 InvoiceSentByEMail=Kundefaktura %s sendt via e-post
 SupplierOrderSentByEMail=Innkjøpsordre %s sendt via epost
+ORDER_SUPPLIER_DELETEInDolibarr=Innkjøpsordre %s slettet
 SupplierInvoiceSentByEMail=Leverandørfaktura %s sendt via epost
 ShippingSentByEMail=Forsendelse %s sendt via epost
 ShippingValidated= Forsendelse %s validert
@@ -83,9 +85,15 @@ InterventionSentByEMail=Intervensjon %s sendt via epost
 ProposalDeleted=Tilbud slettet
 OrderDeleted=Ordre slettet
 InvoiceDeleted=Faktura slettet
+DraftInvoiceDeleted=Fakturautkast slettet
 PRODUCT_CREATEInDolibarr=Vare%s opprettet
 PRODUCT_MODIFYInDolibarr=Vare %s endret
 PRODUCT_DELETEInDolibarr=Vare %s slettet
+HOLIDAY_CREATEInDolibarr=Forespørsel om fri%s opprettet
+HOLIDAY_MODIFYInDolibarr=Forespørsel om fri%s endret
+HOLIDAY_APPROVEInDolibarr=Forespørsel om permisjon %s godkjent
+HOLIDAY_VALIDATEInDolibarr=Forespørsel om fri%s bekreftet
+HOLIDAY_DELETEInDolibarr=Forespørsel om fri%s slettet
 EXPENSE_REPORT_CREATEInDolibarr=Utgiftsrapport %s opprettet
 EXPENSE_REPORT_VALIDATEInDolibarr=Utgiftsrapport %s validert
 EXPENSE_REPORT_APPROVEInDolibarr=Utgiftsrapport %s godkjent
@@ -99,6 +107,16 @@ TICKET_MODIFYInDolibarr=Billett %s endret
 TICKET_ASSIGNEDInDolibarr=Billett %s tildelt
 TICKET_CLOSEInDolibarr=Billett %s lukket
 TICKET_DELETEInDolibarr=Billett %s slettet
+BOM_VALIDATEInDolibarr=BOM validert
+BOM_UNVALIDATEInDolibarr=BOM ikke validert
+BOM_CLOSEInDolibarr=BOM deaktivert
+BOM_REOPENInDolibarr=BOM gjenåpne
+BOM_DELETEInDolibarr=BOM slettet
+MRP_MO_VALIDATEInDolibarr=MO validert
+MRP_MO_UNVALIDATEInDolibarr=MO satt til status Utkast
+MRP_MO_PRODUCEDInDolibarr=MO produsert
+MRP_MO_DELETEInDolibarr=MO slettet
+MRP_MO_CANCELInDolibarr=MO kansellert
 ##### End agenda events #####
 AgendaModelModule=Dokumentmaler for hendelse
 DateActionStart=Startdato
@@ -109,6 +127,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger 
 AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
 AgendaUrlOptionsProject=<b>project=__ PROJECT_ID__</b> for å begrense resultat til handlinger knyttet til prosjektet <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatiske hendelser.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> for å inkludere hendelser i ferie.
 AgendaShowBirthdayEvents=Vis kontakters fødselsdager
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager
 Busy=Opptatt
@@ -136,3 +155,6 @@ EveryMonth=Hver måned
 DayOfMonth=Dag i måned
 DayOfWeek=Dag i uken
 DateStartPlusOne=Startdato + 1 time
+SetAllEventsToTodo=Sett alle hendelser til ToDo
+SetAllEventsToInProgress=Sett alle begivenheter til Pågår
+SetAllEventsToFinished=Sett alle hendelser til Ferdig

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -26,7 +26,7 @@ abstract class ModeleNumRefPayments
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 *	Return if a module can be used or not
@@ -63,9 +63,10 @@ abstract class ModeleNumRefPayments
 	}
 
 	/**
-	 *  Test if the existing numbers in the database do not cause conflicts that would prevent this numbering run.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return     boolean     false si conflit, true si ok
+	 *	@return     boolean     false if conflict, true if ok
 	 */
 	public function canBeActivated()
 	{

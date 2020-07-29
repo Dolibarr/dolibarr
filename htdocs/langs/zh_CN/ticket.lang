@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=See tickets of all third parties (not effective for external use
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=软件故障
 TicketTypeShortBUGHARD=硬件故障
 TicketTypeShortCOM=商业问题
-TicketTypeShortINCIDENT=请求帮助
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=项目
 TicketTypeShortOTHER=其他
 
@@ -126,10 +130,14 @@ TicketNumberingModules=票据编号模块
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketGroup=组
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=票据 - 首页
+TicketsIndex=Tickets area
 TicketList=票据清单
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=没有找到票据
@@ -137,6 +145,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=查看所有票据
 TicketViewNonClosedOnly=仅查看有效票据
 TicketStatByStatus=票据按状态
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +234,9 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=不在创建时通知公司
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs
@@ -231,7 +246,7 @@ NoLogForThisTicket=暂无此日志
 TicketLogAssignedTo=Ticket %s assigned to %s
 TicketLogPropertyChanged=Ticket %s modified: classification from %s to %s
 TicketLogClosedBy=Ticket %s closed by %s
-TicketLogReopen=Ticket %s re-opened
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -241,9 +256,9 @@ ShowListTicketWithTrackId=从曲目ID显示票证列表
 ShowTicketWithTrackId=从曲目ID显示票证
 TicketPublicDesc=您可以创建支持服务单或从现有ID进行检查。
 YourTicketSuccessfullySaved=票据已成功保存！
-MesgInfosPublicTicketCreatedWithTrackId=已创建ID为%s的新故障单。
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=请保留我们稍后可能会问你的跟踪号码。
-TicketNewEmailSubject=票据创建确认
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=新支持票
 TicketNewEmailBody=这是一封自动电子邮件，用于确认您已注册新票证。
 TicketNewEmailBodyCustomer=这是一封自动发送的电子邮件，用于确认刚刚在您的帐户中创建了新的故障单。
@@ -262,7 +277,7 @@ Subject=主题
 ViewTicket=查看票证
 ViewMyTicketList=查看我的票证清单
 ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=新票已创建
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=请参阅管理界面中的票证
 TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled

@@ -41,9 +41,7 @@ InterventionsArea=Área intervenciones
 DraftFichinter=Intervenciones borrador
 LastModifiedInterventions=Últimas %s intervenciones modificadas
 FichinterToProcess=Intervenciones a procesar
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contacto cliente seguimiento intervención
-# Modele numérotation
 PrintProductsOnFichinter=Imprimir también líneas de tipo "producto" (no solamente servicios) en las fichas de intervención
 PrintProductsOnFichinterDetails=Intervenciones generadas desde pedidos
 UseServicesDurationOnFichinter=Usar la duración de los servicios para las intervenciones generadas de de los pedidos
@@ -53,14 +51,16 @@ InterventionStatistics=Estadísticas de intervenciones
 NbOfinterventions=Nº de fichas de intervención
 NumberOfInterventionsByMonth=Nº de fichas de intervención por mes (fecha de validación)
 AmountOfInteventionNotIncludedByDefault=Las cantidades de la intervención no se incluye por defecto en los beneficios (en la mayoría de los casos, las hojas de tiempo se utilizan para contar el tiempo invertido). Añada la opción PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT con valor 1 en Inicio-Configuración-Varios para incluirlos.
-##### Exports #####
 InterId=Id. intervención
 InterRef=Ref. intervención
 InterDateCreation=Fecha creación intervención
 InterDuration=Duración intervención
 InterStatus=Estado intervención
 InterNote=Nota intervención
+InterLine=Línea de intervención
 InterLineId=Id. línea intervención
 InterLineDate=Fecha línea intervención
 InterLineDuration=Duración línea intervención
 InterLineDesc=Descripción línea intervención
+RepeatableIntervention=Plantilla de intervención
+ToCreateAPredefinedIntervention=Para crear una intervención predefinida o recurrente, cree una intervención común y conviértala en plantilla de intervención

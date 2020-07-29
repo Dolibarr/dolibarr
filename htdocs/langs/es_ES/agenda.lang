@@ -60,9 +60,10 @@ MemberSubscriptionModifiedInDolibarr=Suscripción %s del miembro %s modificada
 MemberSubscriptionDeletedInDolibarr=Suscripción %s del miembro %s eliminada
 ShipmentValidatedInDolibarr=Expedición %s validada
 ShipmentClassifyClosedInDolibarr=Expedición %s clasificada como pagada
-ShipmentUnClassifyCloseddInDolibarr=Expedición %s clasificada como reabierta
+ShipmentUnClassifyCloseddInDolibarr=Envío %s clasificado como reabierto
 ShipmentBackToDraftInDolibarr=Envío %s ha sido devuelto al estado de borrador
 ShipmentDeletedInDolibarr=Expedición %s eliminada
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Pedido %s creado
 OrderValidatedInDolibarr=Pedido %s validado
 OrderDeliveredInDolibarr=Pedido %s clasificado como enviado
@@ -76,6 +77,7 @@ ContractSentByEMail=Contrato %s enviado por E-Mail
 OrderSentByEMail=Pedido de cliente %s enviado por e-mail
 InvoiceSentByEMail=Factura a cliente %s enviada por e-mail
 SupplierOrderSentByEMail=Pedido a proveedor %s enviado por e-mail
+ORDER_SUPPLIER_DELETEInDolibarr=Pedido a proveedor %s eliminado
 SupplierInvoiceSentByEMail=Factura de proveedor %s enviada por e-mail
 ShippingSentByEMail=Expedición %s enviada por email
 ShippingValidated= Expedición %s validada
@@ -83,9 +85,15 @@ InterventionSentByEMail=Intervención %s enviada por e-mail
 ProposalDeleted=Presupuesto eliminado
 OrderDeleted=Pedido eliminado
 InvoiceDeleted=Factura eliminada
+DraftInvoiceDeleted=Borrador de factura eliminado
 PRODUCT_CREATEInDolibarr=Producto %s creado
 PRODUCT_MODIFYInDolibarr=Producto %s modificado
 PRODUCT_DELETEInDolibarr=Producto %s eliminado
+HOLIDAY_CREATEInDolibarr=Solicitud de días libres %s creado
+HOLIDAY_MODIFYInDolibarr=Solicitud de días libres %s modificada
+HOLIDAY_APPROVEInDolibarr=Solicitud de días libres %s aprobada
+HOLIDAY_VALIDATEInDolibarr=Solicitud de días libres %s validada
+HOLIDAY_DELETEInDolibarr=Solicitud de días libres %s eliminada
 EXPENSE_REPORT_CREATEInDolibarr=Informe de gastos %s creado
 EXPENSE_REPORT_VALIDATEInDolibarr=Informe de gastos %s validado
 EXPENSE_REPORT_APPROVEInDolibarr=Informe de gastos %s aprobado
@@ -99,6 +107,16 @@ TICKET_MODIFYInDolibarr=Ticket %s modificado
 TICKET_ASSIGNEDInDolibarr=Ticket %s asignado
 TICKET_CLOSEInDolibarr=Ticket %s cerrado
 TICKET_DELETEInDolibarr=Ticket %s eliminado
+BOM_VALIDATEInDolibarr=Lista de materiales validada
+BOM_UNVALIDATEInDolibarr=Lista de materiales devalidada
+BOM_CLOSEInDolibarr=Lista de materiales desactivada
+BOM_REOPENInDolibarr=Lista de materiales reabierta
+BOM_DELETEInDolibarr=Lista de materiales eliminada
+MRP_MO_VALIDATEInDolibarr=OF validada
+MRP_MO_UNVALIDATEInDolibarr=OF establecida en estado de borrador
+MRP_MO_PRODUCEDInDolibarr=OF fabricada
+MRP_MO_DELETEInDolibarr=OF eliminada
+MRP_MO_CANCELInDolibarr=OF candelada
 ##### End agenda events #####
 AgendaModelModule=Plantillas de documentos para eventos
 DateActionStart=Fecha de inicio
@@ -109,6 +127,7 @@ AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restringir la salida a accione
 AgendaUrlOptions4=<b>logint=%s</b>para restringir notificaciones en acciones asignadas al usuario <b>%s</b>(propietario y otros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restringir exportación de acciones asociadas al proyecto <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir el evento automático.
+AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> para incluir eventos de días libres.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado
@@ -136,3 +155,6 @@ EveryMonth=Cada mes
 DayOfMonth=Día del mes
 DayOfWeek=Día de la semana
 DateStartPlusOne=Fecha inicio +1 hora
+SetAllEventsToTodo=Establecer todos los eventos para hacer
+SetAllEventsToInProgress=Establecer todos los eventos en progreso
+SetAllEventsToFinished=Establecer todos los eventos para finalizar

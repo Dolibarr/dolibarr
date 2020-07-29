@@ -1,17 +1,18 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
-Establishments=Establishments
-Establishment=Establishment
-NewEstablishment=New establishment
-DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
-OpenEtablishment=Open establishment
-CloseEtablishment=Close establishment
+HRM_EMAIL_EXTERNAL_SERVICE=E-mail pro zabránění externí službě HRM
+Establishments=Provozovny
+Establishment=Zřízení
+NewEstablishment=Nové zařízení
+DeleteEstablishment=Smazat zařízení
+ConfirmDeleteEstablishment=Opravdu chcete toto zařízení smazat?
+OpenEtablishment=Otevřít zařízení
+CloseEtablishment=Zavřít zařízení
 # Dictionary
-DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryPublicHolidays=HRM - státní svátky
+DictionaryDepartment=HRM - Seznam oddělení
+DictionaryFunction=HRM - Pracovní pozice
 # Module
-Employees=Employees
+Employees=Zaměstnanci
 Employee=Zaměstnanec
-NewEmployee=New employee
+NewEmployee=Nový zaměstnanec

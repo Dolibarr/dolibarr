@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,8 +24,8 @@
  */
 
 require_once realpath(__DIR__).'/../main.inc.php';
-if (! class_exists('Holiday')) {
-	require_once DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
+if (!class_exists('Holiday')) {
+	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 }
 
 // Load translation files required by the page

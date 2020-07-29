@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,10 +33,10 @@ include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  */
 class box_comptes extends ModeleBoxes
 {
-    public $boxcode="currentaccounts";
-    public $boximg="object_bill";
-    public $boxlabel="BoxCurrentAccounts";
-    public $depends = array("banque");     // Box active if module banque active
+    public $boxcode = "currentaccounts";
+    public $boximg = "object_bill";
+    public $boxlabel = "BoxCurrentAccounts";
+    public $depends = array("banque"); // Box active if module banque active
 
     /**
      * @var DoliDB Database handler.
@@ -63,10 +63,10 @@ class box_comptes extends ModeleBoxes
 		$this->db = $db;
 
 		// disable module for such cases
-		$listofmodulesforexternal=explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
-		if (! in_array('banque', $listofmodulesforexternal) && ! empty($user->societe_id)) $this->enabled=0;	// disabled for external users
+		$listofmodulesforexternal = explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL);
+		if (!in_array('banque', $listofmodulesforexternal) && !empty($user->socid)) $this->enabled = 0; // disabled for external users
 
-		$this->hidden = ! ($user->rights->banque->lire);
+		$this->hidden = !($user->rights->banque->lire);
 	}
 
 	/**
@@ -77,39 +77,39 @@ class box_comptes extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
-		$this->max=$max;
+		$this->max = $max;
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
         if ($user->rights->banque->lire) {
 			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
-			$sql.= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
-			$sql.= ", b.domiciliation, b.proprio, b.owner_address";
-			$sql.= ", b.account_number, b.currency_code";
-			$sql.= ", b.min_allowed, b.min_desired, comment";
-            $sql.= ', b.fk_accountancy_journal';
-            $sql.= ', aj.code as accountancy_journal';
-            $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
-            $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
-            $sql.= " WHERE b.entity = ".$conf->entity;
-			$sql.= " AND clos = 0";
+			$sql .= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
+			$sql .= ", b.domiciliation, b.proprio, b.owner_address";
+			$sql .= ", b.account_number, b.currency_code";
+			$sql .= ", b.min_allowed, b.min_desired, comment";
+            $sql .= ', b.fk_accountancy_journal';
+            $sql .= ', aj.code as accountancy_journal';
+            $sql .= " FROM ".MAIN_DB_PREFIX."bank_account as b";
+            $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
+            $sql .= " WHERE b.entity = ".$conf->entity;
+			$sql .= " AND clos = 0";
 			//$sql.= " AND courant = 1";
-			$sql.= " ORDER BY label";
-			$sql.= $db->plimit($max, 0);
+			$sql .= " ORDER BY label";
+			$sql .= $this->db->plimit($max, 0);
 
             dol_syslog(get_class($this)."::loadBox", LOG_DEBUG);
-            $result = $db->query($sql);
+            $result = $this->db->query($sql);
             if ($result) {
-                $num = $db->num_rows($result);
+                $num = $this->db->num_rows($result);
 
                 $line = 0;
                 $solde_total = array();
 
-                $account_static = new Account($db);
+                $account_static = new Account($this->db);
                 while ($line < $num) {
-                    $objp = $db->fetch_object($result);
+                    $objp = $this->db->fetch_object($result);
 
                     $account_static->id = $objp->rowid;
 					$account_static->ref = $objp->ref;
@@ -118,7 +118,7 @@ class box_comptes extends ModeleBoxes
                     $account_static->account_number = $objp->account_number;
                     $account_static->currency_code = $objp->currency_code;
                     $account_static->accountancy_journal = $objp->accountancy_journal;
-                    $solde=$account_static->solde(0);
+                    $solde = $account_static->solde(0);
 
                     $solde_total[$objp->currency_code] += $solde;
 
@@ -154,18 +154,18 @@ class box_comptes extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="liste_total right"',
+                        'td' => 'class="liste_total right nowraponall"',
                         'text' => price($solde, 0, $langs, 0, -1, -1, $key)
                     );
                     $line++;
                 }
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

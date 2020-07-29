@@ -20,6 +20,7 @@ Recheck=Haga clic aquí para una prueba más detallada
 ErrorPHPDoesNotSupportSessions=Su instalación de PHP no admite sesiones. Esta función es necesaria para permitir que Dolibarr funcione. Compruebe su configuración de PHP y los permisos del directorio de sesiones.
 ErrorPHPDoesNotSupportGD=Su instalación de PHP no soporta funciones gráficas de GD. No habrá gráficos disponibles.
 ErrorPHPDoesNotSupportCurl=Su instalación de PHP no es compatible con Curl.
+ErrorPHPDoesNotSupportCalendar=Su instalación de PHP no admite extensiones de calendario php.
 ErrorPHPDoesNotSupportUTF8=Su instalación de PHP no es compatible con las funciones UTF8. Dolibarr no puede funcionar correctamente. Resuelve esto antes de instalar Dolibarr.
 ErrorPHPDoesNotSupportIntl=Su instalación de PHP no admite funciones de Intl.
 ErrorDirDoesNotExists=El directorio %s no existe.
@@ -175,7 +176,7 @@ MigrationRemiseExceptEntity=Actualizar el valor del campo de entidad de llx_soci
 MigrationUserRightsEntity=Actualizar el valor del campo de entidad de llx_user_rights
 MigrationUserGroupRightsEntity=Actualizar el valor del campo de entidad de llx_usergroup_rights
 MigrationUserPhotoPath=Migración de rutas de fotos para usuarios.
+MigrationFieldsSocialNetworks=Migración de campos de usuarios en redes sociales (%s)
 ErrorFoundDuringMigration=Se informaron errores durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s">hacer clic aquí</a> , pero es posible que la aplicación o algunas características no funcionen correctamente hasta que se resuelvan los errores.
 YouTryInstallDisabledByDirLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (directorio renombrado con el sufijo .lock). <br>
 YouTryInstallDisabledByFileLock=La aplicación intentó auto actualizarse, pero las páginas de instalación / actualización se han deshabilitado por seguridad (debido a la existencia de un archivo de bloqueo <strong>install.lock</strong> en el directorio de documentos de dolibarr). <br>
-ClickOnLinkOrRemoveManualy=Haga clic en el siguiente enlace. Si siempre ve esta misma página, debe eliminar / cambiar el nombre del archivo install.lock en el directorio de documentos.

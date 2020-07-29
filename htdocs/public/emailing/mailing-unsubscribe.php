@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -27,9 +27,9 @@
  *                  https://myserver/public/emailing/mailing-unsubscribe.php?unsuscrib=1&securitykey=securitykey&tag=abcdefghijklmn
  */
 
-if (! defined('NOLOGIN'))        define("NOLOGIN", 1);			// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');		// Do not check anti CSRF attack test
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
+if (!defined('NOLOGIN'))        define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
 
 /**
  * Header empty
@@ -56,9 +56,9 @@ global $user, $conf, $langs;
 
 $langs->loadLangs(array("main", "mails"));
 
-$tag=GETPOST('tag');
-$unsuscrib=GETPOST('unsuscrib');
-$securitykey=GETPOST('securitykey');
+$tag = GETPOST('tag');
+$unsuscrib = GETPOST('unsuscrib');
+$securitykey = GETPOST('securitykey');
 
 
 /*
@@ -74,7 +74,7 @@ if ($securitykey != $conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY)
 }
 
 
-if (! empty($tag) && ($unsuscrib=='1'))
+if (!empty($tag) && ($unsuscrib == '1'))
 {
 	dol_syslog("public/emailing/mailing-unsubscribe.php : Launch unsubscribe requests", LOG_DEBUG);
 
@@ -82,8 +82,8 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."mailing as m";
 	$sql .= " WHERE mc.fk_mailing = m.rowid AND mc.tag='".$db->escape($tag)."'";
 
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
+	$resql = $db->query($sql);
+	if (!$resql) dol_print_error($db);
 
 	$obj = $db->fetch_object($resql);
 
@@ -94,11 +94,11 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	}
 
 	// Update status of mail in recipient mailing list table
-	$statut='3';
+	$statut = '3';
 	$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=".$statut." WHERE tag='".$db->escape($tag)."'";
 
-	$resql=$db->query($sql);
-	if (! $resql) dol_print_error($db);
+	$resql = $db->query($sql);
+	if (!$resql) dol_print_error($db);
 
 	/*
 	// Update status communication of thirdparty prospect (old usage)
@@ -117,7 +117,7 @@ if (! empty($tag) && ($unsuscrib=='1'))
 	// Update status communication of email (new usage)
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe (date_creat, entity, email) VALUES ('".$db->idate(dol_now())."', ".$db->escape($obj->entity).", '".$db->escape($obj->email)."')";
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	//if (! $resql) dol_print_error($db);	No test on errors, may fail if already unsubscribed
 
 

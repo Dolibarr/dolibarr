@@ -11,7 +11,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -22,7 +22,7 @@ AccountancyCodeAsset = 會計代碼(資產)
 AccountancyCodeDepreciationAsset = 會計代碼(折舊性資產帳號)
 AccountancyCodeDepreciationExpense = 會計代碼(折舊性費用帳號)
 NewAssetType=新資產類型
-AssetsTypeSetup=Asset type setup
+AssetsTypeSetup=資產類型設定
 AssetTypeModified=修改資產類型
 AssetType=資產類型
 AssetsLines=資產
@@ -42,7 +42,7 @@ ModuleAssetsDesc = 資產描述
 AssetsSetup = 資產設定
 Settings = 設定
 AssetsSetupPage = 資產設定頁面
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
+ExtraFieldsAssetsType = 互補屬性(資產類型)
 AssetsType=資產類型
 AssetsTypeId=資產類型ID
 AssetsTypeLabel=資產類型標籤

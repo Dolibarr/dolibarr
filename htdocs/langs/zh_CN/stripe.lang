@@ -16,12 +16,13 @@ StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=您将被重定向到受保护的Stripe页面以输入您的信用卡信息
 Continue=下一个
 ToOfferALinkForOnlinePayment=网址为%s支付
-ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment user interface for a sales order
-ToOfferALinkForOnlinePaymentOnInvoice=网址提供发票一%s在线支付的用户界面
-ToOfferALinkForOnlinePaymentOnContractLine=网址提供了一个合同线%s在线支付的用户界面
-ToOfferALinkForOnlinePaymentOnFreeAmount=网址提供一个免费的网上支付金额%s用户界面
-ToOfferALinkForOnlinePaymentOnMemberSubscription=网址为会员提供订阅%s在线支付的用户界面
-YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (required only for free payment) to add your own payment comment tag.
+ToOfferALinkForOnlinePaymentOnOrder=URL to offer a %s online payment page for a sales order
+ToOfferALinkForOnlinePaymentOnInvoice=URL to offer a %s online payment page for a customer invoice
+ToOfferALinkForOnlinePaymentOnContractLine=URL to offer a %s online payment page for a contract line
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL to offer a %s online payment page of any amount with no existing object
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL to offer a %s online payment page for a member subscription
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=<i>value</i></b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
 SetupStripeToHavePaymentCreatedAutomatically=使用网址<b> %s </b>设置Stripe，以便在Stripe验证时自动创建付款。
 AccountParameter=帐户参数
 UsageParameter=使用参数
@@ -31,6 +32,7 @@ VendorName=供应商名称
 CSSUrlForPaymentForm=付款方式的CSS样式表的URL
 NewStripePaymentReceived=收到新Stripe付款
 NewStripePaymentFailed=新Stripe付款尝试但失败了
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=秘密测试密钥
 STRIPE_TEST_PUBLISHABLE_KEY=可发布的测试密钥
 STRIPE_TEST_WEBHOOK_KEY=Webhook测试密钥
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -73,7 +73,11 @@ class UserTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -85,7 +89,11 @@ class UserTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -192,7 +200,7 @@ class UserTest extends PHPUnit\Framework\TestCase
         $newlocalobject=new User($this->savdb);
         $newlocalobject->initAsSpecimen();
         $this->changeProperties($newlocalobject);
-        $this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
+        $this->assertEquals($this->objCompare($localobject, $newlocalobject, true, array('id','socid','societe_id','note','ref','pass','pass_indatabase','pass_indatabase_crypted','datec','datem','datelastlogin','datepreviouslogin')), array());    // Actual, Expected
 
         return $localobject;
     }
@@ -304,12 +312,12 @@ class UserTest extends PHPUnit\Framework\TestCase
     /**
      * Edit an object to test updates
      *
-     * @param   mixed   $localobject        Object Facture
+     * @param   mixed   $localobject        Object User
      * @return  void
      */
     public function changeProperties(&$localobject)
     {
-        $localobject->note='New note after update';
+        $localobject->note_private='New note after update';
     }
 
     /**
@@ -331,7 +339,7 @@ class UserTest extends PHPUnit\Framework\TestCase
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach($aKeys as $sKey) {
+            foreach ($aKeys as $sKey) {
                 if (in_array($sKey, $fieldstoignorearray))
                     continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey]) {

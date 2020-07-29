@@ -12,32 +12,32 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($conf) || ! is_object($conf))
+if (empty($conf) || !is_object($conf))
 {
 	print "Error, template page can't be called as URL";
 	exit;
 }
 
 
-$object=$GLOBALS['object'];
+$object = $GLOBALS['object'];
 ?>
 
 <!-- BEGIN PHP TEMPLATE VIEW.TPL -->
 <?php
-$head=product_prepare_head($object);
-$titre=$langs->trans("CardProduct".$object->type);
+$head = product_prepare_head($object);
+$titre = $langs->trans("CardProduct".$object->type);
 
 dol_fiche_head($head, 'card', $titre, -1, 'service');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter=" fk_product_type = ".$object->type;
+$object->next_prev_filter = " fk_product_type = ".$object->type;
 
 $shownav = 1;
-if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+if ($user->socid && !in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav = 0;
 
 dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 ?>
@@ -56,8 +56,8 @@ dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 <td><?php echo $object->label; ?></td>
 
 <?php if ($object->photos) { ?>
-<td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblignes; ?>">
-<?php echo $object->photos; ?>
+<td valign="middle" align="center" width="30%" rowspan="<?php echo $object->nblines; ?>">
+	<?php echo $object->photos; ?>
 </td>
 <?php } ?>
 

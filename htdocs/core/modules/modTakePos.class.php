@@ -13,18 +13,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * 	\defgroup   takepos     Module TakePos
  *  \brief      TakePos module descriptor.
  *
- *  \file       htdocs/takepos/core/modules/modTakePos.class.php
+ *  \file       htdocs/core/modules/modTakePos.class.php
  *  \ingroup    takepos
  *  \brief      Description and activation file for module TakePos
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -39,7 +39,7 @@ class modTakePos extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-        global $langs,$conf;
+        global $langs, $conf;
 
         $this->db = $db;
 
@@ -71,21 +71,21 @@ class modTakePos extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='list';
+		$this->picto = 'cash-register';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /takepos/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /takepos/core/modules/barcode)
 		// for specific css file (eg: /takepos/css/takepos.css.php)
 		$this->module_parts = array(
-		                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
-									'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
-									'substitutions' => 1,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
-									'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
-									'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
-									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
-									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
+		                        	'triggers' => 0, // Set this to 1 if module has its own trigger directory (core/triggers)
+									'login' => 0, // Set this to 1 if module has its own login method file (core/login)
+									'substitutions' => 1, // Set this to 1 if module has its own substitution function file (core/substitutions)
+									'menus' => 0, // Set this to 1 if module has its own menus handler directory (core/menus)
+									'theme' => 0, // Set this to 1 if module has its own theme directory (theme)
+		                        	'tpl' => 0, // Set this to 1 if module overwrite template dir (core/tpl)
+									'barcode' => 0, // Set this to 1 if module has its own barcode directory (core/modules/barcode)
+									'models' => 0, // Set this to 1 if module has its own models directory (core/modules/xxx)
 									'hooks' => array() 	                                // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
 		                        );
 
@@ -97,15 +97,15 @@ class modTakePos extends DolibarrModules
 		$this->config_page_url = array("setup.php@takepos");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array('always1'=>"modBanque", 'always2'=>"modFacture", 'always3'=>"modProduct", 'always4'=>'modCategorie', 'FR1'=>'modBlockedLog');			// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array('always1'=>"modBanque", 'always2'=>"modFacture", 'always3'=>"modProduct", 'always4'=>'modCategorie', 'FR1'=>'modBlockedLog'); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("cashdesk");
-		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(4,0);	// Minimum version of Dolibarr required by module
-		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw');                     // Warning to show when we activate module. array('always'='text') or array('FR'='text')
-		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(4, 0); // Minimum version of Dolibarr required by module
+		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw'); // Warning to show when we activate module. array('always'='text') or array('FR'='text')
+		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'TakePosWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
@@ -119,10 +119,10 @@ class modTakePos extends DolibarrModules
 		);
 
 
-		if (! isset($conf->takepos) || ! isset($conf->takepos->enabled))
+		if (!isset($conf->takepos) || !isset($conf->takepos->enabled))
 		{
-			$conf->takepos=new stdClass();
-			$conf->takepos->enabled=0;
+			$conf->takepos = new stdClass();
+			$conf->takepos->enabled = 0;
 		}
 
 
@@ -156,7 +156,7 @@ class modTakePos extends DolibarrModules
 
 
         // Dictionaries
-		$this->dictionaries=array();
+		$this->dictionaries = array();
         /* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@takepos',
@@ -193,37 +193,37 @@ class modTakePos extends DolibarrModules
 
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
 
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 50151;
-		$this->rights[$r][1] = 'Use point of sale';
+		$this->rights[$r][1] = 'Use Point Of Sale';
 		$this->rights[$r][2] = 'a';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'use';
+		$this->rights[$r][4] = 'run';
 
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
+		$this->menu = array(); // List of menus to add
+		$r = 0;
 
 		// Add here entries to declare new menus
 
 		/* BEGIN MODULEBUILDER TOPMENU */
-		$this->menu[$r++]=array('fk_menu'=>'',			                // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-								'type'=>'top',			                // This is a Top menu entry
+		$this->menu[$r++] = array('fk_menu'=>'', // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+								'type'=>'top', // This is a Top menu entry
 								'titre'=>'PointOfSaleShort',
 								'mainmenu'=>'takepos',
 								'leftmenu'=>'',
-								'url'=>'/takepos/takepos.php',
-								'langs'=>'cashdesk',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-								'position'=>1000+$r,
-								'enabled'=>'$conf->takepos->enabled',	// Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
-								'perms'=>'1',			                // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
+								'url'=>'/takepos/index.php',
+								'langs'=>'cashdesk', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+								'position'=>1000 + $r,
+								'enabled'=>'$conf->takepos->enabled', // Define condition to show or hide menu entry. Use '$conf->takepos->enabled' if entry must be visible if module is enabled.
+								'perms'=>'$user->rights->takepos->run', // Use 'perms'=>'$user->rights->takepos->level1->level2' if you want your menu with a permission rules
 								'target'=>'takepos',
-								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+								'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
 
 		/* END MODULEBUILDER TOPMENU */
 
@@ -253,28 +253,6 @@ class modTakePos extends DolibarrModules
 								'target'=>'',
 								'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
 		END MODULEBUILDER LEFTMENU MYOBJECT */
-
-
-		// Exports
-		$r=1;
-
-		/* BEGIN MODULEBUILDER EXPORT MYOBJECT */
-		/*
-		$langs->load("cashdesk");
-		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='myobject@takepos';
-		$keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject';
-		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
-		$r++; */
-		/* END MODULEBUILDER EXPORT MYOBJECT */
 	}
 
 	/**
@@ -287,6 +265,10 @@ class modTakePos extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
+		global $conf, $db;
+
+		dolibarr_set_const($db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
+
 		$this->_load_tables('/takepos/sql/');
 
 		$sql = array();

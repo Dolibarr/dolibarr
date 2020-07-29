@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, seehttp://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,23 +22,23 @@
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/fiscalyear.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/fiscalyear.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","compta"));
+$langs->loadLangs(array("admin", "compta"));
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 	accessforbidden();
-if (! $user->rights->accounting->fiscalyear)
+if (!$user->rights->accounting->fiscalyear->write)
 	accessforbidden();
 
 $id = GETPOST('id', 'int');
 
 // View
-$title = $langs->trans("Fiscalyear") . " - " . $langs->trans("Info");
+$title = $langs->trans("Fiscalyear")." - ".$langs->trans("Info");
 $helpurl = "";
 llxHeader("", $title, $helpurl);
 

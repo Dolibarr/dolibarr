@@ -18,7 +18,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 
@@ -96,4 +96,10 @@ insert into llx_const (name, value, type, visible, entity) VALUES ('PRODUCT_ADDO
 insert into llx_const (name, value, type, visible, entity) VALUES ('CONTRACT_ADDON_PDF_ODT_PATH',  'DOL_DATA_ROOT/doctemplates/contracts', 'chaine', 0, 1);
 insert into llx_const (name, value, type, visible, entity) VALUES ('USERGROUP_ADDON_PDF_ODT_PATH', 'DOL_DATA_ROOT/doctemplates/usergroups', 'chaine', 0, 1);
 insert into llx_const (name, value, type, visible, entity) VALUES ('USER_ADDON_PDF_ODT_PATH',      'DOL_DATA_ROOT/doctemplates/users', 'chaine', 0, 1);
+
+
+--
+-- PRODUCTS
+--
+INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRICE_BASE_TYPE', 0, 'HT', 'string', 0);
 

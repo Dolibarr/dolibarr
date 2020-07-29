@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +24,7 @@
  *	\brief      Fichier de description et activation du module Label
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -47,21 +47,21 @@ class modLabel extends DolibarrModules
 		$this->module_position = '75';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "Gestion des etiquettes";
+		$this->description = "Management of stickers";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='label';
+		$this->picto = 'generic';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/label/temp");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
 
 		// Config pages
 		// $this->config_page_url = array("label.php");
@@ -77,17 +77,17 @@ class modLabel extends DolibarrModules
 		$this->rights_class = 'label';
 
 		$this->rights[1][0] = 601; // id de la permission
-		$this->rights[1][1] = 'Lire les etiquettes'; // libelle de la permission
+		$this->rights[1][1] = 'Read stickers';
 		$this->rights[1][3] = 1; // La permission est-elle une permission par defaut
 		$this->rights[1][4] = 'lire';
 
 		$this->rights[2][0] = 602; // id de la permission
-		$this->rights[2][1] = 'Creer/modifier les etiquettes'; // libelle de la permission
+		$this->rights[2][1] = 'Create/modify stickers';
 		$this->rights[2][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[2][4] = 'creer';
 
 		$this->rights[4][0] = 609; // id de la permission
-		$this->rights[4][1] = 'Supprimer les etiquettes'; // libelle de la permission
+		$this->rights[4][1] = 'Delete stickers';
 		$this->rights[4][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[4][4] = 'supprimer';
 	}

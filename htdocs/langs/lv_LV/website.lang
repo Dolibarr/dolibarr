@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Robotfails (robots.txt)
 WEBSITE_HTACCESS=Tīmekļa vietne .htaccess fails
 WEBSITE_MANIFEST_JSON=Vietnes manifest.json fails
 WEBSITE_README=Fails README.md
+WEBSITE_KEYWORDSDesc=Lai atdalītu vērtības, izmantojiet komatu
 EnterHereLicenseInformation=Ievadiet šeit meta datus vai licences informāciju, lai aizpildītu README.md failu. ja jūs izplatīsit savu vietni kā veidni, fails tiks iekļauts veidņu paketē.
 HtmlHeaderPage=HTML virsraksts (tikai šai lapai)
 PageNameAliasHelp=Lapas nosaukums vai pseidonīms. <br> Šis aizstājvārds tiek izmantots arī, lai izveidotu SEO vietrādi, ja vietne tiek izmantota no Web servera virtuālās saimniekdatora (piemēram, Apacke, Nginx, ...). Izmantojiet pogu "<strong> %s </strong>, lai rediģētu šo aizstājvārdu.
@@ -42,7 +43,8 @@ ViewPageInNewTab=Skatīt lapu jaunā cilnē
 SetAsHomePage=Iestatīt kā mājas lapu
 RealURL=Reāls URL
 ViewWebsiteInProduction=Apskatīt vietni, izmantojot mājas URL
-SetHereVirtualHost=<u> Lietošana ar Apache / NGinx / ... </u> <br> Ja jūs savā tīmekļa serverī (Apache, Nginx, ...) varat izveidot īpašu virtuālo resursdatoru ar iespējotu PHP un saknes direktoriju <br> <strong> %s </strong> <br> pēc tam iestatiet virtuālā uzņēmēja nosaukumu, kuru esat izveidojis tīmekļa vietnes īpašībās, tāpēc priekšskatījumu var izdarīt arī, izmantojot šo īpašo tīmekļa servera piekļuvi vietējā Dolibarr vietā serveri.
+SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
+ExampleToUseInApacheVirtualHostConfig=Piemērs izmantošanai Apache virtuālā resursdatora iestatīšanā:
 YouCanAlsoTestWithPHPS=<u> Izmantojiet ar PHP serveri. </u> <br> Izstrādājot vidi, jūs varat izvēlēties testēt vietni ar PHP tīmekļa serveri (nepieciešams PHP 5.5), palaižot <br><strong> php -S 0.0. 0.0 8080-t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Izmantojiet savu vietni kopā ar citu Dolibarr mitināšanas pakalpojumu sniedzēju</u> <br> Ja jums nav pieejams tāds interneta serveris kā Apache vai NGinx, varat eksportēt un importēt savu vietni citā Dolibarr instancē, kuru nodrošina cits Dolibarr mitināšanas pakalpojumu sniedzējs un kas nodrošina pilnīgu integrāciju ar vietnes moduli. Dažu Dolibarr mitināšanas pakalpojumu sniedzēju sarakstu varat atrast vietnē <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Pārbaudiet arī to, vai virtuālajam serverim ir atļauja <strong>%s</strong> failiem vietnē <br><strong>%s</strong>
@@ -56,7 +58,10 @@ NoPageYet=Vēl nav nevienas lapas
 YouCanCreatePageOrImportTemplate=Jūs varat izveidot jaunu lapu vai importēt pilnu vietnes veidni
 SyntaxHelp=Palīdzība par konkrētiem sintakses padomiem
 YouCanEditHtmlSourceckeditor=Jūs varat rediģēt HTML avota kodu, izmantojot redaktorā pogu "Avots".
-YouCanEditHtmlSource=<br> <span class = "fa fa-bug"> </ span> Jūs varat iekļaut PHP kodu šajā avotā, izmantojot tagus <strong> &lt;? php? &gt; </ strong>. Pieejami šādi globālie mainīgie: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs. <br> <br> <span class = "fa fa-bug"> </ span> Jūs var iekļaut arī citu lapas / konteinera saturu ar šādu sintaksi: <br> <strong> &lt;? php includeContainer ('alias_of_container_to_include'); ? &gt; </ strong> <br> <br> <span class = "fa fa-bug"> </ span> Jūs varat veikt novirzīšanu uz citu lapu / konteineru ar šādu sintaksi (Piezīme: novirzīšana): <br> <strong> &lt;? php redirectToContainer ('alias_ofcontainer_to_redirect_to'); ? &gt; </ strong> <br> <br> <span class = "fa fa-link"> </ span> Lai pievienotu saiti uz citu lapu, izmantojiet sintaksi: <br> <strong> &lt;a href = "alias_of_page_to_link_to .php "&gt;mylink&lt;a&gt; </ strong> <br> <br> <span class =" fa fa-download "> </ span> Lai iekļautu <strong> saiti, lai lejupielādētu </ strong> failu, kas saglabāts <strong> dokumentiem </ strong>, izmantojiet iesaiņojuma <strong> document.php </ strong> mapi: <br> Piemēram, failam dokumentos / ecm (jāreģistrē) sintakse ir: <br> <strong> &lt;a href = "/ document.php? modulepart = ecm & file = [relative_dir /] filename.ext" &gt; </ strong> <br> Ja failā ir dokumenti / mediji (atvērtā direktorijā publiskai piekļuvei), sintakse ir: <br> < strong> &lt;a href = "/ document.php? modulepart = media & file =" [relative_dir /] filename.ext "&gt; </ strong> <br> par failu, kas koplietots ar koplietošanas saiti (atvērtā piekļuve, izmantojot faila koplietošanas hash atslēgu) , sintakse ir: <br> <strong> &lt;a href = "/ document.php? hashp = publicsharekeyoffile" &gt; </ strong> <br> <br> <span clas s = "fa fa-picture-o"> </ span> Lai iekļautu <strong> attēlu </ strong>, kas saglabāts direktorijā <strong> documents </ strong>, izmantojiet <strong> viewimage.php </ strong > iesaiņojums: <br> Piemērs, lai attēls būtu pieejams dokumentos / plašsaziņas līdzekļos (atvērtā direktorijā publiskai piekļuvei), sintakse ir: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = [relative_dir /] filename .ext "&gt; </ strong> <br>
+YouCanEditHtmlSource= <br> <span class="fa fa-bug"> </span> Varat šajā avotā iekļaut PHP kodu, izmantojot tagus <strong> &lt;? php? &gt; a0a65d06. Ir pieejami šādi globālie mainīgie: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs, $ pagelangs. <br> <br> <span class="fa fa-bug"> </span> Varat arī iekļaut citas lappuses / konteinera saturu ar šādu sintakse: <br> a0e7843947c0er0e03_04_03 ? &gt; </strong> <br> <br> <span class="fa fa-bug"> </span> Jūs varat veikt novirzīšanu uz citu lapu / Container ar šādu sintaksi (piezīme: nav izejas kādu saturu pirms novirzīšanas):? <br> <strong> &lt; php redirectToContainer ( "alias_of_container_to_redirect_to '); ? &gt; </strong> <br> <br> <span class="fa fa-link"> </span> Lai pievienotu saiti uz citu lapu, izmantojiet sintaksi: <br> <strong> &lt;a href = "alias_of_page_to_link_to.php" &gt;mylink&lt;a&gt; </strong> <br> <br> <span class="fa fa-download"> </span> Lai iekļautu <strong> saiti uz lejupielādēt </strong> saglabātu failu vērā <strong> dokumentos </strong> katalogs, izmantojiet <strong> document.php </strong> iesaiņojuma: <br> Piemēram, failu stāšanās dokumentu / ECM (nepieciešams pieteicies), sintakse ir:? <br> <strong> &lt;a href = "/ document.php modulepart = ECM & file = [relative_dir / ] filename.ext "&gt; </strong> <br>. Failā dokumentos / plašsaziņas līdzekļos (atvērts direktorijs publiskai piekļuvei) sintakse ir: <br> <strong> a03900df70b030000 "/document.php?modulepart=medias&file=[relative_dir/ ]faila nosaukums.ext"&gt; </strong> <br> failam, kas koplietots ar koplietošanas saiti (atvērta piekļuve, izmantojot faila koplietošanas hash atslēgu04_04_04_04_04_04_04_04_04_04 /document.php?hashp=publicsharekeyoffile"&gt; </strong> <br> <br> <span class="fa fa-picture-o"> </span> Lai iekļautu <strong> attēla </strong> saglabāto vērā <strong> dokumentos </strong> direktorijā, izmantot <strong> viewimage.php </strong> iesaiņojuma: <br> Piemērs, par attēlu dokumentos / plašsaziņas (open publiskās piekļuves direktorijs), sintakse ir: <br> <strong> &lt;img src = "/ viewimage.php? modulepart = medias&amp;file = a [santykis_dir /] faila nosaukuma.ext"
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=Attēlam, kas tiek koplietots ar koplietošanas saiti (atvērta piekļuve, izmantojot faila koplietošanas hash atslēgu), sintakse ir: <br> <strong> &lt;img src = "/ viewimage.php? Hashp = 123456790120f0f0f0f0f0f0c0f0fcfcfcfcfcfcfcfcfcfcfcflcflcfcflcflcfl0f0flffcfcfcflflfcflflflflflflflflflflflflflflflflflflflflflflfcflflflflflflflflflflflflflrlxlrg" "
+YouCanEditHtmlSourceMore= <br>. Citi HTML vai dinamiskā koda piemēri, kas pieejami vietnē <a href="%s" target="_blank">, wiki dokumentācija </a> <br>.
 ClonePage=Klonēt lapu / konteineru
 CloneSite=Klonēt vietni
 SiteAdded=Tīmekļa vietne ir pievienota
@@ -76,7 +81,7 @@ BlogPost=Emuāra ziņa
 WebsiteAccount=Tīmekļa vietnes konts
 WebsiteAccounts=Tīmekļa vietnes konti
 AddWebsiteAccount=Izveidot mājas lapas kontu
-BackToListOfThirdParty=Atpakaļ uz trešo pušu sarakstu
+BackToListForThirdParty=Atpakaļ uz trešo personu sarakstu
 DisableSiteFirst=Vispirms atspējojiet vietni
 MyContainerTitle=Manas tīmekļa vietnes virsraksts
 AnotherContainer=Šis ir veids, kā iekļaut citas lapas / konteinera saturu (šeit, iespējams, iespējot dinamisko kodu, iespējams, ir kļūda, jo iegultais apakštvertne, iespējams, neeksistē)
@@ -84,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Diemžēl šī vietne pašlaik nav pieejama. Lūd
 WEBSITE_USE_WEBSITE_ACCOUNTS=Iespējot tīmekļa vietnes kontu tabulu
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Ļauj tabulai saglabāt tīmekļa vietņu kontus (pieteikšanās / caurlaide) katrai vietnei / trešajai pusei
 YouMustDefineTheHomePage=Vispirms ir jādefinē noklusējuma sākumlapa
-OnlyEditionOfSourceForGrabbedContentFuture=Brīdinājums: Web lapas izveide, importējot ārēju tīmekļa lapu, ir paredzēta pieredzējušiem lietotājiem. Atkarībā no avota lapas sarežģītības importa rezultāts var atšķirties no oriģināla. Arī tad, ja avota lapa izmanto kopējus CSS stilus vai konfliktējošu javascript, tas, ja strādājat šajā lapā, var izjaukt tīmekļa vietnes redaktora izskatu vai funkcijas. Šī metode ir ātrāks veids, kā izveidot lapu, bet ir ieteicams izveidot jaunu lapu no nulles vai no ieteicamās lapas veidnes. no ārējās lapas ("Online" redaktors NAV pieejams)
+OnlyEditionOfSourceForGrabbedContentFuture=Brīdinājums: Web lapas izveidošana, importējot ārēju Web lapu, ir paredzēta pieredzējušiem lietotājiem. Atkarībā no avota lapas sarežģītības importēšanas rezultāts var atšķirties no oriģināla. Arī tad, ja avota lapā tiek izmantoti parastie CSS stili vai konfliktējošais javascript, strādājot ar šo lapu, tas var sabojāt vietnes redaktora izskatu vai funkcijas. Šī metode ir ātrāks veids, kā izveidot lapu, taču ieteicams jauno lapu izveidot no nulles vai no ieteiktās lapas veidnes. <br> Ņemiet vērā arī to, ka iebūvētais redaktors, iespējams, nedarbosies pareizi, ja to izmanto satvertā ārējā lapā.
 OnlyEditionOfSourceForGrabbedContent=Tikai HTML avota izdevums ir pieejams, ja saturs tiek satverts no ārējas vietnes
 GrabImagesInto=Grab arī attēlus, kas atrodami CSS un lapā.
 ImagesShouldBeSavedInto=Attēli jāuzglabā mapē
@@ -102,7 +107,7 @@ ThisPageIsTranslationOf=Šī lapa / konteiners ir tulkojums
 ThisPageHasTranslationPages=Šajā lapā / konteinerā ir tulkojums
 NoWebSiteCreateOneFirst=Vēl nav izveidota neviena vietne. Vispirms izveidojiet vienu.
 GoTo=Iet uz
-DynamicPHPCodeContainsAForbiddenInstruction=Jūs pievienojat dinamisku PHP kodu, kas satur PHP norādījumu &#39; <strong>%s</strong> &#39;, kas pēc noklusējuma ir aizliegta kā dinamisks saturs (skatiet slēptās opcijas WEBSITE_PHP_ALLOW_xxx, lai palielinātu atļauto komandu sarakstu).
+DynamicPHPCodeContainsAForbiddenInstruction=Jūs pievienojat dinamisku PHP kodu, kas satur PHP norādījumu ' <strong>%s</strong> ', kas pēc noklusējuma ir aizliegta kā dinamisks saturs (skatiet slēptās opcijas WEBSITE_PHP_ALLOW_xxx, lai palielinātu atļauto komandu sarakstu).
 NotAllowedToAddDynamicContent=Jums nav atļaujas pievienot vai rediģēt PHP dinamisko saturu tīmekļa vietnēs. Uzdodiet atļauju vai vienkārši saglabājiet kodu php tagos nemainītā veidā.
 ReplaceWebsiteContent=Meklēt vai aizstāt vietnes saturu
 DeleteAlsoJs=Vai arī dzēst visus šajā tīmekļa vietnē raksturīgos javascript failus?
@@ -111,6 +116,22 @@ MyWebsitePages=Manas vietnes lapas
 SearchReplaceInto=Meklēt | Nomainiet uz
 ReplaceString=Jauna virkne
 CSSContentTooltipHelp=Ievadiet šeit CSS saturu. Lai izvairītos no konfliktiem ar lietojumprogrammas CSS, pārliecinieties, ka visa deklarācija ir jāpapildina ar .bodywebsite klasi. Piemēram: <br><br> #mycssselector, input.myclass: virziet kursoru {...} <br> jābūt <br> .bodywebsite #mycssselector, .bodywebsite input.myclass: hover {...} <br><br> Piezīme: ja jums ir liels fails bez šī prefiksa, varat izmantot “lessc”, lai to pārveidotu, lai visur pievienotu .bodywebsite prefiksu.
-LinkAndScriptsHereAreNotLoadedInEditor=Brīdinājums: Šis saturs tiek izvadīts tikai tad, ja vietnei piekļūst no servera. Tas netiek izmantots rediģēšanas režīmā, tāpēc, ja javascript faili ir jāielādē arī rediģēšanas režīmā, vienkārši pievienojiet lapā tagu &#39;script src = ...&#39;.
+LinkAndScriptsHereAreNotLoadedInEditor=Brīdinājums: Šis saturs tiek izvadīts tikai tad, ja vietnei piekļūst no servera. Tas netiek izmantots rediģēšanas režīmā, tāpēc, ja javascript faili ir jāielādē arī rediģēšanas režīmā, vienkārši pievienojiet lapā tagu 'script src = ...'.
 Dynamiccontent=Lapas ar dinamisku saturu paraugs
 ImportSite=Importēt vietnes veidni
+EditInLineOnOff=Režīms “Rediģēt iekļauto” ir %s
+ShowSubContainersOnOff='Dinamiskā satura' izpildes režīms ir %s
+GlobalCSSorJS=Vietnes globālais CSS / JS / galvenes fails
+BackToHomePage=Atpakaļ uz sākumlapu ...
+TranslationLinks=Tulkošanas saites
+YouTryToAccessToAFileThatIsNotAWebsitePage=Jūs mēģināt piekļūt lapai, kas nav pieejama. <br> (ref = %s, type = %s, status = %s)
+UseTextBetween5And70Chars=Lai iegūtu labu SEO praksi, izmantojiet tekstu no 5 līdz 70 rakstzīmēm
+MainLanguage=Galvenā valoda
+OtherLanguages=Citas valodas
+UseManifest=Norādiet failu manifest.json
+PublicAuthorAlias=Publiskā autora pseidonīms
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Pieejamās valodas tiek definētas vietņu īpašumos
+ReplacementDoneInXPages=Aizvietošana veikta %s lappusēs vai konteineros
+RSSFeed=RSS barotne
+RSSFeedDesc=Izmantojot šo URL, varat iegūt RSS plūsmu no jaunākajiem rakstiem ar veidu “blogpost”
+PagesRegenerated=reģenerēta %s lapa (s) / konteiners (-i)

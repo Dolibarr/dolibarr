@@ -15,18 +15,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       htdocs/don/class/dontats.class.php
+ *  \file       htdocs/don/class/donstats.class.php
  *  \ingroup    donations
  *  \brief      File of class to manage donations statistics
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
-include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
+include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
@@ -39,11 +39,22 @@ class DonationStats extends Stats
 	 */
 	public $table_element;
 
-	public  $socid;
+	public $socid;
     public $userid;
 
+    /**
+     * @var string FROM
+     */
     public $from;
+
+    /**
+     * @var string field
+     */
 	public $field;
+
+	/**
+	 * @var string WHERE
+	 */
     public $where;
 
 
@@ -65,22 +76,22 @@ class DonationStats extends Stats
         $this->userid = $userid;
 		$this->cachefilesuffix = $mode;
 
-        $object=new Don($this->db);
+        $object = new Don($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as d";
 		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 		//$this->field='weight';	// Warning, unit of weight is NOT USED AND MUST BE
-		$this->where.= " d.fk_statut > 0";    // Not draft and not cancelled
+		$this->where .= " d.fk_statut > 0"; // Not draft and not cancelled
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where.= " AND d.entity = ".$conf->entity;
-		if ($this->userid > 0) $this->where.=' WHERE c.fk_user_author = '.$this->userid;
+		$this->where .= " AND d.entity = ".$conf->entity;
+		if ($this->userid > 0) $this->where .= ' WHERE c.fk_user_author = '.$this->userid;
     }
 
     /**
      *  Return shipment number by month for a year
      *
 	 *  @param	int		$year		Year to scan
-     *  @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *  @param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
 	 *  @return	array				Array with number by month
      */
     public function getNbByMonth($year, $format = 0)
@@ -88,13 +99,13 @@ class DonationStats extends Stats
         global $user;
 
         $sql = "SELECT date_format(d.datedon,'%m') as dm, COUNT(*) as nb";
-		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
-		$sql.= " AND ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " FROM ".$this->from;
+		$sql .= " WHERE d.datedon BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " AND ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
-		$res=$this->_getNbByMonth($year, $sql, $format);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		return $res;
     }
 
@@ -109,10 +120,10 @@ class DonationStats extends Stats
 		global $user;
 
 		$sql = "SELECT date_format(d.datedon,'%Y') as dm, COUNT(*) as nb, SUM(d.".$this->field.")";
-		$sql.= " FROM ".$this->from;
-		$sql.= " WHERE ".$this->where;
-		$sql.= " GROUP BY dm";
-        $sql.= $this->db->order('dm', 'DESC');
+		$sql .= " FROM ".$this->from;
+		$sql .= " WHERE ".$this->where;
+		$sql .= " GROUP BY dm";
+        $sql .= $this->db->order('dm', 'DESC');
 
 		return $this->_getNbByYear($sql);
 	}
@@ -127,10 +138,10 @@ class DonationStats extends Stats
         global $user;
 
         $sql = "SELECT date_format(d.datedon,'%Y') as year, COUNT(*) as nb, SUM(d.".$this->field.") as total, AVG(".$this->field.") as avg";
-        $sql.= " FROM ".$this->from;
-        $sql.= " WHERE ".$this->where;
-        $sql.= " GROUP BY year";
-        $sql.= $this->db->order('year', 'DESC');
+        $sql .= " FROM ".$this->from;
+        $sql .= " WHERE ".$this->where;
+        $sql .= " GROUP BY year";
+        $sql .= $this->db->order('year', 'DESC');
 
         return $this->_getAllByYear($sql);
     }

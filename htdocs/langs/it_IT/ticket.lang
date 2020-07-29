@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -21,7 +21,7 @@
 Module56000Name=Ticket
 Module56000Desc=Sistema di ticket per la gestione di problemi o richieste
 
-Permission56001=See tickets
+Permission56001=Visualizza tickets
 Permission56002=Modify tickets
 Permission56003=Delete tickets
 Permission56004=Manage tickets
@@ -30,10 +30,14 @@ Permission56005=See tickets of all third parties (not effective for external use
 TicketDictType=Ticket - Types
 TicketDictCategory=Ticket - Groupes
 TicketDictSeverity=Ticket - Severities
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
 TicketTypeShortBUGHARD=Dysfonctionnement matériel
 TicketTypeShortCOM=Commercial question
-TicketTypeShortINCIDENT=Richiesta di assistenza
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug o problemi
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=Progetto
 TicketTypeShortOTHER=Altro
 
@@ -60,7 +64,7 @@ NotRead=Non letto
 Read=Da leggere
 Assigned=Assegnato
 InProgress=Avviato
-NeedMoreInformation=Waiting for information
+NeedMoreInformation=In attesa di informazioni
 Answered=Answered
 Waiting=In attesa
 Closed=Chiuso
@@ -86,7 +90,7 @@ TicketParamModule=Module variable setup
 TicketParamMail=Email setup
 TicketEmailNotificationFrom=Notification email from
 TicketEmailNotificationFromHelp=Used into ticket message answer by example
-TicketEmailNotificationTo=Notifications email to
+TicketEmailNotificationTo=Notifiche via email a
 TicketEmailNotificationToHelp=Invia email di notifica a questo indirizzo
 TicketNewEmailBodyLabel=Text message sent after creating a ticket
 TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
@@ -126,10 +130,14 @@ TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify third party at creation
 TicketGroup=Gruppo
 TicketsDisableCustomerEmail=Always disable emails when a ticket is created from public interface
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Ticket (Home)
+TicketsIndex=Area Tickets
 TicketList=List of tickets
 TicketAssignedToMeInfos=This page display ticket list created by or assigned to current user
 NoTicketsFound=No ticket found
@@ -137,6 +145,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=View all tickets
 TicketViewNonClosedOnly=View only open tickets
 TicketStatByStatus=Tickets by status
+OrderByDateAsc=Ordina per data crescente
+OrderByDateDesc=Ordina per data decrescente
+ShowAsConversation=Mostra come elenco di conversazioni
+MessageListViewType=Mostra come elenco di tabelle
 
 #
 # Ticket card
@@ -195,7 +207,7 @@ TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of th
 TicketMessageMailSignature=Firma
 TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
 TicketMessageMailSignatureText=<p>Sincerely,</p><p>--</p>
-TicketMessageMailSignatureLabelAdmin=Signature of response email
+TicketMessageMailSignatureLabelAdmin=Firma dell'email di risposta
 TicketMessageMailSignatureHelpAdmin=Questo testo verrà inserito dopo il messaggio di risposta
 TicketMessageHelp=Only this text will be saved in the message list on ticket card.
 TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
@@ -211,8 +223,8 @@ MarkMessageAsPrivate=Mark message as private
 TicketMessagePrivateHelp=This message will not display to external users
 TicketEmailOriginIssuer=Issuer at origin of the tickets
 InitialMessage=Initial Message
-LinkToAContract=Link to a contract
-TicketPleaseSelectAContract=Select a contract
+LinkToAContract=Collega ad un contratto
+TicketPleaseSelectAContract=Seleziona un contratto
 UnableToCreateInterIfNoSocid=Can not create an intervention when no third party is defined
 TicketMailExchanges=Mail exchanges
 TicketInitialMessageModified=Initial message modified
@@ -222,6 +234,9 @@ TicketConfirmChangeStatus=Confirm the status change: %s ?
 TicketLogStatusChanged=Status changed: %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
 Unread=Unread
+TicketNotCreatedFromPublicInterface=Non disponibile. Il ticket non è stato creato dall'interfaccia pubblica.
+PublicInterfaceNotEnabled=L'interfaccia pubblica non è stata abilitata
+ErrorTicketRefRequired=È richiesto il nome di riferimento del biglietto
 
 #
 # Logs
@@ -243,7 +258,7 @@ TicketPublicDesc=You can create a support ticket or check from an existing ID.
 YourTicketSuccessfullySaved=Ticket has been successfully saved!
 MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s.
 PleaseRememberThisId=Please keep the tracking number that we might ask you later.
-TicketNewEmailSubject=Ticket creation confirmation
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=New support ticket
 TicketNewEmailBody=Questa email automatica conferma che è stato registrato un nuovo ticket
 TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
@@ -262,14 +277,14 @@ Subject=Oggetto
 ViewTicket=Vedi ticket
 ViewMyTicketList=Vedi l'elenco dei miei ticket
 ErrorEmailMustExistToCreateTicket=Error: email address not found in our database
-TicketNewEmailSubjectAdmin=Nuovo ticket creato
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see information:</p>
 SeeThisTicketIntomanagementInterface=See ticket in management interface
 TicketPublicInterfaceForbidden=The public interface for the tickets was not enabled
 ErrorEmailOrTrackingInvalid=Bad value for tracking ID or email
 OldUser=Old user
 NewUser=Nuovo utente
-NumberOfTicketsByMonth=Number of tickets per month
+NumberOfTicketsByMonth=Numero di ticket per mese
 NbOfTickets=Number of tickets
 # notifications
 TicketNotificationEmailSubject=Ticket %s updated

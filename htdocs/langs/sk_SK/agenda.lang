@@ -60,9 +60,10 @@ MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Zásielka %s overená
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=Zásielka %s zmazaná
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Objednať %s overená
 OrderDeliveredInDolibarr=Objednávka %s doručená
@@ -76,6 +77,7 @@ ContractSentByEMail=Contract %s sent by email
 OrderSentByEMail=Sales order %s sent by email
 InvoiceSentByEMail=Customer invoice %s sent by email
 SupplierOrderSentByEMail=Purchase order %s sent by email
+ORDER_SUPPLIER_DELETEInDolibarr=Purchase order %s deleted
 SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= Zásielka %s overená
@@ -83,9 +85,15 @@ InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=Ponuka zmazaná
 OrderDeleted=Objednávka zmazaná
 InvoiceDeleted=Faktúra zmazaná
+DraftInvoiceDeleted=Draft invoice deleted
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
+HOLIDAY_CREATEInDolibarr=Request for leave %s created
+HOLIDAY_MODIFYInDolibarr=Request for leave %s modified
+HOLIDAY_APPROVEInDolibarr=Request for leave %s approved
+HOLIDAY_VALIDATEInDolibarr=Request for leave %s validated
+HOLIDAY_DELETEInDolibarr=Request for leave %s deleted
 EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
 EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
 EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
@@ -99,6 +107,16 @@ TICKET_MODIFYInDolibarr=Ticket %s modified
 TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
+BOM_VALIDATEInDolibarr=BOM validated
+BOM_UNVALIDATEInDolibarr=BOM unvalidated
+BOM_CLOSEInDolibarr=BOM disabled
+BOM_REOPENInDolibarr=BOM reopen
+BOM_DELETEInDolibarr=BOM deleted
+MRP_MO_VALIDATEInDolibarr=MO validated
+MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
+MRP_MO_PRODUCEDInDolibarr=MO produced
+MRP_MO_DELETEInDolibarr=MO deleted
+MRP_MO_CANCELInDolibarr=MO canceled
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Dátum začatia
@@ -109,6 +127,7 @@ AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not own
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=Zobraziť narodeniny kontaktov
 AgendaHideBirthdayEvents=Skryť naroodeniny kontaktov
 Busy=Zaneprázdnený
@@ -136,3 +155,6 @@ EveryMonth=Každý mesiac
 DayOfMonth=Deň v mesiaci
 DayOfWeek=Deň v týždni
 DateStartPlusOne=Čas začatia + 1 hodina
+SetAllEventsToTodo=Set all events to todo
+SetAllEventsToInProgress=Set all events to in progress
+SetAllEventsToFinished=Set all events to finished

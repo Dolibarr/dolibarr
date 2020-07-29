@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
 llxHeader();
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
@@ -51,7 +51,7 @@ $fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=receptionstats&file=reception
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
-if (! $mesg)
+if (!$mesg)
 {
     $px->SetData($data);
     $px->SetMaxValue($px->GetCeilMaxValue());
@@ -60,11 +60,10 @@ if (! $mesg)
     $px->SetYLabel($langs->trans("NbOfOrders"));
     $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
     $px->draw($filename, $fileurl);
 }
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 print '<tr><td class="center">Nombre d reception par mois</td>';
 print '<td class="center">';
 print $px->show();

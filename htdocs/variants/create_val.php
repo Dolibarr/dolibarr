@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../main.inc.php';
@@ -24,9 +24,9 @@ $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $value = GETPOST('value', 'alpha');
 
-$action=GETPOST('action', 'alpha');
-$cancel=GETPOST('cancel', 'alpha');
-$backtopage=GETPOST('backtopage', 'alpha');
+$action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 $object = new ProductAttribute($db);
 $objectval = new ProductAttributeValue($db);
@@ -43,9 +43,9 @@ if ($object->fetch($id) < 1) {
 
 if ($cancel)
 {
-    $action='';
-    header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
-    exit();
+	$action = '';
+	header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
+	exit();
 }
 
 // None
@@ -61,7 +61,6 @@ if ($action == 'add')
 	if (empty($ref) || empty($value)) {
 		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
-
 		$objectval->fk_product_attribute = $object->id;
 		$objectval->ref = $ref;
 		$objectval->value = $value;
@@ -82,9 +81,9 @@ $title = $langs->trans('ProductAttributeName', dol_htmlentities($object->label))
 
 llxHeader('', $title);
 
-$h=0;
+$h = 0;
 $head[$h][0] = DOL_URL_ROOT.'/variants/card.php?id='.$object->id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("ProductAttributeName");
 $head[$h][2] = 'variant';
 $h++;
 
@@ -113,7 +112,7 @@ print '<br>';
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="add">';
 print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,7 +23,7 @@
  *  \ingroup    debugbar
  *  \brief      Description and activation file for module debugbar
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -54,7 +54,7 @@ class modDebugBar extends DolibarrModules
         // Possible values for version are: 'development', 'experimental', 'dolibarr' or version
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        $this->picto='technic';
+        $this->picto = 'bug';
 
         $this->module_parts = array('moduleforexternal' => 0);
 
@@ -62,7 +62,7 @@ class modDebugBar extends DolibarrModules
         $this->dirs = array();
 
         // Dependencies
-        $this->depends = array();        // May be used for product or service or third party module
+        $this->depends = array(); // May be used for product or service or third party module
         $this->requiredby = array();
 
         // Config pages

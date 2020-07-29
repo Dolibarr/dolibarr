@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
-StripeSetup=Stripe module setup
-StripeDesc=Offer customers a Stripe online payment page for payments with credit/cebit cards via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeSetup=Impostazione modulo Stripe
+StripeDesc=Offri ai clienti una pagina di pagamento online Stripe per pagamenti con carte di credito / debito tramite <a href="http://www.stripe.com" target="_blank">Stripe</a> . Questo modulo può essere usato per consentire ai tuoi clienti di effettuare pagamenti ad-hoc o per pagamenti relativi a un particolare oggetto Dolibarr (fattura, ordine, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
 PaymentForm=Forma di pagamento
@@ -21,6 +21,7 @@ ToOfferALinkForOnlinePaymentOnInvoice=URL per il pagamento %s di una fattura
 ToOfferALinkForOnlinePaymentOnContractLine=URL per il pagamento %s di una riga di contratto
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL per il pagamento %s di un importo
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL per il pagamento %s dell'adesione di un membro
+ToOfferALinkForOnlinePaymentOnDonation=URL to offer a %s online payment page for payment of a donation
 YouCanAddTagOnUrl=Puoi anche aggiungere a qualunque di questi url il parametro <b>&tag=<i>value</i></b> (richiesto solo per il pagamento gratuito) per aggiungere una tag con un tuo commento.
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
 AccountParameter=Dati account
@@ -29,8 +30,9 @@ InformationToFindParameters=Aiuto per trovare informazioni sul tuo account %s
 STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
 VendorName=Nome del venditore
 CSSUrlForPaymentForm=URL del foglio di stile CSS per il modulo di pagamento
-NewStripePaymentReceived=New Stripe payment received
-NewStripePaymentFailed=New Stripe payment tried but failed
+NewStripePaymentReceived=Nuovo pagamento Stripe ricevuto
+NewStripePaymentFailed=Nuovo pagamento Stripe provato ma non riuscito
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=Secret test key
 STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
 STRIPE_TEST_WEBHOOK_KEY=Webhook test key
@@ -39,7 +41,7 @@ STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
 STRIPE_LIVE_WEBHOOK_KEY=Webhook live key
 ONLINE_PAYMENT_WAREHOUSE=Stock to use for stock decrease when online payment is done<br>(TODO When option to decrease stock is done on an action on invoice and the online payment generate itself the invoice ?)
 StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)
-StripeImportPayment=Import Stripe payments
+StripeImportPayment=Importa pagamenti Stripe
 ExampleOfTestCreditCard=Example of credit card for test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 StripeGateways=Stripe gateways
 OAUTH_STRIPE_TEST_ID=Stripe Connect Client ID (ca_...)
@@ -49,7 +51,7 @@ StripeAccount=Stripe account
 StripeChargeList=List of Stripe charges
 StripeTransactionList=List of Stripe transactions
 StripeCustomerId=Stripe customer id
-StripePaymentModes=Stripe payment modes
+StripePaymentModes=Tipo di pagamento Stripe
 LocalID=Local ID
 StripeID=Stripe ID
 NameOnCard=Name on card
@@ -67,3 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

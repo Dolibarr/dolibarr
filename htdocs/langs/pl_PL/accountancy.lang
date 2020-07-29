@@ -1,4 +1,5 @@
-# Dolibarr language file - en_US - Accounting Expert
+# Dolibarr language file - en_US - Accountancy (Double entries)
+Accountancy=Księgowość
 Accounting=Księgowość
 ACCOUNTING_EXPORT_SEPARATORCSV=Separator kolumn dla eksportowanego pliku
 ACCOUNTING_EXPORT_DATE=Format daty dla eksportowanego pliku 
@@ -15,13 +16,13 @@ ThisService=Ta usługa
 ThisProduct=Ten produkt
 DefaultForService=Domyślny dla usługi
 DefaultForProduct=Domyślny dla produktu
-CantSuggest=Nie można zaproponować
+CantSuggest=Nie mogę zasugerować
 AccountancySetupDoneFromAccountancyMenu=Most setup of the accountancy is done from the menu %s
 ConfigAccountingExpert=Konfiguracja modułu eksperta księgowego
 Journalization=Dokumentowanie
 Journaux=Dzienniki
 JournalFinancial=Dzienniki finansowe
-BackToChartofaccounts=Powrót planu kont
+BackToChartofaccounts=Zwróć plan kont
 Chartofaccounts=Plan kont
 CurrentDedicatedAccountingAccount=Aktualne dedykowane konto
 AssignDedicatedAccountingAccount=Nowe konto do przypisania
@@ -31,34 +32,34 @@ OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to an acc
 OtherInfo=Inne informacje
 DeleteCptCategory=Usuń konto księgowe z grupy
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group?
-JournalizationInLedgerStatus=Status of journalization
+JournalizationInLedgerStatus=Status dokumentowania
 AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
-DetailByAccount=Show detail by account
-AccountWithNonZeroValues=Accounts with non-zero values
-ListOfAccounts=List of accounts
-CountriesInEEC=Countries in EEC
-CountriesNotInEEC=Countries not in EEC
-CountriesInEECExceptMe=Countries in EEC except %s
-CountriesExceptMe=All countries except %s
-AccountantFiles=Export accounting documents
+DetailByAccount=Pokaż szczegóły konta
+AccountWithNonZeroValues=Konta z wartościami niezerowymi
+ListOfAccounts=Lista kont
+CountriesInEEC=Kraje UE
+CountriesNotInEEC=Kraje spoza UE
+CountriesInEECExceptMe=Kraje UE oprócz %s
+CountriesExceptMe=Wszystkie kraje oprócz %s
+AccountantFiles=Eksportuj dokumenty księgowe
 
 MainAccountForCustomersNotDefined=Główne konto księgowe dla klientów nie zdefiniowane w ustawieniach
-MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
+MainAccountForSuppliersNotDefined=Główne konto rozliczeniowe dla dostawców niezdefiniowane w konfiguracji
 MainAccountForUsersNotDefined=Główne konto księgowe dla użytkowników nie zdefiniowane w ustawieniach
 MainAccountForVatPaymentNotDefined=Główne konto księgowe dla płatności VAT nie zdefiniowane w ustawieniach
 MainAccountForSubscriptionPaymentNotDefined=Main accounting account for subscription payment not defined in setup
 
-AccountancyArea=Accounting area
+AccountancyArea=Strefa księgowości
 AccountancyAreaDescIntro=Usage of the accountancy module is done in several step:
 AccountancyAreaDescActionOnce=Następujące akcje są wykonywane zwykle tylko raz lub raz w roku...
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
 AccountancyAreaDescActionFreq=Następujące akcje są wykonywane zwykle każdego miesiąca, tygodnia lub dnia dla naprawdę wielkich firm...
 
 AccountancyAreaDescJournalSetup=STEP %s: Create or check content of your journal list from menu %s
-AccountancyAreaDescChartModel=STEP %s: Create a model of chart of account from menu %s
-AccountancyAreaDescChart=STEP %s: Create or check content of your chart of account from menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=Krok %s: Zdefiniuj konta księgowe dla każdej stawki VAT. W tym celu użyj pozycji menu %s.
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
@@ -96,14 +97,16 @@ MenuTaxAccounts=Konta podatkowe
 MenuExpenseReportAccounts=Konta raportu kosztów
 MenuLoanAccounts=Konta kredytowe
 MenuProductsAccounts=Konta produktów
-MenuClosureAccounts=Closure accounts
+MenuClosureAccounts=Zamknięte konta
+MenuAccountancyClosure=Zamknięte
+MenuAccountancyValidationMovements=Validate movements
 ProductsBinding=Konta produktów
 TransferInAccounting=Transfer in accounting
-RegistrationInAccounting=Registration in accounting
-Binding=Dowiązane do kont
+RegistrationInAccounting=Rejestracja w rachunkowości
+Binding=Powiązanie z kontami
 CustomersVentilation=Powiązania do faktury klienta
 SuppliersVentilation=Vendor invoice binding
-ExpenseReportsVentilation=Expense report binding
+ExpenseReportsVentilation=Wiążący raport z wydatków
 CreateMvts=Utwórz nową transakcję
 UpdateMvts=Modyfikacja transakcji
 ValidTransaction=Potwierdź transakcję
@@ -112,12 +115,13 @@ Bookkeeping=Księga główna
 AccountBalance=Bilans konta
 ObjectsRef=Source object ref
 CAHTF=Total purchase vendor before tax
-TotalExpenseReport=Total expense report
+TotalExpenseReport=Raport z całkowitych wydatków
 InvoiceLines=Pozycje faktury do powiązania
 InvoiceLinesDone=Bound lines of invoices
 ExpenseReportLines=Linie raportów kosztów do dowiązania
 ExpenseReportLinesDone=Bound lines of expense reports
 IntoAccount=Bind line with the accounting account
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Powiąż
@@ -150,12 +154,12 @@ ACCOUNTING_SELL_JOURNAL=Dziennik sprzedaży
 ACCOUNTING_PURCHASE_JOURNAL=Dziennik zakupów
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Dziennik różnic
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Dziennik raportów kosztowych
-ACCOUNTING_SOCIAL_JOURNAL=Czasopismo Społecznego
-ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
+ACCOUNTING_SOCIAL_JOURNAL=Dziennik społecznościowy
+ACCOUNTING_HAS_NEW_JOURNAL=Ma nowy dziennik
 
 ACCOUNTING_RESULT_PROFIT=Result accounting account (Profit)
 ACCOUNTING_RESULT_LOSS=Result accounting account (Loss)
-ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Journal of closure
+ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=Dziennik zamknięcia
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Accounting account of transitional bank transfer
 TransitionalAccount=Transitional bank transfer account
@@ -164,12 +168,19 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Konto księgowe dla oczekujących
 DONATION_ACCOUNTINGACCOUNT=Konto księgowe dla zarejestrowanych dotatcji
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=Accounting account to register subscriptions
 
-ACCOUNTING_PRODUCT_BUY_ACCOUNT=Konto księgowe używane domyślnie dla kupionych produktów (używane jeżeli nie zdefiniowano konta w arkuszu produktu)
+ACCOUNTING_PRODUCT_BUY_ACCOUNT=Accounting account by default for the bought products (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=Accounting account by default for the bought products in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought products and imported out of EEC (used if not defined in the product sheet)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Konto księgowe używane domyślnie dla sprzedanych produktów (używane jeżeli nie zdefiniowano konta w arkuszu produktu)
-ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the sold products in EEC (used if not defined in the product sheet)
-ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the sold products export out of EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=Accounting account by default for the products sold in EEC (used if not defined in the product sheet)
+ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=Accounting account by default for the products sold and exported out of EEC (used if not defined in the product sheet)
+
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Konto księgowe używane domyślnie dla kupionych usług (używane jeżeli nie zdefiniowano konta w arkuszu produktu)
+ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=Accounting account by default for the bought services in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=Accounting account by default for the bought services and imported out of EEC (used if not defined in the service sheet)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Konto księgowe używane domyślnie dla sprzedanych usług (używane jeżeli nie zdefiniowano konta w arkuszu produktu)
+ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=Accounting account by default for the services sold in EEC (used if not defined in the service sheet)
+ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=Accounting account by default for the services sold and exported out of EEC (used if not defined in the service sheet)
 
 Doctype=Rodzaj dokumentu
 Docdate=Data
@@ -192,9 +203,10 @@ ByPersonalizedAccountGroups=By personalized groups
 ByYear=Według roku
 NotMatch=Nie ustawione
 DeleteMvt=Usuń linie z księgi głównej
+DelMonth=Month to delete
 DelYear=Rok do usunęcia
 DelJournal=Dziennik do usunięcia
-ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criterion is required.
+ConfirmDeleteMvt=This will delete all lines of the Ledger for the year/month and/or from a specific journal (At least one criterion is required). You will have to reuse the feature 'Registration in accounting' to have the deleted record back in the ledger.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
 FinanceJournal=Dziennik finansów
 ExpenseReportsJournal=Dziennik raportów kosztów
@@ -218,13 +230,19 @@ ListAccounts=Lista kont księgowych
 UnknownAccountForThirdparty=Unknown third-party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third-party account. Blocking error
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Third-party account not defined or third party unknown. We will use %s
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unknown and subledger not defined on the payment. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
+OpeningBalance=Opening balance
+ShowOpeningBalance=Show opening balance
+HideOpeningBalance=Hide opening balance
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=Grupa konta
-Pcgsubtype=Podgrupa konta
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+
+Reconcilable=Reconcilable
 
 TotalVente=Łączny obrót przed opodatkowaniem
 TotalMarge=Całkowita marża sprzedaży
@@ -235,12 +253,18 @@ DescVentilDoneCustomer=Consult here the list of the lines of invoices customers 
 DescVentilTodoCustomer=Powiąż pozycje faktury aktualnie nie związane  z kontem księgowym produktu
 ChangeAccount=Zmień konto księgowe dla zaznaczonych produktów/usług na następujące konto księgowe:
 Vide=-
-DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account (only record not already transfered in accountancy are visible)
 DescVentilDoneSupplier=Consult here the list of the lines of vendor invoices and their accounting account
 DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
 DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
+
+DescClosure=Consult here the number of movements by month who are not validated & fiscal years already open
+OverviewOfMovementsNotValidated=Step 1/ Overview of movements not validated. (Necessary to close a fiscal year)
+ValidateMovements=Validate movements
+DescValidateMovements=Any modification or deletion of writing, lettering and deletes will be prohibited. All entries for an exercise must be validated otherwise closing will not be possible
+SelectMonthAndValidate=Select month and validate movements
 
 ValidateHistory=Dowiąż automatycznie
 AutomaticBindingDone=Automatyczne dowiązanie ukończone
@@ -256,6 +280,8 @@ ListOfProductsWithoutAccountingAccount=Lista produktów nie dowiązanych do żad
 ChangeBinding=Zmień dowiązanie
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet accounted in ledger
+ShowTutorial=Show Tutorial
+NotReconciled=Not reconciled
 
 ## Admin
 ApplyMassCategories=Dodaj masowo kategorie
@@ -264,7 +290,7 @@ CategoryDeleted=Kategoria dla konta księgowego została usunięta
 AccountingJournals=Dzienniki kont księgowych
 AccountingJournal=Dziennik księgowy
 NewAccountingJournal=Nowy dziennik księgowy
-ShowAccoutingJournal=Wyświetl dziennik konta księgowego
+ShowAccountingJournal=Wyświetl dziennik konta księgowego
 NatureOfJournal=Nature of Journal
 AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Sprzedaż
@@ -291,11 +317,13 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
-Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
+Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Chart of accounts Id
 
 ## Tools - Init accounting account on product / service
@@ -308,10 +336,14 @@ OptionModeProductSell=Tryb sprzedaży
 OptionModeProductSellIntra=Mode sales exported in EEC
 OptionModeProductSellExport=Mode sales exported in other countries
 OptionModeProductBuy=Tryb zakupów
+OptionModeProductBuyIntra=Mode purchases imported in EEC
+OptionModeProductBuyExport=Mode purchased imported from other countries
 OptionModeProductSellDesc=Pokaż wszystkie produkty z kontem księgowym dla sprzedaży
 OptionModeProductSellIntraDesc=Show all products with accounting account for sales in EEC.
 OptionModeProductSellExportDesc=Show all products with accounting account for other foreign sales.
 OptionModeProductBuyDesc=Pokaż wszystkie produkty z kontem księgowym dla zakupów
+OptionModeProductBuyIntraDesc=Show all products with accounting account for purchases in EEC.
+OptionModeProductBuyExportDesc=Show all products with accounting account for other foreign purchases.
 CleanFixHistory=Remove accounting code from lines that not exists into charts of account
 CleanHistory=Resetuj wszystkie dowiązania dla wybranego roku
 PredefinedGroups=Predefined groups
@@ -322,6 +354,8 @@ AccountRemovedFromGroup=Account removed from group
 SaleLocal=Local sale
 SaleExport=Export sale
 SaleEEC=Sale in EEC
+SaleEECWithVAT=Sale in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale in EEC with no VAT but the VAT ID of thirdparty is not defined. We fallback on the product account for standard sales. You can fix the VAT ID of thirdparty or the product account if needed.
 
 ## Dictionary
 Range=Zakres konta księgowego

@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=نمایش همۀ برگه‌های مربوط به اشخاص �
 TicketDictType=برگه‌ها - انواع
 TicketDictCategory=برگه‌ها - دسته‌بندی‌ها
 TicketDictSeverity=برگه‌ها - سطح اهمیت
+TicketDictResolution=Ticket - Resolution
 TicketTypeShortBUGSOFT=اشکال نرم‌افزاری
 TicketTypeShortBUGHARD=اشکال نرم‌افزاری
 TicketTypeShortCOM=سوال تجاری
-TicketTypeShortINCIDENT=درخواست پشتیبانی
+
+TicketTypeShortHELP=Request for functionnal help
+TicketTypeShortISSUE=Issue, bug or problem
+TicketTypeShortREQUEST=Change or enhancement request
 TicketTypeShortPROJET=طرح
 TicketTypeShortOTHER=سایر
 
@@ -126,10 +130,14 @@ TicketNumberingModules=واحد شماره‌دهی برگه‌های پشتیب
 TicketNotifyTiersAtCreation=اطلاع‌رسانی به شخص‌سوم در هنگام ساخت
 TicketGroup=گروه
 TicketsDisableCustomerEmail=همواره در هنگامی که یک برگۀ‌پشتیبانی از طریق رابط عمومی ساخته می‌شود، قابلیت رایانامه غیرفعال شود
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=برگۀ‌پشتیبانی - خانه
+TicketsIndex=Tickets area
 TicketList=فهرست برگه‌ها
 TicketAssignedToMeInfos=این برگه نمایش دهندۀ برگه‌های پشتیبانی است که به کاربر جاری نسبت داشته شده یا توسط وی ساخته شده است
 NoTicketsFound=برگه‌ای پیدا نشد
@@ -137,6 +145,10 @@ NoUnreadTicketsFound=No unread ticket found
 TicketViewAllTickets=نمایش همۀ برگه‌ها
 TicketViewNonClosedOnly=نمایش محدود به برگه‌های پشتیبانی باز
 TicketStatByStatus=برگه‌ها بر حسب وضعیت
+OrderByDateAsc=Sort by ascending date
+OrderByDateDesc=Sort by descending date
+ShowAsConversation=Show as conversation list
+MessageListViewType=Show as table list
 
 #
 # Ticket card
@@ -222,6 +234,9 @@ TicketConfirmChangeStatus=تائید تغییر وضعیت به: %s ؟
 TicketLogStatusChanged=وضعیت تغییر پیدا کرد: %s به %s
 TicketNotNotifyTiersAtCreate=عدم اطلاع‌رسانی به شرکت در هنگام ساخت
 Unread=خوانده نشده
+TicketNotCreatedFromPublicInterface=Not available. Ticket was not created from public interface.
+PublicInterfaceNotEnabled=Public interface was not enabled
+ErrorTicketRefRequired=Ticket reference name is required
 
 #
 # Logs
@@ -231,7 +246,7 @@ NoLogForThisTicket=هنوز گزارشی برای این برگه وجود ند�
 TicketLogAssignedTo=برگۀ %s به %s نسبت داده شد
 TicketLogPropertyChanged=برگۀ %s ویرایش شد: طبقه‌بندی از %s به %s
 TicketLogClosedBy=برگۀ %s توسط %s بسته شد
-TicketLogReopen=برگۀ %s بازگشائی شد
+TicketLogReopen=Ticket %s re-open
 
 #
 # Public pages
@@ -241,9 +256,9 @@ ShowListTicketWithTrackId=نمایش فهرست برگه‌ها از شناسۀ 
 ShowTicketWithTrackId=نمایش برگۀ پشتیبانی از شناسۀ رهگیری
 TicketPublicDesc=شما می‌توانید یک برگۀ پشتیبانی ساخته یا یک برگۀ موجود را بررسی کنید
 YourTicketSuccessfullySaved=برگه با موفقیت ذخیره شد!
-MesgInfosPublicTicketCreatedWithTrackId=یک برگه با شناسۀ %s ساخته شد.
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s and Ref %s.
 PleaseRememberThisId=لطفا شناسۀ رهگیری را حفظ کنید. ممکن است بعدا از شما این شماره را درخواست کنیم.
-TicketNewEmailSubject=تائید ساخت برگۀ‌پشتیبانی
+TicketNewEmailSubject=Ticket creation confirmation - Ref %s (public ticket ID %s)
 TicketNewEmailSubjectCustomer=برگۀ‌پشتیبانی جدید
 TicketNewEmailBody=این یک رایانامۀ خودکار است که به شما تاکید می‌کند شما یک برگۀ‌پشتیبانی ثبت کرده و ساخته‌اید
 TicketNewEmailBodyCustomer=این یک رایانامۀ خودکار است که تاکید می‌کند که یک برگۀ‌پشتیبانی در حساب‌کاربری شما ساخته شده است. 
@@ -262,7 +277,7 @@ Subject=موضوع
 ViewTicket=نمایش برگه
 ViewMyTicketList=نمایش فهرست برگه‌های پشتیبانی من
 ErrorEmailMustExistToCreateTicket=خطا: چنین رایانامه‌ای در پایگاه دادۀ ما پیدا نشد
-TicketNewEmailSubjectAdmin=یک برگۀ‌پشتیبانی ساخته شد
+TicketNewEmailSubjectAdmin=New ticket created - Ref %s (public ticket ID %s)
 TicketNewEmailBodyAdmin=<p> برگۀ پشتیبانی اکنون با شناسۀ #%s ساخته شد، اطلاعات آن را مشاهده کنید:</p>
 SeeThisTicketIntomanagementInterface=برگه را در رابط‌کاربری مدیریت ببینید
 TicketPublicInterfaceForbidden=رابط عمومی برای برگه‌های پشتیبانی فعال نشده است

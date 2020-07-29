@@ -41,9 +41,7 @@ InterventionsArea=Espace interventions
 DraftFichinter=Interventions brouillon
 LastModifiedInterventions=Les %s dernières interventions modifiées
 FichinterToProcess=Interventions à traiter
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Contact client suivi de l'intervention
-# Modele numérotation
 PrintProductsOnFichinter=Imprimer aussi les lignes de type "produit" (pas seulement de type service) sur les fiches d'intervention
 PrintProductsOnFichinterDetails=interventions générées à partir des commandes
 UseServicesDurationOnFichinter=Utiliser la durée des services dans les interventions créées depuis des commandes
@@ -53,14 +51,16 @@ InterventionStatistics=Statistiques des interventions
 NbOfinterventions=Nb de fiches d'intervention
 NumberOfInterventionsByMonth=Nb de fiches d'intervention par mois (date de validation)
 AmountOfInteventionNotIncludedByDefault=Le total des interventions 'nest pas inclus par défaut dans les profits (dans la plupart des cas, les feuilles de temps totalisent le temps passé). Activez l'option PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT à 1 dans Accueil > Condiguration > Divers
-##### Exports #####
 InterId=Id intervention
 InterRef=Intervention ref.
 InterDateCreation=Date création intervention
 InterDuration=Durée intervention
 InterStatus=Statut intervention
 InterNote=Note intervention
+InterLine=Ligne d'intervention
 InterLineId=Id ligne intervention
 InterLineDate=Date ligne intervention
 InterLineDuration=Durée ligne intervention
 InterLineDesc=Description ligne intervention
+RepeatableIntervention=Modèle d'intervention
+ToCreateAPredefinedIntervention=Pour créer une intervention prédéfinie ou récurrente, créez une intervention standard et convertissez-la en modèle d'intervention

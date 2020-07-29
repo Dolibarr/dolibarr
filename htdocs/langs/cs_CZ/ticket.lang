@@ -12,7 +12,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #
 # Generic
@@ -30,10 +30,14 @@ Permission56005=Viz vstupenky všech subjektů (neplatí pro externí uživatele
 TicketDictType=Vstupenka - Typy
 TicketDictCategory=Vstupenka - skupiny
 TicketDictSeverity=Vstupenka - závažnosti
+TicketDictResolution=Vstupenka - rozlišení
 TicketTypeShortBUGSOFT=Logika Dysfonctionnement
 TicketTypeShortBUGHARD=Dysfonctionnement matériel -nějaký mišmaš ???
 TicketTypeShortCOM=Obchodní otázka
-TicketTypeShortINCIDENT=Žádost o pomoc
+
+TicketTypeShortHELP=Žádost o funkční pomoc
+TicketTypeShortISSUE=Problém, chyba nebo problém
+TicketTypeShortREQUEST=Žádost o změnu nebo vylepšení
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Jiný
 
@@ -126,17 +130,25 @@ TicketNumberingModules=Modul číslování vstupenek
 TicketNotifyTiersAtCreation=Upozornit subjekt na vytvoření
 TicketGroup=Skupina
 TicketsDisableCustomerEmail=Pokud je lístek vytvořen z veřejného rozhraní, vždy zakažte e-maily
+TicketsPublicNotificationNewMessage=Po přidání nové zprávy odešlete e-mail(y)
+TicketsPublicNotificationNewMessageHelp=Odeslat e-mail(y) při přidání nové zprávy z veřejného rozhraní (přiřazenému uživateli nebo e-mailu s oznámením do (aktualizace) a/nebo e-mailu s oznámením do)
+TicketPublicNotificationNewMessageDefaultEmail=E-mail s oznámeními (aktualizace)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Pokud na lístek není přiřazen uživatel nebo nemá e-mail, zašlete na tuto adresu e-mailem oznámení o nové zprávě.
 #
 # Index & list page
 #
-TicketsIndex=Vstupenka - domov
+TicketsIndex=Vstupenky
 TicketList=Seznam vstupenek
 TicketAssignedToMeInfos=Tato stránka zobrazuje seznam lístků vytvořených nebo přiřazených aktuálnímu uživateli
 NoTicketsFound=Nebyla nalezena žádná vstupenka
-NoUnreadTicketsFound=No unread ticket found
+NoUnreadTicketsFound=Nebyl nalezen žádný nepřečtený lístek
 TicketViewAllTickets=Zobrazit všechny vstupenky
 TicketViewNonClosedOnly=Zobrazit pouze otevřené vstupenky
 TicketStatByStatus=Vstupenky podle statusu
+OrderByDateAsc=Seřadit podle vzestupného data
+OrderByDateDesc=Seřadit podle sestupného data
+ShowAsConversation=Zobrazit jako seznam konverzací
+MessageListViewType=Zobrazit jako seznam tabulek
 
 #
 # Ticket card
@@ -222,6 +234,9 @@ TicketConfirmChangeStatus=Potvrďte změnu stavu: %s?
 TicketLogStatusChanged=Stav změněn: %s až %s
 TicketNotNotifyTiersAtCreate=Neinformovat společnost na vytvoření
 Unread=Nepřečtený
+TicketNotCreatedFromPublicInterface=Není dostupný. Vstupenka nebyla vytvořena z veřejného rozhraní.
+PublicInterfaceNotEnabled=Veřejné rozhraní nebylo povoleno
+ErrorTicketRefRequired=Je vyžadován referenční název vstupenky
 
 #
 # Logs
@@ -231,7 +246,7 @@ NoLogForThisTicket=Pro tento lístek zatím není žádný záznam
 TicketLogAssignedTo=Vstupenka %s přiřazena %s
 TicketLogPropertyChanged=Vstupenka %s upraveno: klasifikace z %s do %s
 TicketLogClosedBy=Vstupenka %s uzavřena %s
-TicketLogReopen=Vstupenka %s znovu otevřena
+TicketLogReopen=Vstupenka %s se znovu otevře
 
 #
 # Public pages
@@ -241,9 +256,9 @@ ShowListTicketWithTrackId=Zobrazí seznam lístků z ID stopy
 ShowTicketWithTrackId=Zobrazit jízdenku z ID stopy
 TicketPublicDesc=Můžete vytvořit lístek podpory nebo šek z existujícího ID.
 YourTicketSuccessfullySaved=Lístek byl úspěšně uložen!
-MesgInfosPublicTicketCreatedWithTrackId=Byl vytvořen nový lístek s ID %s.
+MesgInfosPublicTicketCreatedWithTrackId=Byl vytvořen nový lístek s ID %s a Ref %s.
 PleaseRememberThisId=Udržujte prosím sledovací číslo, které bychom vás mohli požádat později.
-TicketNewEmailSubject=Potvrzení vytvoření vstupenky
+TicketNewEmailSubject=Potvrzení vytvoření lístku - Ref %s (ID veřejné vstupenky %s)
 TicketNewEmailSubjectCustomer=Nová podpora lístku
 TicketNewEmailBody=Jedná se o automatický e-mail, který potvrzuje, že jste zaregistrovali nový lístek.
 TicketNewEmailBodyCustomer=Jedná se o automatický e-mail, který potvrzuje, že byl do vašeho účtu právě vytvořen nový lístek.
@@ -262,15 +277,15 @@ Subject=Předmět
 ViewTicket=Zobrazit lístek
 ViewMyTicketList=Zobrazit seznam lístků
 ErrorEmailMustExistToCreateTicket=Chyba: e-mailová adresa nebyla nalezena v naší databázi
-TicketNewEmailSubjectAdmin=Vytvořen nový lístek
+TicketNewEmailSubjectAdmin=Byl vytvořen nový lístek - Ref %s (ID veřejné vstupenky %s)
 TicketNewEmailBodyAdmin=<p> Lístek byl právě vytvořen s ID # %s, viz informace: </p>
 SeeThisTicketIntomanagementInterface=Viz tiket v rozhraní pro správu
 TicketPublicInterfaceForbidden=Veřejné rozhraní pro vstupenky nebylo povoleno
 ErrorEmailOrTrackingInvalid=Špatná hodnota pro ID sledování nebo e-mail
-OldUser=Old user
+OldUser=Starý uživatel
 NewUser=Nový uživatel
-NumberOfTicketsByMonth=Number of tickets per month
-NbOfTickets=Number of tickets
+NumberOfTicketsByMonth=Počet vstupenek za měsíc
+NbOfTickets=Počet vstupenek
 # notifications
 TicketNotificationEmailSubject=Vstupenka %s aktualizována
 TicketNotificationEmailBody=Toto je automatická zpráva, která vás upozorní, že právě byla aktualizována vstupenka %s

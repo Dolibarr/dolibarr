@@ -17,7 +17,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -34,7 +34,7 @@ create table llx_societe
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,
 
-  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)						
+  status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
 
   code_client              varchar(24),                         		-- code client
   code_fournisseur         varchar(24),                         		-- code founisseur
@@ -50,17 +50,18 @@ create table llx_societe
   fax                      varchar(20),                         		-- fax number
   url                      varchar(255),                        		--
   email                    varchar(128),                        		--
-  
-  skype                    varchar(255),                        		--
-  twitter                  varchar(255),                        		--
-  facebook                 varchar(255),                        		--
-  linkedin                 varchar(255),                        		--
-  instagram                varchar(255),                        		--
-  snapchat                 varchar(255),                        		--
-  googleplus               varchar(255),                        		--
-  youtube                  varchar(255),                        		--
-  whatsapp                 varchar(255),                        		--
-  
+
+  socialnetworks           text DEFAULT NULL,                           -- json with socialnetworks
+  skype                    varchar(255),                        		-- deprecated
+  twitter                  varchar(255),                        		-- deprecated
+  facebook                 varchar(255),                        		-- deprecated
+  linkedin                 varchar(255),                        		-- deprecated
+  instagram                varchar(255),                        		-- deprecated
+  snapchat                 varchar(255),                        		-- deprecated
+  googleplus               varchar(255),                        		-- deprecated
+  youtube                  varchar(255),                        		-- deprecated
+  whatsapp                 varchar(255),                        		-- deprecated
+
   fk_effectif              integer        DEFAULT 0,            		--
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
@@ -107,11 +108,12 @@ create table llx_societe
   supplier_order_min_amount	       double(24,8)   DEFAULT NULL,			-- min amount for supplier orders
   default_lang             varchar(6),									-- default language
   logo                     varchar(255)   DEFAULT NULL,
+  logo_squarred            varchar(255)   DEFAULT NULL,
   canvas				   varchar(32)    DEFAULT NULL,	                -- type of canvas if used (null by default)
   fk_entrepot 			   integer DEFAULT 0,							-- if we need a link between third party and warehouse
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
-  
+
   tms                      timestamp,									-- last modification date
   datec	                   datetime,                            		-- creation date
   fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info

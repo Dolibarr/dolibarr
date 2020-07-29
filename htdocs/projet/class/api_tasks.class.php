@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -66,16 +66,16 @@ class Tasks extends DolibarrApi
      */
     public function get($id, $includetimespent = 0)
     {
-		if(! DolibarrApiAccess::$user->rights->projet->lire) {
+		if (!DolibarrApiAccess::$user->rights->projet->lire) {
 			throw new RestException(401);
 		}
 
         $result = $this->task->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Task not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
+		if (!DolibarrApi::_checkAccessToResource('task', $this->task->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -113,22 +113,22 @@ class Tasks extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-        $socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+        $socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
-        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
+        if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) $search_sale = DolibarrApiAccess::$user->id;
 
         $sql = "SELECT t.rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task as t";
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet_task as t";
 
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-        $sql.= ' WHERE t.entity IN ('.getEntity('project').')';
-        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
-        if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-        if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+        $sql .= ' WHERE t.entity IN ('.getEntity('project').')';
+        if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
+        if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
+        if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
         // Insert sale filter
         if ($search_sale > 0)
         {
@@ -137,23 +137,23 @@ class Tasks extends DolibarrApi
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        $sql .= $db->order($sortfield, $sortorder);
+        if ($limit) {
             if ($page < 0)
             {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $db->plimit($limit + 1, $offset);
+            $sql .= $db->plimit($limit + 1, $offset);
         }
 
         dol_syslog("API Rest request");
@@ -163,20 +163,20 @@ class Tasks extends DolibarrApi
         {
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
+            $i = 0;
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $task_static = new Task($db);
-                if($task_static->fetch($obj->rowid)) {
+                if ($task_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($task_static);
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve task list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if (!count($obj_ret)) {
             throw new RestException(404, 'No task found');
         }
 		return $obj_ret;
@@ -190,13 +190,13 @@ class Tasks extends DolibarrApi
      */
     public function post($request_data = null)
     {
-        if (! DolibarrApiAccess::$user->rights->projet->creer) {
+        if (!DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401, "Insuffisant rights");
         }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->task->$field = $value;
         }
         /*if (isset($request_data["lines"])) {
@@ -213,14 +213,14 @@ class Tasks extends DolibarrApi
         return $this->task->id;
     }
 
-    /**
-     * Get time spent of a task
-     *
-     * @param int   $id                     Id of task
-     * @return int
-     *
-     * @url	GET {id}/tasks
-     */
+    // /**
+    //  * Get time spent of a task
+    //  *
+    //  * @param int   $id                     Id of task
+    //  * @return int
+    //  *
+    //  * @url	GET {id}/tasks
+    //  */
     /*
     public function getLines($id, $includetimespent=0)
     {
@@ -269,16 +269,16 @@ class Tasks extends DolibarrApi
     {
         global $db;
 
-        if(! DolibarrApiAccess::$user->rights->projet->lire) {
+        if (!DolibarrApiAccess::$user->rights->projet->lire) {
             throw new RestException(401);
         }
 
         $result = $this->task->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Task not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('tasks', $this->task->id)) {
+        if (!DolibarrApi::_checkAccessToResource('tasks', $this->task->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -297,16 +297,16 @@ class Tasks extends DolibarrApi
     }
 
 
-    /**
-     * Add a task to given project
-     *
-     * @param int   $id             Id of project to update
-     * @param array $request_data   Projectline data
-     *
-     * @url	POST {id}/tasks
-     *
-     * @return int
-     */
+    // /**
+    //  * Add a task to given project
+    //  *
+    //  * @param int   $id             Id of project to update
+    //  * @param array $request_data   Projectline data
+    //  *
+    //  * @url	POST {id}/tasks
+    //  *
+    //  * @return int
+    //  */
     /*
     public function postLine($id, $request_data = null)
     {
@@ -359,17 +359,17 @@ class Tasks extends DolibarrApi
     }
     */
 
-    /**
-     * Update a task to given project
-     *
-     * @param int   $id             Id of project to update
-     * @param int   $taskid         Id of task to update
-     * @param array $request_data   Projectline data
-     *
-     * @url	PUT {id}/tasks/{taskid}
-     *
-     * @return object
-     */
+    // /**
+    //  * Update a task to given project
+    //  *
+    //  * @param int   $id             Id of project to update
+    //  * @param int   $taskid         Id of task to update
+    //  * @param array $request_data   Projectline data
+    //  *
+    //  * @url	PUT {id}/tasks/{taskid}
+    //  *
+    //  * @return object
+    //  */
     /*
     public function putLine($id, $lineid, $request_data = null)
     {
@@ -429,19 +429,19 @@ class Tasks extends DolibarrApi
      */
     public function put($id, $request_data = null)
     {
-        if (! DolibarrApiAccess::$user->rights->projet->creer) {
+        if (!DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401);
         }
 
         $result = $this->task->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Task not found');
         }
 
-		if ( ! DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->task->$field = $value;
         }
@@ -449,9 +449,7 @@ class Tasks extends DolibarrApi
         if ($this->task->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
             throw new RestException(500, $this->task->error);
         }
     }
@@ -465,19 +463,19 @@ class Tasks extends DolibarrApi
      */
     public function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->projet->supprimer) {
+        if (!DolibarrApiAccess::$user->rights->projet->supprimer) {
             throw new RestException(401);
         }
         $result = $this->task->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'Task not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
+		if (!DolibarrApi::_checkAccessToResource('tasks', $this->project->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        if( ! $this->task->delete(DolibarrApiAccess::$user)) {
+        if (!$this->task->delete(DolibarrApiAccess::$user)) {
             throw new RestException(500, 'Error when delete task : '.$this->task->error);
         }
 
@@ -507,7 +505,7 @@ class Tasks extends DolibarrApi
      */
     public function addTimeSpent($id, $date, $duration, $user_id = 0, $note = '')
     {
-        if( ! DolibarrApiAccess::$user->rights->projet->creer) {
+        if (!DolibarrApiAccess::$user->rights->projet->creer) {
             throw new RestException(401);
         }
         $result = $this->task->fetch($id);
@@ -515,7 +513,7 @@ class Tasks extends DolibarrApi
             throw new RestException(404, 'Task not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('project', $this->task->fk_project)) {
+        if (!DolibarrApi::_checkAccessToResource('project', $this->task->fk_project)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
@@ -570,7 +568,7 @@ class Tasks extends DolibarrApi
         unset($object->fk_account);
         unset($object->note);
         unset($object->fk_incoterms);
-        unset($object->libelle_incoterms);
+        unset($object->label_incoterms);
         unset($object->location_incoterms);
         unset($object->name);
         unset($object->lastname);
@@ -616,6 +614,6 @@ class Tasks extends DolibarrApi
     }
 
 
-    // TODO
+    // \todo
     // getSummaryOfTimeSpent
 }

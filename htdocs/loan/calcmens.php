@@ -1,6 +1,7 @@
 <?php
 /* TVI
  * Copyright (C) 2015	Florian HENRY 		<florian.henry@open-concept.pro>
+ * Copyright (C) 2020   Maxime DEMAREST     <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,48 +19,28 @@
  */
 
 /**
- * \file tvi/ajax/list.php
- * \brief File to return datables output
+ *  \file htdocs/loan/calcmens.php
+ *  \ingroup    loan
+ *  \brief File to calculate loan monthly payments
  */
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
-if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1'); // Disables token renewal
+if (!defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');
+if (!defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX', '1');
 
 require '../main.inc.php';
-require DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
+require DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
 
-$mens=GETPOST('mens');
-$capital=GETPOST('capital');
-$rate=GETPOST('rate');
-$echance=GETPOST('echeance');
-$nbterm=GETPOST('nbterm');
+$mens = GETPOST('mens');
+$capital = GETPOST('capital');
+$rate = GETPOST('rate');
+$echance = GETPOST('echeance');
+$nbterm = GETPOST('nbterm');
 
 top_httphead();
 
-$output=array();
+$output = array();
 
-$object = new LoanSchedule($db);
-
-$int = ($capital*($rate/12));
-$int = round($int, 2, PHP_ROUND_HALF_UP);
-$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
-$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency),'interet'=>$int,'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency),'mens'=>$mens);
-
-$echance++;
-$capital=$cap_rest;
-while ($echance<=$nbterm) {
-
-	$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm-$echance+1), 2, PHP_ROUND_HALF_UP);
-
-	$int = ($capital*($rate/12));
-	$int = round($int, 2, PHP_ROUND_HALF_UP);
-	$cap_rest = round($capital - ($mens-$int), 2, PHP_ROUND_HALF_UP);
-
-	$output[$echance]=array('cap_rest'=>$cap_rest,'cap_rest_str'=>price($cap_rest, 0, '', 1, -1, -1, $conf->currency),'interet'=>$int,'interet_str'=>price($int, 0, '', 1, -1, -1, $conf->currency),'mens'=>$mens);
-
-	$capital=$cap_rest;
-	$echance++;
-}
+$output = loanCalcMonthlyPayment($mens, $capital, $rate, $echance, $nbterm);
 
 echo json_encode($output);

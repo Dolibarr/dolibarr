@@ -1,4 +1,13 @@
 # .scrutinizer.yml
+#build:
+#    - php-scrutinizer-run
+build:
+    nodes:
+        analysis:
+            tests:
+                override:
+                    - php-scrutinizer-run
+          
 imports:
     - javascript
     - php
@@ -29,6 +38,7 @@ tools:
                 - doc/*
                 - test/*
                 - htdocs/includes/*
+                - htdocs/core/class/lessc.class.php
             paths:
                 - htdocs/
                 - scripts/
@@ -176,22 +186,6 @@ tools:
     php_sim:
         enabled: false
         min_mass: 30
-        filter:
-            excluded_paths:
-                - 'build/*'
-                - 'dev/*'
-                - 'doc/*'
-                - 'test/*'
-                - 'htdocs/includes/*'
-            paths: {  }
-
-    php_changetracking:
-        enabled: false
-        bug_patterns:
-            - '\bfix(?:es|ed)?\b'
-        feature_patterns:
-            - '\badd(?:s|ed)?\b'
-            - '\bimplement(?:s|ed)?\b'
         filter:
             excluded_paths:
                 - 'build/*'

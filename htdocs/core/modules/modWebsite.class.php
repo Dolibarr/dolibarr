@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -22,7 +22,7 @@
  *  \ingroup    websites
  *  \brief      Description and activation file for module Website
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -38,7 +38,7 @@ class modWebsite extends DolibarrModules
      */
     public function __construct($db)
     {
-    	global $langs,$conf;
+    	global $langs, $conf;
 
         $this->db = $db;
         $this->numero = 10000;
@@ -55,7 +55,7 @@ class modWebsite extends DolibarrModules
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
-        $this->picto='globe';
+        $this->picto = 'website';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/website/temp");
@@ -64,11 +64,11 @@ class modWebsite extends DolibarrModules
         $this->config_page_url = array('website.php');
 
         // Dependencies
-		$this->hidden = ! empty($conf->global->MODULE_WEBSITE_DISABLED);	// A condition to disable module
-		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->conflictwith = array();	// List of modules id this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
+		$this->hidden = !empty($conf->global->MODULE_WEBSITE_DISABLED); // A condition to disable module
+		$this->depends = array('modFckeditor'); // List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->conflictwith = array(); // List of modules id this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module
         $this->langfiles = array("website");
 
         // Constants
@@ -81,9 +81,9 @@ class modWebsite extends DolibarrModules
         $this->boxes = array();
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
 		$this->rights_class = 'website';
-		$r=0;
+		$r = 0;
 
 		$this->rights[$r][0] = 10001;
 		$this->rights[$r][1] = 'Read website content';
@@ -110,35 +110,34 @@ class modWebsite extends DolibarrModules
 		$r++;
 
         // Main menu entries
-        $r=0;
-        $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-						        'type'=>'top',			                // This is a Left menu entry
+        $r = 0;
+        $this->menu[$r] = array('fk_menu'=>'0', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+						        'type'=>'top', // This is a Left menu entry
 						        'titre'=>'WebSites',
                                 'mainmenu'=>'website',
 						        'url'=>'/website/index.php',
-						        'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						        'langs'=>'website', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>100,
-						        'enabled'=>'$conf->website->enabled',  		// Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-						        'perms'=>'$user->rights->website->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						        'enabled'=>'$conf->website->enabled', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+						        'perms'=>'$user->rights->website->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
-						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+						        'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
         $r++;
 
         // Exports
-        $r=1;
+        $r = 1;
 
-        $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='MyWebsitePages';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        $this->export_icon[$r]='globe';
-        $keyforclass = 'WebsitePage'; $keyforclassfile='/website/class/websitepage.class.php'; $keyforelement='Website';
+        $this->export_code[$r] = $this->rights_class.'_'.$r;
+        $this->export_label[$r] = 'MyWebsitePages'; // Translation key (used only if key ExportDataset_xxx_z not found)
+        $this->export_icon[$r] = 'globe';
+        $keyforclass = 'WebsitePage'; $keyforclassfile = '/website/class/websitepage.class.php'; $keyforelement = 'Website';
         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
         //$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
-        $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'website_page as t, '.MAIN_DB_PREFIX.'website as p';
-        $this->export_sql_end[$r] .=' WHERE t.fk_website = p.rowid';
-        $this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('website').')';
+        $this->export_sql_start[$r] = 'SELECT DISTINCT ';
+        $this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'website_page as t, '.MAIN_DB_PREFIX.'website as p';
+        $this->export_sql_end[$r] .= ' WHERE t.fk_website = p.rowid';
+        $this->export_sql_end[$r] .= ' AND p.entity IN ('.getEntity('website').')';
         $r++;
     }
 
@@ -153,29 +152,47 @@ class modWebsite extends DolibarrModules
      */
     public function init($options = '')
     {
-    	global $conf,$langs;
+    	global $conf, $langs;
 
     	// Remove permissions and default values
     	$this->remove($options);
 
-    	// Copy flags and octicons directoru
-    	$dirarray=array('common/flags', 'common/octicons');
-    	foreach($dirarray as $dir)
+    	// Copy flags and octicons directory
+    	$dirarray = array('common/flags'=>'flags', 'common/octicons/build/svg'=>'octicons');
+    	foreach ($dirarray as $dirfrom => $dirtarget)
     	{
-	    	$src=DOL_DOCUMENT_ROOT.'/theme/'.$dir;
-	    	$dest=DOL_DATA_ROOT.'/medias/image/'.$dir;
+	    	$src = DOL_DOCUMENT_ROOT.'/theme/'.$dirfrom;
+	    	$dest = DOL_DATA_ROOT.'/medias/image/'.$dirtarget;
 
 	    	if (is_dir($src))
 	    	{
 	    		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	    		dol_mkdir($dest);
-	    		$result=dolCopyDir($src, $dest, 0, 0);
+	    		$result = dolCopyDir($src, $dest, 0, 0);
 	    		if ($result < 0)
 	    		{
 	    			$langs->load("errors");
-	    			$this->error=$langs->trans('ErrorFailToCopyDir', $src, $dest);
+	    			$this->error = $langs->trans('ErrorFailToCopyDir', $src, $dest);
 	    			return 0;
 	    		}
+	    	}
+    	}
+
+    	// Website templates
+    	$srcroot = DOL_DOCUMENT_ROOT.'/install/doctemplates/websites';
+    	$destroot = DOL_DATA_ROOT.'/doctemplates/websites';
+
+    	dol_mkdir($destroot);
+
+    	$docs = dol_dir_list($srcroot, 'files', 0, 'website_.*(\.zip|\.jpg)$');
+    	foreach ($docs as $cursorfile) {
+	    	$src = $srcroot.'/'.$cursorfile['name'];
+	    	$dest = $destroot.'/'.$cursorfile['name'];
+
+	    	$result = dol_copy($src, $dest, 0, 1); // For full zip templates, we overwrite old existing files
+	    	if ($result < 0) {
+	    		$langs->load("errors");
+	    		$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);
 	    	}
     	}
 

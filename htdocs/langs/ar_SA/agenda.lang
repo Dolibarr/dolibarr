@@ -60,9 +60,10 @@ MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
 MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=شحنة%s التأكد من صلاحيتها
 ShipmentClassifyClosedInDolibarr=الشحنة %sتم تصنيفها مدفوعة
-ShipmentUnClassifyCloseddInDolibarr=الشحنة %s تم تصنيفها معاد فتحها
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=الشحنة%sتم حذفها
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=الطلب %s تم إنشاؤة
 OrderValidatedInDolibarr=الطلب %s تم التحقق منه
 OrderDeliveredInDolibarr=الطلب %s مصنف تم التوصيل
@@ -76,6 +77,7 @@ ContractSentByEMail=Contract %s sent by email
 OrderSentByEMail=Sales order %s sent by email
 InvoiceSentByEMail=Customer invoice %s sent by email
 SupplierOrderSentByEMail=Purchase order %s sent by email
+ORDER_SUPPLIER_DELETEInDolibarr=Purchase order %s deleted
 SupplierInvoiceSentByEMail=Vendor invoice %s sent by email
 ShippingSentByEMail=Shipment %s sent by email
 ShippingValidated= الشحنة %s تم التأكد من صلاحيتها
@@ -83,9 +85,15 @@ InterventionSentByEMail=Intervention %s sent by email
 ProposalDeleted=تم حذف العرض
 OrderDeleted=تم حذف الطلب
 InvoiceDeleted=تم حذف الفاتورة
+DraftInvoiceDeleted=Draft invoice deleted
 PRODUCT_CREATEInDolibarr=المنتج %s تم انشاؤه
 PRODUCT_MODIFYInDolibarr=المنتج %sتم تعديلة
 PRODUCT_DELETEInDolibarr=المنتج%s تم حذفة
+HOLIDAY_CREATEInDolibarr=Request for leave %s created
+HOLIDAY_MODIFYInDolibarr=Request for leave %s modified
+HOLIDAY_APPROVEInDolibarr=Request for leave %s approved
+HOLIDAY_VALIDATEInDolibarr=Request for leave %s validated
+HOLIDAY_DELETEInDolibarr=Request for leave %s deleted
 EXPENSE_REPORT_CREATEInDolibarr=تقرير المصروفات %sتم إنشاؤة
 EXPENSE_REPORT_VALIDATEInDolibarr=تقرير المصروفات %s تم التحقق من صحتة
 EXPENSE_REPORT_APPROVEInDolibarr=تقرير المصروفات %s تم الموافقة عليه
@@ -99,6 +107,16 @@ TICKET_MODIFYInDolibarr=Ticket %s modified
 TICKET_ASSIGNEDInDolibarr=Ticket %s assigned
 TICKET_CLOSEInDolibarr=Ticket %s closed
 TICKET_DELETEInDolibarr=Ticket %s deleted
+BOM_VALIDATEInDolibarr=BOM validated
+BOM_UNVALIDATEInDolibarr=BOM unvalidated
+BOM_CLOSEInDolibarr=BOM disabled
+BOM_REOPENInDolibarr=BOM reopen
+BOM_DELETEInDolibarr=BOM deleted
+MRP_MO_VALIDATEInDolibarr=MO validated
+MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
+MRP_MO_PRODUCEDInDolibarr=MO produced
+MRP_MO_DELETEInDolibarr=MO deleted
+MRP_MO_CANCELInDolibarr=MO canceled
 ##### End agenda events #####
 AgendaModelModule=نماذج المستندات للحدث
 DateActionStart=تاريخ البدء
@@ -109,6 +127,7 @@ AgendaUrlOptionsNotAdmin=<b>لوجينا=!%s</b> لمنع اخراج الجرا�
 AgendaUrlOptions4=<b>لوجينت =%s</b> لتقييد الإخراج على الإجراءات المعينة للمستخدم <b>%s</b> (المالك والآخرين).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic events.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
 AgendaShowBirthdayEvents=عرض تواريخ ميلاد جهات الإتصال
 AgendaHideBirthdayEvents=إخفاء تواريخ ميلاد جهات الإتصال
 Busy=مشغول
@@ -136,3 +155,6 @@ EveryMonth=كل شهر
 DayOfMonth=يوم من الشهر
 DayOfWeek=يوم من الأسبوع
 DateStartPlusOne=تاريخ بدء + 1 ساعة
+SetAllEventsToTodo=Set all events to todo
+SetAllEventsToInProgress=Set all events to in progress
+SetAllEventsToFinished=Set all events to finished

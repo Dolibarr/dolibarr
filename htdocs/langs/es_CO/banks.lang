@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - banks
 BankAccounts=cuentas bancarias
 BankBalance=Equilibrar
+StandingOrders=Órdenes de débito directo
+StandingOrder=Orden de domiciliación bancaria
 StatusAccountOpened=Activo
 StatusAccountClosed=Cerrado
-WithdrawalPayment=Withdrawal payment
 SocialContributionPayment=Pago de impuestos sociales / fiscales
-BankTransfer=transferencia bancaria
 TransferTo=A

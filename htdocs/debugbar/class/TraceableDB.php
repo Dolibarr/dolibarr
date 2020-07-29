@@ -1,6 +1,6 @@
 <?php
 
-require_once DOL_DOCUMENT_ROOT .'/core/db/DoliDB.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
 /**
  * TraceableDB class
@@ -26,7 +26,7 @@ class TraceableDB extends DoliDB
 	 */
 	protected $startMemory;
 	/**
-	 * @var Database type
+	 * @var string type
 	 */
 	public $type;
 	/**
@@ -148,10 +148,10 @@ class TraceableDB extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Renvoie le nombre de lignes dans le resultat d'une requete INSERT, DELETE ou UPDATE
+	 * Return the number o flines into the result of a request INSERT, DELETE or UPDATE
 	 *
 	 * @param   resource $resultset    Curseur de la requete voulue
-	 * @return 	int                    Nombre de lignes
+	 * @return 	int                    Number of lines
 	 * @see    	num_rows()
 	 */
 	public function affected_rows($resultset)

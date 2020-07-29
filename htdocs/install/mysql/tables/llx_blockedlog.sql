@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -32,7 +32,8 @@ CREATE TABLE llx_blockedlog
 	date_object	datetime,
 	signature varchar(100) NOT NULL, 
 	signature_line varchar(100) NOT NULL, 
-	object_data	text,
+	object_data	mediumtext,
+	object_version varchar(32) DEFAULT '',
 	certified integer
 ) ENGINE=innodb;
 

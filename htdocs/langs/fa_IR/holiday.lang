@@ -8,7 +8,6 @@ NotActiveModCP=شما باید واحد مرخصی را فعال کنید تا �
 AddCP=ایجاد یک درخواست مرخصی
 DateDebCP=تاریخ شروع
 DateFinCP=تاریخ پایان
-DateCreateCP=تاریخ ایجاد
 DraftCP=پیش‌نویس
 ToReviewCP=در انتظار تایید
 ApprovedCP=تایید شده
@@ -16,8 +15,10 @@ CancelCP=لغو شد
 RefuseCP=رد شده
 ValidatorCP=متقاضی
 ListeCP=فهرست مرخصی
+Leave=درخواست مرخصی
 LeaveId=شناسۀ مرخصی
 ReviewedByCP=اجازه توسط
+UserID=User ID
 UserForApprovalID=شناسۀ کاربر تائید کننده
 UserForApprovalFirstname=نام کاربر تائید کننده
 UserForApprovalLastname=نام‌خانوادگی کاربر تائید کننده
@@ -39,8 +40,10 @@ TypeOfLeaveId=شناسۀ نوع درخواست مرخصی
 TypeOfLeaveCode=کد نوع درخواست مرخصی
 TypeOfLeaveLabel=برچسب نوع درخواست مرخصی
 NbUseDaysCP=تعداد روزهای مصرف شدۀ مرخصی
+NbUseDaysCPHelp=The calculation takes into account the non working days and the holidays defined in the dictionary.
 NbUseDaysCPShort=جمع روزهای مصرف‌شده
 NbUseDaysCPShortInMonth=جمع‌روزهای مصرف شده در ماه
+DayIsANonWorkingDay=%s is a non working day
 DateStartInMonth=تاریخ شروع در ماه
 DateEndInMonth=تاریخ پایان در ماه
 EditCP=ویرایش
@@ -128,3 +131,4 @@ TemplatePDFHolidays=قالب PDF درخواست‌های مرخصی
 FreeLegalTextOnHolidays=متن دلخواه روی PDF
 WatermarkOnDraftHolidayCards=نوشتۀ کمرنگ روی درخواست مرخصی پیش‌نویس
 HolidaysToApprove=روزهای‌تعطیل مجاز
+NobodyHasPermissionToValidateHolidays=Nobody has permission to validate holidays

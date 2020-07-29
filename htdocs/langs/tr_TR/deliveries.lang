@@ -2,7 +2,7 @@
 Delivery=Teslimat
 DeliveryRef=Teslimat Ref
 DeliveryCard=Makbuz kartı
-DeliveryOrder=Teslimat emri
+DeliveryOrder=Teslimat Makbuzu
 DeliveryDate=Teslim tarihi
 CreateDeliveryOrder=Teslimat makbuzu oluştur
 DeliveryStateSaved=Teslimat durumu kaydedildi

@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
 ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
 ShipmentBackToDraftInDolibarr=Expédition %s remise au statut brouillon
 ShipmentDeletedInDolibarr=Expédition %s supprimée
+ReceptionValidatedInDolibarr=Réception %s validée
 OrderCreatedInDolibarr=Commande %s créée
 OrderValidatedInDolibarr=Commande %s validée
 OrderDeliveredInDolibarr=Commande %s classée Livrée
@@ -76,6 +77,7 @@ ContractSentByEMail=Contrat %s envoyé par e-mail
 OrderSentByEMail=Commande client %s envoyée par email
 InvoiceSentByEMail=Facture client %s envoyée par email
 SupplierOrderSentByEMail=Commande fournisseur %s envoyée par email
+ORDER_SUPPLIER_DELETEInDolibarr=Commande d'achat %s supprimée
 SupplierInvoiceSentByEMail=Facture fournisseur %s envoyée par email
 ShippingSentByEMail=Bon d'expédition %s envoyé par email
 ShippingValidated= Expédition %s validée
@@ -83,9 +85,15 @@ InterventionSentByEMail=Intervention %s envoyé par email
 ProposalDeleted=Proposition commerciale supprimée
 OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée
+DraftInvoiceDeleted=Facture brouillon supprimée
 PRODUCT_CREATEInDolibarr=Produit %s créé
 PRODUCT_MODIFYInDolibarr=Produit %s modifié
 PRODUCT_DELETEInDolibarr=Produit%ssupprimé
+HOLIDAY_CREATEInDolibarr=Demande de congé %s créée
+HOLIDAY_MODIFYInDolibarr=Demande de congé %s modifiée
+HOLIDAY_APPROVEInDolibarr=Demande de congé %s approuvée 
+HOLIDAY_VALIDATEInDolibarr=Demande de congé %s validée
+HOLIDAY_DELETEInDolibarr=Demande de congé %s supprimée
 EXPENSE_REPORT_CREATEInDolibarr=Note de frais %s créée
 EXPENSE_REPORT_VALIDATEInDolibarr=Note de frais %s validée
 EXPENSE_REPORT_APPROVEInDolibarr=Note de frais %s approuvée
@@ -99,6 +107,16 @@ TICKET_MODIFYInDolibarr=Ticket %s modifié
 TICKET_ASSIGNEDInDolibarr=Ticket %s assigné
 TICKET_CLOSEInDolibarr=Ticket %s fermé
 TICKET_DELETEInDolibarr=Ticket %s supprimé
+BOM_VALIDATEInDolibarr=Nomenclature (BOM) validée
+BOM_UNVALIDATEInDolibarr=Nomenclature (BOM) dévalidée
+BOM_CLOSEInDolibarr=Nomenclature (BOM) désactivée
+BOM_REOPENInDolibarr=Nomenclature (BOM) ré-ouverte
+BOM_DELETEInDolibarr=Nomenclature (BOM) supprimée
+MRP_MO_VALIDATEInDolibarr=OF validé
+MRP_MO_UNVALIDATEInDolibarr=OF mis à l'état de brouillon
+MRP_MO_PRODUCEDInDolibarr=OF réalisé
+MRP_MO_DELETEInDolibarr=OF supprimé
+MRP_MO_CANCELInDolibarr=OF annulé
 ##### End agenda events #####
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
@@ -106,9 +124,10 @@ DateActionEnd=Date de fin
 AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions non assignées à l'utilisateur <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
+AgendaUrlOptions4=<b>logint=%s</b> pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure les événements automatiques.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
 AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
@@ -136,3 +155,6 @@ EveryMonth=Chaque mois
 DayOfMonth=Jour du mois
 DayOfWeek=Jour de la semaine
 DateStartPlusOne=Date de début + 1 heure
+SetAllEventsToTodo=Réglez tous les événements à "A faire"
+SetAllEventsToInProgress=Définir tous les événements à "En cours"
+SetAllEventsToFinished=Définir tous les événements sur "Terminés"

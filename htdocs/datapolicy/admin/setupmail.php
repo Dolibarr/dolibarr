@@ -15,13 +15,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once '../lib/datapolicy.lib.php';
 
 // Translations
@@ -34,43 +34,43 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $formadmin = new FormAdmin($db);
 
 if (GETPOST('l')) {
-    $l = GETPOST('l');
+	$l = GETPOST('l');
 } else {
-    $l = $langs->defaultlang;
+	$l = $langs->defaultlang;
 }
 // Access control
 if (!$user->admin)
-    accessforbidden();
+	accessforbidden();
 
 /*
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT . '/core/actions_setmoduleoptions.inc.php';
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'setvalue' && $user->admin) {
-    $db->begin();
-    $sub = "DATAPOLICIESSUBJECT_" . $l;
-    $result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-    $cont = "DATAPOLICIESCONTENT_" . $l;
-    $result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
-    $cont = "TXTLINKDATAPOLICIESACCEPT_" . $l;
-    $result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
-    $cont = "TXTLINKDATAPOLICIESREFUSE_" . $l;
-    $result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
-    $sub = "DATAPOLICIESACCEPT_" . $l;
-    $result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-    $sub = "DATAPOLICIESREFUSE_" . $l;
-    $result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
-    if (!$result > 0)
-        $error++;
-    if (!$error) {
-        $db->commit();
-        setEventMessage($langs->trans("SetupSaved"));
-    } else {
-        $db->rollback();
-        dol_print_error($db);
-    }
+	$db->begin();
+	$sub = "DATAPOLICIESSUBJECT_".$l;
+	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
+	$cont = "DATAPOLICIESCONTENT_".$l;
+	$result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
+	$cont = "TXTLINKDATAPOLICIESACCEPT_".$l;
+	$result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
+	$cont = "TXTLINKDATAPOLICIESREFUSE_".$l;
+	$result = dolibarr_set_const($db, $cont, GETPOST($cont), 'chaine', 0, '', $conf->entity);
+	$sub = "DATAPOLICIESACCEPT_".$l;
+	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
+	$sub = "DATAPOLICIESREFUSE_".$l;
+	$result = dolibarr_set_const($db, $sub, GETPOST($sub), 'chaine', 0, '', $conf->entity);
+	if (!$result > 0)
+		$error++;
+	if (!$error) {
+		$db->commit();
+		setEventMessage($langs->trans("SetupSaved"));
+	} else {
+		$db->rollback();
+		dol_print_error($db);
+	}
 }
 
 
@@ -82,7 +82,7 @@ $page_name = "datapolicySetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . ($backtopage ? $backtopage : DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1') . '">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.($backtopage ? $backtopage : DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback, 'object_datapolicy@datapolicy');
 
@@ -95,43 +95,43 @@ print "<script type='text/javascript'>
         $(document).ready(function(){
          $('#default_lang').change(function(){
          lang=$('#default_lang').val();
-                    window.location.replace('" . $_SERVER['PHP_SELF'] . "?l='+lang);
+                    window.location.replace('" . $_SERVER['PHP_SELF']."?l='+lang);
                     });
         });
 </script>";
 
-print '<form method="post" action="' . $_SERVER["PHP_SELF"] . '?l=' . $l . '">';
-print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?l='.$l.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 print '<table>';
 if ($conf->global->MAIN_MULTILANGS) {
-    print '<tr><td>' . $form->editfieldkey('DefaultLang', 'default_lang', '', null, 0) . '</td><td colspan="3" class="maxwidthonsmartphone">' . "\n";
-    print $formadmin->select_language((GETPOST('l') ? GETPOST('l') : $langs->defaultlang), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
-    print '</tr>';
+	print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', null, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+	print $formadmin->select_language((GETPOST('l') ? GETPOST('l') : $langs->defaultlang), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+	print '</tr>';
 }
-$subject = 'DATAPOLICIESSUBJECT_' . $l;
-$linka = 'TXTLINKDATAPOLICIESACCEPT_' . $l;
-$linkr = 'TXTLINKDATAPOLICIESREFUSE_' . $l;
-$content = 'DATAPOLICIESCONTENT_' . $l;
-$acc = 'DATAPOLICIESACCEPT_' . $l;
-$ref = 'DATAPOLICIESREFUSE_' . $l;
+$subject = 'DATAPOLICIESSUBJECT_'.$l;
+$linka = 'TXTLINKDATAPOLICIESACCEPT_'.$l;
+$linkr = 'TXTLINKDATAPOLICIESREFUSE_'.$l;
+$content = 'DATAPOLICIESCONTENT_'.$l;
+$acc = 'DATAPOLICIESACCEPT_'.$l;
+$ref = 'DATAPOLICIESREFUSE_'.$l;
 print '<tr class"oddeven"><td class="fieldrequired">';
-print $langs->trans('DATAPOLICIESSUBJECTMAIL') . '</td><td>';
-print '<input type="text" size="100" name="' . $subject . '" value="' . $conf->global->$subject . '" />';
+print $langs->trans('DATAPOLICIESSUBJECTMAIL').'</td><td>';
+print '<input type="text" size="100" name="'.$subject.'" value="'.$conf->global->$subject.'" />';
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 print $langs->trans('DATAPOLICIESCONTENTMAIL').'</td><td>';
-print $langs->trans('DATAPOLICIESSUBSITUTION');echo'__LINKACCEPT__,__LINKREFUSED__,__FIRSTNAME__,__NAME__,__CIVILITY__';
+print $langs->trans('DATAPOLICIESSUBSITUTION'); echo'__LINKACCEPT__,__LINKREFUSED__,__FIRSTNAME__,__NAME__,__CIVILITY__';
 $doleditor = new DolEditor($content, $conf->global->$content, '', 250, 'Full', '', false, true, 1, 200, 70);
 $doleditor->Create();
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
-print $langs->trans('TXTLINKDATAPOLICIESACCEPT') . '</td><td>';
-print '<input type="text" size="200" name="' . $linka . '" value="' . $conf->global->$linka . '" />';
+print $langs->trans('TXTLINKDATAPOLICIESACCEPT').'</td><td>';
+print '<input type="text" size="200" name="'.$linka.'" value="'.$conf->global->$linka.'" />';
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
-print $langs->trans('TXTLINKDATAPOLICIESREFUSE') . '</td><td>';
-print '<input type="text" size="200" name="' . $linkr . '" value="' . $conf->global->$linkr . '" />';
+print $langs->trans('TXTLINKDATAPOLICIESREFUSE').'</td><td>';
+print '<input type="text" size="200" name="'.$linkr.'" value="'.$conf->global->$linkr.'" />';
 print '</td><tr>';
 print '<tr class"oddeven"><td class="fieldrequired">';
 
@@ -149,7 +149,7 @@ $doleditor->Create();
 print '</td><tr>';
 print '</table>';
 
-print '<br><center><input type="submit" class="button" value="' . $langs->trans("Modify") . '"></center>';
+print '<br><center><input type="submit" class="button" value="'.$langs->trans("Modify").'"></center>';
 
 print '</form>';
 

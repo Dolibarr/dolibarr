@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ===================================================================
 
@@ -21,7 +21,8 @@ create table llx_prelevement_facture_demande
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   entity              integer DEFAULT 1 NOT NULL,
-  fk_facture          integer NOT NULL,
+  fk_facture          integer NULL,
+  fk_facture_fourn    integer NULL,
   sourcetype          varchar(32),
   amount              double(24,8) NOT NULL,
   date_demande        datetime NOT NULL,
