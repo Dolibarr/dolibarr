@@ -2033,7 +2033,7 @@ class Product extends CommonObject
         $sql .= " accountancy_code_buy, accountancy_code_buy_intra, accountancy_code_buy_export,";
         $sql .= " accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
         $sql .= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
-        $sql .= " fk_price_expression, price_autogen,model_pdf";
+        $sql .= " fk_price_expression, price_autogen, model_pdf";
         $sql .= " FROM ".MAIN_DB_PREFIX."product";
         if ($id) {
             $sql .= " WHERE rowid = ".(int) $id;
