@@ -389,8 +389,8 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql.= $db->plimit($limit+1, $offset);
 
-$result = $db->query($sql);
-if (! $result)
+$resql = $db->query($sql);
+if (! $resql)
 {
 	dol_print_error($db);
 	exit;
@@ -763,7 +763,7 @@ $i = 0;
 $totalarray=array();
 while ($i < min($num, $limit))
 {
-	$obj = $db->fetch_object($result);
+	$obj = $db->fetch_object($resql);
 
 	print '<tr class="oddeven">';
 
@@ -980,7 +980,7 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-$db->free($result);
+$db->free($resql);
 
 $parameters=array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 $reshook=$hookmanager->executeHooks('printFieldListFooter', $parameters);    // Note that $action and $object may have been modified by hook
