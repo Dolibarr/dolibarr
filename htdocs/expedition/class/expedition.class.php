@@ -321,10 +321,10 @@ class Expedition extends CommonObject
 		$sql.= ", ".($this->fk_delivery_address>0?$this->fk_delivery_address:"null");
 		$sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:"null");
 		$sql.= ", '".$this->db->escape($this->tracking_number)."'";
-		$sql.= ", ".$this->weight;
-		$sql.= ", ".$this->sizeS;	// TODO Should use this->trueDepth
-		$sql.= ", ".$this->sizeW;	// TODO Should use this->trueWidth
-		$sql.= ", ".$this->sizeH;	// TODO Should use this->trueHeight
+		$sql.= ", ".(is_numeric($this->weight)?$this->weight:'NULL');
+		$sql.= ", ".(is_numeric($this->sizeS)?$this->sizeS:'NULL');	// TODO Should use this->trueDepth
+		$sql.= ", ".(is_numeric($this->sizeW)?$this->sizeW:'NULL');	// TODO Should use this->trueWidth
+		$sql.= ", ".(is_numeric($this->sizeH)?$this->sizeH:'NULL');	// TODO Should use this->trueHeight
 		$sql.= ", ".($this->weight_units != '' ? (int) $this->weight_units : 'NULL');
 		$sql.= ", ".($this->size_units != '' ? (int) $this->size_units : 'NULL');
 		$sql.= ", ".(!empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
