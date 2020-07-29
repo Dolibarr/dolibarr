@@ -37,5 +37,5 @@ CREATE TABLE llx_establishment (
   datec				datetime NOT NULL,
   tms				timestamp NOT NULL,
   status            tinyint DEFAULT 1
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

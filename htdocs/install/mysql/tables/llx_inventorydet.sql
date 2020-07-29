@@ -30,4 +30,4 @@ qty_stock double DEFAULT NULL,   -- The targeted value. can be filled during dra
 qty_view double DEFAULT NULL, 	   -- must be filled once regulation is done
 qty_regulated double DEFAULT NULL  -- must be filled once regulation is done
 ) 
-ENGINE=InnoDB;
+ENGINE=innodb;

@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/compta/prelevement/fiche-stat.php
  *  \ingroup    prelevement
- *	\brief      Prelevement statistics
+ *	\brief      Debit order or credit transfer statistics
  */
 
 require '../../main.inc.php';
@@ -54,6 +54,17 @@ $pagenext = $page + 1;
 
 $object = new BonPrelevement($db);
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+
+if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
+	accessforbidden();
+}
+if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
+	accessforbidden();
+}
+
+
 
 /*
  * View
@@ -68,7 +79,7 @@ if ($prev_id > 0 || $ref)
 		$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'statistics', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php'.($object->type != 'bank-transfer' ? '' : '?type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -79,13 +90,6 @@ if ($prev_id > 0 || $ref)
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
-
-		// Status
-		/*
-		print '<tr><td>'.$langs->trans('Status').'</td>';
-		print '<td>'.$object->getLibStatut(1).'</td>';
-		print '</tr>';
-		*/
 
 		if ($object->date_trans <> 0)
 		{
@@ -117,7 +121,9 @@ if ($prev_id > 0 || $ref)
 		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 		print '<tr><td class="titlefield">';
-		print $langs->trans("BankToReceiveWithdraw");
+		$labelofbankfield = "BankToReceiveWithdraw";
+		if ($object->type == 'bank-transfer') $labelofbankfield = 'BankToPayCreditTransfer';
+		print $langs->trans($labelofbankfield);
 		print '</td>';
 		print '<td>';
 		if ($acc->id > 0)
@@ -126,9 +132,13 @@ if ($prev_id > 0 || $ref)
 		print '</tr>';
 
 		print '<tr><td class="titlefield">';
-		print $langs->trans("WithdrawalFile").'</td><td>';
+		$labelfororderfield = 'WithdrawalFile';
+		if ($object->type == 'bank-transfer') $labelfororderfield = 'CreditTransferFile';
+		print $langs->trans($labelfororderfield).'</td><td>';
 		$relativepath = 'receipts/'.$object->ref.'.xml';
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		$modulepart = 'prelevement';
+		if ($object->type == 'bank-transfer') $modulepart = 'paymentbybanktransfer';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 		print '</td></tr></table>';
 
 		print '</div>';
@@ -137,14 +147,13 @@ if ($prev_id > 0 || $ref)
 	}
 	else
 	{
-		$langs->load("errors");
-		print $langs->trans("Error");
+		dol_print_error($db);
 	}
 
 	/*
 	 * Stats
 	 */
-	$ligne = new LignePrelevement($db);
+	$line = new LignePrelevement($db);
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -170,7 +179,7 @@ if ($prev_id > 0 || $ref)
 
 			print '<tr class="oddeven"><td>';
 
-			print $ligne->LibStatut($row[1], 1);
+			print $line->LibStatut($row[1], 1);
 
 			print '</td><td class="right">';
 			print price($row[0]);

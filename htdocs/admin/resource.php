@@ -28,7 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
-if (!empty($conf->resouce->enabled)) require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "resource"));

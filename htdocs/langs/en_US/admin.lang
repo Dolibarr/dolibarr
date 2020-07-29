@@ -300,8 +300,9 @@ MAIN_MAIL_DEFAULT_FROMTYPE=Default sender email for manual sending (User email o
 UserEmail=User email
 CompanyEmail=Company Email
 FeatureNotAvailableOnLinux=Feature not available on Unix like systems. Test your sendmail program locally.
+FixOnTransifex=Fix the translation on the online translation platform of project
 SubmitTranslation=If the translation for this language is not complete or you find errors, you can correct this by editing files in directory <b>langs/%s</b> and submit your change to www.transifex.com/dolibarr-association/dolibarr/
-SubmitTranslationENUS=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit modified files on dolibarr.org/forum or for developers on github.com/Dolibarr/dolibarr.
+SubmitTranslationENUS=If translation for this language is not complete or you find errors, you can correct this by editing files into directory <b>langs/%s</b> and submit modified files on dolibarr.org/forum or, if you are a developer, with a PR on github.com/Dolibarr/dolibarr
 ModuleSetup=Module setup
 ModulesSetup=Modules/Application setup
 ModuleFamilyBase=System
@@ -1686,7 +1687,7 @@ AGENDA_SHOW_LINKED_OBJECT=Show linked object into agenda view
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup
 ClickToDialUrlDesc=Url called when a click on phone picto is done.  In URL, you can use tags<br><b>__PHONETO__</b> that will be replaced with the phone number of person to call<br><b>__PHONEFROM__</b> that will be replaced with phone number of calling person (yours)<br><b>__LOGIN__</b> that will be replaced with clicktodial login (defined on user card)<br><b>__PASS__</b> that will be replaced with clicktodial password (defined on user card).
-ClickToDialDesc=This module makea phone numbers clickable links. A click on the icon will make your phone call the number. This can be used to call a call-center system from Dolibarr that can call the phone number on a SIP system for example.
+ClickToDialDesc=This module change phone numbers, when using a desktop computer, into clickable links. A click will call the number. This can be used to start the phone call when using a soft phone on your desktop or when using a CTI system based on SIP protocol for example. Note: When using a smartphone, phone numbers are always clickable.
 ClickToDialUseTelLink=Use just a link "tel:" on phone numbers
 ClickToDialUseTelLinkDesc=Use this method if your users have a softphone or a software interface installed on the same computer as the browser, and called when you click on a link in your browser that starts with "tel:". If you need a full server solution (no need of local software installation), you must set this to "No" and fill next field.
 ##### Point Of Sale (CashDesk) #####
