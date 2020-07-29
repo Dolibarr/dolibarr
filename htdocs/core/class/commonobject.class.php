@@ -7549,11 +7549,11 @@ abstract class CommonObject
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
 		$keys = array();
-		$values = array();
+		$values = array();	// Array to store string forged for SQL syntax
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
-			$values[$k] = $this->quote($v, $value);
+			$values[$k] = $this->quote($v, $value);			// May return string 'NULL' if $value is null
 		}
 
 		// Clean and check mandatory
