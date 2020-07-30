@@ -251,12 +251,12 @@ print '<br>';
 
 // Label
 
-print $langs->trans("Label").' ';
+print $langs->trans("Label").' : ';
 print '<b>'.$object->label.'</b><br>';
 
 // Date
 
-print  $langs->trans("DateExpected").' ';
+print  $langs->trans("DateExpected").' : ';
 print '<b>';
 if ($object->date_planned > $now) {
 	print dol_print_date($object->date_planned, 'day');
