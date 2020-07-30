@@ -2098,6 +2098,10 @@ class ExtraFields
 				{
 					$value_key = GETPOST("options_".$key, 'alpha');
 				}
+				elseif (in_array($key_type, array('text')))
+				{
+					$value_key = GETPOST("options_".$key, 'alphanohtml');
+				}
 				else
 				{
 					$value_key = GETPOST("options_".$key);
