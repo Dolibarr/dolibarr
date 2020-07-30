@@ -301,4 +301,3 @@ htmlPrintOnlinePaymentFooter($mysoc, $langs);
 llxFooter('', 'public');
 
 $db->close();
-
