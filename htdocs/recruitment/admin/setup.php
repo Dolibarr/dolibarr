@@ -40,7 +40,7 @@ global $langs, $user;
 
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/recruitment.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/lib/recruitment.lib.php';
 require_once DOL_DOCUMENT_ROOT."/recruitment/class/recruitmentjobposition.class.php";
 
 // Translations
@@ -194,10 +194,10 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 
 // Configuration header
 $head = recruitmentAdminPrepareHead();
-dol_fiche_head($head, 'settings', '', -1, "object_recruitment");
+dol_fiche_head($head, 'settings', '', -1, '');
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("RecruitmentSetupPage").'</span><br><br>';
+//echo '<span class="opacitymedium">'.$langs->trans("RecruitmentSetupPage").'</span><br><br>';
 
 
 if ($action == 'edit')

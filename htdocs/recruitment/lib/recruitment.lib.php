@@ -40,12 +40,10 @@ function recruitmentAdminPrepareHead()
 	$head[$h][2] = 'settings';
 	$h++;
 
-	/*
-	$head[$h][0] = dol_buildpath("/recruitment/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
+	$head[$h][0] = dol_buildpath("/recruitment/admin/public_interface.php", 1);
+	$head[$h][1] = $langs->trans("PublicUrl");
+	$head[$h][2] = 'publicurl';
 	$h++;
-	*/
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

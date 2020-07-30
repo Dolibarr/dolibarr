@@ -27,8 +27,10 @@ ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job posi
 #
 RecruitmentSetup = Recruitment setup
 Settings = Settings
-RecruitmentSetupPage = Recruitment setup page
+RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
 RecruitmentArea=Recruitement area
+PublicInterfaceRecruitmentDesc=Public interface is public URLs to show and answer to open jobs. There is one different link for each open job.
+EnablePublicRecruitmentPages=Enable public recruitment pages
 
 #
 # About page
@@ -43,8 +45,10 @@ DateExpected=Expected date
 FutureManager=Future manager
 ResponsibleOfRecruitement=Responsible of recruitment
 IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Position to be filled
-PositionsToBeFilled=Positions to be filled
-ListOfPositionsToBeFilled=List of positions to be filled
-NewPositionToBeFilled=New position to be filled
+PositionToBeFilled=Job offer to be filled
+PositionsToBeFilled=Job offers to be filled
+ListOfPositionsToBeFilled=List of job offers to be filled
+NewPositionToBeFilled=New job offers to be filled
 
+JobOfferToBeFilled=Job offer to be filled
+ThisIsInformationOnJobPosition=Information of the job position to be filled

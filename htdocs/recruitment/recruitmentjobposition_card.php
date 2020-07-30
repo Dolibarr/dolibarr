@@ -572,6 +572,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('recruitmentjobposition'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+		// Show link to public job page
+		if ($object->status != RecruitmentJobPosition::STATUS_DRAFT)
+		{
+			print '<br><!-- Link to go on public job page -->'."\n";
+			// Load translation files required by the page
+			$langs->loadLangs(array('recruitment'));
+
+			$out = img_picto('', 'globe').' '.$langs->trans("PublicUrl").'<br>';
+
+			$url = getPublicJobPositionUrl(0, $object->ref);
+			$out .= '<input type="text" id="recruitmentjobpositionurl" class="quatrevingtpercent" value="'.$url.'">';
+			$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe').'</a>';
+			$out .= ajax_autoselect("recruitmentjobpositionurl", 0);
+
+			print $out;
+		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

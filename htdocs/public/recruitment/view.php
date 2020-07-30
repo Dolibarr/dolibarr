@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,18 +21,9 @@
  *       \brief      Public file to show on job
  */
 
-if (!defined('NOCSRFCHECK')) {
-	define('NOCSRFCHECK', '1');
-}
-// Do not check anti CSRF attack test
-if (!defined('NOREQUIREMENU')) {
-	define('NOREQUIREMENU', '1');
-}
-// If there is no need to load and show top and left menu
-if (!defined("NOLOGIN")) {
-	define("NOLOGIN", '1');
-}
-// If this page is public (can be called outside logged session)
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentjobposition.class.php';
@@ -45,9 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 $langs->loadLangs(array("companies", "other", "recruitment"));
 
 // Get parameters
-$cancel   = GETPOST('cancel', 'alpha');
 $action   = GETPOST('action', 'aZ09');
+$cancel   = GETPOST('cancel', 'alpha');
 $email    = GETPOST('email', 'alpha');
+$backtopage = '';
 
 $ref = GETPOST('ref', 'alpha');
 
@@ -59,6 +50,22 @@ if (isset($_SESSION['email_customer'])) {
 }
 
 $object = new RecruitmentJobPosition($db);
+
+if (!$action)
+{
+	if (!$ref)
+	{
+		print $langs->trans('ErrorBadParameters')." - ref missing";
+		exit;
+	} else {
+		$object->fetch('', $ref);
+	}
+}
+
+// Define $urlwithroot
+//$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+//$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
 
 
 /*
@@ -141,7 +148,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
  * View
  */
 
-$form = new Form($db);
+$head = '';
+if (!empty($conf->global->MAIN_RECRUITMENT_CSS_URL)) $head = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MAIN_RECRUITMENT_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
+
+$conf->dol_hide_topmenu = 1;
+$conf->dol_hide_leftmenu = 1;
 
 if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
 	print '<div class="error">'.$langs->trans('PublicInterfaceForbidden').'</div>';
@@ -150,170 +161,148 @@ if (!$conf->global->RECRUITMENT_ENABLE_PUBLIC_INTERFACE) {
 }
 
 $arrayofjs = array();
-$arrayofcss = array('/ticket/css/styles.css.php');
+$arrayofcss = array();
 
-llxHeaderRecruitment($langs->trans("Jobs"), "", 0, 0, $arrayofjs, $arrayofcss);
+$replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
+llxHeader($head, $langs->trans("PositionToBeFilled"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-print '<div class="ticketpublicarea">';
 
-if ($action == "view" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
-	if ($display_ticket)
-	{
-		// Confirmation close
-		if ($action == 'close') {
-			print $form->formconfirm($_SERVER["PHP_SELF"]."?track_id=".$track_id, $langs->trans("CloseATicket"), $langs->trans("ConfirmCloseAticket"), "confirm_public_close", '', '', 1);
-		}
+print '<span id="dolpaymentspan"></span>'."\n";
+print '<div class="center">'."\n";
+print '<form id="dolpaymentform" class="center" name="paymentform" action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
+print '<input type="hidden" name="action" value="dosign">'."\n";
+print '<input type="hidden" name="tag" value="'.GETPOST("tag", 'alpha').'">'."\n";
+print '<input type="hidden" name="suffix" value="'.GETPOST("suffix", 'alpha').'">'."\n";
+print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
+print '<input type="hidden" name="entity" value="'.$entity.'" />';
+print "\n";
+print '<!-- Form to sign -->'."\n";
 
-		print '<div id="form_view" class="margintoponly">';
+print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
-		print '<table class="ticketpublictable centpercent tableforfield">';
-
-		// Ref
-		print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>';
-		print $object->dao->ref;
-		print '</td></tr>';
-
-		// Tracking ID
-		print '<tr><td>'.$langs->trans("TicketTrackId").'</td><td>';
-		print $object->dao->track_id;
-		print '</td></tr>';
-
-		// Subject
-		print '<tr><td>'.$langs->trans("Subject").'</td><td>';
-		print $object->dao->subject;
-		print '</td></tr>';
-
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-		print $object->dao->getLibStatut(2);
-		print '</td></tr>';
-
-		// Type
-		print '<tr><td>'.$langs->trans("Type").'</td><td>';
-		print $object->dao->type_label;
-		print '</td></tr>';
-
-		// Category
-		print '<tr><td>'.$langs->trans("Category").'</td><td>';
-		print $object->dao->category_label;
-		print '</td></tr>';
-
-		// Severity
-		print '<tr><td>'.$langs->trans("Severity").'</td><td>';
-		print $object->dao->severity_label;
-		print '</td></tr>';
-
-		// Creation date
-		print '<tr><td>'.$langs->trans("DateCreation").'</td><td>';
-		print dol_print_date($object->dao->datec, 'dayhour');
-		print '</td></tr>';
-
-		// Author
-		print '<tr><td>'.$langs->trans("Author").'</td><td>';
-		if ($object->dao->fk_user_create > 0) {
-			$langs->load("users");
-			$fuser = new User($db);
-			$fuser->fetch($object->dao->fk_user_create);
-			print $fuser->getFullName($langs);
-		} else {
-			print dol_escape_htmltag($object->dao->origin_email);
-		}
-
-		print '</td></tr>';
-
-		// Read date
-		if (!empty($object->dao->date_read)) {
-			print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
-			print dol_print_date($object->dao->date_read, 'dayhour');
-			print '</td></tr>';
-		}
-
-		// Close date
-		if (!empty($object->dao->date_close)) {
-			print '<tr><td>'.$langs->trans("TicketCloseOn").'</td><td>';
-			print dol_print_date($object->dao->date_close, 'dayhour');
-			print '</td></tr>';
-		}
-
-		// User assigned
-		print '<tr><td>'.$langs->trans("AssignedTo").'</td><td>';
-		if ($object->dao->fk_user_assign > 0) {
-			$fuser = new User($db);
-			$fuser->fetch($object->dao->fk_user_assign);
-			print $fuser->getFullName($langs, 1);
-		}
-		print '</td></tr>';
-
-		// Progression
-		print '<tr><td>'.$langs->trans("Progression").'</td><td>';
-		print ($object->dao->progress > 0 ? $object->dao->progress : '0').'%';
-		print '</td></tr>';
-
-		print '</table>';
-
-		print '</div>';
-
-		print '<div style="clear: both; margin-top: 1.5em;"></div>';
-
-		if ($action == 'presend') {
-			print load_fiche_titre($langs->trans('AddMessage'), '', 'messages@ticket');
-
-			/*$formticket = new FormTicket($db);
-
-			$formticket->action = "add_message";
-			$formticket->track_id = $object->dao->track_id;
-			$formticket->id = $object->dao->id;
-
-			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1', 'returnurl' => DOL_URL_ROOT.'/public/ticket/view.php');
-
-			$formticket->withfile = 2;
-			$formticket->withcancel = 1;
-
-			$formticket->showMessageForm('100%');
-			*/
-			print 'TODO Show message form';
-		}
-
-		if ($action != 'presend') {
-			print '<form method="post" id="form_view_list" name="form_view_list" enctype="multipart/form-data" action="'.DOL_URL_ROOT.'/public/recruitment/list.php">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="viewlist">';
-			print '<input type="hidden" name="ref" value="'.$object->ref.'">';
-			print '<input type="hidden" name="email" value="'.$_SESSION['email_customer'].'">';
-			//print '<input type="hidden" name="search_fk_status" value="non_closed">';
-			print "</form>\n";
-
-			print '<div class="tabsAction">';
-
-			// List ticket
-			print '<div class="inline-block divButAction"><a class="left" style="padding-right: 50px" href="javascript:$(\'#form_view_list\').submit();">'.$langs->trans('ViewMyTicketList').'</a></div>';
-
-			if ($object->dao->fk_statut < Ticket::STATUS_CLOSED) {
-				// New message
-				print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=presend&mode=init&ref='.$object->ref.'">'.$langs->trans('AddMessage').'</a></div>';
-
-				// Close ticket
-				if ($object->dao->fk_statut >= Ticket::STATUS_NOT_READ && $object->dao->fk_statut < Ticket::STATUS_CLOSED) {
-					print '<div class="inline-block divButAction"><a  class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=close&track_id='.$object->dao->track_id.'">'.$langs->trans('CloseTicket').'</a></div>';
-				}
-			}
-
-			print '</div>';
-		}
-
-		// Message list
-		print load_fiche_titre($langs->trans('JobMessagesList'), '', 'object_conversation');
-		//$object->viewTicketMessages(false, true, $object->dao);
-	} else {
-		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?ref='.$object->ref.'">'.$langs->trans('Back').'</a></div>';
+// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
+$width = 0;
+// Define logo and logosmall
+$logosmall = $mysoc->logo_small;
+$logo = $mysoc->logo;
+$paramlogo = 'ONLINE_RECRUITMENT_LOGO_'.$suffix;
+if (!empty($conf->global->$paramlogo)) $logosmall = $conf->global->$paramlogo;
+elseif (!empty($conf->global->ONLINE_RECRUITMENT_LOGO)) $logosmall = $conf->global->ONLINE_RECRUITMENT_LOGO_;
+//print '<!-- Show logo (logosmall='.$logosmall.' logo='.$logo.') -->'."\n";
+// Define urllogo
+$urllogo = '';
+$urllogofull = '';
+if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall))
+{
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+	$width = 150;
+} elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
+{
+	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
+	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+	$width = 150;
+}
+// Output html code for logo
+if ($urllogo)
+{
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
+	if ($width) print ' width="'.$width.'"';
+	print '>';
+	print '</div>';
+	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a href="https://www.dolibarr.org" target="dolibarr">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
+	print '</div>';
 }
 
-print "</div>";
+// Output introduction text
+$text = '';
+if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT))
+{
+	$langs->load("recruitment");
+	if (preg_match('/^\((.*)\)$/', $conf->global->RECRUITMENT_NEWFORM_TEXT, $reg)) $text .= $langs->trans($reg[1])."<br>\n";
+	else $text .= $conf->global->RECRUITMENT_NEWFORM_TEXT."<br>\n";
+	$text = '<tr><td align="center"><br>'.$text.'<br></td></tr>'."\n";
+}
+if (empty($text))
+{
+	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("JobOfferToBeFilled", $mysoc->name).'</strong>';
+	$text .= ' &nbsp; - &nbsp; <span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation);
+	$text .= '</td></tr>'."\n";
+	$text .= '<tr><td class="textpublicpayment"><h1>'.$object->label.'</h1><br></td></tr>'."\n";
+}
+print $text;
 
-// End of page
-htmlPrintOnlinePaymentFooter($mysoc, $langs, 0, $suffix, $object);
+// Output payment summary form
+print '<tr><td align="center">';
+print '<table with="100%" id="tablepublicpayment">';
+print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</td></tr>'."\n";
+
+$error = 0;
+$var = false;
+
+// Label
+
+print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("JobLabel");
+print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
+print '<b>'.$object->label.'</b>';
+print '</td></tr>'."\n";
+
+// Date
+
+print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("DateExpected");
+print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
+if ($object->date_planned > $now) {
+	print dol_print_date('day', $object->date_planned);
+} else {
+	print $langs->trans("ASAP");
+}
+print '</b>';
+
+// Description
+
+$text = $object->description;
+print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').' tdtop">'.$langs->trans("Description");
+print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+print '</td></tr>'."\n";
+
+
+
+
+if (!$found && !$mesg) $mesg = $langs->trans("ErrorBadParameters");
+
+if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>'."\n";
+
+print '</table>'."\n";
+print "\n";
+
+if ($action != 'dosign')
+{
+	if ($found && !$error)	// We are in a management option and no error
+	{
+	} else {
+		dol_print_error_email('ERRORNEWONLINESIGN');
+	}
+} else {
+	// Print
+}
+
+print '</td></tr>'."\n";
+
+print '</table>'."\n";
+print '</form>'."\n";
+print '</div>'."\n";
+print '<br>';
+
+
+htmlPrintOnlinePaymentFooter($mysoc, $langs);
 
 llxFooter('', 'public');
 
 $db->close();
+

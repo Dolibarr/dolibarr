@@ -88,3 +88,40 @@ function recruitmentjobpositionPrepareHead($object)
 
 	return $head;
 }
+
+
+/**
+ * Return string with full Url
+ *
+ * @param   int		$mode		      0=True url, 1=Url formated with colors
+ * @param	string	$ref		      Ref of object
+ * @param   string  $localorexternal  0=Url for browser, 1=Url for external access
+ * @return	string				      Url string
+ */
+function getPublicJobPositionUrl($mode, $ref = '', $localorexternal = 0)
+{
+	global $conf, $dolibarr_main_url_root;
+
+	$ref = str_replace(' ', '', $ref);
+	$out = '';
+
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	$urltouse = DOL_MAIN_URL_ROOT;
+	if ($localorexternal) $urltouse = $urlwithroot;
+
+	$out = $urltouse.'/public/recruitment/view.php?ref='.($mode ? '<font color="#666666">' : '').$ref.($mode ? '</font>' : '');
+	/*if (!empty($conf->global->RECRUITMENT_SECURITY_TOKEN))
+	{
+		if (empty($conf->global->RECRUITMENT_SECURITY_TOKEN)) $out .= '&securekey='.$conf->global->RECRUITMENT_SECURITY_TOKEN;
+		else $out .= '&securekey='.dol_hash($conf->global->RECRUITMENT_SECURITY_TOKEN, 2);
+	}*/
+
+	// For multicompany
+	if (!empty($out) && !empty($conf->multicompany->enabled)) $out .= "&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
+
+	return $out;
+}
