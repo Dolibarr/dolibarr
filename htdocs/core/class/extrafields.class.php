@@ -154,8 +154,8 @@ class ExtraFields
 
 
 	public static $type2label = array(
-	    'varchar'=>'String',
-	    'text'=>'TextLong',
+	    'varchar'=>'String1Line',
+	    'text'=>'TextLongNLines',
 	    'html'=>'HtmlText',
 	    'int'=>'Int',
 	    'double'=>'Float',
