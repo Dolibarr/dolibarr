@@ -238,50 +238,46 @@ if (empty($text))
 print $text;
 
 // Output payment summary form
-print '<tr><td align="center">';
-print '<table with="100%" id="tablepublicpayment">';
-print '<tr><td align="left" colspan="2" class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</td></tr>'."\n";
+print '<tr><td class="left">';
+
+print '<div with="100%" id="tablepublicpayment">';
+print '<div class="opacitymedium">'.$langs->trans("ThisIsInformationOnJobPosition").' :</div>'."\n";
 
 $error = 0;
 $var = false;
+$found = true;
+
+print '<br>';
 
 // Label
 
-print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Label");
-print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
-print '<b>'.$object->label.'</b>';
-print '</td></tr>'."\n";
+print $langs->trans("Label").' ';
+print '<b>'.$object->label.'</b><br>';
 
 // Date
 
-print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("DateExpected");
-print '</td><td class="CTableRow'.($var ? '1' : '2').'"><b>';
+print  $langs->trans("DateExpected").' ';
+print '<b>';
 if ($object->date_planned > $now) {
-	print dol_print_date('day', $object->date_planned);
+	print dol_print_date($object->date_planned, 'day');
 } else {
 	print $langs->trans("ASAP");
 }
-print '</b>';
+print '</b><br>';
+
+print '<br>';
 
 // Description
 
 $text = $object->description;
-print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').' tdtop">'.$langs->trans("Description");
-print '</td><td class="CTableRow'.($var ? '1' : '2').'">'.$text;
+print $text;
 print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
-print '</td></tr>'."\n";
 
-
-
-
-if (!$found && !$mesg) $mesg = $langs->trans("ErrorBadParameters");
-
-if ($mesg) print '<tr><td align="center" colspan="2"><br><div class="warning">'.$mesg.'</div></td></tr>'."\n";
-
-print '</table>'."\n";
+print '</div>'."\n";
 print "\n";
 
-if ($action != 'dosign')
+
+if ($action != 'dosubmit')
 {
 	if ($found && !$error)	// We are in a management option and no error
 	{
