@@ -654,8 +654,8 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->mymodule->read;
-	$delallowed = $user->rights->mymodule->create;
+	$genallowed = $user->rights->stock->lire;
+	$delallowed = $user->rights->stock->creer;
 
 	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
