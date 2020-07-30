@@ -594,12 +594,35 @@ if (!empty($id) || !empty($ref))
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
 			</tr>
+<?php 		if (empty($conf->global->PRODUIT_MULTIPRICES)){ ?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
-				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
+				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label>
+				</td>
 			</tr>
-			<?php
+<?php 		}
+			else{
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+				{
+					if($i===1 && empty($TPriceImpact[$i])){
+						$TPriceImpact[$i] = $price_impact;
+					}
+
+					print '<tr>';
+					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel',$i).'</label>';
+					if($i===1){
+						print ' <a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
+					}
+					print '</td>';
+					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($TPriceImpact[$i]).'">';
+					print '<input type="checkbox" class="level_price_impact_percent" id="level_price_impact_percent_'.$i.'" name="level_price_impact_percent['.$i.']" '. (!empty($TPriceImpactPercent[$i]) ? ' checked' : '' ).'> <label for="level_price_impact_percent_'.$i.'">'.$langs->trans('PercentageVariation').'</label>';
+
+					print '</td>';
+					print '</tr>';
+				}
+			}
+
             if ($object->isProduct()) {
 				print '<tr>';
 				print '<td><label for="weight_impact">'.$langs->trans('WeightImpact').'</label></td>';
@@ -609,9 +632,30 @@ if (!empty($id) || !empty($ref))
 			print '</table>';
 		}
 
-		dol_fiche_end();
-        ?>
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)){
+?>
+		<script>
+			$(document).ready(function() {
+				// Apply level 1 impact to all prices impact levels
+				$('body').on('click', '#apply-price-impact-to-all-level', function(e) {
+					e.preventDefault();
+					let priceImpact = $( "#level_price_impact_1" ).val();
+					let priceImpactPrecent = $( "#level_price_impact_percent_1" ).prop("checked");
 
+					var multipricelimit = <?php print intval($conf->global->PRODUIT_MULTIPRICES_LIMIT); ?>
+
+					for (let i = 2; i <= multipricelimit; i++) {
+						$( "#level_price_impact_" + i ).val(priceImpact);
+						$( "#level_price_impact_percent_" + i  ).prop("checked", priceImpactPrecent);
+					}
+				});
+			});
+		</script>
+<?php
+		}
+
+		dol_fiche_end();
+?>
 		<div style="text-align: center">
 		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
 		&nbsp;
