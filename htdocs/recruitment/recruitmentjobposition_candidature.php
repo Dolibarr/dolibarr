@@ -16,9 +16,9 @@
  */
 
 /**
- *   	\file       recruitmentjobposition_card.php
+ *   	\file       recruitmentjobposition_candidature.php
  *		\ingroup    recruitment
- *		\brief      Page to create/edit/view recruitmentjobposition
+ *		\brief      Page to see/add candidatures
  */
 
 //if (! defined('NOREQUIREDB'))              define('NOREQUIREDB','1');					// Do not create database handler $db
@@ -266,7 +266,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = recruitmentjobpositionPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	dol_fiche_head($head, 'candidatures', $langs->trans("RecruitmentCandidatures"), -1, $object->picto);
 
 	$formconfirm = '';
 

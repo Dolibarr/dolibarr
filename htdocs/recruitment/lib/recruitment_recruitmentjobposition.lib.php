@@ -43,7 +43,7 @@ function recruitmentjobpositionPrepareHead($object)
 
 	$head[$h][0] = dol_buildpath("/recruitment/recruitmentjobposition_candidature.php", 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("Candidatures");
-	$head[$h][2] = 'candidature';
+	$head[$h][2] = 'candidatures';
 	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))

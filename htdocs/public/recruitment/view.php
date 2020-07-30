@@ -247,7 +247,7 @@ $var = false;
 
 // Label
 
-print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("JobLabel");
+print '<tr class="CTableRow'.($var ? '1' : '2').'"><td class="CTableRow'.($var ? '1' : '2').'">'.$langs->trans("Label");
 print '</td><td class="CTableRow'.($var ? '1' : '2').'">';
 print '<b>'.$object->label.'</b>';
 print '</td></tr>'."\n";
