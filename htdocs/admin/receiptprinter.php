@@ -391,15 +391,16 @@ if ($mode == 'config' && $user->admin) {
 
 // mode = template
 if ($mode == 'template' && $user->admin) {
-    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
+
+	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
+
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
     print '<input type="hidden" name="token" value="'.newToken().'">';
     if ($action != 'edittemplate') {
         print '<input type="hidden" name="action" value="addtemplate">';
     } else {
         print '<input type="hidden" name="action" value="updatetemplate">';
     }
-
-    print load_fiche_titre($langs->trans("ReceiptPrinterTemplateDesc"), '', '');
 
     print '<table class="noborder centpercent">'."\n";
     print '<tr class="liste_titre">';
@@ -463,6 +464,8 @@ if ($mode == 'template' && $user->admin) {
         print '<div class="center"><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Save")).'"></div>';
     }
     print '</form>';
+
+    dol_fiche_end();
 
     print '<br>';
 
