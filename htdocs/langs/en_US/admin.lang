@@ -2008,3 +2008,6 @@ RssNote=Note: Each RSS feed definition provides a widget that you must enable to
 JumpToBoxes=Jump to Setup -> Widgets
 MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
 MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.
+TemplateAdded=Template added
+TemplateUpdated=Template updated
+TemplateDeleted=Template deleted
