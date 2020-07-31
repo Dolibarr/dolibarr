@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - multicurrency
+MultiCurrency=Meerdere valuta
+ErrorAddRateFail=Fout in toegevoegde koers
+ErrorAddCurrencyFail=Fout in toegevoegde valuta
+ErrorDeleteCurrencyFail=Verwijderen fout mislukt
+multicurrency_syncronize_error=Synchronisatiefout: %s
+MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE=Gebruik de datum van het document om de wisselkoers te vinden, in plaats van de laatst bekende koers te gebruiken
+multicurrency_useOriginTx=Wanneer een object van een ander wordt gemaakt, moet u de oorspronkelijke koers van het bronobject behouden (gebruik anders de laatst bekende koers)
+CurrencyLayerAccount=CurrencyLayer API
+CurrencyLayerAccount_help_to_synchronize=U moet een account maken op de website %s om deze functionaliteit te gebruiken. <br> Download uw <b>API-sleutel</b> . <br> Als je een gratis account gebruikt, kunt u de <b>bron (USD</b> standaard) niet veranderen. <br> Als uw hoofdvaluta geen USD is, zal de toepassing deze automatisch opnieuw berekenen. <br><br> U bent beperkt tot 1000 synchronisaties per maand.
+multicurrency_appId=API key
+multicurrency_appCurrencySource=Bron valuta
+multicurrency_alternateCurrencySource=Alternatieve bron valuta
+CurrenciesUsed=Gebruikte valuta's
+CurrenciesUsed_help_to_add=Voeg de verschillende valuta's en koersen toe die u moet gebruiken voor uw <b>voorstellen</b>, <b>bestellingen</b> enz.
+rate=koers
+MulticurrencyReceived=Ontvangen, originele valuta
+MulticurrencyRemainderToTake=Resterend bedrag, oorspronkelijke valuta
+MulticurrencyPaymentAmount=Betalingsbedrag, originele valuta
+AmountToOthercurrency=Bedrag in (in valuta van ontvangende account)
+CurrencyRateSyncSucceed=Synchronisatie van valutakoersen is geslaagd
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Gebruik de valuta van het document voor online betalingen

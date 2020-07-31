@@ -215,9 +215,7 @@ class CMailFile
 		{
 			$this->msgishtml = 0;
 			if (dol_textishtml($msg)) $this->msgishtml = 1;
-		}
-		else
-		{
+		} else {
 			$this->msgishtml = $msgishtml;
 		}
 
@@ -319,8 +317,7 @@ class CMailFile
 			$this->message = 'This is a message with multiple parts in MIME format.'.$this->eol;
 			$this->message .= $text_body.$files_encoded;
 			$this->message .= "--".$this->mixed_boundary."--".$this->eol;
-		}
-		elseif ($this->sendmode == 'smtps')
+		} elseif ($this->sendmode == 'smtps')
 		{
 			// Use SMTPS library
 			// ------------------------------------------
@@ -386,8 +383,7 @@ class CMailFile
 			$this->msgid = time().'.SMTPs-dolibarr-'.$trackid.'@'.$host;
 
 			$this->smtps = $smtps;
-		}
-		elseif ($this->sendmode == 'swiftmailer')
+		} elseif ($this->sendmode == 'swiftmailer')
 		{
 			// Use Swift Mailer library
             $host = dol_getprefix('email');
@@ -424,7 +420,20 @@ class CMailFile
             //$this->message->setFrom(array('john@doe.com' => 'John Doe'));
             if (!empty($from)) {
                 try {
-                    $result = $this->message->setFrom($this->getArrayAddress($from));
+					if (! empty($conf->global->MAIN_FORCE_DISABLE_MAIL_SPOOFING)) {
+						// Prevent email spoofing for smtp server with a strict configuration
+						$regexp = '/([a-z0-9_\.\-\+])+\@(([a-z0-9\-])+\.)+([a-z0-9]{2,4})+/i'; // This regular expression extracts all emails from a string
+						$emailMatchs = preg_match_all($regexp, $from, $adressEmailFrom);
+						$adressEmailFrom = reset($adressEmailFrom);
+						if ($emailMatchs !== false && filter_var($conf->global->MAIN_MAIL_SMTPS_ID, FILTER_VALIDATE_EMAIL) && $conf->global->MAIN_MAIL_SMTPS_ID !== $adressEmailFrom)
+						{
+							$result = $this->message->setFrom($conf->global->MAIN_MAIL_SMTPS_ID);
+						} else {
+							$result = $this->message->setFrom($this->getArrayAddress($from));
+						}
+					} else {
+						$result = $this->message->setFrom($this->getArrayAddress($from));
+					}
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -499,9 +508,7 @@ class CMailFile
 			if (!empty($addr_bcc)) $this->message->setBcc($this->getArrayAddress($addr_bcc));
 			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
 			if (isset($deliveryreceipt) && $deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
-		}
-		else
-		{
+		} else {
 			// Send mail method not correctly defined
 			// --------------------------------------
 			$this->error = 'Bad value for sendmode';
@@ -707,9 +714,7 @@ class CMailFile
 						$this->error .= ".<br>";
 						$this->error .= $langs->trans("ErrorPhpMailDelivery");
 						dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
-					}
-					else
-					{
+					} else {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 					}
 				}
@@ -722,8 +727,7 @@ class CMailFile
 				// Restore parameters
 				if (!empty($conf->global->$keyforsmtpserver))	ini_restore('SMTP');
 				if (!empty($conf->global->$keyforsmtpport)) 	ini_restore('smtp_port');
-			}
-			elseif ($this->sendmode == 'smtps')
+			} elseif ($this->sendmode == 'smtps')
 			{
 				if (!is_object($this->smtps))
 				{
@@ -794,16 +798,13 @@ class CMailFile
 					{
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;
-					}
-					else
-					{
+					} else {
 						if (empty($this->error)) $this->error = $result;
 						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>".$this->error, LOG_ERR);
 						$res = false;
 					}
 				}
-			}
-			elseif ($this->sendmode == 'swiftmailer')
+			} elseif ($this->sendmode == 'swiftmailer')
 			{
                 // Use Swift Mailer library
                 // ------------------------------------------
@@ -860,14 +861,10 @@ class CMailFile
 				if (!empty($this->error) || !$result) {
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
-				}
-				else
-				{
+				} else {
 					dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 				}
-			}
-			else
-			{
+			} else {
 				// Send mail method not correctly defined
 				// --------------------------------------
 
@@ -883,9 +880,7 @@ class CMailFile
 
 				return $reshook;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = 'No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 			dol_syslog("CMailFile::sendfile: ".$this->error, LOG_WARNING);
 		}
@@ -924,9 +919,7 @@ class CMailFile
 			$contents = file_get_contents($newsourcefile); // Need PHP 4.3
 			$encoded = chunk_split(base64_encode($contents), 76, $this->eol); // 76 max is defined into http://tools.ietf.org/html/rfc2047
 			return $encoded;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error: Can't read file '".$sourcefile."' into _encode_file";
 			dol_syslog("CMailFile::encode_file: ".$this->error, LOG_ERR);
 			return -1;
@@ -957,12 +950,10 @@ class CMailFile
 				fputs($fp, $this->headers);
 				fputs($fp, $this->eol); // This eol is added by the mail function, so we add it in log
 				fputs($fp, $this->message);
-			}
-			elseif ($this->sendmode == 'smtps')
+			} elseif ($this->sendmode == 'smtps')
 			{
 				fputs($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
-			}
-			elseif ($this->sendmode == 'swiftmailer')
+			} elseif ($this->sendmode == 'swiftmailer')
 			{
 				fputs($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
 			}
@@ -991,9 +982,7 @@ class CMailFile
 			$out .= ">";
 			$out .= $msg;
 			$out .= "</body></html>";
-		}
-		else
-		{
+		} else {
 			$out = $msg;
 		}
 
@@ -1074,9 +1063,7 @@ class CMailFile
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2; // Uppercase seems replaced by phpmail
 			$out .= 'References: <'.$this->msgid.">".$this->eol2;
 			$out .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host.$this->eol2;
-		}
-		else
-		{
+		} else {
 			$this->msgid = time().'.phpmail@'.$host;
 			$out .= 'Message-ID: <'.$this->msgid.">".$this->eol2;
 		}
@@ -1205,9 +1192,7 @@ class CMailFile
 			{
 				$out .= "--".$this->alternative_boundary."--".$this->eol;
 			}
-		}
-		else
-		{
+		} else {
 			$out .= "Content-Type: text/plain; charset=".$conf->file->character_set_client.$this->eol;
 			//$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
 			$out .= $this->eol.$strContent.$this->eol;
@@ -1265,9 +1250,7 @@ class CMailFile
 					$out .= $encoded;
 					$out .= $this->eol;
 					//$out.= $this->eol;
-				}
-				else
-				{
+				} else {
 					return $encoded;
 				}
 			}
@@ -1365,9 +1348,7 @@ class CMailFile
 
 				// Check response from Server
 				if ($_retVal = $this->server_parse($socket, "220")) $_retVal = $socket;
-			}
-			else
-			{
+			} else {
 				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : utf8_encode('Error '.$errno.' - '.$errstr);
 			}
 		}
@@ -1487,16 +1468,12 @@ class CMailFile
 					}
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				return -1;
 			}
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -1532,9 +1509,7 @@ class CMailFile
 			{
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);
-			}
-			else
-			{
+			} else {
 				$name  = '';
 				$email = trim($val);
 			}
@@ -1603,9 +1578,7 @@ class CMailFile
 			{
 				$name  = trim($regs[1]);
 				$email = trim($regs[2]);
-			}
-			else
-			{
+			} else {
 				$name  = null;
 				$email = trim($val);
 			}

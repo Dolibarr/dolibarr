@@ -67,6 +67,7 @@ SeeInMarkerPlace=Zie Marktplaats
 AchatTelechargement=Kopen / Downloaden
 GoModuleSetupArea=Ga naar het gedeelte Module-instellingen om een nieuwe module te implementeren / installeren: <a href="%s">%s</a> .
 DoliStoreDesc=DoliStore, de officiële markt voor externe Dolibarr ERP / CRM modules
+DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 WebSiteDesc=Externe websites voor meer add-on (niet-basis) modules ...
 BoxesActivated=Geactiveerde widgets
 DoNotStoreClearPassword=Versleutel wachtwoorden opgeslagen in database (NIET als platte tekst). Het wordt sterk aanbevolen om deze optie te activeren.
@@ -117,7 +118,6 @@ SetupIsReadyForUse=Module-implementatie is voltooid. U moet de module in uw toep
 NotExistsDirect=De alternatieve hoofdmap is niet gedefinieerd voor een bestaande map. <br>
 InfDirAlt=Sinds versie 3 is het mogelijk om een alternatieve rootmap te definiëren. Hiermee kunt u in een speciale map plug-ins en aangepaste sjablonen opslaan. <br> Maak gewoon een map aan in de root van Dolibarr (bv: aangepast). <br>
 InfDirExample=<br> <strong>Verklaar</strong> het dan in het bestand <strong>conf.php</strong> <br> $ Dolibarr_main_url_root_alt='/custom' <br> $ Dolibarr_main_document_root_alt='/pad/of/Dolibarr/htdocs/custom' <br> Als deze regels worden becommentarieerd met "#", schakelt u ze gewoon uit door het teken "#" te verwijderen.
-YouCanSubmitFile=You can upload the .zip file of module package from here:
 LastStableVersion=Nieuwste stabiele versie
 GenericMaskCodes2=<b>{cccc}</b> de clientcode van n tekens <br> <b>{cccc000}</b> de <b>klantcode</b> op n tekens wordt gevolgd door een teller voor de klant. Deze teller die aan de klant is toegewezen, wordt tegelijkertijd opnieuw ingesteld als de globale teller. <br> <b>{tttt}</b> De code van het type van een derde partij op n tekens (zie menu Home - Instellingen - Woordenboek - Typen derde partijen). Als u deze tag toevoegt, verschilt de teller voor elk type derde partij. <br>
 GenericMaskCodes4a=<u>Voorbeeld op de 99e %s van de derde partij TheCompany, met datum 31-01-2007:</u> <br>
@@ -150,7 +150,6 @@ ExtrafieldPassword=Paswoord
 ExtrafieldRadio=Radioknoppen (slechts één keuze)
 ExtrafieldCheckBox=checkboxes
 ExtrafieldCheckBoxFromList=Selectievakjes uit tabel
-ComputedFormulaDesc=U kunt hier een formule invoeren met andere eigenschappen van het object of een willekeurige PHP-codering om een dynamische berekende waarde te krijgen. U kunt alle PHP-compatibele formules gebruiken, inclusief de "?" voorwaarde-operator en het volgende globale object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong> . <br> <strong>WAARSCHUWING</strong>: Mogelijk zijn slechts enkele eigenschappen van $ object beschikbaar. Als u eigenschappen nodig hebt die niet zijn geladen, haalt u het object gewoon in uw formule op zoals in het tweede voorbeeld. <br> Als u een berekend veld gebruikt, kunt u geen waarde invoeren via de interface. Als er een syntaxisfout is, kan de formule ook niets retourneren. <br><br> Voorbeeld van formule: <br> $object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br> Voorbeeld om een object opnieuw te laden <br> (($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br> Ander voorbeeld van een formule om de belasting van het object en het bovenliggende object te forceren: <br> (($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 LibraryToBuildPDF=Bibliotheek om PDF bestanden te genereren.
 SetAsDefault=Instellen als standaard
 NoDetails=Geen aanvullende details in voettekst
@@ -161,21 +160,18 @@ ModuleCompanyCodePanicum=Retourneer een lege boekhoudcode.
 Module40Name=Verkoper
 Module1780Name=Labels/Categorien
 Module1780Desc=Label/categorie maken (producten, klanten, leveranciers, contacten of leden)
-Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
+Permission221=Bekijk EMailings
 Permission1004=Bekijk voorraadmutaties
 Permission1005=Creëren / wijzigen voorraadmutaties
-ValueOfConstantKey=Value of a configuration constant
 InfoWebServer=Over webserver
 InfoDatabase=Over de database
 AccountantFileNumber=Code voor boekhouder
 AvailableModules=Beschikbare app / modules
-SuppliersCommandModel=Complete template of Purchase Order
-SuppliersInvoiceModel=Complete template of Vendor Invoice
 SalariesSetup=Setup van module salarissen
 MailToSendProposal=Klant voorstellen
 MailToSendInvoice=Klantfacturen
 AddBoxes=Widgets toevoegen
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 GeneralOptions=Algemene opties
 ExportSetup=Installatie van module Exporteren
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

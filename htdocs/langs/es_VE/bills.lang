@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
-PaymentBack=Refund
-CustomerInvoicePaymentBack=Refund
 CreateCreditNote=Crear factura de abono
 BillShortStatusConverted=Pagada
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
@@ -10,5 +8,4 @@ PaymentConditionShortPT_ORDER=Pedido
 PaymentTypeShortTRA=A validar
 VATIsNotUsedForInvoice=-
 LawApplicationPart1=-
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template 
 situationInvoiceShortcode_S=D

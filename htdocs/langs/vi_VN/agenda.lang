@@ -60,9 +60,10 @@ MemberSubscriptionModifiedInDolibarr=Đăng ký %s cho thành viên %s đã sử
 MemberSubscriptionDeletedInDolibarr=Đăng ký %s cho thành viên %s đã bị xóa
 ShipmentValidatedInDolibarr=Lô hàng %s được xác thực
 ShipmentClassifyClosedInDolibarr=Lô hàng %s được phân loại hóa đơn
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
+ShipmentUnClassifyCloseddInDolibarr=Lô hàng %s được phân loại mở lại
 ShipmentBackToDraftInDolibarr=Lô hàng %s trở lại trạng thái dự thảo
 ShipmentDeletedInDolibarr=Lô hàng %s đã bị xóa
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Đặt hàng %s đã tạo
 OrderValidatedInDolibarr=Thứ tự %s xác nhận
 OrderDeliveredInDolibarr=Đặt hàng %s được phân loại
@@ -84,13 +85,14 @@ InterventionSentByEMail=Can thiệp %s được gửi qua email
 ProposalDeleted=Đề xuất đã bị xóa
 OrderDeleted=Đã xóa đơn hàng
 InvoiceDeleted=Hóa đơn đã bị xóa
+DraftInvoiceDeleted=Hoá đơn dự thảo đã được xoá
 PRODUCT_CREATEInDolibarr=Sản phẩm %s được tạo
 PRODUCT_MODIFYInDolibarr=Sản phẩm %s được sửa đổi
 PRODUCT_DELETEInDolibarr=Đã xóa sản phẩm %s
 HOLIDAY_CREATEInDolibarr=Yêu cầu nghỉ phép %s được tạo
 HOLIDAY_MODIFYInDolibarr=Yêu cầu nghỉ phép %s sửa đổi
 HOLIDAY_APPROVEInDolibarr=Yêu cầu nghỉ phép %s được phê duyệt
-HOLIDAY_VALIDATEDInDolibarr=Yêu cầu nghỉ phép %s được xác nhận
+HOLIDAY_VALIDATEInDolibarr=Yêu cầu nghỉ phép %s được xác nhận
 HOLIDAY_DELETEInDolibarr=Yêu cầu nghỉ phép %s đã bị xóa
 EXPENSE_REPORT_CREATEInDolibarr=Báo cáo chi phí %s đã tạo
 EXPENSE_REPORT_VALIDATEInDolibarr=Báo cáo chi phí %s được xác nhận
@@ -111,8 +113,10 @@ BOM_CLOSEInDolibarr=BOM bị vô hiệu hóa
 BOM_REOPENInDolibarr=BOM mở lại
 BOM_DELETEInDolibarr=BOM đã xóa
 MRP_MO_VALIDATEInDolibarr=MO đã xác nhận
+MRP_MO_UNVALIDATEInDolibarr=MO set to draft status
 MRP_MO_PRODUCEDInDolibarr=MO đã tạo
 MRP_MO_DELETEInDolibarr=MO đã xóa
+MRP_MO_CANCELInDolibarr=MO canceled
 ##### End agenda events #####
 AgendaModelModule=Mẫu tài liệu cho sự kiện
 DateActionStart=Ngày bắt đầu
@@ -123,7 +127,7 @@ AgendaUrlOptionsNotAdmin=<b>logina =! %s</b> để hạn chế đầu ra cho cá
 AgendaUrlOptions4=<b>logint = %s</b> để hạn chế đầu ra cho các hành động được chỉ định cho người dùng <b>%s</b> (chủ sở hữu và những người khác).
 AgendaUrlOptionsProject=<b>project = __PROJECT_ID__</b> để hạn chế đầu ra cho các hành động được liên kết với dự án <b>__PROJECT_ID__</b>.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> để loại trừ các sự kiện tự động.
-AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> to include events of holidays.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> bào gồm các ngày nghỉ sự kiện
 AgendaShowBirthdayEvents=Hiển thị ngày sinh của các liên lạc
 AgendaHideBirthdayEvents=Ẩn ngày sinh của các liên lạc
 Busy=Bận
@@ -151,3 +155,6 @@ EveryMonth=Mỗi tháng
 DayOfMonth=Ngày trong tháng
 DayOfWeek=Ngày trong tuần
 DateStartPlusOne=Ngày bắt đầu + 1 giờ
+SetAllEventsToTodo=Set all events to todo
+SetAllEventsToInProgress=Set all events to in progress
+SetAllEventsToFinished=Set all events to finished

@@ -398,7 +398,7 @@ class Hook extends CommonObject
     {
         $result = $this->fetchCommon($id, $ref);
         if ($result > 0 && !empty($this->table_element_line)) {
-            $this->fetchLines();
+            //$this->fetchLines();
         }
         return $result;
     }
@@ -635,8 +635,7 @@ class Hook extends CommonObject
         // phpcs:enable
     	global $langs;
 
-    	if (empty($this->labelStatus) || empty($this->labelStatusShort))
-    	{
+    	if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
     		global $langs;
     		//$langs->load("mymodule");
     		$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Disabled');
@@ -715,7 +714,6 @@ class Hook extends CommonObject
      *
      * @return  int         0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
      */
-    //public function doScheduledJob($param1, $param2, ...)
     public function doScheduledJob()
     {
         global $conf, $langs;

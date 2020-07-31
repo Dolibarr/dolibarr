@@ -130,10 +130,14 @@ TicketNumberingModules=服務單編號模組
 TicketNotifyTiersAtCreation=建立時通知合作方
 TicketGroup=群組
 TicketsDisableCustomerEmail=從公共界面建立服務單時，始終禁用電子郵件
+TicketsPublicNotificationNewMessage=當有新訊息時寄送電子郵件
+TicketsPublicNotificationNewMessageHelp=當公共界面有新增訊息時寄送電子郵件(給已分配用戶或寄送通知電子郵件給(更新)與/或通知電子郵件給)
+TicketPublicNotificationNewMessageDefaultEmail=通知電子郵件寄送到（更新）
+TicketPublicNotificationNewMessageDefaultEmailHelp=如果沒有分配服務單或用戶沒有電子郵件，請通過電子郵件向此信箱寄送新消息通知。
 #
 # Index & list page
 #
-TicketsIndex=服務單-主頁
+TicketsIndex=門票區
 TicketList=服務單清單
 TicketAssignedToMeInfos=此頁面顯示由目前用戶建立或分配給目前用戶的服務單清單
 NoTicketsFound=找不到服務單

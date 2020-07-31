@@ -59,9 +59,9 @@ class pdf_stdmovement extends ModelePDFMovement
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -286,10 +286,8 @@ class pdf_stdmovement extends ModelePDFMovement
 		{
 			if ($year > 0)
 			$sql .= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, $month, false))."' AND '".$db->idate(dol_get_last_day($year, $month, false))."'";
-			else
-			$sql .= " AND date_format(m.datem, '%m') = '$month'";
-		}
-		elseif ($year > 0)
+			else $sql .= " AND date_format(m.datem, '%m') = '$month'";
+		} elseif ($year > 0)
 		{
 			$sql .= " AND m.datem BETWEEN '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 		}
@@ -363,8 +361,7 @@ class pdf_stdmovement extends ModelePDFMovement
 				$i = 0;
 				$help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 				if ($msid) $texte = $langs->trans('StockMovementForId', $msid);
-				else
-				{
+				else {
 					$texte = $langs->trans("ListOfStockMovements");
 					if ($id) $texte .= ' ('.$langs->trans("ForThisWarehouse").')';
 				}
@@ -375,9 +372,7 @@ class pdf_stdmovement extends ModelePDFMovement
 			{
 				$dir = $conf->stock->dir_output."/movement";
 				$file = $dir."/SPECIMEN.pdf";
-			}
-			else
-			{
+			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				if (!empty($search_inventorycode)) $objectref .= "_".$id."_".$search_inventorycode;
 				if ($search_type_mouvement) $objectref .= "_".$search_type_mouvement;
@@ -539,19 +534,15 @@ class pdf_stdmovement extends ModelePDFMovement
 									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter + 1);
 								}
-							}
-							else
-							{
+							} else {
 								// We found a page break
 
 								// Allows data in the first page if description is long enough to break in multiples pages
 								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
-								else
-									$showpricebeforepagebreak = 0;
+								else $showpricebeforepagebreak = 0;
 							}
-						}
-						else	// No pagebreak
+						} else // No pagebreak
 						{
 							$pdf->commitTransaction();
 						}
@@ -666,9 +657,7 @@ class pdf_stdmovement extends ModelePDFMovement
 							if ($pagenb == 1)
 							{
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
-							}
-							else
-							{
+							} else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -682,9 +671,7 @@ class pdf_stdmovement extends ModelePDFMovement
 							if ($pagenb == 1)
 							{
 								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
-							}
-							else
-							{
+							} else {
 								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -719,9 +706,7 @@ class pdf_stdmovement extends ModelePDFMovement
 					// Total Qty
 					$pdf->SetXY($this->postotalht, $curY);
 					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', 0);
-				}
-				else
-				{
+				} else {
 					dol_print_error($db);
 				}
 
@@ -745,9 +730,7 @@ class pdf_stdmovement extends ModelePDFMovement
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
-				}
-				else
-				{
+				} else {
 					$height_note = 0;
 				}
 
@@ -762,9 +745,7 @@ class pdf_stdmovement extends ModelePDFMovement
 				{
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-				}
-				else
-				{
+				} else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
@@ -802,15 +783,11 @@ class pdf_stdmovement extends ModelePDFMovement
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // No error
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "PRODUCT_OUTPUTDIR");
 			return 0;
 		}
@@ -993,17 +970,13 @@ class pdf_stdmovement extends ModelePDFMovement
 	        {
 	            $height = pdf_getHeightForLogo($logo);
 	            $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-	        }
-	        else
-	        {
+	        } else {
 	            $pdf->SetTextColor(200, 0, 0);
 	            $pdf->SetFont('', 'B', $default_font_size - 2);
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 	            $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 	        }
-	    }
-	    else
-	    {
+	    } else {
 	        $text = $this->emetteur->name;
 	        $pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 	    }
@@ -1045,9 +1018,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		if (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0)
 		{
 			$pdf->MultiCell(150, 3, $e->label, '', 'R');
-		}
-		else
-		{
+		} else {
 			$pdf->MultiCell(150, 3, $outputlangs->transnoentities("None"), '', 'R');
 		}
 
@@ -1084,18 +1055,14 @@ class pdf_stdmovement extends ModelePDFMovement
 		{
 			$obj = $db->fetch_object($resqlbis);
 			$lastmovementdate = $db->jdate($obj->datem);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 
 		if ($lastmovementdate)
 		{
 			$toWrite = dol_print_date($lastmovementdate, 'dayhour').' ';
-		}
-		else
-		{
+		} else {
 			$toWrite = $outputlangs->transnoentities("None");
 		}
 

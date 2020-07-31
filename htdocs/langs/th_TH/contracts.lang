@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=ตัวแทนขายสัญ�
 TypeContact_contrat_external_BILLING=การเรียกเก็บเงินการติดต่อกับลูกค้า
 TypeContact_contrat_external_CUSTOMER=ติดตามการติดต่อกับลูกค้า
 TypeContact_contrat_external_SALESREPSIGN=ลงนามในสัญญาการติดต่อกับลูกค้า
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

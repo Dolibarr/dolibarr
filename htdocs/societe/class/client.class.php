@@ -59,7 +59,7 @@ class Client extends Societe
         // phpcs:enable
         global $user;
 
-        $this->nb = array("customers" => 0, "prospects" => 0);
+        $this->nb = array("prospects" => 0, "customers" => 0);
         $clause = "WHERE";
 
         $sql = "SELECT count(s.rowid) as nb, s.client";
@@ -84,9 +84,7 @@ class Client extends Societe
             }
             $this->db->free($resql);
             return 1;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             $this->error = $this->db->lasterror();
             return -1;

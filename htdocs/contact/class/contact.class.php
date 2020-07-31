@@ -295,9 +295,7 @@ class Contact extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -398,16 +396,12 @@ class Contact extends CommonObject
             {
                 $this->db->commit();
                 return $this->id;
-            }
-            else
-            {
+            } else {
                 $this->db->rollback();
                 dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
                 return -2;
             }
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 
 			$this->db->rollback();
@@ -611,16 +605,12 @@ class Contact extends CommonObject
 			{
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -$error;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror().' sql='.$sql;
             $this->db->rollback();
 			return -1;
@@ -776,14 +766,10 @@ class Contact extends CommonObject
                     $error++;
                     $this->error = $this->db->lasterror();
 				}
-			}
-			else
-			{
+			} else {
 				$result = true;
 			}
-		}
-		else
-		{
+		} else {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_alert ";
 			$sql .= "WHERE type=1 AND fk_contact=".$this->db->escape($id)." AND fk_user=".$user->id;
 			$result = $this->db->query($sql);
@@ -806,9 +792,7 @@ class Contact extends CommonObject
 		{
 		    $this->db->commit();
 		    return 1;
-		}
-		else
-		{
+		} else {
 		    dol_syslog(get_class($this)."::update Error ".$this->error, LOG_ERR);
 		    $this->db->rollback();
 		    return -$error;
@@ -863,8 +847,7 @@ class Contact extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcommcontact as st ON c.fk_stcommcontact = st.id';
 		if ($id) $sql .= " WHERE c.rowid = ".$id;
-		else
-		{
+		else {
 			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
 			if ($ref_ext) {
 				$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
@@ -884,8 +867,7 @@ class Contact extends CommonObject
 				dol_syslog($this->error, LOG_ERR);
 
 				return 2;
-			}
-			elseif ($num)   // $num = 1
+			} elseif ($num)   // $num = 1
 			{
 				$obj = $this->db->fetch_object($resql);
 
@@ -967,9 +949,7 @@ class Contact extends CommonObject
 						$this->user_id = $uobj->rowid;
 					}
 					$this->db->free($resql);
-				}
-				else
-				{
+				} else {
 					$this->error = $this->db->error();
 					return -1;
 				}
@@ -995,9 +975,7 @@ class Contact extends CommonObject
 							$this->birthday_alert = 1;
 						}
 						$this->db->free($resql);
-					}
-					else
-					{
+					} else {
 						$this->error = $this->db->error();
 						return -1;
 					}
@@ -1012,15 +990,11 @@ class Contact extends CommonObject
 				}
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("RecordNotFound");
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1041,8 +1015,7 @@ class Contact extends CommonObject
 		if (in_array($this->civility_id, array('MR')) || in_array($this->civility_code, array('MR')))
 		{
 			$this->gender = 'man';
-		}
-		elseif (in_array($this->civility_id, array('MME', 'MLE')) || in_array($this->civility_code, array('MME', 'MLE')))
+		} elseif (in_array($this->civility_id, array('MME', 'MLE')) || in_array($this->civility_code, array('MME', 'MLE')))
 		{
 			$this->gender = 'woman';
 		}
@@ -1086,9 +1059,7 @@ class Contact extends CommonObject
 			}
 			$this->db->free($resql);
 			return 0;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -1106,9 +1077,6 @@ class Contact extends CommonObject
 
 		$error = 0;
 
-		//$this->old_lastname = $obj->lastname;
-		//$this->old_firstname = $obj->firstname;
-
 		$this->db->begin();
 
 		if (!$error)
@@ -1120,7 +1088,7 @@ class Contact extends CommonObject
 			$sql .= " WHERE ec.fk_socpeople=".$this->id;
 			$sql .= " AND ec.fk_c_type_contact=tc.rowid";
 			$sql .= " AND tc.source='external'";
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -1133,7 +1101,7 @@ class Contact extends CommonObject
 
 					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
 					$sqldel .= " WHERE rowid = ".$obj->rowid;
-					dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+					dol_syslog(__METHOD__, LOG_DEBUG);
 					$result = $this->db->query($sqldel);
 					if (!$result)
 					{
@@ -1143,9 +1111,7 @@ class Contact extends CommonObject
 
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 				$this->error = $this->db->error().' sql='.$sql;
 			}
@@ -1155,7 +1121,7 @@ class Contact extends CommonObject
 		{
 			// Remove Roles
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_contacts WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1169,7 +1135,7 @@ class Contact extends CommonObject
 		{
 			// Remove category
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_contact WHERE fk_socpeople = ".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if (!$resql)
 			{
@@ -1183,7 +1149,7 @@ class Contact extends CommonObject
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
 			$sql .= " WHERE rowid=".$this->id;
-			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+			dol_syslog(__METHOD__, LOG_DEBUG);
 			$result = $this->db->query($sql);
 			if (!$result)
 			{
@@ -1211,9 +1177,7 @@ class Contact extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			dol_syslog("Error ".$this->error, LOG_ERR);
 			return -1;
@@ -1260,9 +1224,7 @@ class Contact extends CommonObject
 			}
 
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 		}
 	}
@@ -1287,9 +1249,7 @@ class Contact extends CommonObject
 
 			$this->db->free($resql);
 			return $nb;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -1550,9 +1510,7 @@ class Contact extends CommonObject
 		{
 			$this->db->rollback();
 			return -$error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1615,7 +1573,7 @@ class Contact extends CommonObject
 	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
 	{
 		$tables = array(
-			'socpeople'
+			'socpeople', 'societe_contacts'
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
@@ -1705,9 +1663,7 @@ class Contact extends CommonObject
 			}
 
 			return $tab;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			dol_print_error($this->db);
 			return -1;

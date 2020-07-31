@@ -14,18 +14,9 @@ WarningModuleNotActive=Le module <b>%s</b> doit être activé
 WarningOnlyPermissionOfActivatedModules=Seules les permissions liées à des modules activés sont montrées ici. Vous pouvez activer d'autres modules sur la page Accueil->Configuration->Modules.
 FormToTestFileUploadForm=Formulaire pour tester l'upload de fichiers (selon la configuration)
 IfModuleEnabled=Note: oui ne fonctionne que si le module <b>%s</b> est activé
-AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
-AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
-YouCanSubmitFile=You can upload the .zip file of module package from here:
+DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 Module20Name=Propales
 Module30Name=Factures
-Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
-ValueOfConstantKey=Value of a configuration constant
-SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
-SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
-CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
 Target=Objectif
-SuppliersCommandModel=Complete template of Purchase Order
-SuppliersInvoiceModel=Complete template of Vendor Invoice
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

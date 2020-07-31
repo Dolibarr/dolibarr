@@ -2,7 +2,7 @@
 Delivery=Aflevering
 DeliveryRef=Ref Levering
 DeliveryCard=Kvitteringskort
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Leveringskvittering
 DeliveryDate=Leveringsdato
 CreateDeliveryOrder=Generer leveringskvittering
 DeliveryStateSaved=Leveringsstatus gemt
@@ -18,14 +18,14 @@ StatusDeliveryCanceled=Aflyst
 StatusDeliveryDraft=Udkast til
 StatusDeliveryValidated=Modtaget
 # merou PDF model
-NameAndSignature=Name and Signature:
+NameAndSignature=Navn og underskrift:
 ToAndDate=Til___________________________________ om ____ / _____ / __________
 GoodStatusDeclaration=Har modtaget varerne over i god stand,
-Deliverer=Deliverer:
+Deliverer=Befrier:
 Sender=Sender
 Recipient=Modtager
 ErrorStockIsNotEnough=Der er ikke nok lager
 Shippable=Fragtvarer
 NonShippable=Kan ikke sendes
 ShowReceiving=Vis leverings kvittering
-NonExistentOrder=Nonexistent order
+NonExistentOrder=ikke-eksisterende ordre

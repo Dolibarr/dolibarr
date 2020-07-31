@@ -175,8 +175,7 @@ class AgendaEvents extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve Agenda Event list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -248,7 +247,7 @@ class AgendaEvents extends DolibarrApi
             throw new RestException(404, 'actioncomm not found');
         }
 
-        if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id)) {
+        if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
         foreach ($request_data as $field => $value) {
@@ -290,7 +289,7 @@ class AgendaEvents extends DolibarrApi
             throw new RestException(404, 'Agenda Event not found');
         }
 
-        if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id)) {
+        if (!DolibarrApi::_checkAccessToResource('actioncomm', $this->actioncomm->id, 'actioncomm', '', 'fk_soc', 'id')) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 

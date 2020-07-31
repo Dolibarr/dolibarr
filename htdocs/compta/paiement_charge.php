@@ -41,6 +41,8 @@ if ($user->socid > 0)
 	$socid = $user->socid;
 }
 
+$charge = new ChargeSociales($db);
+
 
 /*
  * Actions
@@ -141,9 +143,7 @@ if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'y
                 $loc = DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid;
                 header('Location: '.$loc);
                 exit;
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
         }
@@ -163,7 +163,6 @@ $form = new Form($db);
 // Formulaire de creation d'un paiement de charge
 if ($action == 'create')
 {
-	$charge = new ChargeSociales($db);
 	$charge->fetch($chid);
     $charge->accountid = $charge->fk_account ? $charge->fk_account : $charge->accountid;
     $charge->paiementtype = $charge->mode_reglement_id ? $charge->mode_reglement_id : $charge->paiementtype;
@@ -225,7 +224,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Date").'</td><td>';
 	$datepaye = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	$datepayment = empty($conf->global->MAIN_AUTOFILL_DATE) ? (empty($_POST["remonth"]) ?-1 : $datepaye) : 0;
-	print $form->selectDate($datepayment, '', '', '', '', "add_payment", 1, 1);
+	print $form->selectDate($datepayment, '', '', '', 0, "add_payment", 1, 1, 0, '', '', $charge->date_ech, '', 1, $langs->trans("DateOfSocialContribution"));
 	print "</td>";
 	print '</tr>';
 
@@ -283,9 +282,7 @@ if ($action == 'create')
 		if ($objp->date_ech > 0)
 		{
 			print '<td class="left">'.dol_print_date($objp->date_ech, 'day').'</td>'."\n";
-		}
-		else
-		{
+		} else {
 			print "<td align=\"center\"><b>!!!</b></td>\n";
 		}
 
@@ -305,9 +302,7 @@ if ($action == 'create')
 			$remaintopay = $objp->amount - $sumpaid;
 			print '<input type=hidden class="sum_remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
 			print '<input type="text" size="8" name="'.$namef.'" id="'.$namef.'">';
-		}
-		else
-		{
+		} else {
 			print '-';
 		}
 		print "</td>";

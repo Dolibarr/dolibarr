@@ -64,13 +64,10 @@ if ($action == 'getProducts') {
 	    	}
 	    }
     	echo json_encode($prods);
-    }
-    else
-    {
+    } else {
     	echo 'Failed to load category with id='.$category;
     }
-}
-elseif ($action == 'search' && $term != '') {
+} elseif ($action == 'search' && $term != '') {
 	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
 	$filteroncategids = '';
 	if ($conf->global->TAKEPOS_ROOT_CATEGORY_ID > 0) {	// A root category is defined, we must filter on products inside this category tree
@@ -109,8 +106,7 @@ elseif ($action == 'search' && $term != '') {
 	    	);
 	    }
 	    echo json_encode($rows);
-	}
-	else {
+	} else {
 		echo 'Failed to search product : '.$db->lasterror();
 	}
 } elseif ($action == "opendrawer" && $term != '') {
@@ -142,4 +138,10 @@ elseif ($action == 'search' && $term != '') {
 	}
 
 	echo json_encode($object);
+} elseif ($action == 'thecheck') {
+	$place = GETPOST('place', 'alpha');
+	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+    $printer = new dolReceiptPrinter($db);
+    $printer->sendToPrinter($object, $conf->global->{'TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$term}, $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$term});
 }

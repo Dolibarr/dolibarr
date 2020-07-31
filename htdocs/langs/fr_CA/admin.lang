@@ -19,8 +19,6 @@ UploadNewTemplate=Télécharger un nouveau modèle (s)
 SecurityFilesDesc=Définissez ici les options liées à la sécurité concernant le téléchargement de fichiers.
 AllowToSelectProjectFromOtherCompany=Sur le document d'un tiers, peut choisir un projet lié à un autre tiers
 NextValueForDeposit=Valeur suivante (acompte)
-AntiVirusCommandExample=Example for ClamAv Daemon (require clamav-daemon): /usr/bin/clamdscan<br>Example for ClamWin (very very slow): c:\\Progra~1\\ClamWin\\bin\\clamscan.exe
-AntiVirusParamExample=Example for ClamAv Daemon: --fdpass<br>Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 MultiCurrencySetup=Configuration multi-devises
 NotConfigured=Module / Application non configuré
 AllWidgetsWereEnabled=Tous les widgets disponibles sont activés
@@ -41,6 +39,7 @@ CompatibleAfterUpdate=Ce module nécessite une mise à jour de votre Dolibarr %s
 SeeInMarkerPlace=Voir dans Market place
 Updated=Mis à jour
 AchatTelechargement=Acheter / Télécharger
+DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 DevelopYourModuleDesc=Quelques solutions pour développer votre propre module ...
 InstrucToEncodePass=Pour chiffrer le mot de passe de la base dans le fichier de configuration <b>conf.php</b>, remplacer la ligne<br><b>$dolibarr_main_db_pass="...";</b><br>par<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=Pour avoir le mot de passe de la base décodé (en clair) dans le fichier de configuration <b>conf.php</b>, remplacer dans ce fichier la ligne<br><b>$dolibarr_main_db_pass="crypted:..."</b><br>par<br><b>$dolibarr_main_db_pass="%s"</b>
@@ -59,7 +58,6 @@ ModuleFamilyInterface=Interfaces avec les systèmes externes
 ThisIsAlternativeProcessToFollow=Il s'agit d'une configuration alternative à traiter manuellement:
 NotExistsDirect=Le répertoire racine alternatif n'est pas défini dans un répertoire existant.
 InfDirAlt=Depuis la version 3, il est possible de définir un autre répertoire racine. Cela vous permet de stocker, dans un répertoire dédié, des plug-ins et des modèles personnalisés. <br> Créez simplement un répertoire à la racine de Dolibarr (par exemple: personnalisé).
-YouCanSubmitFile=You can upload the .zip file of module package from here:
 LastStableVersion=Dernière version stable
 LastActivationDate=Dernière date d'activation
 LastActivationAuthor=Dernier auteur d'activation
@@ -101,7 +99,6 @@ Module2610Desc=Activer le serveur REST de services API de les services
 Module2660Name=WebServices appel ( client SOAP )
 Module4000Name=Gestion des ressources humaines
 Module10000Name=Sites Internet
-Module50150Desc=Point of Sale module TakePOS (touchscreen POS, for shops, bars or restaurants).
 Module55000Name=Sondage, enquête ou vote
 Permission45=Exportation de projets
 Permission76=Exporter des données
@@ -129,20 +126,16 @@ DictionaryVAT=Taux de TPS/TVH ou de Taxes de Ventes
 DictionaryAccountancyJournal=Revues comptables
 DictionaryProspectStatus=Status prospection
 SetupNotSaved=Le programme d'installation n'a pas été enregistré
-ValueOfConstantKey=Value of a configuration constant
 CurrentNext=Actuel / Suivant
 DefaultMaxSizeList=Longueur maximale des listes
 CompanyObject=Objet de la compagnie
 ShowBugTrackLink=Afficher le lien "Signaler un défaut"
-SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
-SetupDescription4=<a href="%s">%s -> %s</a><br><br>This software is a suite of many modules/applications. The modules related to your needs must be enabled and configured. Menu entries will appears with the activation of these modules.
 InfoDolibarr=À propos de Dolibarr
 InfoBrowser=À propos du navigateur
 InfoWebServer=À propos du serveur Web
 InfoPHP=À propos de PHP
 InfoPerf=À propos des performances
 AreaForAdminOnly=Les paramètres d'installation peuvent être définis par <b> utilisateurs d'administrateur </ b> uniquement.
-CompanyFundationDesc=Edit the information of your company/organization. Click on "%s" button at the bottom of the page when done.
 DictionaryDesc=Insérez toutes les données de référence. Vous pouvez ajouter vos valeurs par défaut.
 MiscellaneousDesc=Tous les autres paramètres liés à la sécurité sont définis ici.
 UnitPriceOfProduct=Prix unitaire (no tax) d'un produit
@@ -199,8 +192,6 @@ ApiExporerIs=Vous pouvez explorer et tester les API à l'URL
 OnlyActiveElementsAreExposed=Seuls les éléments de modules activés sont exposés
 ApiKey=Clé API
 WarningAPIExplorerDisabled=L'explorateur API a été désactivé. L'API Explorer n'est pas nécessaire pour fournir des services API. C'est un outil permettant aux développeurs de trouver / tester des API REST. Si vous avez besoin de cet outil, installez le module API REST pour l'activer.
-SuppliersCommandModel=Complete template of Purchase Order
-SuppliersInvoiceModel=Complete template of Vendor Invoice
 AccountingPeriods=Périodes de comptabilité
 AccountingPeriodCard=Période de comptabilité
 NewFiscalYear=Nouvelle période comptable
@@ -257,6 +248,6 @@ LandingPage=Page d'atterrissage
 ModuleEnabledAdminMustCheckRights=Le module a été activé. Les autorisations pour les modules activés ont été données uniquement aux utilisateurs administratifs. Vous devrez peut-être accorder des autorisations aux autres utilisateurs ou groupes manuellement si nécessaire.
 BaseCurrency=Monnaie de référence de la société (entrer dans la configuration de l'entreprise pour modifier cela)
 FormatZip=Code postal
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 UseSearchToSelectResource=Utilisez un formulaire de recherche pour choisir une ressource (plutôt qu'une liste déroulante).
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

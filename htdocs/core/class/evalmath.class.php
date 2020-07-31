@@ -194,7 +194,7 @@ class EvalMath
 	 *
 	 * @return string Output
 	 */
-	private function vars()
+	public function vars()
 	{
 		$output = $this->v;
 		unset($output['pi']);
@@ -270,10 +270,11 @@ class EvalMath
 				// ===============
 			} elseif ($op == ')' and $expecting_op) { // ready to close a parenthesis?
 				while (($o2 = $stack->pop()) != '(') { // pop off the stack back to the last (
-					if (is_null($o2))
+					if (is_null($o2)) {
 						return $this->trigger(5, "unexpected ')'", ")");
-					else
+					} else {
 						$output[] = $o2;
+					}
 				}
 				if (preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches)) { // did we just close a function?
 					$fnn = $matches[1]; // get the function name
@@ -293,10 +294,11 @@ class EvalMath
 				// ===============
 			} elseif ($op == ',' and $expecting_op) { // did we just finish a function argument?
 				while (($o2 = $stack->pop()) != '(') {
-					if (is_null($o2))
+					if (is_null($o2)) {
 						return $this->trigger(5, "unexpected ','", ","); // oops, never had a (
-					else
+					} else {
 						$output[] = $o2; // pop the argument expression stuff and push onto the output
+					}
 				}
 				// make sure there was a function
 				if (!preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches))

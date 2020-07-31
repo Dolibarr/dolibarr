@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Robotfil (robots.txt)
 WEBSITE_HTACCESS=Nettstedets .htaccess-fil
 WEBSITE_MANIFEST_JSON=Nettstedets manifest.json-fil
 WEBSITE_README=README.md-fil
+WEBSITE_KEYWORDSDesc=Use a comma to separate values
 EnterHereLicenseInformation=Skriv inn metadata eller lisensinformasjon for å arkivere en README.md-fil. Hvis du distribuerer nettstedet ditt som en mal, vil filen bli inkludert i mal-pakken.
 HtmlHeaderPage=HTML-header (kun for denne siden)
 PageNameAliasHelp=Navn eller alias på siden. <br> Dette aliaset brukes også til å lage en SEO-URL når nettsiden blir kjørt fra en virtuell vert til en webserver (som Apacke, Nginx, ...). Bruk knappen "<strong>%s</strong>" for å redigere dette aliaset.
@@ -42,7 +43,7 @@ ViewPageInNewTab=Vis side i ny fane
 SetAsHomePage=Sett som startside
 RealURL=Virkelig URL
 ViewWebsiteInProduction=Vis webside ved hjelp av  hjemme-URL
-SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
+SetHereVirtualHost=<u>Bruk med Apache/NGinx/...</u><br>Opprett på webserveren din (Apache, Nginx, ...) en dedikert virtuell vert med PHP aktivert og en rotkatalog på <br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Eksempel på Apache virtuelt vertsoppsett:
 YouCanAlsoTestWithPHPS= <u> Bruk med PHP-innebygd server </u> <br> I utviklingsmiljø kan du foretrekke å teste nettstedet med PHP-innebygd webserver (PHP 5.5 nødvendig) ved å kjøre <br> <strong> php -S 0.0.0.0:8080 -t %s </strong>
 YouCanAlsoDeployToAnotherWHP=<u>Kjør nettstedet ditt med en annen leverandør av Dolibarr Hosting</u> <br> Hvis du ikke har en webserver som Apache eller NGinx tilgjengelig på internett, kan du eksportere og importere nettstedet til en annen Dolibarr-forekomst levert av en annen Dolibarr-leverandør som gir full integrasjon med nettstedsmodulen. Du kan finne en liste over noen Dolibarr-vertsleverandører på <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
@@ -57,7 +58,10 @@ NoPageYet=Ingen sider ennå
 YouCanCreatePageOrImportTemplate=Du kan opprette en ny side eller importere en full nettsidemal
 SyntaxHelp=Hjelp med spesifikke syntakstips
 YouCanEditHtmlSourceckeditor=Du kan redigere HTML kildekode ved hjelp av "Kilde" -knappen i redigeringsprogrammet.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Du kan inkludere PHP-kode i denne kilden ved å bruke tagger <strong>&lt;? Php?&gt;</strong> . Følgende globale variabler er tilgjengelige: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs. <br><br><span class="fa fa-bug"></span> Du kan også ta med innhold av en annen side/container med følgende syntaks: <br> <strong>&lt;?php includeContainer ('alias_of_container_to_include'); ?&gt;</strong> <br><br><span class="fa fa-bug"></span> Du kan lage en viderekobling til en annen side/container med følgende syntaks (Merk: ikke send ut noe innhold før en viderekobling): <br> <strong>&lt;? php redirectToContainer ('alias_of_container_to_redirect_to'); ?&gt;</strong> <br><br><span class="fa fa-link"></span> Hvis du vil legge til en kobling til en annen side, bruker du syntaks: <br> <strong>&lt;a href="quot;alias_of_page_to_link_to.php"&gt;mylink &lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> Hvis du vil inkludere en <strong>kobling for å laste ned</strong> en fil som er lagret i <strong>dokumentkatalogen</strong> , bruker du wrapper til <strong>document.php</strong> : <br> For eksempel, for en fil til dokumenter / ecm (må loggføres), er syntaks: <br> <strong>&lt;a href="/document.php?modulepart=ecm&amp;file=??relative_dir/??filename.ext&"&gt;</strong> <br> For en fil i dokumenter / medier (åpen katalog for offentlig tilgang) er syntaks: <br> <strong>&lt;a href="/document.php?modulepart=medias&amp;file=??relative_dir/??filename.ext"&gt;</strong> <br> For en fil som er delt med en delelink (åpen tilgang ved å bruke hash-nøkkelen til filen), er syntaks: <br> <strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br><br><span class="fa fa-picture-o"></span> Hvis du vil ta med et <strong>bilde som er</strong> lagret i <strong>dokumentkatalogen</strong> , bruker du innpakningen <strong>viewimage.php</strong> : <br> For eksempel, for et bilde i dokumenter / medier (åpen katalog for offentlig tilgang), er syntaks: <br> <strong>&lt;img src="/ viewimage.php? modulepart = medias &amp; file = [relative_dir /] filnavn.ext"&gt;</strong> <br><br> Flere eksempler på HTML eller dynamisk kode er tilgjengelige <a href="%s" target="_blank">i wikidokumentasjonen</a> <br> .
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Klon side/container
 CloneSite=Klon side
 SiteAdded=Nettsted lagt til
@@ -77,7 +81,7 @@ BlogPost=Blogg post
 WebsiteAccount=Nettstedskonto
 WebsiteAccounts=Nettstedskontoer
 AddWebsiteAccount=Opprett nettsidekonto
-BackToListOfThirdParty=Tilbake til listen over tredjeparter
+BackToListForThirdParty=Tilbake til listen for tredjepart
 DisableSiteFirst=Deaktiver nettsted først
 MyContainerTitle=Mitt nettsteds tittel
 AnotherContainer=Slik inkluderer du innhold på en annen side/container (du kan ha en feil her hvis du aktiverer dynamisk kode fordi den innebygde undercontaineren kanskje ikke eksisterer)
@@ -85,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Beklager, dette nettstedet er for øyeblikket off
 WEBSITE_USE_WEBSITE_ACCOUNTS=Aktiver nettstedkontotabellen
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktiver tabellen for å lagre nettstedkontoer (innlogging/pass) for hvert nettsted/tredjepart
 YouMustDefineTheHomePage=Du må først definere standard startside
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correclty when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContentFuture=Advarsel: Å opprette en webside ved å importere en ekstern webside er forbeholdt erfarne brukere. Avhengig av kompleksiteten på kildesiden, kan resultatet av importen avvike fra originalen. Også hvis kildesiden bruker vanlige CSS-stiler eller motstridende javascript, kan det ødelegge utseendet eller funksjonene til nettstedredigereren når du jobber med denne siden. Denne metoden er en raskere måte å opprette en side på, men det anbefales å opprette den nye siden fra bunnen av eller fra en foreslått sidemal. <br> Merk også at inline-redigeringsprogrammet ikke fungerer korrekt når det brukes på en ekstern side.
 OnlyEditionOfSourceForGrabbedContent=Kun HTML-kilde er mulig når innholdet ble tatt fra et eksternt nettsted
 GrabImagesInto=Hent bilder som er funnet i css og side også.
 ImagesShouldBeSavedInto=Bilder bør lagres i katalogen
@@ -120,11 +124,14 @@ ShowSubContainersOnOff=Mode for å utføre 'dynamisk innhold' er %s
 GlobalCSSorJS=Global CSS/JS/Header-fil på nettstedet
 BackToHomePage=Tilbake til hjemmesiden...
 TranslationLinks=Oversettelseslenker
-YouTryToAccessToAFileThatIsNotAWebsitePage=Du prøver å få tilgang til en side som ikke er en webside
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=For god SEO-praksis, bruk en tekst mellom 5 og 70 tegn
 MainLanguage=Hovedspråk
 OtherLanguages=Andre språk
 UseManifest=Oppgi en manifest.json-fil
-PublicAuthorAlias=Public author alias
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
-ReplacementDoneInXPages=Replacement done in %s pages or containers
+PublicAuthorAlias=Offentlig forfatter alias
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Tilgjengelige språk er definert i nettstedegenskaper
+ReplacementDoneInXPages=Utskifting utført på %s sider eller containere
+RSSFeed=RSS nyhetsstrøm
+RSSFeedDesc=You can get a RSS feed of latest articles with type 'blogpost' using this URL
+PagesRegenerated=%s page(s)/container(s) regenerated

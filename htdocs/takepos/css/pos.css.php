@@ -102,6 +102,7 @@ button.calcbutton {
     border-width: 0;
     margin: 1px;
 	font-size: 14pt;
+    border-radius: 3px;
 }
 
 button.calcbutton2 {
@@ -121,6 +122,7 @@ button.calcbutton2 {
 	font-weight: bold;
 	font-size: 10pt;
 	margin: 1px;
+    border-radius: 3px;
 }
 
 button.calcbutton3 {
@@ -136,12 +138,14 @@ button.calcbutton3 {
 	height: calc(25% - 2px);
 	font-size: 14pt;
 	margin: 1px;
+    border-radius: 3px;
 }
 
 button.actionbutton {
     background: #EABCA6;
     border: 2px solid #EEE;
     min-height: 40px;
+    border-radius: 3px;
 }
 
 button.actionbutton {
@@ -153,7 +157,7 @@ button.actionbutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width: calc(33% - 2px);
+	width: calc(33.33% - 2px);
 	height: calc(25% - 2px);
 	margin: 1px;
    	border-width: 0;
@@ -268,12 +272,18 @@ table.postablelines tr td {
     background-color: var(--colorbacklineimpair1);
 }
 
+.postablelines td.linecolht {
+    line-height: 1.3em !important;
+}
+
 div.paymentbordline
 {
-	width:50%;
+	width:calc(50% - 16px);
 	background-color:#888;
 	border-radius: 8px;
 	margin-bottom: 4px;
+	display: inline-block;
+	padding: 5px;
 }
 
 @media only screen and (max-aspect-ratio: 6/4) {
@@ -423,7 +433,7 @@ p.description_content{
 div.description_content {
 	display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW;?>;
     overflow: hidden;
     padding-left: 2px;
     padding-right: 2px;
@@ -467,6 +477,14 @@ div.description_content {
     margin-left: 4px;
     font-size: 1.3em;
 }
+
+@media screen and (max-width: 767px) {
+	.topnav .login_block_other a {
+		padding: 5px 5px;
+		font-size: 1.2em;
+	}
+}
+
 .topnav-right > a {
 	font-size: 17px;
 }
@@ -568,7 +586,7 @@ div#moreinfo, div#infowarehouse {
 	}
 
 	.topnav input[type="text"] {
-		max-width: 100px;
+		max-width: 90px;
 	}
 
 	.topnav-right {
@@ -591,6 +609,9 @@ div#moreinfo, div#infowarehouse {
 		height: calc(45% - 100px);
 	}
 
+	div#moreinfo, div#infowarehouse {
+	    padding: 0 5px 0 5px;
+	}
 
 	div.div1 {
 		padding-bottom: 0;

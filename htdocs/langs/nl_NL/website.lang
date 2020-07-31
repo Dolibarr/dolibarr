@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Robotbestand (robots.txt)
 WEBSITE_HTACCESS=Website .htaccess bestand
 WEBSITE_MANIFEST_JSON=Website manifest.json bestand
 WEBSITE_README=README.md bestand
+WEBSITE_KEYWORDSDesc=Gebruik een komma om waarden te scheiden
 EnterHereLicenseInformation=Voer hier metadata of licentie-informatie in om een README.md bestand in te dienen. Als u uw website als sjabloon distribueert, wordt het bestand opgenomen in het template-pakket.
 HtmlHeaderPage=HTML-header (alleen voor deze pagina)
 PageNameAliasHelp=Naam of alias van de pagina. <br> Deze alias wordt ook gebruikt om een SEO-URL te veranderen wanneer de website wordt uitgevoerd vanaf een virtuele host van een webserver (zoals Apacke, Nginx, ...). Gebruik de knop "<strong>%s</strong>" om deze alias te bewerken.
@@ -42,8 +43,8 @@ ViewPageInNewTab=Bekijk pagina in nieuw tabblad
 SetAsHomePage=Als startpagina instellen
 RealURL=Echte URL
 ViewWebsiteInProduction=Bekijk website met behulp van eigen URL's
-SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
-ExampleToUseInApacheVirtualHostConfig=Example to use in Apache virtual host setup:
+SetHereVirtualHost=<u> Gebruik met Apache / NGinx / ... </u> <br> Creëer op uw webserver (Apache, Nginx, ...) een speciale virtuele host met PHP ingeschakeld en een root-directory op <br><strong> %s</strong>
+ExampleToUseInApacheVirtualHostConfig=Voorbeeld om te gebruiken in Apache virtual host setup:
 YouCanAlsoTestWithPHPS=<u>Gebruik met PHP embedded server</u> <br> In een ontwikkelomgeving kunt u de site het liefst testen met de ingebouwde PHP-webserver (PHP 5.5 vereist) <br> <strong>php -S 0.0.0.0:8080 -t %s</strong>
 YouCanAlsoDeployToAnotherWHP=<u>Beheer uw website met een andere Dolibarr Hosting-provider</u> <br> Als u geen webserver zoals Apache of NGinx beschikbaar heeft op internet, kunt u uw website exporteren en importeren in een ander Dolibarr-exemplaar van een andere Dolibarr-hostingprovider die volledige integratie met de websitemodule biedt. U kunt een lijst met sommige Dolibarr-hostingproviders vinden op <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Controleer ook of virtuele host toestemming <strong>%s heeft</strong> voor bestanden in <br> <strong>%s</strong>
@@ -57,7 +58,10 @@ NoPageYet=Nog geen pagina's
 YouCanCreatePageOrImportTemplate=U kunt een nieuwe pagina maken of een volledige websitesjabloon importeren
 SyntaxHelp=Help bij specifieke syntax-tips
 YouCanEditHtmlSourceckeditor=U kunt HTML-broncode bewerken met de knop "Bron" in de editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> U kunt PHP-code in deze bron opnemen met behulp van tags <strong>&lt;? Php?&gt;</strong> . De volgende globale variabelen zijn beschikbaar: $ conf, $ db, $ mysoc, $ user, $ website, $ websitepage, $ weblangs. <br><br><span class="fa fa-bug"></span> U kunt ook inhoud van een andere pagina / container met de volgende syntaxis opnemen: <br> <strong>&lt;? php includeContainer (&#39;alias_of_container_to_include&#39;); ?&gt;</strong> <br><br><span class="fa fa-bug"></span> U kunt een omleiding maken naar een andere pagina / container met de volgende syntaxis (Opmerking: voer geen inhoud uit vóór een omleiding): <br> <strong>&lt;? php redirectToContainer (&#39;alias_of_container_to_redirect_to&#39;); ?&gt;</strong> <br><br><span class="fa fa-link"></span> Gebruik de syntaxis om een link naar een andere pagina toe te voegen: <br> <strong>&lt;a href="alias_of_page_to_link_to.php"&gt; mylink &lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> Gebruik de <strong>document.php</strong> wrapper om een <strong>link op te nemen om</strong> een bestand <strong>te downloaden</strong> dat is opgeslagen in de <strong>documentenmap</strong> : <br> Voor een bestand in documenten / ecm (moet worden vastgelegd) is de syntaxis: <br> <strong>&lt;a href="/document.php?modulepart=ecm&amp;file= cialisrelative_dir/Buchfilename.ext"&gt;</strong> <br> Voor een bestand in documenten / media (map openen voor openbare toegang) is syntaxis: <br> <strong>&lt;a href="/document.php?modulepart=medias&amp;file= cialisrelative_dir/Buchfilename.ext"&gt;</strong> <br> Voor een bestand dat wordt gedeeld met een deellink (open toegang met de gedeelde hash-sleutel van het bestand), is de syntaxis: <br> <strong>&lt;a href=&quot;/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br><br><span class="fa fa-picture-o"></span> Gebruik de <strong>viewimage.php</strong> wrapper om een <strong>afbeelding op te nemen die is</strong> opgeslagen in de <strong>documentenmap</strong> : <br> Voor een afbeelding in documenten / media (open directory voor openbare toegang) is de syntaxis: <br> <strong>&lt;img src = ";/ viewimage.php? modulepart = medias &amp; file = [relative_dir /] bestandsnaam.ext"&gt;</strong> <br><br> Meer voorbeelden van HTML of dynamische code beschikbaar in <a href="%s" target="_blank">de wikidocumentatie</a> <br> .
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Kloon pagina/container
 CloneSite=Klonen site
 SiteAdded=Website toegevoegd
@@ -77,7 +81,7 @@ BlogPost=Blogpost
 WebsiteAccount=Website account
 WebsiteAccounts=Website accounts
 AddWebsiteAccount=Maak een website-account
-BackToListOfThirdParty=Terug naar lijst voor relatie
+BackToListForThirdParty=Terug naar lijst voor de derde partij
 DisableSiteFirst=Schakel website eerst uit
 MyContainerTitle=De titel van mijn website
 AnotherContainer=Zo neemt u inhoud van een andere pagina / container op (mogelijk hebt u hier een foutmelding als u dynamische code inschakelt omdat de ingesloten subcontainer mogelijk niet bestaat)
@@ -85,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Sorry, deze website is momenteel offline. Kom lat
 WEBSITE_USE_WEBSITE_ACCOUNTS=Schakel de website-accounttabel in
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Schakel de tabel in om websiteaccounts (login/wachtwoord) voor elke website/relatie op te slaan
 YouMustDefineTheHomePage=U moet eerst de standaard startpagina definiëren
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correclty when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContentFuture=Waarschuwing: het maken van een webpagina door het importeren van een externe webpagina is gereserveerd voor ervaren gebruikers. Afhankelijk van de complexiteit van de bronpagina kan het resultaat van de invoer afwijken van het origineel. Ook als de bronpagina veelvoorkomende CSS-stijlen of tegenstrijdig JavaScript gebruikt, kan dit het uiterlijk of de functies van de Website-editor verbreken wanneer aan deze pagina wordt gewerkt. Deze methode is een snellere manier om een pagina te maken, maar het wordt aanbevolen om uw nieuwe pagina helemaal opnieuw te maken of vanuit een voorgestelde paginasjabloon. <br> Merk ook op dat de inline-editor mogelijk niet correct werkt wanneer deze wordt gebruikt op een externe pagina.
 OnlyEditionOfSourceForGrabbedContent=Alleen de HTML-bronversie is mogelijk wanneer inhoud van een externe site is opgehaald
 GrabImagesInto=Importeer ook afbeeldingen gevonden in css en pagina.
 ImagesShouldBeSavedInto=Afbeeldingen moeten worden opgeslagen in de directory
@@ -120,11 +124,14 @@ ShowSubContainersOnOff=De modus om &#39;dynamische inhoud&#39; uit te voeren is 
 GlobalCSSorJS=Globaal CSS / JS / Header-bestand van website
 BackToHomePage=Terug naar de startpagina...
 TranslationLinks=Vertaling links
-YouTryToAccessToAFileThatIsNotAWebsitePage=U probeert toegang te krijgen tot een pagina die geen webpagina is
+YouTryToAccessToAFileThatIsNotAWebsitePage=U probeert toegang te krijgen tot een pagina die niet beschikbaar is. <br> (ref = %s, type = %s, status = %s)
 UseTextBetween5And70Chars=Gebruik voor goede SEO-praktijken een tekst tussen 5 en 70 tekens
-MainLanguage=Main language
-OtherLanguages=Other languages
-UseManifest=Provide a manifest.json file
-PublicAuthorAlias=Public author alias
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
-ReplacementDoneInXPages=Replacement done in %s pages or containers
+MainLanguage=Hoofdtaal
+OtherLanguages=Andere talen
+UseManifest=Geef een manifest.json-bestand op
+PublicAuthorAlias=Alias van openbare auteur
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Beschikbare talen zijn gedefinieerd in website-eigenschappen
+ReplacementDoneInXPages=Vervanging gedaan in %s pagina's of containers
+RSSFeed=RSS-feeds
+RSSFeedDesc=U kunt via deze URL een RSS-feed krijgen van de nieuwste artikelen met het type 'blogpost'
+PagesRegenerated=%s pagina ('s) / container (s) her-aangemaakt

@@ -38,10 +38,23 @@ function takepos_prepare_head()
 	$head[$h][2] = 'setup';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/appearance.php';
+	$head[$h][1] = $langs->trans("Appearance");
+	$head[$h][2] = 'appearance';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/receipt.php';
 	$head[$h][1] = $langs->trans("Receipt");
 	$head[$h][2] = 'receipt';
 	$h++;
+
+	if ($conf->global->TAKEPOS_BAR_RESTAURANT)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/takepos/admin/bar.php';
+		$head[$h][1] = $langs->trans("BarRestaurant");
+		$head[$h][2] = 'bar';
+		$h++;
+	}
 
 	$numterminals = max(1, $conf->global->TAKEPOS_NUM_TERMINALS);
 	for ($i = 1; $i <= $numterminals; $i++)

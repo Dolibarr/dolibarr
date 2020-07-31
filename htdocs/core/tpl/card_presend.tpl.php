@@ -51,9 +51,7 @@ if ($action == 'presend')
 		if ($object->element == 'invoice_supplier')
 		{
 			$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-		}
-		else
-		{
+		} else {
 			$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 		}
 
@@ -103,9 +101,7 @@ if ($action == 'presend')
 			if ($object->element == 'invoice_supplier')
 			{
 				$fileparams = dol_most_recent_file($diroutput.'/'.get_exdir($object->id, 2, 0, 0, $object, $object->element).$ref, preg_quote($ref, '/').'([^\-])+');
-			}
-			else
-			{
+			} else {
 				$fileparams = dol_most_recent_file($diroutput.'/'.$ref, preg_quote($ref, '/').'[^\-]+');
 			}
 
@@ -131,7 +127,24 @@ if ($action == 'presend')
 	{
 		$formmail->fromid = $user->id;
 	}
-	$formmail->trackid = $trackid;
+
+	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+
+	$formmail->trackid=$trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 	{
 		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -146,23 +159,18 @@ if ($action == 'presend')
 		$fuser = new User($db);
 		$fuser->fetch($object->fk_user_author);
 		$liste['thirdparty'] = $fuser->getFullName($outputlangs)." <".$fuser->email.">";
-	}
-	elseif ($object->element == 'societe')
+	} elseif ($object->element == 'societe')
 	{
 		foreach ($object->thirdparty_and_contact_email_array(1) as $key => $value) {
 			$liste[$key] = $value;
 		}
-	}
-	elseif ($object->element == 'contact')
+	} elseif ($object->element == 'contact')
 	{
 		$liste['contact'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	elseif ($object->element == 'user' || $object->element == 'member')
+	} elseif ($object->element == 'user' || $object->element == 'member')
 	{
 		$liste['thirdparty'] = $object->getFullName($outputlangs)." <".$object->email.">";
-	}
-	else
-	{
+	} else {
 		if (is_object($object->thirdparty))
 		{
 			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
@@ -258,7 +266,6 @@ if ($action == 'presend')
 		}
 	}
 
-	$custcontact = '';
 	$contactarr = array();
 	$contactarr = $tmpobject->liste_contact(-1, 'external');
 

@@ -40,6 +40,7 @@ WebUserGroup=کاربرِ/گروهِ سرویس‌دهندۀ‌وب
 NoSessionFound=به نظر می‌رسد پیکربندی PHP شما امکان فهرست‌کردن نشست‌های فعال را نداشته باشد. ممکن است پوشه‌ای که برای ذخیرۀ نشست‌ها مورد استفاده است (<b>%s</b>)  حفاظت شده باشد (مثلا بواسطۀ مجوزهای سیستم‌عامل یا با تمهیدات   open_basedir در PHP).
 DBStoringCharset=تنظیمات کدبندی Charset بانک داده برای ذخیره داده‌ها
 DBSortingCharset=تنظیمات کدبندی Charset بانک داده برای مرتب‌سازی داده‌ها
+HostCharset=Host charset
 ClientCharset=تنظیمات Charset مشتری
 ClientSortingCharset=تنظیمات collation مشتری
 WarningModuleNotActive=واحد <b>%s</b> باید فعال باشد
@@ -94,7 +95,7 @@ NextValueForInvoices=مقدار بعدی (صورت‌حساب)
 NextValueForCreditNotes=مقدار بعدی (یادداشت‌های اعتبار)
 NextValueForDeposit=مقدار بعدی (پیش پرداخت)
 NextValueForReplacements=ارزش بعدی (جایگزینی)
-MustBeLowerThanPHPLimit=نکته: پیکربندی PHP <b>شما</b> حداکثر اندازۀ فایل برای بارگذاری را به مقدار <b>%s</b>%s محدود کرده است. محدودیت بدون توجه به مؤلفه مقابل رعایت خواهد شد.
+MustBeLowerThanPHPLimit=Note: your PHP configuration currently limits the maximum filesize for upload to <b>%s</b> %s, irrespective of the value of this parameter
 NoMaxSizeByPHPLimit=توجه: هیچ محدودیتی در پیکربندی PHP شما وجود ندارد
 MaxSizeForUploadedFiles=حداکثر اندازۀ فایل بارگذاری شده ( برای عدم اجازۀ ارسال فایل عدد 0 را وارد نمائید)
 UseCaptchaCode=استفاده از کدهای گرافیکی (CAPTCHA) در صفحۀ ورود
@@ -206,7 +207,7 @@ ModulesMarketPlaces=پیدا کردن واحد‌ها/برنامه‌های بی
 ModulesDevelopYourModule=ساختن برنامه/واحد دل‌خواه
 ModulesDevelopDesc=همچنین می‌توانید واحد‌های کاربردی دل‌خواه خودتان را ایجاد کنید یا شخصی برای توسعۀ نیازمندی‌های خود پیدا کنید تا این کار را انجام دهد.
 DOLISTOREdescriptionLong=به جای مراجعه به وبگاه <a href="https://www.dolistore.com">www.dolistore.com</a> برای پید کردن یک واحد مورد نیاز از بیرون، می‌توانید این ابزار داخلی را که بر روی بازارچۀ بیرونی جستجو می‌کند استفاده نمائید (ممکن است کند باشد، نیاز به دسترسی اینترنت دارد)...
-NewModule=جدید
+NewModule=New module
 FreeModule=رایگان
 CompatibleUpTo=سازگار با نسخۀ %s
 NotCompatible=به نظر نمی‌رسد این واحد با نسخۀ %s Dolibarr  نصب شده سازگار باشد (سازگاری حداقل با %s و حداکثر با %s ).
@@ -218,7 +219,7 @@ Nouveauté=تازگی
 AchatTelechargement=خرید / بارگیری
 GoModuleSetupArea=برای به کاربردن یا نصب یک واحد، به محل برپاسازی واحد‌ها بروید: <a href="%s">%s</a>.
 DoliStoreDesc=DoliStore، بازارچۀ رسمی برای واحد‌های بیرونی Dolibarr ERP / CRM
-DoliPartnersDesc=فهرست شرکت‌هائی که واحد‌ها یا قابلیت‌های اختصاصی توسعه می‌دهند. <br> نکته: از آن‌جا که Dolibarr یک برنامۀ متن‌باز است، <i>هر</i> کسی که بتواند با PHP برنامه‌نویسی کند امکان توسعه دادن واحد‌های جدید را داراست.
+DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 WebSiteDesc=سایت‌های دیگر برای واحد‌های افزودنی (غیر هسته‌) دیگر...
 DevelopYourModuleDesc=چند راه برای توسعه دادن و ایجاد واحد دل‌خواه....
 URL=نشانی‌اینترنتی
@@ -427,7 +428,7 @@ ExtrafieldCheckBox=کادرهای تائید
 ExtrafieldCheckBoxFromList=کادرهای تائید از جدول
 ExtrafieldLink=پیوند به یک شیء
 ComputedFormula=بخش محاسبه شده
-ComputedFormulaDesc=شما در این‌جا می‌توانید فرمولی را با استفاده از مشخصات دیگر یک شیء یا یک کدنوشتۀ PHP وارد نمائید تا یک مقدار پویای محاسبه شده دریافت کنید. شما همچنین می‌توانید هر فرمول سازگار با PHP را به همراه عمل‌گر شرطی  "?" وارد نمائید که با یک شیء سراسری دنبال می‌شود: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>. <br><strong>هشدار</strong>: تنها برخی از مشخصه‌های $object در دسترس هستند. در صورتی که نیاز به مشخصه‌ای دارید که بارگذاری نشده، همانند مثال دوم خودتان باید آن شیء را واکشی نمائید.<br> استفاده از یک بخش محاسبه‌شده به آن معناست که شما قادر نخواهید باد که از رابط خود مقداری وارد نمائید. همچنین، در صورتی که یک خطای نوشتاری وجود داشته باشد، فرمول هیچ چیز ارائه نخواهد داد.<br><br>مثال فرمول:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br> مثال بارگذاری مجدد شیئ<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetch($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1' <br><br> مثال دیگر فرمول برای اازام به بارگذاری شیء و والد آن:<br> (($reloadedobj = new Task($db)) && ($reloadedobj->fetch($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetch($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
+ComputedFormulaDesc=You can enter here a formula using other properties of object or any PHP coding to get a dynamic computed value. You can use any PHP compatible formulas including the "?" condition operator, and following global object: <strong>$db, $conf, $langs, $mysoc, $user, $object</strong>.<br><strong>WARNING</strong>: Only some properties of $object may be available. If you need a properties not loaded, just fetch yourself the object into your formula like in the second example.<br>Using a computed field means you can't enter yourself any value from interface. Also, if there is a syntax error, the formula may return nothing.<br><br>Example of formula:<br>$object->id < 10 ? round($object->id / 2, 2): ($object->id + 2 * $user->id) * (int) substr($mysoc->zip, 1, 2)<br><br>Example to reload object<br>(($reloadedobj = new Societe($db)) && ($reloadedobj->fetchNoCompute($obj->id ? $obj->id: ($obj->rowid ? $obj->rowid: $object->id)) > 0)) ? $reloadedobj->array_options['options_extrafieldkey'] * $reloadedobj->capital / 5: '-1'<br><br>Other example of formula to force load of object and its parent object:<br>(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref: 'Parent project not found'
 Computedpersistent=بخش محاسبه‌شدۀ فروشگاه
 ComputedpersistentDesc=بخش‌های محاسبه‌شدۀ اضافی در پایگاه داده ذخیره خواهند شد، به‌هرحال مقدار تنها در زمانی دوباره محاسبه خواهد شد که شیء این بخش تغییر کند. در صورتی که بخش محاسبه‌شده به سایر اشیاء یا داده‌های سراسری وابسته باشد، این مقدار ممکن است خطا باشد!!
 ExtrafieldParamHelpPassword=خالی رها کردن این بخش به معنای این است که مقدار بدون حفاظت ذخیره خواهد شد (بخش مربوطه باید با یک ستاره روی صفحه پنهان باشد).<br> 'auto' را برای استفاده از قواعد حفاظت برای ذخیرۀ گذرواژه در بانک‌داده ذخیره کنید (مقدار خوانده شده کدبندی شده است و امکان خواندن مقدار اصلی دیگر وجود نخواهد داشت)
@@ -445,12 +446,13 @@ LinkToTestClickToDial=برای آزمایش نشانی ClickToDial برای کا
 RefreshPhoneLink=بازسازی پیوند
 LinkToTest=پیوند قابل کلیک تولید شده برای کاربر <strong>%s</strong> (شمارۀ تلفن را برای آزمایش وارد نمائید)
 KeepEmptyToUseDefault=برای استفاده از مقدار پیش‌فرض چیزی درج نکنید
+KeepThisEmptyInMostCases=In most cases, you can keep this field empy.
 DefaultLink=پیوند پیش‌فرض
 SetAsDefault=ثبت پیش‌فرض
 ValueOverwrittenByUserSetup=هشدار! این مقدار ممکناست با تغییر تنظیمات برپاسازی کاربر بازنویسی شود (هر کاربر می‌تواند نشانی مخصوص به خود را برای clicktodial تولید کند)
 ExternalModule=External module
 InstalledInto=Installed into directory %s
-BarcodeInitForthird-parties=ایجاد دستجمعی بارکد برای اشخاص‌سوم
+BarcodeInitForThirdparties=ایجاد دستجمعی بارکد برای اشخاص‌سوم
 BarcodeInitForProductsOrServices=ایجاد یا بازسازی بارکد برای محصولات یا خدمات
 CurrentlyNWithoutBarCode=در حال حاضر شما  <strong>%s</strong> ردیف در  <strong>%s</strong> %s دارید که برای آن‌ها بارکد تعریف نشده.
 InitEmptyBarCode=مقدار ابتدائی برای %s ردیف خالی بعدی
@@ -540,8 +542,8 @@ Module54Name=قرارداد‌ها/اشتراک‌ها
 Module54Desc=مدیریت قراردادها (خدمات یا اشتراک‌های تکرارشونده)
 Module55Name=بارکدها
 Module55Desc=مدیریت بارکد
-Module56Name=تماس‌های تلفنی
-Module56Desc=ارتباط تلفنی
+Module56Name=Payment by credit transfer
+Module56Desc=Management of payment of suppliers by credit transfer orders. It includes generation of SEPA file for European countries.
 Module57Name=برداشت‌های مستقیم بانکی
 Module57Desc=مدیریت سفارش برداشت‌های مستقیم بانکی. این شامل تولید فایل SEPA برای کشورهای اروپائی است.
 Module58Name=کلیک برای تماس
@@ -1015,7 +1017,7 @@ LocalTax2IsUsedDescES=نرخ پیش‌فرض IRPF در هنگام ساخت مش�
 LocalTax2IsNotUsedDescES=به طور پیش‌فرض IRPF  مطروحه برابر با 0 است. پایان قاعده.
 LocalTax2IsUsedExampleES=در اسپانیا، خوداشتغالان، و متخصصین مستقل که ارائه دهندۀ خدمات هستند و شرکت‌هائی که سامانۀ مالیاتی modules را برگزیده‌اند.
 LocalTax2IsNotUsedExampleES=در اسپانیا مشاغلی هستند که درسامانۀ مالیاتی modules موضوعیت ندارند.
-RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps des not provide any reporting. Only few countries uses this type of tax.
+RevenueStampDesc=The "tax stamp" or "revenue stamp" is a fixed tax you per invoice (It does not depend on amount of invoice). It can also be a percent tax but using the second or third type of tax is better for percent taxes as tax stamps does not provide any reporting. Only few countries uses this type of tax.
 UseRevenueStamp=Use a tax stamp
 UseRevenueStampExample=The value of tax stamp is defined by default into the setup of dictionaries (%s - %s - %s)
 CalcLocaltax=گزارش مالیات‌های محلی
@@ -1144,6 +1146,7 @@ AvailableModules=برنامه‌ها/واحد‌های دردسترس
 ToActivateModule=برای فعال‌کردن واحد‌ها، به صفحۀ برپاسازی مراجعه کنید (خانه->برپاسازی->واحد‌ها).
 SessionTimeOut=زمان پایان نشست
 SessionExplanation=این عدد تعیین می‌کند که نشست قبل از این بازۀ زمانی منقضی نشود، این فقط در صورتی صادق است که پاک‌ساز نشست‌ها توسط پاک‌ساز داخلی PHP انجام شود (و نه پاک‌کنندۀ دیگر). پاک‌کنندۀ داخلی PHP جلسات ضمانت نمی‌کند که نشست پس از پایان این مهلت انقضا یابد. بعد از این مهلت و در هنگامی که پاک‌ساز جلسات اجرا شود منقضی خواهد شد، پس برابر هر <b>%s/%s</b> دسترسی خواهد بود، مگر در صورت دسترسی توسط سایر نشست‌ها (در صورتی که مقدار برابر با 0 باشد، این بدان معناست که پاک کردن نشست تنها توسط یک پردازش بیرونی انجام خواهد شد). <br> نکته: در برخی سرویس‌دهنده‌ها که از یک سازوکار خارجی پاک‌سازی نشست‌ها استفده می‌کنند (کرون در دبیان، اوبونتو و غیره)، نشست می‌تواند پس از این‌که در روند تنظیمات خارجی تعریف شد از بین برود، این‌که چه مقداری در این قسمت وارد شود، اهمیت پیدا می‌کند.
+SessionsPurgedByExternalSystem=Sessions on this server seems to be cleaned by an external mechanism (cron under debian, ubuntu ...), probably every <b>%s</b> seconds (= value of parameter <b>session.gc_maxlifetime</b>), so changing the value here has no effect. You must ask the server administrator to change session delay.
 TriggersAvailable=محرک‌های موجود
 TriggersDesc=محرک‌ها، فایل‌هائی هستند که رفتار و روندکاری Dolibarr را به‌مجرد این‌که به پوشۀ <b>htdocs/core/triggers</b> کپی شدند، تغییر می‌دهند. این فایل‌ها باعث ایجاد کنش‌های جدید شده و در واحد رخدادهای Dolibarr فعال می‌شوند (ساخت شرکت جدید، اعتباردهی به صورت‌حساب و غیره).
 TriggerDisabledByName=محرک‌های موجود در این فایل با پس‌وند <b>-NORUN</b> در نام محرک، غیرفعال می‌شوند.
@@ -1261,6 +1264,7 @@ FieldEdition=ویرایش بخش %s
 FillThisOnlyIfRequired=مثال: +2 (تنها در صورتی که با مشکل ناحیۀ زمانی مواجه شوید)
 GetBarCode=دریافت بارکد
 NumberingModules=Numbering models
+DocumentModules=Document models
 ##### Module password generation
 PasswordGenerationStandard=بازگرداندن یک گذرواژه که با توجه به الگوریتم‌ Dolibarr تولید شده است: 8 نویسه، متشکل از اعداد و حروف کوچک.
 PasswordGenerationNone=گذرواژۀ پیشنهادی ارائه نشود. گذرواژه‌ها باید به شکل دستی وارد شوند.
@@ -1272,6 +1276,7 @@ RuleForGeneratedPasswords=قواعد تولید و اعتبارسنجی گذرو
 DisableForgetPasswordLinkOnLogonPage=در صفحۀ ورود پیوند "فراموشی گذرواژه" نمایش داده نشود
 UsersSetup=برپاسازی واحد کاربران
 UserMailRequired=برای ایجاد یک کاربر جدید یک رایانامه لازم است
+UserHideInactive=Hide inactive users from all combo lists of users (Not recommended: this may means you won't be able to filter or search on old users on some pages)
 UsersDocModules=Document templates for documents generated from user record
 GroupsDocModules=Document templates for documents generated from a group record
 ##### HRM setup #####
@@ -1731,7 +1736,7 @@ MultiCompanySetup=برپاسازی واحد چندشرکتی
 ##### Suppliers #####
 SuppliersSetup=برپاسازی واحد فروشندگان
 SuppliersCommandModel=Complete template of Purchase Order
-SuppliersCommandModelMuscadet=Complete template of Purchase Order 
+SuppliersCommandModelMuscadet=Complete template of Purchase Order (old implementation of cornas template)
 SuppliersInvoiceModel=Complete template of Vendor Invoice
 SuppliersInvoiceNumberingModel=روش‌های شماره‌گذاری صورت‌حساب فروشندگان
 IfSetToYesDontForgetPermission=If set to a non null value, don't forget to provide permissions to groups or users allowed for the second approval
@@ -1803,6 +1808,7 @@ TopMenuDisableImages=پنهان کردن تصاویر فهرست بالا
 LeftMenuBackgroundColor=رنگ پس‌زمینۀ فهرست سمت چپ
 BackgroundTableTitleColor=رنگ پس‌زمیۀ سطر عنوان جدول
 BackgroundTableTitleTextColor=رنگ نوشتۀ سطر عنوان جدول
+BackgroundTableTitleTextlinkColor=Text color for Table title link line
 BackgroundTableLineOddColor=رنگ پس‌زمینۀ سطور فرد جدول
 BackgroundTableLineEvenColor=رنگ پس‌زمینۀ سطور زوج جدول
 MinimumNoticePeriod=حداقل بازۀ خبردهی (درخواست مرخصی شما باید حداقل با این فاصلۀ زمانی انجام شود)
@@ -1841,6 +1847,7 @@ MailToThirdparty=طرف‌های سوم
 MailToMember=اعضا
 MailToUser=کاربران
 MailToProject=صفحۀ طرح‌ها
+MailToTicket=برگه‌های پشتیبانی
 ByDefaultInList=نمایش پیش‌فرض نمای فهرستی
 YouUseLastStableVersion=استفاده از آخرین نسخۀ پایدار
 TitleExampleForMajorRelease=مثال پیامی که می‌توانید برای استفاده در اطلاع‌رسانی این انتشار اصلی داشته باشید (در استفاده از آن در وبگاه خود راحت باشید)
@@ -1936,7 +1943,7 @@ WithoutDolTrackingID=Dolibarr Reference not found in Message ID
 FormatZip=کدپستی
 MainMenuCode=کد ورودی فهرست (فهرست اصلی)
 ECMAutoTree=نمایش ساختاردرختی خودکار ECM
-OperationParamDesc=مقادیر تعریف شده برای کنش-action یا چگونگی استخراج مقادیر را این‌جا تعریف کنید. برای مثال: <br>objproperty1=SET:abc<br> objproperty1=SET:a value with replacement of __objproperty1__ <br> objproperty3=SETIFEMPTY:abc <br> objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*) <br> options_myextrafield=EXTRACT:SUBJECT:([^\\s]*) <br> object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*) <br><br> از یک ویرگول‌نقطۀ انگلیسی ; به‌عنوان جداکنندۀ یا استخراجی یا تنظیم چند گروه مشخصات استفاده کنید.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 OpeningHours=ساعات کار
 OpeningHoursDesc=ساعات کاری معمول شرکت خود را در این بخش وارد نمائید
 ResourceSetup=پیکربندی واحد منابع
@@ -1976,7 +1983,7 @@ SmallerThan=کوچک‌تر از
 LargerThan=بزرگتر از
 IfTrackingIDFoundEventWillBeLinked=توجه کنید در صورتی که یک شناسۀ ره‌گیری در یک رایانامۀ دریافتی یافت شود، روی‌داد به طور خودکار به اشیاء مربوطه متصل خواهد شد
 WithGMailYouCanCreateADedicatedPassword=با یک حساب GMail در صورتی که تائید 2 گامی را انتخاب کرده باشید، پیشنهاد می‌شود یک گذرواژۀ دوم برای استفادۀ برنامه به‌جای گذرواژۀ خودتان برای حساب بسازید. این کار از https://myaccount.google.com/ قابل انجام است.
-EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set a value here to use this feature. Note that you must also use a read/write login account.
+EmailCollectorTargetDir=It may be a desired behaviour to move the email into another tag/directory when it was processed successfully. Just set name of directory here to use this feature (Do NOT use special characters in name). Note that you must also use a read/write login account.
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.
 EndPointFor=نقطۀ آخر برای %s : %s
 DeleteEmailCollector=حذف جمع‌آورندۀ رایانامه
@@ -1993,5 +2000,8 @@ EmailTemplate=Template for email
 EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
 PDF_USE_ALSO_LANGUAGE_CODE=If you want to have some texts in your PDF duplicated in 2 different languages in the same generated PDF, you must set here this second language so generated PDF will contains 2 different languages in same page, the one chosen when generating PDF and this one (only few PDF templates support this). Keep empty for 1 language per PDF.
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
+FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
+MeasuringUnitTypeDesc=Use here a value like "size", "surface", "volume", "weight", "time"
+MeasuringScaleDesc=The scale is the number of places you have to move the decimal part to match the default reference unit. For "time" unit type, it is the number of seconds. Values between 80 and 99 are reserved values.

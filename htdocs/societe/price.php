@@ -55,6 +55,7 @@ $object = new Societe($db);
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('thirdpartycustomerprice', 'globalcard'));
 
+$error = 0;
 
 
 /*
@@ -73,62 +74,70 @@ if (empty($reshook))
     }
 
     if ($action == 'add_customer_price_confirm' && !$cancel && ($user->rights->produit->creer || $user->rights->service->creer)) {
-    	$update_child_soc = GETPOST('updatechildprice');
-
-    	// add price by customer
-    	$prodcustprice->fk_soc = $socid;
-    	$prodcustprice->fk_product = GETPOST('prodid', 'int');
-    	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
-    	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
-    	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
-
-    	$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
-
-    	// We must define tva_tx, npr and local taxes
-    	$vatratecode = '';
-    	$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt); // keep remove all after the numbers and dot
-    	$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
-    	$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
-    	// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
-    	if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
-    	{
-    	    // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
-    	    $vatratecode = $reg[1];
-    	    // Get record from code
-    	    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
-    	    $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
-    	    $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
-    	    $sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
-    	    $sql .= " AND t.code ='".$vatratecode."'";
-    	    $resql = $db->query($sql);
-    	    if ($resql)
-    	    {
-    	        $obj = $db->fetch_object($resql);
-    	        $npr = $obj->recuperableonly;
-    	        $localtax1 = $obj->localtax1;
-    	        $localtax2 = $obj->localtax2;
-    	        $localtax1_type = $obj->localtax1_type;
-    	        $localtax2_type = $obj->localtax2_type;
-    	    }
+    	if (! (GETPOST('prodid', 'int') > 0)) {
+    		$error++;
+    		setEventMessages($langs->trans("ErrorFieldRequired", $langs->trans("Product")), null, 'errors');
+    		$action = 'add_customer_price';
     	}
 
-    	$prodcustprice->default_vat_code = $vatratecode;
-    	$prodcustprice->tva_tx = $tva_tx;
-    	$prodcustprice->recuperableonly = $npr;
-    	$prodcustprice->localtax1_tx = $localtax1;
-    	$prodcustprice->localtax2_tx = $localtax2;
-    	$prodcustprice->localtax1_type = $localtax1_type;
-    	$prodcustprice->localtax2_type = $localtax2_type;
+    	if (! $error) {
+	    	$update_child_soc = GETPOST('updatechildprice');
 
-    	$result = $prodcustprice->create($user, 0, $update_child_soc);
+	    	// add price by customer
+	    	$prodcustprice->fk_soc = $socid;
+	    	$prodcustprice->fk_product = GETPOST('prodid', 'int');
+	    	$prodcustprice->price = price2num(GETPOST("price"), 'MU');
+	    	$prodcustprice->price_min = price2num(GETPOST("price_min"), 'MU');
+	    	$prodcustprice->price_base_type = GETPOST("price_base_type", 'alpha');
 
-    	if ($result < 0) {
-    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
-    	} else {
-    		setEventMessages($langs->trans('Save'), null, 'mesgs');
+	    	$tva_tx_txt = GETPOST('tva_tx', 'alpha'); // tva_tx can be '8.5'  or  '8.5*'  or  '8.5 (XXX)' or '8.5* (XXX)'
+
+	    	// We must define tva_tx, npr and local taxes
+	    	$vatratecode = '';
+	    	$tva_tx = preg_replace('/[^0-9\.].*$/', '', $tva_tx_txt); // keep remove all after the numbers and dot
+	    	$npr = preg_match('/\*/', $tva_tx_txt) ? 1 : 0;
+	    	$localtax1 = 0; $localtax2 = 0; $localtax1_type = '0'; $localtax2_type = '0';
+	    	// If value contains the unique code of vat line (new recommended method), we use it to find npr and local taxes
+	    	if (preg_match('/\((.*)\)/', $tva_tx_txt, $reg))
+	    	{
+	    	    // We look into database using code (we can't use get_localtax() because it depends on buyer that is not known). Same in update price.
+	    	    $vatratecode = $reg[1];
+	    	    // Get record from code
+	    	    $sql = "SELECT t.rowid, t.code, t.recuperableonly, t.localtax1, t.localtax2, t.localtax1_type, t.localtax2_type";
+	    	    $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_country as c";
+	    	    $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$mysoc->country_code."'";
+	    	    $sql .= " AND t.taux = ".((float) $tva_tx)." AND t.active = 1";
+	    	    $sql .= " AND t.code ='".$vatratecode."'";
+	    	    $resql = $db->query($sql);
+	    	    if ($resql)
+	    	    {
+	    	        $obj = $db->fetch_object($resql);
+	    	        $npr = $obj->recuperableonly;
+	    	        $localtax1 = $obj->localtax1;
+	    	        $localtax2 = $obj->localtax2;
+	    	        $localtax1_type = $obj->localtax1_type;
+	    	        $localtax2_type = $obj->localtax2_type;
+	    	    }
+	    	}
+
+	    	$prodcustprice->default_vat_code = $vatratecode;
+	    	$prodcustprice->tva_tx = $tva_tx;
+	    	$prodcustprice->recuperableonly = $npr;
+	    	$prodcustprice->localtax1_tx = $localtax1;
+	    	$prodcustprice->localtax2_tx = $localtax2;
+	    	$prodcustprice->localtax1_type = $localtax1_type;
+	    	$prodcustprice->localtax2_type = $localtax2_type;
+
+	    	$result = $prodcustprice->create($user, 0, $update_child_soc);
+
+	    	if ($result < 0) {
+	    		setEventMessages($prodcustprice->error, $prodcustprice->errors, 'errors');
+	    	} else {
+	    		setEventMessages($langs->trans('Save'), null, 'mesgs');
+	    	}
+
+	    	$action = '';
     	}
-
-    	$action = '';
     }
 
     if ($action == 'delete_customer_price' && ($user->rights->produit->creer || $user->rights->service->creer)) {
@@ -252,6 +261,9 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	if ($action == 'add_customer_price') {
 		// Create mode
+
+		print '<br>';
+		print '<!-- Price by customer -->'."\n";
 
 		print load_fiche_titre($langs->trans('PriceByCustomer'));
 
@@ -402,7 +414,8 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		print '<br></form>';
 	} elseif ($action == 'showlog_customer_price') {
-	    print '<!-- showlog_customer_price -->'."\n";
+	    print '<br>';
+		print '<!-- showlog_customer_price -->'."\n";
 
 		$filter = array(
 			't.fk_product' => GETPOST('prodid', 'int'), 't.fk_soc' => $socid
@@ -426,6 +439,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 		if (count($prodcustprice->lines) > 0) {
 			print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 			print '<table class="noborder centpercent">';
@@ -466,18 +480,14 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 				print '</td>';
 			}
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			print $langs->trans('None');
 		}
 
 		print "\n".'<div class="tabsAction">'."\n";
 		print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'">'.$langs->trans("Ok").'</a></div>';
 		print "\n</div><br>\n";
-	}
-	else
-	{
+	} else {
         // View mode
 
 		/* ************************************************************************** */
@@ -514,6 +524,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	    print_barre_liste($langs->trans('PriceForEachProduct'), $page, $_SERVER['PHP_SELF'], $option, $sortfield, $sortorder, '', count($prodcustprice->lines), $nbtotalofrecords, '');
 
         print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="POST">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         print '<input type="hidden" name="id" value="'.$object->id.'">';
 
         print '<table class="noborder centpercent">';
@@ -573,16 +584,16 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
                 // Action
                 if ($user->rights->produit->creer || $user->rights->service->creer)
                 {
-                    print '<td class="right">';
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;socid='.$object->id.'&amp;prodid='.$line->fk_product.'">';
+                    print '<td class="right nowraponall">';
+                    print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=showlog_customer_price&amp;socid='.$object->id.'&amp;prodid='.$line->fk_product.'">';
                     print img_info();
                     print '</a>';
                     print ' ';
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
+                    print '<a class="editfielda paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=edit_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
                     print img_edit('default', 0, 'style="vertical-align: middle;"');
                     print '</a>';
                     print ' ';
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
+                    print '<a class="paddingleftonly paddingrightonly" href="'.$_SERVER["PHP_SELF"].'?action=delete_customer_price&amp;socid='.$object->id.'&amp;lineid='.$line->id.'">';
                     print img_delete('default', 'style="vertical-align: middle;"');
                     print '</a>';
                     print '</td>';
@@ -590,9 +601,7 @@ if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
                 print "</tr>\n";
             }
-        }
-        else
-        {
+        } else {
             $colspan = 9;
             if ($user->rights->produit->supprimer || $user->rights->service->supprimer) $colspan += 1;
             print '<tr class="oddeven"><td colspan="'.$colspan.'">'.$langs->trans('None').'</td></tr>';

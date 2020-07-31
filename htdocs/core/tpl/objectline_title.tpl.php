@@ -59,7 +59,19 @@ if ($this->element == 'supplier_proposal' || $this->element == 'order_supplier' 
 }
 
 // VAT
-print '<td class="linecolvat right" style="width: 80px">'.$langs->trans('VAT').'</td>';
+print '<td class="linecolvat right" style="width: 80px">'.$langs->trans('VAT');
+if (in_array($object->element, array('propal', 'commande', 'facture')) && $object->status == $object::STATUS_DRAFT)
+{
+	global $mysoc;
+	print img_edit($langs->trans("UpdateForAllLines"), 0, 'class="clickvatforalllines opacitymedium paddingleft"');
+	print '<script>$(document).ready(function() { $(".clickvatforalllines").click(function() { jQuery(".classvatforalllines").toggle(); }); });</script>';
+	print '<div class="classvatforalllines hidden inline-block nowraponall">';
+	//print '<input class="inline-block maxwidth50" type="text" name="vatforalllines" id="vatforalllines" value="">';
+	print $form->load_tva('vatforalllines', '', $mysoc, $object->thirdparty, 0, 0, '', false, 1);
+	print '<input class="inline-block" type="submit" name="submitforalllines" value="'.$langs->trans("Update").'">';
+	print '</div>';
+}
+print '</td>';
 
 // Price HT
 print '<td class="linecoluht right" style="width: 80px">'.$langs->trans('PriceUHT').'</td>';
@@ -83,7 +95,7 @@ print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td
 // Fields for situation invoice
 if ($this->situation_cycle_ref) {
 	print '<td class="linecolcycleref right">'.$langs->trans('Progress').'</td>';
-	print '<td class="linecolcycleref2 right">'.$langs->trans('TotalHT100Short').'</td>';
+	print '<td class="linecolcycleref2 right">'.$form->textwithpicto($langs->trans('TotalHT100Short'), $langs->trans('UnitPriceXQtyLessDiscount')).'</td>';
 }
 
 if ($usemargins && !empty($conf->margin->enabled) && empty($user->socid))

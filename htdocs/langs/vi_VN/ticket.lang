@@ -130,10 +130,14 @@ TicketNumberingModules=Mô-đun đánh số vé
 TicketNotifyTiersAtCreation=Thông báo cho bên thứ ba khi tạo
 TicketGroup=Nhóm
 TicketsDisableCustomerEmail=Luôn vô hiệu hóa email khi vé được tạo từ giao diện công cộng
+TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Vé - nhà
+TicketsIndex=Tickets area
 TicketList=Danh sách vé
 TicketAssignedToMeInfos=Trang này hiển thị danh sách vé được tạo bởi hoặc gán cho người dùng hiện tại
 NoTicketsFound=Không tìm thấy vé

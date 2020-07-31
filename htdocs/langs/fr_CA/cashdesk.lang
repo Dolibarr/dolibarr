@@ -2,5 +2,5 @@
 NoVAT=Pas de TVA (TAXE) pour cette vente
 BankToPay=Compte pour le paiement
 DolibarrReceiptPrinter=Imprimante de reçu Dolibarr
-TicketVatGrouped=Group VAT by rate in tickets|receipts
-AutoPrintTickets=Automatically print tickets|receipts
+NumberOfLinesToShow=Number of lines to show in image box
+DefineTablePlan=Define table plan

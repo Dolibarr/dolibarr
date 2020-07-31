@@ -129,8 +129,14 @@ class BookKeeping extends CommonObject
 
     /**
      * @var float FEC:Amount (Not necessary)
+     * @deprecated Use $amount
      */
 	public $montant;
+
+	/**
+	 * @var float FEC:Amount (Not necessary)
+	 */
+	public $amount;
 
     /**
      * @var string FEC:Sens (Not necessary)
@@ -258,9 +264,7 @@ class BookKeeping extends CommonObject
 			if (in_array($this->doc_type, array('bank', 'expense_report')))
 			{
 				$this->errors[] = $langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet, $this->doc_type);
-			}
-			else
-			{
+			} else {
 				//$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForInvoiceLine', $this->doc_ref,  $this->label_compte);
 				$mesg = $this->doc_ref.', '.$langs->trans("AccountAccounting").': '.$this->numero_compte;
 				if ($this->subledger_account && $this->subledger_account != $this->numero_compte)
@@ -477,8 +481,7 @@ class BookKeeping extends CommonObject
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-		}
-		else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+		} else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -1127,7 +1130,7 @@ class BookKeeping extends CommonObject
 	 *
 	 * @param  User    $user       User that modifies
 	 * @param  bool    $notrigger  false=launch triggers after, true=disable triggers
-	 * @param  string  $mode       Mode
+	 * @param  string  $mode       Mode ('' or _tmp')
 	 * @return int                 <0 if KO, >0 if OK
 	 */
     public function update(User $user, $notrigger = false, $mode = '')
@@ -1254,12 +1257,12 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Update movement
+	 * Update accounting movement
 	 *
 	 * @param  string  $piece_num      Piece num
 	 * @param  string  $field          Field
 	 * @param  string  $value          Value
-	 * @param  string  $mode           Mode
+	 * @param  string  $mode           Mode ('' or _tmp')
 	 * @return number                  <0 if KO, >0 if OK
 	 */
 	public function updateByMvt($piece_num = '', $field = '', $value = '', $mode = '')
@@ -1268,9 +1271,9 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.$mode." as ab";
-		$sql .= ' SET ab.'.$field.'='.(is_numeric($value) ? $value : "'".$this->db->escape($value)."'");
-		$sql .= ' WHERE ab.piece_num='.$piece_num;
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element.$mode;
+		$sql .= ' SET '.$field.'='.(is_numeric($value) ? $value : "'".$this->db->escape($value)."'");
+		$sql .= " WHERE piece_num = '".$this->db->escape($piece_num)."'";
 		$resql = $this->db->query($sql);
 
 		if (!$resql) {

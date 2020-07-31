@@ -116,9 +116,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergrou
 if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity)))
 {
 	$sql .= " WHERE g.entity IS NOT NULL";
-}
-else
-{
+} else {
 	$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 }
 if (!empty($search_group)) natural_search(array("g.nom", "g.note"), $search_group);
@@ -221,9 +219,7 @@ if ($resql)
     print "</form>\n";
 
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

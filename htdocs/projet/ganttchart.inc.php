@@ -195,9 +195,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	if ($project_id && $level < 0)
 	{
 		$parent = '-'.$project_id;
-	}
-	else
-	{
+	} else {
 		$parent = $task["task_parent_alternate_id"];
 		//$parent = $task["task_parent"];
 	}
@@ -208,9 +206,7 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 	{
 		//$link=DOL_URL_ROOT.'/projet/tasks.php?withproject=1&id='.abs($task["task_id"]);
 		$link = '';
-	}
-	else
-	{
+	} else {
 		$link = DOL_URL_ROOT.'/projet/tasks/contact.php?withproject=1&id='.$task["task_id"];
 	}
 

@@ -50,9 +50,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 } elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
@@ -61,14 +59,10 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
-}
-
-elseif ($action == 'updateform')
+} elseif ($action == 'updateform')
 {
 	$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	$res2 = dolibarr_set_const($db, "MAIN_SESSION_TIMEOUT", GETPOST("MAIN_SESSION_TIMEOUT", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
@@ -99,7 +93,7 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
+dol_fiche_head($head, 'misc', '', -1);
 
 
 // Other Options
@@ -118,21 +112,15 @@ if (function_exists("imagecreatefrompng"))
 	if (!empty($conf->use_javascript_ajax))
 	{
 		print ajax_constantonoff('MAIN_SECURITY_ENABLECAPTCHA');
-	}
-	else
-	{
+	} else {
 		if (empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_SECURITY_ENABLECAPTCHA">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 		}
 	}
-}
-else
-{
+} else {
     $desc = $form->textwithpicto('', $langs->transnoentities("EnableGDLibraryDesc"), 1, 'warning');
     print $desc;
 }
@@ -145,15 +133,11 @@ print '<td class="right">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print ajax_constantonoff('MAIN_USE_ADVANCED_PERMS');
-}
-else
-{
+} else {
 	if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MAIN_USE_ADVANCED_PERMS">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
@@ -177,7 +161,11 @@ $sessiontimeout = ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_SESSION_TIMEOUT)) $conf->global->MAIN_SESSION_TIMEOUT = $sessiontimeout;
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
-print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor")));
+if (ini_get("session.gc_probability") == 0) {
+	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
+} else {
+	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
+}
 print '</td>';
 print '<td class="nowrap">';
 print '<input class="flat" name="MAIN_SESSION_TIMEOUT" type="text" size="6" value="'.htmlentities($conf->global->MAIN_SESSION_TIMEOUT).'"> '.strtolower($langs->trans("Seconds"));
@@ -185,7 +173,6 @@ print '</td>';
 print '</tr>';
 
 
-$sessiontimeout = ini_get("session.gc_maxlifetime");
 if (empty($conf->global->MAIN_APPLICATION_TITLE)) $conf->global->MAIN_APPLICATION_TITLE = "";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_APPLICATION_TITLE").'</td><td class="right">';

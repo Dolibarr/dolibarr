@@ -232,9 +232,7 @@ if (count($typeleaves) == 0)
     print $langs->trans("NoLeaveWithCounterDefined")."<br>\n";
     print $langs->trans("GoIntoDictionaryHolidayTypes");
     //print '</div>';
-}
-else
-{
+} else {
     $canedit = 0;
     if (!empty($user->rights->holiday->define_holiday)) $canedit = 1;
 
@@ -260,15 +258,13 @@ else
         {
             print '<td class="liste_titre" style="text-align:center"></td>';
         }
-    }
-    else
-    {
+    } else {
         print '<td class="liste_titre"></td>';
     }
     print '<td class="liste_titre"></td>';
 
     // Action column
-    print '<td class="liste_titre maxwidthsearch">';
+    print '<td class="liste_titre maxwidthsearch center">';
     $searchpicto = $form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -285,9 +281,7 @@ else
         	$labeltype = ($langs->trans($val['code']) != $val['code']) ? $langs->trans($val['code']) : $langs->trans($val['label']);
         	print_liste_field_titre($labeltype, $_SERVER["PHP_SELF"], '', '', '', '', '', '', 'center ');
         }
-    }
-    else
-    {
+    } else {
         print_liste_field_titre('NoLeaveWithCounterDefined', $_SERVER["PHP_SELF"], '', '', '', '');
     }
     print_liste_field_titre((empty($user->rights->holiday->define_holiday) ? '' : 'Note'), $_SERVER["PHP_SELF"]);
@@ -342,9 +336,7 @@ else
         	    //print ' '.$langs->trans('days');
             	print '</td>'."\n";
         	}
-        }
-        else
-        {
+        } else {
             print '<td></td>';
         }
 

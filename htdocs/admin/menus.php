@@ -96,9 +96,7 @@ if ($action == 'update' && !$cancel)
 				if ($result > 0)
 				{
 					$db->commit();
-				}
-				else
-				{
+				} else {
 					$error++;
 					setEventMessages($langs->trans("FailedToInitializeMenu").' '.$key, null, 'errors');
 					$db->rollback();
@@ -153,7 +151,7 @@ print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
-dol_fiche_head($head, 'handler', $langs->trans("Menus"), -1);
+dol_fiche_head($head, 'handler', '', -1);
 
 print '<span class="opacitymedium">'.$langs->trans("MenusDesc")."</span><br>\n";
 print "<br>\n";

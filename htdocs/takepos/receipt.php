@@ -25,7 +25,7 @@
  *	\brief      Page to show a receipt.
  */
 
-require '../main.inc.php'; // Load $user and permissions
+if (!isset($action)) require '../main.inc.php'; // If this file is called from send.php avoid load again
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk", "companies"));
@@ -89,12 +89,14 @@ if (!empty($hookmanager->resPrint)) {
 <br>
 <p class="left">
 <?php
-if (!empty($conf->global->TAKEPOS_HEADER))
+$constFreeText = 'TAKEPOS_HEADER' . $_SESSION['takeposterminal'];
+if (!empty($conf->global->TAKEPOS_HEADER) || !empty($conf->global->{$constFreeText}))
 {
+	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->TAKEPOS_HEADER))
-	$newfreetext = make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
-	echo $newfreetext;
+	if (!empty($conf->global->TAKEPOS_HEADER))      $newfreetext .= make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+	if (!empty($conf->global->{$constFreeText}))    $newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	print $newfreetext;
 }
 ?>
 </p>
@@ -183,11 +185,14 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 <br>
 <br>
 <?php
-if (!empty($conf->global->TAKEPOS_FOOTER))
+$constFreeText = 'TAKEPOS_FOOTER' . $_SESSION['takeposterminal'];
+if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText}))
 {
+	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	$newfreetext = make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
-	echo $newfreetext;
+	if (!empty($conf->global->{$constFreeText}))    $newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	if (!empty($conf->global->TAKEPOS_FOOTER))      $newfreetext .= make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+	print $newfreetext;
 }
 ?>
 

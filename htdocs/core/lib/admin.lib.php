@@ -185,8 +185,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 			                {
 			                	$qualified = 0;
 			                }
-            			}
-            			else						// This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
+            			} else // This is a test on a constant. For example when we have -- VMYSQLUTF8UNICODE, we test constant $conf->global->UTF8UNICODE
             			{
             				$dbcollation = strtoupper(preg_replace('/_/', '', $conf->db->dolibarr_main_db_collation));
             				//var_dump($reg[2]);
@@ -225,9 +224,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
 
         if ($buffer) $arraysql[$i] = $buffer;
         fclose($fp);
-    }
-    else
-    {
+    } else {
         dol_syslog("Admin.lib::run_sql failed to open file ".$sqlfile, LOG_ERR);
     }
 
@@ -251,9 +248,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
                     $obj = $db->fetch_object($resql);
                     $listofmaxrowid[$table] = $obj->max;
                     if (empty($listofmaxrowid[$table])) $listofmaxrowid[$table] = 0;
-                }
-                else
-                {
+                } else {
                     if (!$silent) print '<tr><td class="tdtop" colspan="2">';
                     if (!$silent) print '<div class="error">'.$langs->trans("Failed to get max rowid for ".$table)."</div></td>";
                     if (!$silent) print '</tr>';
@@ -273,10 +268,11 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
         if ($offsetforchartofaccount > 0)
         {
         	// Replace lines
-        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (1401, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
+        	// 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401, 'PCG99-ABREGE', 'CAPIT', '1234', 1400, '...', 1);'
         	// with
-        	// 'INSERT INTO llx_accounting_account (__ENTITY__, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (1401 + 200100000, 'PCG99-ABREGE','CAPIT', 'XXXXXX', '1', 0, '...', 1);'
-        	$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
+            // 'INSERT INTO llx_accounting_account (entity, rowid, fk_pcg_version, pcg_type, account_number, account_parent, label, active) VALUES (__ENTITY__, 1401 + 200100000, 'PCG99-ABREGE','CAPIT', '1234', 1400 + 200100000, '...', 1);'
+            // Note: string with 1234 instead of '1234' is also supported
+        	$newsql = preg_replace('/VALUES\s*\(__ENTITY__, \s*(\d+)\s*,(\s*\'[^\',]*\'\s*,\s*\'[^\',]*\'\s*,\s*\'?[^\',]*\'?\s*),\s*\'?([^\',]*)\'?/ims', 'VALUES (__ENTITY__, \1 + '.$offsetforchartofaccount.', \2, \3 + '.$offsetforchartofaccount, $newsql);
         	$newsql = preg_replace('/([,\s])0 \+ '.$offsetforchartofaccount.'/ims', '\1 0', $newsql);
         	//var_dump($newsql);
         	$arraysql[$i] = $newsql;
@@ -369,9 +365,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
                     dol_syslog('Admin.lib::run_sql Insert nb '.$cursorinsert.', done in table '.$table.', rowid is '.$listofinsertedrowid[$cursorinsert], LOG_DEBUG);
                 }
                 // 	          print '<td class="right">OK</td>';
-            }
-            else
-            {
+            } else {
                 $errno = $db->errno();
                 if (!$silent) print '<!-- Result = '.$errno.' -->'."\n";
 
@@ -413,9 +407,7 @@ function run_sql($sqlfile, $silent = 1, $entity = '', $usesavepoint = 1, $handle
         if (!$silent) print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
         if (!$silent) print '<td class="right">'.$langs->trans("OK").'</td></tr>'."\n";
         $ok = 1;
-    }
-    else
-    {
+    } else {
         if (!$silent) print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
         if (!$silent) print '<td class="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>'."\n";
         $ok = 0;
@@ -457,9 +449,7 @@ function dolibarr_del_const($db, $name, $entity = 1)
     {
         $conf->global->$name = '';
         return 1;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
         return -1;
     }
@@ -554,9 +544,7 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
         $db->commit();
         $conf->global->$name = $value;
         return 1;
-    }
-    else
-    {
+    } else {
         $error = $db->lasterror();
         $db->rollback();
         return -1;
@@ -658,12 +646,11 @@ function security_prepare_head()
     {
     	$obj = $db->fetch_object($resql);
     	if ($obj) $nbPerms = $obj->nb;
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
 
     $head[$h][0] = DOL_URL_ROOT."/admin/perms.php";
     $head[$h][1] = $langs->trans("DefaultRights");
-    if ($nbPerms > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>';
+    if ($nbPerms > 0) $head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">'.$nbPerms.'</span>' : '');
     $head[$h][2] = 'default';
     $h++;
 
@@ -720,14 +707,14 @@ function translation_prepare_head()
     $h = 0;
     $head = array();
 
-    $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
-    $head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
-    $head[$h][2] = 'overwrite';
-    $h++;
-
     $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
     $head[$h][1] = $langs->trans("TranslationKeySearch");
     $head[$h][2] = 'searchkey';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=overwrite";
+    $head[$h][1] = $langs->trans("TranslationOverwriteKey").'<span class="fa fa-plus-circle valignmiddle paddingleft"></span>';
+    $head[$h][2] = 'overwrite';
     $h++;
 
     complete_head_from_modules($conf, $langs, null, $head, $h, 'translation_admin');
@@ -970,9 +957,7 @@ function activateModule($value, $withdeps = 1)
     if ($result <= 0)
     {
         $ret['errors'][] = $objMod->error;
-    }
-    else
-    {
+    } else {
         if ($withdeps)
         {
             if (isset($objMod->depends) && is_array($objMod->depends) && !empty($objMod->depends))
@@ -1008,9 +993,7 @@ function activateModule($value, $withdeps = 1)
     				{
     				    $ret['nbmodules'] += $resarray['nbmodules'];
     				    $ret['nbperms'] += $resarray['nbperms'];
-    				}
-    				else
-    				{
+    				} else {
     				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
     				}
                 }
@@ -1081,8 +1064,7 @@ function unActivateModule($value, $requiredby = 1)
         $objMod = new $modName($db);
         $result = $objMod->remove();
         if ($result <= 0) $ret = $objMod->error;
-    }
-    else    // We come here when we try to unactivate a module when module does not exists anymore in sources
+    } else // We come here when we try to unactivate a module when module does not exists anymore in sources
     {
         //print $dir.$modFile;exit;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
@@ -1162,9 +1144,7 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
                         if ($objMod->numero > 0)
                         {
                             $j = $objMod->numero;
-                        }
-                        else
-                        {
+                        } else {
                             $j = 1000 + $i;
                         }
 
@@ -1209,24 +1189,19 @@ function complete_dictionary_with_modules(&$taborder, &$tabname, &$tablib, &$tab
                                 {
                                     print 'Error in descriptor of module '.$const_name.'. Array ->dictionaries has not same number of record for key "tabname", "tablib", "tabsql" and "tabsqlsort"';
                                     //print "$const_name: $nbtabname=$nbtablib=$nbtabsql=$nbtabsqlsort=$nbtabfield=$nbtabfieldvalue=$nbtabfieldinsert=$nbtabrowid=$nbtabcond=$nbtabfieldcheck=$nbtabhelp\n";
-                                }
-                                else
-                                {
+                                } else {
                                 	$taborder[] = 0; // Add an empty line
                                 }
                             }
 
                             $j++;
                             $i++;
-                        }
-                        else dol_syslog("Module ".get_class($objMod)." not qualified");
+                        } else dol_syslog("Module ".get_class($objMod)." not qualified");
                     }
                 }
             }
             closedir($handle);
-        }
-        else
-        {
+        } else {
             dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
         }
     }
@@ -1284,15 +1259,12 @@ function activateModulesRequiredByCountry($country_code)
 
 								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
-						}
-						else dol_syslog("Module ".get_class($objMod)." not qualified");
+						} else dol_syslog("Module ".get_class($objMod)." not qualified");
 					}
 				}
 			}
 			closedir($handle);
-		}
-		else
-		{
+		} else {
 			dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
 		}
 	}
@@ -1347,9 +1319,7 @@ function complete_elementList_with_modules(&$elementList)
                         if ($objMod->numero > 0)
                         {
                             $j = $objMod->numero;
-                        }
-                        else
-                        {
+                        } else {
                             $j = 1000 + $i;
                         }
 
@@ -1386,15 +1356,12 @@ function complete_elementList_with_modules(&$elementList)
 
                             $j++;
                             $i++;
-                        }
-                        else dol_syslog("Module ".get_class($objMod)." not qualified");
+                        } else dol_syslog("Module ".get_class($objMod)." not qualified");
                     }
                 }
             }
             closedir($handle);
-        }
-        else
-        {
+        } else {
             dol_syslog("htdocs/admin/modules.php: Failed to open directory ".$dir.". See permission and open_basedir option.", LOG_WARNING);
         }
     }
@@ -1409,7 +1376,7 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants array('key'=>array('type'=>type, 'label'=>label)
  *									where type can be 'string', 'text', 'textarea', 'html', 'yesno', 'emailtemplate:xxx', ...
- *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all (form is output by caller, recommanded)
+ *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (deprecated), 2=No form nor button at all (form is output by caller, recommended)
  *  @param  string  $helptext       Help
  *	@return	void
  */
@@ -1420,6 +1387,9 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 
     $form = new Form($db);
 
+    if (empty($strictw3c)) {
+    	dol_syslog("Warning: Function form_constantes is calle with parameter strictw3c = 0, this is deprecated. Value must be 2 now.", LOG_DEBUG);
+    }
     if (!empty($strictw3c) && $strictw3c == 1)
     {
         print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -1444,17 +1414,13 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
     	// $const is a const key like 'MYMODULE_ABC'
     	if (is_numeric($key)) {		// Very old behaviour
     		$type = 'string';
-    	}
-    	else
-    	{
+    	} else {
     		if (is_array($const))
     		{
     			$type = $const['type'];
 				$label = $const['label'];
     			$const = $key;
-    		}
-    		else
-    		{
+    		} else {
     			$type = $const;
     			$const = $key;
     		}
@@ -1545,9 +1511,7 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
                 print '<input type="hidden" name="consttype" value="yesno">';
                 print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
                 print '</td>';
-            }
-            else
-            {
+            } else {
                 print '<td>';
                 print '<input type="hidden" name="consttype'.(empty($strictw3c) ? '' : '[]').'" value="'.($obj->type ? $obj->type : 'string').'">';
                 print '<input type="hidden" name="constnote'.(empty($strictw3c) ? '' : '[]').'" value="'.nl2br(dol_escape_htmltag($obj->note)).'">';
@@ -1556,18 +1520,15 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
                     print '<textarea class="flat" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" cols="50" rows="5" wrap="soft">'."\n";
                     print $obj->value;
                     print "</textarea>\n";
-                }
-                elseif ($obj->type == 'html')
+                } elseif ($obj->type == 'html')
                 {
                 	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
                 	$doleditor = new DolEditor('constvalue_'.$const.(empty($strictw3c) ? '' : '[]'), $obj->value, '', 160, 'dolibarr_notes', '', false, false, $conf->fckeditor->enabled, ROWS_5, '90%');
                 	$doleditor->Create();
-                }
-                elseif ($obj->type == 'yesno')
+                } elseif ($obj->type == 'yesno')
                 {
                 	print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : '[]'), $obj->value, 1);
-                }
-                elseif (preg_match('/emailtemplate/', $obj->type))
+                } elseif (preg_match('/emailtemplate/', $obj->type))
                 {
                 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
                 	$formmail = new FormMail($db);
@@ -1584,14 +1545,14 @@ function form_constantes($tableau, $strictw3c = 0, $helptext = '')
 	                		//var_dump($modelmail);
 	                		$moreonlabel = '';
 	                		if (!empty($arrayofmessagename[$modelmail->label])) $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
-	                		$arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+	                		// The 'label' is the key that is unique if we exclude the language
+	                		$arrayofmessagename[$modelmail->label.':'.$tmp[1]] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
 	                	}
                 	}
                 	//var_dump($arraydefaultmessage);
                 	//var_dump($arrayofmessagename);
-                	print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
-                }
-                else	// type = 'string' ou 'chaine'
+                	print $form->selectarray('constvalue_'.$obj->name, $arrayofmessagename, $obj->value.':'.$tmp[1], 'None', 0, 0, '', 0, 0, 0, '', '', 1);
+                } else // type = 'string' ou 'chaine'
                 {
                     print '<input type="text" class="flat" size="48" name="constvalue'.(empty($strictw3c) ? '' : '[]').'" value="'.dol_escape_htmltag($obj->value).'">';
                 }
@@ -1680,9 +1641,7 @@ function addDocumentModel($name, $type, $label = '', $description = '')
 	{
 		$db->commit();
 		return 1;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 		$db->rollback();
 		return -1;
@@ -1713,9 +1672,7 @@ function delDocumentModel($name, $type)
 	{
 		$db->commit();
 		return 1;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 		$db->rollback();
 		return -1;
@@ -1744,8 +1701,7 @@ function phpinfo_array()
 		if (preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val))
 		{
 			$info_arr[trim($cat)][trim($val[1])] = $val[2];
-		}
-		elseif (preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val))
+		} elseif (preg_match("~<tr><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td><td[^>]+>([^<]*)</td></tr>~", $line, $val))
 		{
 			$info_arr[trim($cat)][trim($val[1])] = array("local" => $val[2], "master" => $val[3]);
 		}

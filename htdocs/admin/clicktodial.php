@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2020 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,10 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action', 'aZ09');
 
+if (! in_array('clicktodial', $conf->modules)) {
+	accessforbidden($langs->trans("WarningModuleNotActive", $langs->transnoentitiesnoconv("Module58Name")));
+}
+
 
 /*
  *	Actions
@@ -46,9 +50,7 @@ if ($action == 'setvalue' && $user->admin)
     if ($result1 >= 0 && $result2 >= 0)
     {
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -57,6 +59,8 @@ if ($action == 'setvalue' && $user->admin)
 /*
  * View
  */
+
+$form = new Form($db);
 
 $user->fetch_clicktodial();
 
@@ -73,6 +77,7 @@ print '<form method="post" action="clicktodial.php">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -105,6 +110,7 @@ print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 print '<div class="center"><br><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
 
@@ -133,9 +139,7 @@ if (!empty($conf->global->CLICKTODIAL_URL))
 	if ($setupcomplete)
 	{
 		print $langs->trans("LinkToTest", $user->login).': '.dol_print_phone($phonefortest, '', 0, 0, 'AC_TEL');
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		print '<div class="warning">'.$langs->trans("WarningClickToDialUserSetupNotComplete").'</div>';
 	}

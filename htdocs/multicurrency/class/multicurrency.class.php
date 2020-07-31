@@ -409,9 +409,7 @@ class MultiCurrency extends CommonObject
 		{
 			$this->rate = $currencyRate;
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->rate = null;
 			$this->errors = $currencyRate->errors;
 			return -1;
@@ -519,6 +517,7 @@ class MultiCurrency extends CommonObject
 		global $conf;
 
 	 	$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
+
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
 		$sql1 .= " WHERE m.code = '".$db->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
@@ -527,14 +526,13 @@ class MultiCurrency extends CommonObject
 			$tmparray = dol_getdate($date_document);
 			$sql2 .= " AND mc.date_sync <= '".$db->idate(dol_mktime(23, 59, 59, $tmparray['mon'], $tmparray['mday'], $tmparray['year'], true))."'";
 		}
-		$sql3 .= ' ORDER BY mc.date_sync DESC LIMIT 1';
+		$sql3 = ' ORDER BY mc.date_sync DESC LIMIT 1';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql1.$sql2.$sql3);
 
 		if ($resql && $obj = $db->fetch_object($resql)) return array($obj->rowid, $obj->rate);
-		else
-		{
+		else {
 			if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE))
 			{
 				$resql = $db->query($sql1.$sql3);
@@ -556,16 +554,13 @@ class MultiCurrency extends CommonObject
      */
     public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way = 'dolibarr', $table = 'facture')
     {
-        global $db;
-
         $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
 
         if ($multicurrency_tx)
         {
             if ($way == 'dolibarr') return $amount * $multicurrency_tx;
             else return $amount / $multicurrency_tx;
-        }
-        else return $amount;
+        } else return $amount;
     }
 
 	/**
@@ -592,10 +587,11 @@ class MultiCurrency extends CommonObject
 	}
 
 	/**
-	 * With free account we can't set source then recalcul all rates to force another source
+	 * With free account we can't set source then recalcul all rates to force another source.
+	 * This modify the array &$TRate.
 	 *
 	 * @param   stdClass	$TRate	Object containing all currencies rates
-	 * @return	-1 if KO, 0 if nothing, 1 if OK
+	 * @return	int					-1 if KO, 0 if nothing, 1 if OK
 	 */
 	public static function recalculRates(&$TRate)
 	{
@@ -659,8 +655,7 @@ class MultiCurrency extends CommonObject
 					if ($obj->fetch(null, $code) > 0)
 					{
 						$obj->updateRate($rate);
-					}
-					elseif ($addifnotfound)
+					} elseif ($addifnotfound)
 					{
 						self::addRateFromDolibarr($code, $rate);
 					}
@@ -668,9 +663,7 @@ class MultiCurrency extends CommonObject
 			}
 
 			return 1;
-        }
-		else
-		{
+        } else {
 		    dol_syslog("Failed to call endpoint ".$response->error->info, LOG_WARNING);
 			setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
 

@@ -1,4 +1,4 @@
 # Dolibarr language file - Source file is en_US - cashdesk
 NoVAT=No GST for this sale
-TicketVatGrouped=Group VAT by rate in tickets|receipts
-AutoPrintTickets=Automatically print tickets|receipts
+NumberOfLinesToShow=Number of lines to show in image box
+DefineTablePlan=Define table plan

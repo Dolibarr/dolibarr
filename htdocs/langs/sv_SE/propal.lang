@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Kundfaktura kontakt
 TypeContact_propal_external_CUSTOMER=Kundkontakt följa upp förslag
 TypeContact_propal_external_SHIPPING=Kundkontakt för leverans
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Skapa standardmodell
 DefaultModelPropalToBill=Standardmall när ett affärsförslag sluts (att fakturera)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Standardmall när ett affärsförslag sluts (ofakturera
 ProposalCustomerSignature=Skriftligt godkännande, företagsstämpel, datum och signatur
 ProposalsStatisticsSuppliers=Statistik för leverantörsförslag
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

@@ -159,7 +159,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount,";
-			$sql .= " fk_typepaiement, num_paiement as num_payment, note, fk_user_creat, fk_bank)";
+			$sql .= " fk_typepaiement, num_paiement, note, fk_user_creat, fk_bank)";
 			$sql .= " VALUES ($this->chid, '".$this->db->idate($now)."',";
 			$sql .= " '".$this->db->idate($this->datepaye)."',";
 			$sql .= " ".$totalamount.",";
@@ -194,14 +194,11 @@ class PaymentSocialContribution extends CommonObject
 							if ($remaintopay == 0)
 							{
 								$result = $contrib->set_paid($user);
-							}
-							else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
+							} else dol_syslog("Remain to pay for conrib ".$contribid." not null. We do nothing.");
 						}
 					}
 				}
-			}
-			else
-			{
+			} else {
 				$error++;
 			}
 		}
@@ -215,9 +212,7 @@ class PaymentSocialContribution extends CommonObject
             $this->total = $totalamount; // deprecated
 		    $this->db->commit();
 			return $this->id;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -1;
@@ -286,9 +281,7 @@ class PaymentSocialContribution extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -358,9 +351,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -414,9 +405,7 @@ class PaymentSocialContribution extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -465,9 +454,7 @@ class PaymentSocialContribution extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -516,6 +503,9 @@ class PaymentSocialContribution extends CommonObject
     {
         global $conf;
 
+		// Clean data
+        $this->num_payment = trim($this->num_payment ? $this->num_payment : $this->num_paiement);
+
         $error = 0;
 
         if (!empty($conf->banque->enabled))
@@ -534,7 +524,7 @@ class PaymentSocialContribution extends CommonObject
                 $this->paiementtype, // Payment mode id or code ("CHQ or VIR for example")
                 $label,
                 $total,
-                $this->num_paiement,
+                $this->num_payment,
                 '',
                 $user,
                 $emetteur_nom,
@@ -577,9 +567,7 @@ class PaymentSocialContribution extends CommonObject
                         if ($result <= 0) dol_print_error($this->db);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $this->error = $acc->error;
                 $error++;
             }
@@ -588,9 +576,7 @@ class PaymentSocialContribution extends CommonObject
         if (!$error)
         {
             return 1;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -613,9 +599,7 @@ class PaymentSocialContribution extends CommonObject
 		if ($result)
 		{
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return 0;
 		}
@@ -699,7 +683,7 @@ class PaymentSocialContribution extends CommonObject
 		$result = '';
 
 		if (empty($this->ref)) $this->ref = $this->lib;
-        $label = $langs->trans("ShowPayment").': '.$this->ref;
+        $label = $langs->trans("Payment").': '.$this->ref;
 
         if (!empty($this->id)) {
             $link = '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';

@@ -104,9 +104,7 @@ class DoliDBPgsql extends DoliDB
 		{
 			$this->connected = true;
 			$this->ok = true;
-		}
-		else
-		{
+		} else {
 			// host, login ou password incorrect
 			$this->connected = false;
 			$this->ok = false;
@@ -122,18 +120,14 @@ class DoliDBPgsql extends DoliDB
 				$this->database_selected = true;
 				$this->database_name = $name;
 				$this->ok = true;
-			}
-			else
-			{
+			} else {
 				$this->database_selected = false;
 				$this->database_name = '';
 				$this->ok = false;
 				$this->error = $this->error();
 				dol_syslog(get_class($this)."::DoliDBPgsql : Erreur Select_db ".$this->error, LOG_ERR);
 			}
-		}
-		else
-		{
+		} else {
 			// Pas de selection de base demandee, ok ou ko
 			$this->database_selected = false;
 		}
@@ -183,6 +177,8 @@ class DoliDBPgsql extends DoliDB
 
 		    if ($type == 'dml')
 		    {
+		    	$reg = array();
+
                 $line = preg_replace('/\s/', ' ', $line); // Replace tabulation with space
 
 		        // we are inside create table statement so lets process datatypes
@@ -518,8 +514,7 @@ class DoliDBPgsql extends DoliDB
 				{
 					$query = preg_replace('/([^\'])([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9])/', '\\1\'\\2\'', $query);
 					dol_syslog("Warning: Bad formed request converted into ".$query, LOG_WARNING);
-				}
-				else $loop = false;
+				} else $loop = false;
 			}
 		}
 
@@ -722,8 +717,7 @@ class DoliDBPgsql extends DoliDB
 		if (!$this->connected) {
 			// Si il y a eu echec de connexion, $this->db n'est pas valide.
 			return 'DB_ERROR_FAILED_TO_CONNECT';
-		}
-		else {
+		} else {
 			// Constants to convert error code to a generic Dolibarr error code
 			$errorcode_map = array(
 			1004 => 'DB_ERROR_CANNOT_CREATE',
@@ -998,10 +992,8 @@ class DoliDBPgsql extends DoliDB
 			{
 				if (preg_match("/null/i", $field_desc['default']))
 				    $sqlfields[$i] .= " default ".$field_desc['default'];
-				else
-				    $sqlfields[$i] .= " default '".$field_desc['default']."'";
-			}
-			elseif (preg_match("/^[^\s]/i", $field_desc['null']))
+				else $sqlfields[$i] .= " default '".$field_desc['default']."'";
+			} elseif (preg_match("/^[^\s]/i", $field_desc['null']))
 			    $sqlfields[$i]  .= " ".$field_desc['null'];
 
 			elseif (preg_match("/^[^\s]/i", $field_desc['extra']))
@@ -1041,8 +1033,7 @@ class DoliDBPgsql extends DoliDB
 		dol_syslog($sql, LOG_DEBUG);
 		if (!$this->query($sql))
 		return -1;
-		else
-		return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1059,8 +1050,7 @@ class DoliDBPgsql extends DoliDB
 
 		if (!$this->query($sql))
 			return -1;
-		else
-			return 1;
+		else return 1;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1126,11 +1116,12 @@ class DoliDBPgsql extends DoliDB
 		// ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
 		$sql = "ALTER TABLE ".$table." ADD ".$field_name." ";
 		$sql .= $field_desc['type'];
-		if (preg_match("/^[^\s]/i", $field_desc['value']))
-	    if (!in_array($field_desc['type'], array('int', 'date', 'datetime')))
-	    {
-	        $sql .= "(".$field_desc['value'].")";
-	    }
+		if (preg_match("/^[^\s]/i", $field_desc['value'])) {
+			if (!in_array($field_desc['type'], array('int', 'date', 'datetime')) && $field_desc['value'])
+		    {
+		        $sql .= "(".$field_desc['value'].")";
+		    }
+		}
 		if (preg_match("/^[^\s]/i", $field_desc['attribute']))
             $sql .= " ".$field_desc['attribute'];
 		if (preg_match("/^[^\s]/i", $field_desc['null']))
@@ -1167,7 +1158,7 @@ class DoliDBPgsql extends DoliDB
         // phpcs:enable
 		$sql = "ALTER TABLE ".$table;
 		$sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-		if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
 			$sql .= "(".$field_desc['value'].")";
 		}
 
@@ -1178,8 +1169,7 @@ class DoliDBPgsql extends DoliDB
         	{
         		$sqlbis = "UPDATE ".$table." SET ".$field_name." = '".$this->escape($field_desc['default'] ? $field_desc['default'] : '')."' WHERE ".$field_name." IS NULL";
         		$this->query($sqlbis);
-        	}
-        	elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int')
+        	} elseif ($field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int')
         	{
         		$sqlbis = "UPDATE ".$table." SET ".$field_name." = ".((int) $this->escape($field_desc['default'] ? $field_desc['default'] : 0))." WHERE ".$field_name." IS NULL";
         		$this->query($sqlbis);
@@ -1231,8 +1221,7 @@ class DoliDBPgsql extends DoliDB
 		{
             $liste = $this->fetch_array($resql);
 		    return $liste['server_encoding'];
-		}
-		else return '';
+		} else return '';
 	}
 
 	/**
@@ -1272,8 +1261,7 @@ class DoliDBPgsql extends DoliDB
 		{
 		    $liste = $this->fetch_array($resql);
 			return $liste['lc_collate'];
-		}
-		else return '';
+		} else return '';
 	}
 
 	/**
@@ -1312,9 +1300,7 @@ class DoliDBPgsql extends DoliDB
 		if (file_exists('/usr/bin/pg_dump'))
 		{
 		    $fullpathofdump = '/usr/bin/pg_dump';
-		}
-		else
-		{
+		} else {
             // TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
 		    $resql = $this->query('SHOW data_directory');
     		if ($resql)
@@ -1343,9 +1329,7 @@ class DoliDBPgsql extends DoliDB
         if (file_exists('/usr/bin/'.$tool))
         {
             $fullpathofdump = '/usr/bin/'.$tool;
-        }
-        else
-        {
+        } else {
             // TODO L'utilisateur de la base doit etre un superadmin pour lancer cette commande
             $resql = $this->query('SHOW data_directory');
             if ($resql)

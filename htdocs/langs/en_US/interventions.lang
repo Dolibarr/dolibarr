@@ -62,5 +62,5 @@ InterLineId=Line id intervention
 InterLineDate=Line date intervention
 InterLineDuration=Line duration intervention
 InterLineDesc=Line description intervention
-RepeatableIntervention=Template of intevention
+RepeatableIntervention=Template of intervention
 ToCreateAPredefinedIntervention=To create a predefined or recurring intervention, create a common intervention and convert it into intervention template

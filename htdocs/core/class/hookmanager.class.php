@@ -207,6 +207,7 @@ class HookManager
 				'restrictedArea',
 				'sendMail',
 				'sendMailAfter',
+				'showOptionals',
 				'showLinkToObjectBlock',
 				'setContentSecurityPolicy',
 				'setHtmlTitle',
@@ -266,8 +267,7 @@ class HookManager
                     	if (!empty($actionclassinstance->resprints)) $this->resPrint .= $actionclassinstance->resprints;
                     }
                     // Generic hooks that return a string or array (printLeftBlock, formAddObjectLine, formBuilddocOptions, ...)
-                    else
-					{
+                    else {
                     	// TODO. this test should be done into the method of hook by returning nothing
                     	if (is_array($parameters) && !empty($parameters['special_code']) && $parameters['special_code'] > 3 && $parameters['special_code'] != $actionclassinstance->module_number) continue;
 

@@ -72,8 +72,8 @@ $tables=array(
     'bank'=>array(0=>'datev', 1=>'dateo'),
     'commande_fournisseur'=>array(0=>'date_commande', 1=>'date_valid', 3=>'date_creation', 4=>'date_approve', 5=>'date_approve2', 6=>'date_livraison'),
     'supplier_proposal'=>array(0=>'datec', 1=>'date_valid', 2=>'date_cloture'),
-	'expense_report'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 4=>'date_approve', 5=>'date_refuse', 6=>'date_cancel'),
-	'leave'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 5=>'date_refuse', 6=>'date_cancel')
+	'expensereport'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 4=>'date_approve', 5=>'date_refuse', 6=>'date_cancel'),
+	'holiday'=>array(0=>'date_debut', 1=>'date_fin', 2=>'date_create', 3=>'date_valid', 5=>'date_refuse', 6=>'date_cancel')
 );
 
 $year=2010;
@@ -87,7 +87,7 @@ while ($year <= $currentyear)
 
     if ($delta1)
     {
-        foreach($tables as $tablekey => $tableval)
+        foreach ($tables as $tablekey => $tableval)
         {
             print "Correct ".$tablekey." for year ".$year." and move them to current year ".$currentyear." ";
             $sql="select rowid from ".MAIN_DB_PREFIX.$tablekey." where ".$tableval[0]." between '".$year."-01-01' and '".$year."-12-31' and ".$tableval[0]." < DATE_ADD(NOW(), INTERVAL -1 YEAR)";
@@ -105,7 +105,7 @@ while ($year <= $currentyear)
                         print ".";
                         $sql2="UPDATE ".MAIN_DB_PREFIX.$tablekey." set ";
                         $j=0;
-                        foreach($tableval as $field)
+                        foreach ($tableval as $field)
                         {
                             if ($j) $sql2.=", ";
                             $sql2.= $field." = ".$db->ifsql("DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR) > NOW()", "DATE_ADD(".$field.", INTERVAL ".$delta2." YEAR)", "DATE_ADD(".$field.", INTERVAL ".$delta1." YEAR)");

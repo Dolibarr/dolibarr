@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Fitxer per robots (robots.txt)
 WEBSITE_HTACCESS=Fitxer .htaccess del lloc web
 WEBSITE_MANIFEST_JSON=Arxiu del lloc web manifest.json
 WEBSITE_README=Fitxer README.md
+WEBSITE_KEYWORDSDesc=Utilitza una coma per separar valors
 EnterHereLicenseInformation=Introduïu aquí dades de meta o informació de llicència per enviar un fitxer README.md. si distribuïu el vostre lloc web com a plantilla, el fitxer s’inclourà al paquet temptador.
 HtmlHeaderPage=Encapçalament HTML (específic sols per aquesta pàgina)
 PageNameAliasHelp=Nom o àlies de la pàgina. <br> Aquest àlies també s'utilitza per construir un URL de SEO quan el lloc web es llanci des d'un Host Virtual d'un servidor web (com Apache, Nginx...). Utilitzeu el botó "<strong>%s</strong>" per editar aquest àlies.
@@ -42,8 +43,8 @@ ViewPageInNewTab=Mostra la pàgina en una nova pestanya
 SetAsHomePage=Indica com a Pàgina principal
 RealURL=URL real
 ViewWebsiteInProduction=Mostra la pàgina web utilitzant les URLs d'inici
-SetHereVirtualHost=<u>Use with Apache/NGinx/...</u><br>Create on your web server (Apache, Nginx, ...) a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong>
-ExampleToUseInApacheVirtualHostConfig=Example to use in Apache virtual host setup:
+SetHereVirtualHost=<u>Utilitzar amb Apache/NGinx/...</u><br>Creeu al vostre servidor web (Apache, Nginx, ...) un Virtual Host dedicat amb PHP habilitat i un directori arrel a<br><strong>%s</strong>
+ExampleToUseInApacheVirtualHostConfig=Exemple a utilitzar en la configuració de d'un Virtual Host d'Apache:
 YouCanAlsoTestWithPHPS=<u> Utilitzeu-lo amb el servidor incrustat de PHP </u> <br> Al desenvolupar l'entorn, és possible que preferiu provar el lloc amb el servidor web incrustat de PHP (requereix PHP 5.5) executant<br> <strong> php -S 0.0. 0.0: 8080 -t %s </strong>
 YouCanAlsoDeployToAnotherWHP=<u>Executeu el vostre lloc web amb un altre proveïdor de hosting de Dolibarr</u> <br> Si no teniu disponible un servidor web com Apache o NGinx a Internet, podeu exportar i importar el vostre lloc web a una altra instància de Dolibarr proporcionada per un altre proveïdor d'allotjament de Dolibarr que ofereixi una integració completa amb el mòdul del lloc web. Podeu trobar una llista d'alguns proveïdors d'allotjament Dolibarr a <a href="https://saas.dolibarr.org" target="_blank">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Comproveu també que l'amfitrió virtual té permisos <strong> %s </strong> en fitxers a <strong> %s </strong>
@@ -57,7 +58,10 @@ NoPageYet=Encara sense pàgines
 YouCanCreatePageOrImportTemplate=Podeu crear una pàgina nova o importar una plantilla completa del lloc web
 SyntaxHelp=Ajuda sobre consells de sintaxi específics
 YouCanEditHtmlSourceckeditor=Podeu editar el codi font HTML usant el botó "Codi font" a l'editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Podeu incloure codi PHP a aquest origen mitjançant etiquetes <strong>&lt;?php ?&gt;</strong> . Estan disponibles les variables globals següents: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs. <br><br><span class="fa fa-bug"></span> També podeu incloure contingut d’una altra pàgina/contenidor amb la sintaxi següent: <br> <strong>&lt;?php includeContainer('alies_del_contenidor_a_incloure'); ?&gt;</strong> <br><br><span class="fa fa-bug"></span> Podeu fer una redirecció a una altra pàgina/contenidor amb la sintaxi següent (Nota: no produiu cap contingut de sortida abans d'una redirecció): <br> <strong>&lt;?php redirectToContainer('alies_del_contenidor_a_redireccionar'); ?&gt;</strong> <br><br><span class="fa fa-link"></span> Per afegir un enllaç a una altra pàgina, utilitzeu la sintaxi: <br> <strong>&lt;a href="alies_de_la_plana.php"&gt;elmeuenllaç&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> Per incloure un <strong>enllaç per baixar</strong> un fitxer emmagatzemat al directori  <strong>documents</strong> , utilitzeu l'empaquetador <strong>document.php</strong> : <br> Per exemple, per a un fitxer a documents/ecm (cal estar registrat), la sintaxi és: <br> <strong>&lt;a href="/document.php?modulepart=ecm&file=[directori_relatiu/]nomdefitxer.ext"&gt;</strong> <br> Per a un fitxer a documents/medias (directori obert per a accés públic), la sintaxi és: <br> <strong>&lt;a href="/document.php?modulepart=medias&file=[directori_relatiu/]nomdefitxer.ext"&gt;</strong> <br> Per a un fitxer compartit amb un enllaç de compartició (accés obert mitjançant la clau hash de compartició del fitxer), la sintaxi és: <br> <strong>&lt;a href="/document.php?hashp=claupublicadecomparticio"&gt;</strong> <br><br><span class="fa fa-picture-o"></span> Per incloure una <strong>imatge</strong> emmagatzemada al directori de <strong>documents</strong> , utilitzeu l'empaquetador <strong>viewimage.php</strong> : <br> Per exemple, per a una imatge a documents/medias (directori obert per a accés públic), la sintaxi és: <br> <strong>&lt;img src="/ viewimage.php?modulepart=medias&file=[directori_relatiu/]nomdelfitxer.ext"&gt;</strong> <br><br> Més exemples de codi HTML o dinàmic disponibles a <a href="%s" target="_blank">la documentació wiki</a> <br> .
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-link"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank">the wiki documentation</a><br>.
 ClonePage=Clona la pàgina/contenidor
 CloneSite=Clona el lloc
 SiteAdded=S'ha afegit el lloc web
@@ -77,7 +81,7 @@ BlogPost=Publicació del bloc
 WebsiteAccount=Compte del lloc web
 WebsiteAccounts=Comptes de lloc web
 AddWebsiteAccount=Crear un compte de lloc web
-BackToListOfThirdParty=Tornar a la llista de Tercers
+BackToListForThirdParty=Tornar al llistat del tercer
 DisableSiteFirst=Deshabilita primer el lloc web
 MyContainerTitle=Títol del meu lloc web
 AnotherContainer=Així s’inclou contingut d’una altra pàgina / contenidor (pot ser que tingueu un error aquí si activeu el codi dinàmic perquè pot no existir el subconjunt incrustat)
@@ -85,7 +89,7 @@ SorryWebsiteIsCurrentlyOffLine=Ho sentim, actualment aquest lloc web està fora 
 WEBSITE_USE_WEBSITE_ACCOUNTS=Activa la taula del compte del lloc web
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activeu la taula per emmagatzemar comptes del lloc web (login/contrasenya) per a cada lloc web de tercers
 YouMustDefineTheHomePage=Primer heu de definir la pàgina d'inici predeterminada
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting javascript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correclty when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContentFuture=Avís: la creació d'una pàgina web mitjançant la importació d'una pàgina web externa es reserva per a usuaris experimentats. Segons la complexitat de la pàgina d'origen, el resultat de la importació pot diferir de l'original. També si la pàgina font utilitza estils CSS comuns o Javascript en conflicte, pot trencar l'aspecte o les funcions de l'editor del lloc web quan es treballi en aquesta pàgina. Aquest mètode és una manera més ràpida de crear una pàgina, però es recomana crear la vostra pàgina nova des de zero o des d’una plantilla de pàgina suggerida. <br> Tingueu en compte també que l'editor en línia pot no funcionar correctament quan s'utilitza en una pàgina creada a partir d'importar una externa.
 OnlyEditionOfSourceForGrabbedContent=Només l'edició de codi HTML és possible quan el contingut s'ha capturat d'un lloc extern
 GrabImagesInto=Agafa també imatges trobades dins del css i a la pàgina.
 ImagesShouldBeSavedInto=Les imatges s'han de desar al directori
@@ -120,11 +124,14 @@ ShowSubContainersOnOff=El mode per executar &quot;contingut dinàmic&quot; és %
 GlobalCSSorJS=Fitxer CSS / JS / Capçalera global del lloc web
 BackToHomePage=Torna a la pàgina principal...
 TranslationLinks=Enllaços de traducció
-YouTryToAccessToAFileThatIsNotAWebsitePage=Intenteu accedir a una adreça que no és una pàgina web
+YouTryToAccessToAFileThatIsNotAWebsitePage=You try to access to a page that is not available.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=Per seguir bones pràctiques de SEO, utilitzeu un text entre 5 i 70 caràcters
 MainLanguage=Idioma principal
 OtherLanguages=Altres idiomes
 UseManifest=Proporciona un fitxer manifest.json
-PublicAuthorAlias=Public author alias
-AvailableLanguagesAreDefinedIntoWebsiteProperties=Available languages are defined into website properties
-ReplacementDoneInXPages=Replacement done in %s pages or containers
+PublicAuthorAlias=Àlies d’autor públic
+AvailableLanguagesAreDefinedIntoWebsiteProperties=Els idiomes disponibles es defineixen a les propietats del lloc web
+ReplacementDoneInXPages=Substitució realitzada  %s pàgines o contenidors
+RSSFeed=Fils RSS
+RSSFeedDesc=Podeu obtenir un feed RSS dels darrers articles amb el tipus "blogpost" mitjançant aquesta URL
+PagesRegenerated=%s page(s)/container(s) regenerated

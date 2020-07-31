@@ -49,7 +49,6 @@ ActivityOnProjectThisMonth=Activité de projet ce mois-ci
 ActivityOnProjectThisYear=Activité de projet cette année
 NotOwnerOfProject=Pas le propriétaire de ce projet privé
 AffectedTo=Alloué à
-CantRemoveProject=Ce projet ne peut pas être supprimé car il est référencé par d'autres objets (facture, commandes ou autres). Voir l'onglet des références.
 ValidateProject=Valider le projet
 ConfirmValidateProject=Êtes-vous sûr de vouloir valider ce projet?
 CloseAProject=Prochain projet

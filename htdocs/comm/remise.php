@@ -59,9 +59,9 @@ if (GETPOST('action', 'aZ09') == 'setremise')
 	$discount_type = GETPOST('discount_type', 'int');
 
 	if (!empty($discount_type)) {
-		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note"), $user);
+		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	} else {
-		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note"), $user);
+		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	}
 
 	if ($result > 0)
@@ -70,15 +70,11 @@ if (GETPOST('action', 'aZ09') == 'setremise')
 	    {
     		header("Location: ".$backtopage);
     		exit;
-	    }
-	    else
-	    {
+	    } else {
     		header("Location: remise.php?id=".$_GET["id"]);
     		exit;
 	    }
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -187,7 +183,7 @@ if ($socid > 0)
 
 	// Motif/Note
 	print '<tr><td class="fieldrequired">';
-	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.dol_escape_htmltag(GETPOST("note")).'"></td></tr>';
+	print $langs->trans("NoteReason").'</td><td><input type="text" size="60" name="note" value="'.dol_escape_htmltag(GETPOST("note", "alphanohtml")).'"></td></tr>';
 
 	print "</table>";
 
@@ -252,16 +248,12 @@ if ($socid > 0)
 	    			print '</tr>';
 	    			$i++;
 	    		}
-			}
-			else
-			{
+			} else {
 			    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -311,16 +303,12 @@ if ($socid > 0)
 					print '</tr>';
 					$i++;
 				}
-			}
-			else
-			{
+			} else {
 				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			$db->free($resql);
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 

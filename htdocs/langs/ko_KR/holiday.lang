@@ -15,6 +15,7 @@ CancelCP=취소 된
 RefuseCP=거절됨
 ValidatorCP=Approbator
 ListeCP=List of leave
+Leave=Leave request
 LeaveId=Leave ID
 ReviewedByCP=Will be approved by
 UserID=User ID

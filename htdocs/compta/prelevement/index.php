@@ -22,7 +22,7 @@
 /**
  *	\file       htdocs/compta/prelevement/index.php
  *  \ingroup    prelevement
- *	\brief      Prelevement index page
+ *	\brief      Home page for direct debit orders
  */
 
 
@@ -78,13 +78,13 @@ print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</
 print '<tr class="oddeven"><td>'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
 print '<td class="right">';
 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/demandes.php?status=0">';
-print $bprev->NbFactureAPrelever();
+print $bprev->nbOfInvoiceToPay('direct-debit');
 print '</a>';
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>'.$langs->trans("AmountToWithdraw").'</td>';
 print '<td class="right">';
-print price($bprev->SommeAPrelever(), '', '', 1, -1, -1, 'auto');
+print price($bprev->SommeAPrelever('direct-debit'), '', '', 1, -1, -1, 'auto');
 print '</td></tr></table></div><br>';
 
 
@@ -94,7 +94,7 @@ print '</td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.rowid as socid";
+$sql .= " s.nom as name, s.email, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -106,7 +106,9 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 {
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
-$sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
+$sql .= " AND pfd.traite = 0";
+$sql .= " AND pfd.ext_payment_id IS NULL";
+$sql .= " AND pfd.fk_facture = f.rowid";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 
@@ -133,14 +135,15 @@ if ($resql)
             $invoicestatic->type = $obj->type;
             $alreadypayed = $invoicestatic->getSommePaiement();
 
+            $thirdpartystatic->id = $obj->socid;
+            $thirdpartystatic->name = $obj->name;
+            $thirdpartystatic->email = $obj->email;
 
             print '<tr class="oddeven"><td>';
             print $invoicestatic->getNomUrl(1, 'withdraw');
             print '</td>';
 
             print '<td>';
-            $thirdpartystatic->id = $obj->socid;
-            $thirdpartystatic->name = $obj->name;
             print $thirdpartystatic->getNomUrl(1, 'customer');
             print '</td>';
 
@@ -158,15 +161,11 @@ if ($resql)
             print '</tr>';
             $i++;
         }
-    }
-    else
-    {
+    } else {
         print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders")).'</td></tr>';
     }
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -175,11 +174,13 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 /*
- * Withdraw receipts
+ * Direct debit orders
  */
+
 $limit = 5;
 $sql = "SELECT p.rowid, p.ref, p.amount, p.datec, p.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " WHERE p.type = 'debit-order'";
 $sql .= " ORDER BY datec DESC";
 $sql .= $db->plimit($limit);
 
@@ -192,37 +193,41 @@ if ($result)
     print"\n<!-- debut table -->\n";
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder centpercent">';
-    print '<tr class="liste_titre"><th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
+    print '<tr class="liste_titre">';
+    print '<th>'.$langs->trans("LastWithdrawalReceipt", $limit).'</th>';
     print '<th>'.$langs->trans("Date").'</th>';
     print '<th class="right">'.$langs->trans("Amount").'</th>';
     print '<th class="right">'.$langs->trans("Status").'</th>';
     print '</tr>';
 
-    while ($i < min($num, $limit))
-    {
-        $obj = $db->fetch_object($result);
+    if ($num > 0) {
+    	while ($i < min($num, $limit))
+	    {
+	        $obj = $db->fetch_object($result);
 
 
-        print '<tr class="oddeven">';
+	        print '<tr class="oddeven">';
 
-        print "<td>";
-        $bprev->id = $obj->rowid;
-        $bprev->ref = $obj->ref;
-        $bprev->statut = $obj->statut;
-        print $bprev->getNomUrl(1);
-        print "</td>\n";
-        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
-        print '<td class="right">'.price($obj->amount)."</td>\n";
-        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
+	        print "<td>";
+	        $bprev->id = $obj->rowid;
+	        $bprev->ref = $obj->ref;
+	        $bprev->statut = $obj->statut;
+	        print $bprev->getNomUrl(1);
+	        print "</td>\n";
+	        print '<td>'.dol_print_date($db->jdate($obj->datec), "dayhour")."</td>\n";
+	        print '<td class="right">'.price($obj->amount)."</td>\n";
+	        print '<td class="right">'.$bprev->getLibStatut(3)."</td>\n";
 
-        print "</tr>\n";
-        $i++;
+	        print "</tr>\n";
+	        $i++;
+	    }
+    } else {
+    	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("None").'</td></tr>';
     }
+
     print "</table></div><br>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

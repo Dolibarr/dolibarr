@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Przedstawiciel handlowy w ślad za umo
 TypeContact_contrat_external_BILLING=Billing kontakt z klientem
 TypeContact_contrat_external_CUSTOMER=W ślad za kontakt z klientem
 TypeContact_contrat_external_SALESREPSIGN=Podpisanie umowy, kontakt z klientem
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

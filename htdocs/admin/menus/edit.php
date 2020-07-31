@@ -103,9 +103,7 @@ if ($action == 'update')
             if (is_numeric(GETPOST('menuIdParent', 'alpha')))
             {
             	$menu->fk_menu = GETPOST('menuIdParent', 'alpha');
-            }
-            else
-            {
+            } else {
     	       	if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu = 0;
     	       	else $menu->fk_menu = -1;
             	$menu->fk_mainmenu = $mainmenu;
@@ -116,23 +114,17 @@ if ($action == 'update')
             if ($result > 0)
             {
 	            setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
-            }
-            else
-            {
+            } else {
 	            setEventMessages($menu->error, $menu->errors, 'errors');
             }
-        }
-        else
-        {
+        } else {
 	        setEventMessages($menu->error, $menu->errors, 'errors');
         }
         $action = "edit";
 
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;
-    }
-    else
-    {
+    } else {
         header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".$menu_handler);
         exit;
     }
@@ -221,9 +213,7 @@ if ($action == 'add')
         if (is_numeric(GETPOST('menuId', 'alpha', 3)))
         {
         	$menu->fk_menu = GETPOST('menuId', 'alpha', 3);
-        }
-        else
-        {
+        } else {
             if (GETPOST('type', 'alpha') == 'top') $menu->fk_menu = 0;
             else $menu->fk_menu = -1;
             $menu->fk_mainmenu = $mainmenu;
@@ -235,9 +225,7 @@ if ($action == 'add')
         {
             header("Location: ".DOL_URL_ROOT."/admin/menus/index.php?menu_handler=".GETPOST('menu_handler', 'aZ09'));
             exit;
-        }
-        else
-        {
+        } else {
             $action = 'create';
 	        setEventMessages($menu->error, $menu->errors, 'errors');
         }
@@ -260,9 +248,7 @@ if ($action == 'confirm_delete' && $_POST["confirm"] == 'yes')
 	    setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
         llxFooter();
         exit;
-    }
-    else
-    {
+    } else {
         $this->db->rollback();
 
         $reload = 0;
@@ -358,9 +344,7 @@ if ($action == 'create')
     {
         print $langs->trans('Left');
         print '<input type="hidden" name="type" value="left">';
-    }
-    else
-    {
+    } else {
         print '<select name="type" class="flat" id="topleft">';
         print '<option value="">&nbsp;</option>';
         print '<option value="top"'.($_POST["type"] && $_POST["type"] == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
@@ -381,9 +365,7 @@ if ($action == 'create')
     if ($parent_rowid)
     {
         print '<td>'.$parent_rowid.'<input type="hidden" name="menuId" value="'.$parent_rowid.'"></td>';
-    }
-    else
-    {
+    } else {
         print '<td><input type="text" class="minwidth300" id="menuId" name="menuId" value="'.(GETPOST("menuId", 'int') ?GETPOST("menuId", 'int') : '').'"></td>';
     }
     print '<td>'.$langs->trans('DetailMenuIdParent');
@@ -425,8 +407,7 @@ if ($action == 'create')
 	print '</div>';
 
     print '</form>';
-}
-elseif ($action == 'edit')
+} elseif ($action == 'edit')
 {
     print load_fiche_titre($langs->trans("ModifMenu"), '', 'title_setup');
     print '<br>';

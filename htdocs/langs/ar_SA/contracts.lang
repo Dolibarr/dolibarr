@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=ممثل مبيعات متابعة ا�
 TypeContact_contrat_external_BILLING=فواتير العملاء الاتصال
 TypeContact_contrat_external_CUSTOMER=متابعة العملاء الاتصال
 TypeContact_contrat_external_SALESREPSIGN=توقيع عقد خدمات العملاء
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

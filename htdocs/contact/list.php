@@ -126,14 +126,12 @@ if ($type == "c")
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactcustomerlist';
 	$titre .= '  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche = "card.php";
-}
-elseif ($type == "f")
+} elseif ($type == "f")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactsupplierlist';
 	$titre .= ' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche = "card.php";
-}
-elseif ($type == "o")
+} elseif ($type == "o")
 {
 	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage = 'contactotherlist';
 	$titre .= ' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
@@ -369,9 +367,7 @@ if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("p.fk_s
 if ($search_priv != '0' && $search_priv != '1')
 {
 	$sql .= " AND (p.priv='0' OR (p.priv='1' AND p.fk_user_creat=".$user->id."))";
-}
-else
-{
+} else {
 	if ($search_priv == '0') $sql .= " AND p.priv='0'";
 	if ($search_priv == '1') $sql .= " AND (p.priv='1' AND p.fk_user_creat=".$user->id.")";
 }
@@ -401,7 +397,6 @@ if (strlen($search_fax))            $sql .= natural_search('p.fax', $search_fax)
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active'] && strlen($search_{$key})) {
-			//$sql.= natural_search("p.socialnetworks->'$.".$key."'", $search_{$key});
 			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
 		}
 	}
@@ -419,16 +414,13 @@ if ($search_import_key)             $sql .= natural_search("p.import_key", $sear
 if ($type == "o")        // filtre sur type
 {
 	$sql .= " AND p.fk_soc IS NULL";
-}
-elseif ($type == "f")        // filtre sur type
+} elseif ($type == "f")        // filtre sur type
 {
 	$sql .= " AND s.fournisseur = 1";
-}
-elseif ($type == "c")        // filtre sur type
+} elseif ($type == "c")        // filtre sur type
 {
 	$sql .= " AND s.client IN (1, 3)";
-}
-elseif ($type == "p")        // filtre sur type
+} elseif ($type == "p")        // filtre sur type
 {
 	$sql .= " AND s.client IN (2, 3)";
 }
@@ -446,9 +438,7 @@ $sql .= $hookmanager->resPrint;
 if ($view == "recent")
 {
 	$sql .= $db->order("p.datec", "DESC");
-}
-else
-{
+} else {
 	$sql .= $db->order($sortfield, $sortorder);
 }
 
@@ -456,8 +446,8 @@ else
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
 	{
 		$page = 0;
@@ -467,14 +457,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if (!$result)
+$resql = $db->query($sql);
+if (! $resql)
 {
 	dol_print_error($db);
 	exit;
 }
 
-$num = $db->num_rows($result);
+$num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -853,7 +843,7 @@ $i = 0;
 $totalarray = array();
 while ($i < min($num, $limit))
 {
-	$obj = $db->fetch_object($result);
+	$obj = $db->fetch_object($resql);
 
 	$arraysocialnetworks = (array) json_decode($obj->socialnetworks, true);
 	$contactstatic->lastname = $obj->lastname;
@@ -990,9 +980,7 @@ while ($i < min($num, $limit))
 		    $objsoc = new Societe($db);
 		    $objsoc->fetch($obj->socid);
 		    print $objsoc->getNomUrl(1);
-		}
-		else
-			print '&nbsp;';
+		} else print '&nbsp;';
 		print '</td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
@@ -1031,7 +1019,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
@@ -1079,7 +1067,7 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-$db->free($result);
+$db->free($resql);
 
 $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook

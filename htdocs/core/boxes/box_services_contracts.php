@@ -90,7 +90,7 @@ class box_services_contracts extends ModeleBoxes
 
 			$sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
 			$sql .= " c.rowid, c.ref, c.statut as contract_status, c.ref_customer, c.ref_supplier,";
-			$sql .= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type,";
+			$sql .= " cd.rowid as cdid, cd.label, cd.description, cd.tms as datem, cd.statut, cd.product_type as type, cd.date_fin_validite as date_line,";
 			$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as plabel, p.fk_product_type as ptype, p.entity, p.tobuy, p.tosell";
 			$sql .= " FROM (".MAIN_DB_PREFIX."societe as s";
 			$sql .= " INNER JOIN ".MAIN_DB_PREFIX."contrat as c ON s.rowid = c.fk_soc";
@@ -113,6 +113,8 @@ class box_services_contracts extends ModeleBoxes
 
 				while ($i < $num)
 				{
+					$late = '';
+
 					$objp = $this->db->fetch_object($result);
 					$datem = $this->db->jdate($objp->datem);
 
@@ -124,11 +126,11 @@ class box_services_contracts extends ModeleBoxes
 					$contractlinestatic->product_id = $objp->product_id;
 					$contractlinestatic->product_ref = $objp->product_ref;
 
-                    $contractstatic->statut = $objp->contract_status;
 					$contractstatic->id = $objp->rowid;
 					$contractstatic->ref = $objp->ref;
 					$contractstatic->ref_customer = $objp->ref_customer;
 					$contractstatic->ref_supplier = $objp->ref_supplier;
+					$contractstatic->statut = $objp->contract_status;
 
 					$thirdpartytmp->name = $objp->name;
 					$thirdpartytmp->id = $objp->socid;
@@ -139,6 +141,9 @@ class box_services_contracts extends ModeleBoxes
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
+
+					$dateline = $this->db->jdate($objp->date_line);
+					if ($contractstatic->statut == Contrat::STATUS_VALIDATED && $objp->statut == ContratLigne::STATUS_OPEN && !empty($dateline) && ($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late = img_warning($langs->trans("Late"));
 
 					// Multilangs
 					if (!empty($conf->global->MAIN_MULTILANGS) && $objp->product_id > 0) // if option multilang is on
@@ -186,9 +191,7 @@ class box_services_contracts extends ModeleBoxes
 						}
 
 						$s = $form->textwithtooltip($text, $description, 3, '', '', $cursorline, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
-					}
-					else
-					{
+					} else {
 						$s = img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description);
 					}
 
@@ -214,6 +217,7 @@ class box_services_contracts extends ModeleBoxes
 					$this->info_box_contents[$i][] = array(
                         'td' => '',
                         'text' => dol_print_date($datem, 'day'),
+						'text2'=> $late,
                     );
 
 					$this->info_box_contents[$i][] = array(
@@ -223,20 +227,20 @@ class box_services_contracts extends ModeleBoxes
 
 					$i++;
 				}
-				if ($num == 0) $this->info_box_contents[$i][0] = array('td' => 'class="center"', 'text'=>$langs->trans("NoContractedProducts"));
+				if ($num == 0) $this->info_box_contents[$i][0] = array(
+					'td' => 'class="center opacitymedium"',
+					'text'=>$langs->trans("NoContractedProducts")
+				);
 
 				$this->db->free($result);
-			}
-			else
-			{
+			} else {
 				$this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength' => 500,
                     'text' => ($this->db->error().' sql='.$sql),
                 );
 			}
-		}
-		else {
+		} else {
 			$this->info_box_contents[0][0] = array(
 			    'td' => 'class="nohover opacitymedium left"',
                 'text' => $langs->trans("ReadPermissionNotAllowed")

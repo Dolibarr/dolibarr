@@ -41,11 +41,11 @@ class doc_generic_reception_odt extends ModelePdfReception
      */
     public $emetteur; // Objet societe qui emet
 
-    /**
+	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
     /**
      * @var string Dolibarr version of the loaded document
@@ -132,8 +132,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				unset($listofdir[$key]); continue;
 			}
 			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			else
-			{
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
@@ -271,9 +270,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				    $format = $conf->global->MAIN_DOC_USE_TIMING;
 				    if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
-				}
-				else
-				{
+				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
 				}
 				$file = $dir.'/'.$filename;
@@ -300,9 +297,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 					// On peut utiliser le nom de la societe du contact
 					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
 					else $socobject = $object->thirdparty;
-				}
-				else
-				{
+				} else {
 					$socobject = $object->thirdparty;
 				}
 
@@ -339,8 +334,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 					return -1;
@@ -370,8 +364,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else    // Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
@@ -390,8 +383,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 							//var_dump($value);exit;
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
@@ -408,8 +400,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
@@ -430,8 +421,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else    // Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
@@ -440,8 +430,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 					}
 				}
 				// Replace tags of lines
-				try
-				{
+				try {
 					$listlines = $odfHandler->setSegment('lines');
 					foreach ($object->lines as $line)
 					{
@@ -463,8 +452,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						$listlines->merge();
 					}
 					$odfHandler->mergeSegment($listlines);
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -494,8 +482,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 						$this->error = $e->getMessage();
 						return -1;
 					}
-				}
-				else {
+				} else {
 					try {
 					    $odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
@@ -512,9 +499,7 @@ class doc_generic_reception_odt extends ModelePdfReception
 				$odfHandler = null; // Destroy object
 
 				return 1; // Success
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

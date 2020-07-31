@@ -180,12 +180,10 @@ if (empty($reshook))
 			{
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else  setEventMessages($object->error, null, 'errors');
+			else setEventMessages($object->error, null, 'errors');
 				$action = 'create';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'create';
 		}
 	}
@@ -217,17 +215,13 @@ if (empty($reshook))
 			if ($result > 0)
 			{
 				$action = 'view';
-			}
-			else
-			{
+			} else {
 				// Creation KO
 				if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 				else setEventMessages($object->error, null, 'errors');
 				$action = 'edit';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'edit';
 		}
 	}
@@ -242,9 +236,7 @@ if (empty($reshook))
 			setEventMessages("RecordDeleted", null, 'mesgs');
 			header("Location: ".dol_buildpath('/stock/list.php', 1));
 			exit;
-		}
-		else
-		{
+		} else {
 			if (!empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 			else setEventMessages($object->error, null, 'errors');
 		}
@@ -331,7 +323,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '<tr><td class="titlefield">'.$langs->trans("Product").'</td><td>';
     $producttmp = new Product($db);
     $producttmp->fetch($object->fk_product);
-    print $producttmp->getNomUrl(1, 'stock');
+    print $producttmp->getNomUrl(1, 'stock'). " - " . $producttmp->label;
     print '</td></tr>';
 
     // Eat by

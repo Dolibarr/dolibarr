@@ -58,8 +58,8 @@ AccountancyAreaDescActionOnceBis=I prossimi passi dovrebbero essere fatti per fa
 AccountancyAreaDescActionFreq=Le seguenti azioni vengono di solito eseguite ogni mese, settimana o giorno per le grandi compagnie...
 
 AccountancyAreaDescJournalSetup=PASSO %s: Crea o controlla il contenuto del tuo elenco del giornale dal menu %s
-AccountancyAreaDescChartModel=STEP %s: Crea un modello di piano dei conti dal menu %s
-AccountancyAreaDescChart=STEP %s: Crea o seleziona il tuo piano dei conti dal menu %s
+AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
+AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
 
 AccountancyAreaDescVat=STEP %s: Definisci le voci del piano dei conti per ogni IVA/tassa. Per fare ciò usa il menu %s.
 AccountancyAreaDescDefault=STEP %s: Definisci gli account di contabilità di default. Per questo, usa la voce menù %s.
@@ -121,6 +121,7 @@ InvoiceLinesDone=Righe di fatture bloccate
 ExpenseReportLines=Linee di note spese da associare
 ExpenseReportLinesDone=Linee vincolate di note spese
 IntoAccount=Collega linee con il piano dei conti
+TotalForAccount=Total for accounting account
 
 
 Ventilate=Associa
@@ -233,8 +234,10 @@ ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=Third-party unkno
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Third-party account not defined or third party unknown. Blocking error.
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third-party account and waiting account not defined. Blocking error
 PaymentsNotLinkedToProduct=Payment not linked to any product / service
+OpeningBalance=Opening balance
 ShowOpeningBalance=Mostra bilancio di apertura
 HideOpeningBalance=Nascondi bilancio di apertura
+ShowSubtotalByGroup=Show subtotal by group
 
 Pcgtype=Gruppo di conto
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
@@ -314,12 +317,13 @@ Modelcsv_quadratus=Export for Quadratus QuadraCompta
 Modelcsv_ebp=Export for EBP
 Modelcsv_cogilog=Export for Cogilog
 Modelcsv_agiris=Export for Agiris
-Modelcsv_LDCompta=Export for LD Compta (v9 & higher) (Test)
+Modelcsv_LDCompta=Export for LD Compta (v9) (Test)
 Modelcsv_LDCompta10=Export for LD Compta (v10 & higher)
 Modelcsv_openconcerto=Export for OpenConcerto (Test)
 Modelcsv_configurable=Export CSV Configurable
 Modelcsv_FEC=Export FEC
 Modelcsv_Sage50_Swiss=Export for Sage 50 Switzerland
+Modelcsv_winfic=Export Winfic - eWinfic - WinSis Compta
 ChartofaccountsId=Id Piano dei Conti
 
 ## Tools - Init accounting account on product / service

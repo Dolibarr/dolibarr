@@ -55,20 +55,19 @@ function facture_prepare_head($object)
 		$h++;
 	}
 
-	//if ($fac->mode_reglement_code == 'PRE')
 	if (!empty($conf->prelevement->enabled))
 	{
 	    $nbStandingOrders = 0;
 	    $sql = "SELECT COUNT(pfd.rowid) as nb";
 	    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 	    $sql .= " WHERE pfd.fk_facture = ".$object->id;
+	    $sql .= " AND pfd.ext_payment_id IS NULL";
         $resql = $db->query($sql);
         if ($resql)
         {
             $obj = $db->fetch_object($resql);
             if ($obj) $nbStandingOrders = $obj->nb;
-        }
-        else dol_print_error($db);
+        } else dol_print_error($db);
 		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id;
 		$head[$h][1] = $langs->trans('StandingOrders');
 		if ($nbStandingOrders > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
@@ -163,10 +162,12 @@ function invoice_admin_prepare_head()
 	$head[$h][2] = 'attributeslinesrec';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
-	$head[$h][1] = $langs->trans("InvoiceSituation");
-	$head[$h][2] = 'situation';
-	$h++;
+	if ($conf->global->INVOICE_USE_SITUATION) {	// Warning, implementation is seriously bugged and a new one not compatible is expected to become stable
+		$head[$h][0] = DOL_URL_ROOT.'/admin/facture_situation.php';
+		$head[$h][1] = $langs->trans("InvoiceSituation");
+		$head[$h][2] = 'situation';
+		$h++;
+	}
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'invoice_admin', 'remove');
 

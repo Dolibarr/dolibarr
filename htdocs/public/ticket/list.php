@@ -18,7 +18,7 @@
 /**
  *       \file       htdocs/public/ticket/list.php
  *       \ingroup    ticket
- *       \brief      Public file to add and manage ticket
+ *       \brief      Public file to list tickets
  */
 
 if (!defined('NOCSRFCHECK')) {
@@ -235,7 +235,7 @@ if ($action == "view_ticketlist")
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
         	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
         		if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-        			$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
+        			$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' =>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) && $extrafields->attributes[$object->table_element]['perms'][$key]);
                 }
             }
         }

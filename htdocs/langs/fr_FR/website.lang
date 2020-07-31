@@ -16,6 +16,7 @@ WEBSITE_ROBOT=Fichier robot (robots.txt)
 WEBSITE_HTACCESS=Fichier .htaccess du site web
 WEBSITE_MANIFEST_JSON=Fichier manifest.json de site Web
 WEBSITE_README=Fichier README.md
+WEBSITE_KEYWORDSDesc=Utiliser une virgule pour séparer les valeurs
 EnterHereLicenseInformation=Entrez ici les métadonnées ou les informations de licence pour créer un fichier README.md. Si vous distribuez votre site Web en tant que modèle, le fichier sera inclus dans le package.
 HtmlHeaderPage=En-tête HTML (spécifique pour la page uniquement)
 PageNameAliasHelp=Nom ou alias de la page. <br>Cet alias est également utilisé pour forger une URL SEO lorsque le site Web est exécuté à partir d'un hôte virtuel d'un serveur Web (comme Apache, Nginx, ...). Utilisez le bouton "<strong>%s</strong>" pour modifier cet alias.
@@ -57,7 +58,10 @@ NoPageYet=Pas de page pour l'instant
 YouCanCreatePageOrImportTemplate=Vous pouvez créer une nouvelle page ou importer un modèle de site Web complet.
 SyntaxHelp=Aide sur quelques astuces spécifiques de syntaxe 
 YouCanEditHtmlSourceckeditor=Vous pouvez éditer le code source en activant l'éditeur HTML avec le bouton "Source".
-YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Vous pouvez inclure du code PHP dans cette source en utilisant les balises <strong>&lt;?php ?&gt;</strong>. Les variables globales suivantes sont disponibles: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs. <br><br><span class="fa fa-bug"></span> Vous pouvez également inclure le contenu d'une autre page / conteneur avec la syntaxe suivante: <br> <strong>&lt;? php includeContainer ('alias_of_container_to_include'); ?&gt;</strong> <br><br><span class="fa fa-bug"></span> Vous pouvez créer une redirection vers une autre page / conteneur avec la syntaxe suivante (Remarque: ne pas afficher de contenu avant une redirection): <br> <strong>&lt;? php redirectToContainer ('alias_of_container_to_redirect_to'); ?&gt;</strong> <br><br><span class="fa fa-link"></span> Pour ajouter un lien vers une autre page, utilisez la syntaxe: <br> <strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> Pour inclure un <strong>lien pour télécharger</strong> un fichier stocké dans le répertoire des <strong>documents</strong> , utilisez l'encapsuleur <strong>document.php</strong> : <br> Exemple, pour un fichier dans documents/ecm (besoin d'être loggué), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=ecm&amp;file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier dans des documents/médias (répertoire ouvert pour accès public), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier partagé avec un lien de partage (accès ouvert en utilisant la clé de partage du fichier), la syntaxe est la suivante: <br> <strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br><br><span class="fa fa-picture-o"></span> Pour inclure une <strong>image</strong> stockée dans le répertoire <strong>documents</strong>, utilisez le wrapper <strong>viewimage.php</strong> : <br> Exemple, pour une image dans des documents/médias (répertoire ouvert), la syntaxe est: <br> <strong>&lt;img src = "/viewimage.php?modulepart=media&file=[relative_dir/]filename.ext"&gt;</strong> <br><br> Plus d'exemples de code HTML ou dynamique sont disponibles sur <a href="%s" target="_blank">la documentation du wiki</a><br> .
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> Vous pouvez inclure du code PHP dans cette source en utilisant les balises <strong>&lt;?php ?&gt;</strong>. Les variables globales suivantes sont disponibles: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs. <br><br><span class="fa fa-bug"></span> Vous pouvez également inclure le contenu d'une autre page / conteneur avec la syntaxe suivante: <br> <strong>&lt;?php includeContainer ('alias_of_container_to_include'); ?&gt;</strong> <br><br><span class="fa fa-bug"></span> Vous pouvez créer une redirection vers une autre page / conteneur avec la syntaxe suivante (Remarque: ne pas afficher de contenu avant une redirection): <br> <strong>&lt;?php redirectToContainer ('alias_of_container_to_redirect_to'); ?&gt;</strong> <br><br><span class="fa fa-link"></span> Pour ajouter un lien vers une autre page, utilisez la syntaxe: <br> <strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong> <br><br><span class="fa fa-download"></span> Pour inclure un <strong>lien pour télécharger</strong> un fichier stocké dans le répertoire des <strong>documents</strong> , utilisez l'encapsuleur <strong>document.php</strong> : <br> Exemple, pour un fichier dans documents/ecm (besoin d'être loggué), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=ecm&amp;file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier dans des documents/medias (répertoire ouvert pour accès public), la syntaxe est: <br> <strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong> <br> Pour un fichier partagé avec un lien de partage (accès ouvert en utilisant la clé de partage du fichier), la syntaxe est la suivante: <br> <strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong> <br><br><span class="fa fa-picture-o"></span> Pour inclure une <strong>image</strong> stockée dans le répertoire <strong>documents</strong>, utilisez le wrapper <strong>viewimage.php</strong> : <br> Exemple, pour une image dans des documents/medias (répertoire ouvert), la syntaxe est: <br> <strong>&lt;img src = "/viewimage.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+#YouCanEditHtmlSource2=<br><span class="fa fa-picture-o"></span> To include a <strong>image</strong> shared publicaly, use the <strong>viewimage.php</strong> wrapper:<br>Example with a shared key 123456789, syntax is:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource2=Pour une image partagée avec un lien de partage (accès ouvert à l'aide de la clé de partage du fichier), la syntaxe est la suivante: <br> <strong> &lt;img src = "/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSourceMore=<br> Plus d'exemples de code HTML ou dynamique disponibles sur <a href="%s" target="_blank"> la documentation wiki </a> <br>.
 ClonePage=Cloner la page/container
 CloneSite=Cloner le site
 SiteAdded=Site web ajouté
@@ -77,7 +81,7 @@ BlogPost=Article de Blog
 WebsiteAccount=Compte de site Web
 WebsiteAccounts=Comptes de site web
 AddWebsiteAccount=Créer un compte de site web
-BackToListOfThirdParty=Retour à la liste pour le Tiers
+BackToListForThirdParty=Retour à la liste pour le tiers
 DisableSiteFirst=Désactiver le site Web d'abord
 MyContainerTitle=Titre de mon site web
 AnotherContainer=Voici comment inclure le contenu d'une autre page/conteneur (vous pouvez avoir une erreur ici si vous activez le code dynamique car le sous-conteneur incorporé peut ne pas exister)
@@ -120,11 +124,14 @@ ShowSubContainersOnOff=Mode 'exécution dynamique' est %s
 GlobalCSSorJS=Fichier CSS/JS/Header global du site Web
 BackToHomePage=Retour à la page d'accueil...
 TranslationLinks=Liens de traduction
-YouTryToAccessToAFileThatIsNotAWebsitePage=Vous tentez d'accéder à une page qui n'est pas une page du site web
+YouTryToAccessToAFileThatIsNotAWebsitePage=Vous essayez d’accéder à une page qui n’est pas disponible.<br>(ref=%s, type=%s, status=%s)
 UseTextBetween5And70Chars=Pour les bonnes pratiques de référencement, utilisez un texte de 5 à 70 caractères
 MainLanguage=Langage principal
 OtherLanguages=Autres langues
 UseManifest=Fournir un fichier manifest.json
 PublicAuthorAlias=Alias publique de l'auteur
 AvailableLanguagesAreDefinedIntoWebsiteProperties=Les langues disponibles sont définies dans les propriétés du site Web
-ReplacementDoneInXPages=Replacement done in %s pages or containers
+ReplacementDoneInXPages=Remplacement effectué dans %s pages ou des conteneurs
+RSSFeed=Flux RSS
+RSSFeedDesc=Vous pouvez obtenir un flux RSS des derniers articles de type 'blogpost' en utilisant cette URL
+PagesRegenerated=%s page(s)/conteneur(s) régénéré(s)

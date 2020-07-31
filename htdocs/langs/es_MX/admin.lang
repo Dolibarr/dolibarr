@@ -65,7 +65,6 @@ NextValueForInvoices=Valor siguiente (facturas)
 NextValueForCreditNotes=Valor siguiente (notas de crédito)
 NextValueForDeposit=Valor siguiente (pago inicial)
 NextValueForReplacements=Valor siguiente (sustituciones)
-MustBeLowerThanPHPLimit=Nota: <b>tu</b> configuración PHP actualmente limita el máximo tamaño de fichero para subir a <b>%s</b> %s, independientemente de el valor de este parametro
 NoMaxSizeByPHPLimit=Nota: No hay límite establecido en la configuración de PHP
 MaxSizeForUploadedFiles=El tamaño máximo para los archivos subidos (0 para no permitir ninguna carga)
 UseCaptchaCode=Utilizar el código gráfico (CAPTCHA) en la página de inicio de sesión
@@ -233,10 +232,8 @@ DictionaryProspectStatus=Estatus del cliente potencial
 Upgrade=Actualizar
 LDAPFieldFirstName=Nombre(s)
 AGENDA_SHOW_LINKED_OBJECT=Mostrar objeto vinculado en la vista de agenda
-SuppliersCommandModel=Complete template of Purchase Order
-SuppliersInvoiceModel=Complete template of Vendor Invoice
 ConfFileMustContainCustom=Instalar o construir un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong> %s </strong>. Para que este directorio sea procesado por Dolibarr, debe configurar su <strong> conf/conf.php </strong> para agregar las 2 líneas de directiva: <strong> $dolibarr_main_url_root_alt='/custom'; </strong> <br> <strong> $dolibarr_main_document_root_alt='%s/custom'; </strong>
 MailToSendProposal=Propuestas de clientes
 MailToSendInvoice=Facturas de clientes
-OperationParamDesc=Define values to use for action, or how to extract values. For example:<br>objproperty1=SET:abc<br>objproperty1=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:abc<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey.*[^\\s]+(.*)<br>options_myextrafield=EXTRACT:SUBJECT:([^\\s]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
+OperationParamDesc=Define the values to use for the object of the action, or how to extract values. For example:<br>objproperty1=SET:the value to set<br>objproperty2=SET:a value with replacement of __objproperty1__<br>objproperty3=SETIFEMPTY:value used if objproperty3 is not already defined<br>objproperty4=EXTRACT:HEADER:X-Myheaderkey:\\s*([^\\s]*)<br>options_myextrafield1=EXTRACT:SUBJECT:([^&#92;n]*)<br>object.objproperty5=EXTRACT:BODY:My company name is\\s([^\\s]*)<br><br>Use a ; char as separator to extract or set several properties.
 EmailCollectorLoadThirdPartyHelp=You can use this action to use the email content to find and load an existing thirdparty in your database. The found (or created) thirdparty will be used for following actions that need it. In the parameter field you can use for example 'EXTRACT:BODY:Name:\\s([^\\s]*)' if you want to extract the name of the thirdparty from a string 'Name: name to find' found into the body.

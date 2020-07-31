@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Erro (s) foram relatados durante o processo de migraç
 YouTryInstallDisabledByDirLock=O aplicativo tentou fazer o upgrade automático, mas as páginas de instalação / atualização foram desativadas para segurança (o diretório foi renomeado com o sufixo .lock). <br>
 YouTryInstallDisabledByFileLock=O aplicativo tentou fazer o upgrade automático, mas as páginas de instalação / atualização foram desativadas para segurança (pela existência de um arquivo de bloqueio <strong> install.lock </ strong> no diretório de documentos dolibarr).
 ClickHereToGoToApp=Clique aqui para ir ao seu aplicativo
-ClickOnLinkOrRemoveManualy=Clique no link a seguir. Se você sempre vê esta mesma página, você deve remover / renomear o arquivo install.lock no diretório de documentos.
+ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
 Loaded=Loaded
 FunctionTest=Function test

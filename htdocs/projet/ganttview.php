@@ -235,10 +235,11 @@ if ($user->rights->projet->all->creer || $user->rights->projet->creer) {
 
 $linktocreatetask = dolGetButtonTitle($langs->trans('AddTask'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id), '', $linktocreatetaskUserRight, $linktocreatetaskParam);
 
-$linktolist = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
+$linktotasks = dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-list-alt paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id, '', 1, array('morecss'=>'reposition'));
+$linktotasks .= dolGetButtonTitle($langs->trans('ViewGantt'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1', '', 1, array('morecss'=>'reposition marginleftonly btnTitleSelected'));
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'generic', 0, '', '', 0, 1);
-print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'generic');
+print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'generic');
 
 
 // Get list of tasks in tasksarray and taskarrayfiltered
@@ -281,8 +282,7 @@ if (count($tasksarray) > 0)
             $tasks[$taskcursor]['task_is_group'] = 1;
         	$tasks[$taskcursor]['task_css'] = 'ggroupblack';
             //$tasks[$taskcursor]['task_css'] = 'gtaskblue';
-        }
-        elseif ($task->hasChildren() > 0) {
+        } elseif ($task->hasChildren() > 0) {
             $tasks[$taskcursor]['task_is_group'] = 1;
         	//$tasks[$taskcursor]['task_is_group'] = 0;
             $tasks[$taskcursor]['task_css'] = 'ggroupblack';
@@ -370,7 +370,17 @@ if (count($tasksarray) > 0)
 	    //var_dump($dateformatinput);
   		//var_dump($dateformatinput2);
 
-	    print '<br>';
+	    $moreforfilter = '<div class="liste_titre liste_titre_bydiv centpercent">';
+
+	    $moreforfilter .= '<div class="divsearchfield">';
+	    //$moreforfilter .= $langs->trans("TasksAssignedTo").': ';
+	    //$moreforfilter .= $form->select_dolusers($tmpuser->id > 0 ? $tmpuser->id : '', 'search_user_id', 1);
+	    $moreforfilter .= '&nbsp;';
+	    $moreforfilter .= '</div>';
+
+	    $moreforfilter .= '</div>';
+
+		print $moreforfilter;
 
 	    print '<div class="div-table-responsive">';
 
@@ -379,15 +389,11 @@ if (count($tasksarray) > 0)
 		print '</div>'."\n";
 
 		print '</div>';
-	}
-	else
-	{
+	} else {
 		$langs->load("admin");
 		print $langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled");
 	}
-}
-else
-{
+} else {
 	print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
 }
 

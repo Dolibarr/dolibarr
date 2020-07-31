@@ -160,8 +160,7 @@ if (!empty($conf->holiday->enabled))
 	    print '</td>';
 	    print '</tr>';
 	    print '</table></div><br>';
-	}
-	elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+	} elseif (!is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
 	{
 		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
 	}
@@ -241,16 +240,13 @@ if (!empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
                 $i++;
             }
-        }
-        else
-        {
+        } else {
             print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
         print '</table>';
         print '</div>';
         print '<br>';
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
 }
 
 
@@ -314,15 +310,12 @@ if (!empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table>';
 		print '</div>';
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 

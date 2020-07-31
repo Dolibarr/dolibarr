@@ -59,9 +59,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -73,20 +71,19 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
 if ($action == 'set')
 {
+	$getDefaultFilter = GETPOST('AGENDA_DEFAULT_FILTER_TYPE');
+	$defaultfilter = (is_array($getDefaultFilter)) ? implode(',', $getDefaultFilter) : $getDefaultFilter;
 	dolibarr_set_const($db, 'AGENDA_USE_EVENT_TYPE_DEFAULT', GETPOST('AGENDA_USE_EVENT_TYPE_DEFAULT'), 'chaine', 0, '', $conf->entity);
-    dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', GETPOST('AGENDA_DEFAULT_FILTER_TYPE'), 'chaine', 0, '', $conf->entity);
+    dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_TYPE', $defaultfilter, 'chaine', 0, '', $conf->entity);
     dolibarr_set_const($db, 'AGENDA_DEFAULT_FILTER_STATUS', GETPOST('AGENDA_DEFAULT_FILTER_STATUS'), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
-}
-elseif ($action == 'specimen')  // For orders
+} elseif ($action == 'specimen')  // For orders
 {
     $modele = GETPOST('module', 'alpha');
 
@@ -118,15 +115,11 @@ elseif ($action == 'specimen')  // For orders
     	{
     		header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
     		return;
-    	}
-    	else
-    	{
+    	} else {
     		setEventMessages($module->error, $module->errors, 'errors');
     		dol_syslog($module->error, LOG_ERR);
     	}
-    }
-    else
-    {
+    } else {
     	setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
     	dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -137,9 +130,7 @@ elseif ($action == 'setmodel')
 {
 	//print "sssd".$value;
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -211,9 +202,7 @@ if ($resql)
         array_push($def, $array[0]);
         $i++;
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -261,8 +250,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			$module = new $classname($db, $specimenthirdparty);
             			if (method_exists($module, 'info'))
             				print $module->info($langs);
-            			else
-            				print $module->description;
+            			else print $module->description;
             			print "</td>\n";
 
             			// Active
@@ -274,15 +262,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             				    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">';
             				    print img_picto($langs->trans("Enabled"), 'switch_on');
             				    print '</a>';
-            			    }
-            			    else
-            			    {
+            			    } else {
             				    print img_picto($langs->trans("Enabled"), 'switch_on');
             			    }
             				print "</td>";
-            			}
-            			else
-            			{
+            			} else {
             				print '<td class="center">'."\n";
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmodel&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
             				print "</td>";
@@ -293,9 +277,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
             			if ($conf->global->ACTION_EVENT_ADDON_PDF == "$name")
             			{
             				print img_picto($langs->trans("Default"), 'on');
-            			}
-            			else
-            			{
+            			} else {
             				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'&amp;type=action"" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
             			}
             			print '</td>';
@@ -344,9 +326,7 @@ print '<td class="right">'."\n";
 if (empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
-}
-else
-{
+} else {
 	print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_USE_EVENT_TYPE">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 print '</td></tr>'."\n";
@@ -377,7 +357,12 @@ print '<tr class="oddeven">'."\n";
 print '<td>'.$langs->trans("AGENDA_DEFAULT_FILTER_TYPE").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
-$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1);
+$multiselect = 0;
+if (!empty($conf->global->MAIN_ENABLE_MULTISELECT_TYPE)) {
+    // We use an option here because it adds bugs when used on agenda page "peruser" and "list"
+    $multiselect = (!empty($conf->global->AGENDA_USE_EVENT_TYPE));
+}
+$formactions->select_type_actions($conf->global->AGENDA_DEFAULT_FILTER_TYPE, "AGENDA_DEFAULT_FILTER_TYPE", '', (empty($conf->global->AGENDA_USE_EVENT_TYPE) ? 1 : -1), 1, $multiselect);
 print '</td></tr>'."\n";
 
 // AGENDA_DEFAULT_FILTER_STATUS

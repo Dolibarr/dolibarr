@@ -130,10 +130,14 @@ TicketNumberingModules=Supportseddel nummereringsmodul
 TicketNotifyTiersAtCreation=Varsle tredjepart ved opprettelse
 TicketGroup=Gruppe
 TicketsDisableCustomerEmail=Slå alltid av e-post når en billett er opprettet fra det offentlige grensesnittet
+TicketsPublicNotificationNewMessage=Send e-post(er) når en ny melding legges til
+TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
+TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
 #
-TicketsIndex=Supportsedler - hjem
+TicketsIndex=Billettområde
 TicketList=Liste over supportsedler
 TicketAssignedToMeInfos=Denne siden viser Supportseddel-liste som er tilordnet gjeldende bruker
 NoTicketsFound=Ingen supportseddel funnet
