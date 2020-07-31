@@ -123,5 +123,5 @@ create table llx_recruitment_recruitmentjobposition_extrafields
 ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
-ALTER TABLE llx_product_attribute_combination ADD fk_price_level INT(3) NOT NULL DEFAULT '1';
+ALTER TABLE llx_product_attribute_combination ADD fk_price_level INTEGER NOT NULL DEFAULT '1';
 

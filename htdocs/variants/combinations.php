@@ -33,6 +33,10 @@ $ref = GETPOST('ref', 'alpha');
 $weight_impact = GETPOST('weight_impact', 'alpha');
 $price_impact = GETPOST('price_impact', 'alpha');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
+
+$level_price_impact = GETPOST('level_price_impact', 'array');
+$level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
+
 $reference = GETPOST('reference', 'alpha');
 $form = new Form($db);
 
@@ -112,6 +116,18 @@ if ($_POST) {
 		    }
 			$weight_impact = price2num($weight_impact);
 			$price_impact = price2num($price_impact);
+
+			// for conf PRODUIT_MULTIPRICES
+			if($conf->global->PRODUIT_MULTIPRICES) {
+				$level_price_impact = array_map('price2num', $level_price_impact);
+				$level_price_impact_percent = array_map('price2num', $level_price_impact_percent);
+			}
+			else{
+				$level_price_impact = array(1 => $weight_impact);
+				$level_price_impact_percent = array(1 => $price_impact_percent);
+			}
+
+
 			$sanit_features = array();
 
 			//First, sanitize
@@ -145,7 +161,7 @@ if ($_POST) {
 
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
-				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact, $reference);
+				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
