@@ -171,11 +171,12 @@ if ($conf->global->TAKEPOS_QR_MENU)
 	print '<br>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("URL").'</td><td>'.$langs->trans("QR").'</td>';
+	print '<td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
 	print "</tr>\n";
 	print '<tr class="oddeven value"><td>';
 	print "<a target='_blank' href='".$urlwithroot."/takepos/public/menu.php'>".$urlwithroot."/takepos/public/menu.php</a>";
-	print '<td>';
+	print '</td>';
+	print '<td class="right">';
 	print "<a target='_blank' href='printqr.php'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' height='42' width='42'></a>";
 	print '</td></tr>';
 	print '</table>';
@@ -186,7 +187,7 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
 	print '<br>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td>'.$langs->trans("QR").'</td>';
+	print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
 	print "</tr>\n";
 
 	//global $dolibarr_main_url_root;
@@ -198,9 +199,11 @@ if ($conf->global->TAKEPOS_AUTO_ORDER)
 	while ($row = $db->fetch_array($resql)) {
 		print '<tr class="oddeven value"><td>';
 		print $langs->trans("Table")." ".$row['label'];
+		print '</td>';
 		print '<td>';
 		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
-		print '<td>';
+		print '</td>';
+		print '<td class="right">';
 		print "<a target='_blank' href='printqr.php?id=".$row['rowid']."'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'></a>";
 		print '</td></tr>';
 	}
