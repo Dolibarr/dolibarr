@@ -2209,7 +2209,7 @@ class Product extends CommonObject
                             }
                             }*/
                         } else {
-                            dol_print_error($this->db);
+	                        $this->error=$this->db->lasterror;
                             return -1;
                         }
                     }
@@ -2254,12 +2254,12 @@ class Product extends CommonObject
                                 }
                                 $this->prices_by_qty_list[0] = $resultat;
                             } else {
-                                    dol_print_error($this->db);
-                                    return -1;
+	                            $this->error=$this->db->lasterror;
+                                return -1;
                             }
                         }
                     } else {
-                        dol_print_error($this->db);
+	                    $this->error=$this->db->lasterror;
                         return -1;
                     }
                 } elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) && empty($ignore_price_load))    // prices per customer and quantity
@@ -2313,12 +2313,12 @@ class Product extends CommonObject
                                     }
                                     $this->prices_by_qty_list[$i] = $resultat;
                                 } else {
-                                    dol_print_error($this->db);
+	                                $this->error=$this->db->lasterror;
                                     return -1;
                                 }
                             }
                         } else {
-                            dol_print_error($this->db);
+	                        $this->error=$this->db->lasterror;
                             return -1;
                         }
                     }
@@ -2345,7 +2345,7 @@ class Product extends CommonObject
                 return 0;
             }
         } else {
-            dol_print_error($this->db);
+	        $this->error=$this->db->lasterror;
             return -1;
         }
     }
