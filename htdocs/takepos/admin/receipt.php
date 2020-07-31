@@ -92,7 +92,7 @@ print load_fiche_titre($langs->trans("PrintMethod"), '', '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td><td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td><td class="right">'.$langs->trans("Status").'</td>';
 print "</tr>\n";
 
 // Browser method
@@ -100,7 +100,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('Browser');
 print '<td>';
 print $langs->trans('BrowserMethodDescription');
-print '</td><td class="center">';
+print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
@@ -119,7 +119,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	print $langs->trans('ReceiptPrinterMethodDescription');
 	print '<br>';
 	print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
-	print '</td><td class="center">';
+	print '</td><td class="right">';
 	if ($conf->receiptprinter->enabled) {
 		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter")
 		{
@@ -142,7 +142,7 @@ print '<tr class="oddeven"><td>';
 print "TakePOS Connector";
 print '<td>';
 print $langs->trans('TakeposConnectorMethodDescription');
-print '</td><td class="center">';
+print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
