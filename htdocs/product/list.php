@@ -371,6 +371,7 @@ if ($search_label)   $sql .= natural_search('p.label', $search_label);
 if ($search_barcode) $sql .= natural_search('p.barcode', $search_barcode);
 if (isset($search_tosell) && dol_strlen($search_tosell) > 0 && $search_tosell != -1) $sql .= " AND p.tosell = ".$db->escape($search_tosell);
 if (isset($search_tobuy) && dol_strlen($search_tobuy) > 0 && $search_tobuy != -1)   $sql .= " AND p.tobuy = ".$db->escape($search_tobuy);
+if ((!isset($search_tosell) || $search_tosell === "" || $search_tosell != 0) && (!isset($search_tobuy) || $search_tobuy === "" || $search_tobuy != 0))  $sql.= " AND (p.tosell = 1 OR p.tobuy = 1)";
 if ($search_vatrate) $sql .= natural_search('p.tva_tx', $search_vatrate);
 if (dol_strlen($canvas) > 0)                    $sql .= " AND p.canvas = '".$db->escape($canvas)."'";
 if ($catid > 0)     $sql .= " AND cp.fk_categorie = ".$catid;
