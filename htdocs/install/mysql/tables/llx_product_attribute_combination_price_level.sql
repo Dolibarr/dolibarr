@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
+-- Copyright (C) 2020      John BOTELLA         <john.botella@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
 --
 -- ============================================================================
 
-CREATE TABLE llx_product_attribute_combination
+CREATE TABLE llx_product_attribute_combination_price_level
 (
   rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  fk_product_parent INTEGER NOT NULL,
-  fk_product_child INTEGER NOT NULL,
+  fk_product_attribute_combination INTEGER DEFAULT 1 NOT NULL,
+  fk_price_level INTEGER DEFAULT 1 NOT NULL,
   variation_price DOUBLE(24,8) NOT NULL,
-  variation_price_percentage INTEGER NULL,
-  variation_weight REAL NOT NULL,
-  entity INTEGER DEFAULT 1 NOT NULL
+  variation_price_percentage INTEGER NULL
 )ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE( fk_product_attribute_combination, fk_price_level);
