@@ -1806,6 +1806,9 @@ img.photoref, div.photoref {
 	width: 80px;
     object-fit: contain;
 }
+div.photoref .fa, div.photoref .fas, div.photoref .far {
+	font-size: 2.5em;
+}
 img.fitcontain {
     object-fit: contain;
 }
