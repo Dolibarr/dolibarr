@@ -8215,14 +8215,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     }
 
     // TODO : add a hook
-
     if ($displayMode == 0) {
-        $return = !empty($html) ? $html : $statusLabel;
+    	$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
     } elseif ($displayMode == 1) {
-        $return = !empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel);
+    	$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
     } // Use status with images (for backward compatibility)
     elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
-        $return = '';
+    	$return = '';
         $htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
         $htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 
@@ -8267,17 +8266,17 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
     } // Use new badge
     elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
-        $statusLabelShort = !empty($statusLabelShort) ? $statusLabelShort : $statusLabel;
+    	$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
 		$dolGetBadgeParams['attr']['title'] = $statusLabel;
 
         if ($displayMode == 3) {
-            $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);
+        	$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
         } elseif ($displayMode === 5) {
             $return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
         } else {
-            $return = dolGetBadge($statusLabel, $html, $statusType, '', $url, $dolGetBadgeParams);
+        	$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
         }
     }
 

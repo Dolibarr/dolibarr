@@ -34,7 +34,7 @@
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #000055;
+	--fieldrequiredcolor: #804000;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -186,6 +186,12 @@ input, select {
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
+	color: #FFF !important;
+
+	/* -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1); */
+
+	border-radius: 3px;
     border-collapse: collapse;
     border: none;
 }
@@ -3245,11 +3251,7 @@ div.pagination li:first-child span {
   /*border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;*/
 }
-div.pagination li:last-child a,
-div.pagination li:last-child span {
-  /*border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;*/
-}
+
 div.pagination li a:hover,
 div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
