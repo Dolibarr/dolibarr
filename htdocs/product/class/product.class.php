@@ -565,7 +565,7 @@ class Product extends CommonObject
             return -1;
         }
 
-        if (empty($this->ref)) {
+        if (empty($this->ref) || $this->ref == 'auto') {
             // Load object modCodeProduct
             $module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
             if ($module != 'mod_codeproduct_leopard')    // Do not load module file for leopard
