@@ -678,8 +678,7 @@ class FormFile
 				if ($conf->browser->layout == 'phone') $morecss = 'maxwidth100';
 				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
 			}
-			else
-			{
+			else {
 				$out .= '<div class="float">'.$langs->trans("Files").'</div>';
 			}
 
