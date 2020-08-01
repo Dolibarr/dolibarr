@@ -404,7 +404,7 @@ if (empty($reshook))
 	        }
 	        $object->entity					= (GETPOSTISSET('entity') ? GETPOST('entity', 'int') : $conf->entity);
 	        $object->name_alias = GETPOST('name_alias', 'alphanohtml');
-	        $object->address				= GETPOST('address', 'alphanohtml');
+	        $object->address				= GETPOST('address', 'none');
 	        $object->zip = GETPOST('zipcode', 'alphanohtml');
 	        $object->town = GETPOST('town', 'alphanohtml');
 	        $object->country_id = GETPOST('country_id', 'int');
