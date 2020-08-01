@@ -677,11 +677,9 @@ class FormFile
 				$morecss = 'maxwidth200';
 				if ($conf->browser->layout == 'phone') $morecss = 'maxwidth100';
 				$out .= $form->selectarray('model', $modellist, $modelselected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss);
-				if ($conf->use_javascript_ajax)
-				{
-					$out .= ajax_combobox('model');
-				}
-			} else {
+			}
+			else
+			{
 				$out .= '<div class="float">'.$langs->trans("Files").'</div>';
 			}
 
