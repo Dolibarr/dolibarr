@@ -15,9 +15,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 
 <?php
-if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";
+	}
 	print "
-    @media (prefers-color-scheme: dark) {
       :root {
 
             --btncolortext: ;
@@ -27,8 +30,10 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
             --butactionbg:rgb(173,140,79);
             --butactiondeletebg: rgb(252,84,91);
 
-      }
-    }";
+      }\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "}";
+	}
 }
 ?>
 

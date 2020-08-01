@@ -45,10 +45,12 @@
 }
 
 <?php
-if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
-	print "@media (prefers-color-scheme: dark) {
-	      :root {
-
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";
+	}
+	print ":root {
 	            --colorbackhmenu1: #1d1e20;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
@@ -84,8 +86,10 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
-	      }
-	    }";
+	      }\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "}\n";
+	}
 }
 ?>
 

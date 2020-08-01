@@ -850,13 +850,13 @@ if (GETPOST('theme', 'alpha'))
 }
 
 // Set javascript option
-if (!GETPOST('nojs', 'int'))   // If javascript was not disabled on URL
-{
-	if (!empty($user->conf->MAIN_DISABLE_JAVASCRIPT))
-	{
+if (GETPOST('nojs', 'int')) {  // If javascript was not disabled on URL
+	$conf->use_javascript_ajax = 0;
+} else {
+	if (!empty($user->conf->MAIN_DISABLE_JAVASCRIPT)) {
 		$conf->use_javascript_ajax = !$user->conf->MAIN_DISABLE_JAVASCRIPT;
 	}
-} else $conf->use_javascript_ajax = 0;
+}
 
 // Set MAIN_OPTIMIZEFORTEXTBROWSER for user (must be after login part)
 if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && !empty($user->conf->MAIN_OPTIMIZEFORTEXTBROWSER)) {
@@ -1233,6 +1233,7 @@ function top_htmlhead($head, $title = '', $disablejs = 0, $disablehead = 0, $arr
 		if (GETPOSTISSET('dol_optimize_smallscreen')) { $themeparam .= '&amp;dol_optimize_smallscreen='.GETPOST('dol_optimize_smallscreen', 'int'); }
 		if (GETPOSTISSET('dol_no_mouse_hover')) { $themeparam .= '&amp;dol_no_mouse_hover='.GETPOST('dol_no_mouse_hover', 'int'); }
 		if (GETPOSTISSET('dol_use_jmobile')) { $themeparam .= '&amp;dol_use_jmobile='.GETPOST('dol_use_jmobile', 'int'); $conf->dol_use_jmobile = GETPOST('dol_use_jmobile', 'int'); }
+		if (GETPOSTISSET('THEME_DARKMODEENABLED')) { $themeparam .= '&amp;THEME_DARKMODEENABLED='.GETPOST('THEME_DARKMODEENABLED', 'int'); }
 		if (GETPOSTISSET('THEME_SATURATE_RATIO')) { $themeparam .= '&amp;THEME_SATURATE_RATIO='.GETPOST('THEME_SATURATE_RATIO', 'int'); }
 
 		if (!defined('DISABLE_JQUERY') && !$disablejs && $conf->use_javascript_ajax)
