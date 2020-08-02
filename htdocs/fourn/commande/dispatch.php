@@ -971,7 +971,7 @@ if ($id > 0 || !empty($ref)) {
 
 								// Discount
 								print '<td class="right">';
-								print '<input id="pu'.$suffix.'" name="dto'.$suffix.'" type="text" size="8" value="'.(GETPOST('dto'.$suffix) != '' ? GETPOST('dto'.$suffix) : '').'">';
+								print '<input id="dto' . $suffix . '" name="dto' . $suffix . '" type="text" size="8" value="' . (GETPOST('dto' . $suffix) != '' ? GETPOST('dto' . $suffix) : '') . '">';
 								print '</td>';
 
 								// Save price

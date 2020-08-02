@@ -365,6 +365,13 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Gift receipt
+print '<tr class="oddeven"><td>';
+print $langs->trans('GiftReceiptButton');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Numbering module
 //print '<tr class="oddeven"><td>';
 //print $langs->trans("BillsNumberingModule");

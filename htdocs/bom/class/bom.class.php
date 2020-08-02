@@ -1004,7 +1004,11 @@ class BOM extends CommonObject
 
 		foreach ($this->lines as &$line) {
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($line->fk_product);
+			$result= $tmpproduct->fetch($line->fk_product);
+			if ($result < 0) {
+				$this->error=$tmpproduct->error;
+				return -1;
+			}
 			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 			if (empty($line->unit_cost)) {
 				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)
