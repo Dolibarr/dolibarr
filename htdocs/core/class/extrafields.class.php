@@ -154,8 +154,8 @@ class ExtraFields
 
 
 	public static $type2label = array(
-	    'varchar'=>'String',
-	    'text'=>'TextLong',
+	    'varchar'=>'String1Line',
+	    'text'=>'TextLongNLines',
 	    'html'=>'HtmlText',
 	    'int'=>'Int',
 	    'double'=>'Float',
@@ -2025,6 +2025,8 @@ class ExtraFields
 					$value_key = price2num($value_arr);
 				} elseif (in_array($key_type, array('html'))) {
 					$value_key = GETPOST("options_".$key, 'alpha');
+				} elseif (in_array($key_type, array('text'))) {
+					$value_key = GETPOST("options_".$key, 'alphanohtml');
 				} else {
 					$value_key = GETPOST("options_".$key);
 					if (in_array($key_type, array('link')) && $value_key == '-1') $value_key = '';

@@ -86,7 +86,11 @@ if (empty($reshook))
         $res = $object->delete($user);
         if ($res > 0)
         {
-            header("Location: index.php");
+        	if ($object->type == 'bank-transfer') {
+        		header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
+        	} else {
+        		header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
+        	}
             exit;
         }
     }
