@@ -321,25 +321,25 @@ class Contracts extends DolibarrApi
         $request_data = (object) $request_data;
 
         $updateRes = $this->contract->updateline(
-            $lineid,
-            $request_data->desc,
-            $request_data->subprice,
-            $request_data->qty,
-            $request_data->remise_percent,
-            $request_data->date_ouveture_prevue,
-            $request_data->date_fin_validite,
-            $request_data->tva_tx,
-            $request_data->localtax1_tx,
-            $request_data->localtax2_tx,
-            $request_data->date_ouverture,
-            $request_data->date_cloture,
-            'HT',
-            $request_data->info_bits,
-            $request_data->fk_fourn_price,
-            $request_data->pa_ht,
-            $request_data->array_options,
-            $request_data->fk_unit
-        );
+			$lineid,
+			$request_data->request_data[0]['desc'],
+			$request_data->request_data[0]['subprice'],
+			$request_data->request_data[0]['qty'],
+			$request_data->request_data[0]['remise_percent'],
+			$request_data->request_data[0]['date_start'],
+			$request_data->request_data[0]['date_end'],
+			$request_data->request_data[0]['tva_tx'],
+			$request_data->request_data[0]['localtax1_tx'],
+			$request_data->request_data[0]['localtax2_tx'],
+			$request_data->request_data[0]['date_start_real'],
+			$request_data->request_data[0]['date_end_real'],
+			'HT',
+			$request_data->request_data[0]['info_bits'],
+			$request_data->request_data[0]['fk_fournprice'],
+			$request_data->request_data[0]['pa_ht'],
+			$request_data->request_data[0]['array_options'],
+			$request_data->request_data[0]['fk_unit']
+		);
 
         if ($updateRes > 0) {
             $result = $this->get($id);
