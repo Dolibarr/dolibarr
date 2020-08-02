@@ -100,6 +100,7 @@ class RecruitmentJobPosition extends CommonObject
 		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp',),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
 		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>-1, 'foreignkey'=>'user.rowid',),
+		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail'),
 		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid',),
 		'fk_establishment' => array('type'=>'integer:Establishment:hrm/class/establishment.class.php', 'label'=>'Establishment', 'enabled'=>'$conf->hrm->enabled', 'position'=>56, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'establishment.rowid',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'1', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner",),
@@ -123,6 +124,7 @@ class RecruitmentJobPosition extends CommonObject
 	public $fk_soc;
 	public $fk_project;
 	public $fk_user_recruiter;
+	public $email_recruiter;
 	public $fk_user_supervisor;
 	public $fk_establishment;
 	public $date_planned;

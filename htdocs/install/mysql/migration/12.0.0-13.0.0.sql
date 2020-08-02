@@ -112,6 +112,8 @@ ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitmen
 ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitment_recruitmentjobposition_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_status (status);
 
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN email_recruiter varchar(255);
+
 create table llx_recruitment_recruitmentjobposition_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,

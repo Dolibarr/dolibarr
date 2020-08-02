@@ -264,15 +264,19 @@ if ($object->date_planned > $now) {
 print '</b><br>';
 
 // Contact
-print  $langs->trans("ContactForRecruitment").' : ';
 $tmpuser = new User($db);
 $tmpuser->fetch($object->fk_user_recruiter);
+
+print  $langs->trans("ContactForRecruitment").' : ';
+$emailforcontact = $object->email_recruiter;
+if (empty($emailforcontact)) {
+	$emailforcontact = $tmpuser->email;
+	if (empty($emailforcontact)) {
+		$emailforcontact = $mysoc->email;
+	}
+}
 print '<b>';
 print $tmpuser->getFullName(-1);
-$emailforcontact = $tmpuser->email;
-if (empty($emailforcontact)) {
-	$emailforcontact = $mysoc->email;
-}
 print ' - '.img_picto('', 'email', 'class="paddingrightonly"').dol_print_email($emailforcontact);
 print '</b>';
 print '</b><br>';
