@@ -54,7 +54,6 @@ DescWareHouse=Descrição do armazém
 LieuWareHouse=Localização do armazenamento
 WarehousesAndProducts=Armazenamento de produtos
 AverageUnitPricePMPShort=Preço médio de entrada
-AverageUnitPricePMP=Preço médio de entrada
 SellPriceMin=Venda Preço unitário
 EstimatedStockValueSellShort=Valor para venda
 EstimatedStockValueSell=Valor para venda

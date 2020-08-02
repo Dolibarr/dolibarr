@@ -19,7 +19,6 @@ FormatDateHourShort=%d-%m-%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
-EmptySearchString=Enter non empty search criterias
 NoRecordFound=Geen record gevonden
 ErrorCanNotCreateDir=Kan dir %s niet maken
 ErrorCanNotReadDir=Kan dir %s niet lezen
