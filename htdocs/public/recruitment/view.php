@@ -230,7 +230,8 @@ if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT))
 }
 if (empty($text))
 {
-	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("JobOfferToBeFilled", $mysoc->name).'</strong>';
+	$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
+	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
 	$text .= ' &nbsp; - &nbsp; <span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation);
 	$text .= '</td></tr>'."\n";
 	$text .= '<tr><td class="textpublicpayment"><h1>'.$object->label.'</h1><br></td></tr>'."\n";
