@@ -509,7 +509,7 @@ if ($search_status != '') $param .= '&amp;search_status='.urlencode($search_stat
 if ($search_priv == '0' || $search_priv == '1') $param .= "&amp;search_priv=".urlencode($search_priv);
 if ($search_stcomm != '') $param.='&search_stcomm='.urlencode($search_stcomm);
 if (is_array($search_level) && count($search_level)) {
-	foreach($search_level as $slevel) {
+	foreach ($search_level as $slevel) {
 		$param.='&search_level[]='.urlencode($slevel);
 	}
 }
@@ -742,7 +742,7 @@ if (! empty($arrayfields['p.fk_stcommcontact']['checked']))
 {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	$arraystcomm=array();
-	foreach($prospectstatic->cacheprospectstatus as $key => $val)
+	foreach ($contactstatic->cacheprospectstatus as $key => $val)
 	{
 		$arraystcomm[$val['id']]=($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
 	}
