@@ -3893,7 +3893,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '</td>';
 
 					// Number of words
-					print '<td class="center">';
+					print '<td class="center nowraponall">';
 					$textwithouthtml = dol_string_nohtmltag(dolStripPhpCode($answerrecord->content));
 					$characterMap = 'áàéèëíóúüñùç0123456789';
 					$nbofwords = str_word_count($textwithouthtml, 0, $characterMap);
