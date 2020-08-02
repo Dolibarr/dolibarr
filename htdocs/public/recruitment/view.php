@@ -250,12 +250,10 @@ $found = true;
 print '<br>';
 
 // Label
-
 print $langs->trans("Label").' : ';
 print '<b>'.$object->label.'</b><br>';
 
 // Date
-
 print  $langs->trans("DateExpected").' : ';
 print '<b>';
 if ($object->date_planned > $now) {
@@ -264,6 +262,21 @@ if ($object->date_planned > $now) {
 	print $langs->trans("ASAP");
 }
 print '</b><br>';
+
+// Contact
+print  $langs->trans("ContactForRecruitment").' : ';
+$tmpuser = new User($db);
+$tmpuser->fetch($object->fk_user_recruiter);
+print '<b>';
+print $tmpuser->getFullName(-1);
+$emailforcontact = $tmpuser->email;
+if (empty($emailforcontact)) {
+	$emailforcontact = $mysoc->email;
+}
+print ' - '.img_picto('', 'email', 'class="paddingrightonly"').dol_print_email($emailforcontact);
+print '</b>';
+print '</b><br>';
+
 
 print '<br>';
 
