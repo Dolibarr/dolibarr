@@ -125,5 +125,38 @@ create table llx_recruitment_recruitmentjobposition_extrafields
 ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
+-- Add dictionary for prospect level and action commercial on contacts (Using this is not recommanded)
+
+create table llx_c_prospectcontactlevel
+(
+  code            varchar(12) PRIMARY KEY,
+  label           varchar(30),
+  sortorder       smallint,
+  active          smallint    DEFAULT 1 NOT NULL,
+  module          varchar(32) NULL
+) ENGINE=innodb;
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_NONE',      'None',     1);
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_LOW',       'Low',      2);
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_MEDIUM',    'Medium',   3);
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_HIGH',      'High',     4);
+
+create table llx_c_stcommcontact
+(
+  id       integer      PRIMARY KEY,
+  code     varchar(12)  NOT NULL,
+  libelle  varchar(30),
+  picto    varchar(128),
+  active   tinyint default 1  NOT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_c_stcommcontact ADD UNIQUE INDEX uk_c_stcommcontact(code);
+
+insert into llx_c_stcommcontact (id,code,libelle) values (-1, 'ST_NO',    'Do not contact');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 0, 'ST_NEVER', 'Never contacted');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 1, 'ST_TODO',  'To contact');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 2, 'ST_PEND',  'Contact in progress');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 3, 'ST_DONE',  'Contacted');
+
+ALTER TABLE llx_socpeople ADD COLUMN fk_prospectcontactlevel varchar(12) AFTER priv;
+ALTER TABLE llx_socpeople ADD COLUMN fk_stcommcontact integer DEFAULT 0 NOT NULL AFTER fk_prospectcontactlevel;
 
 

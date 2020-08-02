@@ -232,6 +232,10 @@ class Contact extends CommonObject
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (empty($conf->mailing->enabled)) $this->fields['no_email']['enabled'] = 0;
 		if (!empty($conf->global->SOCIETE_DISABLE_CONTACTS)) $this->fields['thirdparty']['enabled'] = 0;
+		if (empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {	// Default behaviour
+			$this->field['fk_stcomm']['enabled'] = 0;
+			$this->field['fk_prospectlevel']['enabled'] = 0;
+		}
 		$this->statut = 1; // By default, status is enabled
 
 		// Unset fields that are disabled
@@ -1830,8 +1834,7 @@ class Contact extends CommonObject
 			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto) . ' ' . $langs->trans("StatusProspect1");
 			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto) . ' ' . $langs->trans("StatusProspect2");
 			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto) . ' ' . $langs->trans("StatusProspect3");
-			else
-			{
+			else {
 				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto) . ' ' . (($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label);
 			}
 		}
@@ -1842,8 +1845,7 @@ class Contact extends CommonObject
 			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto);
 			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto);
 			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto);
-			else
-			{
+			else {
 				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto);
 			}
 		}
@@ -1854,8 +1856,7 @@ class Contact extends CommonObject
 			elseif ($statut == '1' || $statut == 'ST_TODO') return img_action($langs->trans("StatusProspect1"), 1, $picto) . ' ' . $langs->trans("StatusProspect1");
 			elseif ($statut == '2' || $statut == 'ST_PEND') return img_action($langs->trans("StatusProspect2"), 2, $picto) . ' ' . $langs->trans("StatusProspect2");
 			elseif ($statut == '3' || $statut == 'ST_DONE') return img_action($langs->trans("StatusProspect3"), 3, $picto) . ' ' . $langs->trans("StatusProspect3");
-			else
-			{
+			else {
 				return img_action(($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label, 0, $picto) . ' ' . (($langs->trans("StatusProspect" . $statut) != "StatusProspect" . $statut) ? $langs->trans("StatusProspect" . $statut) : $label);
 			}
 		}

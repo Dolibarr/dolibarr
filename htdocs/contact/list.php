@@ -179,13 +179,16 @@ $arrayfields = array(
 	'p.no_email'=>array('label'=>"No_Email", 'position'=>41, 'checked'=>0, 'enabled'=>(!empty($conf->mailing->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'position'=>50, 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
 	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
-	'p.fk_prospectcontactlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>1),
-	'p.fk_stcommcontact'=>array('label'=>"StatusProsp", 'checked'=>1),
 	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'p.import_key'=>array('label'=>"ImportId", 'checked'=>0, 'position'=>1100),
 );
+if (! empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+	$arrayfields['p.fk_prospectcontactlevel'] = array('label'=>"ProspectLevelShort", 'checked'=>1, 'position'=>210);
+	$arrayfields['p.fk_stcommcontact'] = array('label'=>"StatusProsp", 'checked'=>1, 'position'=>215);
+}
+
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
@@ -504,10 +507,14 @@ if ($search_email != '') $param .= '&amp;search_email='.urlencode($search_email)
 if ($search_no_email != '') $param .= '&amp;search_no_email='.urlencode($search_no_email);
 if ($search_status != '') $param .= '&amp;search_status='.urlencode($search_status);
 if ($search_priv == '0' || $search_priv == '1') $param .= "&amp;search_priv=".urlencode($search_priv);
-if ($search_stcomm != '') $param.='&search_stcomm='.$search_stcomm;
-if (is_array($search_level) && count($search_level)) foreach($search_level as $slevel) $param.='&search_level[]='.urlencode($slevel);
+if ($search_stcomm != '') $param.='&search_stcomm='.urlencode($search_stcomm);
+if (is_array($search_level) && count($search_level)) {
+	foreach($search_level as $slevel) {
+		$param.='&search_level[]='.urlencode($slevel);
+	}
+}
 if ($search_import_key != '') $param .= '&amp;search_import_key='.urlencode($search_import_key);
-if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
+if ($optioncss != '') $param .= '&amp;optioncss='.urlencode($optioncss);
 if (count($search_roles) > 0) $param .= implode('&search_roles[]=', $search_roles);
 
 // Add $param from extra fields
