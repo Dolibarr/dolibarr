@@ -2025,7 +2025,7 @@ class Product extends CommonObject
             return -1;
         }
 
-        $sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
+        $sql = "SELECT rowid, ref, ref_ext, label, description, url, note_public, note as note_private, customcode, fk_country, price, price_ttc,";
         $sql .= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
         $sql .= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, net_measure, net_measure_units, weight, weight_units,";
         $sql .= " length, length_units, width, width_units, height, height_units,";
@@ -2061,8 +2061,9 @@ class Product extends CommonObject
                 $this->label                          = $obj->label;
                 $this->description                    = $obj->description;
                 $this->url                            = $obj->url;
-                $this->note_private                    = $obj->note_private;
-                $this->note                            = $obj->note_private; // deprecated
+                $this->note_public                    = $obj->note_public;
+                $this->note_private                   = $obj->note_private;
+                $this->note                           = $obj->note_private; // deprecated
 
                 $this->type                            = $obj->fk_product_type;
                 $this->status                        = $obj->tosell;

@@ -2847,12 +2847,14 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
+
+		$newsuffix = $suffix;
+
 		// Special cas
-		//var_dump($this->table_element);exit;
-		if ($this->table_element == 'product') $suffix = '';
+		if ($this->table_element == 'product' && $newsuffix == '_private') $newsuffix = '';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET note".$suffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
+		$sql .= " SET note".$newsuffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
 		$sql .= " ,".(in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment')) ? "fk_user_mod" : "fk_user_modif")." = ".$user->id;
 		$sql .= " WHERE rowid =".$this->id;
 
