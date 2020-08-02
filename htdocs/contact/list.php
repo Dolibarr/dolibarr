@@ -11,6 +11,7 @@
  * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2020       Open-Dsi      			<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,6 +92,8 @@ $search_town = GETPOST('search_town', 'alpha');
 $search_import_key = GETPOST("search_import_key", "alpha");
 $search_country = GETPOST("search_country", 'intcomma');
 $search_roles = GETPOST("search_roles", 'array');
+$search_level = GETPOST("search_level", "array");
+$search_stcomm = GETPOST('search_stcomm', 'int');
 
 if ($search_status == '') $search_status = 1; // always display active customer first
 
@@ -176,6 +179,8 @@ $arrayfields = array(
 	'p.no_email'=>array('label'=>"No_Email", 'position'=>41, 'checked'=>0, 'enabled'=>(!empty($conf->mailing->enabled))),
 	'p.thirdparty'=>array('label'=>"ThirdParty", 'position'=>50, 'checked'=>1, 'enabled'=>empty($conf->global->SOCIETE_DISABLE_CONTACTS)),
 	'p.priv'=>array('label'=>"ContactVisibility", 'checked'=>1, 'position'=>200),
+	'p.fk_prospectcontactlevel'=>array('label'=>"ProspectLevelShort", 'checked'=>1),
+	'p.fk_stcommcontact'=>array('label'=>"StatusProsp", 'checked'=>1),
 	'p.datec'=>array('label'=>"DateCreationShort", 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>"DateModificationShort", 'checked'=>0, 'position'=>500),
 	'p.statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
@@ -256,6 +261,8 @@ if (empty($reshook))
 			}
 		}
 		$search_priv = "";
+		$search_stcomm='';
+		$search_level='';
 		$search_status = -1;
 		$search_categ = '';
 		$search_categ_thirdparty = '';
@@ -273,6 +280,17 @@ if (empty($reshook))
 	$permissiontodelete = $user->rights->societe->supprimer;
 	$uploaddir = $conf->societe->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	if ($action == 'setstcomm')
+	{
+		$object = new Contact($db);
+		$result = $object->fetch(GETPOST('stcommcontactid'));
+		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
+		$result = $object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+
+		$action = '';
+	}
 }
 
 if ($search_priv < 0) $search_priv = '';
@@ -286,13 +304,35 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
+$contactstatic->thirdparty->client=2;
+$contactstatic->loadCacheOfProspStatus();
 
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
+
+// Select every potentiels, and note each potentiels which fit in search parameters
+$tab_level = array();
+$sql = "SELECT code, label, sortorder";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
+$sql.= " WHERE active > 0";
+$sql.= " ORDER BY sortorder";
+$resql = $db->query($sql);
+if ($resql)
+{
+	while ($obj = $db->fetch_object($resql))
+	{
+		// Compute level text
+		$level=$langs->trans($obj->code);
+		if ($level == $obj->code) $level=$langs->trans($obj->label);
+		$tab_level[$obj->code] = $level;
+	}
+}
+else dol_print_error($db);
 
 $sql = "SELECT s.rowid as socid, s.nom as name,";
 $sql .= " p.rowid, p.lastname as lastname, p.statut, p.firstname, p.zip, p.town, p.poste, p.email, p.no_email,";
 $sql .= " p.socialnetworks, p.photo,";
 $sql .= " p.phone as phone_pro, p.phone_mobile, p.phone_perso, p.fax, p.fk_pays, p.priv, p.datec as date_creation, p.tms as date_update,";
+$sql.= " st.libelle as stcomm, st.picto as stcomm_picto, p.fk_stcommcontact as stcomm_id, p.fk_prospectcontactlevel,";
 $sql .= " co.label as country, co.code as country_code";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
@@ -306,6 +346,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = p.fk_pays";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_stcommcontact as st ON st.id = p.fk_stcommcontact";
 if (!empty($search_categ)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_contact as cc ON p.rowid = cc.fk_socpeople"; // We need this table joined to the select in order to filter by categ
 if (!empty($search_categ_thirdparty)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc"; // We need this table joined to the select in order to filter by categ
 if (!empty($search_categ_supplier)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc"; // We need this table joined to the select in order to filter by categ
@@ -319,6 +360,8 @@ if (!empty($userid))    // propre au commercial
 {
 	$sql .= " AND p.fk_user_creat=".$db->escape($userid);
 }
+if ($search_level)  $sql .= natural_search("p.fk_prospectcontactlevel", join(',', $search_level), 3);
+if ($search_stcomm != '' && $search_stcomm != -2) $sql .= natural_search("p.fk_stcommcontact", $search_stcomm, 2);
 
 // Filter to exclude not owned private contacts
 if ($search_priv != '0' && $search_priv != '1')
@@ -461,6 +504,8 @@ if ($search_email != '') $param .= '&amp;search_email='.urlencode($search_email)
 if ($search_no_email != '') $param .= '&amp;search_no_email='.urlencode($search_no_email);
 if ($search_status != '') $param .= '&amp;search_status='.urlencode($search_status);
 if ($search_priv == '0' || $search_priv == '1') $param .= "&amp;search_priv=".urlencode($search_priv);
+if ($search_stcomm != '') $param.='&search_stcomm='.$search_stcomm;
+if (is_array($search_level) && count($search_level)) foreach($search_level as $slevel) $param.='&search_level[]='.urlencode($slevel);
 if ($search_import_key != '') $param .= '&amp;search_import_key='.urlencode($search_import_key);
 if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 if (count($search_roles) > 0) $param .= implode('&search_roles[]=', $search_roles);
@@ -678,6 +723,25 @@ if (!empty($arrayfields['p.priv']['checked']))
     print $form->selectarray('search_priv', $selectarray, $search_priv, 1);
     print '</td>';
 }
+// Prospect level
+if (! empty($arrayfields['p.fk_prospectcontactlevel']['checked']))
+{
+	print '<td class="liste_titre center">';
+	print $form->multiselectarray('search_level', $tab_level, $search_level, 0, 0, 'width75', 0, 0, '', '', '', 2);
+	print '</td>';
+}
+// Prospect status
+if (! empty($arrayfields['p.fk_stcommcontact']['checked']))
+{
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	$arraystcomm=array();
+	foreach($prospectstatic->cacheprospectstatus as $key => $val)
+	{
+		$arraystcomm[$val['id']]=($langs->trans("StatusProspect".$val['id']) != "StatusProspect".$val['id'] ? $langs->trans("StatusProspect".$val['id']) : $val['label']);
+	}
+	print $form->selectarray('search_stcomm', $arraystcomm, $search_stcomm, -2, 0, 0, '', 0, 0, 0, '', 'nowrap ');
+	print '</td>';
+}
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -746,6 +810,8 @@ if (!empty($conf->socialnetworks->enabled)) {
 }
 if (!empty($arrayfields['p.thirdparty']['checked']))          print_liste_field_titre($arrayfields['p.thirdparty']['label'], $_SERVER["PHP_SELF"], "s.nom", $begin, $param, '', $sortfield, $sortorder);
 if (!empty($arrayfields['p.priv']['checked']))                print_liste_field_titre($arrayfields['p.priv']['label'], $_SERVER["PHP_SELF"], "p.priv", $begin, $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_prospectcontactlevel']['checked'])) 	print_liste_field_titre($arrayfields['p.fk_prospectcontactlevel']['label'], $_SERVER["PHP_SELF"], "p.fk_prospectcontactlevel", "", $param, '', $sortfield, $sortorder, 'center ');
+if (!empty($arrayfields['p.fk_stcommcontact']['checked'])) 			print_liste_field_titre($arrayfields['p.fk_stcommcontact']['label'], $_SERVER["PHP_SELF"], "p.fk_stcommcontact", "", $param, '', $sortfield, $sortorder, 'center ');
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -795,6 +861,8 @@ while ($i < min($num, $limit))
 	$contactstatic->country = $obj->country;
 	$contactstatic->country_code = $obj->country_code;
 	$contactstatic->photo = $obj->photo;
+
+	$contactstatic->fk_prospectlevel=$obj->fk_prospectcontactlevel;
 
 	print '<tr class="oddeven">';
 
@@ -921,6 +989,30 @@ while ($i < min($num, $limit))
 	if (!empty($arrayfields['p.priv']['checked']))
 	{
 		print '<td class="center">'.$contactstatic->LibPubPriv($obj->priv).'</td>';
+		if (!$i) $totalarray['nbfield']++;
+	}
+
+	if (! empty($arrayfields['p.fk_prospectcontactlevel']['checked']))
+	{
+		// Prospect level
+		print '<td class="center">';
+		print $contactstatic->getLibProspLevel();
+		print "</td>";
+		if (!$i) $totalarray['nbfield']++;
+	}
+
+	if (! empty($arrayfields['p.fk_stcommcontact']['checked']))
+	{
+		// Prospect status
+		print '<td class="center nowrap"><div class="nowrap">';
+		print '<div class="inline-block">' . $contactstatic->libProspCommStatut($obj->stcomm_id, 2, $contactstatic->cacheprospectstatus[$obj->stcomm_id]['label'], $obj->stcomm_picto);
+		print '</div> - <div class="inline-block">';
+		foreach ($contactstatic->cacheprospectstatus as $key => $val) {
+			$titlealt = 'default';
+			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
+			if ($obj->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?stcommcontactid=' . $obj->rowid . '&stcomm=' . $val['code'] . '&action=setstcomm' . $param . ($page ? '&page=' . urlencode($page) : '') . '">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+		}
+		print '</div></div></td>';
 		if (!$i) $totalarray['nbfield']++;
 	}
 

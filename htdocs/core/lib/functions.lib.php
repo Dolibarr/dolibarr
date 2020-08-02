@@ -15,6 +15,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3306,9 +3307,14 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
  *
  *	@param	string		$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string		$numaction   	Action id or code to show
+ *	@param 	string		$picto      	Name of image file to show ('filenew', ...)
+ *                                      If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+ *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+ *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+ *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@return string      				Return an img tag
  */
-function img_action($titlealt, $numaction)
+function img_action($titlealt, $numaction, $picto = '')
 {
 	global $langs;
 
@@ -3336,7 +3342,7 @@ function img_action($titlealt, $numaction)
 	}
 	if (!is_numeric($numaction)) $numaction = 0;
 
-	return img_picto($titlealt, 'stcomm'.$numaction.'.png');
+	return img_picto($titlealt, !empty($picto) ? $picto : 'stcomm'.$numaction.'.png');
 }
 
 /**

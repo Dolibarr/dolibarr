@@ -9,6 +9,7 @@
  * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2019 Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
+ * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -557,10 +558,10 @@ if ($object->id > 0)
         print '<div class="floatright">';
         foreach ($object->cacheprospectstatus as $key => $val)
         {
-            $titlealt = 'default';
-            if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-            if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt, $val['code']).'</a>';
-        }
+			$titlealt = 'default';
+			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
+			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&stcomm=' . $val['code'] . '&action=setstcomm">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+		}
         print '</div></td></tr>';
         print "</table>";
 	}
