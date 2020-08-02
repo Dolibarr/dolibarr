@@ -3839,6 +3839,8 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$c = new Categorie($db);
 
+			$totalnbwords = 0;
+
 			foreach ($listofpages['list'] as $answerrecord)
 			{
 				if (get_class($answerrecord) == 'WebsitePage')
@@ -3899,6 +3901,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$nbofwords = str_word_count($textwithouthtml, 0, $characterMap);
 					if ($nbofwords) {
 						print $nbofwords.' '.$langs->trans("words");
+						$totalnbwords += $nbofwords;
 					}
 					print '</td>';
 
@@ -3979,6 +3982,15 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<td>';
 					print '</td>';
 
+					// Categories - Tags
+					print '<td>';
+					print '</td>';
+
+					// Nb of words
+					print '<td>';
+					print '</td>';
+
+					// Edit properties, HTML sources, status
 					print '<td>';
 					print '</td>';
 
@@ -3989,6 +4001,44 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '</tr>';
 				}
 			}
+
+			if (count($listofpages['list']) >= 2) {
+				// Total
+				print '<tr class="lite_titre">';
+
+				// Type of container
+				print '<td>';
+				print $langs->trans("Total");
+				print '</td>';
+
+				// Container url and label
+				print '<td>';
+				print '</td>';
+
+				// Language
+				print '<td>';
+				print '</td>';
+
+				// Categories - Tags
+				print '<td>';
+				print '</td>';
+
+				// Nb of words
+				print '<td class="center nowraponall">';
+				print $totalnbwords.' '.$langs->trans("words");
+				print '</td>';
+
+				// Edit properties, HTML sources, status
+				print '<td>';
+				print '</td>';
+
+				// Action column
+				print '<td class="nowrap center">';
+				print '</td>';
+
+				print '</tr>';
+			}
+
 			print '</table>';
 			print '</div>';
 			print '<br>';
