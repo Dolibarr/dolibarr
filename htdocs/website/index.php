@@ -3832,6 +3832,7 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
 
@@ -3890,6 +3891,17 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<td>';
 					print $answerrecord->lang;
 					print '</td>';
+
+					// Number of words
+					print '<td class="center">';
+					$textwithouthtml = dol_string_nohtmltag(dolStripPhpCode($answerrecord->content));
+					$characterMap = 'áàéèëíóúüñùç0123456789';
+					$nbofwords = str_word_count($textwithouthtml, 0, $characterMap);
+					if ($nbofwords) {
+						print $nbofwords.' '.$langs->trans("words");
+					}
+					print '</td>';
+
 
 					// Edit properties, HTML sources, status
 					print '<td class="tdwebsitesearchresult right nowraponall">';

@@ -199,6 +199,9 @@ input, select {
     border-collapse: collapse;
     border: none;
 }
+#mainbody span.websitetools input.button:not(.buttongen):not(.bordertransp) {
+    color: #000 !important;
+}
 #mainbody input.buttongen, #mainbody button.buttongen {
 	padding: 3px 4px;
 }
