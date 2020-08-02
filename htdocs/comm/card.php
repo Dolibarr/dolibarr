@@ -535,7 +535,7 @@ if ($object->id > 0)
     	print '<div class="underbanner clearboth"></div>';
     	print '<table class="border centpercent tableforfield">';
 
-	    // Level of prospect
+	    // Level of prospection
 	    print '<tr><td class="titlefield nowrap">';
 	    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	    print $langs->trans('ProspectLevel');
@@ -552,7 +552,7 @@ if ($object->id > 0)
         print "</td>";
         print '</tr>';
 
-        // Status
+        // Status of prospection
         $object->loadCacheOfProspStatus();
         print '<tr><td>'.$langs->trans("StatusProsp").'</td><td>'.$object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
         print ' &nbsp; &nbsp; ';
@@ -561,7 +561,7 @@ if ($object->id > 0)
         {
 			$titlealt = 'default';
 			if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus reposition" href="' . $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&stcomm=' . $val['code'] . '&action=setstcomm">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+			if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt, $val['code'], $val['picto']).'</a>';
 		}
         print '</div></td></tr>';
         print "</table>";

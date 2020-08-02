@@ -387,7 +387,6 @@ if ($mode == 'config' && $user->admin) {
 
 // mode = template
 if ($mode == 'template' && $user->admin) {
-
 	dol_fiche_head($head, $mode, $langs->trans("ModuleSetup"), -1, 'technic');
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=template" autocomplete="off">';
