@@ -173,9 +173,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     /* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
     background: linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
-.info-box-sm .info-box-content-warning {
-	background: #ffd7a3;
+.info-box-content-warning span.font-status4 {
+	color: #bc9526 !important;
 }
+/*.info-box-sm .info-box-content-warning {
+	background: #ffd7a3;
+}*/
 /*.info-box-icon.info-box-icon-module-enabled {
     background: #e4f0e4 !important;
 }*/

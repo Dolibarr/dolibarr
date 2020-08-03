@@ -4053,6 +4053,8 @@ div.titre {
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
+    font-size: 1.05em;
+    /* text-transform: uppercase; */
     /* font-weight: 600; */
 }
 div.titre {
