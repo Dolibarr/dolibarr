@@ -2742,7 +2742,7 @@ class Societe extends CommonObject
 	 *  Return bank number property of thirdparty (label or rum)
 	 *
 	 *	@param	string	$mode	'label' or 'rum' or 'format'
-	 *  @return	string			Bank number
+	 *  @return	string			Bank label or RUM or '' if no bank account found
 	 */
     public function display_rib($mode = 'label')
 	{
@@ -2752,25 +2752,25 @@ class Societe extends CommonObject
 		$bac = new CompanyBankAccount($this->db);
 		$bac->fetch(0, $this->id);
 
-		if ($mode == 'label')
-		{
-			return $bac->getRibLabel(true);
-		} elseif ($mode == 'rum')
-		{
-			if (empty($bac->rum))
-			{
-				require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-				$prelevement = new BonPrelevement($this->db);
-				$bac->fetch_thirdparty();
-				$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
+		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
+			if ($mode == 'label') {
+				return $bac->getRibLabel(true);
+			} elseif ($mode == 'rum') {
+				if (empty($bac->rum)) {
+					require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+					$prelevement = new BonPrelevement($this->db);
+					$bac->fetch_thirdparty();
+					$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
+				}
+				return $bac->rum;
+			} elseif ($mode == 'format') {
+				return $bac->frstrecur;
+			} else {
+				return 'BadParameterToFunctionDisplayRib';
 			}
-			return $bac->rum;
-		} elseif ($mode == 'format')
-		{
-			return $bac->frstrecur;
+		} else {
+			return '';
 		}
-
-		return 'BadParameterToFunctionDisplayRib';
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
