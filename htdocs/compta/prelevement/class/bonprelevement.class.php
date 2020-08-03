@@ -1142,7 +1142,7 @@ class BonPrelevement extends CommonObject
 			if (!$error)
 			{
 				/*
-				 * Create file of direct debit order or credit transfer into a XML file
+				 * Create file of type='direct-debit' for direct debit order or type='bank-transfer' for credit transfer into a XML file
 				 */
 
 				dol_syslog(__METHOD__."::Init direct debit or credit transfer file for ".count($factures_prev)." invoices", LOG_DEBUG);
@@ -1569,11 +1569,11 @@ class BonPrelevement extends CommonObject
 				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2)
 				{
-					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format);
+					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
 				}
 
 				/**
-				 * SECTION CREATION SEPA FILE - CREDTI TRANSFER - ISO200022
+				 * SECTION CREATION SEPA FILE - CREDIT TRANSFER - ISO200022
 				 */
 				// SEPA File Header
 				fputs($this->file, '<'.'?xml version="1.0" encoding="UTF-8" standalone="yes"?'.'>'.$CrLf);
@@ -1674,7 +1674,7 @@ class BonPrelevement extends CommonObject
 				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
 				if ($result != -2)
 				{
-					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format);
+					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
 				}
 
 				/**
@@ -1794,6 +1794,22 @@ class BonPrelevement extends CommonObject
 	}
 
 
+	/**
+	 * Build RUM number for a customer bank account
+	 *
+	 * @param	string		$row_code_client	Customer code (soc.code_client)
+	 * @param	int			$row_datec			Creation date of bank account (rib.datec)
+	 * @param	string		$row_drum			Id of customer bank account (rib.rowid)
+	 * @return 	string		RUM number
+	 */
+	public static function buildRumNumber($row_code_client, $row_datec, $row_drum)
+	{
+		global $langs;
+		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
+		return $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
+	}
+
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Write recipient of request (customer)
@@ -1807,9 +1823,11 @@ class BonPrelevement extends CommonObject
 	 *	@param	string	$ref		ref of invoice
 	 *	@param	int		$facid			id of invoice
 	 *  @param	string	$rib_dom		rib domiciliation
+	 *  @param	string	$type			'direct-debit' or 'credit-transfer'
 	 *	@return	void
+	 *  @see EnregDestinataireSEPA()
 	 */
-	public function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount, $ref, $facid, $rib_dom = '')
+	public function EnregDestinataire($rowid, $client_nom, $rib_banque, $rib_guichet, $rib_number, $amount, $ref, $facid, $rib_dom = '', $type = 'direct-debit')
 	{
 		// phpcs:enable
 		fputs($this->file, "06");
@@ -1866,22 +1884,6 @@ class BonPrelevement extends CommonObject
 		fputs($this->file, "\n");
 	}
 
-
-	/**
-	 * Build RUM number for a customer bank account
-	 *
-	 * @param	string		$row_code_client	Customer code (soc.code_client)
-	 * @param	int			$row_datec			Creation date of bank account (rib.datec)
-	 * @param	string		$row_drum			Id of customer bank account (rib.rowid)
-	 * @return 	string		RUM number
-	 */
-	public static function buildRumNumber($row_code_client, $row_datec, $row_drum)
-	{
-		global $langs;
-		$pre = substr(dol_string_nospecial(dol_string_unaccent($langs->transnoentitiesnoconv('RUM'))), 0, 3); // Must always be on 3 char ('RUM' or 'UMR'. This is a protection against bad translation)
-		return $pre.'-'.$row_code_client.'-'.$row_drum.'-'.date('U', $row_datec);
-	}
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Write recipient of request (customer)
@@ -1903,9 +1905,11 @@ class BonPrelevement extends CommonObject
 	 *	@param	string		$row_datec			rib.datec,
 	 *	@param	string		$row_drum			rib.rowid used to generate rum
 	 * 	@param	string		$row_rum			rib.rum Rum defined on company bank account
+	 *  @param	string		$type				'direct-debit' or 'credit-transfer'
 	 *	@return	string							Return string with SEPA part DrctDbtTxInf
+	 *  @see EnregDestinataire()
 	 */
-	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum)
+	public function EnregDestinataireSEPA($row_code_client, $row_nom, $row_address, $row_zip, $row_town, $row_country_code, $row_cb, $row_cg, $row_cc, $row_somme, $row_ref, $row_idfac, $row_iban, $row_bic, $row_datec, $row_drum, $row_rum, $type = 'direct-debit')
 	{
 		// phpcs:enable
 		global $conf;
@@ -1913,7 +1917,7 @@ class BonPrelevement extends CommonObject
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		$CrLf = "\n";
-		$Rowing = sprintf("%06d", $row_idfac);
+		$Rowing = sprintf("%10d", $row_idfac);
 
 		// Define value for RUM
 		// Example:  RUMCustomerCode-CustomerBankAccountId-01424448606	(note: Date is date of creation of CustomerBankAccountId)
@@ -1922,57 +1926,108 @@ class BonPrelevement extends CommonObject
 		// Define date of RUM signature
 		$DtOfSgntr = dol_print_date($row_datec, '%Y-%m-%d');
 
-		$XML_DEBITOR = '';
-		$XML_DEBITOR .= '			<DrctDbtTxInf>'.$CrLf;
-		$XML_DEBITOR .= '				<PmtId>'.$CrLf;
-		// $XML_DEBITOR .='					<EndToEndId>'.('AS-'.dol_trunc($row_ref,20).'-'.$Rowing).'</EndToEndId>'.$CrLf;          // ISO20022 states that EndToEndId has a MaxLength of 35 characters
-		$XML_DEBITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
-		$XML_DEBITOR .= '				</PmtId>'.$CrLf;
-		$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
-		$XML_DEBITOR .= '				<DrctDbtTx>'.$CrLf;
-		$XML_DEBITOR .= '					<MndtRltdInf>'.$CrLf;
-		$XML_DEBITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
-		$XML_DEBITOR .= '						<DtOfSgntr>'.$DtOfSgntr.'</DtOfSgntr>'.$CrLf;
-		$XML_DEBITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
-		$XML_DEBITOR .= '					</MndtRltdInf>'.$CrLf;
-		$XML_DEBITOR .= '				</DrctDbtTx>'.$CrLf;
-		$XML_DEBITOR .= '				<DbtrAgt>'.$CrLf;
-		$XML_DEBITOR .= '					<FinInstnId>'.$CrLf;
-		$XML_DEBITOR .= '						<BIC>'.$row_bic.'</BIC>'.$CrLf;
-		$XML_DEBITOR .= '					</FinInstnId>'.$CrLf;
-		$XML_DEBITOR .= '				</DbtrAgt>'.$CrLf;
-		$XML_DEBITOR .= '				<Dbtr>'.$CrLf;
-		$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
-		$XML_DEBITOR .= '					<PstlAdr>'.$CrLf;
-		$XML_DEBITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
-		$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
-		$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
-		if (trim($addressline1)) 	$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
-		if (trim($addressline2))	$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
-		$XML_DEBITOR .= '					</PstlAdr>'.$CrLf;
-		$XML_DEBITOR .= '				</Dbtr>'.$CrLf;
-		$XML_DEBITOR .= '				<DbtrAcct>'.$CrLf;
-		$XML_DEBITOR .= '					<Id>'.$CrLf;
-		$XML_DEBITOR .= '						<IBAN>'.preg_replace('/\s/', '', $row_iban).'</IBAN>'.$CrLf;
-		$XML_DEBITOR .= '					</Id>'.$CrLf;
-		$XML_DEBITOR .= '				</DbtrAcct>'.$CrLf;
-		$XML_DEBITOR .= '				<RmtInf>'.$CrLf;
-		// $XML_DEBITOR .='					<Ustrd>'.($row_ref.'/'.$Rowing.'/'.$Rum).'</Ustrd>'.$CrLf;
-		// $XML_DEBITOR .='					<Ustrd>'.dol_trunc($row_ref, 135).'</Ustrd>'.$CrLf;        // 140 max
-		$XML_DEBITOR .= '					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "") ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135)).'</Ustrd>'.$CrLf; // 140 max
-		$XML_DEBITOR .= '				</RmtInf>'.$CrLf;
-		$XML_DEBITOR .= '			</DrctDbtTxInf>'.$CrLf;
-		return $XML_DEBITOR;
+		if ($type != 'credit-transfer') {
+			// SEPA Paiement Information of buyer for Direct debit
+			$XML_DEBITOR = '';
+			$XML_DEBITOR .= '			<DrctDbtTxInf>'.$CrLf;
+			$XML_DEBITOR .= '				<PmtId>'.$CrLf;
+			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
+			$XML_DEBITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+			$XML_DEBITOR .= '				</PmtId>'.$CrLf;
+			$XML_DEBITOR .= '				<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_DEBITOR .= '				<DrctDbtTx>'.$CrLf;
+			$XML_DEBITOR .= '					<MndtRltdInf>'.$CrLf;
+			$XML_DEBITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
+			$XML_DEBITOR .= '						<DtOfSgntr>'.$DtOfSgntr.'</DtOfSgntr>'.$CrLf;
+			$XML_DEBITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
+			$XML_DEBITOR .= '					</MndtRltdInf>'.$CrLf;
+			$XML_DEBITOR .= '				</DrctDbtTx>'.$CrLf;
+			$XML_DEBITOR .= '				<DbtrAgt>'.$CrLf;
+			$XML_DEBITOR .= '					<FinInstnId>'.$CrLf;
+			$XML_DEBITOR .= '						<BIC>'.$row_bic.'</BIC>'.$CrLf;
+			$XML_DEBITOR .= '					</FinInstnId>'.$CrLf;
+			$XML_DEBITOR .= '				</DbtrAgt>'.$CrLf;
+			$XML_DEBITOR .= '				<Dbtr>'.$CrLf;
+			$XML_DEBITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
+			$XML_DEBITOR .= '					<PstlAdr>'.$CrLf;
+			$XML_DEBITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
+			$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
+			$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
+			if (trim($addressline1)) 	$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+			if (trim($addressline2))	$XML_DEBITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+			$XML_DEBITOR .= '					</PstlAdr>'.$CrLf;
+			$XML_DEBITOR .= '				</Dbtr>'.$CrLf;
+			$XML_DEBITOR .= '				<DbtrAcct>'.$CrLf;
+			$XML_DEBITOR .= '					<Id>'.$CrLf;
+			$XML_DEBITOR .= '						<IBAN>'.preg_replace('/\s/', '', $row_iban).'</IBAN>'.$CrLf;
+			$XML_DEBITOR .= '					</Id>'.$CrLf;
+			$XML_DEBITOR .= '				</DbtrAcct>'.$CrLf;
+			$XML_DEBITOR .= '				<RmtInf>'.$CrLf;
+			// A string with some information on payment - 140 max
+			$XML_DEBITOR .= '					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "") ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135)).'</Ustrd>'.$CrLf; // 140 max
+			$XML_DEBITOR .= '				</RmtInf>'.$CrLf;
+			$XML_DEBITOR .= '			</DrctDbtTxInf>'.$CrLf;
+			return $XML_DEBITOR;
+		} else {
+			// SEPA Paiement Information of seller for Credit Transfer
+			$XML_CREDITOR = '';
+			$XML_CREDITOR .= '			<CdtTrfTxInf>'.$CrLf;
+			$XML_CREDITOR .= '				<PmtId>'.$CrLf;
+			// Add EndToEndId. Must be a unique ID for each payment (for example by including bank, buyer or seller, date, checksum)
+			$XML_CREDITOR .= '					<EndToEndId>'.(($conf->global->PRELEVEMENT_END_TO_END != "") ? $conf->global->PRELEVEMENT_END_TO_END : ('AS-'.dol_trunc($row_ref, 20)).'-'.$Rowing).'</EndToEndId>'.$CrLf; // ISO20022 states that EndToEndId has a MaxLength of 35 characters
+			$XML_CREDITOR .= '				</PmtId>'.$CrLf;
+			$XML_CREDITOR .= '				<Amt>'.$CrLf;
+			$XML_CREDITOR .= '					<InstdAmt Ccy="EUR">'.round($row_somme, 2).'</InstdAmt>'.$CrLf;
+			$XML_CREDITOR .= '				</Amt>'.$CrLf;
+			/*
+			$XML_CREDITOR .= '				<DrctDbtTx>'.$CrLf;
+			$XML_CREDITOR .= '					<MndtRltdInf>'.$CrLf;
+			$XML_CREDITOR .= '						<MndtId>'.$Rum.'</MndtId>'.$CrLf;
+			$XML_CREDITOR .= '						<DtOfSgntr>'.$DtOfSgntr.'</DtOfSgntr>'.$CrLf;
+			$XML_CREDITOR .= '						<AmdmntInd>false</AmdmntInd>'.$CrLf;
+			$XML_CREDITOR .= '					</MndtRltdInf>'.$CrLf;
+			$XML_CREDITOR .= '				</DrctDbtTx>'.$CrLf;
+			*/
+			//$XML_CREDITOR .= '				<ChrgBr>SLEV</ChrgBr>'.$CrLf;
+			$XML_CREDITOR .= '				<CdtrAgt>'.$CrLf;
+			$XML_CREDITOR .= '					<FinInstnId>'.$CrLf;
+			$XML_CREDITOR .= '						<BIC>'.$row_bic.'</BIC>'.$CrLf;
+			$XML_CREDITOR .= '					</FinInstnId>'.$CrLf;
+			$XML_CREDITOR .= '				</CdtrAgt>'.$CrLf;
+			$XML_CREDITOR .= '				<Cdtr>'.$CrLf;
+			$XML_CREDITOR .= '					<Nm>'.dolEscapeXML(strtoupper(dol_string_unaccent($row_nom))).'</Nm>'.$CrLf;
+			$XML_CREDITOR .= '					<PstlAdr>'.$CrLf;
+			$XML_CREDITOR .= '						<Ctry>'.$row_country_code.'</Ctry>'.$CrLf;
+			$addressline1 = dol_string_unaccent(strtr($row_address, array(CHR(13) => ", ", CHR(10) => "")));
+			$addressline2 = dol_string_unaccent(strtr($row_zip.(($row_zip && $row_town) ? ' ' : ''.$row_town), array(CHR(13) => ", ", CHR(10) => "")));
+			if (trim($addressline1)) 	$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline1, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+			if (trim($addressline2))	$XML_CREDITOR .= '						<AdrLine>'.dolEscapeXML(dol_trunc($addressline2, 70, 'right', 'UTF-8', true)).'</AdrLine>'.$CrLf;
+			$XML_CREDITOR .= '					</PstlAdr>'.$CrLf;
+			$XML_CREDITOR .= '				</Cdtr>'.$CrLf;
+			$XML_CREDITOR .= '				<CdtrAcct>'.$CrLf;
+			$XML_CREDITOR .= '					<Id>'.$CrLf;
+			$XML_CREDITOR .= '						<IBAN>'.preg_replace('/\s/', '', $row_iban).'</IBAN>'.$CrLf;
+			$XML_CREDITOR .= '					</Id>'.$CrLf;
+			$XML_CREDITOR .= '				</CdtrAcct>'.$CrLf;
+			$XML_CREDITOR .= '				<RmtInf>'.$CrLf;
+			// A string with some information on payment - 140 max
+			$XML_CREDITOR .= '					<Ustrd>'.(($conf->global->PRELEVEMENT_USTRD != "") ? $conf->global->PRELEVEMENT_USTRD : dol_trunc($row_ref, 135)).'</Ustrd>'.$CrLf; // 140 max
+			$XML_CREDITOR .= '				</RmtInf>'.$CrLf;
+			$XML_CREDITOR .= '			</CdtTrfTxInf>'.$CrLf;
+			return $XML_CREDITOR;
+		}
 	}
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Write sender of request (me)
+	 *	Write sender of request (me).
 	 *
+	 *  @param	string		$type				'direct-debit' or 'credit-transfer'
 	 *	@return	void
+	 *  @see EnregEmetteurSEPA()
 	 */
-	public function EnregEmetteur()
+	public function EnregEmetteur($type = 'direct-debit')
 	{
 		// phpcs:enable
 		fputs($this->file, "03");
@@ -2044,9 +2099,11 @@ class BonPrelevement extends CommonObject
 	 *	@param	float	$total			Total
 	 *	@param	string	$CrLf			End of line character
 	 *  @param	string	$format			FRST or RCUR or ALL
+	 *  @param	string	$type			'direct-debit' or 'credit-transfer'
 	 *	@return	string					String with SEPA Sender
+	 *  @see EnregEmetteur()
 	 */
-	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST')
+	public function EnregEmetteurSEPA($configuration, $ladate, $nombre, $total, $CrLf = '\n', $format = 'FRST', $type = 'direct-debit')
 	{
 		// phpcs:enable
 		// SEPA INITIALISATION
@@ -2073,7 +2130,7 @@ class BonPrelevement extends CommonObject
 			$this->raison_sociale = $account->proprio;
 		}
 
-		// Récupération info demandeur
+		// Get pending payments
 		$sql = "SELECT rowid, ref";
 		$sql .= " FROM";
 		$sql .= " ".MAIN_DB_PREFIX."prelevement_bons as pb";
@@ -2084,69 +2141,132 @@ class BonPrelevement extends CommonObject
 		{
 			$obj = $this->db->fetch_object($resql);
 
-			// DONNEES BRUTES : par la suite Rows['XXX'] de la requete au dessus
 			$country = explode(':', $configuration->global->MAIN_INFO_SOCIETE_COUNTRY);
 			$IdBon  = sprintf("%05d", $obj->rowid);
 			$RefBon = $obj->ref;
 
-			// SEPA Paiement Information
-			$XML_SEPA_INFO = '';
-			$XML_SEPA_INFO .= '		<PmtInf>'.$CrLf;
-			$XML_SEPA_INFO .= '			<PmtInfId>'.('PREL'.$dateTime_YMD.'/ID'.$IdBon.'-'.$RefBon).'</PmtInfId>'.$CrLf;
-			$XML_SEPA_INFO .= '			<PmtMtd>DD</PmtMtd>'.$CrLf;
-			$XML_SEPA_INFO .= '			<NbOfTxs>'.$nombre.'</NbOfTxs>'.$CrLf;
-			$XML_SEPA_INFO .= '			<CtrlSum>'.$total.'</CtrlSum>'.$CrLf;
-			$XML_SEPA_INFO .= '			<PmtTpInf>'.$CrLf;
-			$XML_SEPA_INFO .= '				<SvcLvl>'.$CrLf;
-			$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>'.$CrLf;
-			$XML_SEPA_INFO .= '				</SvcLvl>'.$CrLf;
-			$XML_SEPA_INFO .= '				<LclInstrm>'.$CrLf;
-			$XML_SEPA_INFO .= '					<Cd>CORE</Cd>'.$CrLf;
-			$XML_SEPA_INFO .= '				</LclInstrm>'.$CrLf;
-			$XML_SEPA_INFO .= '				<SeqTp>'.$format.'</SeqTp>'.$CrLf;
-			$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
-			$XML_SEPA_INFO .= '			<ReqdColltnDt>'.$dateTime_ETAD.'</ReqdColltnDt>'.$CrLf;
-			$XML_SEPA_INFO .= '			<Cdtr>'.$CrLf;
-			$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;
-			$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
-			$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-			$addressline1 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
-			$addressline2 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
-			if ($addressline1)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline1.'</AdrLine>'.$CrLf;
-			if ($addressline2)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline2.'</AdrLine>'.$CrLf;
-			$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
-			$XML_SEPA_INFO .= '			</Cdtr>'.$CrLf;
-			$XML_SEPA_INFO .= '			<CdtrAcct>'.$CrLf;
-			$XML_SEPA_INFO .= '				<Id>'.$CrLf;
-			$XML_SEPA_INFO .= '					<IBAN>'.preg_replace('/\s/', '', $this->emetteur_iban).'</IBAN>'.$CrLf;
-			$XML_SEPA_INFO .= '				</Id>'.$CrLf;
-			$XML_SEPA_INFO .= '			</CdtrAcct>'.$CrLf;
-			$XML_SEPA_INFO .= '			<CdtrAgt>'.$CrLf;
-			$XML_SEPA_INFO .= '				<FinInstnId>'.$CrLf;
-			$XML_SEPA_INFO .= '					<BIC>'.$this->emetteur_bic.'</BIC>'.$CrLf;
-			$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
-			$XML_SEPA_INFO .= '			</CdtrAgt>'.$CrLf;
-			/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
-			 $XML_SEPA_INFO .= '				<Nm>'.$this->raison_sociale.'</Nm>'.$CrLf;
-			 $XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
-			 $XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
-			 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
-			 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
-			 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
-			 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
-			$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;
-			$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
-			$XML_SEPA_INFO .= '				<Id>'.$CrLf;
-			$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
-			$XML_SEPA_INFO .= '						<Othr>'.$CrLf;
-			$XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
-			$XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
-			$XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
-			$XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
-			$XML_SEPA_INFO .= '						</Othr>'.$CrLf;
-			$XML_SEPA_INFO .= '					</PrvtId>'.$CrLf;
-			$XML_SEPA_INFO .= '				</Id>'.$CrLf;
-			$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;
+			if ($type != 'credit-transfer') {
+				// SEPA Paiement Information of my company for Direct debit
+				$XML_SEPA_INFO = '';
+				$XML_SEPA_INFO .= '		<PmtInf>'.$CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>'.('PREL'.$dateTime_YMD.'/ID'.$IdBon.'-'.$RefBon).'</PmtInfId>'.$CrLf;
+				$XML_SEPA_INFO .= '			<PmtMtd>DD</PmtMtd>'.$CrLf;
+				$XML_SEPA_INFO .= '			<NbOfTxs>'.$nombre.'</NbOfTxs>'.$CrLf;
+				$XML_SEPA_INFO .= '			<CtrlSum>'.$total.'</CtrlSum>'.$CrLf;
+				$XML_SEPA_INFO .= '			<PmtTpInf>'.$CrLf;
+				$XML_SEPA_INFO .= '				<SvcLvl>'.$CrLf;
+				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>'.$CrLf;
+				$XML_SEPA_INFO .= '				</SvcLvl>'.$CrLf;
+				$XML_SEPA_INFO .= '				<LclInstrm>'.$CrLf;
+				$XML_SEPA_INFO .= '					<Cd>CORE</Cd>'.$CrLf;
+				$XML_SEPA_INFO .= '				</LclInstrm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<SeqTp>'.$format.'</SeqTp>'.$CrLf;
+				$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
+				$XML_SEPA_INFO .= '			<ReqdColltnDt>'.$dateTime_ETAD.'</ReqdColltnDt>'.$CrLf;
+				$XML_SEPA_INFO .= '			<Cdtr>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
+				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
+				$addressline1 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
+				$addressline2 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
+				if ($addressline1)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline1.'</AdrLine>'.$CrLf;
+				if ($addressline2)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline2.'</AdrLine>'.$CrLf;
+				$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
+				$XML_SEPA_INFO .= '			</Cdtr>'.$CrLf;
+				$XML_SEPA_INFO .= '			<CdtrAcct>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
+				$XML_SEPA_INFO .= '					<IBAN>'.preg_replace('/\s/', '', $this->emetteur_iban).'</IBAN>'.$CrLf;
+				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
+				$XML_SEPA_INFO .= '			</CdtrAcct>'.$CrLf;
+				$XML_SEPA_INFO .= '			<CdtrAgt>'.$CrLf;
+				$XML_SEPA_INFO .= '				<FinInstnId>'.$CrLf;
+				$XML_SEPA_INFO .= '					<BIC>'.$this->emetteur_bic.'</BIC>'.$CrLf;
+				$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
+				$XML_SEPA_INFO .= '			</CdtrAgt>'.$CrLf;
+				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
+				 $XML_SEPA_INFO .= '				<Nm>'.$this->raison_sociale.'</Nm>'.$CrLf;
+				 $XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
+				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
+				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
+				$XML_SEPA_INFO .= '						<Othr>'.$CrLf;
+				$XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
+				$XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
+				$XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
+				$XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
+				$XML_SEPA_INFO .= '						</Othr>'.$CrLf;
+				$XML_SEPA_INFO .= '					</PrvtId>'.$CrLf;
+				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
+				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;
+			} else {
+				// SEPA Paiement Information of my company for Credit Transfer
+				$XML_SEPA_INFO = '';
+				$XML_SEPA_INFO .= '		<PmtInf>'.$CrLf;
+				$XML_SEPA_INFO .= '			<PmtInfId>'.('PREL'.$dateTime_YMD.'/ID'.$IdBon.'-'.$RefBon).'</PmtInfId>'.$CrLf;
+				$XML_SEPA_INFO .= '			<PmtMtd>TRF</PmtMtd>'.$CrLf;
+				//$XML_SEPA_INFO .= '			<BtchBookg>False</BtchBookg>'.$CrLf;
+				$XML_SEPA_INFO .= '			<NbOfTxs>'.$nombre.'</NbOfTxs>'.$CrLf;
+				$XML_SEPA_INFO .= '			<CtrlSum>'.$total.'</CtrlSum>'.$CrLf;
+				/*
+				$XML_SEPA_INFO .= '			<PmtTpInf>'.$CrLf;
+				$XML_SEPA_INFO .= '				<SvcLvl>'.$CrLf;
+				$XML_SEPA_INFO .= '					<Cd>SEPA</Cd>'.$CrLf;
+				$XML_SEPA_INFO .= '				</SvcLvl>'.$CrLf;
+				$XML_SEPA_INFO .= '				<LclInstrm>'.$CrLf;
+				$XML_SEPA_INFO .= '					<Cd>TRF</Cd>'.$CrLf;
+				$XML_SEPA_INFO .= '				</LclInstrm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<CtgyPurp><Cd>SECU</Cd></CtgyPurp>'.$CrLf;
+				$XML_SEPA_INFO .= '			</PmtTpInf>'.$CrLf;
+				*/
+				$XML_SEPA_INFO .= '         <ReqdExctnDt>'.dol_print_date($dateTime_ETAD, 'dayrfc').'</ReqdExctnDt>'.$CrLf;
+				$XML_SEPA_INFO .= '			<Dbtr>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Nm>'.strtoupper(dol_string_unaccent($this->raison_sociale)).'</Nm>'.$CrLf;
+				$XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
+				$XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
+				$addressline1 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ADDRESS, array(CHR(13) => ", ", CHR(10) => "")));
+				$addressline2 = dol_string_unaccent(strtr($configuration->global->MAIN_INFO_SOCIETE_ZIP.(($configuration->global->MAIN_INFO_SOCIETE_ZIP || ' '.$configuration->global->MAIN_INFO_SOCIETE_TOWN) ? ' ' : '').$configuration->global->MAIN_INFO_SOCIETE_TOWN, array(CHR(13) => ", ", CHR(10) => "")));
+				if ($addressline1)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline1.'</AdrLine>'.$CrLf;
+				if ($addressline2)		$XML_SEPA_INFO .= '					<AdrLine>'.$addressline2.'</AdrLine>'.$CrLf;
+				$XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
+				$XML_SEPA_INFO .= '			</Dbtr>'.$CrLf;
+				$XML_SEPA_INFO .= '			<DbtrAcct>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
+				$XML_SEPA_INFO .= '					<IBAN>'.preg_replace('/\s/', '', $this->emetteur_iban).'</IBAN>'.$CrLf;
+				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
+				$XML_SEPA_INFO .= '			</DbtrAcct>'.$CrLf;
+				$XML_SEPA_INFO .= '			<DbtrAgt>'.$CrLf;
+				$XML_SEPA_INFO .= '				<FinInstnId>'.$CrLf;
+				$XML_SEPA_INFO .= '					<BIC>'.$this->emetteur_bic.'</BIC>'.$CrLf;
+				$XML_SEPA_INFO .= '				</FinInstnId>'.$CrLf;
+				$XML_SEPA_INFO .= '			</DbtrAgt>'.$CrLf;
+				/* $XML_SEPA_INFO .= '			<UltmtCdtr>'.$CrLf;
+				 $XML_SEPA_INFO .= '				<Nm>'.$this->raison_sociale.'</Nm>'.$CrLf;
+				 $XML_SEPA_INFO .= '				<PstlAdr>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<Ctry>'.$country[1].'</Ctry>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ADDRESS.'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '					<AdrLine>'.$conf->global->MAIN_INFO_SOCIETE_ZIP.' '.$conf->global->MAIN_INFO_SOCIETE_TOWN.'</AdrLine>'.$CrLf;
+				 $XML_SEPA_INFO .= '				</PstlAdr>'.$CrLf;
+				 $XML_SEPA_INFO .= '			</UltmtCdtr>'.$CrLf;*/
+				$XML_SEPA_INFO .= '			<ChrgBr>SLEV</ChrgBr>'.$CrLf;		// Field "Responsible of fees". Must be SLEV
+				/*$XML_SEPA_INFO .= '			<CdtrSchmeId>'.$CrLf;
+				$XML_SEPA_INFO .= '				<Id>'.$CrLf;
+				$XML_SEPA_INFO .= '					<PrvtId>'.$CrLf;
+				$XML_SEPA_INFO .= '						<Othr>'.$CrLf;
+				$XML_SEPA_INFO .= '							<Id>'.$this->emetteur_ics.'</Id>'.$CrLf;
+				$XML_SEPA_INFO .= '							<SchmeNm>'.$CrLf;
+				$XML_SEPA_INFO .= '								<Prtry>SEPA</Prtry>'.$CrLf;
+				$XML_SEPA_INFO .= '							</SchmeNm>'.$CrLf;
+				$XML_SEPA_INFO .= '						</Othr>'.$CrLf;
+				$XML_SEPA_INFO .= '					</PrvtId>'.$CrLf;
+				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
+				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
+			}
 		}
 		else
 		{
