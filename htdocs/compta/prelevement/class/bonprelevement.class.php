@@ -517,9 +517,7 @@ class BonPrelevement extends CommonObject
 						$this->error = $paiement->error;
 						$this->errors = $paiement->errors;
 						dol_syslog(get_class($this)."::set_infocredit AddPayment Error ".$this->error);
-					}
-					else
-					{
+					} else {
 						if ($this->type == 'bank-transfer') {
 							$modeforaddpayment = 'payment_supplier';
 						} else {
@@ -1639,16 +1637,13 @@ class BonPrelevement extends CommonObject
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
-				}
-				else
-				{
+				} else {
 					fputs($this->file, 'ERROR CREDITOR '.$sql.$CrLf); // CREDITORS = Suppliers
 					$result = -2;
 				}
 
 				// Define $fileEmetteurSection. Start of bloc PmtInf. Will contains all $nbtotalDrctDbtTxInf
-				if ($result != -2)
-				{
+				if ($result != -2) {
 					$fileEmetteurSection .= $this->EnregEmetteurSEPA($conf, $date_actu, $nbtotalDrctDbtTxInf, $this->total, $CrLf, $format, $type);
 				}
 
@@ -2238,11 +2233,8 @@ class BonPrelevement extends CommonObject
 				$XML_SEPA_INFO .= '				</Id>'.$CrLf;
 				$XML_SEPA_INFO .= '			</CdtrSchmeId>'.$CrLf;*/
 			}
-		}
-		else
-		{
+		} else {
 			fputs($this->file, 'INCORRECT EMETTEUR '.$XML_SEPA_INFO.$CrLf);
-			$result = -2;
 		}
 		return $XML_SEPA_INFO;
 	}
