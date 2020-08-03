@@ -1259,7 +1259,7 @@ class FactureFournisseur extends CommonInvoice
         $this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-        $sql .= ' SET paye = 1, fk_statut=2';
+        $sql .= ' SET paye = 1, fk_statut = '.self::STATUS_CLOSED;
         $sql .= ' WHERE rowid = '.$this->id;
 
         dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);

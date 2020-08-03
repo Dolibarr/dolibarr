@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 
 
@@ -66,6 +67,9 @@ class BonPrelevement extends CommonObject
 	public $emetteur_iban;
 	public $emetteur_bic;
 	public $emetteur_ics;
+
+	public $date_trans;
+	public $user_trans;
 
 	public $total;
 	public $fetched;
@@ -405,7 +409,7 @@ class BonPrelevement extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Set direct debit order to "credited" status.
+	 *	Set direct debit or credit transfer order to "paid" status.
 	 *
 	 *	@param	User	$user			Id of user
 	 *	@param 	int		$date			date of action
@@ -420,118 +424,153 @@ class BonPrelevement extends CommonObject
 
 		if ($this->fetched == 1)
 		{
-			if ($date >= $this->date_trans)
+			if ($date < $this->date_trans)
 			{
-				if ($this->db->begin())
+				$this->error = 'DateOfMovementLowerThanDateOfFileTransmission';
+				dol_syslog("bon-prelevment::set_infocredit 1027 ".$this->error);
+				return -1027;
+			}
+
+			$this->db->begin();
+
+			$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
+			$sql .= " SET fk_user_credit = ".$user->id;
+			$sql .= ", statut = ".self::STATUS_CREDITED;
+			$sql .= ", date_credit = '".$this->db->idate($date)."'";
+			$sql .= " WHERE rowid=".$this->id;
+			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND statut = ".self::STATUS_TRANSFERED;
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$langs->load('withdrawals');
+				$subject = $langs->trans("InfoCreditSubject", $this->ref);
+				$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
+
+				//Add payment of withdrawal into bank
+				$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+				$facs = array();
+				$amounts = array();
+				$amountsperthirdparty = array();
+
+				$facs = $this->getListInvoices(1);
+
+				// Loop on each invoice. $facs=array(0=>id, 1=>amount requested)
+				$num = count($facs);
+				for ($i = 0; $i < $num; $i++)
 				{
-					$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_bons ";
-					$sql .= " SET fk_user_credit = ".$user->id;
-					$sql .= ", statut = ".self::STATUS_CREDITED;
-					$sql .= ", date_credit = '".$this->db->idate($date)."'";
-					$sql .= " WHERE rowid=".$this->id;
-					$sql .= " AND entity = ".$conf->entity;
-					$sql .= " AND statut = ".self::STATUS_TRANSFERED;
-
-					if ($this->db->query($sql))
-					{
-						$langs->load('withdrawals');
-						$subject = $langs->trans("InfoCreditSubject", $this->ref);
-						$message = $langs->trans("InfoCreditMessage", $this->ref, dol_print_date($date, 'dayhour'));
-
-						//Add payment of withdrawal into bank
-						$bankaccount = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
-						$facs = array();
-						$amounts = array();
-						$amountsperthirdparty = array();
-
-						$facs = $this->getListInvoices(1);
-
-						// Loop on each invoice. $facs=array(0=>id, 1=>amount requested)
-						$num = count($facs);
-						for ($i = 0; $i < $num; $i++)
-						{
-							$fac = new Facture($this->db);
-							$fac->fetch($facs[$i][0]);
-							$amounts[$fac->id] = $facs[$i][1];
-							$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
-
-							$totalpaye = $fac->getSommePaiement();
-							$totalcreditnotes = $fac->getSumCreditNotesUsed();
-							$totaldeposits = $fac->getSumDepositsUsed();
-							$alreadypayed = $totalpaye + $totalcreditnotes + $totaldeposits;
-
-							if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
-								$result = $fac->set_paid($user);
-							}
-						}
-
-						// Make one payment per customer
-						foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts)
-						{
-							$paiement = new Paiement($this->db);
-							$paiement->datepaye     = $date;
-							$paiement->amounts      = $cursoramounts; // Array with detail of dispatching of payments for each invoice
-							$paiement->paiementid   = 3; //
-							$paiement->num_payment = $this->ref; // Set ref of direct debit note
-							$paiement->num_paiement = $this->ref; // For backward compatibility
-							$paiement->id_prelevement = $this->id;
-
-							$paiement_id = $paiement->create($user);
-							if ($paiement_id < 0)
-							{
-								dol_syslog(get_class($this)."::set_infocredit AddPayment Error");
-								$error++;
-							} else {
-								$result = $paiement->addPaymentToBank($user, 'payment', '(WithdrawalPayment)', $bankaccount, '', '');
-								if ($result < 0)
-								{
-									dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error");
-									$error++;
-								}
-							}
-							//var_dump($paiement->amounts);
-							//var_dump($thirdpartyid);
-							//var_dump($cursoramounts);
-						}
-
-						// Update withdrawal line
-						// TODO: Translate to ligneprelevement.class.php
-						$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
-						$sql .= " SET statut = 2";
-						$sql .= " WHERE fk_prelevement_bons = ".$this->id;
-
-						if (!$this->db->query($sql))
-						{
-							dol_syslog(get_class($this)."::set_infocredit Update lines Error");
-							$error++;
-						}
+					if ($this->type == 'bank-transfer') {
+						$fac = new FactureFournisseur($this->db);
 					} else {
-						dol_syslog(get_class($this)."::set_infocredit Update Bons Error");
+						$fac = new Facture($this->db);
+					}
+
+					$result = $fac->fetch($facs[$i][0]);
+
+					$amounts[$fac->id] = $facs[$i][1];
+					$amountsperthirdparty[$fac->socid][$fac->id] = $facs[$i][1];
+
+					$totalpaye = $fac->getSommePaiement();
+					$totalcreditnotes = $fac->getSumCreditNotesUsed();
+					$totaldeposits = $fac->getSumDepositsUsed();
+					$alreadypayed = $totalpaye + $totalcreditnotes + $totaldeposits;
+
+					// @TODO Move this after creation of payment
+					if (price2num($alreadypayed + $facs[$i][1], 'MT') == $fac->total_ttc) {
+						$result = $fac->set_paid($user);
+						if ($result < 0) {
+							$this->error = $fac->error;
+							$this->errors = $fac->errors;
+						}
+					}
+				}
+				//var_dump($amountsperthirdparty);exit;
+
+				// Make one payment per customer
+				foreach ($amountsperthirdparty as $thirdpartyid => $cursoramounts)
+				{
+					if ($this->type == 'bank-transfer') {
+						$paiement = new PaiementFourn($this->db);
+					} else {
+						$paiement = new Paiement($this->db);
+					}
+					$paiement->datepaye     = $date;
+					$paiement->amounts      = $cursoramounts; // Array with detail of dispatching of payments for each invoice
+
+					if ($this->type == 'bank-transfer') {
+						$paiement->paiementid = 2;
+						$paiement->paiementcode = 'VIR';
+					} else {
+						$paiement->paiementid = 3;
+						$paiement->paiementcode = 'PRE';
+					}
+
+					$paiement->num_payment = $this->ref; // Set ref of direct debit note
+					$paiement->num_paiement = $this->ref; // For backward compatibility
+					$paiement->id_prelevement = $this->id;
+
+					$paiement_id = $paiement->create($user);		// This use ->paiementid, that is ID of payment mode
+					if ($paiement_id < 0)
+					{
+						$error++;
+						$this->error = $paiement->error;
+						$this->errors = $paiement->errors;
+						dol_syslog(get_class($this)."::set_infocredit AddPayment Error ".$this->error);
+					}
+					else
+					{
+						if ($this->type == 'bank-transfer') {
+							$modeforaddpayment = 'payment_supplier';
+						} else {
+							$modeforaddpayment = 'payment';
+						}
+
+						$result = $paiement->addPaymentToBank($user, $modeforaddpayment, '(WithdrawalPayment)', $bankaccount, '', '');
+						if ($result < 0)
+						{
+							$error++;
+							$this->error = $paiement->error;
+							$this->errors = $paiement->errors;
+							dol_syslog(get_class($this)."::set_infocredit AddPaymentToBank Error ".$this->error);
+						}
+					}
+					//var_dump($paiement->amounts);
+					//var_dump($thirdpartyid);
+					//var_dump($cursoramounts);
+				}
+
+				// Update withdrawal line
+				// TODO: Translate to ligneprelevement.class.php
+				if (! $error) {
+					$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes";
+					$sql .= " SET statut = 2";
+					$sql .= " WHERE fk_prelevement_bons = ".$this->id;
+
+					if (!$this->db->query($sql)) {
+						dol_syslog(get_class($this)."::set_infocredit Update lines Error");
 						$error++;
 					}
-
-					/*
-					 * End of procedure
-					 */
-					if ($error == 0)
-					{
-						$this->date_credit = $date;
-						$this->statut = self::STATUS_CREDITED;
-
-						$this->db->commit();
-						return 0;
-					} else {
-						$this->db->rollback();
-						dol_syslog("bon-prelevment::set_infocredit ROLLBACK ");
-						return -1;
-					}
-				} else {
-					dol_syslog(get_class($this)."::set_infocredit 1025 Open SQL transaction impossible ");
-					return -1025;
 				}
 			} else {
-				dol_syslog("bon-prelevment::set_infocredit 1027 Date de credit < Date de trans ");
-				return -1027;
+				$this->error = $this->db->lasterror();
+				dol_syslog(get_class($this)."::set_infocredit Update Bons Error");
+				$error++;
+			}
+
+			/*
+			 * End of procedure
+			 */
+			if ($error == 0)
+			{
+				$this->date_credit = $date;
+				$this->statut = self::STATUS_CREDITED;
+
+				$this->db->commit();
+				return 0;
+			} else {
+				$this->db->rollback();
+				return -1;
 			}
 		} else {
 			return -1026;
@@ -561,7 +600,7 @@ class BonPrelevement extends CommonObject
 			$sql .= " SET fk_user_trans = ".$user->id;
 			$sql .= " , date_trans = '".$this->db->idate($date)."'";
 			$sql .= " , method_trans = ".$method;
-			$sql .= " , statut = 1";
+			$sql .= " , statut = ".self::STATUS_TRANSFERED;
 			$sql .= " WHERE rowid = ".$this->id;
 			$sql .= " AND entity = ".$conf->entity;
 			$sql .= " AND statut = 0";
@@ -583,6 +622,7 @@ class BonPrelevement extends CommonObject
 			{
 				$this->date_trans = $date;
 				$this->statut = 1;
+				$this->user_trans = $user->id;
 				$this->db->commit();
 
 				return 0;
@@ -613,7 +653,12 @@ class BonPrelevement extends CommonObject
 		/*
 		 * Returns all invoices presented within same order
 		 */
-		$sql = "SELECT fk_facture";
+		$sql = "SELECT ";
+		if ($this->type == 'bank-transfer') {
+			$sql .= " pf.fk_facture_fourn";
+		} else {
+			$sql .= " pf.fk_facture";
+		}
 		if ($amounts) $sql .= ", SUM(pl.amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 		$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -622,7 +667,13 @@ class BonPrelevement extends CommonObject
 		$sql .= " AND pl.fk_prelevement_bons = p.rowid";
 		$sql .= " AND p.rowid = ".$this->id;
 		$sql .= " AND p.entity = ".$conf->entity;
-		if ($amounts) $sql .= " GROUP BY fk_facture";
+		if ($amounts) {
+			if ($this->type == 'bank-transfer') {
+				$sql .= " GROUP BY fk_facture_fourn";
+			} else {
+				$sql .= " GROUP BY fk_facture";
+			}
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql)
