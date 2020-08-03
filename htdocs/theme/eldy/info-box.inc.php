@@ -166,15 +166,17 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	padding: 5px 10px;
 	margin-left: 84px;
 }
-
 .info-box-sm .info-box-content{
     margin-left: 80px;
 }
-/*.info-box-setup span {
-    color: var(--colortexttitlenotab2);
+.info-box-sm .info-box-module-enabled {
+    background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8)
 }
-.tdsetuppicto span {
-    color: var(--colortexttitlenotab2);
+.info-box-sm .info-box-content-warning {
+	background: #ffd7a3;
+}
+/*.info-box-icon.info-box-icon-module-enabled {
+    background: #e4f0e4 !important;
 }*/
 
 .info-box-number {
@@ -209,6 +211,8 @@ a.info-box-text{ text-decoration: none;}
 .progress-description {
 	margin: 0;
 }
+
+
 
 
 
