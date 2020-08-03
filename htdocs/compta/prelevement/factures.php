@@ -105,7 +105,7 @@ if ($id > 0 || $ref)
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -160,7 +160,7 @@ if ($id > 0 || $ref)
 
 
 // List of invoices
-$sql = "SELECT pf.rowid,";
+$sql = "SELECT pf.rowid, p.type,";
 $sql .= " f.rowid as facid, f.ref as ref, f.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, pl.statut, pl.amount as amount_requested";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
@@ -193,8 +193,8 @@ $sql .= $db->order($sortfield, $sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
+    $resql = $db->query($sql);
+    $nbtotalofrecords = $db->num_rows($resql);
     if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
     {
     	$page = 0;
@@ -204,10 +204,10 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  	$num = $db->num_rows($result);
+  	$num = $db->num_rows($resql);
   	$i = 0;
 
   	$param = "&id=".$id;
@@ -236,22 +236,28 @@ if ($result)
   	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
   	print_liste_field_titre("AmountInvoice", $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
   	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-  	print_liste_field_titre("StatusDebitCredit", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
+  	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
   	$totalinvoices = 0;
 	$totalamount_requested = 0;
 
+	$invoicetmpcustomer = new Facture($db);
+	$invoicetmpsupplier = new FactureFournisseur($db);
+
   	while ($i < min($num, $limit))
     {
-     	$obj = $db->fetch_object($result);
+     	$obj = $db->fetch_object($resql);
 
-     	$invoicetmp->id = $obj->facid;
-     	$invoicetmp->ref = $obj->ref;
+     	if ($obj->type == 'bank-transfer') {
+     		$invoicetmp = $invoicetmpsupplier;
+     	} else {
+     		$invoicetmp = $invoicetmpcustomer;
+     	}
+     	$invoicetmp->fetch($obj->facid);
 
-     	$thirdpartytmp->id = $obj->socid;
-     	$thirdpartytmp->name = $obj->name;
+     	$thirdpartytmp->fetch($obj->socid);
 
       	print '<tr class="oddeven">';
 
@@ -278,7 +284,11 @@ if ($result)
 		}
       	elseif ($obj->statut == 2)
 		{
-	  		print $langs->trans("StatusCredited");
+			if ($obj->type == 'bank-transfer') {
+				print $langs->trans("StatusDebited");
+			} else {
+				print $langs->trans("StatusCredited");
+			}
 		}
       	elseif ($obj->statut == 3)
 		{
@@ -317,7 +327,7 @@ if ($result)
   	print "</table>";
   	print '</div>';
 
-  	$db->free($result);
+  	$db->free($resql);
 }
 else
 {

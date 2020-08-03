@@ -146,11 +146,9 @@ if (empty($reshook))
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
         $error = $object->set_infocredit($user, $dt);
-
         if ($error)
         {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
+        	setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
