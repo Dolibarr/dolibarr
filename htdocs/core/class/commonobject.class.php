@@ -5531,11 +5531,12 @@ abstract class CommonObject
 			   				$new_array_options[$key] = null;
 			   			}
 			 			break;
-					case 'double':
+			   		case 'price':
+			   		case 'double':
 						$value = price2num($value);
 						if (!is_numeric($value) && $value != '')
 						{
-							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." for ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
 							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 							return -1;
 						}
@@ -5589,9 +5590,6 @@ abstract class CommonObject
 			   				$new_array_options[$key] = $this->array_options[$key];
 			   			}
 			   			break;
-			   		case 'price':
-						$new_array_options[$key] = price2num($this->array_options[$key]);
-						break;
 					case 'date':
 					case 'datetime':
 						// If data is a string instead of a timestamp, we convert it
@@ -5689,7 +5687,7 @@ abstract class CommonObject
     			{
     			    if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
     			    {
-                        if (in_array($tmpval, array('int', 'double'))) $sql .= ", 0";
+                        if (in_array($tmpval, array('int', 'double', 'price'))) $sql .= ", 0";
                         else $sql .= ", ''";
     			    }
     			}
@@ -7963,6 +7961,7 @@ abstract class CommonObject
 		$now = dol_now();
 
 		$fieldvalues = $this->setSaveQuery();
+
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation'] = $this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat'] = $user->id;
 		unset($fieldvalues['rowid']); // The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
