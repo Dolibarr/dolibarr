@@ -2217,6 +2217,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
     	$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($this)));
 
+    	$version = $this->getVersion(0);
+    	$versiontrans = '';
+    	if (preg_match('/development/i', $version))  $versiontrans .= 'warning';
+    	if (preg_match('/experimental/i', $version)) $versiontrans .= 'warning';
+    	if (preg_match('/deprecated/i', $version))   $versiontrans .= 'warning';
+
 		print '
     	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : '').($this->isCoreOrExternalModule() == 'external' ? ' info-box-module-external' : '').'">
 	    <div class="info-box info-box-sm info-box-module">
@@ -2233,39 +2239,19 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			print img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
 		}
 
-		$version = $this->getVersion(0);
-		$versiontrans = '';
-		if (preg_match('/development/i', $version))  $versiontrans .= 'warning';
-		if (preg_match('/experimental/i', $version)) $versiontrans .= 'warning';
-		if (preg_match('/deprecated/i', $version))   $versiontrans .= 'warning';
 		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
 			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').'" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
 			print $this->getVersion(1);
 			print '</span>';
 		}
 
-		/*print '<span class="info-box-icon-action">';
-		print '<div class="valignmiddle inline-block">';
-		print '<div class="valignmiddle inline-block">';
-		print $codeenabledisable;
-		print '</div>';
-		print '<div class="valignmiddle inline-block marginleftonly">';
-		print $codetoconfig;
-		print '</div>';
-		print '</div>';
-		print '</span>';
-		*/
-
 		print '</div>
 	    <div class="info-box-content info-box-text-module">
 	    <span class="info-box-title">'.$this->getName().'</span>
 	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
-		/*print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
-		print $this->getVersion(1);
-		print '</span>'; */
-
 		print '<div class="valignmiddle inline-block info-box-more">';
+		if ($versiontrans) print img_warning($langs->trans("Version").' '.$this->getVersion(1)).' ';
 		print '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($this->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 		print '</div><br>';
 
