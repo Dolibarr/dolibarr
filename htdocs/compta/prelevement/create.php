@@ -379,10 +379,15 @@ if ($resql)
 
 			// RUM
 			print '<td>';
-			print $thirdpartystatic->display_rib('rum');
-			$format = $thirdpartystatic->display_rib('format');
-			if ($type != 'bank-transfer') {
-				if ($format) print ' ('.$format.')';
+			$rumtoshow = $thirdpartystatic->display_rib('rum');
+			if ($rumtoshow) {
+				print $rumtoshow;
+				$format = $thirdpartystatic->display_rib('format');
+				if ($type != 'bank-transfer') {
+					if ($format) print ' ('.$format.')';
+				}
+			} else {
+				print img_warning($langs->trans("NoBankAccount"));
 			}
 			print '</td>';
 			// Amount

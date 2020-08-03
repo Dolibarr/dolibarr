@@ -180,14 +180,14 @@ if (empty($reshook))
 				if ($result < 0)
 				{
 					$langs->load("errors");
-					setEventMessages($langs->trans($object->error), null, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
 			}
 			else
 			{
 				$langs->load("errors");
-				setEventMessages($langs->trans($object->error), null, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 			if (!$error && !empty($object->id) > 0)

@@ -5531,11 +5531,12 @@ abstract class CommonObject
 			   				$new_array_options[$key] = null;
 			   			}
 			 			break;
-					case 'double':
+			   		case 'price':
+			   		case 'double':
 						$value = price2num($value);
 						if (!is_numeric($value) && $value != '')
 						{
-							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." for ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
 							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 							return -1;
 						}
@@ -5589,9 +5590,6 @@ abstract class CommonObject
 			   				$new_array_options[$key] = $this->array_options[$key];
 			   			}
 			   			break;
-			   		case 'price':
-						$new_array_options[$key] = price2num($this->array_options[$key]);
-						break;
 					case 'date':
 					case 'datetime':
 						// If data is a string instead of a timestamp, we convert it
@@ -5689,7 +5687,7 @@ abstract class CommonObject
     			{
     			    if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
     			    {
-                        if (in_array($tmpval, array('int', 'double'))) $sql .= ", 0";
+                        if (in_array($tmpval, array('int', 'double', 'price'))) $sql .= ", 0";
                         else $sql .= ", ''";
     			    }
     			}
@@ -7050,7 +7048,7 @@ abstract class CommonObject
 		if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0)
 		{
 			$out .= "\n";
-			$out .= '<!-- showOptionalsInput --> ';
+			$out .= '<!-- showOptionals --> ';
 			$out .= "\n";
 
             $extrafields_collapse_num = '';
@@ -7188,7 +7186,7 @@ abstract class CommonObject
 					// HTML, select, integer and text add default value
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
 					{
-						if ($action == 'create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
+						if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
 						else $value = $this->array_options['options_'.$key];
 					}
 
@@ -7272,7 +7270,7 @@ abstract class CommonObject
 						setListDependencies();
 				    });
 				</script>'."\n";
-				$out .= '<!-- /showOptionalsInput --> '."\n";
+				$out .= '<!-- /showOptionals --> '."\n";
 			}
 		}
 		return $out;
@@ -7970,11 +7968,11 @@ abstract class CommonObject
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
 		$keys = array();
-		$values = array();
+		$values = array();	// Array to store string forged for SQL syntax
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
-			$values[$k] = $this->quote($v, $value);
+			$values[$k] = $this->quote($v, $value);			// May return string 'NULL' if $value is null
 		}
 
 		// Clean and check mandatory
@@ -7984,8 +7982,7 @@ abstract class CommonObject
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key] = '';
 			if (!empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key] = '';
 
-			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && !isset($values[$key]) && is_null($this->fields[$key]['default']))
+			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && is_null($this->fields[$key]['default']))
 			{
 				$error++;
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);

@@ -154,8 +154,8 @@ class ExtraFields
 
 
 	public static $type2label = array(
-	    'varchar'=>'String',
-	    'text'=>'TextLong',
+	    'varchar'=>'String1Line',
+	    'text'=>'TextLongNLines',
 	    'html'=>'HtmlText',
 	    'int'=>'Int',
 	    'double'=>'Float',
@@ -2097,6 +2097,10 @@ class ExtraFields
 				elseif (in_array($key_type, array('html')))
 				{
 					$value_key = GETPOST("options_".$key, 'alpha');
+				}
+				elseif (in_array($key_type, array('text')))
+				{
+					$value_key = GETPOST("options_".$key, 'alphanohtml');
 				}
 				else
 				{

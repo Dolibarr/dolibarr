@@ -546,7 +546,10 @@ class Translate
     {
 		global $conf, $db;
 
-		if (!is_string($key)) return 'ErrorBadValueForParamNotAString'; // Avoid multiple errors with code not using function correctly.
+		if (!is_string($key)) {
+			//xdebug_print_function_stack('ErrorBadValueForParamNotAString');
+			return 'ErrorBadValueForParamNotAString'; // Avoid multiple errors with code not using function correctly.
+		}
 
 		$newstr = $key;
 	    if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg))

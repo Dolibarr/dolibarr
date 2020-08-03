@@ -219,7 +219,7 @@ if ($action == "update_extras" && !empty($permissiontoadd))
 		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
 		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
 	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
+		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
 	}
 
 	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);

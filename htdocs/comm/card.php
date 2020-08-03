@@ -529,6 +529,7 @@ if ($object->id > 0)
 
 	print "</table>";
 
+	// Prospection level and status
 	if ($object->client == 2 || $object->client == 3)
 	{
     	print '<br>';
@@ -541,7 +542,7 @@ if ($object->id > 0)
 	    print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	    print $langs->trans('ProspectLevel');
 	    print '<td>';
-	    if ($action != 'editlevel' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
+	    if ($action != 'editlevel' && $user->rights->societe->creer) print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editlevel&amp;socid='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 	    print '</tr></table>';
 	    print '</td><td>';
 	    if ($action == 'editlevel')
@@ -564,7 +565,7 @@ if ($object->id > 0)
         {
             $titlealt = 'default';
             if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
-            if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt, $val['code']).'</a>';
+            if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus reposition" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&stcomm='.$val['code'].'&action=setstcomm">'.img_action($titlealt, $val['code']).'</a>';
         }
         print '</div></td></tr>';
         print "</table>";
@@ -1146,7 +1147,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 *   Last invoices
+	 *   Latest invoices
 	 */
 	if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
