@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2017 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,6 +247,26 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 		elseif ($feature == 'projet')
 		{
 			if (! $user->rights->projet->lire && ! $user->rights->projet->all->lire) { $readok=0; $nbko++; }
+		}
+		elseif ($feature == 'agenda')
+		{
+			if ($objectid > 0) {
+				require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+				$action = new ActionComm($db);
+				$action->fetch($objectid);
+				if (empty($user->rights->agenda->allactions->read) && (($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id,
+								$action->userassigned))) || empty($user->rights->agenda->myactions->read))) {
+					$readok = 0;
+					$nbko++;
+				}
+			}
+			else{
+				if (empty($user->rights->agenda->myactions->read) && empty($user->rights->agenda->allactions->read)) {
+					$readok = 0;
+					$nbko++;
+				}
+			}
+
 		}
 		elseif (! empty($feature2))														// This is for permissions on 2 levels
 		{
