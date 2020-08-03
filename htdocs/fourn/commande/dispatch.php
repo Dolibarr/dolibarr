@@ -1077,7 +1077,7 @@ if ($id > 0 || !empty($ref)) {
     while ($i < $nbproduct)
     {
         print '
-                    jQuery("#qty_0_'.$i.'").val(0);';
+                    jQuery("#qty_0_'.$i.'").val("");';
         $i++;
     }
     print '
