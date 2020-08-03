@@ -7048,7 +7048,7 @@ abstract class CommonObject
 		if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0)
 		{
 			$out .= "\n";
-			$out .= '<!-- showOptionalsInput --> ';
+			$out .= '<!-- showOptionals --> ';
 			$out .= "\n";
 
             $extrafields_collapse_num = '';
@@ -7186,7 +7186,7 @@ abstract class CommonObject
 					// HTML, select, integer and text add default value
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
 					{
-						if ($action == 'create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
+						if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
 						else $value = $this->array_options['options_'.$key];
 					}
 
@@ -7270,7 +7270,7 @@ abstract class CommonObject
 						setListDependencies();
 				    });
 				</script>'."\n";
-				$out .= '<!-- /showOptionalsInput --> '."\n";
+				$out .= '<!-- /showOptionals --> '."\n";
 			}
 		}
 		return $out;
