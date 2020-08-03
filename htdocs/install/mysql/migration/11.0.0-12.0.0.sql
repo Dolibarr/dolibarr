@@ -250,7 +250,10 @@ INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, desc
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
 
-ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable DROP DEFAULT;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer USING printable::integer;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable SET DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
 UPDATE llx_const SET name = 'INVOICE_USE_RETAINED_WARRANTY' WHERE name = 'INVOICE_USE_SITUATION_RETAINED_WARRANTY';
@@ -341,3 +344,5 @@ UPDATE llx_const SET value='(SendingReminderForExpiredSubscription):member' WHER
 
 UPDATE llx_c_email_templates SET label = '(SendingEmailOnNewSubscription):member' WHERE module='adherent' AND type_template='member' AND label='(SendingEmailOnNewSubscription)';
 UPDATE llx_const SET value='(SendingEmailOnNewSubscription):member' WHERE name='ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION' AND value ='(SendingEmailOnNewSubscription)';
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;

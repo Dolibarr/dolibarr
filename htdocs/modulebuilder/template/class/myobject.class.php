@@ -840,7 +840,7 @@ class MyObject extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
-			//$langs->load("mymodule");
+			//$langs->load("mymodule@mymodule");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
@@ -953,7 +953,7 @@ class MyObject extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("mymodule@myobject");
+		$langs->load("mymodule@mymodule");
 
 		if (empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
 			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';

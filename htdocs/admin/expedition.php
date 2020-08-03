@@ -197,7 +197,7 @@ print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup')
 print '<br>';
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'sending');
+dol_fiche_head($head, 'shipment', $langs->trans("Sendings"), -1, 'shipment');
 
 // Shipment numbering model
 

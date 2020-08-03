@@ -409,12 +409,11 @@ if (typeof(PhpDebugBar) == 'undefined') {
 
         className: "phpdebugbar " + csscls('minimized'),
 
-        options: {
-            bodyMarginBottom: true,
-            bodyMarginBottomHeight: parseInt($('body').css('margin-bottom'))
-        },
-
         initialize: function() {
+            this.options = {
+                bodyMarginBottom: true,
+                bodyMarginBottomHeight: parseInt($('body').css('margin-bottom')),
+            };
             this.controls = {};
             this.dataMap = {};
             this.datasets = {};

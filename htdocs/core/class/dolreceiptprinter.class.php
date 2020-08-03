@@ -468,6 +468,26 @@ class dolReceiptPrinter extends Printer
         return $error;
     }
 
+    /**
+     *  Function to delete a printer template in db
+     *
+     *  @param    int       $templateid     Template ID
+     *  @return   int                       0 if OK; >0 if KO
+     */
+    public function deleteTemplate($templateid)
+    {
+    	global $conf;
+    	$error = 0;
+    	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'printer_receipt_template';
+    	$sql .= " WHERE rowid = ".((int) $this->db->escape($templateid));
+    	$sql .= " AND entity = ".$conf->entity;
+    	$resql = $this->db->query($sql);
+    	if (!$resql) {
+    		$error++;
+    		$this->errors[] = $this->db->lasterror;
+    	}
+    	return $error;
+    }
 
     /**
      *  Function to Update a printer template in db

@@ -58,6 +58,7 @@ CREATE OR REPLACE FUNCTION dol_util_triggerall(DoEnable boolean) RETURNS integer
 
 -- Add triggers for timestamp fields named tms
 CREATE OR REPLACE FUNCTION update_modified_column_tms()	RETURNS TRIGGER AS $$ BEGIN NEW.tms = now(); RETURN NEW; END; $$ LANGUAGE plpgsql;
+
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accounting_account FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_accounting_fiscalyear FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_actioncomm FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
@@ -127,6 +128,9 @@ CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_localtax FOR EACH RO
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mailing FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mailing_cibles FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_menu FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mrp_mo FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mrp_mo_extrafields FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
+CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_mrp_production FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_notify FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_notify_def FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
 CREATE TRIGGER update_customer_modtime BEFORE UPDATE ON llx_opensurvey_comments FOR EACH ROW EXECUTE PROCEDURE update_modified_column_tms();
