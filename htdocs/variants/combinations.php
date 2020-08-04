@@ -621,9 +621,6 @@ if (!empty($id) || !empty($ref))
 			else{
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
-					if($i===1 && empty($TPriceImpact[$i])){
-						$TPriceImpact[$i] = $price_impact;
-					}
 
 					print '<tr>';
 					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel',$i).'</label>';
@@ -631,8 +628,8 @@ if (!empty($id) || !empty($ref))
 						print ' <a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
 					}
 					print '</td>';
-					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($TPriceImpact[$i]).'">';
-					print '<input type="checkbox" class="level_price_impact_percent" id="level_price_impact_percent_'.$i.'" name="level_price_impact_percent['.$i.']" '. (!empty($TPriceImpactPercent[$i]) ? ' checked' : '' ).'> <label for="level_price_impact_percent_'.$i.'">'.$langs->trans('PercentageVariation').'</label>';
+					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($prodcomb->combination_price_levels[$i]->variation_price).'">';
+					print '<input type="checkbox" class="level_price_impact_percent" id="level_price_impact_percent_'.$i.'" name="level_price_impact_percent['.$i.']" '. (!empty($prodcomb->combination_price_levels[$i]->variation_price_percentage) ? ' checked' : '' ).'> <label for="level_price_impact_percent_'.$i.'">'.$langs->trans('PercentageVariation').'</label>';
 
 					print '</td>';
 					print '</tr>';
