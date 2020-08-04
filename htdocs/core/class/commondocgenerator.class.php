@@ -513,7 +513,7 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		if (is_array($object->array_options) && count($object->array_options))
 		{
-			$extrafieldkey = $object->element;
+			$extrafieldkey = $object->table_element;
 
 			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
