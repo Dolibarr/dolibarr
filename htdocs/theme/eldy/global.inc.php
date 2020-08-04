@@ -3984,7 +3984,7 @@ div.boximport {
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #884400; }
 
-.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
+.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
 td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
 span.widthpictotitle { font-size: 1.7em; }
