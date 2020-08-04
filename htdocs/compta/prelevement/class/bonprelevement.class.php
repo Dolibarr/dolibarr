@@ -1209,11 +1209,9 @@ class BonPrelevement extends CommonObject
 			if (!$error)
 			{
 				$this->db->commit();
-
 				return count($factures_prev);
 			} else {
 				$this->db->rollback();
-
 				return -1;
 			}
 		} else {
