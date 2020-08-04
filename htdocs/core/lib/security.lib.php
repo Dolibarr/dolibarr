@@ -576,6 +576,18 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 				$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
+
+			if ($feature == 'agenda')// Also check myactions rights
+			{
+				if ($objectid > 0 && empty($user->rights->agenda->allactions->read)) {
+					require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
+					$action = new ActionComm($db);
+					$action->fetch($objectid);
+					if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id,$action->userassigned))) {
+						return false;
+					}
+				}
+			}
 		}
 		elseif (in_array($feature, $checkproject))
 		{
