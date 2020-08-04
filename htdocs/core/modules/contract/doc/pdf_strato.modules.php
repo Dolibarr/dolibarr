@@ -500,7 +500,7 @@ class pdf_strato extends ModelePDFContract
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		TCPDF		&$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -550,7 +550,7 @@ class pdf_strato extends ModelePDFContract
 
     /**
      * Show footer signature of page
-     * @param   TCPDF       &$pdf           Object PDF
+     * @param   TCPDF       $pdf            Object PDF
      * @param   int         $tab_top        tab height position
      * @param   int         $tab_height     tab height
      * @param   Translate   $outputlangs    Object language for output
@@ -579,7 +579,7 @@ class pdf_strato extends ModelePDFContract
     /**
      *  Show top header of page.
      *
-     *  @param	TCPDF		&$pdf     		Object PDF
+     *  @param	TCPDF		$pdf     		Object PDF
      *  @param  CommonObject	$object     	Object to show
      *  @param  int	    	$showaddress    0=no, 1=yes
      *  @param  Translate	$outputlangs	Object lang for output
