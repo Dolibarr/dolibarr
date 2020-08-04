@@ -186,7 +186,7 @@ if ($urllogo)
 }
 
 
-print '<br><br>';
+print '<br><br><br>';
 
 
 if (!empty($conf->paypal->enabled))
