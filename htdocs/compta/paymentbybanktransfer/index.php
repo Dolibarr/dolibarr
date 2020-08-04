@@ -68,7 +68,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 $thirdpartystatic = new Societe($db);
-$invoicestatic = new Facture($db);
+$invoicestatic = new FactureFournisseur($db);
 $bprev = new BonPrelevement($db);
 
 print '<div class="div-table-responsive-no-min">';

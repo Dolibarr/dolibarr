@@ -926,14 +926,11 @@ class BonPrelevement extends CommonObject
 				$sql .= " AND f.rowid = pfd.fk_facture_fourn";
 			}
 			$sql .= " AND s.rowid = f.fk_soc";
-			//if ($banque || $agence) $sql.= " AND s.rowid = sr.fk_soc";
-			$sql .= " AND f.fk_statut = 1";
+			$sql .= " AND f.fk_statut = 1";			// Invoice validated
 			$sql .= " AND f.paye = 0";
 			$sql .= " AND pfd.traite = 0";
 			$sql .= " AND f.total_ttc > 0";
 			$sql .= " AND pfd.ext_payment_id IS NULL";
-			//if ($banque) $sql.= " AND sr.code_banque = '".$conf->global->PRELEVEMENT_CODE_BANQUE."'";
-			//if ($agence) $sql.= " AND sr.code_guichet = '".$conf->global->PRELEVEMENT_CODE_GUICHET."'";
 
 			dol_syslog(__METHOD__."::Read invoices, sql=".$sql, LOG_DEBUG);
 
@@ -1052,16 +1049,12 @@ class BonPrelevement extends CommonObject
 
 		if (count($factures_prev) > 0)
 		{
-			if ($mode == 'real')
-			{
+			if ($mode == 'real') {
 				$ok = 1;
-			}
-			else
-			{
-				print $langs->trans("ModeWarning"); //"Option for real mode was not set, we stop after this simulation\n";
+			} else {
+				print $langs->trans("ModeWarning"); // "Option for real mode was not set, we stop after this simulation\n";
 			}
 		}
-
 
 		if ($ok)
 		{
@@ -1105,7 +1098,7 @@ class BonPrelevement extends CommonObject
 
 					// Create withdraw receipt in database
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_bons (";
-					$sql .= " ref, entity, datec, type";
+					$sql .= "ref, entity, datec, type";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->escape($ref)."'";
 					$sql .= ", ".$conf->entity;
@@ -1135,6 +1128,12 @@ class BonPrelevement extends CommonObject
 
 			if (!$error)
 			{
+				if ($type != 'bank-transfer') {
+					$fact = new Facture($this->db);
+				} else {
+					$fact = new FactureFournisseur($this->db);
+				}
+
 				/*
 				 * Create withdrawal receipt in database
 				 */
@@ -1143,11 +1142,14 @@ class BonPrelevement extends CommonObject
 					foreach ($factures_prev as $fac)	// Add a link in database for each invoice
 					{
 						// Fetch invoice
-						$fact = new Facture($this->db);
-						$fact->fetch($fac[0]);
+						$result = $fact->fetch($fac[0]);
+						if ($result < 0) {
+							$this->error = 'ERRORBONPRELEVEMENT Failed to load invoice with id '.$fac[0];
+							break;
+						}
 
 						/*
-						 * Add standing order
+						 * Add standing order. This add record into llx_prelevement_lignes
 						 *
 						 * $fac[0] : invoice_id
 						 * $fac[1] : ???
@@ -1158,9 +1160,7 @@ class BonPrelevement extends CommonObject
 						 * $fac[6] : cle rib
 						 * $fac[7] : amount
 						 * $fac[8] : client nom
-						 * $fac[2] : client id
 						 */
-
 						$ri = $this->AddFacture($fac[0], $fac[2], $fac[8], $fac[7], $fac[3], $fac[4], $fac[5], $fac[6], $type);
 						if ($ri <> 0)
 						{
@@ -1175,7 +1175,6 @@ class BonPrelevement extends CommonObject
 						$sql .= " WHERE rowid = ".$fac[1];
 
 						$resql = $this->db->query($sql);
-
 						if (!$resql)
 						{
 							$error++;
@@ -1199,6 +1198,9 @@ class BonPrelevement extends CommonObject
 					$this->reference_remise = $ref;
 
 					$id = $conf->global->PRELEVEMENT_ID_BANKACCOUNT;
+					if ($type == 'bank-transfer') {
+						$id = $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT;
+					}
 					$account = new Account($this->db);
 					if ($account->fetch($id) > 0)
 					{
@@ -1220,24 +1222,31 @@ class BonPrelevement extends CommonObject
 					// Generation of direct debit or credti transfer file $this->filename (May be a SEPA file for european countries)
 					// This also set the property $this->total with amount that is included into file
 					$result = $this->generate($format, $executiondate, $type);
+					if ($result < 0) {
+						/*var_dump($this->error);
+						var_dump($this->invoice_in_error); */
+						$error++;
+					}
 				}
 				dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
 			}
-			//var_dump($factures_prev);exit;
+			//var_dump($this->total);exit;
 
 			/*
 			 * Update total defined after generation of file
 			 */
-			$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
-			$sql .= " SET amount = ".price2num($this->total);
-			$sql .= " WHERE rowid = ".$this->id;
-			$sql .= " AND entity = ".$conf->entity;
+			if (! $error) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_bons";
+				$sql .= " SET amount = ".price2num($this->total);
+				$sql .= " WHERE rowid = ".$this->id;
+				$sql .= " AND entity = ".$conf->entity;
 
-			$resql = $this->db->query($sql);
-			if (!$resql)
-			{
-				$error++;
-				dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
+				$resql = $this->db->query($sql);
+				if (!$resql)
+				{
+					$error++;
+					dol_syslog(__METHOD__."::Error update total: ".$this->db->error(), LOG_ERR);
+				}
 			}
 
 			if (!$error && !$notrigger)
@@ -1256,16 +1265,12 @@ class BonPrelevement extends CommonObject
 			if (!$error)
 			{
 				$this->db->commit();
-			}
-			else
-			{
+				return count($factures_prev);
+			} else {
 				$this->db->rollback();
+				return -1;
 			}
-
-			return count($factures_prev);
-		}
-		else
-		{
+		} else {
 			return 0;
 		}
 	}
@@ -1571,9 +1576,10 @@ class BonPrelevement extends CommonObject
 				 * Section Debitor (sepa Debiteurs bloc lines)
 				 */
 
-				$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
+				$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 				$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-				$sql .= " f.ref as fac, pf.fk_facture as idfac, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
+				$sql .= " f.ref as fac, pf.fk_facture as idfac,";
+				$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture as f,";
@@ -1584,30 +1590,39 @@ class BonPrelevement extends CommonObject
 				$sql .= " WHERE pl.fk_prelevement_bons = ".$this->id;
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture = f.rowid";
+				$sql .= " AND f.fk_soc = soc.rowid";
 				$sql .= " AND soc.fk_pays = c.rowid";
-				$sql .= " AND soc.rowid = f.fk_soc";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
 				$sql .= " AND rib.default_rib = 1";
 				$sql .= " AND rib.type = 'ban'";
-				//print $sql;
 
 				// Define $fileDebiteurSection. One section DrctDbtTxInf per invoice.
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
+					$cachearraytotestduplicate = array();
+
 					$num = $this->db->num_rows($resql);
 					while ($i < $num)
 					{
 						$obj = $this->db->fetch_object($resql);
+
+						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
+							$this->invoice_in_error[$obj->idfac] = $this->error;
+							$result = -2;
+							break;
+						}
+						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
+
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$fileDebiteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
 						$this->total = $this->total + $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
-				}
-				else
-				{
+				} else {
+					$this->error = $this->db->lasterror();
 					fputs($this->file, 'ERROR DEBITOR '.$sql.$CrLf); // DEBITOR = Customers
 					$result = -2;
 				}
@@ -1676,9 +1691,10 @@ class BonPrelevement extends CommonObject
 				 * Section Creditor (sepa Crediteurs bloc lines)
 				 */
 
-				$sql = "SELECT soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
+				$sql = "SELECT soc.rowid as socid, soc.code_client as code, soc.address, soc.zip, soc.town, c.code as country_code,";
 				$sql .= " pl.client_nom as nom, pl.code_banque as cb, pl.code_guichet as cg, pl.number as cc, pl.amount as somme,";
-				$sql .= " f.ref as fac, pf.fk_facture_fourn as idfac, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
+				$sql .= " f.ref as fac, pf.fk_facture_fourn as idfac,";
+				$sql .= " rib.rowid, rib.datec, rib.iban_prefix as iban, rib.bic as bic, rib.rowid as drum, rib.rum, rib.date_rum";
 				$sql .= " FROM";
 				$sql .= " ".MAIN_DB_PREFIX."prelevement_lignes as pl,";
 				$sql .= " ".MAIN_DB_PREFIX."facture_fourn as f,";
@@ -1689,30 +1705,39 @@ class BonPrelevement extends CommonObject
 				$sql .= " WHERE pl.fk_prelevement_bons = ".$this->id;
 				$sql .= " AND pl.rowid = pf.fk_prelevement_lignes";
 				$sql .= " AND pf.fk_facture_fourn = f.rowid";
+				$sql .= " AND f.fk_soc = soc.rowid";
 				$sql .= " AND soc.fk_pays = c.rowid";
-				$sql .= " AND soc.rowid = f.fk_soc";
 				$sql .= " AND rib.fk_soc = f.fk_soc";
 				$sql .= " AND rib.default_rib = 1";
 				$sql .= " AND rib.type = 'ban'";
-				//print $sql;
 
 				// Define $fileCrediteurSection. One section DrctDbtTxInf per invoice.
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
+					$cachearraytotestduplicate = array();
+
 					$num = $this->db->num_rows($resql);
 					while ($i < $num)
 					{
 						$obj = $this->db->fetch_object($resql);
+
+						if (! empty($cachearraytotestduplicate[$obj->idfac])) {
+							$this->error = $langs->trans('ErrorCompanyHasDuplicateDefaultBAN', $obj->socid);
+							$this->invoice_in_error[$obj->idfac] = $this->error;
+							$result = -2;
+							break;
+						}
+						$cachearraytotestduplicate[$obj->idfac] = $obj->rowid;
+
 						$daterum = (!empty($obj->date_rum)) ? $this->db->jdate($obj->date_rum) : $this->db->jdate($obj->datec);
 						$fileCrediteurSection .= $this->EnregDestinataireSEPA($obj->code, $obj->nom, $obj->address, $obj->zip, $obj->town, $obj->country_code, $obj->cb, $obj->cg, $obj->cc, $obj->somme, $obj->fac, $obj->idfac, $obj->iban, $obj->bic, $daterum, $obj->drum, $obj->rum, $type);
 						$this->total = $this->total + $obj->somme;
 						$i++;
 					}
 					$nbtotalDrctDbtTxInf = $i;
-				}
-				else
-				{
+				} else {
+					$this->error = $this->db->lasterror();
 					fputs($this->file, 'ERROR CREDITOR '.$sql.$CrLf); // CREDITORS = Suppliers
 					$result = -2;
 				}

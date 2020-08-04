@@ -88,12 +88,9 @@ if (empty($reshook))
 
 	    // $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
 	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages($bprev->error, $bprev->errors, 'errors');
-		}
-		elseif ($result == 0)
-		{
+		} elseif ($result == 0) {
 			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 			setEventMessages($mesg, null, 'errors');
 			$mesg .= '<br>'."\n";
@@ -101,9 +98,7 @@ if (empty($reshook))
 			{
 				$mesg .= '<span class="warning">'.$val."</span><br>\n";
 			}
-		}
-		else
-		{
+		} else {
 			if ($type != 'bank-transfer') {
 				setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
 			} else {

@@ -145,3 +145,4 @@ InfoTransData=Amount: %s<br>Method: %s<br>Date: %s
 InfoRejectSubject=Direct debit payment order refused
 InfoRejectMessage=Hello,<br><br>the direct debit payment order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Option for real mode was not set, we stop after this simulation
+ErrorCompanyHasDuplicateDefaultBAN=Company with id %s has more than one default bank account. No way to know wich one to use.
