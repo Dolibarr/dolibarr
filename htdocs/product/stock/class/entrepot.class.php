@@ -878,6 +878,7 @@ class Entrepot extends CommonObject
 		global $conf, $user, $langs;
 
 		$langs->load("stocks");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';

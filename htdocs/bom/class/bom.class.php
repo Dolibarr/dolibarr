@@ -945,6 +945,7 @@ class BOM extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("mrp");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';

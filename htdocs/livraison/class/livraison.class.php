@@ -1068,6 +1068,7 @@ class Livraison extends CommonObject
 		global $conf, $user, $langs;
 
 		$langs->load("deliveries");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'typhon';
