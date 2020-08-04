@@ -454,7 +454,7 @@ class SupplierInvoices extends DolibarrApi
         $paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
         $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
         $paiement->paiementid = $paiementid;
-        $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
+        $paiement->oper = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
         $paiement->num_payment = $num_payment;
         $paiement->note_public = $comment;
 
