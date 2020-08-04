@@ -530,7 +530,6 @@ function Search2(keyCodeForEnter) {
 				}
 			}
 			if (eventKeyCode == keyCodeForEnter){
-				ClearSearch();
 				if (data.length == 0) {
 					$('#search').val('<?php
 					$langs->load('errors');
@@ -538,6 +537,7 @@ function Search2(keyCodeForEnter) {
 					?>');
 					$('#search').select();
 				}
+				else ClearSearch();
 			}
 		});
 	}
