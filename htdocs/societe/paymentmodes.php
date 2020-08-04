@@ -848,7 +848,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
-				print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print '<input type="submit" class="button buttongen" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
 				print '</form>';
 			}
 			print '</td></tr>';
@@ -903,7 +903,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="socid" value="'.$object->id.'">';
 			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
-			//print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
+			//print '<input type="submit" class="button buttongen" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
 			print '</form>';
 		}
 		print '</td></tr>';
