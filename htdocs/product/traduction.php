@@ -73,11 +73,11 @@ $cancel != $langs->trans("Cancel") &&
 	$current_lang = $langs->getDefaultLang();
 
 	// update de l'objet
-	if ($_POST["forcelangprod"] == $current_lang)
-	{
+	if ($_POST["forcelangprod"] == $current_lang) {
 		$object->label			= $_POST["libelle"];
 		$object->description = dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
+		$object->update($object->id, $user);
 	} else {
 		$object->multilangs[$_POST["forcelangprod"]]["label"]		= $_POST["libelle"];
 		$object->multilangs[$_POST["forcelangprod"]]["description"] = dol_htmlcleanlastbr($_POST["desc"]);
@@ -85,8 +85,7 @@ $cancel != $langs->trans("Cancel") &&
 	}
 
 	// sauvegarde en base
-	if ($object->setMultiLangs($user) > 0)
-	{
+	if ($object->setMultiLangs($user) > 0) {
 		$action = '';
 	} else {
 		$action = 'add';
