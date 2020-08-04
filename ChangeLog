@@ -23,13 +23,12 @@ FIX: duration fields size with firefox
 FIX: Edit extrafield of type long text loose carriage returns
 FIX: Fails to retraive accounting code of social contribution sometimes
 FIX: Filter too large for extrafields with type text or html
-FIX: for #14253
 FIX: If using a rounding step, localtax1+2 not included in total
 FIX: input field of extrafields must keep data if form submit fails.
 FIX: Label of opportunities in graph with special chars badly encoded
 FIX: locataxes lost on lines when cloning a vendor invoice
 FIX: Look and feel v12
-FIX: Missing PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE conf in supplier order
+FIX: Missing PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE conf support in supplier order
 FIX: Navigation in object fails to find the next ref in some cases
 FIX: null required
 FIX: order by amount ht uses wrong column
@@ -37,7 +36,7 @@ FIX: Order by amount in product propal stats must be done on d.total_ht and not 
 FIX: page for confirmation of payments is empty
 FIX: Param of fetch_name_optionals_label must be object->table_element
 FIX: Picto of HRM module
-FIX: product label and desc were never updated when modifying trans
+FIX: product label and desc were never updated when modifying translation
 FIX: redirect on contact card from main search
 FIX: Reposition and nav
 FIX: search warehouse list
@@ -57,6 +56,7 @@ FIX: #14209
 FIX: #14222
 FIX: #14236
 FIX: #14241 Mysql 8 compatibility
+FIX: #14253
 FIX: #14256
 FIX: #14259
 FIX: #14279
