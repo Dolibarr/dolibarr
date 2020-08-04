@@ -593,8 +593,8 @@ if ($ispaymentok)
 	{
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$invoice = new Facture($db);
-		$result = $invoice->fetch($tmptag['INV']);
+		$object = new Facture($db);
+		$result = $object->fetch($tmptag['INV']);
 		if ($result)
 		{
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
@@ -623,9 +623,9 @@ if ($ispaymentok)
 				$paiement->datepaye = $now;
 				if ($currencyCodeType == $conf->currency)
 				{
-					$paiement->amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching with invoice id
+					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with invoice id
 				} else {
-					$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
+					$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
 					$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
 					$ispostactionok = -1;
@@ -662,7 +662,7 @@ if ($ispaymentok)
 					if ($bankaccountid > 0)
 					{
 						$label = '(CustomerInvoicePayment)';
-						if ($invoice->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+						if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 						if ($result < 0)
 						{
@@ -709,10 +709,12 @@ if ($ispaymentok)
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Call trigger
-    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
-    if ($result < 0) $error++;
-    // End call triggers
+    if (is_object($object) && method_exists($object, 'call_trigger')) {
+	    // Call trigger
+	    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
+	    if ($result < 0) $error++;
+	    // End call triggers
+    }
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     if ($TRANSACTIONID) print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
@@ -831,10 +833,12 @@ if ($ispaymentok)
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Call trigger
-    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
-    if ($result < 0) $error++;
-    // End call triggers
+    if (is_object($object) && method_exists($object, 'call_trigger')) {
+    	// Call trigger
+	    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
+	    if ($result < 0) $error++;
+	    // End call triggers
+    }
 
     print $langs->trans('DoExpressCheckoutPaymentAPICallFailed')."<br>\n";
     print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
