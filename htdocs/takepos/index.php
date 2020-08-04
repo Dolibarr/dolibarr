@@ -529,8 +529,19 @@ function Search2(keyCodeForEnter) {
 					ClickProduct(0);
 				}
 			}
+			if (eventKeyCode == keyCodeForEnter){
+				ClearSearch();
+				if (data.length == 0) {
+					$('#search').val('<?php
+					$langs->load('errors');
+					echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
+					?>');
+					$('#search').select();
+				}
+			}
 		});
 	}
+	
 }
 
 function Edit(number) {
