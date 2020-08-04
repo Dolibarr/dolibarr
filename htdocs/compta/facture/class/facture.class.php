@@ -4296,6 +4296,7 @@ class Facture extends CommonInvoice
 		global $conf, $langs;
 
 		$langs->load("bills");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele))
 		{

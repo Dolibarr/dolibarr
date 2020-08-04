@@ -2630,6 +2630,7 @@ class SupplierProposal extends CommonObject
         global $conf, $langs;
 
         $langs->load("supplier_proposal");
+		$outputlangs->load("products");
 
         if (!dol_strlen($modele)) {
             $modele = 'aurore';

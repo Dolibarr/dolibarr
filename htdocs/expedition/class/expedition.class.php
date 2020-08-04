@@ -2462,6 +2462,7 @@ class Expedition extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("sendings");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'rouget';

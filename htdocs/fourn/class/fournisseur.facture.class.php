@@ -2637,6 +2637,7 @@ class FactureFournisseur extends CommonInvoice
 		global $conf, $user, $langs;
 
 		$langs->load("suppliers");
+		$outputlangs->load("products");
 
 		// Set the model on the model name to use
 		if (empty($modele))
