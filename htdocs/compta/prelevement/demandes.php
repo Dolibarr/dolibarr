@@ -105,14 +105,17 @@ if ($type != 'bank-transfer') {
 llxHeader('', $title);
 
 $thirdpartystatic = new Societe($db);
-$invoicestatic = new Facture($db);
+if ($type == 'bank-transfer') {
+	$invoicestatic = new FactureFournisseur($db);
+} else {
+	$invoicestatic = new Facture($db);
+}
 
 // List of requests
 
 $sql = "SELECT f.ref, f.rowid, f.total_ttc,";
 $sql .= " s.nom as name, s.rowid as socid,";
-$sql .= " pfd.date_demande as date_demande,";
-$sql .= " pfd.fk_user_demande";
+$sql .= " pfd.date_demande as date_demande, pfd.amount, pfd.fk_user_demande";
 if ($type != 'bank-transfer') {
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
 } else {
@@ -126,6 +129,7 @@ $sql .= " AND f.entity IN (".getEntity('invoice').")";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 if ($socid) $sql .= " AND f.fk_soc = ".$socid;
 if (!$status) $sql .= " AND pfd.traite = 0";
+$sql .= " AND pfd.ext_payment_id IS NULL";
 if ($status) $sql .= " AND pfd.traite = ".$status;
 $sql .= " AND f.total_ttc > 0";
 if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
@@ -140,7 +144,6 @@ if ($type != 'bank-transfer') {
 if ($search_facture) $sql .= natural_search("f.ref", $search_facture);
 if ($search_societe) $sql .= natural_search("s.nom", $search_societe);
 $sql .= $db->order($sortfield, $sortorder);
-
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -205,7 +208,7 @@ print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print_liste_field_titre("Bill", $_SERVER["PHP_SELF"]);
 print_liste_field_titre("Company", $_SERVER["PHP_SELF"]);
-print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
+print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'right ');
 print_liste_field_titre("DateRequest", $_SERVER["PHP_SELF"], "", "", $param, '', '', '', 'center ');
 print_liste_field_titre('');
 print '</tr>';
@@ -228,12 +231,12 @@ while ($i < min($num, $limit))
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) break; // Should not happen
 
+	$invoicestatic->fetch($obj->rowid);
+
 	print '<tr class="oddeven">';
 
 	// Ref facture
 	print '<td>';
-	$invoicestatic->id = $obj->rowid;
-	$invoicestatic->ref = $obj->ref;
 	print $invoicestatic->getNomUrl(1, 'withdraw');
 	print '</td>';
 
@@ -243,7 +246,9 @@ while ($i < min($num, $limit))
 	print $thirdpartystatic->getNomUrl(1, 'customer');
 	print '</td>';
 
-	print '<td class="right">'.price($obj->total_ttc).'</td>';
+	print '<td class="right">';
+	print price($obj->amount, 1, $langs, 1, -1, -1, $conf->currency).' / '.price($obj->total_ttc, 1, $langs, 1, -1, -1, $conf->currency);
+	print '</td>';
 
 	print '<td class="center">'.dol_print_date($db->jdate($obj->date_demande), 'day').'</td>';
 
