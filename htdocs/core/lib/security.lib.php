@@ -564,7 +564,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid = 0, $tableand
 					require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 					$action = new ActionComm($db);
 					$action->fetch($objectid);
-					if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id,$action->userassigned))) {
+					if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
 						return false;
 					}
 				}
