@@ -266,7 +266,6 @@ function restrictedArea($user, $features, $objectid = 0, $tableandshare = '', $f
 					$nbko++;
 				}
 			}
-
 		}
 		elseif (! empty($feature2))														// This is for permissions on 2 levels
 		{
