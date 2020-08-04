@@ -5953,7 +5953,7 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams ? $moreparams : '');
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter);
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
