@@ -292,7 +292,9 @@ class CommandeFournisseurDispatch extends CommonObject
 				$this->batch = $obj->batch;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
-                                $this->fetch_optionals();
+				$this->fk_reception = $obj->fk_reception;
+
+				$this->fetch_optionals();
             }
             $this->db->free($resql);
 
