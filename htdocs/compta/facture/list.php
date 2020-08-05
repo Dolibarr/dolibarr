@@ -1461,7 +1461,7 @@ if ($resql)
 			{
 				$userstatic->id = $obj->fk_user_author;
 				$userstatic->login = $obj->login;
-				print '<td align="center">';
+				print '<td class="center tdoverflowmax100">';
 				if ($userstatic->id) print $userstatic->getLoginUrl(1);
 				else print '&nbsp;';
 				print "</td>\n";
