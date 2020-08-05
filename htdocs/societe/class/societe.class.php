@@ -128,6 +128,7 @@ class Societe extends CommonObject
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
 		'parent' =>array('type'=>'integer', 'label'=>'Parent', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+		'old' =>array('type'=>'integer', 'label'=>'Old', 'enabled'=>1, 'visible'=>-1, 'position'=>21),
 		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>25),
 		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
 		'nom' =>array('type'=>'varchar(128)', 'label'=>'Nom', 'enabled'=>1, 'visible'=>-1, 'position'=>35, 'showoncombobox'=>1),
@@ -1220,6 +1221,7 @@ class Societe extends CommonObject
 			$sql .= ",url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 
 			$sql .= ",parent = ".($this->parent > 0 ? $this->parent : "null");
+			$sql .= ",old = ".($this->old > 0 ? $this->old : "null");
 
 			$sql .= ",note_private = ".(!empty($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null");
 			$sql .= ",note_public = ".(!empty($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null");
@@ -1468,7 +1470,7 @@ class Societe extends CommonObject
 		$sql .= ', s.fk_effectif as effectif_id';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code';
 		$sql .= ', s.webservices_url, s.webservices_key';
-		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.barcode';
+		$sql .= ', s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.parent, s.old, s.barcode';
 		$sql .= ', s.fk_departement as state_id, s.fk_pays as country_id, s.fk_stcomm, s.remise_supplier, s.mode_reglement, s.cond_reglement, s.fk_account, s.tva_assuj';
 		$sql .= ', s.mode_reglement_supplier, s.cond_reglement_supplier, s.localtax1_assuj, s.localtax1_value, s.localtax2_assuj, s.localtax2_value, s.fk_prospectlevel, s.default_lang, s.logo, s.logo_squarred';
 		$sql .= ', s.fk_shipping_method';
@@ -1561,7 +1563,8 @@ class Societe extends CommonObject
 				$this->fax = $obj->fax;
 
 				$this->parent = $obj->parent;
-
+				$this->old = $obj->old;
+				
 				$this->idprof1		= $obj->idprof1;
 				$this->idprof2		= $obj->idprof2;
 				$this->idprof3		= $obj->idprof3;
@@ -3047,6 +3050,33 @@ class Societe extends CommonObject
 			if ($resql)
 			{
 				$this->parent = $id;
+				return 1;
+			} else {
+				return -1;
+			}
+		} else return -1;
+	}
+
+  // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *    Define old commany of current company
+	 *
+	 *    @param	int		$id     Id of thirdparty to set or '' to remove
+	 *    @return	int     		<0 if KO, >0 if OK
+	 */
+    public function set_old($id)
+	{
+        // phpcs:enable
+		if ($this->id)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."societe";
+			$sql .= " SET old = ".($id > 0 ? $id : "null");
+			$sql .= " WHERE rowid = ".$this->id;
+			dol_syslog(get_class($this).'::set_old', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$this->old = $id;
 				return 1;
 			} else {
 				return -1;

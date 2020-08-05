@@ -4812,14 +4812,14 @@ class Form
 	 */
     public function form_thirdparty($page, $selected = '', $htmlname = 'socid', $filter = '', $showempty = 0, $showtype = 0, $forcecombo = 0, $events = array(), $nooutput = 0)
 	{
-        // phpcs:enable
+		// phpcs:enable
 		global $langs;
 
 		$out = '';
 		if ($htmlname != "none")
 		{
 			$out .= '<form method="post" action="'.$page.'">';
-			$out .= '<input type="hidden" name="action" value="set_thirdparty">';
+			$out .= '<input type="hidden" name="action" value="set_thirdparty_'.$htmlname.'">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 			$out .= $this->select_company($selected, $htmlname, $filter, $showempty, $showtype, $forcecombo, $events);
 			$out .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
