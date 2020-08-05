@@ -1582,7 +1582,7 @@ class Societe extends CommonObject
 
 				$this->parent = $obj->parent;
 				$this->old = $obj->old;
-				
+
 				$this->idprof1		= $obj->idprof1;
 				$this->idprof2		= $obj->idprof2;
 				$this->idprof3		= $obj->idprof3;
