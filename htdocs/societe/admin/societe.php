@@ -211,6 +211,33 @@ if ($action == "setaskforshippingmet") {
 	}
 }
 
+//Activate "Disable parent company"
+if ($action == "setdisableparentcompany") {
+    $setdisableprospectcustomer = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "SOCIETE_DISABLE_PARENTCOMPANY", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
+    if (!$res > 0) $error++;
+    if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+//Activate "Disable old company"
+if ($action == "setdisableoldcompany") {
+    $setdisableprospectcustomer = GETPOST('value', 'int');
+    $res = dolibarr_set_const($db, "SOCIETE_DISABLE_OLDCOMPANY", $setdisableprospectcustomer, 'yesno', 0, '', $conf->entity);
+    if (!$res > 0) $error++;
+    if (!$error)
+    {
+        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+        setEventMessages($langs->trans("Error"), null, 'errors');
+    }
+}
+
+
 //Activate "Disable prospect/customer type"
 if ($action == "setdisableprospectcustomer") {
     $setdisableprospectcustomer = GETPOST('value', 'int');
@@ -813,6 +840,38 @@ if (!empty($conf->global->SOCIETE_ASK_FOR_SHIPPING_METHOD))
 } else {
 	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setaskforshippingmet&value=1">';
 	print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+// DISABLE PARENT COMPANY
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("DisableParentCompany").'</td>';
+print '<td>&nbsp</td>';
+print '<td class="center">';
+if (!empty($conf->global->SOCIETE_DISABLE_PARENTCOMPANY))
+{
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableparentcompany&value=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableparentcompany&value=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
+// DISABLE OLD COMPANY
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("DisableOldCompany").'</td>';
+print '<td>&nbsp</td>';
+print '<td class="center">';
+if (!empty($conf->global->SOCIETE_DISABLE_OLDCOMPANY))
+{
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableoldcompany&value=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
+} else {
+    print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisableoldcompany&value=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
 }
 print '</a></td>';
 print '</tr>';
