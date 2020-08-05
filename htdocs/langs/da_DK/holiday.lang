@@ -15,6 +15,7 @@ CancelCP=Aflyst
 RefuseCP=Afviste
 ValidatorCP=Approbator
 ListeCP=Liste over orlov
+Leave=Leave request
 LeaveId=Forlad ID
 ReviewedByCP=Will be reviewed by
 UserID=bruger ID

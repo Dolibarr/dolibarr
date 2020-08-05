@@ -1085,73 +1085,6 @@ if ($action == 'create' || $action == 'adduserldap')
 			}
 		}
 	}
-	// // Skype
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_skype))
-	// 	{
-	// 		print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
-	// 		print $ldap_skype;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-	// // Twitter
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_twitter))
-	// 	{
-	// 		print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
-	// 		print $ldap_twitter;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-	// // Facebook
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_facebook))
-	// 	{
-	// 		print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
-	// 		print $ldap_facebook;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-    // // LinkedIn
-    // if (! empty($conf->socialnetworks->enabled))
-    // {
-    //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-    //     print '<td>';
-    //     if (! empty($ldap_linkedin))
-    //     {
-    //         print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
-    //         print $ldap_linkedin;
-    //     }
-    //     else
-    //     {
-    //         print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
-    //     }
-    //     print '</td></tr>';
-    // }
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -1529,7 +1462,7 @@ if ($action == 'create' || $action == 'adduserldap')
 			print $form->textwithpicto($text, $langs->trans("InternalExternalDesc"));
 			print '</td><td>';
 			$type = $langs->trans("Internal");
-			if ($object->societe_id > 0) $type = $langs->trans("External");
+			if ($object->socid > 0) $type = $langs->trans("External");
 			print $type;
 			if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 			print '</td></tr>'."\n";
@@ -1661,16 +1594,22 @@ if ($action == 'create' || $action == 'adduserldap')
 			print "</tr>\n";
 
 			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+			print '<tr><td>'.$langs->trans("DateOfEmployment").'</td>';
 			print '<td>';
-			print dol_print_date($object->dateemployment, 'day');
-			print '</td>';
-			print "</tr>\n";
+			if ($object->dateemployment) {
+				print '<span class="opacitymedium">'.$langs->trans("FromDate ").'</span>';
+				print dol_print_date($object->dateemployment, 'day');
+			}
+			//print '</td>';
+			//print "</tr>\n";
 
 			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
-			print '<td>';
-			print dol_print_date($object->dateemploymentend);
+			//print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			//print '<td>';
+			if ($object->dateemploymentend) {
+				print '<span class="opacitymedium"> - '.$langs->trans("To ").'</span>';
+				print dol_print_date($object->dateemploymentend, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -1766,10 +1705,10 @@ if ($action == 'create' || $action == 'adduserldap')
 				} else {
 					print $langs->trans("ThisUserIsNot");
 				}
-				if (!empty($object->contactid))
+				if (!empty($object->contact_id))
 				{
 					$contact = new Contact($db);
-					$contact->fetch($object->contactid);
+					$contact->fetch($object->contact_id);
 					if ($object->socid > 0) print ' / ';
 					else print '<br>';
 					print $contact->getNomUrl(1, '');
@@ -2214,15 +2153,15 @@ if ($action == 'create' || $action == 'adduserldap')
 		   	} else {
 				// Select mode
 				$type = 0;
-				if ($object->contactid) $type = $object->contactid;
+				if ($object->contact_id) $type = $object->contact_id;
 
-				if ($object->socid > 0 && ! ($object->contactid > 0)) {	// external user but no link to a contact
+				if ($object->socid > 0 && ! ($object->contact_id > 0)) {	// external user but no link to a contact
 					print img_picto('', 'company').$form->select_company($object->socid, 'socid', '', '&nbsp;');
 					print img_picto('', 'contact').$form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, '', false, 1);
 					if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
-				} elseif ($object->socid > 0 && $object->contactid > 0) {	// external user with a link to a contact
+				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
-					print img_picto('', 'contact').$form->selectcontacts(0, $object->contactid, 'contactid', 1, '', '', 1, '', false, 1);
+					print img_picto('', 'contact').$form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, '', false, 1);
 			   		if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 				} else {	// $object->socid is not > 0 here
 					print img_picto('', 'company').$form->select_company(0, 'socid', '', '&nbsp;');	// We keep thirdparty empty, contact is already set
@@ -2523,11 +2462,11 @@ if ($action == 'create' || $action == 'adduserldap')
 					$societe = new Societe($db);
 					$societe->fetch($object->socid);
 					print $societe->getNomUrl(1, '');
-					if ($object->contactid)
+					if ($object->contact_id)
 					{
 						$contact = new Contact($db);
-						$contact->fetch($object->contactid);
-						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contactid.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
+						$contact->fetch($object->contact_id);
+						print ' / <a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$object->contact_id.'">'.img_object($langs->trans("ShowContact"), 'contact').' '.dol_trunc($contact->getFullName($langs), 32).'</a>';
 					}
 				} else {
 					print $langs->trans("ThisUserIsNot");

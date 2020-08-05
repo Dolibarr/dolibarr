@@ -725,15 +725,15 @@ class Propal extends CommonObject
 	/**
 	 *  Update a proposal line
 	 *
-	 *  @param      int			$rowid           	Id de la ligne
-	 *  @param      float		$pu		     	  	Prix unitaire (HT ou TTC selon price_base_type)
+	 *  @param      int			$rowid           	Id of line
+	 *  @param      float		$pu		     	  	Unit price (HT or TTC depending on price_base_type)
 	 *  @param      float		$qty            	Quantity
-	 *  @param      float		$remise_percent  	Remise effectuee sur le produit
-	 *  @param      float		$txtva	          	Taux de TVA
+	 *  @param      float		$remise_percent  	Discount on line
+	 *  @param      float		$txtva	          	VAT Rate (Can be '1.23' or '1.23 (ABC)')
 	 * 	@param	  	float		$txlocaltax1		Local tax 1 rate
 	 *  @param	  	float		$txlocaltax2		Local tax 2 rate
 	 *  @param      string		$desc            	Description
-	 *	@param	  	string		$price_base_type	HT ou TTC
+	 *	@param	  	string		$price_base_type	HT or TTC
 	 *	@param      int			$info_bits        	Miscellaneous informations
 	 *	@param		int			$special_code		Special code (also used by externals modules!)
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
@@ -1289,9 +1289,10 @@ class Propal extends CommonObject
 	 *
 	 *      @param	    User	$user		    User making the clone
 	 *		@param		int		$socid			Id of thirdparty
+	 *		@param		int		$forceentity	Entity id to force
 	 * 	 	@return		int						New id of clone
 	 */
-    public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $forceentity = null)
 	{
 		global $conf, $hookmanager;
 
@@ -1345,6 +1346,7 @@ class Propal extends CommonObject
 
 		$object->id = 0;
 		$object->ref = '';
+		$object->entity = (! empty($forceentity) ? $forceentity : $object->entity);
 		$object->statut = self::STATUS_DRAFT;
 
 		// Clear fields
@@ -1497,7 +1499,9 @@ class Propal extends CommonObject
 				$this->note                 = $obj->note_private; // TODO deprecated
 				$this->note_private         = $obj->note_private;
 				$this->note_public          = $obj->note_public;
-				$this->statut               = (int) $obj->fk_statut;
+
+				$this->status               = (int) $obj->fk_statut;
+				$this->statut               = $this->status;		// deprecated
 				$this->statut_libelle       = $obj->statut_label;
 
 				$this->datec                = $this->db->jdate($obj->datec); // TODO deprecated
@@ -3660,6 +3664,7 @@ class Propal extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("propale");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'azur';
@@ -4117,6 +4122,8 @@ class PropaleLigne extends CommonObjectLine
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
 
+		if (empty($this->id) && ! empty($this->rowid)) $this->id = $this->rowid;
+
 		// Clean parameters
 		if (empty($this->tva_tx)) $this->tva_tx = 0;
 		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
@@ -4190,7 +4197,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
 		$sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
 
-		$sql .= " WHERE rowid = ".$this->rowid;
+		$sql .= " WHERE rowid = ".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4198,7 +4205,6 @@ class PropaleLigne extends CommonObjectLine
 		{
 			if (!$error)
 			{
-				$this->id = $this->rowid;
 				$result = $this->insertExtraFields();
 				if ($result < 0)
 				{

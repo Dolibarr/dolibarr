@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Πελάτης επαφή τιμολόγιο
 TypeContact_propal_external_CUSTOMER=Πελάτης επαφή που παρακολουθεί την Προσφορά
 TypeContact_propal_external_SHIPPING=Επικοινωνία με τον πελάτη για παράδοση
 # Document models
-DocModelAzurDescription=Ένα πλήρες πρότυπο πρότυπο 
+DocModelAzurDescription=Ένα πλήρες πρότυπο πρότυπο (παλιά εφαρμογή του Cyan πρότυπο)
 DocModelCyanDescription=Ένα πλήρες μοντέλο προτάσεων
 DefaultModelPropalCreate=Δημιουργία προεπιλεγμένων μοντέλων
 DefaultModelPropalToBill=Προεπιλεγμένο πρότυπο όταν κλείνει μια Προσφορά (να τιμολογηθεί)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Προεπιλεγμένο πρότυπο όταν κλ
 ProposalCustomerSignature=Γραπτή αποδοχή, σφραγίδα εταιρείας, ημερομηνία και υπογραφή
 ProposalsStatisticsSuppliers=Στατιστικά στοιχεία για τις προτάσεις προμηθευτών
 CaseFollowedBy=Περίπτωση που ακολουθείται
+SignedOnly=Signed only

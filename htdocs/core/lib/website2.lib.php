@@ -462,7 +462,7 @@ function showWebsiteTemplates(Website $website)
 
 	$colspan = 2;
 
-	print '<!-- For to import website template -->'."\n";
+	print '<!-- For website template import -->'."\n";
 	print '<table class="noborder centpercent">';
 
 	// Title

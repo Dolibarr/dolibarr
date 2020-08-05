@@ -1109,8 +1109,6 @@ if (!$error && $massaction == 'validate' && $permissiontoadd)
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
-				//if (in_array($objecttmp->element, array('societe','member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
-				//else
 				$result = $objecttmp->validate($user);
 				if ($result == 0)
 				{
@@ -1175,6 +1173,7 @@ if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permissio
     }
 }
 
+//var_dump($_POST);var_dump($massaction);exit;
 
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (!$error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permissiontodelete)

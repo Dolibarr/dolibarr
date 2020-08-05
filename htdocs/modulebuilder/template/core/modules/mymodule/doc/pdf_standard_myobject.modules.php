@@ -70,9 +70,9 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -147,7 +147,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 		$this->db = $db;
 		$this->name = "standard";
-		$this->description = $langs->trans('PDFStandardDescription');
+		$this->description = $langs->trans('DocumentModelStandardPDF');
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Dimension page
@@ -160,17 +160,6 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
 		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
-
-		$this->option_logo = 1; // Display logo
-		$this->option_tva = 1; // Manage the vat option FACTURE_TVAOPTION
-		$this->option_modereg = 1; // Display payment mode
-		$this->option_condreg = 1; // Display payment terms
-		$this->option_codeproduitservice = 1; // Display product-service code
-		$this->option_multilang = 1; // Available in several languages
-		$this->option_escompte = 1; // Displays if there has been a discount
-		$this->option_credit_note = 1; // Support credit notes
-		$this->option_freetext = 1; // Support add of a personalised text
-		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 
 		// Get source company
 		$this->emetteur = $mysoc;

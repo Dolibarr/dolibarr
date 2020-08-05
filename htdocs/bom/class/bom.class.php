@@ -251,7 +251,7 @@ class BOM extends CommonObject
 	    if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
 
 	    // Get lines so they will be clone
-	    //foreach($object->lines as $line)
+	    //foreach ($object->lines as $line)
 	    //	$line->fetch_optionals();
 
 	    // Reset some properties
@@ -333,8 +333,10 @@ class BOM extends CommonObject
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
+
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		$this->calculateCosts();
+
 		return $result;
 	}
 
@@ -927,6 +929,7 @@ class BOM extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("mrp");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'standard';
@@ -1002,7 +1005,11 @@ class BOM extends CommonObject
 
 		foreach ($this->lines as &$line) {
 			$tmpproduct = new Product($this->db);
-			$tmpproduct->fetch($line->fk_product);
+			$result= $tmpproduct->fetch($line->fk_product);
+			if ($result < 0) {
+				$this->error=$tmpproduct->error;
+				return -1;
+			}
 			$line->unit_cost = price2num((!empty($tmpproduct->cost_price)) ? $tmpproduct->cost_price : $tmpproduct->pmp);
 			if (empty($line->unit_cost)) {
 				if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0)

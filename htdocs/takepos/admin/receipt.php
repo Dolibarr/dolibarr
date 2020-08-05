@@ -89,7 +89,7 @@ print load_fiche_titre($langs->trans("PrintMethod"), '', '');
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td><td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td><td class="right">'.$langs->trans("Status").'</td>';
 print "</tr>\n";
 
 // Browser method
@@ -97,7 +97,7 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('Browser');
 print '<td>';
 print $langs->trans('BrowserMethodDescription');
-print '</td><td class="center">';
+print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');
@@ -107,17 +107,24 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "browser")
 print "</td></tr>\n";
 
 // Receipt printer module
-if ($conf->receiptprinter->enabled) {
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('DolibarrReceiptPrinter');
 	print '<td>';
 	print $langs->trans('ReceiptPrinterMethodDescription');
-	print '</td><td class="center">';
-	if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter")
-	{
-		print img_picto($langs->trans("Activated"), 'switch_on');
+	print '<br>';
+	print '<a href="'.DOL_URL_ROOT.'/admin/receiptprinter.php">'.$langs->trans("Setup").'</a>';
+	print '</td><td class="right">';
+	if ($conf->receiptprinter->enabled) {
+		if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
+			print img_picto($langs->trans("Activated"), 'switch_on');
+		} else {
+			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		}
 	} else {
-		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmethod&value=receiptprinter">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+		print '<span class="opacitymedium">';
+		print $langs->trans("ModuleReceiptPrinterMustBeEnabled");
+		print '</span>';
 	}
 	print "</td></tr>\n";
 }
@@ -127,7 +134,7 @@ print '<tr class="oddeven"><td>';
 print "TakePOS Connector";
 print '<td>';
 print $langs->trans('TakeposConnectorMethodDescription');
-print '</td><td class="center">';
+print '</td><td class="right">';
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 {
     print img_picto($langs->trans("Activated"), 'switch_on');

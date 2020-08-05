@@ -66,12 +66,14 @@ if (GETPOST('action', 'alpha') == 'set')
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
-llxHeader('', $langs->trans("CashDeskSetup"));
+$arrayofcss = array("/takepos/css/colorbox.css");
+
+llxHeader('', $langs->trans("CashDeskSetup"), '', '', 0, 0, $arrayofjs, $arrayofcss);
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
 $head = takepos_prepare_head();
-dol_fiche_head($head, 'bar', 'TakePOS', -1);
+dol_fiche_head($head, 'bar', 'TakePOS', -1, 'cash-register');
 print '<br>';
 
 
@@ -79,6 +81,20 @@ print '<br>';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set">';
+
+?>
+<script type="text/javascript" src="<?php echo DOL_URL_ROOT ?>/takepos/js/jquery.colorbox-min.js"></script>	<!-- TODO It seems we don't need this -->
+<script type="text/javascript">
+function Floors() {
+	console.log("Open box to select floor");
+	$.colorbox({href:"<?php echo DOL_URL_ROOT ?>/takepos/floors.php?mode=edit&place=0", width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Floors"); ?>"});
+}
+</script>
+
+<?php
+
+print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
+print '<br><br>';
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder centpercent">';
@@ -89,14 +105,16 @@ print "</tr>\n";
 if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD != "browser") {
 	print '<tr class="oddeven value"><td>';
 	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-	print '<td colspan="2">';
+	print '</td>';
+	print '<td>';
 	print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
 	//print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
 	print '</td></tr>';
 
 	print '<tr class="oddeven value"><td>';
 	print $langs->trans("OrderNotes");
-	print '<td colspan="2">';
+	print '</td>';
+	print '<td>';
 	print ajax_constantonoff("TAKEPOS_ORDER_NOTES", array(), $conf->entity, 0, 0, 1, 0);
 	//print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
 	print '</td></tr>';
@@ -104,14 +122,16 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD
 
 print '<tr class="oddeven value"><td>';
 print $langs->trans("BasicPhoneLayout");
-print '<td colspan="2">';
+print '</td>';
+print '<td>';
 //print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
 print ajax_constantonoff("TAKEPOS_PHONE_BASIC_LAYOUT", array(), $conf->entity, 0, 0, 1, 0);
 print '</td></tr>';
 
 print '<tr class="oddeven value"><td>';
 print $langs->trans("ProductSupplements");
-print '<td colspan="2">';
+print '</td>';
+print '<td>';
 //print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
 print ajax_constantonoff("TAKEPOS_SUPPLEMENTS", array(), $conf->entity, 0, 0, 1, 0);
 print '</td></tr>';
@@ -120,53 +140,29 @@ if ($conf->global->TAKEPOS_SUPPLEMENTS)
 {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SupplementCategory");
-	print '<td colspan="2">';
+	print '</td>';
+	print '<td>';
 	print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
 	print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
 	print "</td></tr>\n";
 }
 
 print '<tr class="oddeven value"><td>';
-print 'QR - '.$langs->trans("AutoOrder");
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_AUTO_ORDER", array(), $conf->entity, 0, 0, 1, 0);
-print '</td></tr>';
-
-print '<tr class="oddeven value"><td>';
 print 'QR - '.$langs->trans("CustomerMenu");
-print '<td colspan="2">';
+print '</td>';
+print '<td>';
 print ajax_constantonoff("TAKEPOS_QR_MENU", array(), $conf->entity, 0, 0, 1, 0);
 print '</td></tr>';
 
+print '<tr class="oddeven value"><td>';
+print 'QR - '.$langs->trans("AutoOrder");
+print '</td>';
+print '<td>';
+print ajax_constantonoff("TAKEPOS_AUTO_ORDER", array(), $conf->entity, 0, 0, 1, 0);
+print '</td></tr>';
 
 print '</table>';
 
-if ($conf->global->TAKEPOS_AUTO_ORDER)
-{
-	print '<br>';
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td>'.$langs->trans("QR").'</td>';
-	print "</tr>\n";
-
-	//global $dolibarr_main_url_root;
-	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
-	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
-    $resql = $db->query($sql);
-    $rows = array();
-    while ($row = $db->fetch_array($resql)) {
-        print '<tr class="oddeven value"><td>';
-		print $langs->trans("Table")." ".$row['label'];
-		print '<td>';
-		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
-		print '<td>';
-		print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'>";
-		print '</td></tr>';
-    }
-
-	print '</table>';
-}
 
 if ($conf->global->TAKEPOS_QR_MENU)
 {
@@ -175,13 +171,43 @@ if ($conf->global->TAKEPOS_QR_MENU)
 	print '<br>';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("URL").'</td><td>'.$langs->trans("QR").'</td>';
+	print '<td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
 	print "</tr>\n";
 	print '<tr class="oddeven value"><td>';
 	print "<a target='_blank' href='".$urlwithroot."/takepos/public/menu.php'>".$urlwithroot."/takepos/public/menu.php</a>";
-	print '<td>';
-	print "<img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' height='42' width='42'>";
+	print '</td>';
+	print '<td class="right">';
+	print "<a target='_blank' href='printqr.php'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php' height='42' width='42'></a>";
 	print '</td></tr>';
+	print '</table>';
+}
+
+if ($conf->global->TAKEPOS_AUTO_ORDER)
+{
+	print '<br>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Table").'</td><td>'.$langs->trans("URL").'</td><td class="right">'.$langs->trans("QR").'</td>';
+	print "</tr>\n";
+
+	//global $dolibarr_main_url_root;
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+	$resql = $db->query($sql);
+	$rows = array();
+	while ($row = $db->fetch_array($resql)) {
+		print '<tr class="oddeven value"><td>';
+		print $langs->trans("Table")." ".$row['label'];
+		print '</td>';
+		print '<td>';
+		print "<a target='_blank' href='".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."'>".$urlwithroot."/takepos/public/auto_order.php?key=".dol_encode($row['rowid'])."</a>";
+		print '</td>';
+		print '<td class="right">';
+		print "<a target='_blank' href='printqr.php?id=".$row['rowid']."'><img src='".DOL_URL_ROOT."/takepos/genimg/qr.php?key=".dol_encode($row['rowid'])."' height='42' width='42'></a>";
+		print '</td></tr>';
+	}
+
 	print '</table>';
 }
 

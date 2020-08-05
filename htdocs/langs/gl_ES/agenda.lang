@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Expedición %s clasificada como pagada
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Expedición %s de volta ao estatus de borrador
 ShipmentDeletedInDolibarr=Expedición %s eliminada
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Pedido %s creado
 OrderValidatedInDolibarr=Pedido %s validado
 OrderDeliveredInDolibarr=Pedido %s clasificado como enviado

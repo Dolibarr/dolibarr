@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Kontakt do klienta w sprawie faktury
 TypeContact_propal_external_CUSTOMER=kontakt klienta w ślad za wniosek
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Domyślny model kreacji.
 DefaultModelPropalToBill=Domyślny szablon po zamknięciu wniosku biznesowego ( do zafakturowania)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Domyślny szablon po zamknięciu projektu biznesowego (
 ProposalCustomerSignature=Wpisany akceptacji i pieczęć firmy, data i podpis
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

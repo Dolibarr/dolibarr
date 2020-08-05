@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 global $mysoc;
 
-$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks"));
+$langs->loadLangs(array("companies", "commercial", "bills", "cashdesk", "stocks", "banks"));
 
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
@@ -137,20 +137,36 @@ else $soc->fetch($conf->global->$constforcompanyid);
  * Actions
  */
 
+// Action to record a payment on a TakePOS invoice
 if ($action == 'valid' && $user->rights->facture->creer)
 {
-    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
-    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
-    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
-    else {
-        $accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
-    	$bankaccount = $conf->global->$accountname;
-    }
+	$bankaccount = 0;
+	$error = 0;
+
+	if (! empty($conf->global->TAKEPOS_CAN_FORCE_BANK_ACCOUNT_DURING_PAYMENT)) {
+		$bankaccount = GETPOST('accountid', 'int');
+	}
+	else {
+	    if ($pay == "cash") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CASH'.$_SESSION["takeposterminal"]};            // For backward compatibility
+	    elseif ($pay == "card") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CB'.$_SESSION["takeposterminal"]};          // For backward compatibility
+	    elseif ($pay == "cheque") $bankaccount = $conf->global->{'CASHDESK_ID_BANKACCOUNT_CHEQUE'.$_SESSION["takeposterminal"]};    // For backward compatibility
+	    else {
+	        $accountname = "CASHDESK_ID_BANKACCOUNT_".$pay.$_SESSION["takeposterminal"];
+	    	$bankaccount = $conf->global->$accountname;
+	    }
+	}
+
+	if ($bankaccount <= 0) {
+		$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
+		$error++;
+	}
+
 	$now = dol_now();
 	$res = 0;
 
 	$invoice = new Facture($db);
 	$invoice->fetch($placeid);
+
 	if ($invoice->total_ttc < 0) {
 		$invoice->type = $invoice::TYPE_CREDIT_NOTE;
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE ";
@@ -180,19 +196,20 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	//}
 
 	$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
-	if ($invoice->statut != Facture::STATUS_DRAFT) {
+	if ($error) {
+		dol_htmloutput_errors($errormsg, null, 1);
+	} elseif ($invoice->statut != Facture::STATUS_DRAFT) {
 		//If invoice is validated but it is not fully paid is not error and make the payment
-		if ($invoice->getRemainToPay() > 0) $res = 1;
-		else {
+		if ($invoice->getRemainToPay() > 0) {
+			$res = 1;
+		} else {
 			dol_syslog("Sale already validated");
 			dol_htmloutput_errors($langs->trans("InvoiceIsAlreadyValidated", "TakePos"), null, 1);
 		}
-	} elseif (count($invoice->lines) == 0)
-	{
+	} elseif (count($invoice->lines) == 0) {
 		dol_syslog("Sale without lines");
 		dol_htmloutput_errors($langs->trans("NoLinesToBill", "TakePos"), null, 1);
-	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1")
-	{
+	} elseif (!empty($conf->stock->enabled) && $conf->global->$constantforkey != "1") {
 		$savconst = $conf->global->STOCK_CALCULATE_ON_BILL;
 		$conf->global->STOCK_CALCULATE_ON_BILL = 1;
 
@@ -219,7 +236,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	$remaintopay = $invoice->getRemainToPay();
 
 	// Add the payment
-	if ($res >= 0 && $remaintopay > 0) {
+	if (!$error && $res >= 0 && $remaintopay > 0) {
 		$payment = new Paiement($db);
 		$payment->datepaye = $now;
 		$payment->fk_account = $bankaccount;
@@ -408,6 +425,7 @@ if ($action == "delete") {
 			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql3 = $db->query($sql);
 
+			$invoice->update_price(1);
             if ($resql1 && $resql2 && $resql3)
             {
             	$db->commit();
@@ -579,6 +597,9 @@ if ($action == "valid" || $action == "history")
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		if ($conf->global->TAKEPOS_GIFT_RECEIPT) {
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button><br>';
+		}
     }
     if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
     {
@@ -682,8 +703,8 @@ function SendTicket(id)
     $.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
 }
 
-function Print(id){
-    $.colorbox({href:"receipt.php?facid="+id, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
+function Print(id, gift){
+    $.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
     echo $langs->trans("PrintTicket"); ?>"});
 }
 
@@ -707,7 +728,7 @@ function TakeposConnector(id){
 	?>';
     $.ajax({
         type: "POST",
-        url: '<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>/print.php',
+        url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print.php',
         data: 'invoice='+invoice
     });
 }
@@ -828,7 +849,10 @@ print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
-print '<span style="font-size:120%;" class="right">';
+// In phone version only show when it is invoice page
+if ($mobilepage == "invoice" || $mobilepage == "") {
+	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
+}
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
     $sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
@@ -841,25 +865,28 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
     }
 	// In phone version only show when is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
-		print $langs->trans('Place')." <b>".$label."</b> - ";
-		print $langs->trans('Floor')." <b>".$floor."</b> - ";
+		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".$label."</b><br>";
+		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".$floor."</b>";
 	}
 	elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) print $mysoc->name;
 	elseif ($mobilepage == "cats") print $langs->trans('Category');
 	elseif ($mobilepage == "products") print $langs->trans('Label');
+} else {
+	print $langs->trans("Products");
 }
-// In phone version only show when is invoice page
-if ($mobilepage == "invoice" || $mobilepage == "") {
-	print $langs->trans('TotalTTC');
-	print ' : <b>'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</b></span>';
-	print '<br><input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
-	print '</td>';
-}
+print '</td>';
 if ($_SESSION["basiclayout"] != 1)
 {
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	print '<td class="linecolht right nowraponall">'.$langs->trans('TotalTTCShort').'</td>';
+	print '<td class="linecolht right nowraponall">';
+	print '<span class="opacitymedium small">'.$langs->trans('TotalTTCShort').'</span><br>';
+	// In phone version only show when it is invoice page
+	if ($mobilepage == "invoice" || $mobilepage == "") {
+		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
+		print '</td>';
+	}
+	print '</td>';
 }
 elseif ($mobilepage == "invoice") print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 print "</tr>\n";

@@ -16,6 +16,7 @@
  * Copyright (C) 2018	    Philippe Grand	        <philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020  Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020       Open-Dsi         		<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -574,6 +575,12 @@ class Societe extends CommonObject
 	public $stcomm_id;
 
 	/**
+	 * Status prospect picto
+	 * @var string
+	 */
+	public $stcomm_picto;
+
+	/**
 	 * Status prospect label
 	 * @var int
 	 */
@@ -726,6 +733,8 @@ class Societe extends CommonObject
 	 */
 	public function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 
 		$this->client = 0;
@@ -736,6 +745,13 @@ class Societe extends CommonObject
 		$this->forme_juridique_code = 0;
 		$this->tva_assuj = 1;
 		$this->status = 1;
+
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$this->fields['address']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			$this->fields['zip']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			$this->fields['town']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+			//$this->fields['fk_pays']['showoncombobox'] = $conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST;
+		}
 	}
 
 
@@ -1307,6 +1323,7 @@ class Societe extends CommonObject
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? $user->id : "null");
 			$sql .= ", fk_multicurrency = ".(int) $this->fk_multicurrency;
 			$sql .= ", multicurrency_code = '".$this->db->escape($this->multicurrency_code)."'";
+			$sql .= ", model_pdf = '".$this->db->escape($this->model_pdf)."'";
 			$sql .= " WHERE rowid = ".(int) $id;
 
 			$resql = $this->db->query($sql);
@@ -1481,10 +1498,10 @@ class Societe extends CommonObject
 		$sql .= ', e.libelle as effectif';
 		$sql .= ', c.code as country_code, c.label as country';
 		$sql .= ', d.code_departement as state_code, d.nom as state';
-		$sql .= ', st.libelle as stcomm';
+		$sql .= ', st.libelle as stcomm, st.picto as stcomm_picto';
 		$sql .= ', te.code as typent_code';
 		$sql .= ', i.libelle as label_incoterms';
-		$sql .= ', sr.remise_client';
+		$sql .= ', sr.remise_client, model_pdf';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid';
@@ -1554,6 +1571,7 @@ class Societe extends CommonObject
 				$label = ($transcode != 'StatusProspect'.$obj->fk_stcomm ? $transcode : $obj->stcomm);
 				$this->stcomm_id = $obj->fk_stcomm; // id status prospect
 				$this->status_prospect_label = $label; // label status prospect
+				$this->stcomm_picto = $obj->stcomm_picto;     // picto statut commercial
 
                 $this->email = $obj->email;
 				$this->socialnetworks = (array) json_decode($obj->socialnetworks, true);
@@ -1646,6 +1664,7 @@ class Societe extends CommonObject
 				// multicurrency
 				$this->fk_multicurrency = $obj->fk_multicurrency;
 				$this->multicurrency_code = $obj->multicurrency_code;
+				$this->model_pdf = $obj->model_pdf;
 
 				$result = 1;
 
@@ -2073,11 +2092,13 @@ class Societe extends CommonObject
 	/**
 	 *  Return array of sales representatives
 	 *
-	 *  @param	User	$user		Object user
-	 *  @param	int		$mode		0=Array with properties, 1=Array of id.
-	 *  @return array       		Array of sales representatives of third party
+	 *  @param	User		$user			Object user
+	 *  @param	int			$mode			0=Array with properties, 1=Array of id.
+	 *  @param	string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
+	 *  @param	string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
+	 *  @return array       				Array of sales representatives of third party
 	 */
-    public function getSalesRepresentatives(User $user, $mode = 0)
+    public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
 		global $conf;
 
@@ -2094,6 +2115,11 @@ class Societe extends CommonObject
 		} else $sql .= " WHERE entity in (0, ".$conf->entity.")";
 
 		$sql .= " AND u.rowid = sc.fk_user AND sc.fk_soc = ".$this->id;
+		if (empty($sortfield) && empty($sortorder)) {
+			$sortfield = 'u.lastname,u.firstname';
+			$sortorder = 'ASC,ASC';
+		}
+		$sql .= $this->db->order($sortfield, $sortorder);
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -2335,37 +2361,37 @@ class Societe extends CommonObject
 
 		$label .= '<div class="centpercent">';
 
-		if ($option == 'customer' || $option == 'compta' || $option == 'category' || $option == 'category_supplier')
+		if ($option == 'customer' || $option == 'compta' || $option == 'category')
 		{
-		    $label .= '<u>'.$langs->trans("ShowCustomer").'</u>';
+		    $label .= '<u>'.$langs->trans("Customer").'</u>';
 		    $linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
 		} elseif ($option == 'prospect' && empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
 		{
-			$label .= '<u>'.$langs->trans("ShowProspect").'</u>';
+			$label .= '<u>'.$langs->trans("Prospect").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$this->id;
-		} elseif ($option == 'supplier')
+		} elseif ($option == 'supplier' || $option == 'category_supplier')
 		{
-			$label .= '<u>'.$langs->trans("ShowSupplier").'</u>';
+			$label .= '<u>'.$langs->trans("Supplier").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/fourn/card.php?socid='.$this->id;
 		} elseif ($option == 'agenda')
 		{
-			$label .= '<u>'.$langs->trans("ShowAgenda").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/agenda.php?socid='.$this->id;
 		} elseif ($option == 'project')
 		{
-			$label .= '<u>'.$langs->trans("ShowProject").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/project.php?socid='.$this->id;
 		} elseif ($option == 'margin')
 		{
-			$label .= '<u>'.$langs->trans("ShowMargin").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/margin/tabs/thirdpartyMargins.php?socid='.$this->id.'&type=1';
 		} elseif ($option == 'contact')
 		{
-			$label .= '<u>'.$langs->trans("ShowContacts").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/contact.php?socid='.$this->id;
 		} elseif ($option == 'ban')
 		{
-			$label .= '<u>'.$langs->trans("ShowBan").'</u>';
+			$label .= '<u>'.$langs->trans("ThirdParty").'</u>';
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$this->id;
 		}
 
@@ -2719,7 +2745,7 @@ class Societe extends CommonObject
 	 *  Return bank number property of thirdparty (label or rum)
 	 *
 	 *	@param	string	$mode	'label' or 'rum' or 'format'
-	 *  @return	string			Bank number
+	 *  @return	string			Bank label or RUM or '' if no bank account found
 	 */
     public function display_rib($mode = 'label')
 	{
@@ -2729,25 +2755,25 @@ class Societe extends CommonObject
 		$bac = new CompanyBankAccount($this->db);
 		$bac->fetch(0, $this->id);
 
-		if ($mode == 'label')
-		{
-			return $bac->getRibLabel(true);
-		} elseif ($mode == 'rum')
-		{
-			if (empty($bac->rum))
-			{
-				require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-				$prelevement = new BonPrelevement($this->db);
-				$bac->fetch_thirdparty();
-				$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
+		if ($bac->id > 0) {		// If a bank account has been found for company $this->id
+			if ($mode == 'label') {
+				return $bac->getRibLabel(true);
+			} elseif ($mode == 'rum') {
+				if (empty($bac->rum)) {
+					require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+					$prelevement = new BonPrelevement($this->db);
+					$bac->fetch_thirdparty();
+					$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, $bac->id);
+				}
+				return $bac->rum;
+			} elseif ($mode == 'format') {
+				return $bac->frstrecur;
+			} else {
+				return 'BadParameterToFunctionDisplayRib';
 			}
-			return $bac->rum;
-		} elseif ($mode == 'format')
-		{
-			return $bac->frstrecur;
+		} else {
+			return '';
 		}
-
-		return 'BadParameterToFunctionDisplayRib';
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3903,7 +3929,7 @@ class Societe extends CommonObject
 	 */
     public function getLibProspCommStatut($mode = 0, $label = '')
 	{
-		return $this->LibProspCommStatut($this->stcomm_id, $mode, $label);
+		return $this->LibProspCommStatut($this->stcomm_id, $mode, $label, $this->stcomm_picto);
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3913,45 +3939,45 @@ class Societe extends CommonObject
 	 *  @param	int|string	$status        	Id or code for prospection status
 	 *  @param  int			$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
 	 *  @param	string		$label			Label to use for status for added status
+	 *	@param 	string		$picto      	Name of image file to show ('filenew', ...)
+	 *                                      If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+	 *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+	 *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+	 *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
 	 *  @return string       	 			Label of prospection status
 	 */
-    public function LibProspCommStatut($status, $mode = 0, $label = '')
+    public function LibProspCommStatut($status, $mode = 0, $label = '', $picto = '')
 	{
         // phpcs:enable
 		global $langs;
 		$langs->load('customers');
 
-		if ($mode == 2)
-		{
-			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1).' '.$langs->trans("StatusProspect-1");
-			elseif ($status == '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
-			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
-			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
-			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+		if ($mode == 2) {
+			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1, $picto).' '.$langs->trans("StatusProspect-1");
+			elseif ($status == '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
+			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
+			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
+			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
 			else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
-		}
-		if ($mode == 3)
-		{
-			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1);
-			elseif ($status == '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0);
-			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1);
-			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2);
-			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3);
+		} elseif ($mode == 3) {
+			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1, $picto);
+			elseif ($status == '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto);
+			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1, $picto);
+			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2, $picto);
+			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3, $picto);
 			else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto);
 			}
-		}
-		if ($mode == 4)
-		{
-			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1).' '.$langs->trans("StatusProspect-1");
-			elseif ($status == '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0).' '.$langs->trans("StatusProspect0");
-			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1).' '.$langs->trans("StatusProspect1");
-			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2).' '.$langs->trans("StatusProspect2");
-			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3).' '.$langs->trans("StatusProspect3");
+		} elseif ($mode == 4) {
+			if ($status == '-1' || $status == 'ST_NO')         return img_action($langs->trans("StatusProspect-1"), -1, $picto).' '.$langs->trans("StatusProspect-1");
+			elseif ($status == '0' || $status == 'ST_NEVER') return img_action($langs->trans("StatusProspect0"), 0, $picto).' '.$langs->trans("StatusProspect0");
+			elseif ($status == '1' || $status == 'ST_TODO')  return img_action($langs->trans("StatusProspect1"), 1, $picto).' '.$langs->trans("StatusProspect1");
+			elseif ($status == '2' || $status == 'ST_PEND')  return img_action($langs->trans("StatusProspect2"), 2, $picto).' '.$langs->trans("StatusProspect2");
+			elseif ($status == '3' || $status == 'ST_DONE')  return img_action($langs->trans("StatusProspect3"), 3, $picto).' '.$langs->trans("StatusProspect3");
 			else {
-				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
+				return img_action(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label, 0, $picto).' '.(($langs->trans("StatusProspect".$status) != "StatusProspect".$status) ? $langs->trans("StatusProspect".$status) : $label);
 			}
 		}
 

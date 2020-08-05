@@ -22,9 +22,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     border: 1px solid #e9e9e9;
 	margin-bottom: 15px;
 }
-.info-box.info-box-sm{
+.info-box.info-box-sm {
     min-height: 80px;
     margin-bottom: 10px;
+}
+.opened-dash-board-wrap .info-box.info-box-sm {
+    border-radius: 0 0 0 20px;
 }
 .info-box-more {
     float: right;
@@ -81,6 +84,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     width: 80px;
     font-size: 25px;
     line-height: 92px;
+}
+.opened-dash-board-wrap .info-box-sm .info-box-icon {
+    border-radius: 0 20px 0 20px;
 }
 .opened-dash-board-wrap .info-box-sm .info-box-icon {
     line-height: 80px;
@@ -160,15 +166,21 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	padding: 5px 10px;
 	margin-left: 84px;
 }
-
 .info-box-sm .info-box-content{
     margin-left: 80px;
 }
-/*.info-box-setup span {
-    color: var(--colortexttitlenotab2);
+.info-box-sm .info-box-module-enabled {
+    /* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
+    background: linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
-.tdsetuppicto span {
-    color: var(--colortexttitlenotab2);
+.info-box-content-warning span.font-status4 {
+	color: #bc9526 !important;
+}
+/*.info-box-sm .info-box-content-warning {
+	background: #ffd7a3;
+}*/
+/*.info-box-icon.info-box-icon-module-enabled {
+    background: #e4f0e4 !important;
 }*/
 
 .info-box-number {
@@ -206,6 +218,8 @@ a.info-box-text{ text-decoration: none;}
 
 
 
+
+
 /* ICONS INFO BOX */
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -227,20 +241,31 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
     <?php } ?>
 }
 
+.customer-back {
+	background-color: #99a17d !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+.vendor-back {
+	background-color: #599caf !important;
+	color: #FFF !important;
+	padding: 2px;
+	margin: 2px;
+	border-radius: 3px;
+}
+
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
 	<?php echo $prefix; ?>color: #a47080 !important;
 }
-.bg-infobox-propal,
-.bg-infobox-facture,
-.bg-infobox-commande{
+.bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
 	<?php echo $prefix; ?>color: #99a17d !important;
 }
-.bg-infobox-supplier_proposal,
-.bg-infobox-invoice_supplier,
-.bg-infobox-order_supplier{
+.bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
 }
 .bg-infobox-contrat, .bg-infobox-ticket{
@@ -381,12 +406,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	height: 0;
 }
 
+.info-box-title {
+	width: calc(100% - 20px);
+}
 .info-box-module {
 	min-width: 350px;
     max-width: 350px;
 }
-.info-box-title {
-	width: calc(100% - 20px);
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+	    min-width: 315px;
+	    max-width: 315px;
+	}
 }
 @media only screen and (max-width: 767px) {
 	.info-box-module {

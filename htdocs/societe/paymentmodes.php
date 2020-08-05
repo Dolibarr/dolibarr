@@ -848,7 +848,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 				print '<input type="hidden" name="action" value="synccustomertostripe">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="socid" value="'.$object->id.'">';
-				print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
+				print '<input type="submit" class="button buttongen" name="syncstripecustomer" value="'.$langs->trans("CreateCustomerOnStripe").'">';
 				print '</form>';
 			}
 			print '</td></tr>';
@@ -903,7 +903,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="socid" value="'.$object->id.'">';
 			print '<input type="hidden" name="companybankid" value="'.$rib->id.'">';
-			//print '<input type="submit" class="button" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
+			//print '<input type="submit" class="button buttongen" name="syncstripecustomer" value="'.$langs->trans("CreateSupplierOnStripe").'">';
 			print '</form>';
 		}
 		print '</td></tr>';
@@ -1091,14 +1091,14 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							{
 								if ($stripecu && empty($companypaymentmodetemp->stripe_card_ref))
 								{
-									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="button">'.$langs->trans("CreateCardOnStripe").'</a>';
+									print '<a href="'.$_SERVER['PHP_SELF'].'?action=synccardtostripe&socid='.$object->id.'&id='.$companypaymentmodetemp->id.'" class="paddingrightonly marginrightonly">'.$langs->trans("CreateCardOnStripe").'</a>';
 								}
 
-								print '<a class="editfielda" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
+								print '<a class="editfielda marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=editcard">';
 								print img_picto($langs->trans("Modify"), 'edit');
 								print '</a>';
 								print '&nbsp;';
-								print '<a class="marginleftonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">'; // source='.$companypaymentmodetemp->stripe_card_ref.'&
+								print '<a class="marginleftonly marginrightonly" href="'.DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">'; // source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}
@@ -1766,29 +1766,44 @@ if ($socid && $action == 'create' && $user->rights->societe->creer)
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
 		$require = false;
+		$tooltip = '';
 		if ($val == 'BankCode') {
 			$name = 'code_banque';
 			$size = 8;
+			$content = $companybankaccount->code_banque;
 		} elseif ($val == 'DeskCode') {
 			$name = 'code_guichet';
 			$size = 8;
+			$content = $companybankaccount->code_guichet;
 		} elseif ($val == 'BankAccountNumber') {
 			$name = 'number';
 			$size = 18;
+			$content = $companybankaccount->number;
 		} elseif ($val == 'BankAccountNumberKey') {
 			$name = 'cle_rib';
 			$size = 3;
+			$content = $companybankaccount->cle_rib;
 		} elseif ($val == 'IBAN') {
 			$name = 'iban';
 			$size = 30;
+			$content = $companybankaccount->iban;
 			if ($companybankaccount->needIBAN()) $require = true;
+			$tooltip = $langs->trans("Example").':<br>LT12 1000 0111 0100 1000<br>FR14 2004 1010 0505 0001 3M02 606<br>LU28 0019 4006 4475 0000<br>DE89 3704 0044 0532 0130 00';
 		} elseif ($val == 'BIC') {
 			$name = 'bic';
 			$size = 12;
+			$content = $companybankaccount->bic;
 			if ($companybankaccount->needIBAN()) $require = true;
+			$tooltip = $langs->trans("Example").': LIABLT2XXXX';
 		}
 
-		print '<tr><td'.($require ? ' class="fieldrequired" ' : '').'>'.$langs->trans($val).'</td>';
+		print '<tr><td'.($require ? ' class="fieldrequired" ' : '').'>';
+		if ($tooltip) {
+			print $form->textwithpicto($langs->trans($val), $tooltip, 4, 'help', '', 0, 3, $name);
+		} else {
+			print $langs->trans($val);
+		}
+		print '</td>';
 		print '<td><input size="'.$size.'" type="text" class="flat" name="'.$name.'" value="'.GETPOST($name).'"></td>';
 		print '</tr>';
 	}

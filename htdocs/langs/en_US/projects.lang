@@ -178,6 +178,7 @@ TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributor
 TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 SelectElement=Select element
 AddElement=Link to element
+LinkToElementShort=Link to
 # Documents models
 DocumentModelBeluga=Project document template for linked objects overview
 DocumentModelBaleine=Project document template for tasks

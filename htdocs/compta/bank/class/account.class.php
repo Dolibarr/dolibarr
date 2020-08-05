@@ -1356,6 +1356,8 @@ class Account extends CommonObject
 		$label = '<u>'.$langs->trans("BankAccount").'</u>';
 		$label .= '<br><b>'.$langs->trans('Label').':</b> '.$this->label;
 		$label .= '<br><b>'.$langs->trans('AccountNumber').':</b> '.$this->number;
+		$label .= '<br><b>'.$langs->trans('IBAN').':</b> '.$this->iban;
+		$label .= '<br><b>'.$langs->trans('BIC').':</b> '.$this->bic;
 		$label .= '<br><b>'.$langs->trans("AccountCurrency").':</b> '.$this->currency_code;
 
 		if (empty($user->rights->banque->lire) || !empty($user->socid))

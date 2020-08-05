@@ -35,8 +35,13 @@ ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-orde
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 
+ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
+
 
 -- For v13
+
+UPDATE llx_const SET value = 0 WHERE name = 'FACTURE_TVAOPTION' and value = 'franchise';
+UPDATE llx_const SET value = 1 WHERE name = 'FACTURE_TVAOPTION' and value <> 'franchise' AND value <> '0' AND value <> '1';
 
 ALTER TABLE llx_commande MODIFY COLUMN date_livraison DATETIME;
 
@@ -53,5 +58,104 @@ INSERT INTO llx_const (name, entity, value, type, visible) VALUES ('PRODUCT_PRIC
 ALTER TABLE llx_subscription MODIFY COLUMN datef DATETIME;
 
 ALTER TABLE llx_loan_schedule ADD column fk_payment_loan INTEGER;
+
+ALTER TABLE llx_user DROP COLUMN jabberid;
+ALTER TABLE llx_user DROP COLUMN skype;
+ALTER TABLE llx_user DROP COLUMN twitter;
+ALTER TABLE llx_user DROP COLUMN facebook;
+ALTER TABLE llx_user DROP COLUMN linkedin;
+ALTER TABLE llx_user DROP COLUMN instagram;
+ALTER TABLE llx_user DROP COLUMN snapchat;
+ALTER TABLE llx_user DROP COLUMN googleplus;
+ALTER TABLE llx_user DROP COLUMN youtube;
+ALTER TABLE llx_user DROP COLUMN whatsapp;
+
+ALTER TABLE llx_user ADD COLUMN datestartvalidity datetime;
+ALTER TABLE llx_user ADD COLUMN dateendvalidity   datetime;
+
+ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
+
+
+
+CREATE TABLE llx_recruitment_recruitmentjobposition(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	label varchar(255) NOT NULL, 
+	qty integer DEFAULT 1 NOT NULL, 
+	fk_soc integer, 
+	fk_project integer, 
+	fk_user_recruiter integer, 
+	fk_user_supervisor integer, 
+	fk_establishment integer, 
+	date_planned date, 
+	description text, 
+	note_public text, 
+	note_private text, 
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	last_main_doc varchar(255), 
+	import_key varchar(14), 
+	model_pdf varchar(255), 
+	status smallint NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_rowid (rowid);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_ref (ref);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_fk_soc (fk_soc);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_fk_project (fk_project);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitment_recruitmentjobposition_fk_user_recruiter FOREIGN KEY (fk_user_recruiter) REFERENCES llx_user(rowid);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitment_recruitmentjobposition_fk_user_supervisor FOREIGN KEY (fk_user_supervisor) REFERENCES llx_user(rowid);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitment_recruitmentjobposition_fk_establishment FOREIGN KEY (fk_establishment) REFERENCES llx_establishment(rowid);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitment_recruitmentjobposition_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_status (status);
+
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN email_recruiter varchar(255);
+
+create table llx_recruitment_recruitmentjobposition_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_object(fk_object);
+
+
+-- Add dictionary for prospect level and action commercial on contacts (Using this is not recommanded)
+
+create table llx_c_prospectcontactlevel
+(
+  code            varchar(12) PRIMARY KEY,
+  label           varchar(30),
+  sortorder       smallint,
+  active          smallint    DEFAULT 1 NOT NULL,
+  module          varchar(32) NULL
+) ENGINE=innodb;
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_NONE',      'None',     1);
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_LOW',       'Low',      2);
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_MEDIUM',    'Medium',   3);
+insert into llx_c_prospectcontactlevel (code,label,sortorder) values ('PL_HIGH',      'High',     4);
+
+create table llx_c_stcommcontact
+(
+  id       integer      PRIMARY KEY,
+  code     varchar(12)  NOT NULL,
+  libelle  varchar(30),
+  picto    varchar(128),
+  active   tinyint default 1  NOT NULL
+)ENGINE=innodb;
+ALTER TABLE llx_c_stcommcontact ADD UNIQUE INDEX uk_c_stcommcontact(code);
+
+insert into llx_c_stcommcontact (id,code,libelle) values (-1, 'ST_NO',    'Do not contact');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 0, 'ST_NEVER', 'Never contacted');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 1, 'ST_TODO',  'To contact');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 2, 'ST_PEND',  'Contact in progress');
+insert into llx_c_stcommcontact (id,code,libelle) values ( 3, 'ST_DONE',  'Contacted');
+
+ALTER TABLE llx_socpeople ADD COLUMN fk_prospectcontactlevel varchar(12) AFTER priv;
+ALTER TABLE llx_socpeople ADD COLUMN fk_stcommcontact integer DEFAULT 0 NOT NULL AFTER fk_prospectcontactlevel;
 
 ALTER TABLE llx_societe ADD COLUMN old INTEGER NULL DEFAULT NULL AFTER parent;

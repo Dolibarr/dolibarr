@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=发货%s已经确认付账
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified re-open
 ShipmentBackToDraftInDolibarr=Shipment %s go back to draft status
 ShipmentDeletedInDolibarr=运输 %s 已删除
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=订单%s已创建
 OrderValidatedInDolibarr=订购%s的验证
 OrderDeliveredInDolibarr=订单 %s 归类已交货

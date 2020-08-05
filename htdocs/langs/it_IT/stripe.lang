@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - stripe
-StripeSetup=Stripe module setup
+StripeSetup=Impostazione modulo Stripe
 StripeDesc=Offri ai clienti una pagina di pagamento online Stripe per pagamenti con carte di credito / debito tramite <a href="http://www.stripe.com" target="_blank">Stripe</a> . Questo modulo può essere usato per consentire ai tuoi clienti di effettuare pagamenti ad-hoc o per pagamenti relativi a un particolare oggetto Dolibarr (fattura, ordine, ...)
 StripeOrCBDoPayment=Pay with credit card or Stripe
 FollowingUrlAreAvailableToMakePayments=Puoi utilizzare i seguenti indirizzi per permettere ai clienti di effettuare pagamenti su Dolibarr
@@ -51,7 +51,7 @@ StripeAccount=Stripe account
 StripeChargeList=List of Stripe charges
 StripeTransactionList=List of Stripe transactions
 StripeCustomerId=Stripe customer id
-StripePaymentModes=Stripe payment modes
+StripePaymentModes=Tipo di pagamento Stripe
 LocalID=Local ID
 StripeID=Stripe ID
 NameOnCard=Name on card

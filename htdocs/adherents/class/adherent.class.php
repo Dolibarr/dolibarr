@@ -2747,7 +2747,7 @@ class Adherent extends CommonObject
 								$actioncomm->datef = $now;
 								$actioncomm->percentage = -1; // Not applicable
 								$actioncomm->socid = $adherent->thirdparty->id;
-								$actioncomm->contactid = 0;
+								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is en email (content should be added into note)

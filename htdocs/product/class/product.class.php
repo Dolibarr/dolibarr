@@ -563,7 +563,7 @@ class Product extends CommonObject
             return -1;
         }
 
-        if (empty($this->ref)) {
+        if (empty($this->ref) || $this->ref == 'auto') {
             // Load object modCodeProduct
             $module = (!empty($conf->global->PRODUCT_CODEPRODUCT_ADDON) ? $conf->global->PRODUCT_CODEPRODUCT_ADDON : 'mod_codeproduct_leopard');
             if ($module != 'mod_codeproduct_leopard')    // Do not load module file for leopard
@@ -2025,7 +2025,7 @@ class Product extends CommonObject
             return -1;
         }
 
-        $sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
+        $sql = "SELECT rowid, ref, ref_ext, label, description, url, note_public, note as note_private, customcode, fk_country, price, price_ttc,";
         $sql .= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
         $sql .= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, net_measure, net_measure_units, weight, weight_units,";
         $sql .= " length, length_units, width, width_units, height, height_units,";
@@ -2033,7 +2033,7 @@ class Product extends CommonObject
         $sql .= " accountancy_code_buy, accountancy_code_buy_intra, accountancy_code_buy_export,";
         $sql .= " accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
         $sql .= " datec, tms, import_key, entity, desiredstock, tobatch, fk_unit,";
-        $sql .= " fk_price_expression, price_autogen";
+        $sql .= " fk_price_expression, price_autogen, model_pdf";
         $sql .= " FROM ".MAIN_DB_PREFIX."product";
         if ($id) {
             $sql .= " WHERE rowid = ".(int) $id;
@@ -2061,8 +2061,9 @@ class Product extends CommonObject
                 $this->label                          = $obj->label;
                 $this->description                    = $obj->description;
                 $this->url                            = $obj->url;
-                $this->note_private                    = $obj->note_private;
-                $this->note                            = $obj->note_private; // deprecated
+                $this->note_public                    = $obj->note_public;
+                $this->note_private                   = $obj->note_private;
+                $this->note                           = $obj->note_private; // deprecated
 
                 $this->type                            = $obj->fk_product_type;
                 $this->status                        = $obj->tosell;
@@ -2134,6 +2135,7 @@ class Product extends CommonObject
                 $this->fk_price_expression            = $obj->fk_price_expression;
                 $this->fk_unit                        = $obj->fk_unit;
                 $this->price_autogen = $obj->price_autogen;
+                $this->model_pdf = $obj->model_pdf;
 
                 $this->db->free($resql);
 
@@ -2208,7 +2210,7 @@ class Product extends CommonObject
                             }
                             }*/
                         } else {
-                            dol_print_error($this->db);
+	                        $this->error=$this->db->lasterror;
                             return -1;
                         }
                     }
@@ -2253,12 +2255,12 @@ class Product extends CommonObject
                                 }
                                 $this->prices_by_qty_list[0] = $resultat;
                             } else {
-                                    dol_print_error($this->db);
-                                    return -1;
+	                            $this->error=$this->db->lasterror;
+                                return -1;
                             }
                         }
                     } else {
-                        dol_print_error($this->db);
+	                    $this->error=$this->db->lasterror;
                         return -1;
                     }
                 } elseif (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES) && empty($ignore_price_load))    // prices per customer and quantity
@@ -2312,12 +2314,12 @@ class Product extends CommonObject
                                     }
                                     $this->prices_by_qty_list[$i] = $resultat;
                                 } else {
-                                    dol_print_error($this->db);
+	                                $this->error=$this->db->lasterror;
                                     return -1;
                                 }
                             }
                         } else {
-                            dol_print_error($this->db);
+	                        $this->error=$this->db->lasterror;
                             return -1;
                         }
                     }
@@ -2344,7 +2346,7 @@ class Product extends CommonObject
                 return 0;
             }
         } else {
-            dol_print_error($this->db);
+	        $this->error=$this->db->lasterror;
             return -1;
         }
     }
@@ -3489,7 +3491,7 @@ class Product extends CommonObject
 
     	$sql = "SELECT sum(d.qty), date_format(d.date_valid, '%Y%m')";
     	if ($mode == 'bynumber') {
-    		$sql .= ", count(DISTINCT c.rowid)";
+    		$sql .= ", count(DISTINCT d.rowid)";
     	}
     	$sql .= " FROM ".MAIN_DB_PREFIX."mrp_mo as d LEFT JOIN  ".MAIN_DB_PREFIX."societe as s ON d.fk_soc = s.rowid";
     	if ($filteronproducttype >= 0) {
@@ -4426,6 +4428,7 @@ class Product extends CommonObject
         global $conf, $user, $langs;
 
         $langs->load("products");
+		$outputlangs->load("products");
 
         // Positionne le modele sur le nom du modele a utiliser
         if (!dol_strlen($modele)) {

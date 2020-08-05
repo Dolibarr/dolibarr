@@ -53,6 +53,28 @@ function facturefourn_prepare_head($object)
 		$h++;
 	}
 
+	//if ($fac->mode_reglement_code == 'PRE')
+	if (!empty($conf->paymentbybanktransfer->enabled))
+	{
+		$nbStandingOrders = 0;
+		$sql = "SELECT COUNT(pfd.rowid) as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+		$sql .= " WHERE pfd.fk_facture_fourn = ".$object->id;
+		$sql .= " AND pfd.ext_payment_id IS NULL";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj) $nbStandingOrders = $obj->nb;
+		}
+		else dol_print_error($db);
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$object->id.'&type=bank-transfer';
+		$head[$h][1] = $langs->trans('BankTransfer');
+		if ($nbStandingOrders > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbStandingOrders.'</span>';
+		$head[$h][2] = 'standingorders';
+		$h++;
+	}
+
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -210,8 +232,6 @@ function supplierorder_admin_prepare_head()
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierOrdersLines");
 	$head[$h][2] = 'supplierorderdet';
 	$h++;
-
-
 
 	$head[$h][0] = DOL_URL_ROOT.'/admin/supplierinvoice_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsSupplierInvoices");

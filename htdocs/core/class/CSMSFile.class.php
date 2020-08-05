@@ -131,7 +131,7 @@ class CSMSFile
                 $sms->nostop = $this->nostop;
 
                 $sms->socid = $this->socid;
-                $sms->contactid = $this->contactid;
+                $sms->contact_id = $this->contact_id;
                 $sms->project = $this->fk_project;
 
                 $res = $sms->SmsSend();
@@ -162,7 +162,7 @@ class CSMSFile
 		            $sms->nostop = $this->nostop;
 
 		            $sms->socid = $this->socid;
-		            $sms->contactid = $this->contactid;
+		            $sms->contact_id = $this->contact_id;
 		            $sms->fk_project = $this->fk_project;
 
                     $res = $sms->SmsSend();

@@ -288,7 +288,7 @@ if ($action == 'replacesiteconfirm') {
 		$otherfilters['category'] = GETPOST('optioncategory', 'int');
 	}
 
-	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
+	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
 }
 
 $usercanedit = $user->rights->website->write;
@@ -424,7 +424,7 @@ if ($massaction == 'setcategory' && GETPOST('confirmmassaction', 'alpha') && $us
 		$db->commit();
 	}
 	// Now we reload list
-	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters);
+	$listofpages = getPagesFromSearchCriterias($containertype, $algo, $searchkey, 1000, $sortfield, $sortorder, $langcode, $otherfilters, -1);
 }
 
 // Replacement of string into pages
@@ -987,23 +987,35 @@ if ($action == 'addcontainer')
 			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
 			$action = 'createcontainer';
 		}
-		else {
-			// If there is no home page yet, this new page will be set as the home page
-			if (empty($object->fk_default_home)) {
-				$object->fk_default_home = $pageid;
-				$res = $object->update($user);
-				if ($res <= 0)
-				{
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				} else {
-					$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+	}
 
-					// Generate the index.php page (to be the home page) and wrapper.php file
-					$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+	if (!$error) {
+		// Website categories association
+		$categoriesarray = GETPOST('categories', 'array');
+		$result = $objectpage->setCategories($categoriesarray);
+		if ($result < 0)
+		{
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 
-					if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
-				}
+	if (!$error) {
+		// If there is no home page yet, this new page will be set as the home page
+		if (empty($object->fk_default_home)) {
+			$object->fk_default_home = $pageid;
+			$res = $object->update($user);
+			if ($res <= 0)
+			{
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$filetpl = $pathofwebsite.'/page'.$pageid.'.tpl.php';
+
+				// Generate the index.php page (to be the home page) and wrapper.php file
+				$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper);
+
+				if ($result <= 0) setEventMessages('Failed to write file '.$fileindex, null, 'errors');
 			}
 		}
 	}
@@ -1166,7 +1178,7 @@ if (GETPOSTISSET('pageid') && $action == 'delete' && $permissiontodelete) {
 	$res = $object->fetch(0, $websitekey);
 	$website = $object;
 
-	$res = $objectpage->fetch($pageid, $object->fk_website);
+	$res = $objectpage->fetch($pageid, $object->id);
 
 	if ($res > 0)
 	{
@@ -1670,7 +1682,7 @@ if ($action == 'updatemeta')
 	}
 
 	if (!$error) {
-		// Supplier categories association
+		// Website categories association
 		$categoriesarray = GETPOST('categories', 'array');
 		$result = $objectpage->setCategories($categoriesarray);
 		if ($result < 0)
@@ -2582,11 +2594,11 @@ if (!GETPOST('hide_websitemenu'))
 					$textifempty = 1;
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
-						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 0, 1, 0, $onlylang, 1)),
-						array('type' => 'other', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
+						array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
 						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
 						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> ''),
+						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss'=>'margintoponly'),
+						array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 0, 1, 0, $onlylang, 1)),
 					);
 
 				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
@@ -2960,6 +2972,15 @@ if ($action == 'editcss')
 	print $websitekey;
 	print '</td></tr>';
 
+	// Status of web site
+	print '<!-- Status of website -->'."\n";
+	print '<tr><td class="fieldrequired">';
+	print $langs->trans('Status');
+	print '</td><td>';
+	print ajax_object_onoff($object, 'status', 'status', 'Enabled', 'Disabled');
+	//print dol_print_date($pagedatecreation, 'dayhour');
+	print '</td></tr>';
+
 	// Main language
 	print '<tr><td class="tdtop fieldrequired">';
 	$htmltext = '';
@@ -3276,15 +3297,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	if ($action != 'createcontainer')
 	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('IDOfPage');
+		print '<tr><td class="titlefield fieldrequired">';
+		print $langs->trans('IDOfPage').' - '.$langs->trans('InternalURLOfPage');
 		print '</td><td>';
 		print $pageid;
-		print '</td></tr>';
+		//print '</td></tr>';
 
-		print '<tr><td class="titlefield">';
-		print $langs->trans('InternalURLOfPage');
-		print '</td><td>';
+		//print '<tr><td class="titlefield fieldrequired">';
+		//print $langs->trans('InternalURLOfPage');
+		//print '</td><td>';
+		print ' &nbsp; - &nbsp; ';
 		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode($pageid);
 		//if ($objectpage->grabbed_from) print ' - <span class="opacitymedium">'.$langs->trans('InitiallyGrabbedFrom').' '.$objectpage->grabbed_from.'</span>';
 		print '</td></tr>';
@@ -3321,6 +3343,17 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
 	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
+
+	if ($action != 'createcontainer')
+	{
+		print '<!-- Status of page -->'."\n";
+		print '<tr><td class="fieldrequired">';
+		print $langs->trans('Status');
+		print '</td><td>';
+		print ajax_object_onoff($objectpage, 'status', 'status', 'Enabled', 'Disabled');
+		//print dol_print_date($pagedatecreation, 'dayhour');
+		print '</td></tr>';
+	}
 
 	// Type of container
 	print '<tr><td class="titlefield fieldrequired">';
@@ -3472,8 +3505,10 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 			$c = new Categorie($db);
 			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
 			$arrayselected = array();
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
+			if (is_array($cats)) {
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
 			}
 
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', null, null, 1);
@@ -3540,16 +3575,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
-
-	if ($action != 'createcontainer')
-	{
-		print '<tr><td>';
-		print $langs->trans('Status');
-		print '</td><td>';
-		print ajax_object_onoff($objectpage, 'status', 'status', 'Enabled', 'Disabled');
-		//print dol_print_date($pagedatecreation, 'dayhour');
-		print '</td></tr>';
-	}
 
 	print '</table>';
 	if ($action == 'createcontainer')
@@ -3814,11 +3839,17 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 			print '<tr class="liste_titre">';
 			print getTitleFieldOfList("Type", 0, $_SERVER['PHP_SELF'], 'type_container', '', $param, '', $sortfield, $sortorder, '')."\n";
 			print getTitleFieldOfList("Page", 0, $_SERVER['PHP_SELF'], 'pageurl', '', $param, '', $sortfield, $sortorder, '')."\n";
-			//print getTitleFieldOfList("Description", 0, $_SERVER['PHP_SELF'], '', '', $param, '', $sortfield, $sortorder, '')."\n";
+			print getTitleFieldOfList("Categories", 0, $_SERVER['PHP_SELF']);
+			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList("", 0, $_SERVER['PHP_SELF']);
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			print '</tr>';
+
+			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+			$c = new Categorie($db);
+
+			$totalnbwords = 0;
 
 			foreach ($listofpages['list'] as $answerrecord)
 			{
@@ -3826,10 +3857,12 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 				{
 					print '<tr>';
 
+					// Type of container
 					print '<td class="nowraponall">'.$langs->trans("Container").' - ';
 					print $langs->trans($answerrecord->type_container); // TODO Use label of container
 					print '</td>';
 
+					// Container url and label
 					print '<td>';
 					print $answerrecord->getNomUrl(1);
 					print ' <span class="opacitymedium">('.($answerrecord->title ? $answerrecord->title : $langs->trans("NoTitle")).')</span>';
@@ -3838,6 +3871,23 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '<br>';
 					print '<span class="opacitymedium">'.$answerrecord->description.'</span>';
 					print '</td>';
+
+					// Categories - Tags
+					print '<td>';
+					if (!empty($conf->categorie->enabled) && !empty($user->rights->categorie->lire))
+					{
+						// Get current categories
+						$existing = $c->containing($answerrecord->id, Categorie::TYPE_WEBSITE_PAGE, 'object');
+						if (is_array($existing)) {
+							foreach ($existing as $tmpcategory) {
+								//var_dump($tmpcategory);
+								print img_object($langs->trans("Category").' : '.$tmpcategory->label, 'category', 'style="padding-left: 2px; padding-right: 2px; color: #'.($tmpcategory->color != '' ? $tmpcategory->color : '888').'"');
+							}
+						}
+					}
+					//var_dump($existing);
+					print '</td>';
+
 
 					$param = '?action=replacesiteconfirm';
 					$param .= '&websiteid='.$website->id;
@@ -3849,30 +3899,49 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
 					$param .= '&searchstring='.urlencode($searchkey);
 
-					// Edit properties
+					// Language
 					print '<td>';
+					print $answerrecord->lang;
+					print '</td>';
+
+					// Number of words
+					print '<td class="center nowraponall">';
+					$textwithouthtml = dol_string_nohtmltag(dolStripPhpCode($answerrecord->content));
+					$characterMap = 'áàéèëíóúüñùç0123456789';
+					$nbofwords = str_word_count($textwithouthtml, 0, $characterMap);
+					if ($nbofwords) {
+						print $nbofwords.' '.$langs->trans("words");
+						$totalnbwords += $nbofwords;
+					}
+					print '</td>';
+
+
+					// Edit properties, HTML sources, status
+					print '<td class="tdwebsitesearchresult right nowraponall">';
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editmeta&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
-					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
-					print '</td>';
+					print '<a class="editfielda marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditPageMeta").'">'.img_picto($langs->trans("EditPageMeta"), 'pencil-ruler').'</a>';
 
-					// Edit HTML source
-					print '<td>';
 					$disabled = '';
 					$urltoedithtmlsource = $_SERVER["PHP_SELF"].'?action=editsource&websiteid='.$website->id.'&pageid='.$answerrecord->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].$param);
 					if (empty($user->rights->website->write)) {
 						$disabled = ' disabled';
 						$urltoedithtmlsource = '';
 					}
-					print '<a class="editfielda '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
+					print '<a class="editfielda  marginleftonly marginrightonly '.$disabled.'" href="'.$urltoedithtmlsource.'" title="'.$langs->trans("EditHTMLSource").'">'.img_picto($langs->trans("EditHTMLSource"), 'edit').'</a>';
+
+					print '<span class="marginleftonly marginrightonly"></span>'.ajax_object_onoff($answerrecord, 'status', 'status', 'Enabled', 'Disabled');
+
 					print '</td>';
 
 					// Action column
 					print '<td class="nowrap center">';
+
+					print '<!-- Status of page -->'."\n";
 					if ($massactionbutton || $massaction)
 					{
 						$selected = 0;
@@ -3882,10 +3951,10 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '</td>';
 
 					print '</tr>';
-				}
-				else {
+				} else {
 					print '<tr>';
 
+					// Type of container
 					print '<td>';
 					$translateofrecordtype = array(
 						'website_csscontent'=>'WEBSITE_CSS_INLINE',
@@ -3913,12 +3982,26 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					$param .= '&optioncategory='.GETPOST('optioncategory', 'aZ09');
 					$param .= '&searchstring='.urlencode($searchkey);
 
+					// Container url and label
 					print '<td>';
 					$backtopageurl = $_SERVER["PHP_SELF"].$param;
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=editcss&website='.$website->ref.'&backtopage='.urlencode($backtopageurl).'">'.$langs->trans("EditCss").'</a>';
 					print '</td>';
 
-					print '<td class="tdoverflow100">';
+					// Language
+					print '<td>';
+					print '</td>';
+
+					// Categories - Tags
+					print '<td>';
+					print '</td>';
+
+					// Nb of words
+					print '<td>';
+					print '</td>';
+
+					// Edit properties, HTML sources, status
+					print '<td>';
 					print '</td>';
 
 					// Action column
@@ -3928,12 +4011,50 @@ if ($action == 'replacesite' || $action == 'replacesiteconfirm' || $massaction =
 					print '</tr>';
 				}
 			}
+
+			if (count($listofpages['list']) >= 2) {
+				// Total
+				print '<tr class="lite_titre">';
+
+				// Type of container
+				print '<td>';
+				print $langs->trans("Total");
+				print '</td>';
+
+				// Container url and label
+				print '<td>';
+				print '</td>';
+
+				// Language
+				print '<td>';
+				print '</td>';
+
+				// Categories - Tags
+				print '<td>';
+				print '</td>';
+
+				// Nb of words
+				print '<td class="center nowraponall">';
+				print $totalnbwords.' '.$langs->trans("words");
+				print '</td>';
+
+				// Edit properties, HTML sources, status
+				print '<td>';
+				print '</td>';
+
+				// Action column
+				print '<td class="nowrap center">';
+				print '</td>';
+
+				print '</tr>';
+			}
+
 			print '</table>';
 			print '</div>';
 			print '<br>';
 		}
 		else {
-			print $listofpages['message'];
+			print '<div class="warning">'.$listofpages['message'].'</div>';
 		}
 
 		print '</div>';

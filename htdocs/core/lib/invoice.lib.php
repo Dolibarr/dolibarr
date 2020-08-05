@@ -55,7 +55,6 @@ function facture_prepare_head($object)
 		$h++;
 	}
 
-	//if ($fac->mode_reglement_code == 'PRE')
 	if (!empty($conf->prelevement->enabled))
 	{
 	    $nbStandingOrders = 0;

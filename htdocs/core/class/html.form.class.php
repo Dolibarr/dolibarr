@@ -2641,9 +2641,9 @@ class Form
 
     			    $outval .= ' - '.$langs->transnoentities("VirtualStock").':';
     			    if ($virtualstock > 0) {
-    			        $outval .= ' - <span class="product_line_stock_ok">';
+    			        $outval .= '<span class="product_line_stock_ok">';
     			    } elseif ($virtualstock <= 0) {
-    			        $outval .= ' - <span class="product_line_stock_too_low">';
+    			        $outval .= '<span class="product_line_stock_too_low">';
     			    }
     			    $outval .= $virtualstock;
     			    $outval .= '</span>';
@@ -4104,7 +4104,7 @@ class Form
 					} elseif ($input['type'] == 'select')
 					{
 						$more .= '<div class="tagtr"><div class="tagtd'.(empty($input['tdclass']) ? '' : (' '.$input['tdclass'])).'">';
-						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd tdtop left">';
+						if (!empty($input['label'])) $more .= $input['label'].'</div><div class="tagtd left">';
 						$more .= $this->selectarray($input['name'], $input['values'], $input['default'], 1, 0, 0, $moreattr, 0, 0, 0, '', $morecss);
 						$more .= '</div></div>'."\n";
 					} elseif ($input['type'] == 'checkbox')
@@ -5243,6 +5243,28 @@ class Form
     }
 
     /**
+     *  Show 2 HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
+     *  Fields are preselected with :
+     *              - set_time date (must be a local PHP server timestamp or string date with format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM')
+     *              - local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
+     *              - Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
+     *
+     *  @param  integer     $set_time       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+     *  @param  integer     $set_time_end       Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
+     *  @param	string		$prefix			Prefix for fields name
+     *  @param	string		$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
+     * 	@return string                      Html for selectDate
+     *  @see    form_date(), select_month(), select_year(), select_dayofweek()
+     */
+    public function selectDateToDate($set_time = '', $set_time_end = '', $prefix = 're', $empty = 0)
+    {
+        $ret = $this->selectDate($set_time, $prefix.'_start', 0, 0, $empty);
+        $ret .= '<br/>';
+        $ret .= $this->selectDate($set_time_end, $prefix.'_end', 0, 0, $empty);
+        return $ret;
+    }
+
+    /**
      *  Show a HTML widget to input a date or combo list for day, month, years and optionaly hours and minutes.
 	 *  Fields are preselected with :
 	 *              - set_time date (must be a local PHP server timestamp or string date with format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM')
@@ -5258,7 +5280,7 @@ class Form
 	 *	@param	int			$d				1=Show days, month, years
 	 * 	@param	int			$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
 	 * 	@param 	int			$disabled		Disable input fields
-	 *  @param  int			$fullday        When a checkbox with this html name is on, hour and day are set with 00:00 or 23:59
+	 *  @param  int			$fullday        When a checkbox with id #fullday is cheked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
      *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
@@ -5349,7 +5371,7 @@ class Form
 				if ($usecalendar == "eldy")
 				{
 					// Zone de saisie manuelle de la date
-					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidth75" maxlength="11" value="'.$formated_date.'"';
+					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
@@ -5402,7 +5424,7 @@ class Form
 
 					// Zone de saisie manuelle de la date
 					$retstring .= '<div class="nowrap inline-block">';
-					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidth75" maxlength="11" value="'.$formated_date.'"';
+					$retstring .= '<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidthdate" maxlength="11" value="'.$formated_date.'"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= '>';
@@ -5545,10 +5567,17 @@ class Form
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y', 'tzuser').'\');';
             } elseif ($addnowlink == 2)
             {
+            	/* Disabled because the output does not use the string format defined by FormatDateShort key to forge the value into #prefix.
+            	 * This break application for foreign languages.
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(d.toLocaleDateString(\''.str_replace('_', '-', $langs->defaultlang).'\'));';
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(d.getDate().pad());';
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(parseInt(d.getMonth().pad()) + 1);';
                 $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(d.getFullYear());';
+                */
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'\').val(\''.dol_print_date(dol_now(), 'day', 'tzuser').'\');';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'day\').val(\''.dol_print_date(dol_now(), '%d', 'tzuser').'\');';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'month\').val(\''.dol_print_date(dol_now(), '%m', 'tzuser').'\');';
+                $reset_scripts .= 'jQuery(\'#'.$prefix.'year\').val(\''.dol_print_date(dol_now(), '%Y', 'tzuser').'\');';
             }
 			/*if ($usecalendar == "eldy")
             {
@@ -5676,8 +5705,7 @@ class Form
 			$minSelected = convertSecondToTime($iSecond, 'min');
 		}
 
-		if ($typehour == 'select')
-		{
+		if ($typehour == 'select') {
 			$retstring .= '<select class="flat" id="select_'.$prefix.'hour" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').'>';
 			for ($hour = 0; $hour < 25; $hour++)	// For a duration, we allow 24 hours
 			{
@@ -5689,10 +5717,11 @@ class Form
 				$retstring .= ">".$hour."</option>";
 			}
 			$retstring .= "</select>";
-		} elseif ($typehour == 'text' || $typehour == 'textselect')
-		{
-			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
-		} else return 'BadValueForParameterTypeHour';
+		} elseif ($typehour == 'text' || $typehour == 'textselect') {
+			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
+		} else {
+			return 'BadValueForParameterTypeHour';
+		}
 
 		if ($typehour != 'text') $retstring .= ' '.$langs->trans('HourShort');
 		else $retstring .= '<span class="hideonsmartphone">:</span>';
@@ -5713,7 +5742,7 @@ class Form
 			$retstring .= "</select>";
 		} elseif ($typehour == 'text')
 		{
-			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
 		}
 
 		if ($typehour != 'text') $retstring .= ' '.$langs->trans('MinuteShort');
@@ -6471,7 +6500,7 @@ class Form
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
-		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage;
+		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage;	// To get list of saved seleteced properties
 		if (!empty($user->conf->$tmpvar))
 		{
 			$tmparray = explode(',', $user->conf->$tmpvar);

@@ -84,7 +84,7 @@ $hookmanager->initHooks(array('contractservicelist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('contratdet');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -576,7 +576,7 @@ while ($i < min($num, $limit))
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked']))
 	{
-		print '<td>';
+		print '<td class="nowraponall">';
 		print $contractstatic->getNomUrl(1, 16);
 		print '</td>';
         if (!$i) $totalarray['nbfield']++;

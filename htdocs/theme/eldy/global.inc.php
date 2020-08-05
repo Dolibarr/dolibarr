@@ -34,7 +34,7 @@
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #000055;
+	--fieldrequiredcolor: #804000;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -45,10 +45,12 @@
 }
 
 <?php
-if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
-	print "@media (prefers-color-scheme: dark) {
-	      :root {
-
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";
+	}
+	print ":root {
 	            --colorbackhmenu1: #1d1e20;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
@@ -84,8 +86,10 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
-	      }
-	    }";
+	      }\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "}\n";
+	}
 }
 ?>
 
@@ -148,9 +152,9 @@ table.liste th.wrapcolumntitle.liste_titre:not(.maxwidthsearch), table.liste td.
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth],
 select#date_startday, select#date_startmonth, select#date_endday, select#date_endmonth, select#reday, select#remonth,
-input[name=duration_value]
+input[name=duration_value], input[name=durationhour]
 {
-	margin-right: 4px;
+	margin-right: 4px !important;
 }
 input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
@@ -165,7 +169,7 @@ input, input.flat, textarea, textarea.flat, form.flat select, select, select.fla
     font-family: <?php print $fontlist ?>;
     outline: none;
     margin: 0px 0px 0px 0px;
-    border<?php echo empty($conf->global->THEME_HIDE_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+    border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 }
 
 input {
@@ -186,8 +190,17 @@ input, select {
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
+	color: #FFF !important;
+
+	/* -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1); */
+
+	border-radius: 3px;
     border-collapse: collapse;
     border: none;
+}
+#mainbody span.websitetools input.button:not(.buttongen):not(.bordertransp) {
+    color: #000 !important;
 }
 #mainbody input.buttongen, #mainbody button.buttongen {
 	padding: 3px 4px;
@@ -196,6 +209,7 @@ input, select {
 input.button:focus {
 	border-bottom: 0;
 }
+
 input.button.massactionconfirmed {
     margin: 4px;
 }
@@ -391,7 +405,16 @@ input.removedfile {
 	border: 0px !important;
 	vertical-align: text-bottom;
 }
-input[type=file ]    { background-color: transparent; border-top: none; border-left: none; border-right: none; box-shadow: none; }
+input[type=file ]    {
+	background-color: transparent;
+	box-shadow: none;
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	<?php } ?>
+    border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+}
 input[type=checkbox] { background-color: transparent; border: none; box-shadow: none; }
 input[type=radio]    { background-color: transparent; border: none; box-shadow: none; }
 input[type=image]    { background-color: transparent; border: none; box-shadow: none; }
@@ -493,9 +516,16 @@ div.floatright
 {
     float:<?php print $right; ?>;
 }
+.block
+{
+	display:block;
+}
 .inline-block
 {
 	display:inline-block;
+}
+.largenumber {
+    font-size: 1.4em;
 }
 
 th .button {
@@ -616,10 +646,10 @@ textarea.centpercent {
 	padding-<?php print $right; ?>: 2px;
 }
 .paddingtop {
-	padding-bottom: 4px;
+	padding-top: 4px;
 }
 .paddingtop2 {
-	padding-bottom: 2px;
+	padding-top: 2px;
 }
 .paddingbottom {
 	padding-bottom: 4px;
@@ -688,9 +718,17 @@ body[class*="colorblind-"] .text-success{
 	float: none !important;
 }
 
+span.fa.fa-plus-circle.paddingleft {
+    padding-right: 4px;
+    padding-top: 3px;
+    padding-bottom: 2px;
+}
+
 .fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
-.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off {
+.asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
+.tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off
+{
 	font-size: 1.5em; vertical-align: text-bottom;
 }
 
@@ -1035,6 +1073,7 @@ table[summary="list_of_modules"] .fa-cog {
 /* ============================================================================== */
 
 .clearboth  { clear:both; }
+
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 .minwidth75  { min-width: 75px; }
@@ -1073,6 +1112,7 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth25  { max-width: 25px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
+.maxwidthdate  { max-width: 80px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -1083,6 +1123,7 @@ table[summary="list_of_modules"] .fa-cog {
 .maxwidth50imp  { max-width: 50px !important; }
 .maxwidth75imp  { max-width: 75px !important; }
 .minheight20 { min-height: 20px; }
+.minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
 .titlefield       { /* width: 25%; */ width: 250px; }
@@ -1161,10 +1202,11 @@ table[summary="list_of_modules"] .fa-cog {
 	}
 
 	select.minwidth100imp, select.minwidth100, select.minwidth200, .widthcentpercentminusx {
-		width: calc(100% - 30px) !important;
+		width: calc(100% - 50px) !important;
 		display: inline-block;
 	}
 
+	.clearbothonsmartphone { clear: both; display: block; }
 	/*img.photoref, div.photoref {
 		box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.2);
 	}*/
@@ -1728,7 +1770,7 @@ div.heightref {
 	min-height: 80px;
 }
 div.divphotoref {
-	padding-<?php echo $right; ?>: 20px;
+	padding-<?php echo $right; ?>: 30px;
 }
 div.paginationref {
 	padding-bottom: 10px;
@@ -1766,6 +1808,9 @@ img.photoref, div.photoref {
 	height: 80px;
 	width: 80px;
     object-fit: contain;
+}
+div.photoref .fa, div.photoref .fas, div.photoref .far {
+	font-size: 2.5em;
 }
 img.fitcontain {
     object-fit: contain;
@@ -1975,7 +2020,11 @@ div.mainmenu {
 	margin-left: 0px;
 	min-width: 40px;
 }
+
 a.tmenuimage:focus, .mainmenu.topmenuimage:focus {
+    outline: none;
+}
+button.ui-button.ui-corner-all.ui-widget:focus {
     outline: none;
 }
 
@@ -2780,6 +2829,9 @@ a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
     text-decoration: none;
     white-space: nowrap;
 
+	/*border-right: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-top: 1px solid #ddd; */
 	border-right: 1px solid transparent;
 	border-left: 1px solid transparent;
 	border-top: 1px solid transparent;
@@ -3108,7 +3160,7 @@ table.listwithfilterbefore {
 
 /* Pagination */
 div.refidpadding  {
-	padding-top: 3px;
+	/* padding-top: 3px; */
 }
 div.refid  {
 	font-weight: bold;
@@ -3150,7 +3202,7 @@ div.pagination li {
   display: inline-block;
   padding-left: 0px;
   padding-right: 0px;
-  padding-top: 10px;
+  /* padding-top: 10px; */
   padding-bottom: 5px;
   font-size: 1.1em;
 }
@@ -3209,11 +3261,7 @@ div.pagination li:first-child span {
   /*border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;*/
 }
-div.pagination li:last-child a,
-div.pagination li:last-child span {
-  /*border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;*/
-}
+
 div.pagination li a:hover,
 div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
@@ -3624,6 +3672,11 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
     padding-bottom: 2px;
     width: 118px;
 }
+
+.boxtable:not(.widgetstats) td.tdboxstats .boxstats {
+	box-shadow: 1px 1px 8px var(--colorboxstatsborder);
+}
+
 .tabBar .fichehalfright .boxstats {
     padding-top: 8px;
     padding-bottom: 4px;
@@ -3931,10 +3984,11 @@ div.boximport {
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #884400; }
 
-.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
+.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
 td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 1.7em; };
+span.widthpictotitle { font-size: 1.7em; }
+table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -3999,6 +4053,8 @@ div.titre {
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
+    font-size: 1.05em;
+    /* text-transform: uppercase; */
     /* font-weight: 600; */
 }
 div.titre {
@@ -4036,6 +4092,9 @@ div.backgreypublicpayment { background-color: #f0f0f0; padding: 20px; border-bot
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
 #tablepublicpayment tr.liste_total td { border-top: none; }
+input#cardholder-name {
+    font-size: 1em;
+}
 
 .divmainbodylarge { margin-left: 40px; margin-right: 40px; }
 #divsubscribe { max-width: 900px; }
@@ -4383,6 +4442,7 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 table.cal_month    { border-spacing: 0px;  }
 table.cal_month td:first-child  { border-left: 0px; }
 table.cal_month td:last-child   { border-right: 0px; }
+table.cal_month td { padding-left: 1px !important; padding-right: 1px !important; }
 .cal_current_month { border-top: 0; border-left: solid 1px #E0E0E0; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_peruserleft { border-top: 0; border-left: solid 2px #6C7C7B; border-right: 0; border-bottom: solid 1px #E0E0E0; }
 .cal_current_month_oneday { border-right: solid 1px #E0E0E0; }
@@ -4399,11 +4459,17 @@ table.cal_month td:last-child   { border-right: 0px; }
 .cal_today_peruser_peruserleft { background: #FDFDF0; border-left: solid 2px #6C7C7B; border-right: solid 1px #E0E0E0; border-bottom: solid 1px #E0E0E0; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 1px; padding-top: 0px; padding-bottom: 0px; }
 .cal_past          { }
 .cal_peruser       { padding-top: 0 !important; padding-bottom: 0 !important; padding-<?php print $left; ?>: 1px !important; padding-<?php print $right; ?>: 1px !important; }
-.cal_impair        { background: #F8F8F8; }
+.cal_impair        {
+	background: linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
+    background: -o-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
+    background: -moz-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
+    background: -webkit-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%);
+    /*  background: -ms-linear-gradient(bottom, var(--colorbacklinepair1) 85%, var(--colorbacklinepair2) 100%); */
+}
 .cal_today_peruser_impair { background: #F8F8F0; }
 .peruser_busy      { }
 .peruser_notbusy   { opacity: 0.5; }
-table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; }
+table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px; min-height: 20px; filter: saturate(0.8); border-radius: 3px; }
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
@@ -4414,6 +4480,7 @@ table.cal_event td.cal_event_right { padding: 4px 4px !important; }
 .cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
+table.cal_month tr td table.nobordernopadding tr td { padding: 0 2px 0 2px; }
 
 .calendarviewcontainertr { height: 100px; }
 
@@ -4494,10 +4561,10 @@ td.cal_other_month {
 /* ============================================================================== */
 
 /* CSS for treeview */
-.treeview ul { background-color: transparent !important; margin-top: 4px; padding-top: 4px !important; }
+.treeview ul { background-color: transparent !important; margin-bottom: 4px !important; margin-top: 0 !important; padding-top: 4px !important; }
 .treeview li { background-color: transparent !important; padding: 0 0 0 16px !important; min-height: 26px; }
 .treeview .hover { color: var(--colortextlink) !important; text-decoration: underline !important; }
-
+.treeview .hitarea { margin-top: 3px; }
 
 
 /* ============================================================================== */
@@ -5143,16 +5210,18 @@ span#select2-taskid-container[title^='--'] {
 }
 
 span.select2.select2-container.select2-container--default {
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
     border-left: none;
     border-top: none;
     border-right: none;
+    <?php } ?>
 }
 input.select2-input {
 	border-bottom: none ! important;
 }
 .select2-choice {
 	border: none;
-	border-bottom:  solid 1px rgba(0,0,0,.2) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
+	border-bottom: solid 1px var(--inputbordercolor) !important;	/* required to avoid to lose bottom line when focus is lost on select2. */
 }
 .select2-results .select2-highlighted.optionblue {
 	color: #FFF !important;
@@ -5215,19 +5284,23 @@ input.select2-input {
 	box-shadow: none !important;
 }
 .select2-container--open .select2-dropdown--above {
-    border-bottom: solid 1px rgba(0,0,0,.2);
+    border-bottom: solid 1px var(--inputbordercolor);
 }
 .select2-drop.select2-drop-above.select2-drop-active {
 	border-top: 1px solid #ccc;
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px var(--inputbordercolor);
 }
 .select2-container--default .select2-selection--single
 {
 	outline: none;
+	<?php if (empty($conf->global->THEME_SHOW_BORDER_ON_INPUT)) { ?>
 	border-top: none;
 	border-left: none;
 	border-right: none;
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	<?php } ?>
+
+	border<?php echo empty($conf->global->THEME_SHOW_BORDER_ON_INPUT) ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
+
 	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
@@ -5238,7 +5311,7 @@ input.select2-input {
 	border-right: none;
 }
 .select2-container--default .select2-selection--multiple {
-	border-bottom: solid 1px rgba(0,0,0,.2);
+	border-bottom: solid 1px var(--inputbordercolor);
 	border-top: none;
 	border-left: none;
 	border-right: none;
@@ -5385,7 +5458,7 @@ span#select2-boxbookmark-container, span#select2-boxcombo-container {
 
 /* To emulate select 2 style */
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
-  padding: 2px 5px 1px 5px;
+  padding: 3px 5px 2px 5px;
   margin: 0 0 2px 3px;
   position: relative;
   line-height: 13px;
@@ -5441,7 +5514,8 @@ span.noborderoncategories a, li.noborderoncategories a {
 	vertical-align: top;
 }
 span.noborderoncategories {
-	padding: 3px 5px 0px 5px;
+	padding: 4px 5px 0px 5px;
+	display: inline-block;
 }
 .categtextwhite, .treeview .categtextwhite.hover {
 	color: #fff !important;

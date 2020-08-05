@@ -1424,15 +1424,15 @@ abstract class CommonObject
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load object contact with id=$this->contactid into $this->contact
+	 *		Load object contact with id=$this->contact_id into $this->contact
 	 *
-	 *		@param	int		$contactid      Id du contact. Use this->contactid if empty.
+	 *		@param	int		$contactid      Id du contact. Use this->contact_id if empty.
 	 *		@return	int						<0 if KO, >0 if OK
 	 */
 	public function fetch_contact($contactid = null)
 	{
         // phpcs:enable
-		if (empty($contactid)) $contactid = $this->contactid;
+		if (empty($contactid)) $contactid = $this->contact_id;
 
 		if (empty($contactid)) return 0;
 
@@ -1858,14 +1858,15 @@ abstract class CommonObject
 		$row = $this->db->fetch_row($result);
 		$this->ref_previous = $row[0];
 
-
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql .= " FROM ".(empty($nodbprefix) ?MAIN_DB_PREFIX:'').$this->table_element." as te";
 		if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 			$sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 'fk_soc@societe') $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to entity
-		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ", ".MAIN_DB_PREFIX.$tmparray[1]." as ".($tmparray[1] == 'societe' ? 's' : 'parenttable'); // If we need to link to this table to limit select to entity
+		} elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe as s"; // If we need to link to societe to limit select to socid
 		elseif ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid"; // If we need to link to societe to limit select to socid
 		if ($this->restrictiononfksoc && !$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON ".$aliastablesociete.".rowid = sc.fk_soc";
 		$sql .= " WHERE te.".$fieldid." > '".$this->db->escape($fieldid=='rowid' ? $this->id : $this->ref)."'"; // ->ref must always be defined (set to id if field does not exists)
@@ -1876,8 +1877,10 @@ abstract class CommonObject
 			if (!preg_match('/^\s*AND/i', $filter)) $sql .= " AND "; // For backward compatibility
 			$sql .= $filter;
 		}
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 'fk_soc@societe') $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to entity
-		elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged)) {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ' AND te.'.$tmparray[0].' = '.($tmparray[1] == 'societe' ? 's' : 'parenttable').'.rowid'; // If we need to link to this table to limit select to entity
+		} elseif ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql .= ' AND te.fk_soc = s.rowid'; // If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
@@ -1889,6 +1892,10 @@ abstract class CommonObject
 			} else {
 				$sql .= ' AND te.entity IN ('.getEntity($this->element).')';
 			}
+		}
+		if (isset($this->ismultientitymanaged) && !is_numeric($this->ismultientitymanaged) && $this->element != 'societe') {
+			$tmparray = explode('@', $this->ismultientitymanaged);
+			$sql .= ' AND parenttable.entity IN ('.getEntity($tmparray[1]).')';
 		}
 		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql .= ' AND te.fk_soc = '.$socid;
 		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql .= ' AND (te.fk_soc = '.$socid.' OR te.fk_soc IS NULL)';
@@ -2525,10 +2532,11 @@ abstract class CommonObject
 	/**
 	 * 	Get children of line
 	 *
-	 * 	@param	int		$id		Id of parent line
-	 * 	@return	array			Array with list of children lines id
+	 * 	@param	int		$id		            Id of parent line
+	 * 	@param	int		$includealltree		0 = 1st level child, 1 = All level child
+	 * 	@return	array			            Array with list of children lines id
 	 */
-	public function getChildrenOfLine($id)
+	public function getChildrenOfLine($id, $includealltree = 0)
 	{
 		$rows = array();
 
@@ -2541,16 +2549,13 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$i = 0;
-			$num = $this->db->num_rows($resql);
-			while ($i < $num)
-			{
-				$row = $this->db->fetch_row($resql);
-				$rows[$i] = $row[0];
-				$i++;
+			if ($this->db->num_rows($resql) > 0) {
+				while ($row = $this->db->fetch_row($resql)) {
+					$rows[] = $row[0];
+					if (!empty($includealltree)) $rows = array_merge($rows, $this->getChildrenOfLine($row[0]), $includealltree);
+				}
 			}
 		}
-
 		return $rows;
 	}
 
@@ -2842,12 +2847,14 @@ abstract class CommonObject
 			dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
+
+		$newsuffix = $suffix;
+
 		// Special cas
-		//var_dump($this->table_element);exit;
-		if ($this->table_element == 'product') $suffix = '';
+		if ($this->table_element == 'product' && $newsuffix == '_private') $newsuffix = '';
 
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-		$sql .= " SET note".$suffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
+		$sql .= " SET note".$newsuffix." = ".(!empty($note) ? ("'".$this->db->escape($note)."'") : "NULL");
 		$sql .= " ,".(in_array($this->table_element, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment')) ? "fk_user_mod" : "fk_user_modif")." = ".$user->id;
 		$sql .= " WHERE rowid =".$this->id;
 
@@ -5304,11 +5311,12 @@ abstract class CommonObject
 			   				$new_array_options[$key] = null;
 			   			}
 			 			break;
-					case 'double':
+			   		case 'price':
+			   		case 'double':
 						$value = price2num($value);
 						if (!is_numeric($value) && $value != '')
 						{
-							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." sur ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." for ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
 							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 							return -1;
 						} elseif ($value == '')
@@ -5356,9 +5364,6 @@ abstract class CommonObject
 			   				$new_array_options[$key] = $this->array_options[$key];
 			   			}
 			   			break;
-			   		case 'price':
-						$new_array_options[$key] = price2num($this->array_options[$key]);
-						break;
 					case 'date':
 					case 'datetime':
 						// If data is a string instead of a timestamp, we convert it
@@ -5450,7 +5455,7 @@ abstract class CommonObject
     			{
     			    if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey]))    // If field not already added previously
     			    {
-                        if (in_array($tmpval, array('int', 'double'))) $sql .= ", 0";
+                        if (in_array($tmpval, array('int', 'double', 'price'))) $sql .= ", 0";
                         else $sql .= ", ''";
     			    }
     			}
@@ -5608,7 +5613,7 @@ abstract class CommonObject
 	 *	Update an extra field value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
-	 *  @param  string      $key    		Key of the extrafield (without starting 'options_')
+	 *  @param  string      $key    		Key of the extrafield to update (without starting 'options_')
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
@@ -5844,7 +5849,7 @@ abstract class CommonObject
 			if ($type == 'date')
 			{
 				$morecss = 'minwidth100imp';
-			} elseif ($type == 'datetime' || $type == 'link')
+			} elseif ($type == 'datetime' || $type == 'link')	// link means an foreign key to another primary id
 			{
 				$morecss = 'minwidth200imp';
 			} elseif (in_array($type, array('int', 'integer', 'price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/', $type))
@@ -6278,11 +6283,13 @@ abstract class CommonObject
 			$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter]]'
 			$param_list_array = explode(':', $param_list[0]);
 			$showempty = (($required && $default != '') ? 0 : 1);
+			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
+				$morecss .= ' widthcentpercentminusx';
+			}
 
 			$out = $form->selectForForms($param_list[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
-			if (!empty($param_list_array[2]))		// If we set to add a create button
-			{
+			if (!empty($param_list_array[2])) {		// If the entry into $fields is set to add a create button
 				if (!GETPOSTISSET('backtopage') && empty($val['disabled']) && empty($nonewbutton))	// To avoid to open several times the 'Create Object' button and to avoid to have button if field is protected by a "disabled".
 				{
 		   			list($class, $classfile) = explode(':', $param_list[0]);
@@ -6711,237 +6718,245 @@ abstract class CommonObject
 	 */
 	public function showOptionals($extrafields, $mode = 'view', $params = null, $keysuffix = '', $keyprefix = '', $onetrtd = 0)
 	{
-		global $db, $conf, $langs, $action, $form;
+		global $db, $conf, $langs, $action, $form, $hookmanager;
 
 		if (!is_object($form)) $form = new Form($db);
 
 		$out = '';
 
-		if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0)
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook))
 		{
-			$out .= "\n";
-			$out .= '<!-- showOptionalsInput --> ';
-			$out .= "\n";
-
-            $extrafields_collapse_num = '';
-			$e = 0;
-			foreach ($extrafields->attributes[$this->table_element]['label'] as $key=>$label)
+			if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0)
 			{
-				// Show only the key field in params
-				if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
+				$out .= "\n";
+				$out .= '<!-- showOptionals --> ';
+				$out .= "\n";
 
-				// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
-				$enabled = 1;
-				if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key]))
+	            $extrafields_collapse_num = '';
+				$e = 0;
+				foreach ($extrafields->attributes[$this->table_element]['label'] as $key=>$label)
 				{
-                    $enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1);
-                }
-				if (empty($enabled)) continue;
+					// Show only the key field in params
+					if (is_array($params) && array_key_exists('onlykey', $params) && $key != $params['onlykey']) continue;
 
-				$visibility = 1;
-				if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
-				{
-				    $visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
-				}
+					// @todo Add test also on 'enabled' (different than 'list' that is 'visibility')
+					$enabled = 1;
+					if ($enabled && isset($extrafields->attributes[$this->table_element]['enabled'][$key]))
+					{
+	                    $enabled = dol_eval($extrafields->attributes[$this->table_element]['enabled'][$key], 1);
+	                }
+					if (empty($enabled)) continue;
 
-				$perms = 1;
-				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key]))
-				{
-					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
-				}
-
-				if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
-				elseif (($mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3 && abs($visibility) != 4) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
-				elseif ($mode == 'view' && empty($visibility)) continue;
-				if (empty($perms)) continue;
-				// Load language if required
-				if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
-					$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
-				}
-
-				$colspan = '';
-				if (is_array($params) && count($params) > 0) {
-					if (array_key_exists('cols', $params)) {
-						$colspan = $params['cols'];
-					} elseif (array_key_exists('colspan', $params)) {	// For backward compatibility. Use cols instead now.
-						$reg = array();
-						if (preg_match('/colspan="(\d+)"/', $params['colspan'], $reg)) {
-							$colspan = $reg[1];
-						} else {
-							$colspan = $params['colspan'];
-						}
+					$visibility = 1;
+					if ($visibility && isset($extrafields->attributes[$this->table_element]['list'][$key]))
+					{
+					    $visibility = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
 					}
-				}
 
-				switch ($mode) {
-					case "view":
-						$value = $this->array_options["options_".$key.$keysuffix];
-						break;
-					case "create":
-                    case "edit":
-                        $getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
-                        // GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
-						if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
-						{
-							if (is_array($getposttemp)) {
-								// $getposttemp is an array but following code expects a comma separated string
-								$value = implode(",", $getposttemp);
-							} else {
-								$value = $getposttemp;
-							}
-						} else {
-							$value = $this->array_options["options_".$key]; // No GET, no POST, no default value, so we take value of object.
-						}
-						//var_dump($keyprefix.' - '.$key.' - '.$keysuffix.' - '.$keyprefix.'options_'.$key.$keysuffix.' - '.$this->array_options["options_".$key.$keysuffix].' - '.$getposttemp.' - '.$value);
-						break;
-				}
+					$perms = 1;
+					if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key]))
+					{
+						$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
+					}
 
-				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
-				{
-                    $extrafields_collapse_num = '';
-                    $extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
-                    if (!empty($extrafield_param) && is_array($extrafield_param)) {
-                        $extrafield_param_list = array_keys($extrafield_param['options']);
+					if (($mode == 'create') && abs($visibility) != 1 && abs($visibility) != 3) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+					elseif (($mode == 'edit') && abs($visibility) != 1 && abs($visibility) != 3 && abs($visibility) != 4) continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
+					elseif ($mode == 'view' && empty($visibility)) continue;
+					if (empty($perms)) continue;
+					// Load language if required
+					if (!empty($extrafields->attributes[$this->table_element]['langfile'][$key])) {
+						$langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
+					}
 
-                        if (count($extrafield_param_list) > 0) {
-                            $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
-
-                            if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
-                                $extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
-                            }
-                        }
-                    }
-
-					$out .= $extrafields->showSeparator($key, $this, ($colspan + 1));
-				} else {
-					$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
-					$csstyle = '';
+					$colspan = '';
 					if (is_array($params) && count($params) > 0) {
-						if (array_key_exists('class', $params)) {
-							$class .= $params['class'].' ';
+						if (array_key_exists('cols', $params)) {
+							$colspan = $params['cols'];
+						} elseif (array_key_exists('colspan', $params)) {	// For backward compatibility. Use cols instead now.
+							$reg = array();
+							if (preg_match('/colspan="(\d+)"/', $params['colspan'], $reg)) {
+								$colspan = $reg[1];
+							} else {
+								$colspan = $params['colspan'];
+							}
 						}
-						if (array_key_exists('style', $params)) {
-							$csstyle = $params['style'];
-						}
 					}
-
-					// add html5 elements
-					$domData  = ' data-element="extrafield"';
-					$domData .= ' data-targetelement="'.$this->element.'"';
-					$domData .= ' data-targetid="'.$this->id.'"';
-
-					$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
-
-					$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
-
-					if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan = '0'; }
-
-					if ($action == 'selectlines') { $colspan++; }
-
-					// Convert date into timestamp format (value in memory must be a timestamp)
-					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime')))
-					{
-						$datenotinstring = $this->array_options['options_'.$key];
-						if (!is_numeric($this->array_options['options_'.$key]))	// For backward compatibility
-						{
-							$datenotinstring = $this->db->jdate($datenotinstring);
-						}
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
-					}
-					// Convert float submited string into real php numeric (value in memory must be a php numeric)
-					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
-					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
-					}
-					// HTML, select, integer and text add default value
-					if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
-					{
-						if ($action == 'create') $value = $extrafields->attributes[$this->table_element]['default'][$key];
-						else $value = $this->array_options['options_'.$key];
-					}
-
-					$labeltoshow = $langs->trans($label);
-					$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
-
-					$out .= '<td class="';
-					//$out .= "titlefield";
-					//if (GETPOST('action', 'none') == 'create') $out.='create';
-					// BUG #11554 : For public page, use red dot for required fields, instead of bold label
-					$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
-					if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
-						$out .= '">';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
-						else $out .= $labeltoshow;
-						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
-					} else {
-						if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
-						$out .= '">';
-						if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
-						else $out .= $labeltoshow;
-					}
-					$out .= '</td>';
-
-					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-
-					$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').'class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
 
 					switch ($mode) {
 						case "view":
-							$out .= $extrafields->showOutputField($key, $value);
+							$value = $this->array_options["options_".$key.$keysuffix];
 							break;
-                        case "create":
-                        case "edit":
-							$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+						case "create":
+	                    case "edit":
+	                        $getposttemp = GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none'); // GETPOST can get value from GET, POST or setup of default values.
+	                        // GETPOST("options_" . $key) can be 'abc' or array(0=>'abc')
+							if (is_array($getposttemp) || $getposttemp != '' || GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix))
+							{
+								if (is_array($getposttemp)) {
+									// $getposttemp is an array but following code expects a comma separated string
+									$value = implode(",", $getposttemp);
+								} else {
+									$value = $getposttemp;
+								}
+							} else {
+								$value = $this->array_options["options_".$key]; // No GET, no POST, no default value, so we take value of object.
+							}
+							//var_dump($keyprefix.' - '.$key.' - '.$keysuffix.' - '.$keyprefix.'options_'.$key.$keysuffix.' - '.$this->array_options["options_".$key.$keysuffix].' - '.$getposttemp.' - '.$value);
 							break;
 					}
 
-					$out .= '</td>';
-
-					/*for($ii = 0; $ii < ($colspan - 1); $ii++)
+					if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 					{
-						$out .='<td class="'.$this->element.'_extras_'.$key.'"></td>';
-					}*/
+	                    $extrafields_collapse_num = '';
+	                    $extrafield_param = $extrafields->attributes[$this->table_element]['param'][$key];
+	                    if (!empty($extrafield_param) && is_array($extrafield_param)) {
+	                        $extrafield_param_list = array_keys($extrafield_param['options']);
 
-					if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
-					else $out .= '</tr>';
-					$e++;
-				}
-			}
-			$out .= "\n";
-			// Add code to manage list depending on others
-			if (!empty($conf->use_javascript_ajax)) {
-				$out .= '
-				<script>
-				    jQuery(document).ready(function() {
-				    	function showOptions(child_list, parent_list)
-				    	{
-				    		var val = $("select[name=\""+parent_list+"\"]").val();
-				    		var parentVal = parent_list + ":" + val;
-							if(val > 0) {
-					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
-					    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
-							} else {
-								$("select[name=\""+child_list+"\"] option").show();
+	                        if (count($extrafield_param_list) > 0) {
+	                            $extrafield_collapse_display_value = intval($extrafield_param_list[0]);
+
+	                            if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
+	                                $extrafields_collapse_num = $extrafields->attributes[$this->table_element]['pos'][$key];
+	                            }
+	                        }
+	                    }
+
+						$out .= $extrafields->showSeparator($key, $this, ($colspan + 1));
+					} else {
+						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
+						$csstyle = '';
+						if (is_array($params) && count($params) > 0) {
+							if (array_key_exists('class', $params)) {
+								$class .= $params['class'].' ';
 							}
-				    	}
-						function setListDependencies() {
-					    	jQuery("select option[parent]").parent().each(function() {
-					    		var child_list = $(this).attr("name");
-								var parent = $(this).find("option[parent]:first").attr("parent");
-								var infos = parent.split(":");
-								var parent_list = infos[0];
-								$("select[name=\""+parent_list+"\"]").change(function() {
-									showOptions(child_list, parent_list);
-								});
-					    	});
+							if (array_key_exists('style', $params)) {
+								$csstyle = $params['style'];
+							}
 						}
 
-						setListDependencies();
-				    });
-				</script>'."\n";
-				$out .= '<!-- /showOptionalsInput --> '."\n";
+						// add html5 elements
+						$domData  = ' data-element="extrafield"';
+						$domData .= ' data-targetelement="'.$this->element.'"';
+						$domData .= ' data-targetid="'.$this->id.'"';
+
+						$html_id = (empty($this->id) ? '' : 'extrarow-'.$this->element.'_'.$key.'_'.$this->id);
+
+						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan = '0'; }
+
+						if ($action == 'selectlines') { $colspan++; }
+
+						// Convert date into timestamp format (value in memory must be a timestamp)
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date', 'datetime')))
+						{
+							$datenotinstring = $this->array_options['options_'.$key];
+							if (!is_numeric($this->array_options['options_'.$key]))	// For backward compatibility
+							{
+								$datenotinstring = $this->db->jdate($datenotinstring);
+							}
+							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min", 'int', 3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year", 'int', 3)) : $datenotinstring;
+						}
+						// Convert float submited string into real php numeric (value in memory must be a php numeric)
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('price', 'double')))
+						{
+							$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)) : $this->array_options['options_'.$key];
+						}
+						// HTML, select, integer and text add default value
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('html', 'text', 'select', 'int')))
+						{
+							if ($action == 'create') $value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) ? GETPOST($keyprefix.'options_'.$key.$keysuffix, 'none', 3) : $extrafields->attributes[$this->table_element]['default'][$key];
+							else $value = $this->array_options['options_'.$key];
+						}
+
+						$labeltoshow = $langs->trans($label);
+						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
+
+						$out .= '<tr '.($html_id ? 'id="'.$html_id.'" ' : '').$csstyle.' class="'.$class.$this->element.'_extras_'.$key.' trextrafields_collapse'.$extrafields_collapse_num.'" '.$domData.' >';
+						$out .= '<td class="';
+						//$out .= "titlefield";
+						//if (GETPOST('action', 'none') == 'create') $out.='create';
+						// BUG #11554 : For public page, use red dot for required fields, instead of bold label
+						$tpl_context = isset($params["tpl_context"]) ? $params["tpl_context"] : "none";
+						if ($tpl_context == "public") {	// Public page : red dot instead of fieldrequired characters
+							$out .= '">';
+							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
+							else $out .= $labeltoshow;
+							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= '&nbsp;<font color="red">*</font>';
+						} else {
+							if ($mode != 'view' && !empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
+							$out .= '">';
+							if (!empty($extrafields->attributes[$this->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $helptoshow);
+							else $out .= $labeltoshow;
+						}
+						$out .= '</td>';
+
+						$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
+
+						$out .= '<td '.($html_id ? 'id="'.$html_id.'" ' : '').'class="'.$this->element.'_extras_'.$key.'" '.($colspan ? ' colspan="'.$colspan.'"' : '').'>';
+
+						switch ($mode) {
+							case "view":
+								$out .= $extrafields->showOutputField($key, $value);
+								break;
+	                        case "create":
+	                        case "edit":
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this->id, $this->table_element);
+								break;
+						}
+
+						$out .= '</td>';
+
+						/*for($ii = 0; $ii < ($colspan - 1); $ii++)
+						{
+							$out .='<td class="'.$this->element.'_extras_'.$key.'"></td>';
+						}*/
+
+						if (!empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
+						else $out .= '</tr>';
+						$e++;
+					}
+				}
+				$out .= "\n";
+				// Add code to manage list depending on others
+				if (!empty($conf->use_javascript_ajax)) {
+					$out .= '
+					<script>
+					    jQuery(document).ready(function() {
+					    	function showOptions(child_list, parent_list)
+					    	{
+					    		var val = $("select[name=\""+parent_list+"\"]").val();
+					    		var parentVal = parent_list + ":" + val;
+								if(val > 0) {
+						    		$("select[name=\""+child_list+"\"] option[parent]").hide();
+						    		$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+								} else {
+									$("select[name=\""+child_list+"\"] option").show();
+								}
+					    	}
+							function setListDependencies() {
+						    	jQuery("select option[parent]").parent().each(function() {
+						    		var child_list = $(this).attr("name");
+									var parent = $(this).find("option[parent]:first").attr("parent");
+									var infos = parent.split(":");
+									var parent_list = infos[0];
+									$("select[name=\""+parent_list+"\"]").change(function() {
+										showOptions(child_list, parent_list);
+									});
+						    	});
+							}
+
+							setListDependencies();
+					    });
+					</script>'."\n";
+				}
+
+				$out .= '<!-- /showOptionals --> '."\n";
 			}
 		}
+
+		$out .= $hookmanager->resPrint;
+
 		return $out;
 	}
 
@@ -7603,11 +7618,11 @@ abstract class CommonObject
 		if (array_key_exists('ref', $fieldvalues)) $fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
 
 		$keys = array();
-		$values = array();
+		$values = array();	// Array to store string forged for SQL syntax
 		foreach ($fieldvalues as $k => $v) {
 			$keys[$k] = $k;
 			$value = $this->fields[$k];
-			$values[$k] = $this->quote($v, $value);
+			$values[$k] = $this->quote($v, $value);			// May return string 'NULL' if $value is null
 		}
 
 		// Clean and check mandatory
@@ -7617,8 +7632,7 @@ abstract class CommonObject
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && $values[$key] == '-1') $values[$key] = '';
 			if (!empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key] = '';
 
-			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && !isset($values[$key]) && is_null($this->fields[$key]['default']))
+			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && is_null($this->fields[$key]['default']))
 			{
 				$error++;
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
@@ -7756,6 +7770,11 @@ abstract class CommonObject
 			if ($obj)
 			{
 				$this->setVarsFromFetchObj($obj);
+
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
+
 				return $this->id;
 			} else {
 				return 0;
@@ -7788,6 +7807,9 @@ abstract class CommonObject
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
 		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
 		if ($morewhere)   $sql .= $morewhere;
+		if (isset($objectline->fields['position'])) {
+			$sql .= $this->db->order('position', 'ASC');
+		}
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -8267,6 +8289,27 @@ abstract class CommonObject
     }
 
     /* Part for categories/tags */
+
+    /**
+     * Sets object to given categories.
+     *
+     * Deletes object from existing categories not supplied.
+     * Adds it to non existing supplied categories.
+     * Existing categories are left untouch.
+     *
+     * @param 	string 		$type_categ 	Category type ('customer', 'supplier', 'website_page', ...)
+     * @return	int							Array of category objects or < 0 if KO
+     */
+    public function getCategoriesCommon($type_categ)
+    {
+    	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
+    	// Get current categories
+    	$c = new Categorie($this->db);
+    	$existing = $c->containing($this->id, $type_categ, 'id');
+
+    	return $existing;
+    }
 
     /**
      * Sets object to given categories.

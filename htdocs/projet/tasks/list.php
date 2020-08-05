@@ -61,6 +61,8 @@ $search_task_description = GETPOST('search_task_description');
 $search_task_ref_parent = GETPOST('search_task_ref_parent');
 $search_project_user = GETPOST('search_project_user');
 $search_task_user = GETPOST('search_task_user');
+$search_task_progress = GETPOST('search_task_progress');
+$search_societe = GETPOST('search_societe');
 
 $mine = $_REQUEST['mode'] == 'mine' ? 1 : 0;
 if ($mine) { $search_task_user = $user->id; $mine = 0; }
@@ -175,6 +177,7 @@ if (empty($reshook))
 		$search_task_label = "";
 		$search_task_description = "";
 		$search_task_ref_parent = "";
+		$search_task_progress = "";
 		$search_task_user = -1;
 		$search_project_user = -1;
 		$search_sday = '';
@@ -309,6 +312,7 @@ if ($search_task_ref)      $sql .= natural_search('t.ref', $search_task_ref);
 if ($search_task_label)    $sql .= natural_search('t.label', $search_task_label);
 if ($search_task_description)    $sql .= natural_search('t.description', $search_task_description);
 if ($search_task_ref_parent)    $sql .= ' AND t.fk_task_parent IN (SELECT ipt.rowid FROM '.MAIN_DB_PREFIX.'projet_task  as ipt WHERE '.natural_search('ipt.ref', $search_task_ref_parent, 0, 1).')';
+if ($search_task_progress) $sql .= natural_search('t.progress', $search_task_progress, 1);
 if ($search_societe)       $sql .= natural_search('s.nom', $search_societe);
 $sql .= dolSqlDateFilter('t.dateo', $search_sday, $search_smonth, $search_syear);
 $sql .= dolSqlDateFilter('t.datee', $search_eday, $search_emonth, $search_eyear);
@@ -396,6 +400,7 @@ if ($search_task_ref != '') 			$param .= '&search_task_ref='.urlencode($search_r
 if ($search_task_label != '') 		$param .= '&search_task_label='.urlencode($search_label);
 if ($search_task_description != '') 		$param .= '&search_task_description='.urlencode($search_description);
 if ($search_task_ref_parent != '') 		$param .= '&search_task_ref_parent='.urlencode($search_task_ref_parent);
+if ($search_task_progress != '') 			$param .= '&search_task_progress='.urlencode($search_task_progress);
 if ($search_societe != '') 		$param .= '&search_societe='.urlencode($search_societe);
 if ($search_projectstatus != '') $param .= '&search_projectstatus='.urlencode($search_projectstatus);
 if ((is_numeric($search_opp_status) && $search_opp_status >= 0) || in_array($search_opp_status, array('all', 'none'))) 	$param .= '&search_opp_status='.urlencode($search_opp_status);
@@ -571,7 +576,13 @@ if (!empty($arrayfields['p.fk_statut']['checked']))
 if (!empty($arrayfields['t.planned_workload']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.duration_effective']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.progress_calculated']['checked'])) print '<td class="liste_titre"></td>';
-if (!empty($arrayfields['t.progress']['checked'])) print '<td class="liste_titre"></td>';
+if (!empty($arrayfields['t.progress']['checked']))
+{
+	print '<td class="liste_titre center">';
+	print '<input type="text" class="flat" name="search_task_progress" value="'.$search_task_progress.'" size="4">';
+	print '</td>';
+}
+
 if (!empty($arrayfields['t.progress_summary']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.tobill']['checked'])) print '<td class="liste_titre"></td>';
 if (!empty($arrayfields['t.billed']['checked'])) print '<td class="liste_titre"></td>';

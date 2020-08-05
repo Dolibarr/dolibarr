@@ -33,12 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class MyObject extends CommonObject
 {
 	/**
-	 * @var string ID to identify managed object
+	 * @var string ID to identify managed object.
 	 */
 	public $element = 'myobject';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'mymodule_myobject';
 
@@ -310,7 +310,7 @@ class MyObject extends CommonObject
 			foreach ($object->array_options as $key => $option)
 			{
 				$shortkey = preg_replace('/options_/', '', $key);
-				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey]))
 				{
 					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
@@ -830,7 +830,7 @@ class MyObject extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
-			//$langs->load("mymodule");
+			//$langs->load("mymodule@mymodule");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
@@ -939,7 +939,7 @@ class MyObject extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("mymodule@myobject");
+		$langs->load("mymodule@mymodule");
 
 		if (empty($conf->global->MYMODULE_MYOBJECT_ADDON)) {
 			$conf->global->MYMODULE_MYOBJECT_ADDON = 'mod_myobject_standard';
@@ -1060,11 +1060,24 @@ class MyObject extends CommonObject
 	}
 }
 
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
 /**
  * Class MyObjectLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class MyObjectLine
+class MyObjectLine extends CommonObjectLine
 {
 	// To complete with content of an object MyObjectLine
 	// We should have a field rowid, fk_myobject and position
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
 }

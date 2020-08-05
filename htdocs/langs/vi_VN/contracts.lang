@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Đại diện bán hàng theo dõi h�
 TypeContact_contrat_external_BILLING=Liên hệ để thanh toán của khách hàng
 TypeContact_contrat_external_CUSTOMER=Liên lạc để theo dõi của khách hàng
 TypeContact_contrat_external_SALESREPSIGN=Liên lạc để ký hợp đồng của khách hàng
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

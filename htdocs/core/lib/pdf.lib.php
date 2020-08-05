@@ -265,7 +265,7 @@ function pdf_getPDFFontSize($outputlangs)
 function pdf_getHeightForLogo($logo, $url = false)
 {
 	global $conf;
-	$height = (empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? 22 : $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
+	$height = (empty($conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT) ? 20 : $conf->global->MAIN_DOCUMENTS_LOGO_HEIGHT);
 	$maxwidth = 130;
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 	$tmp = dol_getImageSize($logo, $url);
@@ -1828,7 +1828,6 @@ function pdf_getlineunit($object, $i, $outputlangs, $hidedetails = 0, $hookmanag
 	}
 	if (empty($reshook))
 	{
-        if ($object->lines[$i]->special_code == 3) return '';
 	    if (empty($hidedetails) || $hidedetails > 1) $result .= $langs->transnoentitiesnoconv($object->lines[$i]->getLabelOfUnit('short'));
 	}
 	return $result;

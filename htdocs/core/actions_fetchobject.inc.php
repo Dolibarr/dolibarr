@@ -44,8 +44,10 @@ if (($id > 0 || (!empty($ref) && !in_array($action, array('create', 'createtask'
 	    		{
 	    			setEventMessages('Fetch on object (type '.get_class($object).') return an error without filling $object->error nor $object->errors', null, 'errors');
 	    		}
-	    	} else setEventMessages($object->error, $object->errors, 'errors');
-	        $action = '';
+	    	} else {
+	    		setEventMessages($object->error, $object->errors, 'errors');
+	    	}
+        	$action = '';
 	    }
 	}
 }

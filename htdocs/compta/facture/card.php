@@ -313,15 +313,23 @@ if (empty($reshook))
 
 				if (($tmp_total_ht < 0 || $tmp_total_ht_devise < 0) && empty($conf->global->FACTURE_ENABLE_NEGATIVE_LINES))
 				{
-					$langs->load("errors");
 					if ($object->type == $object::TYPE_DEPOSIT) {
+						$langs->load("errors");
 						// Using negative lines on deposit lead to headach and blocking problems when you want to consume them.
 						setEventMessages($langs->trans("ErrorLinesCantBeNegativeOnDeposits"), null, 'errors');
+						$error++;
+						$action = '';
 					} else {
-						setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate"), null, 'errors');
+						$tmpvatratetoshow = explode('_', $vatrate);
+						$tmpvatratetoshow[0] = round($tmpvatratetoshow[0], 2);
+
+						if ($tmpvatratetoshow[0] != 0) {
+							$langs->load("errors");
+							setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate", $tmpvatratetoshow[0]), null, 'errors');
+							$error++;
+							$action = '';
+						}
 					}
-					$error++;
-					$action = '';
 				}
 			}
 		}
@@ -1409,7 +1417,7 @@ if (empty($reshook))
 						$result = $srcobject->fetch($object->origin_id);
 
 						$typeamount = GETPOST('typedeposit', 'aZ09');
-						$valuedeposit = GETPOST('valuedeposit', 'int');
+						$valuedeposit = price2num(GETPOST('valuedeposit', 'alpha'), 'MU');
 
 						// If deposit invoice
 						if ($_POST['type'] == Facture::TYPE_DEPOSIT && in_array($typeamount, array('amount', 'variable')))
@@ -1859,8 +1867,16 @@ if (empty($reshook))
 			$_GET["originid"] = $_POST["originid"];
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
-	} // Add a new line
-	elseif ($action == 'addline' && $usercancreate)
+	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'aZ09') && GETPOST('vatforalllines', 'alpha')) {
+		// Define vat_rate
+		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
+		$vat_rate = str_replace('*', '', $vat_rate);
+		$localtax1_rate = get_localtax($vat_rate, 1, $object->thirdparty, $mysoc);
+		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty, $mysoc);
+		foreach ($object->lines as $line) {
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $vat_rate, $localtax1_rate, $localtax2_rate, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
+		}
+	} elseif ($action == 'addline' && $usercancreate)		// Add a new line
 	{
 		$langs->load('errors');
 		$error = 0;
@@ -3417,10 +3433,19 @@ if ($action == 'create')
 	}
 
 	// Other attributes
-	$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="2"', 'cols' => '2');
+	$parameters = array('objectsrc' => $objectsrc, 'colspan' => ' colspan="2"', 'cols' => '2', 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (empty($reshook)) {
+		if (!empty($conf->global->THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE)) {
+			// copy from thirdparty
+			$tpExtrafields = new Extrafields($db);
+			$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($soc->table_element);
+			if ($soc->fetch_optionals() > 0) {
+				$object->array_options = array_merge($object->array_options, $soc->array_options);
+			}
+		};
+
 		print $object->showOptionals($extrafields, 'edit', $parameters);
 	}
 

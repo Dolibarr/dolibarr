@@ -127,7 +127,24 @@ if ($action == 'presend')
 	{
 		$formmail->fromid = $user->id;
 	}
-	$formmail->trackid = $trackid;
+
+	if ($object->element === 'facture' && !empty($conf->global->INVOICE_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->INVOICE_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+	if ($object->element === 'shipping' && !empty($conf->global->SHIPPING_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->SHIPPING_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+	if ($object->element === 'commande' && !empty($conf->global->COMMANDE_EMAIL_SENDER)) {
+		$formmail->frommail = $conf->global->COMMANDE_EMAIL_SENDER;
+		$formmail->fromname = '';
+		$formmail->fromtype = 'special';
+	}
+
+	$formmail->trackid=$trackid;
 	if (!empty($conf->global->MAIN_EMAIL_ADD_TRACK_ID) && ($conf->global->MAIN_EMAIL_ADD_TRACK_ID & 2))	// If bit 2 is set
 	{
 		include DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

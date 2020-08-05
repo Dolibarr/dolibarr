@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Sölufulltrúi eftirfarandi upp samnin
 TypeContact_contrat_external_BILLING=Innheimta viðskiptavina samband
 TypeContact_contrat_external_CUSTOMER=Eftirfylgni viðskiptavina samband
 TypeContact_contrat_external_SALESREPSIGN=Undirritun samnings viðskiptavina samband
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Bank | Bar
 FinancialAccount=Finanzkonto
+BankAccount=Bankkonto
 BankAccounts=Kontenübersicht
 BankAccountsAndGateways=Bankkonten | Schnittstellen
 AccountRef=Konto-Referenz
@@ -45,7 +46,6 @@ Conciliated=Ausgeglichen
 BankLineConciliated=Transaktion mit Bankbeleg ausgeglichen
 Reconciled=Ausgeglichen
 SupplierInvoicePayment=Lieferantenzahlung
-BankTransfers=Kontentransfer
 MenuBankInternalTransfer=Kontoübertrag
 TransferDesc=Das ist ein interner Transfer zwischen zwei Konten. Dolibarr schreibt zwei Transaktionen über den selben Betrag vom Haben zum Sollkonto. Datum und Bezeichner sind auch gleich.
 TransferFrom=Von

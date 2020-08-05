@@ -108,7 +108,8 @@ class Ticket extends CommonObject
 	/**
 	 * @var int  Ticket statut
 	 */
-	public $fk_statut;
+	public $fk_statut;				// deprecated
+	public $status;
 
 	/**
 	 * @var string State resolution
@@ -184,8 +185,8 @@ class Ticket extends CommonObject
 		'track_id' => array('type'=>'varchar(255)', 'label'=>'TicketTrackId', 'visible'=>-2, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
 		'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
 		'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>-2, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'tdoverflowmax150'),
-		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth75', 'autofocusoncreate'=>1),
-		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
+		'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth200', 'autofocusoncreate'=>1),
+		'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth150'),
 		'category_code' => array('type'=>'varchar(32)', 'label'=>'TicketGroup', 'visible'=>-1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
 		'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'help'=>"", 'css'=>'maxwidth100'),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty", 'css'=>'tdoverflowmax150 maxwidth150onsmartphone'),
@@ -463,7 +464,7 @@ class Ticket extends CommonObject
 		$sql .= " t.fk_user_assign,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
-		$sql .= " t.fk_statut,";
+		$sql .= " t.fk_statut as status,";
 		$sql .= " t.resolution,";
 		$sql .= " t.progress,";
 		$sql .= " t.timing,";
@@ -509,7 +510,10 @@ class Ticket extends CommonObject
 				$this->fk_user_assign = $obj->fk_user_assign;
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
-				$this->fk_statut = $obj->fk_statut;
+
+				$this->status = $obj->status;
+				$this->fk_statut = $this->status;		// For backward compatibility
+
 				$this->resolution = $obj->resolution;
 				$this->progress = $obj->progress;
 				$this->timing = $obj->timing;
@@ -2618,7 +2622,7 @@ class Ticket extends CommonObject
 
 								foreach ($external_contacts as $key => $info_sendto) {
 									// altairis: avoid duplicate emails to external contacts
-									if ($info_sendto['id'] == $user->contactid) {
+									if ($info_sendto['id'] == $user->contact_id) {
 										continue;
 									}
 

@@ -498,8 +498,10 @@ class Paiement extends CommonObject
 		{
 			$accline = new AccountLine($this->db);
 
-			$result = $accline->fetch($bank_line_id);
-			if ($result == 0) $accline->rowid = $bank_line_id; // If not found, we set artificially rowid to allow delete of llx_bank_url
+			$result=$accline->fetch($bank_line_id);
+			if ($result == 0) {
+				$accline->id = $accline->rowid = $bank_line_id;    // If not found, we set artificially rowid to allow delete of llx_bank_url
+			}
 
             // Delete bank account url lines linked to payment
 			$result = $accline->delete_urls($user);
@@ -1152,7 +1154,7 @@ class Paiement extends CommonObject
 		if (!empty($conf->dol_no_mouse_hover)) $notooltip = 1; // Force disable tooltips
 
 		$result = '';
-        $label = '<u>'.$langs->trans("ShowPayment").'</u><br>';
+        $label = '<u>'.$langs->trans("Payment").'</u><br>';
         $label .= '<strong>'.$langs->trans("Ref").':</strong> '.$this->ref;
         if ($this->datepaye ? $this->datepaye : $this->date) $label .= '<br><strong>'.$langs->trans("Date").':</strong> '.dol_print_date($this->datepaye ? $this->datepaye : $this->date, 'dayhour');
         if ($mode == 'withlistofinvoices')

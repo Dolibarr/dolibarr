@@ -419,8 +419,10 @@ class Documents extends DolibarrApi
 
 			$object = new Product($this->db);
 			$result = $object->fetch($id, $ref);
-			if (!$result) {
+			if ($result==0) {
 				throw new RestException(404, 'Product not found');
+			} elseif ($result<0) {
+				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
@@ -630,7 +632,7 @@ class Documents extends DolibarrApi
 			    }
 				elseif ($result < 0)
 				{
-					throw new RestException(500, 'Error while fetching object.');
+					throw new RestException(500, 'Error while fetching object: '.$object->error);
 				}
 			}
 

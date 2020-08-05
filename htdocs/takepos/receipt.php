@@ -34,6 +34,8 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 
 $facid = GETPOST('facid', 'int');
 
+$gift = GETPOST('gift', 'int');
+
 if (empty($user->rights->takepos->run)) {
 	accessforbidden();
 }
@@ -125,8 +127,8 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 	<tr>
         <th class="center"><?php print $langs->trans("Label"); ?></th>
         <th class="right"><?php print $langs->trans("Qty"); ?></th>
-        <th class="right"><?php print $langs->trans("Price"); ?></th>
-        <th class="right"><?php print $langs->trans("TotalTTC"); ?></th>
+        <th class="right"><?php if ($gift!=1) print $langs->trans("Price"); ?></th>
+        <th class="right"><?php if ($gift!=1) print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
     <tbody>
@@ -140,8 +142,8 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
         else echo $line->description; ?>
         </td>
         <td class="right"><?php echo $line->qty; ?></td>
-        <td class="right"><?php echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
-        <td class="right"><?php echo price($line->total_ttc, 1); ?></td>
+        <td class="right"><?php if ($gift!=1) echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
+        <td class="right"><?php if ($gift!=1) echo price($line->total_ttc, 1); ?></td>
     </tr>
         <?php
     }
@@ -151,8 +153,8 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 <br>
 <table class="right">
 <tr>
-    <th class="right"><?php echo $langs->trans("TotalHT"); ?></th>
-    <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+    <th class="right"><?php if ($gift!=1) echo $langs->trans("TotalHT"); ?></th>
+    <td class="right"><?php if ($gift!=1) echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
 	$vat_groups = array();
@@ -166,18 +168,18 @@ if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 	foreach ($vat_groups as $key => $val) {
 	    ?>
 	<tr>
-		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
-		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+		<th align="right"><?php if ($gift!=1) echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
+		<td align="right"><?php if ($gift!=1) echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 	</tr>
         <?php
 	}
 } else { ?>
 <tr>
-	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+	<th class="right"><?php if ($gift!=1) echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php } ?>
 <tr>
-	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+	<th class="right"><?php if ($gift!=1) echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">

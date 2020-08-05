@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (!empty($conf->propal->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+if (!empty($conf->propal->enabled))         require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (!empty($conf->facture->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (!empty($conf->commande->enabled))		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
@@ -535,18 +535,18 @@ if (! empty($conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN)) {
 	}
 	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_PLUS_MARGIN);
 	foreach ($newelementforplusmargin as $value) {
-		$listofreferent[$value]['margin']='add';
+		$listofreferent[trim($value)]['margin']='add';
 	}
 }
 if (! empty($conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN)) {
 	foreach ($listofreferent as $key => $element) {
-		if ($listofreferent[$key]['margin'] == 'add') {
+		if ($listofreferent[$key]['margin'] == 'minus') {
 			unset($listofreferent[$key]['margin']);
 		}
 	}
-	$newelementforplusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
-	foreach ($newelementforplusmargin as $value) {
-		$listofreferent[$value]['margin']='minus';
+	$newelementforminusmargin = explode(',', $conf->global->PROJECT_ELEMENTS_FOR_MINUS_MARGIN);
+	foreach ($newelementforminusmargin as $value) {
+		$listofreferent[trim($value)]['margin']='minus';
 	}
 }
 
@@ -591,7 +591,7 @@ if (!$showdatefilter)
 {
 	print '<div class="center centpercent">';
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="tablename" value="'.$tablename.'">';
 	print '<input type="hidden" name="action" value="view">';
 	print '<table class="center"><tr>';
@@ -634,10 +634,10 @@ foreach ($listofreferent as $key => $value)
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'add')
 	{
 		if ($margin == 'add') {
-			$tooltiponprofitplus.=' + '.$name."<br>\n";
+			$tooltiponprofitplus.=' &gt; '.$name." (+)<br>\n";
 		}
 		if ($margin == 'minus') {
-			$tooltiponprofitminus.=' - '.$name."<br>\n";
+			$tooltiponprofitminus.=' &gt; '.$name." (-)<br>\n";
 		}
 	}
 }
@@ -649,6 +649,8 @@ print '<td class="right" width="100">'.$langs->trans("Number").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountHT").'</td>';
 print '<td class="right" width="100">'.$langs->trans("AmountTTC").'</td>';
 print '</tr>';
+
+$total_revenue_ht = 0;
 
 foreach ($listofreferent as $key => $value)
 {
@@ -690,7 +692,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				if ($key == 'propal')
 				{
-				    if ($element->statut == Propal::STATUS_NOTSIGNED) $qualifiedfortotal = false; // Refused proposal must not be included in total
+					if ($element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedfortotal = false; // Only signed proposal must not be included in total
 				}
 
 				if ($tablename != 'expensereport_det' && method_exists($element, 'fetch_thirdparty')) $element->fetch_thirdparty();
@@ -767,12 +769,17 @@ foreach ($listofreferent as $key => $value)
 			// Each element with at least one line is output
 			$qualifiedforfinalprofit = true;
 			if ($key == 'intervention' && empty($conf->global->PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT)) $qualifiedforfinalprofit = false;
-			//var_dump($key);
+			if ($key == 'propal' && $element->status != Propal::STATUS_SIGNED && $element->status != Propal::STATUS_BILLED) $qualifiedforfinalprofit = false;
+			//var_dump($key.' '.$qualifiedforfinalprofit);
 
 			// Calculate margin
 			if ($qualifiedforfinalprofit)
 			{
-			    if ($margin != "add")
+				if ($margin == 'add') {
+					$total_revenue_ht += $total_ht;
+				}
+
+			    if ($margin != "add")	// Revert sign
 				{
 					$total_ht = -$total_ht;
 					$total_ttc = -$total_ttc;
@@ -789,13 +796,19 @@ foreach ($listofreferent as $key => $value)
 			print '<td class="right">'.$i.'</td>';
 			// Amount HT
 			print '<td class="right">';
-			if (!$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
-			else print price($total_ht);
+			if ($key == 'intervention' && !$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else {
+				print price($total_ht);
+				if ($key == 'propal') print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
+			}
 			print '</td>';
 			// Amount TTC
 			print '<td class="right">';
-			if (!$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
-			else print price($total_ttc);
+			if ($key == 'intervention' && !$qualifiedforfinalprofit) print '<span class="opacitymedium">'.$form->textwithpicto($langs->trans("NA"), $langs->trans("AmountOfInteventionNotIncludedByDefault")).'</span>';
+			else {
+				print price($total_ttc);
+				if ($key == 'propal') print '<span class="opacitymedium">'.$form->textwithpicto('', $langs->trans("SignedOnly")).'</span>';
+			}
 			print '</td>';
 			print '</tr>';
 		}
@@ -803,10 +816,19 @@ foreach ($listofreferent as $key => $value)
 }
 // and the final balance
 print '<tr class="liste_total">';
-print '<td class="right" colspan=2 >'.$langs->trans("Profit").'</td>';
-print '<td class="right" >'.price(price2num($balance_ht, 'MT')).'</td>';
-print '<td class="right" >'.price(price2num($balance_ttc, 'MT')).'</td>';
+print '<td class="right" colspan="2">'.$langs->trans("Profit").'</td>';
+print '<td class="right">'.price(price2num($balance_ht, 'MT')).'</td>';
+print '<td class="right">'.price(price2num($balance_ttc, 'MT')).'</td>';
 print '</tr>';
+
+// and the margin (profit / revenues)
+if ($total_revenue_ht) {
+	print '<tr class="liste_total">';
+	print '<td class="right" colspan="2">'.$langs->trans("Margin").'</td>';
+	print '<td class="right">'.round(100 * $balance_ht / $total_revenue_ht, 1).'%</td>';
+	print '<td class="right"></td>';
+	print '</tr>';
+}
 
 print "</table>";
 
@@ -854,7 +876,7 @@ foreach ($listofreferent as $key => $value)
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element))
        	{
-			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300', -2, !empty($project_field) ? $project_field : 'fk_projet');
+			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, !empty($project_field) ? $project_field : 'fk_projet');
 			if ($selectList < 0)
 			{
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
@@ -863,14 +885,14 @@ foreach ($listofreferent as $key => $value)
 				// Define form with the combo list of elements to link
 			    $addform .= '<div class="inline-block valignmiddle">';
 			    $addform .= '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
-			    $addform .= '<input type="hidden" name="token" value="'.$_SESSION["newtoken"].'">';
+			    $addform .= '<input type="hidden" name="token" value="'.newToken().'">';
 			    $addform .= '<input type="hidden" name="tablename" value="'.$tablename.'">';
 				$addform .= '<input type="hidden" name="action" value="addelement">';
 				$addform .= '<input type="hidden" name="datesrfc" value="'.dol_print_date($dates, 'dayhourrfc').'">';
 				$addform .= '<input type="hidden" name="dateerfc" value="'.dol_print_date($datee, 'dayhourrfc').'">';
-				$addform .= '<table><tr><td>'.$langs->trans("SelectElement").'</td>';
+				$addform .= '<table><tr><td><span class="hideonsmartphone opacitymedium">'.$langs->trans("SelectElement").'</span></td>';
 				$addform .= '<td>'.$selectList.'</td>';
-				$addform .= '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("AddElement")).'"></td>';
+				$addform .= '<td><input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("LinkToElementShort")).'"></td>';
 				$addform .= '</tr></table>';
 				$addform .= '</form>';
 				$addform .= '</div>';
@@ -879,9 +901,9 @@ foreach ($listofreferent as $key => $value)
 		if (empty($conf->global->PROJECT_CREATE_ON_OVERVIEW_DISABLED) && $urlnew)
 		{
 			$addform .= '<div class="inline-block valignmiddle">';
-			if ($testnew) $addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+			if ($testnew) $addform .= '<a class="buttonxxx" href="'.$urlnew.'"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			elseif (empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) {
-				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
+				$addform .= '<a class="buttonxxx buttonRefused" disabled="disabled" href="#"><span class="valignmiddle text-plus-circle hideonsmartphone">'.($buttonnew ? $langs->trans($buttonnew) : $langs->trans("Create")).'</span><span class="fa fa-plus-circle valignmiddle paddingleft"></span></a>';
 			}
             $addform .= '<div>';
 		}
@@ -889,6 +911,7 @@ foreach ($listofreferent as $key => $value)
 		print load_fiche_titre($langs->trans($title), $addform, '');
 
 		print "\n".'<!-- Table for tablename = '.$tablename.' -->'."\n";
+		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
 
 		print '<tr class="liste_titre">';
@@ -1005,7 +1028,7 @@ foreach ($listofreferent as $key => $value)
 				print "</td>\n";
 
 				// Ref
-				print '<td class="left nowrap">';
+				print '<td class="left nowraponall">';
 				if ($tablename == 'expensereport_det')
 				{
 					print $expensereport->getNomUrl(1);
@@ -1312,6 +1335,7 @@ foreach ($listofreferent as $key => $value)
 			}
 		}
 		print "</table>";
+		print '</div>';
 		print "<br>\n";
 	}
 }

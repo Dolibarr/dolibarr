@@ -15,6 +15,7 @@ CancelCP=取消
 RefuseCP=拒绝
 ValidatorCP=同意
 ListeCP=List of leave
+Leave=请假条
 LeaveId=请假申请 ID
 ReviewedByCP=审批人：
 UserID=User ID

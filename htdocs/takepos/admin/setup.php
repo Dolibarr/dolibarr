@@ -75,7 +75,6 @@ if ($action == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -118,6 +117,7 @@ if ($action != '') {
 		setEventMessages($langs->trans('Error'), null, 'errors');
 	}
 }
+
 
 /*
  * View
@@ -303,14 +303,6 @@ $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
 
-// Color theme
-print '<tr class="oddeven"><td>';
-print $langs->trans("ColorTheme");
-print '<td colspan="2">';
-$array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
-print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
-print "</td></tr>\n";
-
 // Payment numpad
 print '<tr class="oddeven"><td>';
 print $langs->trans("Paymentnumpad");
@@ -371,6 +363,13 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('ControlCashOpening');
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Gift receipt
+print '<tr class="oddeven"><td>';
+print $langs->trans('GiftReceiptButton');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Numbering module

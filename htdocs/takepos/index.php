@@ -431,7 +431,7 @@ function CloseBill() {
 }
 
 function Floors() {
-	console.log("Open box to select floor");
+	console.log("Open box to select floor place="+place);
 	$.colorbox({href:"floors.php?place="+place, width:"90%", height:"90%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("Floors"); ?>"});
 }
 
@@ -467,6 +467,7 @@ function New() {
 		}
 
 		if (r == true) {
+			// Reload section with invoice lines
 			$("#poslines").load("invoice.php?action=delete&place=" + place, function () {
 				//$('#poslines').scrollTop($('#poslines')[0].scrollHeight);
 			});
@@ -528,8 +529,19 @@ function Search2(keyCodeForEnter) {
 					ClickProduct(0);
 				}
 			}
+			if (eventKeyCode == keyCodeForEnter){
+				if (data.length == 0) {
+					$('#search').val('<?php
+					$langs->load('errors');
+					echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
+					?>');
+					$('#search').select();
+				}
+				else ClearSearch();
+			}
 		});
 	}
+	
 }
 
 function Edit(number) {
@@ -869,7 +881,7 @@ $menus[$r++] = array('title'=>'<span class="fa fa-percent paddingrightonly"></sp
 $menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("Payment").'</div>', 'action'=>'CloseBill();');
 
 if ($conf->global->TAKEPOS_DIRECT_PAYMENT) {
-	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").'</div>', 'action'=>'DirectPayment();');
+	$menus[$r++] = array('title'=>'<span class="far fa-money-bill-alt paddingrightonly"></span><div class="trunc">'.$langs->trans("DirectPayment").' <span class="opacitymedium">('.$langs->trans("Cash").')</span></div>', 'action'=>'DirectPayment();');
 }
 
 // BAR RESTAURANT specific menu
@@ -928,7 +940,13 @@ if ($resql)
 $hookmanager->initHooks(array('takeposfrontend'));
 $reshook = $hookmanager->executeHooks('ActionButtons');
 if (!empty($reshook)) {
-    $menus[$r++] = $reshook;
+	if (is_array($reshook) && !isset($reshook['title'])) {
+		foreach ($reshook as $reshook) {
+			$menus[$r++] = $reshook;
+		}
+	} else {
+		$menus[$r++] = $reshook;
+	}
 }
 
 if ($r % 3 == 2) $menus[$r++] = array('title'=>'', 'style'=>'visibility: hidden;');
@@ -982,7 +1000,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
 				    //echo '<img class="imgwrapper" src="img/arrow-next-top.png" height="100%" id="catimg'.$count.'" />';
 				    echo '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
 				} else {
-				    echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
+				    if (!$conf->global->TAKEPOS_HIDE_CATEGORY_IMAGES) echo '<img class="imgwrapper" height="100%" id="catimg'.$count.'" />';
 				}
 				?>
 				<?php if ($count != ($MAXCATEG - 2) && $count != ($MAXCATEG - 1)) { ?>
@@ -1015,7 +1033,7 @@ if (!empty($conf->global->TAKEPOS_HIDE_HEAD_BAR)) {
     					print '<span class="fa fa-chevron-right centerinmiddle" style="font-size: 5em;"></span>';
     				} else {
     					print '<div class="" id="proprice'.$count.'"></div>';
-    					print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
+    					if (!$conf->global->TAKEPOS_HIDE_PRODUCT_IMAGES) print '<img class="imgwrapper" height="100%" title="" id="proimg'.$count.'">';
     				}
     				?>
 					<?php if ($count != ($MAXPRODUCT - 2) && $count != ($MAXPRODUCT - 1)) { ?>

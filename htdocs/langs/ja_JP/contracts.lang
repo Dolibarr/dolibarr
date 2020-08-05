@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=営業担当者には、次のアッ�
 TypeContact_contrat_external_BILLING=課金顧客の連絡先
 TypeContact_contrat_external_CUSTOMER=フォローアップ顧客との接触
 TypeContact_contrat_external_SALESREPSIGN=署名契約の顧客の連絡先
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

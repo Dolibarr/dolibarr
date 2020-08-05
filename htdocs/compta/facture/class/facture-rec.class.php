@@ -199,9 +199,10 @@ class FactureRec extends CommonInvoice
 	 *
 	 * 	@param		User	$user		User object
 	 * 	@param		int		$facid		Id of source invoice
+	 *  @param		int		$notrigger	No trigger
 	 *	@return		int					<0 if KO, id of invoice created if OK
 	 */
-	public function create($user, $facid)
+	public function create($user, $facid, $notrigger = 0)
 	{
 		global $conf;
 
@@ -220,7 +221,6 @@ class FactureRec extends CommonInvoice
 			$this->frequency = 0;
 			$this->date_when = null;
 		}
-
 
 		$this->frequency = abs($this->frequency);
 		$this->nb_gen_done = 0;
@@ -387,6 +387,26 @@ class FactureRec extends CommonInvoice
 	    					}
 					    }
 					}
+				}
+
+				if (!$error) {
+					$result = $this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+
+				if (!$error && !$notrigger)
+				{
+					// Call trigger
+					$result = $this->call_trigger('BILLREC_CREATE', $user);
+					if ($result < 0)
+					{
+						$this->db->rollback();
+						return -2;
+					}
+					// End call triggers
 				}
 
 				if ($error)
@@ -1313,7 +1333,7 @@ class FactureRec extends CommonInvoice
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("ShowInvoice").'</u>';
+		$label = '<u>'.$langs->trans("RepeatableInvoice").'</u>';
 		if (!empty($this->ref)) {
 			$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		}

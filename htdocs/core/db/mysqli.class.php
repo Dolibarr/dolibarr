@@ -440,8 +440,9 @@ class DoliDBMysqli extends DoliDB
             1215 => 'DB_ERROR_CANNOT_ADD_FOREIGN_KEY_CONSTRAINT',
             1216 => 'DB_ERROR_NO_PARENT',
             1217 => 'DB_ERROR_CHILD_EXISTS',
-            1396 => 'DB_ERROR_USER_ALREADY_EXISTS', // When creating user already existing
-            1451 => 'DB_ERROR_CHILD_EXISTS'
+            1396 => 'DB_ERROR_USER_ALREADY_EXISTS', // When creating a user that already existing
+            1451 => 'DB_ERROR_CHILD_EXISTS',
+            1826 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS'
             );
 
             if (isset($errorcode_map[$this->db->errno])) {
@@ -791,7 +792,7 @@ class DoliDBMysqli extends DoliDB
         $sql .= $field_desc['type'];
         if (preg_match("/^[^\s]/i", $field_desc['value']))
         {
-            if (!in_array($field_desc['type'], array('date', 'datetime')))
+        	if (!in_array($field_desc['type'], array('date', 'datetime')) && $field_desc['value'])
             {
                 $sql .= "(".$field_desc['value'].")";
             }
@@ -837,7 +838,7 @@ class DoliDBMysqli extends DoliDB
         // phpcs:enable
         $sql = "ALTER TABLE ".$table;
         $sql .= " MODIFY COLUMN ".$field_name." ".$field_desc['type'];
-        if ($field_desc['type'] == 'double' || $field_desc['type'] == 'tinyint' || $field_desc['type'] == 'int' || $field_desc['type'] == 'varchar') {
+        if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
         	$sql .= "(".$field_desc['value'].")";
         }
         if ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')

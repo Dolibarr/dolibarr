@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Spedizione %s classificata come fatturata
 ShipmentUnClassifyCloseddInDolibarr=Spedizione %s classificata come riaperta
 ShipmentBackToDraftInDolibarr=La spedizione %s torna allo stato bozza
 ShipmentDeletedInDolibarr=Spedizione %s eliminata
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Ordine %s creato
 OrderValidatedInDolibarr=Ordine convalidato
 OrderDeliveredInDolibarr=Ordine %s classificato consegnato

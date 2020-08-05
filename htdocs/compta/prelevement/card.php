@@ -31,10 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'bills', 'withdrawals'));
-
-if (!$user->rights->prelevement->bons->lire)
-accessforbidden();
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
 
 // Security check
 if ($user->socid > 0) accessforbidden();
@@ -44,7 +41,6 @@ $action = GETPOST('action', 'alpha');
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $socid = GETPOST('socid', 'int');
-
 $type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
@@ -67,6 +63,13 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
+if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
+	accessforbidden();
+}
+if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -83,7 +86,11 @@ if (empty($reshook))
         $res = $object->delete($user);
         if ($res > 0)
         {
-            header("Location: index.php");
+        	if ($object->type == 'bank-transfer') {
+        		header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
+        	} else {
+        		header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
+        	}
             exit;
         }
     }
@@ -139,11 +146,9 @@ if (empty($reshook))
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
         $error = $object->set_infocredit($user, $dt);
-
         if ($error)
         {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
+        	setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }
@@ -174,7 +179,7 @@ if ($id > 0 || $ref)
 
 	}*/
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php'.($object->type != 'bank-transfer' ? '' : '?type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -200,7 +205,7 @@ if ($id > 0 || $ref)
 
 		print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 		print dol_print_date($object->date_trans, 'day');
-		print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
+		print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
 		print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 		print $object->methodes_trans[$object->method_trans];
 		print '</td></tr>';
@@ -223,7 +228,9 @@ if ($id > 0 || $ref)
 	$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 	print '<tr><td class="titlefield">';
-	print $langs->trans("BankToReceiveWithdraw");
+	$labelofbankfield = "BankToReceiveWithdraw";
+	if ($object->type == 'bank-transfer') $labelofbankfield = 'BankToPayCreditTransfer';
+	print $langs->trans($labelofbankfield);
 	print '</td>';
 	print '<td>';
 	if ($acc->id > 0)
@@ -232,9 +239,13 @@ if ($id > 0 || $ref)
 	print '</tr>';
 
 	print '<tr><td class="titlefield">';
-	print $langs->trans("WithdrawalFile").'</td><td>';
+	$labelfororderfield = 'WithdrawalFile';
+	if ($object->type == 'bank-transfer') $labelfororderfield = 'CreditTransferFile';
+	print $langs->trans($labelfororderfield).'</td><td>';
 	$relativepath = 'receipts/'.$object->ref.'.xml';
-	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+	$modulepart = 'prelevement';
+	if ($object->type == 'bank-transfer') $modulepart = 'paymentbybanktransfer';
+	print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 	print '</td></tr></table>';
 
 	print '</div>';

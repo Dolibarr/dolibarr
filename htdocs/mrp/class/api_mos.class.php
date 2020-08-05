@@ -225,12 +225,9 @@ class Mos extends DolibarrApi
 			$this->mo->$field = $value;
 		}
 
-		if ($this->mo->update($id, DolibarrApiAccess::$user) > 0)
-		{
+		if ($this->mo->update($id, DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
-		}
-		else
-		{
+		} else {
 			throw new RestException(500, $this->mo->error);
 		}
 	}

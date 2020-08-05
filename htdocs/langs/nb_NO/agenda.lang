@@ -63,6 +63,7 @@ ShipmentClassifyClosedInDolibarr=Forsendelse %s klassifisert fakturert
 ShipmentUnClassifyCloseddInDolibarr=Forsendelse %s klassifisert gjenåpnet
 ShipmentBackToDraftInDolibarr=Sett levering %s tilbake til utkaststatus
 ShipmentDeletedInDolibarr=Leveranse %s slettet
+ReceptionValidatedInDolibarr=Reception %s validated
 OrderCreatedInDolibarr=Ordre %s opprettet
 OrderValidatedInDolibarr=Ordre %s validert
 OrderDeliveredInDolibarr=Ordre %s klassifisert som levert
