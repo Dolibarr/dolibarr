@@ -54,3 +54,4 @@ ALTER TABLE llx_subscription MODIFY COLUMN datef DATETIME;
 
 ALTER TABLE llx_loan_schedule ADD column fk_payment_loan INTEGER;
 
+ALTER TABLE llx_societe ADD COLUMN old INTEGER NULL DEFAULT NULL AFTER parent;

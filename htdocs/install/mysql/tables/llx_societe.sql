@@ -33,6 +33,7 @@ create table llx_societe
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,
+  old					   integer,
 
   status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)
 

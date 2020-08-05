@@ -2550,6 +2550,26 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         	print '</tr>';
         }
 
+		// Old company
+        if (empty($conf->global->SOCIETE_DISABLE_OLDCOMPANY))
+        {
+        	print '<tr><td>';
+        	print '<table class="nobordernopadding" width="100%"><tr><td>';
+        	print $langs->trans('OldCompany');
+        	print '</td>';
+        	if ($action != 'editoldcompany') print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editoldcompany&amp;socid='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+        	print '</tr></table>';
+        	print '</td><td>';
+        	if ($action == 'editoldcompany')
+        	{
+        		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->old, 'editoldcompany', 's.rowid <> '.$object->id, 1);
+        	} else {
+        		$form->form_thirdparty($_SERVER['PHP_SELF'].'?socid='.$object->id, $object->old, 'none', 's.rowid <> '.$object->id, 1);
+        	}
+        	print '</td>';
+        	print '</tr>';
+        }
+
         // Sales representative
         include DOL_DOCUMENT_ROOT.'/societe/tpl/linesalesrepresentative.tpl.php';
 

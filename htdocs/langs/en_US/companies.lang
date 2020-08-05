@@ -42,6 +42,7 @@ ThirdPartyType=Third-party type
 Individual=Private individual
 ToCreateContactWithSameName=Will automatically create a contact/address with same information as the third party under the third party. In most cases, even if your third party is a physical person, creating a third party alone is enough.
 ParentCompany=Parent company
+OldCompany=Old company
 Subsidiaries=Subsidiaries
 ReportByMonth=Report by month
 ReportByCustomers=Report by customer
