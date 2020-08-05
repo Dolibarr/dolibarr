@@ -51,6 +51,16 @@ abstract class CommonObjectLine extends CommonObject
 
 
 	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
 	 *	Returns the translation key from units dictionary.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *

@@ -688,6 +688,7 @@ Method=Method
 Receive=Receive
 CompleteOrNoMoreReceptionExpected=Complete or nothing more expected
 ExpectedValue=Expected Value
+ExpectedQty=Expected Qty
 PartialWoman=Partial
 TotalWoman=Total
 NeverReceived=Never received

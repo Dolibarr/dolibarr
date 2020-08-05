@@ -115,7 +115,7 @@ if (empty($reshook))
 		}
 	}
 	$triggermodname = 'STOCK_INVENTORY_MODIFY'; // Name of trigger action code to execute when we modify record
-	
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -127,10 +127,10 @@ if (empty($reshook))
 
 	// Action to move up and down lines of object
 	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
-	
+
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-	
+
 	/*if ($action == 'set_thirdparty' && $permissiontoadd)
 	{
 		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
@@ -139,7 +139,7 @@ if (empty($reshook))
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
-	
+
 	// Actions to send emails
 	$triggersendname = 'INVENTORY_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_INVENTORY_TO';
@@ -188,12 +188,12 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	
+
 	dol_fiche_head(array(), '');
 
 	// Set some default values
 	//if (! GETPOSTISSET('fieldname')) $_POST['fieldname'] = 'myvalue';
-	
+
 	print '<table class="border centpercent tableforfieldcreate">'."\n";
 
 	// Common attributes
@@ -228,7 +228,7 @@ if (($id || $ref) && $action == 'edit')
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
-	
+
 	dol_fiche_head();
 
 	print '<table class="border centpercent tableforfieldedit">'."\n";
@@ -292,7 +292,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		 */
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
-	
+
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 	$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -395,36 +395,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 	    		}
     		}
-    
+
     		// Modify
-    		if ($permissiontoadd)
+    		if ($object->status == $object::STATUS_DRAFT)
     		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
-    		} else {
-    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+    			if ($permissiontoadd)
+	    		{
+	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
+	    		} else {
+	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
+	    		}
     		}
-    		
+
     		// Validate
     		if ($object->status == $object::STATUS_DRAFT)
     		{
     			if ($permissiontoadd)
 	    		{
-	    			if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
-	    			{
-	    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").'</a>';
-	    			} else {
-	    				$langs->load("errors");
-	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
-	    			}
+    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>';
 	    		}
     		}
- 
+
     		// Clone
     		/*if ($permissiontoadd)
     		{
     			print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=myobject">'.$langs->trans("ToClone").'</a>'."\n";
     		}*/
-    		
+
     		// Delete (need delete permission, or if draft, just need create/modify permission)
     		if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
     		{
@@ -457,7 +454,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    	$delallowed = $user->rights->mymodule->myobject->write;	// If you can create/edit, you can remove a file on card
 	    	print $formfile->showdocuments('mymodule:MyObject', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 	    }
-	    
+
 	    // Show links to link elements
 	    $linktoelem = $form->showLinkToObjectBlock($object, null, array('inventory'));
 	    $somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
@@ -482,7 +479,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	//Select mail models is same action as presend
 	if (GETPOST('modelselected')) $action = 'presend';
-	
+
 	// Presend form
 	$modelmail='inventory';
 	$defaulttopic='InformationMessage';

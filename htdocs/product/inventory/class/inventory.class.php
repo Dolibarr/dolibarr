@@ -228,7 +228,101 @@ class Inventory extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		return $this->createCommon($user, $notrigger);
+		$result = $this->createCommon($user, $notrigger);
+
+		return $result;
+	}
+
+	/**
+	 * Validate inventory (start it)
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function validate(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		$result = 0;
+
+		if ($result >= 0) {
+			// Scan existing stock to prefill the inventory
+			$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,';
+			$sql .= ' pb.batch, pb.qty';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_stock as ps';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb ON pb.fk_product_stock = ps.rowid,';
+			$sql .= ' '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'entrepot as e';
+			$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
+			$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
+			if ($object->fk_product > 0) $sql .= ' AND ps.fk_product = '.$object->fk_product;
+			if ($object->fk_warehouse > 0) $sql .= ' AND ps.fk_entrepot = '.$object->fk_warehouse;
+
+			$inventoryline = new InventoryLine($this->db);
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+
+					$inventoryline->fk_inventory = $this->id;
+					$inventoryline->fk_warehouse = $obj->fk_warehouse;
+					$inventoryline->fk_product = $obj->fk_product;
+					$inventoryline->batch = $obj->batch;
+					$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel);		// If there is batch detail, we take qty for batch, else global qty
+					$inventoryline->datec = dol_now();
+
+					$resultline = $inventoryline->create($user);
+					if ($resultline <= 0) {
+						$this->error = $inventoryline->error;
+						$this->errors = $inventoryline->errors;
+						$result = -1;
+						break;
+					}
+
+					$i++;
+				}
+			} else {
+				$result = -1;
+				$this->error = $this->db->lasterror();
+			}
+		}
+
+		if ($result >= 0) {
+			$result = $this->setStatut($this::STATUS_VALIDATED, null, '', 'INVENTORY_VALIDATED');
+		}
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+	}
+
+	/**
+	 * Go back to draft
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function setDraft(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		$result = $this->setStatut($this::STATUS_DRAFT, null, '', 'INVENTORY_DRAFT');
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
 	}
 
 	/**
@@ -412,10 +506,13 @@ class Inventory extends CommonObject
 
 		$labelStatus = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans('Started').')';
 		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Started');
+		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 
-		return dolGetStatus($labelStatus[$status], $labelStatus[$status], '', 'status'.$status, $mode);
+		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', 'status'.$status, $mode);
 	}
 
 	/**
@@ -506,7 +603,6 @@ class InventoryLine extends CommonObjectLine
      */
     public $picto = 'stock';
 
-
     /**
      *  'type' if the field format.
      *  'label' the translation key.
@@ -546,6 +642,28 @@ class InventoryLine extends CommonObjectLine
      */
     public $rowid;
 
+    public $fk_inventory;
+    public $fk_warehouse;
+    public $fk_product;
+    public $batch;
+    public $datec;
+    public $tms;
+    public $qty_stock;
+    public $qty_view;
+    public $qty_regulated;
+
+
+    /**
+     * Create object in database
+     *
+     * @param User $user       User that creates
+     * @param bool $notrigger  false=launch triggers after, true=disable triggers
+     * @return int             <0 if KO, >0 if OK
+     */
+    public function create(User $user, $notrigger = false)
+    {
+    	return $this->createCommon($user, $notrigger);
+    }
 
 	/**
 	 * Load object in memory from the database
