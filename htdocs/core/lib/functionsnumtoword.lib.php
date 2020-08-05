@@ -24,20 +24,20 @@
 
 
 /**
- * Function to return number in text.
+ * Function to return a number into a text.
  * May use module NUMBERWORDS if found.
  *
- * @param	float       $num			Number to convert
+ * @param	float       $num			Number to convert (must be a numeric value, like reported by price2num())
  * @param	Translate   $langs			Language
  * @param	boolean     $currency		0=number to translate | 1=currency to translate
- * @param	boolean     $centimes		0=no centimes | 1=centimes to translate
+ * @param	boolean     $centimes		0=no cents/centimes | 1=there is cents/centimes to translate
  * @return 	string|false			    Text of the number
  */
 function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 {
 	global $conf;
 
-    $num = str_replace(array(',', ' '), '', trim($num));
+    //$num = str_replace(array(',', ' '), '', trim($num));	This should be useless since $num MUST be a php numeric value
     if (!$num) {
         return false;
     }
@@ -56,6 +56,7 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 		$concatWords = $langs->getLabelFromNumber($num, $type);
 		return $concatWords;
 	} else {
+
 		$TNum = explode('.', $num);
 	    $num = (int) $TNum[0];
 	    $words = array();
@@ -140,7 +141,11 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 		// If we need to write cents call again this function for cents
 		if (!empty($TNum[1])) {
 			if (!empty($currency)) $concatWords .= ' '.$langs->transnoentities('and');
-			$concatWords .= ' '.dol_convertToWord($TNum[1], $langs, $currency, true);
+
+			$decimalpart = $TNum[1];
+			$decimalpart = preg_replace('/0+$/', '', $decimalpart);
+
+			$concatWords .= ' '.dol_convertToWord($decimalpart, $langs, '', true);
 			if (!empty($currency)) $concatWords .= ' '.$langs->transnoentities('centimes');
 		}
 	    return $concatWords;

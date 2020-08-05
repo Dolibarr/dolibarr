@@ -223,7 +223,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 				}
 			}
 
-			$total = $object->montant;
+			$total = $object->amount;
 
 			// Definition of $dir and $file
 			if ($object->specimen)
@@ -550,12 +550,12 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 		// Total payments
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 50, $posy);
-		$pdf->MultiCell(50, 4, price($object->montant), 0, 'R', 1);
+		$pdf->MultiCell(50, 4, price($object->amount), 0, 'R', 1);
 		$posy += 20;
 
 		// translate amount
 		$currency = $conf->currency;
-		$translateinletter = strtoupper(dol_convertToWord($object->montant, $outputlangs, $currency));
+		$translateinletter = strtoupper(dol_convertToWord($object->amount, $outputlangs, $currency));
 		$pdf->SetXY($this->marge_gauche + 50, $posy);
 		$pdf->MultiCell(90, 8, $translateinletter, 0, 'L', 1);
 		$posy += 8;
@@ -565,9 +565,8 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->MultiCell(150, 4, $object->thirdparty->nom, 0, 'L', 1);
 
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
-		$pdf->MultiCell(35, 4, str_pad(price($object->montant).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
+		$pdf->MultiCell(35, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
-
 
 		// City
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
@@ -608,9 +607,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$titre = strtoupper($mysoc->town).', le '.date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y");
+		/*$titre = strtoupper($mysoc->town).' - '.dol_print_date(dol_now(), 'day', 'tzserver', $outputlangs);
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top - 6);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);*/
 
 		$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top);
@@ -774,7 +773,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $mysoc, ((!empty($object->contact)) ? $object->contact : null), $usecontact, 'target', $object);
+			$usecontact = 0;
+
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ((!empty($object->contact)) ? $object->contact : null), $usecontact, 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 90;
