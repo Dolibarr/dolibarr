@@ -33,14 +33,15 @@ $quality = 80;
  *      Return if a filename is file name of a supported image format
  *
  *      @param	string	$file       Filename
+ *      @param	int		$acceptsvg	0=Default (depends on setup), 1=Always accept SVG as image files
  *      @return int         		-1=Not image filename, 0=Image filename but format not supported for conversion by PHP, 1=Image filename with format supported by this PHP
  */
-function image_format_supported($file)
+function image_format_supported($file, $acceptsvg = 0)
 {
 	global $conf;
 
     $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
-    if (! empty($conf->global->MAIN_ALLOW_PREVIEW_OF_UPLOADED_SVG_FILES)) {
+    if ($acceptsvg || ! empty($conf->global->MAIN_ALLOW_SVG_FILES_AS_IMAGES)) {
     	$regeximgext .= '|\.svg';		// Not allowed by default. SVG can contains javascript
     }
 
