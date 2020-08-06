@@ -717,6 +717,7 @@ function TakeposPrinting(id){
 }
 
 function TakeposConnector(id){
+	console.log("TakeposConnector" + id);
 	var invoice='<?php
 	$data = json_encode($invoice);
 	$data = base64_encode($data);
@@ -730,7 +731,7 @@ function TakeposConnector(id){
 }
 
 function DolibarrTakeposPrinting(id) {
-    console.log('Printing invoice ticket ' + id)
+    console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
     $.ajax({
         type: "GET",
         url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
