@@ -17,7 +17,8 @@
 CREATE TABLE llx_recruitment_recruitmentcandidature(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	fk_recruitmentjobposition INTEGER NOT NULL,
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
 	description text, 
 	note_public text, 
 	note_private text, 

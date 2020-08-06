@@ -129,6 +129,51 @@ create table llx_recruitment_recruitmentjobposition_extrafields
 ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_object(fk_object);
 
 
+
+CREATE TABLE llx_recruitment_recruitmentcandidature(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_recruitmentjobposition INTEGER NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	description text, 
+	note_public text, 
+	note_private text, 
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	model_pdf varchar(255), 
+	status smallint NOT NULL, 
+	firstname varchar(128), 
+	lastname varchar(128), 
+	remuneration_requested integer, 
+	remuneration_proposed integer
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_rowid (rowid);
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_ref (ref);
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD CONSTRAINT llx_recruitment_recruitmentcandidature_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_status (status);
+
+
+create table llx_recruitment_recruitmentcandidature_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_fk_object(fk_object);
+
+
+
+
+
+
+
 -- Add dictionary for prospect level and action commercial on contacts (Using this is not recommanded)
 
 create table llx_c_prospectcontactlevel
