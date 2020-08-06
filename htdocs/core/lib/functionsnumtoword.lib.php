@@ -241,7 +241,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			$entexto .= hundreds2text($c, $d, $u);
 			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number > 1000000)
 				$entexto .= " DE";
-				$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
+			$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
 		}
 		return $entexto;
 	}
