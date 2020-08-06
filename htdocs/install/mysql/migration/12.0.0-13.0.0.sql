@@ -81,6 +81,7 @@ ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
 CREATE TABLE llx_recruitment_recruitmentjobposition(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	entity INTEGER DEFAULT 1 NOT NULL, 
 	label varchar(255) NOT NULL, 
 	qty integer DEFAULT 1 NOT NULL, 
 	fk_soc integer, 
@@ -89,6 +90,7 @@ CREATE TABLE llx_recruitment_recruitmentjobposition(
 	fk_user_supervisor integer, 
 	fk_establishment integer, 
 	date_planned date, 
+	remuneration_suggested varchar(255), 
 	description text, 
 	note_public text, 
 	note_private text, 
@@ -113,6 +115,8 @@ ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitmen
 ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_status (status);
 
 ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN email_recruiter varchar(255);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN remuneration_suggested varchar(255);
 
 create table llx_recruitment_recruitmentjobposition_extrafields
 (
