@@ -830,12 +830,15 @@ if ($resql)
 	{
 		print '<td class="liste_titre center">';
 		print '<div class="nowrap">';
+		/*
 		print $langs->trans('From').' ';
 		print $form->selectDate($search_datelimit_start ? $search_datelimit_start : -1, 'search_datelimit_start', 0, 0, 1);
 		print '</div>';
 		print '<div class="nowrap">';
-		print $langs->trans('to').' ';
+		print $langs->trans('to').' ';*/
+		print $langs->trans("Before").' ';
 		print $form->selectDate($search_datelimit_end ? $search_datelimit_end : -1, 'search_datelimit_end', 0, 0, 1);
+		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late' ? ' checked' : '').'> '.$langs->trans("Alert");
 		print '</div>';
 		print '</td>';
 	}
@@ -1442,7 +1445,7 @@ if ($resql)
 			{
 				$userstatic->id = $obj->fk_user_author;
 				$userstatic->login = $obj->login;
-				print '<td align="center">';
+				print '<td class="center tdoverflowmax100">';
 				if ($userstatic->id) print $userstatic->getLoginUrl(1);
 				else print '&nbsp;';
 				print "</td>\n";

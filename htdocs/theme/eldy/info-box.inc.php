@@ -101,6 +101,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     max-width: 60%;
 }
 
+a.info-box-text.info-box-text-a {
+    display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+    font-size: 0.9em;
+}
+
 .info-box-icon-text{
     box-sizing: border-box;
     display: block;
