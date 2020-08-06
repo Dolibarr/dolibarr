@@ -37,7 +37,12 @@ $quality = 80;
  */
 function image_format_supported($file)
 {
-    $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm|\.svg'; // See also into product.class.php
+	global $conf;
+
+    $regeximgext = '\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.xpm|\.xbm'; // See also into product.class.php
+    if (! empty($conf->global->MAIN_ALLOW_PREVIEW_OF_UPLOADED_SVG_FILES)) {
+    	$regeximgext .= '|\.svg';		// Not allowed by default. SVG can contains javascript
+    }
 
     // Case filename is not a format image
     $reg = array();
