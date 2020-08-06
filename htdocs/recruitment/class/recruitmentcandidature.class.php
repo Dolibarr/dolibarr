@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- * \file        class/recruitmentjobposition.class.php
+ * \file        class/recruitmentcandidature.class.php
  * \ingroup     recruitment
- * \brief       This file is a CRUD class file for RecruitmentJobPosition (Create/Read/Update/Delete)
+ * \brief       This file is a CRUD class file for RecruitmentCandidature (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
@@ -27,25 +28,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for RecruitmentJobPosition
+ * Class for RecruitmentCandidature
  */
-class RecruitmentJobPosition extends CommonObject
+class RecruitmentCandidature extends CommonObject
 {
 	/**
-	 * @var string ID to identify managed object
+	 * @var string ID to identify managed object.
 	 */
-	public $element = 'recruitmentjobposition';
+	public $element = 'recruitmentcandidature';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
 	 */
-	public $table_element = 'recruitment_recruitmentjobposition';
+	public $table_element = 'recruitment_recruitmentcandidature';
 
 	/**
 	 * @var int  Does this object support multicompany module ?
 	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
 	 */
-	public $ismultientitymanaged = 1;
+	public $ismultientitymanaged = 0;
 
 	/**
 	 * @var int  Does object support extrafields ? 0=No, 1=Yes
@@ -53,14 +54,13 @@ class RecruitmentJobPosition extends CommonObject
 	public $isextrafieldmanaged = 1;
 
 	/**
-	 * @var string String with name of icon for recruitmentjobposition. Must be the part after the 'object_' into object_recruitmentjobposition.png
+	 * @var string String with name of icon for recruitmentcandidature. Must be the part after the 'object_' into object_recruitmentcandidature.png
 	 */
-	public $picto = 'recruitmentjobposition';
+	public $picto = 'recruitmentcandidature@recruitment';
 
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
-	const STATUS_RECRUITED = 3;
 	const STATUS_CANCELED = 9;
 
 
@@ -96,41 +96,23 @@ class RecruitmentJobPosition extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'position'=>5, 'notnull'=>1, 'default'=>'1', 'index'=>1),
-		'label' => array('type'=>'varchar(255)', 'label'=>'JobLabel', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth500', 'showoncombobox'=>'1', 'autofocusoncreate'=>1),
-		'qty' => array('type'=>'integer', 'label'=>'NbOfEmployeesExpected', 'enabled'=>'1', 'position'=>45, 'notnull'=>1, 'visible'=>1, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp',),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
-		'fk_user_recruiter' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'ResponsibleOfRecruitement', 'enabled'=>'1', 'position'=>54, 'notnull'=>1, 'visible'=>1, 'foreignkey'=>'user.rowid',),
-		'email_recruiter' => array('type'=>'varchar(255)', 'label'=>'EmailRecruiter', 'enabled'=>'1', 'position'=>54, 'notnull'=>0, 'visible'=>-1, 'help'=>'ToUseAGenericEmail'),
-		'fk_user_supervisor' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'FutureManager', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'user.rowid',),
-		'fk_establishment' => array('type'=>'integer:Establishment:hrm/class/establishment.class.php', 'label'=>'Establishment', 'enabled'=>'$conf->hrm->enabled', 'position'=>56, 'notnull'=>0, 'visible'=>-1, 'foreignkey'=>'establishment.rowid',),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'WorkPlace', 'enabled'=>'1', 'position'=>57, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'help'=>"IfJobIsLocatedAtAPartner",),
-		'date_planned' => array('type'=>'date', 'label'=>'DateExpected', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>1,),
-		'remuneration_suggested' => array('type'=>'varchar(255)', 'label'=>'Remuneration', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>1,),
-		'description' => array('type'=>'html', 'label'=>'Description', 'enabled'=>'1', 'position'=>65, 'notnull'=>0, 'visible'=>3,),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>101, 'notnull'=>0, 'visible'=>0,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>102, 'notnull'=>0, 'visible'=>0,),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>900, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'firstname' => array('type'=>'varchar(128)', 'label'=>'Firstname', 'enabled'=>'1', 'position'=>20, 'notnull'=>0, 'visible'=>1,),
+		'lastname' => array('type'=>'varchar(128)', 'label'=>'Lastname', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>1,),
+		'remuneration_requested' => array('type'=>'integer', 'label'=>'RequestedRemuneration', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1,),
+		'remuneration_proposed' => array('type'=>'integer', 'label'=>'ProposedRemuneration', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1,),
 	);
 	public $rowid;
 	public $ref;
-	public $entity;
-	public $label;
-	public $qty;
-	public $fk_soc;
-	public $fk_project;
-	public $fk_user_recruiter;
-	public $email_recruiter;
-	public $fk_user_supervisor;
-	public $fk_establishment;
-	public $date_planned;
 	public $description;
 	public $note_public;
 	public $note_private;
@@ -138,10 +120,13 @@ class RecruitmentJobPosition extends CommonObject
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
-	public $last_main_doc;
 	public $import_key;
 	public $model_pdf;
 	public $status;
+	public $firstname;
+	public $lastname;
+	public $remuneration_requested;
+	public $remuneration_proposed;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -150,30 +135,32 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'recruitment_recruitmentjobpositionline';
+	//public $table_element_line = 'recruitment_recruitmentcandidatureline';
 
 	/**
-	 * @var int    Field with ID of parent key if this field has a parent
+	 * @var int    Field with ID of parent key if this object has a parent
 	 */
-	//public $fk_element = 'fk_recruitmentjobposition';
+	//public $fk_element = 'fk_recruitmentcandidature';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'RecruitmentJobPositionline';
+	//public $class_element_line = 'RecruitmentCandidatureline';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array();
+	//protected $childtables = array();
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var array    List of child tables. To know object to delete on cascade.
+	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	//protected $childtablesoncascade=array('recruitment_recruitmentjobpositiondet');
+	//protected $childtablesoncascade = array('recruitment_recruitmentcandidaturedet');
 
 	/**
-	 * @var RecruitmentJobPositionLine[]     Array of subtable lines
+	 * @var RecruitmentCandidatureLine[]     Array of subtable lines
 	 */
 	//public $lines = array();
 
@@ -194,7 +181,7 @@ class RecruitmentJobPosition extends CommonObject
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
 		// Example to show how to set values of fields definition dynamically
-		/*if ($user->rights->recruitment->recruitmentjobposition->read) {
+		/*if ($user->rights->recruitment->recruitmentcandidature->read) {
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
@@ -280,7 +267,7 @@ class RecruitmentJobPosition extends CommonObject
 			foreach ($object->array_options as $key => $option)
 			{
 				$shortkey = preg_replace('/options_/', '', $key);
-				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey]))
 				{
 					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
@@ -499,8 +486,8 @@ class RecruitmentJobPosition extends CommonObject
 			return 0;
 		}
 
-		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitmentjobposition->create))
-		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitmentjobposition->recruitmentjobposition_advance->validate))))
+		/*if (! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitmentcandidature->write))
+		 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->recruitment->recruitmentcandidature->recruitmentcandidature_advance->validate))))
 		 {
 		 $this->error='NotEnoughPermissions';
 		 dol_syslog(get_class($this)."::valid ".$this->error, LOG_ERR);
@@ -541,7 +528,7 @@ class RecruitmentJobPosition extends CommonObject
 			if (!$error && !$notrigger)
 			{
 				// Call trigger
-				$result = $this->call_trigger('RECRUITMENTJOBPOSITION_VALIDATE', $user);
+				$result = $this->call_trigger('RECRUITMENTCANDIDATURE_VALIDATE', $user);
 				if ($result < 0) $error++;
 				// End call triggers
 			}
@@ -555,16 +542,16 @@ class RecruitmentJobPosition extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref))
 			{
 				// Now we rename also files into index
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'recruitmentjobposition/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'recruitmentjobposition/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'recruitmentcandidature/".$this->db->escape($this->newref)."'";
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'recruitmentcandidature/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
 				$resql = $this->db->query($sql);
 				if (!$resql) { $error++; $this->error = $this->db->lasterror(); }
 
 				// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->recruitment->dir_output.'/recruitmentjobposition/'.$oldref;
-				$dirdest = $conf->recruitment->dir_output.'/recruitmentjobposition/'.$newref;
+				$dirsource = $conf->recruitment->dir_output.'/recruitmentcandidature/'.$oldref;
+				$dirdest = $conf->recruitment->dir_output.'/recruitmentcandidature/'.$newref;
 				if (!$error && file_exists($dirsource))
 				{
 					dol_syslog(get_class($this)."::validate() rename dir ".$dirsource." into ".$dirdest);
@@ -573,7 +560,7 @@ class RecruitmentJobPosition extends CommonObject
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles = dol_dir_list($conf->recruitment->dir_output.'/recruitmentjobposition/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+						$listoffiles = dol_dir_list($conf->recruitment->dir_output.'/recruitmentcandidature/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 						foreach ($listoffiles as $fileentry)
 						{
 							$dirsource = $fileentry['name'];
@@ -627,7 +614,7 @@ class RecruitmentJobPosition extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'RECRUITMENTJOBPOSITION_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'RECRUITMENTCANDIDATURE_UNVALIDATE');
 	}
 
 	/**
@@ -652,7 +639,7 @@ class RecruitmentJobPosition extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'RECRUITMENTJOBPOSITION_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'RECRUITMENTCANDIDATURE_CLOSE');
 	}
 
 	/**
@@ -677,7 +664,7 @@ class RecruitmentJobPosition extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'RECRUITMENTJOBPOSITION_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'RECRUITMENTCANDIDATURE_REOPEN');
 	}
 
 	/**
@@ -698,14 +685,14 @@ class RecruitmentJobPosition extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("PositionToBeFilled").'</u>';
+		$label = '<u>'.$langs->trans("RecruitmentCandidature").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
-		$url = dol_buildpath('/recruitment/recruitmentjobposition_card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink')
 		{
@@ -720,7 +707,7 @@ class RecruitmentJobPosition extends CommonObject
 		{
 			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 			{
-				$label = $langs->trans("ShowRecruitmentJobPosition");
+				$label = $langs->trans("ShowRecruitmentCandidature");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
 			}
 			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -766,7 +753,7 @@ class RecruitmentJobPosition extends CommonObject
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
 		global $action, $hookmanager;
-		$hookmanager->initHooks(array('recruitmentjobpositiondao'));
+		$hookmanager->initHooks(array('recruitmentcandidaturedao'));
 		$parameters = array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $result = $hookmanager->resPrint;
@@ -800,15 +787,13 @@ class RecruitmentJobPosition extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
-			//$langs->load("recruitment");
+			//$langs->load("recruitment@recruitment");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatus[self::STATUS_RECRUITED] = $langs->trans('Recruited');
-			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
-			$this->labelStatusShort[self::STATUS_RECRUITED] = $langs->trans('Recruited');
-			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
 		$statusType = 'status'.$status;
@@ -889,7 +874,18 @@ class RecruitmentJobPosition extends CommonObject
 	{
 		$this->lines = array();
 
-		return $this->lines;
+		$objectline = new RecruitmentCandidatureLine($this->db);
+		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_recruitmentcandidature = '.$this->id));
+
+		if (is_numeric($result))
+		{
+			$this->error = $this->error;
+			$this->errors = $this->errors;
+			return $result;
+		} else {
+			$this->lines = $result;
+			return $this->lines;
+		}
 	}
 
 	/**
@@ -900,18 +896,18 @@ class RecruitmentJobPosition extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("recruitment");
+		$langs->load("recruitment@recruitment");
 
-		if (empty($conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON)) {
-			$conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON = 'mod_recruitmentjobposition_standard';
+		if (empty($conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON)) {
+			$conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON = 'mod_recruitmentcandidature_standard';
 		}
 
-		if (!empty($conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON))
+		if (!empty($conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON))
 		{
 			$mybool = false;
 
-			$file = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON.".php";
-			$classname = $conf->global->RECRUITMENT_RECRUITMENTJOBPOSITION_ADDON;
+			$file = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON.".php";
+			$classname = $conf->global->RECRUITMENT_RECRUITMENTCANDIDATURE_ADDON;
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -969,15 +965,15 @@ class RecruitmentJobPosition extends CommonObject
 		$result = 0;
 		$includedocgeneration = 1;
 
-		$langs->load("recruitment");
+		$langs->load("recruitment@recruitment");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard_recruitmentjobposition';
+			$modele = 'standard_recruitmentcandidature';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
-			} elseif (!empty($conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF)) {
-				$modele = $conf->global->RECRUITMENTJOBPOSITION_ADDON_PDF;
+			} elseif (!empty($conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF)) {
+				$modele = $conf->global->RECRUITMENTCANDIDATURE_ADDON_PDF;
 			}
 		}
 
@@ -1018,5 +1014,27 @@ class RecruitmentJobPosition extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+}
+
+
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
+/**
+ * Class RecruitmentCandidatureLine. You can also remove this and generate a CRUD class for lines objects.
+ */
+class RecruitmentCandidatureLine extends CommonObjectLine
+{
+	// To complete with content of an object RecruitmentCandidatureLine
+	// We should have a field rowid, fk_recruitmentcandidature and position
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
 	}
 }

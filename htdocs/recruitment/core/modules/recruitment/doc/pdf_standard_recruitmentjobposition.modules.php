@@ -358,10 +358,10 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 	            $pdf->SetDrawColor(128, 128, 128);
 
 	            $pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-	            $pdf->SetSubject($outputlangs->transnoentities("JobPosition"));
+	            $pdf->SetSubject($object->label);
 	            $pdf->SetCreator("Dolibarr ".DOL_VERSION);
 	            $pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-	            $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("JobPosition")." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
+	            $pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$object->label." ".$outputlangs->convToOutputCharset($object->thirdparty->name));
 	            if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
 	            // Set certificate
@@ -872,11 +872,11 @@ class pdf_standard_recruitmentjobposition extends ModelePDFRecruitmentJobPositio
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("JobPosition");
-		if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
+		$title = $object->label;
+		/*if (!empty($conf->global->PDF_USE_ALSO_LANGUAGE_CODE) && is_object($outputlangsbis)) {
 			$title .= ' - ';
 			$title .= $outputlangsbis->transnoentities("JobPosition");
-		}
+		}*/
 		$pdf->MultiCell($w, 3, $title, '', 'R');
 
 		$pdf->SetFont('', 'B', $default_font_size);
