@@ -157,7 +157,6 @@ if ($_POST) {
 			// sanit_feature is an array with 1 (and only 1) value per attribute.
 			// For example:  Color->blue, Size->Small, Option->2
 			//var_dump($sanit_features);
-			//var_dump($productCombination2ValuePairs1); exit;
 
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
@@ -242,6 +241,31 @@ if ($_POST) {
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 		$prodcomb->variation_price = $price_impact;
 		$prodcomb->variation_weight = $weight_impact;
+
+		// for conf PRODUIT_MULTIPRICES
+		if($conf->global->PRODUIT_MULTIPRICES) {
+			$level_price_impact = array_map('price2num', $level_price_impact);
+			$level_price_impact_percent = array_map(function($a){ return !empty($a);}, $level_price_impact_percent);
+
+			$prodcomb->variation_price = $level_price_impact[1];
+			$prodcomb->variation_price_percentage = (bool)$level_price_impact_percent[1];
+		}
+		else{
+			$level_price_impact = array(1 => $weight_impact);
+			$level_price_impact_percent = array(1 => $price_impact_percent);
+		}
+
+		if($conf->global->PRODUIT_MULTIPRICES){
+			$prodcomb->combination_price_levels = array();
+			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++){
+				$productCombinationLevel = new ProductCombinationLevel($db);
+				$productCombinationLevel->fk_product_attribute_combination = $prodcomb->id;
+				$productCombinationLevel->fk_price_level = $i;
+				$productCombinationLevel->variation_price = $level_price_impact[$i];
+				$productCombinationLevel->variation_price_percentage = $level_price_impact_percent[$i];
+				$prodcomb->combination_price_levels[$i] = $productCombinationLevel;
+			}
+		}
 
 		if ($prodcomb->update($user) > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -619,6 +643,8 @@ if (!empty($id) || !empty($ref))
 			</tr>
 <?php 		}
 			else{
+				$prodcomb->fetchCombinationPriceLevels();
+
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
 
