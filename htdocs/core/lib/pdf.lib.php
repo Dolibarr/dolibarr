@@ -1215,7 +1215,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	global $db, $conf, $langs;
 
 	$idprod=(! empty($object->lines[$i]->fk_product)?$object->lines[$i]->fk_product:false);
-	$label=(! empty($object->lines[$i]->label)?$object->lines[$i]->label:(! empty($object->lines[$i]->product_label)?$object->lines[$i]->product_label:''));
+	$label=(!empty($object->lines[$i]->label) ? $object->lines[$i]->label : (!empty($object->lines[$i]->libelle) ? $object->lines[$i]->libelle : (!empty($object->lines[$i]->product_label) ? $object->lines[$i]->product_label : '')));
 	$desc=(! empty($object->lines[$i]->desc)?$object->lines[$i]->desc:(! empty($object->lines[$i]->description)?$object->lines[$i]->description:''));
 	$ref_supplier=(! empty($object->lines[$i]->ref_supplier)?$object->lines[$i]->ref_supplier:(! empty($object->lines[$i]->ref_fourn)?$object->lines[$i]->ref_fourn:''));    // TODO Not yet saved for supplier invoices, only supplier orders
 	$note=(! empty($object->lines[$i]->note)?$object->lines[$i]->note:'');

@@ -78,6 +78,7 @@ $cancel != $langs->trans("Cancel") &&
 		$object->label			= $_POST["libelle"];
 		$object->description	= dol_htmlcleanlastbr($_POST["desc"]);
 		$object->other			= dol_htmlcleanlastbr($_POST["other"]);
+		$object->update($object->id, $user);
 	}
 	else
 	{
