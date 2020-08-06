@@ -219,8 +219,8 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
 				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON == 1)
 					$entexto .= " MILL&OacuteN ";
-					else
-						$entexto .= " MILLONES ";
+				else
+					$entexto .= " MILLONES ";
 			}
 			if ($number >= 1000) {
 				$cdm = (int) ($numero / 100000);
@@ -240,7 +240,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 			$entexto .= hundreds2text($c, $d, $u);
 			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number > 1000000)
 				$entexto .= " DE";
-				$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
+			$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
 		}
 		return $entexto;
 	}
