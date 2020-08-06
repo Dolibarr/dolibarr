@@ -287,6 +287,9 @@ class Products extends DolibarrApi
         foreach ($request_data as $field => $value) {
             if ($field == 'id') { continue;
             }
+			if ($field == 'stock_reel') {
+				throw new RestException(400, 'Stock reel cannot be updated here. Use the /stockmovements endpoint instead');
+            }
             $this->product->$field = $value;
         }
 
