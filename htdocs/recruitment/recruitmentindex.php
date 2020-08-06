@@ -262,7 +262,7 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">';
-		print $langs->trans("BoxTitleLatestModifiedJobPositions",$max);
+		print $langs->trans("BoxTitleLatestModifiedJobPositions", $max);
 		print '</th>';
 		print '<th class="right">'.$langs->trans("DateModificationShort").'</th>';
 		print '</tr>';
@@ -281,17 +281,13 @@ if (! empty($conf->recruitment->enabled) && $user->rights->recruitment->recruitm
 				print '<td class="nowrap">'.$staticrecruitmentjobposition->getNomUrl(1, '').'</td>';
 				print '<td class="right nowrap">';
 				print "</td>";
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
+				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'day')."</td>";
 				print '</tr>';
 				$i++;
-
-
 			}
 
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table><br>";
