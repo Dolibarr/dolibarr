@@ -348,6 +348,7 @@ if ($action == "addline")
 		}
 	}
 	if ($idoflineadded <= 0) {
+		$invoice->fetch_thirdparty();
 		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
 	}
 
