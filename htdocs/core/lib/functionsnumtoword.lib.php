@@ -164,10 +164,11 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {
-	// If the number is negative convert to positive and return -1 if is too long
+	// If the number is negative convert to positive and return -1 if it is too long
 	if ($numero < 0) $numero *= -1;
-	if ($numero >= 1000000000001)
+	if ($numero >= 1000000000001) {
 		return -1;
+	}
 
 	// Get 2 decimals to cents, another functions round or truncate
 	$strnumber = number_format($numero, 10);
@@ -222,27 +223,27 @@ function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 				else
 					$entexto .= " MILLONES ";
 			}
-				if ($number >= 1000) {
-					$cdm = (int) ($numero / 100000);
-					$numero = $numero - $cdm * 100000;
-					$ddm = (int) ($numero / 10000);
-					$numero = $numero - $ddm * 10000;
-					$udm = (int) ($numero / 1000);
-					$numero = $numero - $udm * 1000;
-					$entexto .= hundreds2text($cdm, $ddm, $udm);
-					if ($cdm || $ddm || $udm)
-						$entexto .= " MIL ";
-				}
-				$c = (int) ($numero / 100);
-				$numero = $numero - $c * 100;
-				$d = (int) ($numero / 10);
-				$u = (int) $numero - $d * 10;
-				$entexto .= hundreds2text($c, $d, $u);
-				if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number > 1000000)
-					$entexto .= " DE";
-					$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
+			if ($number >= 1000) {
+				$cdm = (int) ($numero / 100000);
+				$numero = $numero - $cdm * 100000;
+				$ddm = (int) ($numero / 10000);
+				$numero = $numero - $ddm * 10000;
+				$udm = (int) ($numero / 1000);
+				$numero = $numero - $udm * 1000;
+				$entexto .= hundreds2text($cdm, $ddm, $udm);
+				if ($cdm || $ddm || $udm)
+					$entexto .= " MIL ";
 			}
-			return $entexto;
+			$c = (int) ($numero / 100);
+			$numero = $numero - $c * 100;
+			$d = (int) ($numero / 10);
+			$u = (int) $numero - $d * 10;
+			$entexto .= hundreds2text($c, $d, $u);
+			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number > 1000000)
+				$entexto .= " DE";
+				$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
+		}
+		return $entexto;
 	}
 }
 
