@@ -242,6 +242,23 @@ class CMailFile
 		// Add autocopy to (Note: Adding bcc for specific modules are also done from pages)
 		if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)) $addr_bcc.=($addr_bcc?', ':'').$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 
+		$this->addr_to = $to;
+		$this->addr_cc = $addr_cc;
+		$this->addr_bcc = $addr_bcc;
+		$this->reply_to = $replyto;
+		$this->addr_from = $from;
+		$this->subject = $subject;
+		$this->errors_to = $errors_to;
+		$this->deliveryreceipt = $deliveryreceipt;
+		$this->trackid = $trackid;
+
+		if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
+		{
+			$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
+			$this->addr_cc = '';
+			$this->addr_bcc = '';
+		}
+
 		// Action according to choosed sending method
 		if ($this->sendmode == 'mail')
 		{
@@ -254,16 +271,6 @@ class CMailFile
 			$files_encoded = "";
 
 			// Define smtp_headers
-			$this->subject = $subject;
-			$this->addr_from = $from;
-			$this->reply_to = $replyto;
-			$this->errors_to = $errors_to;
-			$this->addr_to = $to;
-			$this->addr_cc = $addr_cc;
-			$this->addr_bcc = $addr_bcc;
-			$this->deliveryreceipt = $deliveryreceipt;
-			$this->trackid = $trackid;
-
 			$smtp_headers = $this->write_smtpheaders();
 			if (! empty($moreinheader)) $smtp_headers.=$moreinheader;   // $moreinheader contains the \r\n
 
@@ -311,11 +318,11 @@ class CMailFile
 			$smtps = new SMTPs();
 			$smtps->setCharSet($conf->file->character_set_client);
 
-			$smtps->setSubject($this->encodetorfc2822($subject));
-			$smtps->setTO($this->getValidAddress($to, 0, 1));
-			$smtps->setFrom($this->getValidAddress($from, 0, 1));
-			$smtps->setTrackId($trackid);
-			$smtps->setReplyTo($this->getValidAddress($replyto, 0, 1));
+			$smtps->setSubject($this->encodetorfc2822($this->subject));
+			$smtps->setTO($this->getValidAddress($this->addr_to, 0, 1));
+			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
+			$smtps->setTrackId($this->trackid);
+			$smtps->setReplyTo($this->getValidAddress($this->reply_to, 0, 1));
 
 			if (! empty($moreinheader)) $smtps->setMoreInHeader($moreinheader);
 
@@ -353,10 +360,10 @@ class CMailFile
 				}
 			}
 
-			$smtps->setCC($addr_cc);
-			$smtps->setBCC($addr_bcc);
-			$smtps->setErrorsTo($errors_to);
-			$smtps->setDeliveryReceipt($deliveryreceipt);
+			$smtps->setCC($this->addr_cc);
+			$smtps->setBCC($this->addr_bcc);
+			$smtps->setErrorsTo($this->errors_to);
+			$smtps->setDeliveryReceipt($this->deliveryreceipt);
 
 			$this->smtps=$smtps;
 		}
@@ -378,8 +385,8 @@ class CMailFile
             //$this->message = new Swift_SignedMessage();
             // Adding a trackid header to a message
             $headers = $this->message->getHeaders();
-            $headers->addTextHeader('X-Dolibarr-TRACKID', $trackid . '@' . $host);
-            $headerID = time() . '.swiftmailer-dolibarr-' . $trackid . '@' . $host;
+            $headers->addTextHeader('X-Dolibarr-TRACKID', $this->trackid . '@' . $host);
+            $headerID = time() . '.swiftmailer-dolibarr-' . $this->trackid . '@' . $host;
             $msgid = $headers->get('Message-ID');
             $msgid->setId($headerID);
             $headers->addIdHeader('References', $headerID);
@@ -387,33 +394,33 @@ class CMailFile
 
             // Give the message a subject
             try {
-                $result = $this->message->setSubject($subject);
+                $result = $this->message->setSubject($this->subject);
             } catch (Exception $e) {
                 $this->errors[] =  $e->getMessage();
             }
 
             // Set the From address with an associative array
             //$this->message->setFrom(array('john@doe.com' => 'John Doe'));
-            if (! empty($from)) {
+            if (! empty($this->addr_from)) {
                 try {
-                    $result = $this->message->setFrom($this->getArrayAddress($from));
+                    $result = $this->message->setFrom($this->getArrayAddress($this->addr_from));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
             }
 
             // Set the To addresses with an associative array
-            if (! empty($to)) {
+            if (! empty($this->addr_to)) {
                 try {
-                    $result = $this->message->setTo($this->getArrayAddress($to));
+                    $result = $this->message->setTo($this->getArrayAddress($this->addr_to));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
             }
 
-            if (! empty($replyto)) {
+            if (! empty($this->reply_to)) {
                 try {
-                	$result = $this->message->SetReplyTo($this->getArrayAddress($replyto));
+                	$result = $this->message->SetReplyTo($this->getArrayAddress($this->reply_to));
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -467,10 +474,10 @@ class CMailFile
 				}
 			}
 
-			if (! empty($addr_cc)) $this->message->setCc($this->getArrayAddress($addr_cc));
-			if (! empty($addr_bcc)) $this->message->setBcc($this->getArrayAddress($addr_bcc));
+			if (! empty($this->addr_cc)) $this->message->setCc($this->getArrayAddress($this->addr_cc));
+			if (! empty($this->addr_bcc)) $this->message->setBcc($this->getArrayAddress($this->addr_bcc));
 			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
-			if (isset($deliveryreceipt) && $deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($from));
+			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
 		}
 		else
 		{
@@ -587,13 +594,6 @@ class CMailFile
 				$keyforsmtppw    ='MAIN_MAIL_SMTPS_PW_EMAILING';
 				$keyfortls       ='MAIN_MAIL_EMAIL_TLS_EMAILING';
 				$keyforstarttls  ='MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
-			}
-
-			if (!empty($conf->global->MAIN_MAIL_FORCE_SENDTO))
-			{
-				$this->addr_to = $conf->global->MAIN_MAIL_FORCE_SENDTO;
-				$this->addr_cc = '';
-				$this->addr_bcc = '';
 			}
 
 			// Action according to choosed sending method
