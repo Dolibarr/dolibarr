@@ -56,7 +56,6 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
 		$concatWords = $langs->getLabelFromNumber($num, $type);
 		return $concatWords;
 	} else {
-
 		$TNum = explode('.', $num);
 	    $num = (int) $TNum[0];
 	    $words = array();
