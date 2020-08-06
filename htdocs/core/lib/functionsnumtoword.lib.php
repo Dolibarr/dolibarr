@@ -163,86 +163,87 @@ function dol_convertToWord($num, $langs, $currency = false, $centimes = false)
  */
 function dolNumberToWord($numero, $langs, $numorcurrency = 'number')
 {
-	// If the number is negative convert to positive and return -1 if is too long
+	// If the number is negative convert to positive and return -1 if it is too long
 	if ($numero < 0) $numero *= -1;
-	if ($numero >= 1000000000001)
+	if ($numero >= 1000000000001) {
 		return -1;
+	}
 
-		// Get 2 decimals to cents, another functions round or truncate
-		$strnumber = number_format($numero, 10);
-		$len = strlen($strnumber);
-		for ($i = 0; $i < $len; $i++)
-		{
-			if ($strnumber[$i] == '.') {
-				$parte_decimal = $strnumber[$i + 1].$strnumber[$i + 2];
-				break;
-			}
+	// Get 2 decimals to cents, another functions round or truncate
+	$strnumber = number_format($numero, 10);
+	$len = strlen($strnumber);
+	for ($i = 0; $i < $len; $i++)
+	{
+		if ($strnumber[$i] == '.') {
+			$parte_decimal = $strnumber[$i + 1].$strnumber[$i + 2];
+			break;
 		}
+	}
 
-		/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
-		 in case exist why ask $lang like a parameter?*/
-		if (((is_object($langs) && $langs->default == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency')
-		{
-			if ($numero >= 1 && $numero < 2) {
-				return ("UN PESO ".$parte_decimal." / 100 M.N.");
+	/*In dolibarr 3.6.2 (my current version) doesn't have $langs->default and
+	 in case exist why ask $lang like a parameter?*/
+	if (((is_object($langs) && $langs->default == 'es_MX') || (!is_object($langs) && $langs == 'es_MX')) && $numorcurrency == 'currency')
+	{
+		if ($numero >= 1 && $numero < 2) {
+			return ("UN PESO ".$parte_decimal." / 100 M.N.");
+		}
+		elseif ($numero >= 0 && $numero < 1) {
+			return ("CERO PESOS ".$parte_decimal." / 100 M.N.");
+		}
+		elseif ($numero >= 1000000 && $numero < 1000001) {
+			return ("UN MILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
+		}
+		elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
+			return ("UN BILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
+		}
+		else {
+			$entexto = "";
+			$number = $numero;
+			if ($number >= 1000000000) {
+				$CdMMillon = (int) ($numero / 100000000000);
+				$numero = $numero - $CdMMillon * 100000000000;
+				$DdMMillon = (int) ($numero / 10000000000);
+				$numero = $numero - $DdMMillon * 10000000000;
+				$UdMMillon = (int) ($numero / 1000000000);
+				$numero = $numero - $UdMMillon * 1000000000;
+				$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
+				$entexto .= " MIL ";
 			}
-			elseif ($numero >= 0 && $numero < 1) {
-				return ("CERO PESOS ".$parte_decimal." / 100 M.N.");
+			if ($number >= 1000000) {
+				$CdMILLON = (int) ($numero / 100000000);
+				$numero = $numero - $CdMILLON * 100000000;
+				$DdMILLON = (int) ($numero / 10000000);
+				$numero = $numero - $DdMILLON * 10000000;
+				$udMILLON = (int) ($numero / 1000000);
+				$numero = $numero - $udMILLON * 1000000;
+				$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
+				if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON == 1)
+					$entexto .= " MILL&OacuteN ";
+					else
+						$entexto .= " MILLONES ";
 			}
-			elseif ($numero >= 1000000 && $numero < 1000001) {
-				return ("UN MILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-			}
-			elseif ($numero >= 1000000000000 && $numero < 1000000000001) {
-				return ("UN BILL&OacuteN DE PESOS ".$parte_decimal." / 100 M.N.");
-			}
-			else {
-				$entexto = "";
-				$number = $numero;
-				if ($number >= 1000000000) {
-					$CdMMillon = (int) ($numero / 100000000000);
-					$numero = $numero - $CdMMillon * 100000000000;
-					$DdMMillon = (int) ($numero / 10000000000);
-					$numero = $numero - $DdMMillon * 10000000000;
-					$UdMMillon = (int) ($numero / 1000000000);
-					$numero = $numero - $UdMMillon * 1000000000;
-					$entexto .= hundreds2text($CdMMillon, $DdMMillon, $UdMMillon);
+			if ($number >= 1000) {
+				$cdm = (int) ($numero / 100000);
+				$numero = $numero - $cdm * 100000;
+				$ddm = (int) ($numero / 10000);
+				$numero = $numero - $ddm * 10000;
+				$udm = (int) ($numero / 1000);
+				$numero = $numero - $udm * 1000;
+				$entexto .= hundreds2text($cdm, $ddm, $udm);
+				if ($cdm || $ddm || $udm)
 					$entexto .= " MIL ";
-				}
-				if ($number >= 1000000) {
-					$CdMILLON = (int) ($numero / 100000000);
-					$numero = $numero - $CdMILLON * 100000000;
-					$DdMILLON = (int) ($numero / 10000000);
-					$numero = $numero - $DdMILLON * 10000000;
-					$udMILLON = (int) ($numero / 1000000);
-					$numero = $numero - $udMILLON * 1000000;
-					$entexto .= hundreds2text($CdMILLON, $DdMILLON, $udMILLON);
-					if (!$CdMMillon && !$DdMMillon && !$UdMMillon && !$CdMILLON && !$DdMILLON && $udMILLON == 1)
-						$entexto .= " MILL&OacuteN ";
-						else
-							$entexto .= " MILLONES ";
-				}
-				if ($number >= 1000) {
-					$cdm = (int) ($numero / 100000);
-					$numero = $numero - $cdm * 100000;
-					$ddm = (int) ($numero / 10000);
-					$numero = $numero - $ddm * 10000;
-					$udm = (int) ($numero / 1000);
-					$numero = $numero - $udm * 1000;
-					$entexto .= hundreds2text($cdm, $ddm, $udm);
-					if ($cdm || $ddm || $udm)
-						$entexto .= " MIL ";
-				}
-				$c = (int) ($numero / 100);
-				$numero = $numero - $c * 100;
-				$d = (int) ($numero / 10);
-				$u = (int) $numero - $d * 10;
-				$entexto .= hundreds2text($c, $d, $u);
-				if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number > 1000000)
-					$entexto .= " DE";
-					$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
 			}
-			return $entexto;
+			$c = (int) ($numero / 100);
+			$numero = $numero - $c * 100;
+			$d = (int) ($numero / 10);
+			$u = (int) $numero - $d * 10;
+			$entexto .= hundreds2text($c, $d, $u);
+			if (!$cdm && !$ddm && !$udm && !$c && !$d && !$u && $number > 1000000)
+				$entexto .= " DE";
+				$entexto .= " PESOS ".$parte_decimal." / 100 M.N.";
 		}
+		return $entexto;
+	}
 }
 
 /**
