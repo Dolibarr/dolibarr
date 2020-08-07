@@ -55,6 +55,7 @@ create table llx_user
   personal_mobile   varchar(20),
   email             varchar(255),
   personal_email    varchar(255),
+  default_lang      varchar(6),				 -- default language for communication. see also lang parameter
 
   socialnetworks    text DEFAULT NULL,       -- json with socialnetworks
 
@@ -85,7 +86,7 @@ create table llx_user
   openid            varchar(255),
   statut            tinyint DEFAULT 1,
   photo             varchar(255),				-- filename or url of photo
-  lang              varchar(6),
+  lang              varchar(6),					-- language selected by user as interface language. see also default_lang parameter
   color				varchar(6),
   barcode			varchar(255) DEFAULT NULL,
   fk_barcode_type	integer      DEFAULT 0,

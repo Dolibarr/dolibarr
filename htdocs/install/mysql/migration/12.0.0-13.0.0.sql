@@ -208,4 +208,5 @@ insert into llx_c_stcommcontact (id,code,libelle) values ( 3, 'ST_DONE',  'Conta
 ALTER TABLE llx_socpeople ADD COLUMN fk_prospectcontactlevel varchar(12) AFTER priv;
 ALTER TABLE llx_socpeople ADD COLUMN fk_stcommcontact integer DEFAULT 0 NOT NULL AFTER fk_prospectcontactlevel;
 
+ALTER TABLE llx_user ADD COLUMN default_lang varchar(6);
 
