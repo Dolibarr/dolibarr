@@ -242,7 +242,7 @@ class ProductCombination
 		$this->variation_weight = $result->variation_weight;
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-			$this->fetchCombinationPriceLevel();
+			$this->fetchCombinationPriceLevels();
 		}
 
 		return 1;
@@ -362,8 +362,6 @@ class ProductCombination
 			return -1;
 		}
 
-		$parent = new Product($this->db);
-		$parent->fetch($this->fk_product_parent);
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$res = $this->saveCombinationPriceLevels();
@@ -371,6 +369,9 @@ class ProductCombination
 				return -2;
 			}
 		}
+
+		$parent = new Product($this->db);
+		$parent->fetch($this->fk_product_parent);
 
 		$this->updateProperties($parent, $user);
 
@@ -471,6 +472,7 @@ class ProductCombination
 			$child->label           = $parent->label.$varlabel;;
 		}
 
+
 		if ($child->update($child->id, $user) > 0) {
 			$new_vat = $parent->tva_tx;
 			$new_npr = $parent->tva_npr;
@@ -479,9 +481,12 @@ class ProductCombination
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
-					if ($parent->multiprices[$i] != '') {
+					if ($parent->multiprices[$i] != '' || isset($this->combination_price_levels[$i]->variation_price)) {
 						$new_type = $parent->multiprices_base_type[$i];
 						$new_min_price = $parent->multiprices_min[$i];
+						$variation_price = doubleval(!isset($this->combination_price_levels[$i]->variation_price) ? $this->variation_price : $this->combination_price_levels[$i]->variation_price);
+						$variation_price_percentage = doubleval(!isset($this->combination_price_levels[$i]->variation_price_percentage) ? $this->variation_price_percentage : $this->combination_price_levels[$i]->variation_price_percentage);
+
 						if ($parent->prices_by_qty_list[$i]) {
 							$new_psq = 1;
 						} else {
@@ -494,12 +499,12 @@ class ProductCombination
 							$new_price = $parent->multiprices[$i];
 						}
 
-						if ($this->variation_price_percentage) {
+						if ($variation_price_percentage) {
 							if ($new_price != 0) {
-								$new_price *= 1 + ($this->variation_price / 100);
+								$new_price *= 1 + ($variation_price / 100);
 							}
 						} else {
-							$new_price += $this->variation_price;
+							$new_price += $variation_price;
 						}
 
 						$child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq);
@@ -1056,10 +1061,10 @@ class ProductCombinationLevel
 		}
 
 		$this->id = $obj->rowid;
-		$this->fk_product_attribute_combination = $obj->fk_product_attribute_combination;
-		$this->fk_price_level = $obj->fk_price_level;
-		$this->variation_price = $obj->variation_price;
-		$this->variation_price_percentage = $obj->variation_price_percentage;
+		$this->fk_product_attribute_combination = doubleval($obj->fk_product_attribute_combination);
+		$this->fk_price_level = intval($obj->fk_price_level);
+		$this->variation_price = doubleval($obj->variation_price);
+		$this->variation_price_percentage = (bool)$obj->variation_price_percentage;
 
 		return 1;
 	}
