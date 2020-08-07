@@ -1846,6 +1846,7 @@ MailToSendSupplierRequestForQuotation=Quotation request
 MailToSendSupplierOrder=Purchase orders
 MailToSendSupplierInvoice=Vendor invoices
 MailToSendContract=Contracts
+MailToSendReception=Receptions
 MailToThirdparty=Third parties
 MailToMember=Members
 MailToUser=Users
