@@ -356,7 +356,7 @@ class CMailFile
 			}
 
 			$smtps->setSubject($subjecttouse);
-			$smtps->setTO($this->getValidAddress($this->to, 0, 1));
+			$smtps->setTO($this->getValidAddress($this->addr_to, 0, 1));
 			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
 			$smtps->setTrackId($this->trackid);
 			$smtps->setReplyTo($this->getValidAddress($this->replyto, 0, 1));
