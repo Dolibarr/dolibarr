@@ -385,6 +385,9 @@ input.pageplusone {
 .colorwhite {
 	color: #fff;
 }
+.colorgrey {
+    color: #888 !important;
+}
 .colorblack {
 	color: #000;
 }

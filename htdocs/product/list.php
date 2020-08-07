@@ -1090,13 +1090,15 @@ if ($resql)
 			$s = '';
 			if ($obj->fk_product_type == 0)
 			{
-				$s .= '<a class="product-type-back" title="'.$langs->trans("Product").'">';
-				$s .= dol_substr($langs->trans("Product"), 0, 1);
-				$s .= '</a>';
+				//$s .= '<a class="product-type-back" title="'.$langs->trans("Product").'">';
+				$s .= img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"');
+				//$s .= dol_substr($langs->trans("Product"), 0, 1);
+				//$s .= '</a>';
 			} else {
-				$s .= '<span class="service-type-back" title="'.$langs->trans("Service").'">';
-				$s .= dol_substr($langs->trans("Service"), 0, 1);
-				$s .= '</a>';
+				//$s .= '<span class="service-type-back" title="'.$langs->trans("Service").'">';
+				$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
+				//$s .= dol_substr($langs->trans("Service"), 0, 1);
+				//$s .= '</a>';
 			}
 			print $s;
 			print '</td>';
