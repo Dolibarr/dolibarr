@@ -293,9 +293,9 @@ class SupplierInvoices extends DolibarrApi
     }
 
     /**
-     * Validate an order
+     * Validate an invoice
      *
-     * @param   int $id             Order ID
+     * @param   int $id             Invoice ID
      * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
@@ -325,7 +325,7 @@ class SupplierInvoices extends DolibarrApi
 
         $result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
         if ($result == 0) {
-            throw new RestException(304, 'Error nothing done. May be object is already validated');
+            throw new RestException(304, 'Error nothing done. The invoice is already validated');
         }
         if ($result < 0) {
             throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
