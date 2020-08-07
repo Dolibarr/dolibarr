@@ -655,6 +655,11 @@ if (!defined('NOLOGIN'))
 			if (GETPOST('lang', 'aZ09'))       $paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
 			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
+		} else {
+			// User is loaded, we may need to change language for him according to its choice
+			if (! empty($user->conf->MAIN_LANG_DEFAULT)) {
+				$langs->setDefaultLang($user->conf->MAIN_LANG_DEFAULT);
+			}
 		}
 	}
 	else
