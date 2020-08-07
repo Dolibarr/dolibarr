@@ -403,7 +403,7 @@ class CMailFile
 			$smtps->setDeliveryReceipt($this->deliveryreceipt);
 
 			$host = dol_getprefix('email');
-			$this->msgid = time().'.SMTPs-dolibarr-'.$trackid.'@'.$host;
+			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
 
 			$this->smtps = $smtps;
 		}
