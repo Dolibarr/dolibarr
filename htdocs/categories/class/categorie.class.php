@@ -2010,7 +2010,7 @@ class Categorie extends CommonObject
 			return "";
 		}
 	}
-	
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Count all categories
@@ -2019,20 +2019,19 @@ class Categorie extends CommonObject
 	 */
 	public function count_all_categories()
 	{
-	dol_syslog(get_class($this)."::count_all_categories", LOG_DEBUG);
+		dol_syslog(get_class($this)."::count_all_categories", LOG_DEBUG);
 			$sql = "SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."categorie";
 			$sql .= " WHERE entity IN (".getEntity('category').")";
 
 			$res = $this->db->query($sql);
-			if ($res)
+		if ($res)
 			{
-		$obj = $this->db->fetch_object($res);
-					return $obj->count;
-			}
-			else
-			{
-					dol_print_error($this->db);
-					return -1;
-			}
+			$obj = $this->db->fetch_object($res);
+				return $obj->count;
+		}
+		else {
+				dol_print_error($this->db);
+				return -1;
+		}
 	}
 }
