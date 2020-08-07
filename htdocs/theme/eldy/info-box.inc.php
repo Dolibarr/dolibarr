@@ -263,6 +263,24 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	border-radius: 3px;
 }
 
+.product-type-back {
+    background-color: #a6c974 !important;
+    color: #FFF !important;
+    padding: 2px;
+    margin: 2px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+.service-type-back {
+    background-color: #979c01 !important;
+    color: #FFF !important;
+    padding: 2px;
+    margin: 2px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+}
+
+
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }

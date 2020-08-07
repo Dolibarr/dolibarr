@@ -647,7 +647,7 @@ if ($resql)
 	// Type
 	if (!empty($arrayfields['p.fk_product_type']['checked']))
 	{
-		print '<td class="liste_titre left">';
+		print '<td class="liste_titre center">';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
 		print $form->selectarray('search_type', $array, $search_type);
 		print '</td>';
@@ -875,7 +875,7 @@ if ($resql)
         print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], "p.label", "", $param, "", $sortfield, $sortorder);
     }
     if (!empty($arrayfields['p.fk_product_type']['checked'])) {
-        print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder);
+        print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder, 'center ');
     }
     if (!empty($arrayfields['p.barcode']['checked'])) {
         print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"], "p.barcode", "", $param, "", $sortfield, $sortorder);
@@ -1086,9 +1086,19 @@ if ($resql)
 		// Type
 		if (!empty($arrayfields['p.fk_product_type']['checked']))
 		{
-			print '<td>';
-			if ($obj->fk_product_type == 0) print $langs->trans("Product");
-			else print $langs->trans("Service");
+			print '<td class="center">';
+			$s = '';
+			if ($obj->fk_product_type == 0)
+			{
+				$s .= '<a class="product-type-back" title="'.$langs->trans("Product").'">';
+				$s .= dol_substr($langs->trans("Product"), 0, 1);
+				$s .= '</a>';
+			} else {
+				$s .= '<span class="service-type-back" title="'.$langs->trans("Service").'">';
+				$s .= dol_substr($langs->trans("Service"), 0, 1);
+				$s .= '</a>';
+			}
+			print $s;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1323,7 +1333,7 @@ if ($resql)
 			print '</td>';
 		}
 
-        // Sell Tax Rate
+        // VAT or Sell Tax Rate
         if (!empty($arrayfields['p.tva_tx']['checked']))
         {
             print '<td class="right">';
@@ -1339,7 +1349,7 @@ if ($resql)
 			print price($product_static->pmp, 1, $langs);
 			print '</td>';
 		}
-		// cost_price
+		// Cost price
 		if (!empty($arrayfields['p.cost_price']['checked']))
 		{
 			print '<td class="nowrap right">';
