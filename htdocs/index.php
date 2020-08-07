@@ -356,7 +356,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-    // Number of commercial proposals opened (expired)
+    // Number of commercial proposals open (expired)
     if (!empty($conf->propal->enabled) && $user->rights->propale->lire) {
         include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
         $board = new Propal($db);
@@ -365,7 +365,7 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
         $dashboardlines[$board->element.'_signed'] = $board->load_board($user, "signed");
     }
 
-    // Number of commercial proposals opened (expired)
+    // Number of commercial proposals open (expired)
     if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire) {
         include_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
         $board = new SupplierProposal($db);
@@ -407,14 +407,14 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
     	//$dashboardlines[$board->element.'_active'] = $board->load_board($user, "active");
     }
 
-    // Number of invoices customers (has paid)
+    // Number of invoices customers (paid)
     if (!empty($conf->facture->enabled) && $user->rights->facture->lire) {
         include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
         $board = new Facture($db);
         $dashboardlines[$board->element] = $board->load_board($user);
     }
 
-    // Number of supplier invoices (has paid)
+    // Number of supplier invoices (paid)
     if (!empty($conf->supplier_invoice->enabled) && !empty($user->rights->fournisseur->facture->lire)) {
         include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
         $board = new FactureFournisseur($db);
@@ -715,21 +715,35 @@ if (empty($conf->global->MAIN_DISABLE_GLOBAL_WORKBOARD)) {
 
                     $textLate = '';
                     if ($board->nbtodolate > 0) {
-                        $textLate .= ' <span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-warning">';
+                        $textLate .= '<span title="'.dol_htmlentities($textLateTitle).'" class="classfortooltip badge badge-warning">';
                         $textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
                         $textLate .= '</span>';
                     }
+
+                    $openedDashBoard .= '<div class="info-box-line">';
 
                     $nbtodClass = '';
                     if ($board->nbtodo > 0) {
                         $nbtodClass = 'badge badge-info';
                     }
 
-                    $openedDashBoard .= '			<a href="'.$board->url.'" class="info-box-text">'.$infoName.' : <span class="'.$nbtodClass.' classfortooltip" title="'.$board->label.'" >'.$board->nbtodo.'</span>'.$textLate.'</a>'."\n";
+                    $openedDashBoard .= '			<a href="'.$board->url.'" class="info-box-text info-box-text-a">'.$infoName.' : <span class="'.$nbtodClass.' classfortooltip" title="'.$board->label.'" >'.$board->nbtodo.'</span>';
+                    if ($textLate) {
+                    	if ($board->url_late) {
+                    		$openedDashBoard .= '</a>';
+                    		$openedDashBoard .= ' <a href="'.$board->url_late.'" class="info-box-text info-box-text-a paddingleft">';
+                    	} else {
+                    		$openedDashBoard .= ' ';
+                    	}
+                    	$openedDashBoard .= $textLate;
+                    }
+                    $openedDashBoard .= '</a>'."\n";
 
                     if ($board->total > 0 && !empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX)) {
                         $openedDashBoard .= '<a href="'.$board->url.'" class="info-box-text">'.$langs->trans('Total').' : '.price($board->total).'</a>';
                     }
+
+                    $openedDashBoard .= '</div>';
                 }
 
                 $openedDashBoard .= '		</div><!-- /.info-box-content -->'."\n";

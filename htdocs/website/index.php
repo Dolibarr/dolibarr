@@ -2594,11 +2594,11 @@ if (!GETPOST('hide_websitemenu'))
 					$textifempty = 1;
 					$formquestion = array(
 						array('type' => 'hidden', 'name' => 'sourcepageurl', 'value'=> $objectpage->pageurl),
-						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 0, 1, 0, $onlylang, 1)),
-						array('type' => 'other', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
+						array('type' => 'other', 'tdclass'=>'fieldrequired', 'name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
 						array('type' => 'text', 'tdclass'=>'maxwidth200 fieldrequired', 'name' => 'newtitle', 'label'=> $langs->trans("WEBSITE_TITLE"), 'value'=> $langs->trans("CopyOf").' '.$objectpage->title),
 						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'newpageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> ''),
+						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0, 'morecss'=>'margintoponly'),
+						array('type' => 'other', 'name' => 'newlang', 'label' => $form->textwithpicto($langs->trans("Language"), $langs->trans("DefineListOfAltLanguagesInWebsiteProperties")), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, $textifempty, 0, 0, 'minwidth200', 0, 1, 0, $onlylang, 1)),
 					);
 
 				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);
@@ -2972,6 +2972,15 @@ if ($action == 'editcss')
 	print $websitekey;
 	print '</td></tr>';
 
+	// Status of web site
+	print '<!-- Status of website -->'."\n";
+	print '<tr><td class="fieldrequired">';
+	print $langs->trans('Status');
+	print '</td><td>';
+	print ajax_object_onoff($object, 'status', 'status', 'Enabled', 'Disabled');
+	//print dol_print_date($pagedatecreation, 'dayhour');
+	print '</td></tr>';
+
 	// Main language
 	print '<tr><td class="tdtop fieldrequired">';
 	$htmltext = '';
@@ -3288,15 +3297,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	if ($action != 'createcontainer')
 	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('IDOfPage');
+		print '<tr><td class="titlefield fieldrequired">';
+		print $langs->trans('IDOfPage').' - '.$langs->trans('InternalURLOfPage');
 		print '</td><td>';
 		print $pageid;
-		print '</td></tr>';
+		//print '</td></tr>';
 
-		print '<tr><td class="titlefield">';
-		print $langs->trans('InternalURLOfPage');
-		print '</td><td>';
+		//print '<tr><td class="titlefield fieldrequired">';
+		//print $langs->trans('InternalURLOfPage');
+		//print '</td><td>';
+		print ' &nbsp; - &nbsp; ';
 		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode($pageid);
 		//if ($objectpage->grabbed_from) print ' - <span class="opacitymedium">'.$langs->trans('InitiallyGrabbedFrom').' '.$objectpage->grabbed_from.'</span>';
 		print '</td></tr>';
@@ -3333,6 +3343,17 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	if (GETPOST('WEBSITE_KEYWORDS', 'alpha'))    $pagekeywords = str_replace(array('<', '>'), '', GETPOST('WEBSITE_KEYWORDS', 'alphanohtml'));
 	if (GETPOST('WEBSITE_LANG', 'aZ09'))         $pagelang = GETPOST('WEBSITE_LANG', 'aZ09');
 	if (GETPOST('htmlheader', 'none'))			 $pagehtmlheader = GETPOST('htmlheader', 'none');
+
+	if ($action != 'createcontainer')
+	{
+		print '<!-- Status of page -->'."\n";
+		print '<tr><td class="fieldrequired">';
+		print $langs->trans('Status');
+		print '</td><td>';
+		print ajax_object_onoff($objectpage, 'status', 'status', 'Enabled', 'Disabled');
+		//print dol_print_date($pagedatecreation, 'dayhour');
+		print '</td></tr>';
+	}
 
 	// Type of container
 	print '<tr><td class="titlefield fieldrequired">';
@@ -3554,17 +3575,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	$doleditor = new DolEditor('htmlheader', $pagehtmlheader, '', '120', 'ace', 'In', true, false, 'ace', ROWS_3, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
-
-	if ($action != 'createcontainer')
-	{
-		print '<!-- Status of page -->'."\n";
-		print '<tr><td>';
-		print $langs->trans('Status');
-		print '</td><td>';
-		print ajax_object_onoff($objectpage, 'status', 'status', 'Enabled', 'Disabled');
-		//print dol_print_date($pagedatecreation, 'dayhour');
-		print '</td></tr>';
-	}
 
 	print '</table>';
 	if ($action == 'createcontainer')

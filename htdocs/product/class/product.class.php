@@ -4428,6 +4428,7 @@ class Product extends CommonObject
         global $conf, $user, $langs;
 
         $langs->load("products");
+		$outputlangs->load("products");
 
         // Positionne le modele sur le nom du modele a utiliser
         if (!dol_strlen($modele)) {

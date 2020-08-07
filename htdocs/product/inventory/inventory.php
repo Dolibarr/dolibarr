@@ -250,7 +250,7 @@ if ($object->id > 0)
 
 
 	// Buttons for actions
-	if ($action == 'edit') {
+	if ($action == 'record') {
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="update">';
@@ -276,19 +276,36 @@ if ($object->id > 0)
     		{
     			if ($permissiontoadd)
     			{
-    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>'."\n";
+    				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").' ('.$langs->trans("Start").')</a>'."\n";
     			} else {
-    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Edit').'</a>'."\n";
+    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').' ('.$langs->trans("Start").')</a>'."\n";
     			}
     		}
 
-    		if ($object->status == Inventory::STATUS_DRAFT)
+    		if ($object->status == Inventory::STATUS_VALIDATED)
+    		{
+    			if ($permissiontoadd)
+    			{
+    				if ($conf->barcode->enabled) {
+    					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScanningProductBarcode").'</a>';
+    				}
+    				if ($conf->productbatch->enabled) {
+    					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
+    				}
+
+    				//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=savecurrent">'.$langs->trans("Save").'</a>'."\n";
+    			} else {
+    				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
+    			}
+    		}
+
+    		if ($object->status == Inventory::STATUS_VALIDATED)
     		{
 	        	if ($permissiontoadd)
 	    		{
-	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=validate">'.$langs->trans("Validate").'</a>'."\n";
+	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=record">'.$langs->trans("Finish").'</a>'."\n";
 	    		} else {
-	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Validate').'</a>'."\n";
+	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Finish').'</a>'."\n";
 	    		}
     		}
 
@@ -325,24 +342,25 @@ if ($object->id > 0)
 		print $langs->trans("Batch");
 		print '</td>';
 	}
-	print '<td class="right">'.$langs->trans("RecordedQty").'</td>';
-	print '<td class="right">'.$langs->trans("RealQty").'</td>';
-	print '<td>';
+	print '<td class="right">'.$langs->trans("ExpectedQty").'</td>';
+	print '<td class="center">';
+	print $form->textwithpicto($langs->trans("RealQty"), $langs->trans("InventoryRealQtyHelp"));
+	print '</td>';
+	// Actions
+	print '<td class="center">';
 	print '</td>';
 	print '</tr>';
 
-
-	$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'product_stock as ps, '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'entrepot as e';
-	$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
-	$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
-	if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
-	if ($object->fk_product > 0) $sql .= ' AND ps.fk_product = '.$object->fk_product;
-	if ($object->fk_warehouse > 0) $sql .= ' AND ps.fk_entrepot = '.$object->fk_warehouse;
+	// Request to show lines of inventory (prefilled during creation)
+	$sql = 'SELECT id.rowid, id.datec as date_creation, id.tms as date_modification, id.fk_inventory, id.fk_warehouse,';
+	$sql .= ' id.fk_product, id.batch, id.qty_stock, id.qty_view, id.qty_regulated';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'inventorydet as id';
+	$sql .= ' WHERE id.fk_inventory = '.$object->id;
 
 	$cacheOfProducts = array();
 	$cacheOfWarehouses = array();
 
+	//$sql = '';
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -386,18 +404,18 @@ if ($object->id > 0)
 
 			if ($conf->productbatch->enabled) {
 				print '<td>';
-				print '';
+				print $obj->batch;
 				print '</td>';
 			}
 
-			print '<td>';
-			print '';
+			print '<td class="right">';
+			print 'TODO';
 			print '</td>';
-			print '<td>';
-			print '';
+			print '<td class="center">';
+			print '<input type="text" class="maxwidth75" name="id_'.$obj->rowid.' value="'.GETPOST("id_".$obj->rowid).'">';
 			print '</td>';
-			print '<td>';
-			print '';
+			print '<td class="right">';
+			print img_delete();
 			print '</td>';
 
 			print '</tr>';

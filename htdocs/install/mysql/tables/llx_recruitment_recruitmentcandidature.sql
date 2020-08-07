@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) 2020	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,21 +14,11 @@
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
 
-CREATE TABLE llx_recruitment_recruitmentjobposition(
+CREATE TABLE llx_recruitment_recruitmentcandidature(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	fk_recruitmentjobposition INTEGER NOT NULL,
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL,
-	entity INTEGER DEFAULT 1 NOT NULL,
-	label varchar(255) NOT NULL, 
-	qty integer DEFAULT 1 NOT NULL, 
-	fk_soc integer, 
-	fk_project integer, 
-	fk_user_recruiter integer,
-	email_recruiter varchar(255),
-	fk_user_supervisor integer, 
-	fk_establishment integer, 
-	date_planned date,
-	remuneration_suggested varchar(255), 
 	description text, 
 	note_public text, 
 	note_private text, 
@@ -36,9 +26,12 @@ CREATE TABLE llx_recruitment_recruitmentjobposition(
 	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
-	last_main_doc varchar(255), 
 	import_key varchar(14), 
 	model_pdf varchar(255), 
-	status smallint NOT NULL
+	status smallint NOT NULL, 
+	firstname varchar(128), 
+	lastname varchar(128), 
+	remuneration_requested integer, 
+	remuneration_proposed integer
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

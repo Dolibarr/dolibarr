@@ -119,8 +119,7 @@ $object = new Task($db);
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-//$extrafields->fetch_name_optionals_label('projet');
-$extrafields->fetch_name_optionals_label('projet_task');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $arrayfields = array();
 /*$arrayfields=array(
