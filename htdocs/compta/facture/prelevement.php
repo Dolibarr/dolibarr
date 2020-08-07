@@ -38,8 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-if (!$user->rights->facture->lire) accessforbidden();
-
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 
@@ -51,7 +49,6 @@ $type = GETPOST('type', 'aZ09');
 
 $fieldid = (!empty($ref) ? 'ref' : 'rowid');
 if ($user->socid) $socid = $user->socid;
-$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid);
 
 if ($type == 'bank-transfer') {
 	$object = new FactureFournisseur($db);
@@ -63,6 +60,7 @@ if ($type == 'bank-transfer') {
 if ($id > 0 || !empty($ref))
 {
 	$ret = $object->fetch($id, $ref);
+	$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0)
 	{
 		$object->fetch_thirdparty();
@@ -71,6 +69,13 @@ if ($id > 0 || !empty($ref))
 
 $hookmanager->initHooks(array('directdebitcard', 'globalcard'));
 
+if ($type == 'bank-transfer') {
+	$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 'fk_soc', $fieldid, $isdraft);
+	if (!$user->rights->fournisseur->facture->lire) accessforbidden();
+} else {
+	$result = restrictedArea($user, 'facture', $id, '', '', 'fk_soc', $fieldid, $isdraft);
+	if (!$user->rights->facture->lire) accessforbidden();
+}
 
 
 /*
