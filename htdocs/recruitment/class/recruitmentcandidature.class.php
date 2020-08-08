@@ -111,9 +111,11 @@ class RecruitmentCandidature extends CommonObject
 		'lastname' => array('type'=>'varchar(128)', 'label'=>'Lastname', 'enabled'=>'1', 'position'=>21, 'notnull'=>0, 'visible'=>1,),
 		'remuneration_requested' => array('type'=>'integer', 'label'=>'RequestedRemuneration', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1,),
 		'remuneration_proposed' => array('type'=>'integer', 'label'=>'ProposedRemuneration', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1,),
+		'fk_recruitment_origin' => array('type'=>'integer:CRecruitmentOrigin:recruitment/class/recruitment_crecruitmentorigin.class.php', 'label'=>'Origin', 'enabled'=>'1', 'position'=>45, 'visible'=>1, 'index'=>1),
 	);
 	public $rowid;
 	public $ref;
+	public $fk_recruitmentjobposition;
 	public $description;
 	public $note_public;
 	public $note_private;
@@ -128,6 +130,7 @@ class RecruitmentCandidature extends CommonObject
 	public $lastname;
 	public $remuneration_requested;
 	public $remuneration_proposed;
+	public $fk_recruitment_origin;
 	// END MODULEBUILDER PROPERTIES
 
 

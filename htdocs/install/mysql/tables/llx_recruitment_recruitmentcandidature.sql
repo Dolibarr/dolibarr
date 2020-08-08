@@ -32,6 +32,7 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	firstname varchar(128), 
 	lastname varchar(128), 
 	remuneration_requested integer, 
-	remuneration_proposed integer
+	remuneration_proposed integer,
+	fk_recruitment_origin INTEGER NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

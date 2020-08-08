@@ -148,14 +148,18 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	firstname varchar(128), 
 	lastname varchar(128), 
 	remuneration_requested integer, 
-	remuneration_proposed integer
+	remuneration_proposed integer,
+	fk_recruitment_origin INTEGER NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_recruitment_origin INTEGER NULL;
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_rowid (rowid);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_ref (ref);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD CONSTRAINT llx_recruitment_recruitmentcandidature_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_status (status);
+
 
 
 create table llx_recruitment_recruitmentcandidature_extrafields
@@ -208,3 +212,10 @@ insert into llx_c_stcommcontact (id,code,libelle) values ( 3, 'ST_DONE',  'Conta
 ALTER TABLE llx_socpeople ADD COLUMN fk_prospectcontactlevel varchar(12) AFTER priv;
 ALTER TABLE llx_socpeople ADD COLUMN fk_stcommcontact integer DEFAULT 0 NOT NULL AFTER fk_prospectcontactlevel;
 
+create table llx_c_recruitment_origin
+(
+  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
+  code          varchar(32) NOT NULL,
+  label 	    varchar(64)	NOT NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
