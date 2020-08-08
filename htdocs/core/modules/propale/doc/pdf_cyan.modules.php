@@ -1753,7 +1753,7 @@ class pdf_cyan extends ModelePDFPropales
 	/**
 	 *	Show area for the customer to sign
 	 *
-	 *	@param	TCPDF		&$pdf           Object PDF
+	 *	@param	TCPDF		$pdf           Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
