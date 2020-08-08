@@ -143,7 +143,7 @@ class ProductAttribute extends CommonObject
 	        }
 	        // End call triggers
 	    }
-	    
+
 		//Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
@@ -178,7 +178,7 @@ class ProductAttribute extends CommonObject
 	        }
 	        // End call triggers
 	    }
-	    
+
 		//Ref must be uppercase
 		$this->ref = trim(strtoupper($this->ref));
 		$this->label = trim($this->label);
@@ -209,7 +209,7 @@ class ProductAttribute extends CommonObject
 	        }
 	        // End call triggers
 	    }
-	    
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 
 		if ($this->db->query($sql)) {

@@ -175,7 +175,7 @@ class ProductAttributeValue extends CommonObject
     		    }
     		    // End call triggers
     		}
-    		
+
 			return 1;
 		}
 
@@ -199,7 +199,7 @@ class ProductAttributeValue extends CommonObject
 	        }
 	        // End call triggers
 	    }
-	    
+
 		//Ref must be uppercase
 		$this->ref = trim(strtoupper($this->ref));
 		$this->value = trim($this->value);
@@ -224,7 +224,7 @@ class ProductAttributeValue extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
-	    
+
 	    if (empty($notrigger)) {
 	        // Call trigger
 	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_DELETE', $user);
@@ -237,7 +237,7 @@ class ProductAttributeValue extends CommonObject
 	    if ($this->db->query($sql)) {
 	        return 1;
 	    }
-	    
+
 	    return -1;
 	}
 
@@ -251,17 +251,17 @@ class ProductAttributeValue extends CommonObject
 	public function deleteByFkAttribute($fk_attribute, User $user)
 	{
 	    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE fk_product_attribute = ".(int) $fk_attribute;
-	    
+
 	    $query = $this->db->query($sql);
-	    
+
 	    if (!$query) {
 	        return -1;
 	    }
-	    
+
 	    if (!$this->db->num_rows($query)) {
 	        return 1;
 	    }
-	    
+
 	    while ($obj = $this->db->fetch_object($query)) {
 	        $tmp = new ProductAttributeValue($this->db);
 	        if ($tmp->fetch($obj->rowid) > 0) {
@@ -273,7 +273,7 @@ class ProductAttributeValue extends CommonObject
 	            return -1;
 	        }
 	    }
-	    
+
 	    return 1;
 	}
 }
