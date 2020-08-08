@@ -546,8 +546,7 @@ while ($i < min($num, $limit))
 		if ($totalarray['nbfield']==""){
 			print '<td colspan="9" style="font-weight:bold; border-bottom: 1pt solid black;">';
 		}
-		else
-		{
+		else {
 			print '<td colspan="'.$totalarray['nbfield'].'" style="font-weight:bold; border-bottom: 1pt solid black;">';
 		}
 		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
