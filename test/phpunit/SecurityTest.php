@@ -300,9 +300,9 @@ class SecurityTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($genpass2, '');
 
         $conf->global->USER_PASSWORD_GENERATED='Standard';
-        $genpass3=getRandomPassword(false);				// Should return a password of 8 chars
+        $genpass3=getRandomPassword(false);				// Should return a password of 10 chars
         print __METHOD__." genpass3=".$genpass3."\n";
-        $this->assertEquals(strlen($genpass3), 8);
+        $this->assertEquals(strlen($genpass3), 10);
 
         return 0;
     }

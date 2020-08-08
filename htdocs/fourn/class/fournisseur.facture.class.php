@@ -1259,7 +1259,7 @@ class FactureFournisseur extends CommonInvoice
         $this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-        $sql .= ' SET paye = 1, fk_statut=2';
+        $sql .= ' SET paye = 1, fk_statut = '.self::STATUS_CLOSED;
         $sql .= ' WHERE rowid = '.$this->id;
 
         dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);
@@ -2267,7 +2267,8 @@ class FactureFournisseur extends CommonInvoice
 
         $result = '';
 
-        if ($option == 'document')	$url = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id;
+        if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id.'&type=bank-transfer';
+        elseif ($option == 'document')	$url = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id;
         else $url = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id;
 
         if ($short) return $url;
@@ -2641,6 +2642,7 @@ class FactureFournisseur extends CommonInvoice
 		global $conf, $user, $langs;
 
 		$langs->load("suppliers");
+		$outputlangs->load("products");
 
 		// Set the model on the model name to use
 		if (empty($modele))

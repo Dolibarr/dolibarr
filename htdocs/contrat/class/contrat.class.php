@@ -2393,6 +2393,7 @@ class Contrat extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("contracts");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'strato';

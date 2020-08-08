@@ -144,7 +144,7 @@ $hookmanager->initHooks(array('contactlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('contact');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -307,8 +307,10 @@ $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
-$contactstatic->thirdparty->client=2;
-$contactstatic->loadCacheOfProspStatus();
+
+if (! empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+	$contactstatic->loadCacheOfProspStatus();
+}
 
 $title = (!empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
 

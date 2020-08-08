@@ -2966,6 +2966,7 @@ class CommandeFournisseur extends CommonOrder
 		global $conf, $langs;
 
 		$langs->load("suppliers");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'muscadet';

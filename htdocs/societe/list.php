@@ -1196,6 +1196,7 @@ while ($i < min($num, $limit))
 		print "<td>".$obj->idprof6."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
+	// VAT
 	if (!empty($arrayfields['s.tva_intra']['checked']))
 	{
 		print "<td>";

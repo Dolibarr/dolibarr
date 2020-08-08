@@ -264,6 +264,12 @@ if ($object->date_planned > $now) {
 }
 print '</b><br>';
 
+// Remuneration
+print  $langs->trans("Remuneration").' : ';
+print '<b>';
+print $object->remuneration_suggested;
+print '</b><br>';
+
 // Contact
 $tmpuser = new User($db);
 $tmpuser->fetch($object->fk_user_recruiter);

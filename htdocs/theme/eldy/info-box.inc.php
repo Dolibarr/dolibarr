@@ -101,6 +101,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     max-width: 60%;
 }
 
+a.info-box-text.info-box-text-a {
+    display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+    font-size: 0.9em;
+}
+
 .info-box-icon-text{
     box-sizing: border-box;
     display: block;
@@ -166,15 +173,21 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	padding: 5px 10px;
 	margin-left: 84px;
 }
-
 .info-box-sm .info-box-content{
     margin-left: 80px;
 }
-/*.info-box-setup span {
-    color: var(--colortexttitlenotab2);
+.info-box-sm .info-box-module-enabled {
+    /* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
+    background: linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
-.tdsetuppicto span {
-    color: var(--colortexttitlenotab2);
+.info-box-content-warning span.font-status4 {
+	color: #bc9526 !important;
+}
+/*.info-box-sm .info-box-content-warning {
+	background: #ffd7a3;
+}*/
+/*.info-box-icon.info-box-icon-module-enabled {
+    background: #e4f0e4 !important;
 }*/
 
 .info-box-number {
@@ -209,6 +222,8 @@ a.info-box-text{ text-decoration: none;}
 .progress-description {
 	margin: 0;
 }
+
+
 
 
 
@@ -247,6 +262,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	margin: 2px;
 	border-radius: 3px;
 }
+
+
 
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;

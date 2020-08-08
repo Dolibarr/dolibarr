@@ -385,6 +385,9 @@ input.pageplusone {
 .colorwhite {
 	color: #fff;
 }
+.colorgrey {
+    color: #888 !important;
+}
 .colorblack {
 	color: #000;
 }
@@ -3984,10 +3987,11 @@ div.boximport {
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #884400; }
 
-.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
+.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
 td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 1.7em; };
+span.widthpictotitle { font-size: 1.7em; }
+table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -4052,6 +4056,8 @@ div.titre {
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
+    font-size: 1.05em;
+    /* text-transform: uppercase; */
     /* font-weight: 600; */
 }
 div.titre {

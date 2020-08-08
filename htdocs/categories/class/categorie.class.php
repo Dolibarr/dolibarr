@@ -1213,7 +1213,8 @@ class Categorie extends CommonObject
 		//print 'Result for id_categ='.$id_categ.' : '.$this->cats[$id_categ]['fullpath'].'<br>'."\n";
 
 		// We count number of _ to have level
-		$this->cats[$id_categ]['level'] = dol_strlen(preg_replace('/[^_]/i', '', $this->cats[$id_categ]['fullpath']));
+		$nbunderscore = substr_count($this->cats[$id_categ]['fullpath'], '_');
+		$this->cats[$id_categ]['level'] = ($nbunderscore ? $nbunderscore : null);
 
         return;
     }
@@ -2007,6 +2008,27 @@ class Categorie extends CommonObject
 			return " AND (".implode(' AND ', $searchCategorySqlList).")";
 		} else {
 			return "";
+		}
+	}
+
+	/**
+	 *      Count all categories
+	 *
+	 *      @return int                             Number of categories, -1 on error
+	 */
+	public function countNbOfCategories()
+	{
+		dol_syslog(get_class($this)."::count_all_categories", LOG_DEBUG);
+		$sql = "SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."categorie";
+		$sql .= " WHERE entity IN (".getEntity('category').")";
+
+		$res = $this->db->query($sql);
+		if ($res) {
+			$obj = $this->db->fetch_object($res);
+			return $obj->count;
+		} else {
+			dol_print_error($this->db);
+			return -1;
 		}
 	}
 }

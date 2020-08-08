@@ -95,6 +95,85 @@ $result = restrictedArea($user, 'modulebuilder', null);
 $error = 0;
 
 
+// Define $listofmodules
+$dirsrootforscan = array($dirread);
+// Add also the core modules into the list of modules to show/edit
+if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 || !empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT))) { $dirsrootforscan[] = DOL_DOCUMENT_ROOT; }
+
+// Search modules to edit
+$textforlistofdirs = '<!-- Scanned dir -->'."\n";
+$listofmodules = array();
+$i = 0;
+foreach ($dirsrootforscan as $dirread)
+{
+	$moduletype = 'external';
+	if ($dirread == DOL_DOCUMENT_ROOT) {
+		$moduletype = 'internal';
+	}
+
+	$dirsincustom = dol_dir_list($dirread, 'directories');
+	if (is_array($dirsincustom) && count($dirsincustom) > 0) {
+		foreach ($dirsincustom as $dircustomcursor) {
+			$fullname = $dircustomcursor['fullname'];
+			if (dol_is_file($fullname.'/'.$FILEFLAG))
+			{
+				// Get real name of module (MyModule instead of mymodule)
+				$dirtoscanrel = basename($fullname).'/core/modules/';
+
+				$descriptorfiles = dol_dir_list(dirname($fullname).'/'.$dirtoscanrel, 'files', 0, 'mod.*\.class\.php$');
+				if (empty($descriptorfiles))	// If descriptor not found into module dir, we look into main module dir.
+				{
+					$dirtoscanrel = 'core/modules/';
+					$descriptorfiles = dol_dir_list($fullname.'/../'.$dirtoscanrel, 'files', 0, 'mod'.strtoupper(basename($fullname)).'\.class\.php$');
+				}
+				$modulenamewithcase = '';
+				$moduledescriptorrelpath = '';
+				$moduledescriptorfullpath = '';
+
+				foreach ($descriptorfiles as $descriptorcursor) {
+					$modulenamewithcase = preg_replace('/^mod/', '', $descriptorcursor['name']);
+					$modulenamewithcase = preg_replace('/\.class\.php$/', '', $modulenamewithcase);
+					$moduledescriptorrelpath = $dirtoscanrel.$descriptorcursor['name'];
+					$moduledescriptorfullpath = $descriptorcursor['fullname'];
+					//var_dump($descriptorcursor);
+				}
+				if ($modulenamewithcase)
+				{
+					$listofmodules[$dircustomcursor['name']] = array(
+						'modulenamewithcase'=>$modulenamewithcase,
+						'moduledescriptorrelpath'=> $moduledescriptorrelpath,
+						'moduledescriptorfullpath'=>$moduledescriptorfullpath,
+						'moduledescriptorrootpath'=>$dirread,
+						'moduletype'=>$moduletype
+					);
+				}
+				//var_dump($listofmodules);
+			}
+		}
+	}
+
+	if ($forceddirread && empty($listofmodules))    // $forceddirread is 1 if we forced dir to read with dirins=... or with module=...@mydir
+	{
+		$listofmodules[strtolower($module)] = array(
+			'modulenamewithcase'=>$module,
+			'moduledescriptorrelpath'=> 'notyetimplemented',
+			'moduledescriptorfullpath'=> 'notyetimplemented',
+			'moduledescriptorrootpath'=> 'notyetimplemented',
+		);
+	}
+
+	// Show description of content
+	$newdircustom = $dirins;
+	if (empty($newdircustom)) $newdircustom = img_warning();
+	// If dirread was forced to somewhere else, by using URL
+	// htdocs/modulebuilder/index.php?module=Inventory@/home/ldestailleur/git/dolibarr/htdocs/product
+	if (empty($i)) $textforlistofdirs .= $langs->trans("DirScanned").' : ';
+	else $textforlistofdirs .= ', ';
+	$textforlistofdirs .= '<strong class="wordbreakimp">'.$dirread.'</strong>';
+	$i++;
+}
+
+
 /*
  * Actions
  */
@@ -214,7 +293,6 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 
 			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
-
 			//var_dump($result);
 			if ($result < 0)
 			{
@@ -769,6 +847,9 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 {
 	$objectname = ucfirst($objectname);
 
+	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
+
 	if (preg_match('/[^a-z0-9_]/i', $objectname))
 	{
 		$error++;
@@ -1076,6 +1157,9 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj))
 
 	$objectname = $tabobj;
 
+	$dirins = $dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
+	$moduletype = $listofmodules[strtolower($module)]['moduletype'];
+
 	$srcdir = $dirread.'/'.strtolower($module);
 	$destdir = $dirins.'/'.strtolower($module);
 	dol_mkdir($destdir);
@@ -1125,7 +1209,9 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj))
 	// Edit the class file to write properties
 	if (!$error)
 	{
-		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry);
+		$moduletype = 'external';
+
+		$object = rebuildObjectClass($destdir, $module, $objectname, $newmask, $srcdir, $addfieldentry, $moduletype);
 		if (is_numeric($object) && $object <= 0)
 		{
 			$error++;
@@ -1135,7 +1221,9 @@ if ($dirins && $action == 'addproperty' && !empty($module) && !empty($tabobj))
 	// Edit sql with new properties
 	if (!$error)
 	{
-		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object);
+		$moduletype = 'external';
+
+		$result = rebuildObjectSql($destdir, $module, $objectname, $newmask, $srcdir, $object, $moduletype);
 		if ($result <= 0)
 		{
 			$error++;
@@ -1477,78 +1565,10 @@ print load_fiche_titre($text, '', 'title_setup');
 
 print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span><br>';
 
-$dirsrootforscan = array($dirread);
-// Add also the core modules into the list of modules to show/edit
-if ($dirread != DOL_DOCUMENT_ROOT && ($conf->global->MAIN_FEATURES_LEVEL >= 2 || !empty($conf->global->MODULEBUILDER_ADD_DOCUMENT_ROOT))) { $dirsrootforscan[] = DOL_DOCUMENT_ROOT; }
-
-// Search modules to edit
-print '<!-- Scanned dir -->'."\n";
-$listofmodules = array();
-$i = 0;
-foreach ($dirsrootforscan as $dirread)
-{
-	$dirsincustom = dol_dir_list($dirread, 'directories');
-	if (is_array($dirsincustom) && count($dirsincustom) > 0) {
-		foreach ($dirsincustom as $dircustomcursor) {
-			$fullname = $dircustomcursor['fullname'];
-			if (dol_is_file($fullname.'/'.$FILEFLAG))
-			{
-				// Get real name of module (MyModule instead of mymodule)
-				$dirtoscanrel = basename($fullname).'/core/modules/';
-
-				$descriptorfiles = dol_dir_list(dirname($fullname).'/'.$dirtoscanrel, 'files', 0, 'mod.*\.class\.php$');
-				if (empty($descriptorfiles))	// If descriptor not found into module dir, we look into main module dir.
-				{
-					$dirtoscanrel = 'core/modules/';
-					$descriptorfiles = dol_dir_list($fullname.'/../'.$dirtoscanrel, 'files', 0, 'mod'.strtoupper(basename($fullname)).'\.class\.php$');
-				}
-				$modulenamewithcase = '';
-				$moduledescriptorrelpath = '';
-				$moduledescriptorfullpath = '';
-
-				foreach ($descriptorfiles as $descriptorcursor) {
-					$modulenamewithcase = preg_replace('/^mod/', '', $descriptorcursor['name']);
-					$modulenamewithcase = preg_replace('/\.class\.php$/', '', $modulenamewithcase);
-					$moduledescriptorrelpath = $dirtoscanrel.$descriptorcursor['name'];
-					$moduledescriptorfullpath = $descriptorcursor['fullname'];
-					//var_dump($descriptorcursor);
-				}
-				if ($modulenamewithcase)
-				{
-					$listofmodules[$dircustomcursor['name']] = array(
-						'modulenamewithcase'=>$modulenamewithcase,
-						'moduledescriptorrelpath'=> $moduledescriptorrelpath,
-						'moduledescriptorfullpath'=>$moduledescriptorfullpath,
-						'moduledescriptorrootpath'=>$dirread
-					);
-				}
-				//var_dump($listofmodules);
-			}
-		}
-	}
-
-	if ($forceddirread && empty($listofmodules))    // $forceddirread is 1 if we forced dir to read with dirins=... or with module=...@mydir
-	{
-		$listofmodules[strtolower($module)] = array(
-			'modulenamewithcase'=>$module,
-			'moduledescriptorrelpath'=> 'notyetimplemented',
-			'moduledescriptorfullpath'=> 'notyetimplemented',
-			'moduledescriptorrootpath'=> 'notyetimplemented',
-		);
-	}
-
-	// Show description of content
-	$newdircustom = $dirins;
-	if (empty($newdircustom)) $newdircustom = img_warning();
-	// If dirread was forced to somewhere else, by using URL
-	// htdocs/modulebuilder/index.php?module=Inventory@/home/ldestailleur/git/dolibarr/htdocs/product
-	if (empty($i)) print $langs->trans("DirScanned").' : ';
-	else print ', ';
-	print '<strong class="wordbreakimp">'.$dirread.'</strong>';
-	$i++;
-}
+print $textforlistofdirs;
 print '<br>';
 //var_dump($listofmodules);
+
 
 $message = '';
 if (!$dirins)
@@ -1581,7 +1601,6 @@ $infomodulesfound = '<div style="padding: 12px 9px 12px">'.$form->textwithpicto(
 // Load module descriptor
 $error = 0;
 $moduleobj = null;
-
 
 
 if (!empty($module) && $module != 'initmodule' && $module != 'deletemodule')
@@ -1834,6 +1853,8 @@ if ($module == 'initmodule')
 		print ' '.$linktoenabledisable.'</div>';
 
 		print '<br>';
+
+		// Note module is inside $dirread
 
 		if ($tab == 'description')
 		{
@@ -2315,29 +2336,31 @@ if ($module == 'initmodule')
 						$pathtopicto    = strtolower($module).'/img/object_'.strtolower($tabobj).'.png';
 						$pathtoscript   = strtolower($module).'/scripts/'.strtolower($tabobj).'.php';
 
-						//var_dump($pathtolib);
-						$realpathtoclass    = dol_buildpath($pathtoclass, 0, 2);
-						$realpathtoapi      = dol_buildpath($pathtoapi, 0, 2);
-						$realpathtoagenda   = dol_buildpath($pathtoagenda, 0, 2);
-						$realpathtocard     = dol_buildpath($pathtocard, 0, 2);
-						$realpathtodocument = dol_buildpath($pathtodocument, 0, 2);
-						$realpathtolist     = dol_buildpath($pathtolist, 0, 2);
-						$realpathtonote     = dol_buildpath($pathtonote, 0, 2);
-						$realpathtophpunit  = dol_buildpath($pathtophpunit, 0, 2);
-						$realpathtosql      = dol_buildpath($pathtosql, 0, 2);
-						$realpathtosqlextra = dol_buildpath($pathtosqlextra, 0, 2);
-						$realpathtosqlkey   = dol_buildpath($pathtosqlkey, 0, 2);
-						$realpathtosqlextrakey = dol_buildpath($pathtosqlextrakey, 0, 2);
-						$realpathtolib      = dol_buildpath($pathtolib, 0, 2);
-						$realpathtoobjlib   = dol_buildpath($pathtoobjlib, 0, 2);
-						$realpathtopicto    = dol_buildpath($pathtopicto, 0, 2);
-						$realpathtoscript   = dol_buildpath($pathtoscript, 0, 2);
+						//var_dump($pathtoclass); var_dump($dirread);
+						$realpathtoclass    = $dirread.'/'.$pathtoclass;
+						$realpathtoapi      = $dirread.'/'.$pathtoapi;
+						$realpathtoagenda   = $dirread.'/'.$pathtoagenda;
+						$realpathtocard     = $dirread.'/'.$pathtocard;
+						$realpathtodocument = $dirread.'/'.$pathtodocument;
+						$realpathtolist     = $dirread.'/'.$pathtolist;
+						$realpathtonote     = $dirread.'/'.$pathtonote;
+						$realpathtophpunit  = $dirread.'/'.$pathtophpunit;
+						$realpathtosql      = $dirread.'/'.$pathtosql;
+						$realpathtosqlextra = $dirread.'/'.$pathtosqlextra;
+						$realpathtosqlkey   = $dirread.'/'.$pathtosqlkey;
+						$realpathtosqlextrakey = $dirread.'/'.$pathtosqlextrakey;
+						$realpathtolib      = $dirread.'/'.$pathtolib;
+						$realpathtoobjlib   = $dirread.'/'.$pathtoobjlib;
+						$realpathtopicto    = $dirread.'/'.$pathtopicto;
+						$realpathtoscript   = $dirread.'/'.$pathtoscript;
 
 						if (empty($realpathtoapi)) 	// For compatibility with some old modules
 						{
 							$pathtoapi = strtolower($module).'/class/api_'.strtolower($module).'s.class.php';
-							$realpathtoapi = dol_buildpath($pathtoapi, 0, 2);
+							$realpathtoapi = $dirread.'/'.$pathtoapi;
 						}
+						$urloflist = $dirread.'/'.$pathtolist;
+						$urlofcard = $dirread.'/'.$pathtocard;
 
 						print '<div class="fichehalfleft">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("ClassFile").' : <strong>'.($realpathtoclass ? '' : '<strike>').$pathtoclass.($realpathtoclass ? '' : '</strike>').'</strong>';
@@ -2423,9 +2446,6 @@ if ($module == 'initmodule')
 						print '<br>';
 						print '</div>';
 
-						$urloflist = dol_buildpath($pathtolist, 1);
-						$urlofcard = dol_buildpath($pathtocard, 1);
-
 						print '<div class="fichehalfleft">';
 						print '<span class="fa fa-file-o"></span> '.$langs->trans("PageForList").' : <strong><a href="'.$urloflist.'" target="_test">'.($realpathtolist ? '' : '<strike>').$pathtolist.($realpathtolist ? '' : '</strike>').'</a></strong>';
 						print ' <a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?tab='.$tab.'&tabobj='.$tabobj.'&module='.$module.($forceddirread ? '@'.$dirread : '').'&action=editfile&format=php&file='.urlencode($pathtolist).'">'.img_picto($langs->trans("Edit"), 'edit').'</a>';
@@ -2472,7 +2492,7 @@ if ($module == 'initmodule')
 
 						if (function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass, true); // remove the include cache hell !
 
-						if (empty($forceddirread))
+						if (empty($forceddirread) && empty($dirread))
 						{
 							$result = dol_include_once($pathtoclass);
 						} else {
