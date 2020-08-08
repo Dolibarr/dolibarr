@@ -244,8 +244,8 @@ class ProductAttributeValue extends CommonObject
 	/**
 	 * Deletes all product attribute values by a product attribute id
 	 *
-	 * @param int $fk_attribute Product attribute id
-     * @param  int  $notrigger Do not execute trigger
+	 * @param int  $fk_attribute Product attribute id
+	 * @param User $user         Object user
 	 * @return int <0 KO, >0 OK
 	 */
 	public function deleteByFkAttribute($fk_attribute, User $user)
