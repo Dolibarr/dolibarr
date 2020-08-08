@@ -662,7 +662,7 @@ class pdf_rouget extends ModelePdfExpedition
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param	TCPDF		$pdf           Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
