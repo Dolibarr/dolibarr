@@ -154,27 +154,28 @@ class ProductAttributeValue extends CommonObject
 		if (!$this->fk_product_attribute) {
 			return -1;
 		}
-		
-		if (empty($notrigger)) {
-		    // Call trigger
-		    $result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_CREATE', $user);
-		    if ($result < 0) {
-		        return -1;
-		    }
-		    // End call triggers
-		}
 
 		// Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
+	    $this->value = $this->db->escape($this->value);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_value (fk_product_attribute, ref, value, entity)
 		VALUES ('".(int) $this->fk_product_attribute."', '".$this->db->escape($this->ref)."',
-		'".$this->db->escape($this->value)."', ".(int) $this->entity.")";
+		'".$this->value."', ".(int) $this->entity.")";
 
 		$query = $this->db->query($sql);
 
 		if ($query) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute_value');
+    		if (empty($notrigger)) {
+    		    // Call trigger
+    		    $result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_CREATE', $user);
+    		    if ($result < 0) {
+    		        return -1;
+    		    }
+    		    // End call triggers
+    		}
+    		
 			return 1;
 		}
 
@@ -223,6 +224,7 @@ class ProductAttributeValue extends CommonObject
 	 */
 	public function delete(User $user, $notrigger = 0)
 	{
+	    
 	    if (empty($notrigger)) {
 	        // Call trigger
 	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_VALUE_DELETE', $user);
@@ -231,9 +233,7 @@ class ProductAttributeValue extends CommonObject
 	        }
 	        // End call triggers
 	    }
-	    
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE rowid = ".(int) $this->id;
-	    
 	    if ($this->db->query($sql)) {
 	        return 1;
 	    }
