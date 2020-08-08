@@ -707,7 +707,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		TCPDF		&$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -746,7 +746,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
 			//$dlp=dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true);
-			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
+			$pdf->MultiCell(80, 4, '', 0, 'L');
 
             $posy = $pdf->GetY() + 1;
 		}
@@ -1093,13 +1093,10 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
-		if (! empty($object->paye)) $resteapayer=0;
-		*/
+		if (!empty($object->paye)) $resteapayer = 0;
 
-		if ($deja_regle > 0)
-		{
+		if ($deja_regle > 0) {
 			$index++;
 
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
