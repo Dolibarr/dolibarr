@@ -135,7 +135,7 @@ if (empty($reshook))
 			{
 				$cursorfacid = substr($key, 21);
 	            $multicurrency_amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
-	            $multicurrency_totalpayment += $multicurrency_amounts[$cursorfacid];
+	            $multicurrency_totalpayment .= $multicurrency_amounts[$cursorfacid];
 	            if (!empty($multicurrency_amounts[$cursorfacid])) $atleastonepaymentnotnull++;
 	            $result = $tmpinvoice->fetch($cursorfacid);
 	            if ($result <= 0) dol_print_error($db);
