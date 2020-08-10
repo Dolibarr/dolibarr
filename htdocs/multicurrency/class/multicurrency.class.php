@@ -558,9 +558,9 @@ class MultiCurrency extends CommonObject
 
         if ($multicurrency_tx)
         {
-            if ($way == 'dolibarr') return $amount * $multicurrency_tx;
-            else return $amount / $multicurrency_tx;
-        } else return $amount;
+            if ($way == 'dolibarr') return (double)$amount * $multicurrency_tx;
+            else return (double)$amount / $multicurrency_tx;
+        } else return (double)$amount;
     }
 
 	/**
