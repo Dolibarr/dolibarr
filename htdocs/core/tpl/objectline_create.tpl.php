@@ -487,7 +487,7 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 
 	if($prefillDates)
 	{
-?>
+		?>
         function prefill_service_dates()
         {
             $('#date_start').val("<?php echo dol_escape_js(dol_print_date($date_start_prefill, '%d/%m/%Y')); ?>").trigger('change');
@@ -501,7 +501,7 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
             $('#prefill_service_dates').click(prefill_service_dates);
         });
 
-<?php
+		<?php
 	}
 
 	if (!$date_start) {
