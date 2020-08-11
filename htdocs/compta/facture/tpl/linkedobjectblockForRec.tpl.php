@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -24,11 +24,9 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
-?>
 
-<!-- BEGIN PHP TEMPLATE -->
+print "<!-- BEGIN PHP TEMPLATE -->\n";
 
-<?php
 
 global $user;
 global $noMoreLinkedObjectBlockAfter;
@@ -38,28 +36,30 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("bills");
 
-$total=0; $ilink=0;
+$total=0;
+$ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
 
     $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
-?>
+	?>
 <tr class="<?php echo $trclass; ?>" >
     <td class="linkedcol-element"><?php echo $langs->trans("RepeatableInvoice"); ?></td>
-    <td class="linkedcol-name"><?php echo $objectlink->getNomUrl(1); ?></td>
+    <td class="linkedcol-name"><!-- nowraponall because ref is a label --><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td class="linkedcol-ref" align="center"></td>
 	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date_when, 'day'); ?></td>
 	<td class="linkedcol-amount right"><?php
-		if ($user->rights->facture->lire) {
-			$total = $total + $objectlink->total_ht;
-			echo price($objectlink->total_ht);
-		} ?></td>
+	if ($user->rights->facture->lire) {
+		$total = $total + $objectlink->total_ht;
+		echo price($objectlink->total_ht);
+	}
+	?></td>
 	<td class="linkedcol-statut right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td class="linkedcol-action right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+	<td class="linkedcol-action right"><a class="reposition" href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
 </tr>
-<?php
+	<?php
 }
 if (count($linkedObjectBlock) > 1)
 {
@@ -75,6 +75,5 @@ if (count($linkedObjectBlock) > 1)
     </tr>
     <?php
 }
-?>
 
-<!-- END PHP TEMPLATE -->
+print "<!-- END PHP TEMPLATE -->\n";

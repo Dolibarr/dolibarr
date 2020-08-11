@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,10 +40,21 @@ $update=GETPOST('update', 'alpha');
 $delete=GETPOST('delete', 'none');	// Do not use alpha here
 $debug=GETPOST('debug', 'int');
 $consts=GETPOST('const', 'array');
-$constname=GETPOST('constname', 'alpha');
+$constname=GETPOST('constname', 'alphanohtml');
 $constvalue=GETPOST('constvalue', 'none');	// We shoul dbe able to send everything here
 $constnote=GETPOST('constnote', 'alpha');
 
+// Load variable for pagination
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield', 'alpha');
+$sortorder = GETPOST('sortorder', 'alpha');
+$page = GETPOST('page', 'int');
+if (empty($page) || $page == -1 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha') || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1 or if we click on clear filters or if we select empty mass action
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (empty($sortfield)) $sortfield = 'entity,name';
+if (empty($sortorder)) $sortorder = 'ASC';
 
 
 /*
@@ -107,7 +118,6 @@ if (! empty($consts) && $action == 'update')
 // Mass delete
 if (! empty($consts) && $action == 'delete')
 {
-
 	$nbdeleted=0;
 	foreach($consts as $const)
 	{
@@ -153,7 +163,7 @@ llxHeader('', $langs->trans("Setup"), $wikihelp);
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
 {
-?>
+    ?>
 <script type="text/javascript">
 jQuery(document).ready(function() {
 	jQuery("#updateconst").hide();
@@ -171,31 +181,38 @@ jQuery(document).ready(function() {
 	});
 });
 </script>
-<?php
+    <?php
 }
 
 print load_fiche_titre($langs->trans("OtherSetup"), '', 'title_setup');
 
-print $langs->trans("ConstDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("ConstDesc")."</span><br>\n";
 print "<br>\n";
 
+$param = '';
+
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" id="action" name="action" value="">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
+print getTitleFieldOfList('Name', 0, $_SERVER['PHP_SELF'], 'name', '', $param, '', $sortfield, $sortorder, '')."\n";
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Comment").'</td>';
-if (! empty($conf->multicompany->enabled) && !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';
+print getTitleFieldOfList('DateModificationShort', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center')."\n";
+if (! empty($conf->multicompany->enabled) && !$user->entity)
+{
+	print getTitleFieldOfList('Entity', 0, $_SERVER['PHP_SELF'], 'tms', '', $param, '', $sortfield, $sortorder, 'center')."\n";
+}
 print '<td class="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
 
 // Line to add new record
-$var=false;
 print "\n";
 
 print '<tr class="oddeven"><td><input type="text" class="flat" size="24" name="constname" value="'.$constname.'"></td>'."\n";
@@ -203,6 +220,8 @@ print '<td>';
 print '<input type="text" class="flat" size="30" name="constvalue" value="'.$constvalue.'">';
 print '</td><td>';
 print '<input type="text" class="flat" size="40" name="constnote" value="'.$constnote.'">';
+print '</td>';
+print '<td>';
 print '</td>';
 // Limit to superadmin
 if (! empty($conf->multicompany->enabled) && !$user->entity)
@@ -229,13 +248,14 @@ $sql.= ", ".$db->decrypt('name')." as name";
 $sql.= ", ".$db->decrypt('value')." as value";
 $sql.= ", type";
 $sql.= ", note";
+$sql.= ", tms";
 $sql.= ", entity";
 $sql.= " FROM ".MAIN_DB_PREFIX."const";
 $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 if ((empty($user->entity) || $user->admin) && $debug) {} 										// to force for superadmin to debug
 elseif (! GETPOST('visible') || GETPOST('visible') != 'all') $sql.= " AND visible = 1";		// We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits
 if (GETPOST('name')) $sql.=natural_search("name", GETPOST('name'));
-$sql.= " ORDER BY entity, name ASC";
+$sql.= $db->order($sortfield, $sortorder);
 
 dol_syslog("Const::listConstant", LOG_DEBUG);
 $result = $db->query($sql);
@@ -243,12 +263,10 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$var=false;
 
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-
 
 		print "\n";
 
@@ -265,6 +283,11 @@ if ($result)
 		// Note
 		print '<td>';
 		print '<input type="text" id="note_'.$i.'" class="flat inputforupdate" size="40" name="const['.$i.'][note]" value="'.htmlspecialchars($obj->note, 1).'">';
+		print '</td>';
+
+		// Date last change
+		print '<td>';
+		print dol_print_date($db->jdate($obj->tms), 'dayhour');
 		print '</td>';
 
 		// Entity limit to superadmin

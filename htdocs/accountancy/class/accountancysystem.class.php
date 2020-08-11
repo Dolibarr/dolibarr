@@ -14,12 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  * \file		htdocs/accountancy/class/accountancysystem.class.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		File of class to manage accountancy systems
  */
 
@@ -36,7 +36,7 @@ class AccountancySystem
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var int ID
@@ -48,15 +48,34 @@ class AccountancySystem
      */
 	public $fk_pcg_version;
 
+    /**
+     * @var string pcg type
+     */
 	public $pcg_type;
-	public $pcg_subtype;
 
     /**
+     * @var string pcg subtype
+     */
+	public $pcg_subtype;
+
+	/**
+	 * @var string Accountancy System numero
+	 */
+	public $numero;
+
+	/**
      * @var string Accountancy System label
      */
     public $label;
 
+    /**
+     * @var string account number
+     */
 	public $account_number;
+
+    /**
+     * @var string account parent
+     */
 	public $account_parent;
 
 	/**
@@ -83,13 +102,13 @@ class AccountancySystem
 
 	    if ($rowid > 0 || $ref)
 	    {
-	        $sql  = "SELECT a.pcg_version, a.label, a.active";
+	        $sql  = "SELECT a.rowid, a.pcg_version, a.label, a.active";
 	        $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
 	        $sql .= " WHERE";
 	        if ($rowid) {
 	            $sql .= " a.rowid = '" . $rowid . "'";
 	        } elseif ($ref) {
-	            $sql .= " a.pcg_version = '" . $ref . "'";
+	            $sql .= " a.pcg_version = '" . $this->db->escape($ref) . "'";
 	        }
 
 	        dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);

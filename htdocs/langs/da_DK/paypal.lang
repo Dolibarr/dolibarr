@@ -1,25 +1,24 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal-modul opsætning
-PaypalDesc=Dette modul tilbyder sider til at tillade betaling på <a href="http://www.paypal.com" target="_blank">PayPal</a> af kunderne. Dette kan bruges til en gratis betaling eller til en betaling på en bestemt Dolibarr objekt (faktura, ordre, ...)
-PaypalOrCBDoPayment=Betal med Paypal (Kreditkort eller Paypal)
-PaypalDoPayment=Betal med Paypal
+PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalDoPayment=Betal med PayPal
 PAYPAL_API_SANDBOX=Mode test / sandkasse
 PAYPAL_API_USER=API brugernavn
 PAYPAL_API_PASSWORD=API kodeord
 PAYPAL_API_SIGNATURE=API signatur
 PAYPAL_SSLVERSION=Curl SSL Version
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Tilbyder betaling &quot;integreret&quot; (kreditkort + Paypal) eller &quot;Paypal&quot; kun
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Kun PayPal
 ONLINE_PAYMENT_CSS_URL=Valgfri URL til CSS stilark på online betalingsside
 ThisIsTransactionId=Dette er id af transaktionen: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Tilsæt url Paypal betaling, når du sender et dokument med posten
-YouAreCurrentlyInSandboxMode=Du er i øjeblikket i %s "sandbox" -tilstanden
+PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
 NewOnlinePaymentReceived=Ny online betaling modtaget
 NewOnlinePaymentFailed=Ny online betaling forsøgt men mislykkedes
-ONLINE_PAYMENT_SENDEMAIL=E-mail for at advare efter en betaling (succes eller ej)
+ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
 ReturnURLAfterPayment=Returadresse efter betaling
-ValidationOfOnlinePaymentFailed=Validering af online betaling mislykkedes
+ValidationOfOnlinePaymentFailed=Bekræftelse af online betaling mislykkedes
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Betalingsbekræftelsessiden blev kaldt af betalings system returnerede en fejl
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API-opkald mislykkedes.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API-opkald mislykkedes.
@@ -28,7 +27,10 @@ ShortErrorMessage=Kort fejlmeddelelse
 ErrorCode=Fejlkode
 ErrorSeverityCode=Fejl Severity Code
 OnlinePaymentSystem=Online betalings system
-PaypalLiveEnabled=Paypal live aktiveret (ellers test / sandbox mode)
-PaypalImportPayment=Import Paypal payments
-PostActionAfterPayment=Post actions after payments
-ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
+PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Importer PayPal-betalinger
+PostActionAfterPayment=Indsend handlinger efter betalinger
+ARollbackWasPerformedOnPostActions=En tilbagekaldelse blev udført på alle posthandlinger. Du skal færdiggøre posthandlinger manuelt, hvis de er nødvendige.
+ValidationOfPaymentFailed=Bekræftelse af betaling er mislykket
+CardOwner=Card holder
+PayPalBalance=Paypal credit

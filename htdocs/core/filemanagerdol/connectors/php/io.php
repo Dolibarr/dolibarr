@@ -9,10 +9,10 @@
  * choice:
  *
  *  - GNU General Public License Version 2 or later (the "GPL")
- *    http://www.gnu.org/licenses/gpl.html
+ *    https://www.gnu.org/licenses/gpl.html
  *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
- *    http://www.gnu.org/licenses/lgpl.html
+ *    https://www.gnu.org/licenses/lgpl.html
  *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
@@ -401,11 +401,11 @@ EOF;
  */
 function SendCKEditorResults($callback, $sFileUrl, $customMsg = '')
 {
-  echo '<script type="text/javascript">';
+    echo '<script type="text/javascript">';
 
-  $rpl = array( '\\' => '\\\\', '"' => '\\"' );
+    $rpl = array( '\\' => '\\\\', '"' => '\\"' );
 
-  echo 'window.parent.CKEDITOR.tools.callFunction("'. $callback. '","'. strtr($sFileUrl, $rpl). '", "'. strtr($customMsg, $rpl). '");' ;
+    echo 'window.parent.CKEDITOR.tools.callFunction("'. $callback. '","'. strtr($sFileUrl, $rpl). '", "'. strtr($customMsg, $rpl). '");' ;
 
-  echo '</script>';
+    echo '</script>';
 }

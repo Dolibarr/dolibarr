@@ -13,12 +13,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 // Protection to avoid direct call of template
-if (empty($langs) || ! is_object($langs))
+if (empty($langs) || !is_object($langs))
 {
 	print "Error, template page can't be called as URL";
 	exit;
@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("main","bills","cashdesk"));
+$langs->loadLangs(array("main", "bills", "cashdesk"));
 
 ?>
 
@@ -45,22 +45,20 @@ $societe = new Societe($db);
 $societe->fetch($thirdpartyid);
 /** end add Ditto */
 
-$tab = (! empty($_SESSION['poscart'])?$_SESSION['poscart']:array());
+$tab = (!empty($_SESSION['poscart']) ? $_SESSION['poscart'] : array());
 
-$tab_size=count($tab);
+$tab_size = count($tab);
 if ($tab_size <= 0) print '<div class="center">'.$langs->trans("NoArticle").'</div><br>';
 else
 {
-    for ($i=0;$i < $tab_size;$i++)
+    for ($i = 0; $i < $tab_size; $i++)
     {
         echo ('<div class="cadre_article">'."\n");
         echo ('<p><a href="facturation_verif.php?action=suppr_article&suppr_id='.$tab[$i]['id'].'" title="'.$langs->trans("DeleteArticle").'">'.$tab[$i]['ref'].' - '.$tab[$i]['label'].'</a></p>'."\n");
 
-        if ( $tab[$i]['remise_percent'] > 0 ) {
-
+        if ($tab[$i]['remise_percent'] > 0) {
             $remise_percent = ' -'.$tab[$i]['remise_percent'].'%';
         } else {
-
             $remise_percent = '';
         }
 

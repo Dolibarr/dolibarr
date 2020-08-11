@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ function loan_prepare_head($object)
 	$head[$tab][1] = $langs->trans('Card');
 	$head[$tab][2] = 'card';
 	$tab++;
-	
+
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/schedule.php?loanid='.$object->id;
 	$head[$tab][1] = $langs->trans('FinancialCommitment');
 	$head[$tab][2] = 'FinancialCommitment';
@@ -59,7 +59,7 @@ function loan_prepare_head($object)
     $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$tab][2] = 'documents';
 	$tab++;
 
@@ -68,7 +68,7 @@ function loan_prepare_head($object)
 		$nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);
 		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
 		$head[$tab][1] = $langs->trans("Notes");
-		if($nbNote > 0) $head[$tab][1].= ' <span class="badge">'.$nbNote.'</span>';
+		if($nbNote > 0) $head[$tab][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 		$head[$tab][2] = 'note';
 		$tab++;
 	}

@@ -13,13 +13,13 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *      \file       htdocs/asset/admin/asset_extrafields.php
- *		\ingroup    asset
- *		\brief      Page to setup extra fields of assets
+ *  \file       htdocs/asset/admin/assets_extrafields.php
+ *  \ingroup    asset
+ *  \brief      Page to setup extra fields of assets
  */
 
 require '../../main.inc.php';

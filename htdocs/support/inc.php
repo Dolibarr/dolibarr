@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,7 +71,6 @@ if (! defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) 
 	$result=include_once $conffile;	// Load conf file
 	if ($result)
 	{
-
 		if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
 
 		//Mysql driver support has been removed in favor of mysqli
@@ -224,15 +223,12 @@ function pHeader($soutitre, $next, $action = 'none')
 	print '<title>'.$langs->trans("DolibarrHelpCenter").'</title>'."\n";
 	print '</head>'."\n";
 
-	print '<body>'."\n";
+	print '<body class="center">'."\n";
 
-	print '<table class="noborder" summary="helpcentertitle"><tr valign="middle">';
-	print '<td width="20">';
-	print '<img src="helpcenter.png" alt="logohelpcenter">';
-	print '</td>';
-	print '<td>';
-	print '<span class="titre">'.$soutitre.'</span>'."\n";
-	print '</td></tr></table>';
+	print '<div class="noborder centpercent center valignmiddle inline-block">';
+	print '<img src="helpcenter.png" alt="logohelpcenter" class="inline-block"><br><br>';
+	print '<span class="titre inline-block">'.$soutitre.'</span>'."\n";
+	print '</div><br>';
 }
 
 /**

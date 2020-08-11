@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 $langs->loadLangs(array('banks', 'categories'));
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'banque');
 
 
@@ -46,7 +46,7 @@ llxHeader();
 // List movements bu category for bank transactions
 print load_fiche_titre($langs->trans("BankTransactionByCategories"), '', 'title_bank.png');
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print "<tr class=\"liste_titre\">";
 print '<td>'.$langs->trans("Rubrique").'</td>';
 print '<td class="right">'.$langs->trans("Nb").'</td>';

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -148,8 +148,8 @@ elseif ($action == 'setdoc')
 {
 	if (dolibarr_set_const($db, "ACTION_EVENT_ADDON_PDF", $value, 'chaine', 0, '', $conf->entity))
 	{
-		// La constante qui a ete lue en avant du nouveau set
-		// on passe donc par une variable pour avoir un affichage coherent
+		// The constant that has been read in front of the new set
+		// is therefore passed through a variable to have a coherent display
 		$conf->global->ACTION_EVENT_ADDON_PDF = $value;
 	}
 
@@ -180,6 +180,7 @@ $head=agenda_prepare_head();
 dol_fiche_head($head, 'reminders', $langs->trans("Agenda"), -1, 'action');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" name="agenda">';
+print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 print '<input type="hidden" name="action" value="set">';
 
 print '<table class="noborder allwidth">'."\n";

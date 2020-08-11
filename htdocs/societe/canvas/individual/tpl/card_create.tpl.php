@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -32,22 +32,22 @@ if (empty($conf) || ! is_object($conf))
 <?php echo $this->control->tpl['error']; ?>
 
 <?php if ($conf->use_javascript_ajax) { ?>
-<?php echo $this->control->tpl['ajax_selecttype']; ?>
+    <?php echo $this->control->tpl['ajax_selecttype']; ?>
 <br>
-<?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
+    <?php echo $langs->trans("ThirdPartyType") ?>: &nbsp;
 <input type="radio" id="radiocompany" class="flat" name="private" value="0">
-<?php echo $langs->trans("CompanyFoundation"); ?> &nbsp; &nbsp;
+    <?php echo $langs->trans("CompanyFoundation"); ?> &nbsp; &nbsp;
 <input type="radio" id="radioprivate" class="flat" name="private" value="1" checked> <?php echo $langs->trans("Individual"); ?> (<?php echo $langs->trans("ToCreateContactWithSameName") ?>)
 <br>
 <br>
-<?php echo $this->control->tpl['ajax_selectcountry']; ?>
+    <?php echo $this->control->tpl['ajax_selectcountry']; ?>
 <?php } ?>
 
 <form action="<?php echo $_SERVER["PHP_SELF"]; ?>" method="POST" name="formsoc">
 
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="canvas" value="<?php echo $canvas ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>">
+<input type="hidden" name="token" value="<?php echo newToken(); ?>">
 <input type="hidden" name="private" value="<?php echo $this->control->tpl['particulier']; ?>">
 <?php if ($this->control->tpl['auto_customercode'] || $this->control->tpl['auto_suppliercode']) { ?>
 <input type="hidden" name="code_auto" value="1">
@@ -106,14 +106,15 @@ if (empty($conf) || ! is_object($conf))
 	</td>
 </tr>
 
-<?php if (count($this->control->tpl['suppliercategory']) > 0) { ?>
+    <?php if (count($this->control->tpl['suppliercategory']) > 0) { ?>
 <tr>
 	<td><?php echo $langs->trans('SupplierCategory'); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['select_suppliercategory']; ?></td>
 </tr>
-<?php } }?>
+    <?php }
+}
 
-<?php if (! empty($conf->barcode->enabled)) { ?>
+if (! empty($conf->barcode->enabled)) { ?>
 <tr>
 	<td><?php echo $langs->trans('Gencod'); ?></td>
 	<td colspan="3"><input type="text" name="barcode" value="<?php echo $this->control->tpl['barcode']; ?>"></td>

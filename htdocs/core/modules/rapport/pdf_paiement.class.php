@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -47,7 +47,7 @@ class pdf_paiement
 		$this->db = $db;
 		$this->description = $langs->transnoentities("ListOfCustomerPayments");
 
-		// Dimension page pour format A4
+		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray=pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -101,7 +101,7 @@ class pdf_paiement
 		global $conf, $hookmanager, $langs, $user;
 
 		$socid=0;
-		if ($user->societe_id) $socid=$user->societe_id;
+		if ($user->socid) $socid=$user->socid;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO

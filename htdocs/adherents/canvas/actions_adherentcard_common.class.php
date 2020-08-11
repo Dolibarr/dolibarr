@@ -13,17 +13,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *	\file       htdocs/adherents/canvas/actions_adherentcard_common.class.php
  *	\ingroup    adherent
- *	\brief      Fichier de la classe Adherent card controller (common)
+ *	\brief      File of class Thirdparty member card controller (common)
  */
 
 /**
- *	Class to maage members using default canvas
+ *	Class to manage members using default canvas
  */
 abstract class ActionsAdherentCardCommon
 {
@@ -169,7 +169,6 @@ abstract class ActionsAdherentCardCommon
 				$langs->load("mails");
 				$this->tpl['nb_emailing'] = $this->object->getNbOfEMailings();
 			}
-
 
         	// Dolibarr user
         	if ($this->object->user_id)

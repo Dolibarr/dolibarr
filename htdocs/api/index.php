@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,6 +23,8 @@
  *				Search files htdocs/<module>/class/api_<module>.class.php
  *  \file       htdocs/api/index.php
  */
+
+use Luracast\Restler\Format\UploadFormat;
 
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK', '1');			// Do not check anti CSRF attack test
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');		// Do not check anti POST attack test
@@ -53,6 +55,12 @@ require_once DOL_DOCUMENT_ROOT.'/api/class/api_access.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 
+$url = $_SERVER['PHP_SELF'];
+// Fix for some NGINX setups (this should not be required even with NGINX, however setup of NGINX are often mysterious and this may help is such cases)
+if (! empty($conf->global->MAIN_NGINX_FIX))
+{
+	$url = (isset($_SERVER['SCRIPT_URI']) && $_SERVER["SCRIPT_URI"] !== null) ? $_SERVER["SCRIPT_URI"] : $_SERVER['PHP_SELF'];
+}
 
 // Enable and test if module Api is enabled
 if (empty($conf->global->MAIN_MODULE_API))
@@ -65,7 +73,7 @@ if (empty($conf->global->MAIN_MODULE_API))
 }
 
 // Test if explorer is not disabled
-if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($conf->global->API_EXPLORER_DISABLED))
+if (preg_match('/api\/index\.php\/explorer/', $url) && ! empty($conf->global->API_EXPLORER_DISABLED))
 {
     $langs->load("admin");
     dol_syslog("Call Dolibarr API interfaces with module REST disabled");
@@ -88,17 +96,20 @@ if (preg_match('/api\/index\.php\/explorer/', $_SERVER["PHP_SELF"]) && ! empty($
 // index.php/xxx                                called by any REST client to run API
 
 
-preg_match('/index\.php\/([^\/]+)(.*)$/', $_SERVER["PHP_SELF"], $reg);
+$reg=array();
+preg_match('/index\.php\/([^\/]+)(.*)$/', $url, $reg);
 // .../index.php/categories?sortfield=t.rowid&sortorder=ASC
 
 
-// Set the flag to say to refresh (when we reload the explorer, production must be for API call only)
-$refreshcache=false;
+// When in production mode, a file api/temp/routes.php is created with the API available of current call.
+// But, if we set $refreshcache to false, so it may have only one API in the routes.php file if we make a call for one API without
+// using the explorer. And when we make another call for another API, the API is not into the api/temp/routes.php and a 404 is returned.
+// So we force refresh to each call.
+$refreshcache=(empty($conf->global->API_PRODUCTION_DO_NOT_ALWAYS_REFRESH_CACHE) ? true : false);
 if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
 {
     $refreshcache=true;
 }
-
 
 $api = new DolibarrApi($db, '', $refreshcache);
 //var_dump($api->r->apiVersionMap);
@@ -114,8 +125,23 @@ $api->r->addAuthenticationClass('DolibarrApiAccess', '');
 UploadFormat::$allowedMimeTypes = array('image/jpeg', 'image/png', 'text/plain', 'application/octet-stream');
 
 
+// Restrict API to some IPs
+if (! empty($conf->global->API_RESTRICT_ON_IP))
+{
+	$allowedip=explode(' ', $conf->global->API_RESTRICT_ON_IP);
+	$ipremote = getUserRemoteIP();
+	if (! in_array($ipremote, $allowedip))
+	{
+		dol_syslog('Remote ip is '.$ipremote.', not into list '.$conf->global->API_RESTRICT_ON_IP);
+		print 'APIs are not allowed from the IP '.$ipremote;
+		header('HTTP/1.1 503 API not allowed from your IP '.$ipremote);
+		//print $conf->global->API_RESTRICT_ON_IP;
+		exit(0);
+	}
+}
 
-// Call Explorer file for all APIs definitions
+
+// Call Explorer file for all APIs definitions (this part is slow)
 if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || $reg[2] == '/swagger.json/root' || $reg[2] == '/resources.json' || $reg[2] == '/resources.json/root'))
 {
     // Scan all API files to load them
@@ -133,6 +159,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
         {
             while (($file = readdir($handle))!==false)
             {
+            	$regmod=array();
                 if (is_readable($dir.$file) && preg_match("/^mod(.*)\.class\.php$/i", $file, $regmod))
                 {
                     $module = strtolower($regmod[1]);
@@ -162,6 +189,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
                             {
                                 if ($file_searched == 'api_access.class.php') continue;
 
+                                $regapi = array();
                                 if (is_readable($dir_part.$file_searched) && preg_match("/^api_(.*)\.class\.php$/i", $file_searched, $regapi))
                                 {
                                     $classname = ucwords($regapi[1]);
@@ -201,6 +229,7 @@ if (! empty($reg[1]) && $reg[1] == 'explorer' && ($reg[2] == '/swagger.json' || 
 }
 
 // Call one APIs or one definition of an API
+$regbis = array();
 if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && $reg[2] != '/resources.json' && preg_match('/^\/(swagger|resources)\.json\/(.+)$/', $reg[2], $regbis) && $regbis[2] != 'root')))
 {
     $module = $reg[1];
@@ -250,9 +279,9 @@ if (! empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' &&
 		$api->r->addAPIClass($classname);
 }
 
-// TODO If not found, redirect to explorer
 //var_dump($api->r->apiVersionMap);
 //exit;
 
-// Call API (we suppose we found it)
+// Call API (we suppose we found it).
+// The handle will use the file api/temp/routes.php to get data to run the API. If the file exists and the entry for API is not found, it will return 404.
 $api->r->handle();

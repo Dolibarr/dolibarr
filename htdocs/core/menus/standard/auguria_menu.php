@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -111,15 +111,18 @@ class MenuManager
     	$tabMenu=array();
     	$menuArbo = new Menubase($this->db, 'auguria');
     	$menuArbo->menuLoad($mainmenu, $leftmenu, $this->type_user, 'auguria', $tabMenu);
-
     	$this->tabMenu=$tabMenu;
-    }
+    	//var_dump($tabMenu);
+
+    	//if ($forcemainmenu == 'all') { var_dump($this->tabMenu); exit; }
+   	}
 
 
     /**
      *  Show menu
+     *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
      *
-     *	@param	string	$mode		    'top', 'left', 'jmobile' (used to get full xml ul/li menu)
+     *	@param	string	$mode		    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
      *  @param	array	$moredata		An array with more data to output
      *  @return int                     0 or nb of top menu entries if $mode = 'topnb'
 	 */
@@ -138,8 +141,17 @@ class MenuManager
 		require_once DOL_DOCUMENT_ROOT.'/core/class/menu.class.php';
         $this->menu=new Menu();
 
-        if ($mode == 'top')  print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
-        if ($mode == 'left') print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata);
+        if (empty($conf->global->MAIN_MENU_INVERT))
+        {
+        	if ($mode == 'top')  print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
+        	if ($mode == 'left') print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0, '', '', $moredata);
+        }
+        else
+        {
+        	$conf->global->MAIN_SHOW_LOGO=0;
+        	if ($mode == 'top')  print_left_auguria_menu($this->db, $this->menu_array, $this->menu_array_after, $this->tabMenu, $this->menu, 0);
+        	if ($mode == 'left') print_auguria_menu($this->db, $this->atarget, $this->type_user, $this->tabMenu, $this->menu, 0, $mode);
+        }
 
 		if ($mode == 'topnb')
 		{
@@ -315,5 +327,8 @@ class MenuManager
         }
 
         unset($this->menu);
+
+        //print 'xx'.$mode;
+        return 0;
     }
 }

@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -31,22 +31,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$WIDTH=DolGraph::getDefaultGraphSizeForStats('width', 768);
-$HEIGHT=DolGraph::getDefaultGraphSizeForStats('height', 200);
+$WIDTH = DolGraph::getDefaultGraphSizeForStats('width', 768);
+$HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', 200);
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
 {
-	$id = isset($_GET["account"])?$_GET["account"]:(isset($_GET["ref"])?$_GET["ref"]:'');
+	$id = isset($_GET["account"]) ? $_GET["account"] : (isset($_GET["ref"]) ? $_GET["ref"] : '');
 }
-$fieldid = isset($_GET["ref"])?'ref':'rowid';
-if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
+$fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'banque', $id, 'bank_account&bank_account', '', '', $fieldid);
 
-$account=GETPOST("account");
-$mode='standard';
-if (GETPOST("mode") == 'showalltime') $mode='showalltime';
-$error=0;
+$account = GETPOST("account");
+$mode = 'standard';
+if (GETPOST("mode") == 'showalltime') $mode = 'showalltime';
+$error = 0;
 
 
 /*
@@ -63,22 +63,22 @@ $datetime = dol_now();
 $year = dol_print_date($datetime, "%Y");
 $month = dol_print_date($datetime, "%m");
 $day = dol_print_date($datetime, "%d");
-if (GETPOST("year"))  $year=sprintf("%04d", GETPOST("year"));
-if (GETPOST("month")) $month=sprintf("%02d", GETPOST("month"));
+if (GETPOST("year"))  $year = sprintf("%04d", GETPOST("year"));
+if (GETPOST("month")) $month = sprintf("%02d", GETPOST("month"));
 
 
 $object = new Account($db);
-if ($_GET["account"] && ! preg_match('/,/', $_GET["account"]))	// if for a particular account and not a list
+if ($_GET["account"] && !preg_match('/,/', $_GET["account"]))	// if for a particular account and not a list
 {
-	$result=$object->fetch(GETPOST("account", "int"));
+	$result = $object->fetch(GETPOST("account", "int"));
 }
 if ($_GET["ref"])
 {
-	$result=$object->fetch(0, GETPOST("ref"));
-	$account=$object->id;
+	$result = $object->fetch(0, GETPOST("ref"));
+	$account = $object->id;
 }
 
-$result=dol_mkdir($conf->bank->dir_temp);
+$result = dol_mkdir($conf->bank->dir_temp);
 if ($result < 0)
 {
 	$langs->load("errors");
@@ -89,11 +89,11 @@ else
 {
 	// Calcul $min and $max
 	$sql = "SELECT MIN(b.datev) as min, MAX(b.datev) as max";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= " WHERE b.fk_account = ba.rowid";
-	$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-	if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+	$sql .= " WHERE b.fk_account = ba.rowid";
+	$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+	if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 
 	$resql = $db->query($sql);
 	if ($resql)
@@ -107,9 +107,9 @@ else
 	{
 		dol_print_error($db);
 	}
-	if (empty($min)) $min = dol_now - 3600 * 24;
+	if (empty($min)) $min = dol_now() - 3600 * 24;
 
-	$log="graph.php: min=".$min." max=".$max;
+	$log = "graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
 
@@ -120,24 +120,24 @@ else
 		// Loading table $amounts
 		$amounts = array();
 
-		$monthnext = $month+1;
+		$monthnext = $month + 1;
 		$yearnext = $year;
 		if ($monthnext > 12)
 		{
-			$monthnext=1;
+			$monthnext = 1;
 			$yearnext++;
 		}
 
 		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
-		$sql.= ", SUM(b.amount)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
-		$sql.= " GROUP BY date_format(b.datev,'%Y%m%d')";
+		$sql .= ", SUM(b.amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
+		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -161,12 +161,12 @@ else
 		$solde = 0;
 
 		$sql = "SELECT SUM(b.amount)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev < '".$year."-".sprintf("%02s", $month)."-01'";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev < '".$year."-".sprintf("%02s", $month)."-01'";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -225,37 +225,36 @@ else
 		//exit;
 
 		// Fabrication tableau 1
-		$file= $conf->bank->dir_temp."/balance".$account."-".$year.$month.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
-		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
-		$graph_datas=array();
-		foreach($datas as $i => $val)
+		$file = $conf->bank->dir_temp."/balance".$account."-".$year.$month.".png";
+		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.$month.".png";
+		$title = $langs->transnoentities("Balance").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas = array();
+		foreach ($datas as $i => $val)
 		{
-			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+			$graph_datas[$i] = array(isset($labels[$i]) ? $labels[$i] : '', $datas[$i]);
 			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
 		}
 
 		$px1 = new DolGraph();
 		$px1->SetData($graph_datas);
-		$arraylegends=array($langs->transnoentities("Balance"));
+		$arraylegends = array($langs->transnoentities("Balance"));
 		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
 		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
 		$px1->SetLegend($arraylegends);
 		$px1->SetLegendWidthMin(180);
-		$px1->SetMaxValue($px1->GetCeilMaxValue()<0?0:$px1->GetCeilMaxValue());
-		$px1->SetMinValue($px1->GetFloorMinValue()>0?0:$px1->GetFloorMinValue());
+		$px1->SetMaxValue($px1->GetCeilMaxValue() < 0 ? 0 : $px1->GetCeilMaxValue());
+		$px1->SetMinValue($px1->GetFloorMinValue() > 0 ? 0 : $px1->GetFloorMinValue());
 		$px1->SetTitle($title);
 		$px1->SetWidth($WIDTH);
 		$px1->SetHeight($HEIGHT);
-		$px1->SetType(array('lines','lines','lines'));
+		$px1->SetType(array('lines', 'lines', 'lines'));
 		$px1->setBgColor('onglet');
-		$px1->setBgColorGrid(array(255,255,255));
+		$px1->setBgColorGrid(array(255, 255, 255));
 		$px1->SetHorizTickIncrement(1);
-		$px1->SetPrecisionY(0);
 		$px1->draw($file, $fileurl);
 
-		$show1=$px1->show();
+		$show1 = $px1->show();
 		unset($graph_datas);
 		unset($px1);
 		unset($datas);
@@ -272,14 +271,14 @@ else
 		// Loading table $amounts
 		$amounts = array();
 		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
-		$sql.= ", SUM(b.amount)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= ", SUM(b.amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
 		$resql = $db->query($sql);
@@ -304,12 +303,12 @@ else
 		$solde = 0;
 
 		$sql = "SELECT SUM(b.amount)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev < '".$year."-01-01'";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev < '".$year."-01-01'";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -362,37 +361,36 @@ else
 		}
 
 		// Fabrication tableau 2
-		$file= $conf->bank->dir_temp."/balance".$account."-".$year.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.".png";
-		$title=$langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
-		$graph_datas=array();
-		foreach($datas as $i => $val)
+		$file = $conf->bank->dir_temp."/balance".$account."-".$year.".png";
+		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account."-".$year.".png";
+		$title = $langs->transnoentities("Balance").' - '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas = array();
+		foreach ($datas as $i => $val)
 		{
-			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+			$graph_datas[$i] = array(isset($labels[$i]) ? $labels[$i] : '', $datas[$i]);
 			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
 		}
 		$px2 = new DolGraph();
 		$px2->SetData($graph_datas);
-		$arraylegends=array($langs->transnoentities("Balance"));
+		$arraylegends = array($langs->transnoentities("Balance"));
 		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
 		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
 		$px2->SetLegend($arraylegends);
 		$px2->SetLegendWidthMin(180);
-		$px2->SetMaxValue($px2->GetCeilMaxValue()<0?0:$px2->GetCeilMaxValue());
-		$px2->SetMinValue($px2->GetFloorMinValue()>0?0:$px2->GetFloorMinValue());
+		$px2->SetMaxValue($px2->GetCeilMaxValue() < 0 ? 0 : $px2->GetCeilMaxValue());
+		$px2->SetMinValue($px2->GetFloorMinValue() > 0 ? 0 : $px2->GetFloorMinValue());
 		$px2->SetTitle($title);
 		$px2->SetWidth($WIDTH);
 		$px2->SetHeight($HEIGHT);
-		$px2->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
+		$px2->SetType(array('linesnopoint', 'linesnopoint', 'linesnopoint'));
 		$px2->setBgColor('onglet');
-		$px2->setBgColorGrid(array(255,255,255));
+		$px2->setBgColorGrid(array(255, 255, 255));
 		$px2->SetHideXGrid(true);
 		//$px2->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
-		$px2->SetPrecisionY(0);
 		$px2->draw($file, $fileurl);
 
-		$show2=$px2->show();
+		$show2 = $px2->show();
 
 		unset($px2);
 		unset($graph_datas);
@@ -411,13 +409,13 @@ else
 		$amounts = array();
 
 		$sql = "SELECT date_format(b.datev,'%Y%m%d')";
-		$sql.= ", SUM(b.amount)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
-		$sql.= " GROUP BY date_format(b.datev,'%Y%m%d')";
+		$sql .= ", SUM(b.amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
+		$sql .= " GROUP BY date_format(b.datev,'%Y%m%d')";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -449,20 +447,20 @@ else
 		$subtotal = 0;
 
 		$day = $min;
-		$textdate=strftime("%Y%m%d", $day);
+		$textdate = strftime("%Y%m%d", $day);
 		//print "x".$textdate;
 		$i = 0;
-		while ($day <= ($max+86400))	// On va au dela du dernier jour
+		while ($day <= ($max + 86400))	// On va au dela du dernier jour
 		{
 			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 			//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
-			if ($day > ($max+86400))
+			if ($day > ($max + 86400))
 			{
 				$datas[$i] = ''; // Valeur speciale permettant de ne pas tracer le graph
 			}
 			else
 			{
-				$datas[$i] = '' + $solde + $subtotal;
+				$datas[$i] = '' +$solde + $subtotal;
 			}
 			$datamin[$i] = $object->min_desired;
 			$dataall[$i] = $object->min_allowed;
@@ -472,41 +470,40 @@ else
 			}
 
 			$day += 86400;
-			$textdate=strftime("%Y%m%d", $day);
+			$textdate = strftime("%Y%m%d", $day);
 			$i++;
 		}
 
 		// Fabrication tableau 3
-		$file= $conf->bank->dir_temp."/balance".$account.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account.".png";
-		$title=$langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
-		$graph_datas=array();
-		foreach($datas as $i => $val)
+		$file = $conf->bank->dir_temp."/balance".$account.".png";
+		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/balance".$account.".png";
+		$title = $langs->transnoentities("Balance")." - ".$langs->transnoentities("AllTime");
+		$graph_datas = array();
+		foreach ($datas as $i => $val)
 		{
-			$graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+			$graph_datas[$i] = array(isset($labels[$i]) ? $labels[$i] : '', $datas[$i]);
 			if ($object->min_desired) array_push($graph_datas[$i], $datamin[$i]);
 			if ($object->min_allowed) array_push($graph_datas[$i], $dataall[$i]);
 		}
 
 		$px3 = new DolGraph();
 		$px3->SetData($graph_datas);
-		$arraylegends=array($langs->transnoentities("Balance"));
+		$arraylegends = array($langs->transnoentities("Balance"));
 		if ($object->min_desired) array_push($arraylegends, $langs->transnoentities("BalanceMinimalDesired"));
 		if ($object->min_allowed) array_push($arraylegends, $langs->transnoentities("BalanceMinimalAllowed"));
 		$px3->SetLegend($arraylegends);
 		$px3->SetLegendWidthMin(180);
-		$px3->SetMaxValue($px3->GetCeilMaxValue()<0?0:$px3->GetCeilMaxValue());
-		$px3->SetMinValue($px3->GetFloorMinValue()>0?0:$px3->GetFloorMinValue());
+		$px3->SetMaxValue($px3->GetCeilMaxValue() < 0 ? 0 : $px3->GetCeilMaxValue());
+		$px3->SetMinValue($px3->GetFloorMinValue() > 0 ? 0 : $px3->GetFloorMinValue());
 		$px3->SetTitle($title);
 		$px3->SetWidth($WIDTH);
 		$px3->SetHeight($HEIGHT);
-		$px3->SetType(array('linesnopoint','linesnopoint','linesnopoint'));
+		$px3->SetType(array('linesnopoint', 'linesnopoint', 'linesnopoint'));
 		$px3->setBgColor('onglet');
-		$px3->setBgColorGrid(array(255,255,255));
-		$px3->SetPrecisionY(0);
+		$px3->setBgColorGrid(array(255, 255, 255));
 		$px3->draw($file, $fileurl);
 
-		$show3=$px3->show();
+		$show3 = $px3->show();
 
 		unset($px3);
 		unset($graph_datas);
@@ -525,25 +522,25 @@ else
 		$credits = array();
 		$debits = array();
 
-		$monthnext = $month+1;
+		$monthnext = $month + 1;
 		$yearnext = $year;
 		if ($monthnext > 12)
 		{
-			$monthnext=1;
+			$monthnext = 1;
 			$yearnext++;
 		}
 
 		$sql = "SELECT date_format(b.datev,'%d')";
-		$sql.= ", SUM(b.amount)";
+		$sql .= ", SUM(b.amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
-		$sql.= " AND b.amount > 0";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
-		$sql.= " GROUP BY date_format(b.datev,'%d')";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.amount > 0";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
+		$sql .= " GROUP BY date_format(b.datev,'%d')";
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -563,24 +560,24 @@ else
 			dol_print_error($db);
 		}
 
-		$monthnext = $month+1;
+		$monthnext = $month + 1;
 		$yearnext = $year;
 		if ($monthnext > 12)
 		{
-			$monthnext=1;
+			$monthnext = 1;
 			$yearnext++;
 		}
 
 		$sql = "SELECT date_format(b.datev,'%d')";
-		$sql.= ", SUM(b.amount)";
+		$sql .= ", SUM(b.amount)";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
-		$sql.= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
-		$sql.= " AND b.amount < 0";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev >= '".$year."-".$month."-01 00:00:00'";
+		$sql .= " AND b.datev < '".$yearnext."-".$monthnext."-01 00:00:00'";
+		$sql .= " AND b.amount < 0";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%d')";
 
 		$resql = $db->query($sql);
@@ -602,41 +599,40 @@ else
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
-		for ($i = 0 ; $i < 31 ; $i++)
+		for ($i = 0; $i < 31; $i++)
 		{
-			$data_credit[$i] = isset($credits[substr("0".($i+1), -2)]) ? $credits[substr("0".($i+1), -2)] : 0;
-			$data_debit[$i] = isset($debits[substr("0".($i+1), -2)]) ? $debits[substr("0".($i+1), -2)] : 0;
-			$labels[$i] = sprintf("%02d", $i+1);
+			$data_credit[$i] = isset($credits[substr("0".($i + 1), -2)]) ? $credits[substr("0".($i + 1), -2)] : 0;
+			$data_debit[$i] = isset($debits[substr("0".($i + 1), -2)]) ? $debits[substr("0".($i + 1), -2)] : 0;
+			$labels[$i] = sprintf("%02d", $i + 1);
 			$datamin[$i] = $object->min_desired;
 		}
 
 		// Fabrication tableau 4a
-		$file= $conf->bank->dir_temp."/movement".$account."-".$year.$month.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
-		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
-		$graph_datas=array();
-		foreach($data_credit as $i => $val)
+		$file = $conf->bank->dir_temp."/movement".$account."-".$year.$month.".png";
+		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.$month.".png";
+		$title = $langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas = array();
+		foreach ($data_credit as $i => $val)
 		{
-			$graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
+			$graph_datas[$i] = array($labels[$i], $data_credit[$i], $data_debit[$i]);
 		}
 		$px4 = new DolGraph();
 		$px4->SetData($graph_datas);
-		$px4->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+		$px4->SetLegend(array($langs->transnoentities("Credit"), $langs->transnoentities("Debit")));
 		$px4->SetLegendWidthMin(180);
-		$px4->SetMaxValue($px4->GetCeilMaxValue()<0?0:$px4->GetCeilMaxValue());
-		$px4->SetMinValue($px4->GetFloorMinValue()>0?0:$px4->GetFloorMinValue());
+		$px4->SetMaxValue($px4->GetCeilMaxValue() < 0 ? 0 : $px4->GetCeilMaxValue());
+		$px4->SetMinValue($px4->GetFloorMinValue() > 0 ? 0 : $px4->GetFloorMinValue());
 		$px4->SetTitle($title);
 		$px4->SetWidth($WIDTH);
 		$px4->SetHeight($HEIGHT);
-		$px4->SetType(array('bars','bars'));
+		$px4->SetType(array('bars', 'bars'));
 		$px4->SetShading(3);
 		$px4->setBgColor('onglet');
-		$px4->setBgColorGrid(array(255,255,255));
+		$px4->setBgColorGrid(array(255, 255, 255));
 		$px4->SetHorizTickIncrement(1);
-		$px4->SetPrecisionY(0);
 		$px4->draw($file, $fileurl);
 
-		$show4=$px4->show();
+		$show4 = $px4->show();
 
 		unset($graph_datas);
 		unset($px4);
@@ -652,15 +648,15 @@ else
 		$credits = array();
 		$debits = array();
 		$sql = "SELECT date_format(b.datev,'%m')";
-		$sql.= ", SUM(b.amount)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
-		$sql.= " AND b.amount > 0";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= ", SUM(b.amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.amount > 0";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%m');";
 
 		$resql = $db->query($sql);
@@ -681,15 +677,15 @@ else
 			dol_print_error($db);
 		}
 		$sql = "SELECT date_format(b.datev,'%m')";
-		$sql.= ", SUM(b.amount)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-		$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
-		$sql.= " WHERE b.fk_account = ba.rowid";
-		$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
-		$sql.= " AND b.datev >= '".$year."-01-01 00:00:00'";
-		$sql.= " AND b.datev <= '".$year."-12-31 23:59:59'";
-		$sql.= " AND b.amount < 0";
-		if ($account && $_GET["option"]!='all') $sql.= " AND b.fk_account IN (".$account.")";
+		$sql .= ", SUM(b.amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql .= ", ".MAIN_DB_PREFIX."bank_account as ba";
+		$sql .= " WHERE b.fk_account = ba.rowid";
+		$sql .= " AND ba.entity IN (".getEntity('bank_account').")";
+		$sql .= " AND b.datev >= '".$year."-01-01 00:00:00'";
+		$sql .= " AND b.datev <= '".$year."-12-31 23:59:59'";
+		$sql .= " AND b.amount < 0";
+		if ($account && $_GET["option"] != 'all') $sql .= " AND b.fk_account IN (".$account.")";
 		$sql .= " GROUP BY date_format(b.datev,'%m')";
 
 		$resql = $db->query($sql);
@@ -711,41 +707,40 @@ else
 		$labels = array();
 		$data_credit = array();
 		$data_debit = array();
-		for ($i = 0 ; $i < 12 ; $i++)
+		for ($i = 0; $i < 12; $i++)
 		{
-			$data_credit[$i] = isset($credits[substr("0".($i+1), -2)]) ? $credits[substr("0".($i+1), -2)] : 0;
-			$data_debit[$i] = isset($debits[substr("0".($i+1), -2)]) ? $debits[substr("0".($i+1), -2)] : 0;
-			$labels[$i] = dol_print_date(dol_mktime(12, 0, 0, $i+1, 1, 2000), "%b");
+			$data_credit[$i] = isset($credits[substr("0".($i + 1), -2)]) ? $credits[substr("0".($i + 1), -2)] : 0;
+			$data_debit[$i] = isset($debits[substr("0".($i + 1), -2)]) ? $debits[substr("0".($i + 1), -2)] : 0;
+			$labels[$i] = dol_print_date(dol_mktime(12, 0, 0, $i + 1, 1, 2000), "%b");
 			$datamin[$i] = $object->min_desired;
 		}
 
 		// Fabrication tableau 4b
-		$file= $conf->bank->dir_temp."/movement".$account."-".$year.".png";
-		$fileurl=DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
-		$title=$langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;
-		$graph_datas=array();
-		foreach($data_credit as $i => $val)
+		$file = $conf->bank->dir_temp."/movement".$account."-".$year.".png";
+		$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=banque_temp&file='."/movement".$account."-".$year.".png";
+		$title = $langs->transnoentities("BankMovements").' - '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas = array();
+		foreach ($data_credit as $i => $val)
 		{
-			$graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
+			$graph_datas[$i] = array($labels[$i], $data_credit[$i], $data_debit[$i]);
 		}
 		$px5 = new DolGraph();
 		$px5->SetData($graph_datas);
-		$px5->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+		$px5->SetLegend(array($langs->transnoentities("Credit"), $langs->transnoentities("Debit")));
 		$px5->SetLegendWidthMin(180);
-		$px5->SetMaxValue($px5->GetCeilMaxValue()<0?0:$px5->GetCeilMaxValue());
-		$px5->SetMinValue($px5->GetFloorMinValue()>0?0:$px5->GetFloorMinValue());
+		$px5->SetMaxValue($px5->GetCeilMaxValue() < 0 ? 0 : $px5->GetCeilMaxValue());
+		$px5->SetMinValue($px5->GetFloorMinValue() > 0 ? 0 : $px5->GetFloorMinValue());
 		$px5->SetTitle($title);
 		$px5->SetWidth($WIDTH);
 		$px5->SetHeight($HEIGHT);
-		$px5->SetType(array('bars','bars'));
+		$px5->SetType(array('bars', 'bars'));
 		$px5->SetShading(3);
 		$px5->setBgColor('onglet');
-		$px5->setBgColorGrid(array(255,255,255));
+		$px5->setBgColorGrid(array(255, 255, 255));
 		$px5->SetHorizTickIncrement(1);
-		$px5->SetPrecisionY(0);
 		$px5->draw($file, $fileurl);
 
-		$show5=$px5->show();
+		$show5 = $px5->show();
 
 		unset($graph_datas);
 		unset($px5);
@@ -756,7 +751,7 @@ else
 
 
 // Onglets
-$head=bank_prepare_head($object);
+$head = bank_prepare_head($object);
 dol_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0, 'account');
 
 
@@ -764,32 +759,32 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_v
 
 if ($account)
 {
-	if (! preg_match('/,/', $account))
+	if (!preg_match('/,/', $account))
 	{
-		$moreparam='&month='.$month.'&year='.$year.($mode=='showalltime'?'&mode=showalltime':'');
+		$moreparam = '&month='.$month.'&year='.$year.($mode == 'showalltime' ? '&mode=showalltime' : '');
 
-		if ($_GET["option"]!='all')
+		if ($_GET["option"] != 'all')
 		{
-			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
+			$morehtml = '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.'&option=all'.$moreparam.'">'.$langs->trans("ShowAllAccounts").'</a>';
     		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', '', $moreparam, 0, '', '', 1);
 		}
 		else
 		{
-			$morehtml='<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.$moreparam.'">'.$langs->trans("BackToAccount").'</a>';
+			$morehtml = '<a href="'.$_SERVER["PHP_SELF"].'?account='.$account.$moreparam.'">'.$langs->trans("BackToAccount").'</a>';
 			print $langs->trans("AllAccounts");
 			//print $morehtml;
 		}
 	}
 	else
 	{
-	    $bankaccount=new Account($db);
-		$listid=explode(',', $account);
-		foreach($listid as $key => $id)
+	    $bankaccount = new Account($db);
+		$listid = explode(',', $account);
+		foreach ($listid as $key => $id)
 		{
 			$bankaccount->fetch($id);
-			$bankaccount->label=$bankaccount->ref;
+			$bankaccount->label = $bankaccount->ref;
 			print $bankaccount->getNomUrl(1);
-			if ($key < (count($listid)-1)) print ', ';
+			if ($key < (count($listid) - 1)) print ', ';
 		}
 	}
 }
@@ -823,13 +818,13 @@ print '<br><br></td></tr>';
 // Graphs
 if ($mode == 'standard')
 {
-	$prevyear=$year; $nextyear=$year;
-	$prevmonth=$month-1;$nextmonth=$month+1;
-	if ($prevmonth < 1)  { $prevmonth=12; $prevyear--; }
-	if ($nextmonth > 12) { $nextmonth=1; $nextyear++; }
+	$prevyear = $year; $nextyear = $year;
+	$prevmonth = $month - 1; $nextmonth = $month + 1;
+	if ($prevmonth < 1) { $prevmonth = 12; $prevyear--; }
+	if ($nextmonth > 12) { $nextmonth = 1; $nextyear++; }
 
 	// For month
-	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
+	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"] != 'all' ? '' : '&option=all')."&year=".$prevyear."&month=".$prevmonth."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Month")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".$nextyear."&month=".$nextmonth."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td class="right">'.$link.'</td></tr>';
 
 	print '<tr><td class="center">';
@@ -842,8 +837,8 @@ if ($mode == 'standard')
 	print '</td></tr>';
 
 	// For year
-	$prevyear=$year-1;$nextyear=$year+1;
-	$link="<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"]!='all'?'':'&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
+	$prevyear = $year - 1; $nextyear = $year + 1;
+	$link = "<a href='".$_SERVER["PHP_SELF"]."?account=".$account.($_GET["option"] != 'all' ? '' : '&option=all')."&year=".($prevyear)."'>".img_previous('', 'class="valignbottom"')."</a> ".$langs->trans("Year")." <a href='".$_SERVER["PHP_SELF"]."?account=".$account."&year=".($nextyear)."'>".img_next('', 'class="valignbottom"')."</a>";
 	print '<tr><td class="right">'.$link.'</td></tr>';
 
 	print '<tr><td class="center">';

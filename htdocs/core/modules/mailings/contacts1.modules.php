@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -37,6 +37,10 @@ class mailing_contacts1 extends MailingTargets
 	public $desc='Contacts of thirdparties (prospects, customers, suppliers...)';
 	public $require_module=array("societe");               // Module mailing actif si modules require_module actifs
 	public $require_admin=0;                               // Module mailing actif pour user admin ou non
+
+	/**
+	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+	 */
 	public $picto='contact';
 
 	/**
@@ -101,6 +105,8 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " WHERE c.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND c.email != ''"; // Note that null != '' is false
 		$sql.= " AND c.no_email = 0";
+		$sql .= " AND (SELECT count(*) FROM ". MAIN_DB_PREFIX . "mailing_unsubscribe WHERE email = c.email) = 0";
+		// exclude unsubscribed users
 		$sql.= " AND c.statut = 1";
 
 		// The request must return a field called "nb" to be understandable by parent::getNbOfRecipients
@@ -380,6 +386,8 @@ class mailing_contacts1 extends MailingTargets
     	$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND sp.email <> ''";
 		$sql.= " AND sp.no_email = 0";
+		$sql .= " AND (SELECT count(*) FROM ". MAIN_DB_PREFIX . "mailing_unsubscribe WHERE email = sp.email) = 0";
+		// Exclude unsubscribed email adresses
 		$sql.= " AND sp.statut = 1";
 		$sql.= " AND sp.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
 		// Filter on category
@@ -447,6 +455,6 @@ class mailing_contacts1 extends MailingTargets
 			return -1;
 		}
 
-		return parent::add_to_target($mailing_id, $cibles);
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 }

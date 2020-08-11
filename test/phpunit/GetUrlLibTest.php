@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -46,7 +46,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class GetUrlLibTest extends PHPUnit_Framework_TestCase
+class GetUrlLibTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -167,6 +167,53 @@ class GetUrlLibTest extends PHPUnit_Framework_TestCase
         return 1;
     }
 
+    /**
+     * testGetDomainFromURL
+     *
+     * @return	int
+     */
+    public function testGetDomainFromURL()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	$result=getDomainFromURL('http://localhost');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('localhost', $result, 'Test 0a');
+
+    	$result=getDomainFromURL('http://localhost', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('localhost', $result, 'Test 0b');
+
+    	$result=getDomainFromURL('https://dolimed.com');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed', $result, 'Test 1');
+
+    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed', $result, 'Test 2');
+
+    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile');
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed', $result, 'Test 3');
+
+    	$result=getDomainFromURL('https://dolimed.com', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed.com', $result, 'Test 4');
+
+    	$result=getDomainFromURL('http://www.dolimed.com/screenshots/afile', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed.com', $result, 'Test 5');
+
+    	$result=getDomainFromURL('http://www.with.dolimed.com/screenshots/afile', 1);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals('dolimed.com', $result, 'Test 6');
+
+    	return 1;
+    }
 
     /**
      * testRemoveHtmlComment

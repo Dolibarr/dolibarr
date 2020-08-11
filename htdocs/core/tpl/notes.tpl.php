@@ -14,11 +14,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
-if (empty($object) || ! is_object($object)) {
+if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit;
 }
@@ -77,7 +77,7 @@ print '<!-- BEGIN PHP TEMPLATE NOTES -->'."\n";
 print '<div class="tagtable border table-border tableforfield centpercent">'."\n";
 if ($module != 'product') {
 	// No public note yet on products
-	print '<div class="tagtr pair table-border-row">'."\n";
+	print '<div class="tagtr table-border-row">'."\n";
 	print '<div class="tagtd tagtdnote tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
@@ -86,8 +86,8 @@ if ($module != 'product') {
 	print '</div>'."\n";
 	print '</div>'."\n";
 }
-if (empty($user->societe_id)) {
-	print '<div class="tagtr '.($module != 'product'?'impair':'pair').' table-border-row">'."\n";
+if (empty($user->socid)) {
+	print '<div class="tagtr table-border-row">'."\n";
 	print '<div class="tagtd tagtdnote tdtop table-key-border-col'.(empty($cssclass)?'':' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";

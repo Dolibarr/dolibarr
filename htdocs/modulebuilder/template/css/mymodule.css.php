@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -68,6 +68,13 @@ if (empty($dolibarr_nocache)) header('Cache-Control: max-age=10800, public, must
 else header('Cache-Control: no-cache');
 
 ?>
+
+div.mainmenu.mymodule::before {
+    content: "\f249";
+}
+div.mainmenu.mymodule {
+    background-image: none;
+}
 
 .myclasscss {
 	/* ... */

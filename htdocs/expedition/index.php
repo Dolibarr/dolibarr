@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -26,6 +27,11 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+
+$hookmanager = new HookManager($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('sendingindex'));
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings'));
@@ -50,12 +56,13 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
     print '<form method="post" action="list.php">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<table class="noborder nohover" width="100%">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
+    print '<div class="div-table-responsive-no-min">';
+    print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
     print '<tr class="oddeven"><td>';
     print $langs->trans("Shipment").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-    print "</table></form><br>\n";
+    print "</table></div></form><br>\n";
 }
 
 /*
@@ -86,7 +93,8 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	if ($num)
 	{
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("SendingsToValidate").'</th></tr>';
 		$i = 0;
@@ -109,7 +117,7 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -137,7 +145,8 @@ if ($resql)
 		$langs->load("orders");
 
 		$i = 0;
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("OrdersToProcess").'</th></tr>';
 		while ($i < $num)
@@ -166,7 +175,7 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 
@@ -197,7 +206,8 @@ if ( $resql )
 	if ($num)
 	{
 		$i = 0;
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("OrdersInProcess").'</th></tr>';
 		while ($i < $num)
@@ -225,7 +235,7 @@ if ( $resql )
             print '</tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 }
 else dol_print_error($db);
@@ -256,7 +266,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		print '<table class="noborder" width="100%">';
+        print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("LastSendings", $num).'</th></tr>';
 		while ($i < $num)
@@ -282,7 +293,7 @@ if ($resql)
 			print '</td></tr>';
 			$i++;
 		}
-		print "</table><br>";
+		print "</table></div><br>";
 	}
 	$db->free($resql);
 }
@@ -290,6 +301,9 @@ else dol_print_error($db);
 
 
 print '</div></div></div>';
+
+$parameters = array('user' => $user);
+$reshook = $hookmanager->executeHooks('dashboardWarehouseSendings', $parameters, $object); // Note that $action and $object may have been modified by hook
 
 // End of page
 llxFooter();

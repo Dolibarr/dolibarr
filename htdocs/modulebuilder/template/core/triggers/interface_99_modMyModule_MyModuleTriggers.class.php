@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -103,7 +103,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
         // Data and type of action are stored into $object and $action
 
         switch ($action) {
-
             // Users
             //case 'USER_CREATE':
             //case 'USER_MODIFY':
@@ -292,6 +291,9 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
             //case 'TASK_TIMESPENT_CREATE':
             //case 'TASK_TIMESPENT_MODIFY':
             //case 'TASK_TIMESPENT_DELETE':
+            //case 'PROJECT_ADD_CONTACT':
+            //case 'PROJECT_DELETE_CONTACT':
+            //case 'PROJECT_DELETE_RESOURCE':
 
             // Shipping
             //case 'SHIPPING_CREATE':

@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,7 +34,7 @@ $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'asset', $id, '');
 
 $object = new Asset($db);
@@ -44,14 +44,17 @@ $object->fetch($id);
  * Actions
  */
 
+
+
 /*
  * View
  */
+
+$form = new Form($db);
+
 $title = $langs->trans('Asset') . " - " . $langs->trans('Info');
 $helpurl = "";
 llxHeader('', $title, $helpurl);
-
-$form = new Form($db);
 
 $object->info($id);
 

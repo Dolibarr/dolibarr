@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,11 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'exports', 'other'));
 
-if (! $user->admin)
+if (!$user->admin)
 	accessforbidden();
 
-$action=GETPOST('action', 'alpha');
-$value=GETPOST('value', 'alpha');
+$action = GETPOST('action', 'alpha');
+$value = GETPOST('value', 'alpha');
 
 /*
  * Actions
@@ -51,18 +51,18 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 $page_name = "ExportSetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans($page_name), $linkback);
 
 //$head = export_admin_prepare_head();
-$h=0;
+$h = 0;
 $head = array();
 $head[$h][0] = DOL_URL_ROOT.'/admin/export.php';
 $head[$h][1] = $langs->trans("Setup");
@@ -72,7 +72,7 @@ $h++;
 dol_fiche_head($head, 'setup', $langs->trans("ExportsArea"), -1, "exports");
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center" width="20">&nbsp;</td>';
@@ -86,7 +86,7 @@ print '<td class="center" width="20">&nbsp;</td>';
 print '<td class="center" width="100">';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_EXPORTS_SHARE_MODELS">';
 echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</form>';

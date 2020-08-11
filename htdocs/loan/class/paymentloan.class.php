@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,12 +33,12 @@ class PaymentLoan extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='payment_loan';
+	public $element = 'payment_loan';
 
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_loan';
+	public $table_element = 'payment_loan';
 
     /**
      * @var int Loan ID
@@ -48,18 +48,18 @@ class PaymentLoan extends CommonObject
     /**
      * @var string Create date
      */
-    public $datec='';
+    public $datec = '';
 
-    public $tms='';
+    public $tms = '';
 
     /**
      * @var string Payment date
      */
-    public $datep='';
+    public $datep = '';
 
-    public $amounts=array();   // Array of amounts
+    public $amounts = array(); // Array of amounts
 
-    public $amount_capital;    // Total amount of payment
+    public $amount_capital; // Total amount of payment
 
     public $amount_insurance;
 
@@ -90,6 +90,10 @@ class PaymentLoan extends CommonObject
      */
     public $fk_user_modif;
 
+    public $type_code;
+    public $type_label;
+
+
 	/**
 	 *	Constructor
 	 *
@@ -111,22 +115,22 @@ class PaymentLoan extends CommonObject
 	{
 		global $conf, $langs;
 
-		$error=0;
+		$error = 0;
 
-		$now=dol_now();
+		$now = dol_now();
 
 		// Validate parameters
-		if (! $this->datep)
+		if (!$this->datep)
 		{
-			$this->error='ErrorBadValueForParameter';
+			$this->error = 'ErrorBadValueForParameter';
 			return -1;
 		}
 
 		// Clean parameters
 		if (isset($this->fk_loan)) $this->fk_loan = (int) $this->fk_loan;
-		if (isset($this->amount_capital))	$this->amount_capital = price2num($this->amount_capital?$this->amount_capital:0);
-		if (isset($this->amount_insurance)) $this->amount_insurance = price2num($this->amount_insurance?$this->amount_insurance:0);
-		if (isset($this->amount_interest))	$this->amount_interest = price2num($this->amount_interest?$this->amount_interest:0);
+		if (isset($this->amount_capital))	$this->amount_capital = price2num($this->amount_capital ? $this->amount_capital : 0);
+		if (isset($this->amount_insurance)) $this->amount_insurance = price2num($this->amount_insurance ? $this->amount_insurance : 0);
+		if (isset($this->amount_interest))	$this->amount_interest = price2num($this->amount_interest ? $this->amount_interest : 0);
 		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
 		if (isset($this->num_payment)) $this->num_payment = (int) $this->num_payment;
 		if (isset($this->note_private))     $this->note_private = trim($this->note_private);
@@ -147,37 +151,37 @@ class PaymentLoan extends CommonObject
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_loan (fk_loan, datec, datep, amount_capital, amount_insurance, amount_interest,";
-			$sql.= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
-			$sql.= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
-			$sql.= " '".$this->db->idate($this->datep)."',";
-			$sql.= " ".$this->amount_capital.",";
-			$sql.= " ".$this->amount_insurance.",";
-			$sql.= " ".$this->amount_interest.",";
-			$sql.= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
-			$sql.= " 0)";
+			$sql .= " fk_typepayment, num_payment, note_private, note_public, fk_user_creat, fk_bank)";
+			$sql .= " VALUES (".$this->chid.", '".$this->db->idate($now)."',";
+			$sql .= " '".$this->db->idate($this->datep)."',";
+			$sql .= " ".$this->amount_capital.",";
+			$sql .= " ".$this->amount_insurance.",";
+			$sql .= " ".$this->amount_interest.",";
+			$sql .= " ".$this->paymenttype.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_private)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
+			$sql .= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
-			$resql=$this->db->query($sql);
+			$resql = $this->db->query($sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_loan");
 			}
 			else
 			{
-				$this->error=$this->db->lasterror();
+				$this->error = $this->db->lasterror();
 				$error++;
 			}
 		}
 
-		if ($totalamount != 0 && ! $error)
+		if ($totalamount != 0 && !$error)
 		{
-			$this->amount_capital=$totalamount;
+			$this->amount_capital = $totalamount;
 			$this->db->commit();
 			return $this->id;
 		}
 		else
 		{
-			$this->error=$this->db->lasterror();
+			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
 		}
@@ -208,7 +212,7 @@ class PaymentLoan extends CommonObject
 		$sql.= " t.fk_bank,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
+		$sql.= " pt.code as type_code, pt.libelle as type_label,";
 		$sql.= ' b.fk_account';
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
@@ -242,7 +246,7 @@ class PaymentLoan extends CommonObject
 				$this->fk_user_modif = $obj->fk_user_modif;
 
 				$this->type_code = $obj->type_code;
-				$this->type_libelle = $obj->type_libelle;
+				$this->type_label = $obj->type_label;
 
 				$this->bank_account = $obj->fk_account;
 				$this->bank_line = $obj->fk_bank;
@@ -253,7 +257,7 @@ class PaymentLoan extends CommonObject
 		}
 		else
 		{
-			$this->error="Error ".$this->db->lasterror();
+			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
 	}
@@ -269,17 +273,17 @@ class PaymentLoan extends CommonObject
 	public function update($user = 0, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 		if (isset($this->fk_loan)) $this->fk_loan = (int) $this->fk_loan;
-		if (isset($this->amount_capital)) $this->amount_capital=trim($this->amount_capital);
-		if (isset($this->amount_insurance)) $this->amount_insurance=trim($this->amount_insurance);
-		if (isset($this->amount_interest)) $this->amount_interest=trim($this->amount_interest);
+		if (isset($this->amount_capital)) $this->amount_capital = trim($this->amount_capital);
+		if (isset($this->amount_insurance)) $this->amount_insurance = trim($this->amount_insurance);
+		if (isset($this->amount_interest)) $this->amount_interest = trim($this->amount_interest);
 		if (isset($this->fk_typepayment)) $this->fk_typepayment = (int) $this->fk_typepayment;
 		if (isset($this->num_payment)) $this->num_payment = (int) $this->num_payment;
-		if (isset($this->note_private)) $this->note=trim($this->note_private);
-		if (isset($this->note_public)) $this->note=trim($this->note_public);
+		if (isset($this->note_private)) $this->note = trim($this->note_private);
+		if (isset($this->note_public)) $this->note = trim($this->note_public);
 		if (isset($this->fk_bank)) $this->fk_bank = (int) $this->fk_bank;
 		if (isset($this->fk_user_creat)) $this->fk_user_creat = (int) $this->fk_user_creat;
 		if (isset($this->fk_user_modif)) $this->fk_user_modif = (int) $this->fk_user_modif;
@@ -289,32 +293,32 @@ class PaymentLoan extends CommonObject
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_loan SET";
 
-		$sql.= " fk_loan=".(isset($this->fk_loan)?$this->fk_loan:"null").",";
-		$sql.= " datec=".(dol_strlen($this->datec)!=0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
-		$sql.= " tms=".(dol_strlen($this->tms)!=0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
-		$sql.= " datep=".(dol_strlen($this->datep)!=0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
-		$sql.= " amount_capital=".(isset($this->amount_capital)?$this->amount_capital:"null").",";
-		$sql.= " amount_insurance=".(isset($this->amount_insurance)?$this->amount_insurance:"null").",";
-		$sql.= " amount_interest=".(isset($this->amount_interest)?$this->amount_interest:"null").",";
-		$sql.= " fk_typepayment=".(isset($this->fk_typepayment)?$this->fk_typepayment:"null").",";
-		$sql.= " num_payment=".(isset($this->num_payment)?"'".$this->db->escape($this->num_payment)."'":"null").",";
-		$sql.= " note_private=".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null").",";
-		$sql.= " note_public=".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null").",";
-		$sql.= " fk_bank=".(isset($this->fk_bank)?$this->fk_bank:"null").",";
-		$sql.= " fk_user_creat=".(isset($this->fk_user_creat)?$this->fk_user_creat:"null").",";
-		$sql.= " fk_user_modif=".(isset($this->fk_user_modif)?$this->fk_user_modif:"null")."";
+		$sql .= " fk_loan=".(isset($this->fk_loan) ? $this->fk_loan : "null").",";
+		$sql .= " datec=".(dol_strlen($this->datec) != 0 ? "'".$this->db->idate($this->datec)."'" : 'null').",";
+		$sql .= " tms=".(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : 'null').",";
+		$sql .= " datep=".(dol_strlen($this->datep) != 0 ? "'".$this->db->idate($this->datep)."'" : 'null').",";
+		$sql .= " amount_capital=".(isset($this->amount_capital) ? $this->amount_capital : "null").",";
+		$sql .= " amount_insurance=".(isset($this->amount_insurance) ? $this->amount_insurance : "null").",";
+		$sql .= " amount_interest=".(isset($this->amount_interest) ? $this->amount_interest : "null").",";
+		$sql .= " fk_typepayment=".(isset($this->fk_typepayment) ? $this->fk_typepayment : "null").",";
+		$sql .= " num_payment=".(isset($this->num_payment) ? "'".$this->db->escape($this->num_payment)."'" : "null").",";
+		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
+		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
+		$sql .= " fk_bank=".(isset($this->fk_bank) ? $this->fk_bank : "null").",";
+		$sql .= " fk_user_creat=".(isset($this->fk_user_creat) ? $this->fk_user_creat : "null").",";
+		$sql .= " fk_user_modif=".(isset($this->fk_user_modif) ? $this->fk_user_modif : "null")."";
 
-		$sql.= " WHERE rowid=".$this->id;
+		$sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
 		{
-			if (! $notrigger)
+			if (!$notrigger)
 			{
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action call a trigger.
@@ -331,13 +335,13 @@ class PaymentLoan extends CommonObject
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -357,28 +361,28 @@ class PaymentLoan extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$this->db->begin();
 
-		if (! $error)
+		if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url";
-			$sql.= " WHERE type='payment_loan' AND url_id=".$this->id;
+			$sql .= " WHERE type='payment_loan' AND url_id=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."payment_loan";
-			$sql.= " WHERE rowid=".$this->id;
+			$sql .= " WHERE rowid=".$this->id;
 
 			dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
-			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+			if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 		}
 
 		//if (! $error)
@@ -400,13 +404,13 @@ class PaymentLoan extends CommonObject
 		// Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-				$this->error.=($this->error?', '.$errmsg:$errmsg);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
+			return -1 * $error;
 		}
 		else
 		{
@@ -432,22 +436,22 @@ class PaymentLoan extends CommonObject
 	{
 		global $conf;
 
-		$error=0;
+		$error = 0;
 
-		if (! empty($conf->banque->enabled))
+		if (!empty($conf->banque->enabled))
 		{
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$acc = new Account($this->db);
 			$acc->fetch($accountid);
 
-			$total=$this->amount_capital;
-			if ($mode == 'payment_loan') $total=-$total;
+			$total = $this->amount_capital;
+			if ($mode == 'payment_loan') $total = -$total;
 
 			// Insert payment into llx_bank
             $bank_line_id = $acc->addline(
 				$this->datep,
-				$this->paymenttype,  // Payment mode id or code ("CHQ or VIR for example")
+				$this->paymenttype, // Payment mode id or code ("CHQ or VIR for example")
 				$label,
 				$total,
 				$this->num_payment,
@@ -461,7 +465,7 @@ class PaymentLoan extends CommonObject
 			// We know the payment who generated the account write
 			if ($bank_line_id > 0)
 			{
-				$result=$this->update_fk_bank($bank_line_id);
+				$result = $this->update_fk_bank($bank_line_id);
 				if ($result <= 0)
 				{
 					$error++;
@@ -469,11 +473,11 @@ class PaymentLoan extends CommonObject
 				}
 
 				// Add link 'payment_loan' in bank_url between payment and bank transaction
-				$url='';
-				if ($mode == 'payment_loan') $url=DOL_URL_ROOT.'/loan/payment/card.php?id=';
+				$url = '';
+				if ($mode == 'payment_loan') $url = DOL_URL_ROOT.'/loan/payment/card.php?id=';
 				if ($url)
 				{
-					$result=$acc->add_url_line($bank_line_id, $this->id, $url, '(payment)', $mode);
+					$result = $acc->add_url_line($bank_line_id, $this->id, $url, '(payment)', $mode);
 					if ($result <= 0)
 					{
 						$error++;
@@ -484,18 +488,18 @@ class PaymentLoan extends CommonObject
 				// Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
 				if ($mode == 'payment_loan')
 				{
-					$result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''), 'loan');
+					$result = $acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label ? $this->label : ''), 'loan');
 					if ($result <= 0) dol_print_error($this->db);
 				}
 			}
 			else
 			{
-				$this->error=$acc->error;
+				$this->error = $acc->error;
 				$error++;
 			}
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 			return 1;
 		}
@@ -527,7 +531,7 @@ class PaymentLoan extends CommonObject
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error = $this->db->error();
 			return 0;
 		}
 	}
@@ -544,8 +548,6 @@ class PaymentLoan extends CommonObject
 		global $langs;
 
 		$result='';
-
-		if (empty($this->ref)) $this->ref=$this->lib;
 
 		if (!empty($this->id))
 		{

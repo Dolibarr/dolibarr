@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -71,50 +71,51 @@ class Users extends DolibarrApi
 
 	    $obj_ret = array();
 
-		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
-	       throw new RestException(401, "You are not allowed to read list of users");
+		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
+	        throw new RestException(401, "You are not allowed to read list of users");
 	    }
 
 	    // case of external user, $societe param is ignored and replaced by user's socid
-	    //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+	    //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
 	    $sql = "SELECT t.rowid";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."user as t";
-	    $sql.= ' WHERE t.entity IN ('.getEntity('user').')';
-	    if ($user_ids) $sql.=" AND t.rowid IN (".$user_ids.")";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."user as t";
+	    $sql .= ' WHERE t.entity IN ('.getEntity('user').')';
+	    if ($user_ids) $sql .= " AND t.rowid IN (".$user_ids.")";
 	    // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-	    $sql.= $db->order($sortfield, $sortorder);
-	    if ($limit)	{
+	    $sql .= $db->order($sortfield, $sortorder);
+	    if ($limit) {
 	        if ($page < 0)
 	        {
 	            $page = 0;
 	        }
 	        $offset = $limit * $page;
 
-	        $sql.= $db->plimit($limit + 1, $offset);
+	        $sql .= $db->plimit($limit + 1, $offset);
 	    }
 
 	    $result = $db->query($sql);
 
 	    if ($result)
 	    {
+	        $i = 0;
 	        $num = $db->num_rows($result);
 	        $min = min($num, ($limit <= 0 ? $num : $limit));
 	        while ($i < $min)
 	        {
 	            $obj = $db->fetch_object($result);
 	            $user_static = new User($db);
-	            if($user_static->fetch($obj->rowid)) {
+	            if ($user_static->fetch($obj->rowid)) {
 	                $obj_ret[] = $this->_cleanObjectDatas($user_static);
 	            }
 	            $i++;
@@ -123,7 +124,7 @@ class Users extends DolibarrApi
 	    else {
 	        throw new RestException(503, 'Error when retrieve User list : '.$db->lasterror());
 	    }
-	    if( ! count($obj_ret)) {
+	    if (!count($obj_ret)) {
 	        throw new RestException(404, 'No User found');
 	    }
 	    return $obj_ret;
@@ -131,15 +132,15 @@ class Users extends DolibarrApi
 
 	/**
 	 * Get properties of an user object
-	 *
 	 * Return an array with user informations
 	 *
-	 * @param 	int 	$id ID of user
+	 * @param 	int 	$id 					ID of user
+	 * @param	int		$includepermissions	Set this to 1 to have the array of permissions loaded (not done by default for performance purpose)
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
 	 */
-    public function get($id)
+    public function get($id, $includepermissions = 0)
     {
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
@@ -153,12 +154,50 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($includepermissions) {
+			$this->useraccount->getRights();
 		}
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
 
+    /**
+     * Get properties of user connected
+     *
+     * @url	GET /info
+     *
+     * @return  array|mixed Data without useless information
+     *
+     * @throws  401     RestException       Insufficient rights
+     * @throws  404     RestException       User not found
+     * @throws  404     RestException       User group not found
+     */
+    public function getInfo()
+    {
+        $apiUser = DolibarrApiAccess::$user;
+
+        $result = $this->useraccount->fetch($apiUser->id);
+        if (!$result) {
+            throw new RestException(404, 'User not found');
+        }
+
+        if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user')) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $usergroup = new UserGroup($this->db);
+        $userGroupList = $usergroup->listGroupsForUser($apiUser->id, false);
+        if (!is_array($userGroupList)) {
+            throw new RestException(404, 'User group not found');
+        }
+
+        $this->useraccount->user_group_list = $this->_cleanUserGroupListDatas($userGroupList);
+
+        return $this->_cleanObjectDatas($this->useraccount);
+    }
 
 	/**
 	 * Create user account
@@ -215,7 +254,7 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value)
@@ -226,10 +265,10 @@ class Users extends DolibarrApi
 			if ($field == 'statut') {
 				$result = $this->useraccount->setstatus($value);
 				if ($result < 0) {
-				   throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
+				    throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
 				}
 			} else {
-			   $this->useraccount->$field = $value;
+			    $this->useraccount->$field = $value;
 			}
 		}
 
@@ -260,13 +299,13 @@ class Users extends DolibarrApi
 	{
 		$obj_ret = array();
 
-		if (! DolibarrApiAccess::$user->rights->user->user->lire) {
+		if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			throw new RestException(401);
 		}
 
 		$user = new User($this->db);
 		$result = $user->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'user not found');
 		}
 
@@ -306,12 +345,12 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && ! empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
+		if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && !empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
 		{
-			$entity = (! empty($entity) ? $entity : $conf->entity);
+			$entity = (!empty($entity) ? $entity : $conf->entity);
 		}
 		else
 		{
@@ -321,12 +360,122 @@ class Users extends DolibarrApi
 		}
 
 		$result = $this->useraccount->SetInGroup($group, $entity);
-		if (! ($result > 0))
+		if (!($result > 0))
 		{
 			throw new RestException(500, $this->useraccount->error);
 		}
 
 		return 1;
+	}
+
+	/**
+	 * List Groups
+	 *
+	 * Return an array with a list of Groups
+	 *
+	 * @url	GET /groups
+	 *
+	 * @param string	$sortfield	Sort field
+	 * @param string	$sortorder	Sort order
+	 * @param int		$limit		Limit for list
+	 * @param int		$page		Page number
+	 * @param string   	$group_ids   Groups ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @return  array               Array of User objects
+	 */
+    public function listGroups($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $group_ids = 0, $sqlfilters = '')
+    {
+	    global $db, $conf;
+
+	    $obj_ret = array();
+
+		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
+	        throw new RestException(401, "You are not allowed to read list of groups");
+	    }
+
+	    // case of external user, $societe param is ignored and replaced by user's socid
+	    //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
+
+	    $sql = "SELECT t.rowid";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as t";
+	    $sql .= ' WHERE t.entity IN ('.getEntity('user').')';
+	    if ($group_ids) $sql .= " AND t.rowid IN (".$group_ids.")";
+	    // Add sql filters
+        if ($sqlfilters)
+        {
+            if (!DolibarrApi::_checkFilters($sqlfilters))
+            {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+	        $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+
+	    $sql .= $db->order($sortfield, $sortorder);
+	    if ($limit) {
+	        if ($page < 0)
+	        {
+	            $page = 0;
+	        }
+	        $offset = $limit * $page;
+
+	        $sql .= $db->plimit($limit + 1, $offset);
+	    }
+
+	    $result = $db->query($sql);
+
+	    if ($result)
+	    {
+	        $i = 0;
+	        $num = $db->num_rows($result);
+	        $min = min($num, ($limit <= 0 ? $num : $limit));
+	        while ($i < $min)
+	        {
+	            $obj = $db->fetch_object($result);
+	            $group_static = new UserGroup($this->db);
+	            if ($group_static->fetch($obj->rowid)) {
+	                $obj_ret[] = $this->_cleanObjectDatas($group_static);
+	            }
+	            $i++;
+	        }
+	    }
+	    else {
+	        throw new RestException(503, 'Error when retrieve Group list : '.$db->lasterror());
+	    }
+	    if (!count($obj_ret)) {
+	        throw new RestException(404, 'No Group found');
+	    }
+	    return $obj_ret;
+	}
+
+	/**
+	 * Get properties of an group object
+	 *
+	 * Return an array with group informations
+	 *
+	 * @url	GET /groups/{group}
+	 *
+	 * @param 	int 	$group ID of group
+	 * @param int       $load_members     Load members list or not {@min 0} {@max 1}
+	 * @return  array               Array of User objects
+	 */
+    public function infoGroups($group, $load_members = 0)
+    {
+	    global $db, $conf;
+
+		if (!DolibarrApiAccess::$user->rights->user->group_advance->read) {
+	        throw new RestException(401, "You are not allowed to read groups");
+	    }
+
+	            $group_static = new UserGroup($this->db);
+	            $result = $group_static->fetch($group, '', $load_members);
+
+		if (!$result)
+		{
+			throw new RestException(404, 'Group not found');
+		}
+
+	    return $this->_cleanObjectDatas($group_static);
 	}
 
 	/**
@@ -348,9 +497,9 @@ class Users extends DolibarrApi
 
 		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
 		{
-			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-
+        $this->useraccount->oldcopy = clone $this->useraccount;
 		return $this->useraccount->delete(DolibarrApiAccess::$user);
 	}
 
@@ -378,7 +527,7 @@ class Users extends DolibarrApi
 	    unset($object->total_localtax2);
 	    unset($object->total_ttc);
 
-	    unset($object->libelle_incoterms);
+	    unset($object->label_incoterms);
 	    unset($object->location_incoterms);
 
 	    unset($object->fk_delivery_address);
@@ -399,11 +548,17 @@ class Users extends DolibarrApi
 	    unset($object->clicktodial_password);
 	    unset($object->openid);
 
+	    unset($object->lines);
+	    unset($object->modelpdf);
+	    unset($object->skype);
+	    unset($object->twitter);
+	    unset($object->facebook);
+	    unset($object->linkedin);
 
-	    $canreadsalary = ((! empty($conf->salaries->enabled) && ! empty(DolibarrApiAccess::$user->rights->salaries->read))
-	    	|| (! empty($conf->hrm->enabled) && ! empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
+	    $canreadsalary = ((!empty($conf->salaries->enabled) && !empty(DolibarrApiAccess::$user->rights->salaries->read))
+	    	|| (!empty($conf->hrm->enabled) && !empty(DolibarrApiAccess::$user->rights->hrm->employee->read)));
 
-		if (! $canreadsalary)
+		if (!$canreadsalary)
 		{
 			unset($object->salary);
 			unset($object->salaryextra);
@@ -413,6 +568,53 @@ class Users extends DolibarrApi
 
 	    return $object;
 	}
+
+    /**
+     * Clean sensible user group list datas
+     *
+     * @param   array  $objectList   Array of object to clean
+     * @return  array                Array of cleaned object properties
+     */
+    private function _cleanUserGroupListDatas($objectList)
+    {
+        $cleanObjectList = array();
+
+        foreach ($objectList as $object) {
+            $cleanObject = parent::_cleanObjectDatas($object);
+
+            unset($cleanObject->default_values);
+            unset($cleanObject->lastsearch_values);
+            unset($cleanObject->lastsearch_values_tmp);
+
+            unset($cleanObject->total_ht);
+            unset($cleanObject->total_tva);
+            unset($cleanObject->total_localtax1);
+            unset($cleanObject->total_localtax2);
+            unset($cleanObject->total_ttc);
+
+            unset($cleanObject->libelle_incoterms);
+            unset($cleanObject->location_incoterms);
+
+            unset($cleanObject->fk_delivery_address);
+            unset($cleanObject->fk_incoterms);
+            unset($cleanObject->all_permissions_are_loaded);
+            unset($cleanObject->shipping_method_id);
+            unset($cleanObject->nb_rights);
+            unset($cleanObject->search_sid);
+            unset($cleanObject->ldap_sid);
+            unset($cleanObject->clicktodial_loaded);
+
+            unset($cleanObject->datec);
+            unset($cleanObject->datem);
+            unset($cleanObject->members);
+            unset($cleanObject->note);
+            unset($cleanObject->note_private);
+
+            $cleanObjectList[] = $cleanObject;
+        }
+
+        return $cleanObjectList;
+    }
 
 	/**
 	 * Validate fields before create or update object

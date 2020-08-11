@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -42,7 +42,7 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	/**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
 	public $nom='Leopard';
 
@@ -65,7 +65,10 @@ class mod_codeproduct_leopard extends ModeleProductCode
      */
 	public $version = 'dolibarr';    		// 'development', 'experimental', 'dolibarr'
 
-	public $code_auto; 	                // Numerotation automatique
+	/**
+	 * @var int Automatic numbering
+	 */
+	public $code_auto;
 
 
 	/**
@@ -111,15 +114,15 @@ class mod_codeproduct_leopard extends ModeleProductCode
 	/**
 	 *  Check validity of code according to its rules
 	 *
-	 *  @param	DoliDB		$db		Database handler
-	 *  @param	string		$code	Code to check/correct
+	 *  @param	DoliDB		$db			Database handler
+	 *  @param	string		$code		Code to check/correct
 	 *  @param	Product		$product	Object product
-	 *  @param  int		  	$type   0 = product , 1 = service
-	 *  @return int                 0 if OK
-	 *                              -1 ErrorBadProductCodeSyntax
-	 *                              -2 ErrorProductCodeRequired
-	 *                              -3 ErrorProductCodeAlreadyUsed
-	 *                              -4 ErrorPrefixRequired
+	 *  @param  int		  	$type   	0 = product , 1 = service
+	 *  @return int                 	0 if OK
+	 *                              	-1 ErrorBadProductCodeSyntax
+	 *                              	-2 ErrorProductCodeRequired
+	 *                              	-3 ErrorProductCodeAlreadyUsed
+	 *                              	-4 ErrorPrefixRequired
 	 */
 	public function verif($db, &$code, $product, $type)
 	{

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 /**
  * API class for accounts
  *
+ * @property DoliDB db
  * @access protected
  * @class DolibarrApiAccess {@requires user,external}
  */
@@ -167,6 +168,142 @@ class BankAccounts extends DolibarrApi
     }
 
     /**
+     * Create an internal wire transfer between two bank accounts
+     *
+     * @param int     $bankaccount_from_id  BankAccount ID to use as the source of the internal wire transfer		{@from body}{@required true}
+     * @param int     $bankaccount_to_id    BankAccount ID to use as the destination of the internal wire transfer  {@from body}{@required true}
+     * @param string  $date					Date of the internal wire transfer (UNIX timestamp)						{@from body}{@required true}{@type timestamp}
+     * @param string  $description			Description of the internal wire transfer								{@from body}{@required true}
+     * @param float	  $amount				Amount to transfer from the source to the destination BankAccount		{@from body}{@required true}
+     * @param float	  $amount_to			Amount to transfer to the destination BankAccount (only when accounts does not share the same currency)		{@from body}{@required false}
+     *
+     * @url POST    /transfer
+     *
+     * @return array
+     *
+     * @status 201
+     *
+     * @throws 401 Unauthorized: User does not have permission to configure bank accounts
+	 * @throws 404 Not Found: Either the source or the destination bankaccount for the provided id does not exist
+     * @throws 422 Unprocessable Entity: Refer to detailed exception message for the cause
+	 * @throws 500 Internal Server Error: Error(s) returned by the RDBMS
+     */
+    public function transfer($bankaccount_from_id = 0, $bankaccount_to_id = 0, $date = null, $description = "", $amount = 0.0, $amount_to = 0.0)
+    {
+        if (! DolibarrApiAccess::$user->rights->banque->configurer) {
+            throw new RestException(401);
+        }
+
+        if ($bankaccount_from_id === $bankaccount_to_id) {
+            throw new RestException(422, 'bankaccount_from_id and bankaccount_to_id must be different !');
+        }
+
+        require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+        $accountfrom = new Account($this->db);
+        $resultAccountFrom = $accountfrom->fetch($bankaccount_from_id);
+
+        if ($resultAccountFrom === 0) {
+            throw new RestException(404, 'The BankAccount for bankaccount_from_id provided does not exist.');
+        }
+
+        $accountto = new Account($this->db);
+        $resultAccountTo = $accountto->fetch($bankaccount_to_id);
+
+        if ($resultAccountTo === 0) {
+            throw new RestException(404, 'The BankAccount for bankaccount_to_id provided does not exist.');
+        }
+
+        if ($accountto->currency_code == $accountfrom->currency_code)
+        {
+            $amount_to = $amount;
+        }
+        else
+        {
+            if (!$amount_to || empty($amount_to))
+            {
+                throw new RestException(422, 'You must provide amount_to value since bankaccount_from and bankaccount_to does not share the same currency.');
+            }
+        }
+
+        $this->db->begin();
+
+        $error = 0;
+        $bank_line_id_from = 0;
+        $bank_line_id_to = 0;
+        $result = 0;
+        $user = DolibarrApiAccess::$user;
+
+        // By default, electronic transfert from bank to bank
+        $typefrom='PRE';
+        $typeto='VIR';
+
+        if ($accountto->courant == Account::TYPE_CASH || $accountfrom->courant == Account::TYPE_CASH)
+        {
+            // This is transfer of change
+            $typefrom='LIQ';
+            $typeto='LIQ';
+        }
+
+        /**
+         * Creating bank line records
+         */
+
+        if (!$error) {
+            $bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1*price2num($amount), '', '', $user);
+        }
+        if (!($bank_line_id_from > 0)) {
+            $error++;
+        }
+
+        if (!$error) {
+            $bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user);
+        }
+        if (!($bank_line_id_to > 0)) {
+            $error++;
+        }
+
+        /**
+         * Creating links between bank line record and its source
+         */
+
+        $url = DOL_URL_ROOT.'/compta/bank/line.php?rowid=';
+        $label = '(banktransfert)';
+        $type = 'banktransfert';
+
+        if (!$error) {
+            $result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, $url, $label, $type);
+        }
+        if (!($result > 0)) {
+            $error++;
+        }
+
+        if (!$error) {
+            $result = $accountto->add_url_line($bank_line_id_to, $bank_line_id_from, $url, $label, $type);
+        }
+        if (!($result > 0)) {
+            $error++;
+        }
+
+        if (!$error)
+        {
+            $this->db->commit();
+
+            return array(
+                'success' => array(
+                    'code' => 201,
+                    'message' => 'Internal wire transfer created successfully.'
+                )
+            );
+        }
+        else
+        {
+            $this->db->rollback();
+            throw new RestException(500, $accountfrom->error.' '.$accountto->error);
+        }
+    }
+
+    /**
      * Update account
      *
      * @param int    $id              ID of account
@@ -274,8 +411,9 @@ class BankAccounts extends DolibarrApi
      * @throws RestException
      *
      * @url GET {id}/lines
+	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
      */
-    public function getLines($id)
+    public function getLines($id, $sqlfilters = '')
     {
         $list = array();
 
@@ -291,6 +429,18 @@ class BankAccounts extends DolibarrApi
 
         $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."bank ";
         $sql .= " WHERE fk_account = ".$id;
+
+		// Add sql filters
+		if ($sqlfilters)
+		{
+			if (! DolibarrApi::_checkFilters($sqlfilters))
+			{
+				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+			}
+			$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+		}
+
         $sql .= " ORDER BY rowid";
 
         $result = $this->db->query($sql);

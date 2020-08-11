@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -67,14 +67,14 @@ class TakePosFunctionalTest extends \PHPUnit_Extensions_Selenium2TestCase
 		),
 		// Geckodriver does not keep the session at the moment?!
 		// XPath selectors also don't seem to work
-//        array(
-//            'browser' => 'Mozilla Firefox on Linux',
-//            'browserName' => 'firefox',
-//            'sessionStrategy' => 'shared',
-//            'desiredCapabilities' => array(
-//                'marionette' => true
-//            )
-//        )
+        //array(
+        //    'browser' => 'Mozilla Firefox on Linux',
+        //    'browserName' => 'firefox',
+        //    'sessionStrategy' => 'shared',
+        //    'desiredCapabilities' => array(
+        //        'marionette' => true
+        //    )
+        //)
 	);
 
 	/**

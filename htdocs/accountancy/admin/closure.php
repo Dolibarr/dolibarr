@@ -12,18 +12,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  */
 
 /**
  * \file		htdocs/accountancy/admin/closure.php
- * \ingroup		Advanced accountancy
+ * \ingroup		Accountancy (Double entries)
  * \brief		Setup page to configure accounting expert module
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
@@ -89,7 +88,7 @@ llxHeader();
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuClosureAccounts'), $linkback, 'title_accountancy');
 
-print $langs->trans("DefaultClosureDesc").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("DefaultClosureDesc").'</span><br>';
 print '<br>';
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
@@ -97,10 +96,9 @@ print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">'
 print '<input type="hidden" name="action" value="update">';
 
 // Define main accounts for closure
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 foreach ($list_account_main as $key) {
-
     print '<tr class="oddeven value">';
     // Param
     $label = $langs->trans($key);

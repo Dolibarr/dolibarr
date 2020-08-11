@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -37,9 +37,21 @@ $langs->loadLangs(array("orders", "companies"));
 $id=GETPOST('id', 'int')?GETPOST('id', 'int'):GETPOST('socid', 'int');
 $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action', 'alpha');
+$massaction=GETPOST('massaction', 'alpha');
+
+$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$sortfield=GETPOST("sortfield", 'alpha');
+$sortorder=GETPOST("sortorder", 'alpha');
+$page=GETPOST("page", 'int');
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="s.nom";
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'societe', $id, '');
 
 $object = new Societe($db);
@@ -150,11 +162,11 @@ if ($id > 0 || ! empty($ref))
 		dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
 
         $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+        dol_banner_tab($object, 'socid', $linkback, ($user->socid?0:1), 'rowid', 'nom');
 
     	print '<div class="fichecenter">';
 
@@ -233,12 +245,14 @@ if ($id > 0 || ! empty($ref))
 			{
 				$num = $db->num_rows($resql);
 
-				if ($num  > 0 )
+				if ($num  > 0)
 				{
+					$param = '';
+
 					$titre=$langs->trans("MembersListOfTiers");
 					print '<br>';
 
-					print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
+					print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
 
 					print "<table class=\"noborder\" width=\"100%\">";
 					print '<tr class="liste_titre">';
@@ -287,6 +301,8 @@ if ($id > 0 || ! empty($ref))
 						// Type
 						$membertypestatic->id=$objp->type_id;
 						$membertypestatic->libelle=$objp->type;
+						$membertypestatic->label=$objp->type;
+
 						print '<td class="nowrap">';
 						print $membertypestatic->getNomUrl(1, 32);
 						print '</td>';

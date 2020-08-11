@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -110,7 +110,7 @@ function dispatchedOrders()
  * ordered
  *
  * @param 	int		$product_id		Product id
- * @return	void
+ * @return	string|null
  */
 function ordered($product_id)
 {
@@ -155,7 +155,7 @@ function ordered($product_id)
  * getProducts
  *
  * @param 	int		$order_id		Order id
- * @return	void
+ * @return	array|integer[]
  */
 function getProducts($order_id)
 {

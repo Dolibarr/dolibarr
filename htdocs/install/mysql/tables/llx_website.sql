@@ -12,7 +12,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -27,7 +27,8 @@ CREATE TABLE llx_website
 	maincolor     varchar(16),
 	maincolorbis  varchar(16),
 	status		  integer DEFAULT 1,
-	fk_default_home integer, 
+	fk_default_home integer,
+	use_manifest integer,
 	virtualhost   varchar(255), 
     fk_user_creat integer,
     fk_user_modif integer,

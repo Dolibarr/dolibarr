@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
@@ -29,8 +29,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 $langs->loadLangs(array("bills", "companies"));
@@ -40,7 +40,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);
@@ -70,7 +70,7 @@ if ($action == 'setlabel' && $user->rights->fournisseur->facture->creer)
 
 $form = new Form($db);
 
-$title = $langs->trans('SupplierInvoice') . " - " . $langs->trans('Notes');
+$title = $langs->trans('SupplierInvoice')." - ".$langs->trans('Notes');
 $helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
 llxHeader('', $title, $helpurl);
 
@@ -102,20 +102,21 @@ if ($object->id > 0)
         $morehtmlref.='<br>'.$langs->trans('Project') . ' ';
     	if ($user->rights->fournisseur->commande->creer)
     	{
-    	    if ($action != 'classify')
-    	        // $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-    	        $morehtmlref.=' : ';
-				if ($action == 'classify') {
-    	            //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-    	            $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-    	            $morehtmlref.='<input type="hidden" name="action" value="classin">';
-    	            $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    	            $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-    	            $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-    	            $morehtmlref.='</form>';
-    	        } else {
-    	            $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-    	        }
+    	    if ($action != 'classify') {
+    	    	// $morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+				$morehtmlref.=' : ';
+			}
+			if ($action == 'classify') {
+                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+                $morehtmlref.='<input type="hidden" name="token" value="'.newToken().'">';
+                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+                $morehtmlref.='</form>';
+            } else {
+                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+            }
     	} else {
     	    if (! empty($object->fk_project)) {
     	        $proj = new Project($db);
@@ -137,34 +138,34 @@ if ($object->id > 0)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border" width="100%">';
+	print '<table class="border centpercent tableforfield">';
 
     // Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 	print $object->getLibType();
 	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
 	{
-		$facreplaced=new FactureFournisseur($db);
+		$facreplaced = new FactureFournisseur($db);
 		$facreplaced->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("ReplaceInvoice", $facreplaced->getNomUrl(1)).')';
 	}
 	if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE)
 	{
-		$facusing=new FactureFournisseur($db);
+		$facusing = new FactureFournisseur($db);
 		$facusing->fetch($object->fk_facture_source);
 		print ' ('.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).')';
 	}
 
-	$facidavoir=$object->getListIdAvoirFromInvoice();
+	$facidavoir = $object->getListIdAvoirFromInvoice();
 	if (count($facidavoir) > 0)
 	{
 		print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-		$i=0;
-		foreach($facidavoir as $fid)
+		$i = 0;
+		foreach ($facidavoir as $fid)
 		{
-			if ($i==0) print ' ';
+			if ($i == 0) print ' ';
 			else print ',';
-			$facavoir=new FactureFournisseur($db);
+			$facavoir = new FactureFournisseur($db);
 			$facavoir->fetch($fid);
 			print $facavoir->getNomUrl(1);
 		}
@@ -172,7 +173,7 @@ if ($object->id > 0)
 	}
 	if ($facidnext > 0)
 	{
-		$facthatreplace=new FactureFournisseur($db);
+		$facthatreplace = new FactureFournisseur($db);
 		$facthatreplace->fetch($facidnext);
 		print ' ('.$langs->transnoentities("ReplacedByInvoice", $facthatreplace->getNomUrl(1)).')';
 	}
@@ -189,13 +190,13 @@ if ($object->id > 0)
 
 	// Amount Local Taxes
 	//TODO: Place into a function to control showing by country or study better option
-	if ($societe->localtax1_assuj=="1") //Localtax1
+	if ($societe->localtax1_assuj == "1") //Localtax1
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT1", $societe->country_code).'</td>';
 		print '<td>'.price($object->total_localtax1, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
 		print '</tr>';
 	}
-	if ($societe->localtax2_assuj=="1") //Localtax2
+	if ($societe->localtax2_assuj == "1") //Localtax2
 	{
 		print '<tr><td>'.$langs->transcountry("AmountLT2", $societe->country_code).'</td>';
 		print '<td>'.price($object->total_localtax2, 1, $langs, 0, -1, -1, $conf->currency).'</td>';
@@ -208,7 +209,7 @@ if ($object->id > 0)
 	print '<br>';
 
     print '<div class="underbanner clearboth"></div>';
-	$cssclass="titlefield";
+	$cssclass = "titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	dol_fiche_end();

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -21,7 +21,9 @@
  *  \brief      Page to activate/disable all modules
  */
 
-if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');			// If there is no need to load and show top and left menu
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU', '1');	// If there is no need to load and show top and left menu
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');	// Disabled because this page is into a popup on module search page and we want to avoid to have an Anti CSRF token error (done if MAIN_SECURITY_CSRF_WITH_TOKEN is on) when we make a second search after closing popup.
+
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -127,7 +129,7 @@ foreach ($modulesdir as $dir)
 								if (preg_match('/deprecated/', $objMod->version) && (empty($conf->global->$const_name) && ($conf->global->MAIN_FEATURES_LEVEL >= 0))) $modulequalified=0;
 
 		    					// We discard modules according to property disabled
-		    					if (! empty($objMod->hidden)) $modulequalified=0;
+		    					//if (! empty($objMod->hidden)) $modulequalified=0;
 
 		    					if ($modulequalified > 0)
 		    					{
@@ -212,15 +214,17 @@ asort($orders);
 //var_dump($modules);
 
 
+unset($objMod);
 $i=0;
 foreach($orders as $tmpkey => $tmpvalue)
 {
-    $objMod  = $modules[$tmpkey];
-    if ($objMod->numero == $id)
+    $tmpMod  = $modules[$tmpkey];
+    if ($tmpMod->numero == $id)
     {
         $key = $i;
         $modName = $filename[$tmpkey];
         $dirofmodule = $dirmod[$tmpkey];
+        $objMod = $tmpMod;
         break;
     }
     $i++;
@@ -231,25 +235,7 @@ $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$
 
 
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=desc';
-$head[$h][1] = $langs->trans("Description");
-$head[$h][2] = 'desc';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=feature';
-$head[$h][1] = $langs->trans("TechnicalServicesProvided");
-$head[$h][2] = 'feature';
-$h++;
-
-if ($objMod->isCoreOrExternalModule() == 'external')
-{
-    $head[$h][0] = DOL_URL_ROOT."/admin/modulehelp.php?id=".$id.'&mode=changelog';
-    $head[$h][1] = $langs->trans("ChangeLog");
-    $head[$h][2] = 'changelog';
-    $h++;
-}
+$head = modulehelp_prepare_head($objMod);
 
 // Check filters
 $modulename=$objMod->getName();

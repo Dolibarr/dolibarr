@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Need global variable $title to be defined by caller (like dol_loginfunction)
@@ -63,19 +63,17 @@ if (! isset($conf->global->THEME_ELDY_TOPMENU_BACK1)) $conf->global->THEME_ELDY_
 $colorbackhmenu1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)?(empty($conf->global->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$conf->global->THEME_ELDY_TOPMENU_BACK1):(empty($user->conf->THEME_ELDY_TOPMENU_BACK1)?$colorbackhmenu1:$user->conf->THEME_ELDY_TOPMENU_BACK1);
 $colorbackhmenu1 = join(',', colorStringToArray($colorbackhmenu1));    // Normalize value to 'x,y,z'
 
-?>
-<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->
+print "<!-- BEGIN PHP TEMPLATE LOGIN.TPL.PHP -->\n";
 
-<?php
 if (!empty($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND)) {
 	// For example $conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND = 'https://source.unsplash.com/random'
-?>
+	?>
 	<body class="body bodylogin" style="background-image: url('<?php echo dol_escape_htmltag($conf->global->ADD_UNSPLASH_LOGIN_BACKGROUND); ?>'); background-repeat: no-repeat; background-position: center center; background-attachment: fixed; background-size: cover; background-color: #ffffff;">
-<?php
+	<?php
 } else {
-?>
+	?>
 	<body class="body bodylogin"<?php print empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; background-image: url(\''.DOL_URL_ROOT.'/viewimage.php?cache=1&noalt=1&modulepart=mycompany&file=logos/'.urlencode($conf->global->MAIN_LOGIN_BACKGROUND).'\')"'; ?>>
-<?php
+	<?php
 }
 ?>
 
@@ -92,7 +90,8 @@ $(document).ready(function () {
 <div class="login_vertical_align">
 
 <form id="login" name="login" method="post" action="<?php echo $php_self; ?>">
-<input type="hidden" name="token" value="<?php echo $_SESSION['newtoken']; ?>" />
+<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
+<input type="hidden" name="actionlogin" value="login">
 <input type="hidden" name="loginfunction" value="loginfunction" />
 <!-- Add fields to send local user information -->
 <input type="hidden" name="tz" id="tz" value="" />
@@ -179,7 +178,7 @@ if ($captcha) {
 	if (preg_match('/\?/', $php_self)) $php_self.='&time='.dol_print_date(dol_now(), 'dayhourlog');
 	else $php_self.='?time='.dol_print_date(dol_now(), 'dayhourlog');
 	// TODO: provide accessible captcha variants
-?>
+	?>
 	<!-- Captcha -->
 	<div class="trinputlogin">
 	<div class="tagtd nowraponall none center valignmiddle tdinputlogin">
@@ -209,7 +208,10 @@ if ($captcha) {
 <div id="login_line2" style="clear: both">
 
 <!-- Button Connection -->
-<br><input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
+<br>
+<div id="login-submit-wrapper">
+<input type="submit" class="button" value="&nbsp; <?php echo $langs->trans('Connection'); ?> &nbsp;" tabindex="5" />
+</div>
 
 <?php
 if ($forgetpasslink || $helpcenterlink)
@@ -221,7 +223,7 @@ if ($forgetpasslink || $helpcenterlink)
 	if ($dol_use_jmobile)    $moreparam.=(strpos($moreparam, '?')===false?'?':'&').'dol_use_jmobile='.$dol_use_jmobile;
 
 	echo '<br>';
-	echo '<div class="center" style="margin-top: 15px;">';
+	echo '<div class="center" style="margin-top: 5px;">';
 	if ($forgetpasslink) {
 		$url=DOL_URL_ROOT.'/user/passwordforgotten.php'.$moreparam;
 		if (! empty($conf->global->MAIN_PASSWORD_FORGOTLINK)) $url=$conf->global->MAIN_PASSWORD_FORGOTLINK;
@@ -276,11 +278,11 @@ if (isset($conf->file->main_authentication) && preg_match('/openid/', $conf->fil
 // Show error message if defined
 if (! empty($_SESSION['dol_loginmesg']))
 {
-?>
+	?>
 	<div class="center login_main_message"><div class="error">
 	<?php echo $_SESSION['dol_loginmesg']; ?>
 	</div></div>
-<?php
+	<?php
 }
 
 // Add commit strip
@@ -303,11 +305,11 @@ if (!empty($conf->global->MAIN_EASTER_EGG_COMMITSTRIP)) {
 
 <?php if ($main_home)
 {
-?>
+	?>
 	<div class="center login_main_home paddingtopbottom <?php echo empty($conf->global->MAIN_LOGIN_BACKGROUND)?'':' backgroundsemitransparent'; ?>" style="max-width: 70%">
 	<?php echo $main_home; ?>
 	</div><br>
-<?php
+	<?php
 }
 ?>
 
@@ -359,7 +361,7 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 {
 	if (empty($conf->dol_use_jmobile))
 	{
-?>
+		?>
 	<div class="center"><br>
 		<script type="text/javascript"><!--
 			google_ad_client = "<?php echo $conf->global->MAIN_GOOGLE_AD_CLIENT ?>";
@@ -372,14 +374,14 @@ if (! empty($conf->google->enabled) && ! empty($conf->global->MAIN_GOOGLE_AD_CLI
 			src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
 		</script>
 	</div>
-<?php
+		<?php
 	}
 }
 ?>
 
 
 </div>
-</div>	<!-- end of center -->
+</div><!-- end of center -->
 
 
 </body>

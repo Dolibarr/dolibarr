@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -274,32 +274,32 @@ function getSupplierInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 			    $objectresp = array(
 			    	'result'=>array('result_code'=>'OK', 'result_label'=>''),
 			        'invoice'=>array(
-				    	'id' => $invoice->id,
-			   			'ref' => $invoice->ref,
-                        'ref_supplier'=>$invoice->ref_supplier,
-			            'ref_ext' => $invoice->ref_ext,
-			            'fk_user_author' => $invoice->fk_user_author,
-			            'fk_user_valid' => $invoice->fk_user_valid,
-                        'fk_thirdparty' => $invoice->fk_soc,
-                        'type'=>$invoice->type,
-                        'status'=>$invoice->statut,
-                        'total_net'=>$invoice->total_ht,
-                        'total_vat'=>$invoice->total_tva,
-                        'total'=>$invoice->total_ttc,
-                        'date_creation'=>dol_print_date($invoice->datec, 'dayhourrfc'),
-                        'date_modification'=>dol_print_date($invoice->tms, 'dayhourrfc'),
-                        'date_invoice'=>dol_print_date($invoice->date, 'dayhourrfc'),
-                        'date_term'=>dol_print_date($invoice->date_echeance, 'dayhourrfc'),
-                        'label'=>$invoice->libelle,
-                        'paid'=>$invoice->paye,
-                        'note_private'=>$invoice->note_private,
-                        'note_public'=>$invoice->note_public,
-                        'close_code'=>$invoice->close_code,
-                        'close_note'=>$invoice->close_note,
+				    'id' => $invoice->id,
+		   			'ref' => $invoice->ref,
+                    'ref_supplier'=>$invoice->ref_supplier,
+		            'ref_ext' => $invoice->ref_ext,
+		            'fk_user_author' => $invoice->fk_user_author,
+		            'fk_user_valid' => $invoice->fk_user_valid,
+                    'fk_thirdparty' => $invoice->fk_soc,
+                    'type'=>$invoice->type,
+                    'status'=>$invoice->statut,
+                    'total_net'=>$invoice->total_ht,
+                    'total_vat'=>$invoice->total_tva,
+                    'total'=>$invoice->total_ttc,
+                    'date_creation'=>dol_print_date($invoice->datec, 'dayhourrfc'),
+                    'date_modification'=>dol_print_date($invoice->tms, 'dayhourrfc'),
+                    'date_invoice'=>dol_print_date($invoice->date, 'dayhourrfc'),
+                    'date_term'=>dol_print_date($invoice->date_echeance, 'dayhourrfc'),
+                    'label'=>$invoice->label,
+                    'paid'=>$invoice->paid,
+                    'note_private'=>$invoice->note_private,
+                    'note_public'=>$invoice->note_public,
+                    'close_code'=>$invoice->close_code,
+                    'close_note'=>$invoice->close_note,
 
-                        'lines' => $linesresp
-//					        'lines' => array('0'=>array('id'=>222,'type'=>1),
-//				        				 '1'=>array('id'=>333,'type'=>1))
+                    'lines' => $linesresp,
+                    // 'lines' => array('0'=>array('id'=>222,'type'=>1),
+                    // '1'=>array('id'=>333,'type'=>1)),
 
 			    ));
 			}
@@ -422,8 +422,8 @@ function getSupplierInvoicesForThirdParty($authentication, $idthirdparty)
                     'date_modification'=>dol_print_date($invoice->tms, 'dayhourrfc'),
                     'date_invoice'=>dol_print_date($invoice->date, 'dayhourrfc'),
                     'date_term'=>dol_print_date($invoice->date_echeance, 'dayhourrfc'),
-                    'label'=>$invoice->libelle,
-                    'paid'=>$invoice->paye,
+                    'label'=>$invoice->label,
+                    'paid'=>$invoice->paid,
                     'note_private'=>$invoice->note_private,
                     'note_public'=>$invoice->note_public,
                     'close_code'=>$invoice->close_code,

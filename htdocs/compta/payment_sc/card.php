@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ $langs->loadLangs(array('bills', 'banks', 'companies'));
 $id=GETPOST("id", 'int');
 $action=GETPOST('action', 'aZ09');
 $confirm=GETPOST('confirm');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
@@ -169,7 +169,7 @@ dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
-print '<table class="border" width="100%">';
+print '<table class="border centpercent">';
 
 // Ref
 /*print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
@@ -221,7 +221,7 @@ dol_fiche_end();
  */
 
 $disable_delete = 0;
-$sql = 'SELECT f.rowid as scid, f.libelle, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
+$sql = 'SELECT f.rowid as scid, f.libelle as label, f.paye, f.amount as sc_amount, pf.amount, pc.libelle as sc_type';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql.= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
 $sql.= ' AND f.entity = '.$conf->entity;
@@ -235,13 +235,13 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	print '<br><table class="noborder" width="100%">';
+	print '<br><table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('SocialContribution').'</td>';
     print '<td>'.$langs->trans('Type').'</td>';
 	print '<td>'.$langs->trans('Label').'</td>';
 	print '<td class="right">'.$langs->trans('ExpectedToPay').'</td>';
-	print '<td align="center">'.$langs->trans('Status').'</td>';
+	print '<td class="center">'.$langs->trans('Status').'</td>';
 	print '<td class="right">'.$langs->trans('PayedByThisPayment').'</td>';
 	print "</tr>\n";
 
@@ -259,15 +259,15 @@ if ($resql)
 			print "</td>\n";
 			// Type
             print '<td>';
-            print $socialcontrib->type_libelle;
+            print $socialcontrib->type_label;
             /*print $socialcontrib->type;*/
             print "</td>\n";
 			// Label
-			print '<td>'.$objp->libelle.'</td>';
+			print '<td>'.$objp->label.'</td>';
 			// Expected to pay
 			print '<td class="right">'.price($objp->sc_amount).'</td>';
 			// Status
-			print '<td align="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
+			print '<td class="center">'.$socialcontrib->getLibStatut(4, $objp->amount).'</td>';
 			// Amount payed
 			print '<td class="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
@@ -299,7 +299,7 @@ print '<div class="tabsAction">';
 /*
 if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->societe_id == 0 && $object->statut == 0 && $_GET['action'] == '')
+	if ($user->socid == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
 		if ($user->rights->facture->paiement)
 		{

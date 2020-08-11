@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal-modul installation
 PaypalDesc=Denna modul tillåter betalning av kunder via <a href="http://www.paypal.com" target="_blank"> PayPal </a>. Detta kan användas för en ad hoc-betalning eller för en betalning relaterad till ett Dolibarr-objekt (faktura, order, ...)
-PaypalOrCBDoPayment=Betal med PayPal (Kreditkort eller PayPal)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
 PaypalDoPayment=Betala med PayPal
 PAYPAL_API_SANDBOX=Läge test / sandlåda
 PAYPAL_API_USER=API användarnamn
@@ -14,12 +14,11 @@ PaypalModeOnlyPaypal=PayPal endast
 ONLINE_PAYMENT_CSS_URL=Valfri URL för CSS-stilarket på betalningssidan för online
 ThisIsTransactionId=Detta är id transaktion: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Inkludera PayPal-betalningsadressen när du skickar ett dokument via e-post
-YouAreCurrentlyInSandboxMode=Du befinner dig för närvarande i %s "sandbox" -läget
 NewOnlinePaymentReceived=Ny online betalning mottagen
 NewOnlinePaymentFailed=Ny onlinebetalning försökte men misslyckades
 ONLINE_PAYMENT_SENDEMAIL=E-postadress för meddelanden efter varje betalningsförsök (för framgång och misslyckande)
 ReturnURLAfterPayment=Återgå URL efter betalning
-ValidationOfOnlinePaymentFailed=Validering av online betalning misslyckades
+ValidationOfOnlinePaymentFailed=Bekräftelse av online betalning misslyckades
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Betalningsbekräftelse sidan kallades av betalningssystemet returnerade ett fel
 SetExpressCheckoutAPICallFailed=SetExpressCheckout API-samtal misslyckades.
 DoExpressCheckoutPaymentAPICallFailed=DoExpressCheckoutPayment API-samtal misslyckades.
@@ -32,4 +31,6 @@ PaypalLiveEnabled=PayPal "live" -läge aktiverat (annars test / sandbox-läge)
 PaypalImportPayment=Importera PayPal-betalningar
 PostActionAfterPayment=Posta åtgärder efter betalningar
 ARollbackWasPerformedOnPostActions=En återuppringning utfördes på alla Post-åtgärder. Du måste fylla i posthandlingar manuellt om det behövs.
-ValidationOfPaymentFailed=Valideringen av betalningen har misslyckats
+ValidationOfPaymentFailed=Bekräftandet av betalningen har misslyckats
+CardOwner=Card holder
+PayPalBalance=Paypal credit

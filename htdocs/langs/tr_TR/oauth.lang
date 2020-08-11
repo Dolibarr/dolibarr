@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Yapılandırma
-OAuthServices=OAuth services
+ConfigOAuth=OAuth Yapılandırması
+OAuthServices=OAuth Hizmetleri
 ManualTokenGeneration=Manual token generation
-TokenManager=Token manager
+TokenManager=Token Manager
 IsTokenGenerated=Is token generated ?
 NoAccessToken=Yerel veritabanına kayıtlı erişim belirteçi yok
 HasAccessToken=Bir belirteç oluşturuldu ve yerel veritabanına kaydedildi
@@ -11,8 +11,8 @@ ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %
 TokenDeleted=Belirteç silindi
 RequestAccess=Erişim ve kaydedilecek yeni bir belirteç alma isteği/yenilemesi için buraya tıklayın
 DeleteAccess=Belirteçi silmek için burayı tıkla
-UseTheFollowingUrlAsRedirectURI=OAuth sağlayıcınız üzerinde kimlik oluştururken Yönlendirme URI olarak aşağıdaki URL'yi kullanın:
-ListOfSupportedOauthProviders=OAuth2 sağlayıcınız tarafınıdan verilen kimlik bilgilerini burada girin. Burada yalnızca desteklenen OAuth2 sağlayıcılar görünür. Bu ayarlar OAuth2 kimlik doğrulaması gerektiren diğer modüller tarafından da kullanılabilir.
+UseTheFollowingUrlAsRedirectURI=Use the following URL as the Redirect URI when creating your credentials with your OAuth provider:
+ListOfSupportedOauthProviders=Enter the credentials provided by your OAuth2 provider. Only supported OAuth2 providers are listedd here. These services may be used by other modules that need OAuth2 authentication.
 OAuthSetupForLogin=Page to generate an OAuth token
 SeePreviousTab=Önceki sekmeye bakın
 OAuthIDSecret=OAuth ID and Secret
@@ -20,11 +20,11 @@ TOKEN_REFRESH=Belirteç Yenilemesi Mevcuttur
 TOKEN_EXPIRED=Token expired
 TOKEN_EXPIRE_AT=Belirteç sonlanması
 TOKEN_DELETE=Kayıtlı belrteçi sil
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials
+OAUTH_GOOGLE_NAME=OAuth Google hizmeti
+OAUTH_GOOGLE_ID=OAuth Google Id
+OAUTH_GOOGLE_SECRET=OAuth Google Secret
+OAUTH_GOOGLE_DESC=Go to <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create OAuth credentials
+OAUTH_GITHUB_NAME=OAuth GitHub hizmeti
+OAUTH_GITHUB_ID=OAuth GitHub Id
+OAUTH_GITHUB_SECRET=OAuth GitHub Secret
+OAUTH_GITHUB_DESC=<a class="notasortlink" href="https://github.com/settings/developers" target="_blank">Bu sayfaya gidin</a> ve sonra OAuth kimlik bilgileri oluşturmak için "Yeni bir uygulama kaydet" linkine gidin

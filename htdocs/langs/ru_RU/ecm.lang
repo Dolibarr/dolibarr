@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=No. of documents in directory
+ECMNbOfDocs=Количество документов в каталоге
 ECMSection=Директория
 ECMSectionManual=Директория в ручном режиме
 ECMSectionAuto=Директория в автоматическом режиме
@@ -33,9 +33,9 @@ ECMDocsByProducts=Документы, связанные с продуктами
 ECMDocsByProjects=Документы, связанные с проектрами
 ECMDocsByUsers=Документы, связанные с пользователями
 ECMDocsByInterventions=Документы, связанные с меропрятиями
-ECMDocsByExpenseReports=Documents linked to expense reports
-ECMDocsByHolidays=Documents linked to holidays
-ECMDocsBySupplierProposals=Documents linked to supplier proposals
+ECMDocsByExpenseReports=Документы, связанные с отчетами о расходах
+ECMDocsByHolidays=Документы, связанные с отпусками
+ECMDocsBySupplierProposals=Documents linked to vendor proposals
 ECMNoDirectoryYet=Директория не создана
 ShowECMSection=Показать директорию
 DeleteSection=Удаление директории

@@ -14,8 +14,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -32,26 +32,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php'
 class mod_codecompta_aquarium extends ModeleAccountancyCode
 {
 	/**
-	 * @var string Nom du modele
-	 * @deprecated
-	 * @see name
-	 */
-	public $nom='Aquarium';
-
-	/**
 	 * @var string model name
 	 */
-	public $name='Aquarium';
+	public $name = 'Aquarium';
 
 	/**
      * Dolibarr version of the loaded document
      * @var string
      */
-	public $version = 'dolibarr';        // 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public	$prefixcustomeraccountancycode;
+	public $prefixcustomeraccountancycode;
 
-	public	$prefixsupplieraccountancycode;
+	public $prefixsupplieraccountancycode;
+
+	public $position = 20;
 
 
 	/**
@@ -60,10 +55,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	public function __construct()
 	{
 	    global $conf;
-		if (! isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER='411';
-        if (! isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER='401';
-		$this->prefixcustomeraccountancycode=$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
-	    $this->prefixsupplieraccountancycode=$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
+		if (!isset($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) || trim($conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER) == '') $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER = '411';
+        if (!isset($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) || trim($conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER) == '') $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER = '401';
+		$this->prefixcustomeraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER;
+	    $this->prefixsupplieraccountancycode = $conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER;
 	}
 
 
@@ -80,26 +75,26 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 
 		$langs->load("companies");
 
-        $tooltip='';
+        $tooltip = '';
 		$texte = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-		$texte.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		$texte.= '<input type="hidden" name="action" value="setModuleOptions">';
-		$texte.= '<input type="hidden" name="param1" value="COMPANY_AQUARIUM_MASK_SUPPLIER">';
-		$texte.= '<input type="hidden" name="param2" value="COMPANY_AQUARIUM_MASK_CUSTOMER">';
-		$texte.= '<table class="nobordernopadding" width="100%">';
-		$s1= $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">', $tooltip, 1, 1);
-		$s2= $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">', $tooltip, 1, 1);
-		$texte.= '<tr><td>';
-		$texte.=$langs->trans("ModuleCompanyCodeCustomer".$this->name, $s2)."<br>\n";
-		$texte.=$langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1)."<br>\n";
-		$texte.="<br>\n";
-		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_SPECIAL').' = '.yn(1)."<br>\n";
+		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
+		$texte .= '<input type="hidden" name="action" value="setModuleOptions">';
+		$texte .= '<input type="hidden" name="param1" value="COMPANY_AQUARIUM_MASK_SUPPLIER">';
+		$texte .= '<input type="hidden" name="param2" value="COMPANY_AQUARIUM_MASK_CUSTOMER">';
+		$texte .= '<table class="nobordernopadding" width="100%">';
+		$s1 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">', $tooltip, 1, 1);
+		$s2 = $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">', $tooltip, 1, 1);
+		$texte .= '<tr><td>';
+		$texte .= $langs->trans("ModuleCompanyCodeCustomer".$this->name, $s2)."<br>\n";
+		$texte .= $langs->trans("ModuleCompanyCodeSupplier".$this->name, $s1)."<br>\n";
+		$texte .= "<br>\n";
+		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte .= $langs->trans('RemoveSpecialChars').' = '.yn(1)."<br>\n";
 		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
-		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))  $texte.=$langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
-		$texte.= '</td>';
-		$texte.= '<td class="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-        $texte.= '</tr></table>';
-        $texte.= '</form>';
+		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))  $texte .= $langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
+		$texte .= '</td>';
+		$texte .= '<td class="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+        $texte .= '</tr></table>';
+        $texte .= '</form>';
 
 		return $texte;
 	}
@@ -114,10 +109,10 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	public function getExample($langs, $objsoc = 0, $type = -1)
 	{
-		$s='';
-		$s.=$this->prefixcustomeraccountancycode.'CUSTCODE';
-	    $s.="<br>\n";
-	    $s.=$this->prefixsupplieraccountancycode.'SUPPCODE';
+		$s = '';
+		$s .= $this->prefixcustomeraccountancycode.'CUSTCODE';
+	    $s .= "<br>\n";
+	    $s .= $this->prefixsupplieraccountancycode.'SUPPCODE';
 	    return $s;
 	}
 
@@ -139,17 +134,17 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$i = 0;
 		$this->db = $db;
 
-		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(! empty($societe->name)?$societe->name:''));
+		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(!empty($societe->name) ? $societe->name : ''));
 
 		// Regle gestion compte compta
 		if ($type == 'customer')
 		{
-			$codetouse=(! empty($societe->code_client)?$societe->code_client:'CUSTCODE');
+			$codetouse = (!empty($societe->code_client) ? $societe->code_client : 'CUSTCODE');
 			$prefix = $this->prefixcustomeraccountancycode;
 		}
 		elseif ($type == 'supplier')
 		{
-			$codetouse=(! empty($societe->code_fournisseur)?$societe->code_fournisseur:'SUPPCODE');
+			$codetouse = (!empty($societe->code_fournisseur) ? $societe->code_fournisseur : 'SUPPCODE');
 			$prefix = $this->prefixsupplieraccountancycode;
 		}
 		else
@@ -161,26 +156,26 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		//$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
 
 		// Remove special char if COMPANY_AQUARIUM_REMOVE_SPECIAL is set to 1 or not set (default)
-		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $codetouse=preg_replace('/([^a-z0-9])/i', '', $codetouse);
+		if (!isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || !empty($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $codetouse = preg_replace('/([^a-z0-9])/i', '', $codetouse);
 		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
-		if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA))   $codetouse=preg_replace('/([a-z])/i', '', $codetouse);
+		if (!empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA))   $codetouse = preg_replace('/([a-z])/i', '', $codetouse);
 		// Apply a regex replacement pattern on code if COMPANY_AQUARIUM_CLEAN_REGEX is set. Value must be a regex with parenthesis. The part into parenthesis is kept, the rest removed.
-		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
+		if (!empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
 		{
-			$codetouse=preg_replace('/'.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX.'/', '\1\2\3', $codetouse);
+			$codetouse = preg_replace('/'.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX.'/', '\1\2\3', $codetouse);
 		}
 
-		$codetouse=$prefix.strtoupper($codetouse);
+		$codetouse = $prefix.strtoupper($codetouse);
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
-		if (! $is_dispo)
+		if (!$is_dispo)
 		{
-			$this->code=$codetouse;
+			$this->code = $codetouse;
 		}
 		else
 		{
 			// Pour retour
-			$this->code=$codetouse;
+			$this->code = $codetouse;
 		}
 		dol_syslog("mod_codecompta_aquarium::get_code found code=".$this->code);
 		return $is_dispo;
@@ -199,33 +194,33 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	public function verif($db, $code, $societe, $type)
 	{
 		$sql = "SELECT ";
-		if ($type == 'customer') $sql.= "code_compta";
-		elseif ($type == 'supplier') $sql.= "code_compta_fournisseur";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE ";
-		if ($type == 'customer') $sql.= "code_compta";
-		elseif ($type == 'supplier') $sql.= "code_compta_fournisseur";
-		$sql.= " = '".$db->escape($code)."'";
-		if (! empty($societe->id)) $sql.= " AND rowid <> ".$societe->id;
+		if ($type == 'customer') $sql .= "code_compta";
+		elseif ($type == 'supplier') $sql .= "code_compta_fournisseur";
+		$sql .= " FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE ";
+		if ($type == 'customer') $sql .= "code_compta";
+		elseif ($type == 'supplier') $sql .= "code_compta_fournisseur";
+		$sql .= " = '".$db->escape($code)."'";
+		if (!empty($societe->id)) $sql .= " AND rowid <> ".$societe->id;
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			if ($db->num_rows($resql) == 0)
 			{
 				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' available");
-				return 1;	// Dispo
+				return 1; // Dispo
 			}
 			else
 			{
 				dol_syslog("mod_codecompta_aquarium::verif code '".$code."' not available");
-				return 0;	// Non dispo
+				return 0; // Non dispo
 			}
 		}
 		else
 		{
-			$this->error=$db->error()." sql=".$sql;
-			return -1;		// Erreur
+			$this->error = $db->error()." sql=".$sql;
+			return -1; // Erreur
 		}
 	}
 }

@@ -18,3 +18,4 @@ SetHereATitleForLink=Indicar un nombre para el marcador
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Use un enlace externo/absoluto (https://URL) o un enlace interno/relativo (/DOLIBARR_ROOT/htdocs/...)
 ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Elija si la página enlazada debería abrirse en la pestaña actual o en una nueva pestaña
 BookmarksManagement=Gestión de marcadores
+BookmarksMenuShortCut=Ctrl + shift + m

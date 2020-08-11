@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 
@@ -108,9 +108,9 @@ if ($action == 'edit')
 	echo '<input type="hidden" name="action" value="updateik" />';
 }
 
-echo '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
+echo '<input type="hidden" name="token" value="'.newToken().'" />';
 
-echo '<table class="noborder" width="100%">';
+echo '<table class="noborder centpercent">';
 
 foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 {

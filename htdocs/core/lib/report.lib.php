@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -61,7 +61,8 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	{
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
-	print '<table width="100%" class="border">';
+
+	print '<table class="border tableforfield centpercent">';
 
 	$variante = ($periodlink || $exportlink);
 

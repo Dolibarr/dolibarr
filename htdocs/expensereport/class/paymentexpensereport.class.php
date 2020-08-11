@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -25,8 +25,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
-/**     \class      PaymentExpenseReport
- *		\brief      Class to manage payments of expense report
+/**
+ *	Class to manage payments of expense report
  */
 class PaymentExpenseReport extends CommonObject
 {
@@ -83,9 +83,9 @@ class PaymentExpenseReport extends CommonObject
      */
 	public $fk_user_modif;
 
-    //Unknow field
-    public $chid;
-    public $total;
+    public $type_code;
+    public $type_label;
+
 
 	/**
 	 *	Constructor
@@ -124,10 +124,10 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->fk_typepayment))	$this->fk_typepayment=trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment=trim($this->num_payment);
 		if (isset($this->note))				$this->note=trim($this->note);
+		if (isset($this->note_public))		$this->note_public=trim($this->note_public);
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
-		if (! empty($this->fk_expensereport)) $this->chid = $this->fk_expensereport;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -148,10 +148,10 @@ class PaymentExpenseReport extends CommonObject
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
 			$sql.= " fk_typepayment, num_payment, note, fk_user_creat, fk_bank)";
-			$sql.= " VALUES ($this->chid, '".$this->db->idate($now)."',";
+			$sql.= " VALUES ($this->fk_expensereport, '".$this->db->idate($now)."',";
 			$sql.= " '".$this->db->idate($this->datepaid)."',";
 			$sql.= " ".$totalamount.",";
-			$sql.= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note)."', ".$user->id.",";
+			$sql.= " ".$this->fk_typepayment.", '".$this->db->escape($this->num_payment)."', '".$this->db->escape($this->note_public)."', ".$user->id.",";
 			$sql.= " 0)";
 
 			dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -188,7 +188,6 @@ class PaymentExpenseReport extends CommonObject
 	 */
 	public function fetch($id)
 	{
-		global $langs;
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
 		$sql.= " t.fk_expensereport,";
@@ -198,11 +197,11 @@ class PaymentExpenseReport extends CommonObject
 		$sql.= " t.amount,";
 		$sql.= " t.fk_typepayment,";
 		$sql.= " t.num_payment,";
-		$sql.= " t.note,";
+		$sql.= " t.note as note_public,";
 		$sql.= " t.fk_bank,";
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.fk_user_modif,";
-		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
+		$sql.= " pt.code as type_code, pt.libelle as type_label,";
 		$sql.= ' b.fk_account';
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
@@ -227,13 +226,13 @@ class PaymentExpenseReport extends CommonObject
 				$this->amount			= $obj->amount;
 				$this->fk_typepayment  	= $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
-				$this->note				= $obj->note;
+				$this->note_public		= $obj->note_public;
 				$this->fk_bank			= $obj->fk_bank;
 				$this->fk_user_creat	= $obj->fk_user_creat;
 				$this->fk_user_modif	= $obj->fk_user_modif;
 
 				$this->type_code		= $obj->type_code;
-				$this->type_libelle		= $obj->type_libelle;
+				$this->type_label		= $obj->type_label;
 
 				$this->bank_account		= $obj->fk_account;
 				$this->bank_line		= $obj->fk_bank;
@@ -476,11 +475,11 @@ class PaymentExpenseReport extends CommonObject
 	/**
 	 *  Renvoi le libelle d'un statut donne
 	 *
-	 *  @param  int		$statut        	Id statut
+	 *  @param  int		$status        	Id status
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Libelle du statut
 	 */
-    public function LibStatut($statut, $mode = 0)
+    public function LibStatut($status, $mode = 0)
     {
         // phpcs:enable
         global $langs;
@@ -540,8 +539,7 @@ class PaymentExpenseReport extends CommonObject
             $acc->fetch($accountid);
 
             //Fix me field
-            $this->total = $this->amount;
-            $total = $this->total;
+            $total = $this->amount;
 
             if ($mode == 'payment_expensereport') $amount=$total;
 
@@ -665,7 +663,7 @@ class PaymentExpenseReport extends CommonObject
 
 		$result='';
 
-		if (empty($this->ref)) $this->ref=$this->lib;
+		if (empty($this->ref)) $this->ref=$this->label;
         $label = $langs->trans("ShowPayment").': '.$this->ref;
 
 		if (!empty($this->id))

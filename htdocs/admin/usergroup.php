@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,14 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "users"));
-
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $extrafields = new ExtraFields($db);
 
 $action = GETPOST('action', 'alpha');
 $value = GETPOST('value', 'alpha');
-$type='group';
+$type = 'group';
 
 /*
  * Action
@@ -85,7 +84,7 @@ elseif ($action == 'setdoc')
 }
 elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
+    $code = $reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -99,7 +98,7 @@ elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 
 elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
-    $code=$reg[1];
+    $code = $reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -114,33 +113,33 @@ elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
  * View
  */
 
-$help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
+$help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
 llxHeader('', $langs->trans("UsersSetup"), $help_url);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("UsersSetup"), $linkback, 'title_setup');
 
 
-$head=user_admin_prepare_head();
+$head = user_admin_prepare_head();
 
 dol_fiche_head($head, 'usergroupcard', $langs->trans("MenuUsersAndGroups"), -1, 'user');
 
 
-$dirmodels=array_merge(array('/'), (array) $conf->modules_parts['models']);
+$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$form=new Form($db);
+$form = new Form($db);
 
 // Defini tableau def des modeles
 $def = array();
 $sql = "SELECT nom";
-$sql.= " FROM ".MAIN_DB_PREFIX."document_model";
-$sql.= " WHERE type = '".$type."'";
-$sql.= " AND entity = ".$conf->entity;
-$resql=$db->query($sql);
+$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+$sql .= " WHERE type = '".$type."'";
+$sql .= " AND entity = ".$conf->entity;
+$resql = $db->query($sql);
 if ($resql)
 {
 	$i = 0;
-	$num_rows=$db->num_rows($resql);
+	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows)
 	{
 		$array = $db->fetch_array($resql);
@@ -153,7 +152,7 @@ else
 	dol_print_error($db);
 }
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -167,42 +166,41 @@ clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-    foreach (array('','/doc') as $valdir)
+    foreach (array('', '/doc') as $valdir)
     {
     	$dir = dol_buildpath($reldir."core/modules/usergroup".$valdir);
         if (is_dir($dir))
         {
-            $handle=opendir($dir);
+            $handle = opendir($dir);
             if (is_resource($handle))
             {
-                while (($file = readdir($handle))!==false)
+                while (($file = readdir($handle)) !== false)
                 {
-                    $filelist[]=$file;
+                    $filelist[] = $file;
                 }
                 closedir($handle);
                 arsort($filelist);
 
-                foreach($filelist as $file)
+                foreach ($filelist as $file)
                 {
                     if (preg_match('/\.modules\.php$/i', $file) && preg_match('/^(pdf_|doc_)/', $file))
                     {
-
                     	if (file_exists($dir.'/'.$file))
                     	{
-                    		$name = substr($file, 4, dol_strlen($file) -16);
-	                        $classname = substr($file, 0, dol_strlen($file) -12);
+                    		$name = substr($file, 4, dol_strlen($file) - 16);
+	                        $classname = substr($file, 0, dol_strlen($file) - 12);
 
 	                        require_once $dir.'/'.$file;
 	                        $module = new $classname($db);
 
-	                        $modulequalified=1;
-	                        if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified=0;
-	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified=0;
+	                        $modulequalified = 1;
+	                        if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) $modulequalified = 0;
+	                        if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) $modulequalified = 0;
 
 	                        if ($modulequalified)
 	                        {
 	                            print '<tr class="oddeven"><td width="100">';
-	                            print (empty($module->name)?$name:$module->name);
+	                            print (empty($module->name) ? $name : $module->name);
 	                            print "</td><td>\n";
 	                            if (method_exists($module, 'info')) print $module->info($langs);
 	                            else print $module->description;
@@ -211,7 +209,7 @@ foreach ($dirmodels as $reldir)
 	                            // Active
 	                            if (in_array($name, $def))
 	                            {
-	                            	print '<td align="center">'."\n";
+	                            	print '<td class="center">'."\n";
 	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del_default&value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
@@ -219,13 +217,13 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            else
 	                            {
-	                                print '<td align="center">'."\n";
+	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
 	                            // Defaut
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            if ($conf->global->USERGROUP_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
@@ -236,27 +234,24 @@ foreach ($dirmodels as $reldir)
 	                            }
 	                            print '</td>';
 
-	                           // Info
-		    					$htmltooltip =    ''.$langs->trans("Name").': '.$module->name;
-					    		$htmltooltip.='<br>'.$langs->trans("Type").': '.($module->type?$module->type:$langs->trans("Unknown"));
+	                            // Info
+		    					$htmltooltip = ''.$langs->trans("Name").': '.$module->name;
+					    		$htmltooltip .= '<br>'.$langs->trans("Type").': '.($module->type ? $module->type : $langs->trans("Unknown"));
 			                    if ($module->type == 'pdf')
 			                    {
-			                        $htmltooltip.='<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
+			                        $htmltooltip .= '<br>'.$langs->trans("Width").'/'.$langs->trans("Height").': '.$module->page_largeur.'/'.$module->page_hauteur;
 			                    }
-					    		$htmltooltip.='<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
-					    		$htmltooltip.='<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
-					    		$htmltooltip.='<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
+					    		$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").':</u>';
+					    		$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
+					    		$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            print $form->textwithpicto('', $htmltooltip, 1, 0);
 	                            print '</td>';
 
 	                            // Preview
-	                            print '<td align="center">';
+	                            print '<td class="center">';
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';

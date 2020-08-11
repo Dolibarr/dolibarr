@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -28,16 +28,16 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 $langs->load("exports");
 
 // Security check
-$result=restrictedArea($user, 'export');
+$result = restrictedArea($user, 'export');
 
-$export=new Export($db);
+$export = new Export($db);
 $export->load_arrays($user);
 
 /*
  * View
  */
 
-$form=new Form($db);
+$form = new Form($db);
 
 llxHeader('', $langs->trans("ExportsArea"), 'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
@@ -50,14 +50,7 @@ print '<br>';
 print '<div class="center">';
 if (count($export->array_export_code))
 {
-	if ($user->rights->export->creer)
-	{
-		print '<a class="butActionNew" href="'.DOL_URL_ROOT.'/exports/export.php?leftmenu=export"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewExport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-	else
-	{
-		print '<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle text-plus-circle">'.$langs->trans("NewExport").'</span><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
+    print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->rights->export->creer);
 }
 print '</div>';
 print '<br>';
@@ -66,8 +59,8 @@ print '<br>';
 
 // List of available export formats
 
-print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
 print '<td>'.$langs->trans("LibraryShort").'</td>';
@@ -75,20 +68,20 @@ print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-$model=new ModeleExports($db);
-$liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
+$model = new ModeleExports($db);
+$liste = $model->liste_modeles($db); // This is not a static method for exports because method load non static properties
 
-foreach($liste as $key => $val)
+foreach ($liste as $key => $val)
 {
     if (preg_match('/__\(Disabled\)__/', $liste[$key]))
     {
-    	$liste[$key]=preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
+    	$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
     }
 
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
-	$text=$model->getDriverDescForKey($key);
-	$label=$liste[$key];
+	$text = $model->getDriverDescForKey($key);
+	$label = $liste[$key];
 	print '<td>'.$form->textwithpicto($label, $text).'</td>';
 	print '<td>'.$model->getLibLabelForKey($key).'</td>';
 	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';

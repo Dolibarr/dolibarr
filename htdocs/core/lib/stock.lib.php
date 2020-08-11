@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -29,7 +29,7 @@
  */
 function stock_prepare_head($object)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 
 	$h = 0;
 	$head = array();
@@ -39,10 +39,13 @@ function stock_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("StockMovements");
-	$head[$h][2] = 'movements';
-	$h++;
+	if (!empty($user->rights->stock->mouvement->lire))
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/product/stock/movement_list.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("StockMovements");
+		$head[$h][2] = 'movements';
+		$h++;
+	}
 
 	/*
 	$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$object->id;
@@ -75,6 +78,39 @@ function stock_prepare_head($object)
 	$h++;
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'stock', 'remove');
+
+    return $head;
+}
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	        head array with tabs
+ */
+function stock_admin_prepare_head()
+{
+    global $langs, $conf, $user;
+
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT.'/admin/stock.php';
+    $head[$h][1] = $langs->trans("Miscellaneous");
+    $head[$h][2] = 'general';
+    $h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin');
+
+    $head[$h][0] = DOL_URL_ROOT.'/product/admin/stock_extrafields.php';
+    $head[$h][1] = $langs->trans("ExtraFields");
+    $head[$h][2] = 'attributes';
+    $h++;
+
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'stock_admin', 'remove');
 
     return $head;
 }

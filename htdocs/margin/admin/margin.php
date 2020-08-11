@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -119,7 +119,7 @@ $head = marges_admin_prepare_head();
 dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
 print load_fiche_titre($langs->trans("MemberMainOptions"), '', '');
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
 print '<td colspan="2" class="center">'.$langs->trans("Value").'</td>'."\n";
@@ -130,7 +130,7 @@ $form = new Form($db);
 
 // GLOBAL DISCOUNT MANAGEMENT
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
@@ -237,7 +237,7 @@ $methods = array(
 
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
@@ -253,7 +253,7 @@ print '</form>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AgentContactType").'</td>';

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -322,7 +322,7 @@ function getInvoice($authentication, $id = '', $ref = '', $ref_ext = '')
 				{
 					//var_dump($line); exit;
 					$linesresp[]=array(
-						'id'=>$line->rowid,
+						'id'=>$line->id,
 						'type'=>$line->product_type,
                                                 'desc'=>dol_htmlcleanlastbr($line->desc),
                                                 'total_net'=>$line->total_ht,
@@ -458,17 +458,17 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 			    	foreach($invoice->lines as $line)
 			    	{
 			    		$linesresp[]=array(
-	    					'id'=>$line->rowid,
-	    					'type'=>$line->product_type,
-	    					'total_net'=>$line->total_ht,
-	    					'total_vat'=>$line->total_tva,
-	    					'total'=>$line->total_ttc,
+			    			'id'=>$line->id,
+			    			'type'=>$line->product_type,
+			    			'total_net'=>$line->total_ht,
+			    			'total_vat'=>$line->total_tva,
+			    			'total'=>$line->total_ttc,
 			    			'vat_rate'=>$line->tva_tx,
 			    			'qty'=>$line->qty,
-                                                'unitprice'=> $line->subprice,
-                                                'date_start'=> $line->date_start?dol_print_date($line->date_start, 'dayrfc'):'',
-                                                'date_end'=> $line->date_end?dol_print_date($line->date_end, 'dayrfc'):'',
-                                                'product_id'=>$line->fk_product,
+			    			'unitprice'=> $line->subprice,
+			    			'date_start'=> $line->date_start?dol_print_date($line->date_start, 'dayrfc'):'',
+			    			'date_end'=> $line->date_end?dol_print_date($line->date_end, 'dayrfc'):'',
+			    			'product_id'=>$line->fk_product,
 			    			'product_ref'=>$line->product_ref,
 			    			'product_label'=>$line->product_label,
 			    			'product_desc'=>$line->product_desc,
@@ -569,7 +569,7 @@ function createInvoice($authentication, $invoice)
         $new_invoice->fk_project=$invoice['project_id'];
         $new_invoice->date_creation=$now;
 
-	//take mode_reglement and cond_reglement from thirdparty
+	    //take mode_reglement and cond_reglement from thirdparty
         $soc = new Societe($db);
         $res=$soc->fetch($new_invoice->socid);
         if ($res > 0) {
@@ -660,7 +660,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 
 	$now=dol_now();
 
-dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
+    dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." id=".$id_order.
 			", ref=".$ref_order.", ref_ext=".$ref_ext_order);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
@@ -697,7 +697,6 @@ dol_syslog("Function: createInvoiceFromOrder login=".$authentication['login']." 
 
 				if(!$error)
 				{
-
 					$newobject=new Facture($db);
 					$result = $newobject->createFromOrder($order, $fuser);
 
@@ -744,7 +743,7 @@ function updateInvoice($authentication, $invoice)
 {
 	global $db,$conf,$langs;
 
-dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
+    dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$invoice['id'].
     		", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
 
 	if ($authentication['entity']) $conf->entity=$authentication['entity'];
@@ -768,7 +767,6 @@ dol_syslog("Function: updateInvoice login=".$authentication['login']." id=".$inv
 		$result=$object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], '');
 
 		if (!empty($object->id)) {
-
 			$objectfound=true;
 
 			$db->begin();

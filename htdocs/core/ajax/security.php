@@ -12,12 +12,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
  *       \file       htdocs/core/ajax/security.php
- *       \brief      This ajax component is used to generated has keys for security purposes
+ *       \brief      This ajax component is used to generated hash keys for security purposes
  *                   like key to use into URL to protect them.
  */
 

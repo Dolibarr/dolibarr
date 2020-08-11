@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -38,8 +38,10 @@ class FormSms
      */
     public $db;
 
+    public $fromid;
     public $fromname;
     public $fromsms;
+    public $fromtype;
     public $replytoname;
     public $replytomail;
     public $toname;
@@ -133,7 +135,7 @@ function limitChars(textarea, limit, infodiv)
 
         if ($showform) print "<form method=\"POST\" name=\"smsform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
 
-        print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+        print '<input type="hidden" name="token" value="'.newToken().'">';
         foreach ($this->param as $key=>$value)
         {
             print "<input type=\"hidden\" name=\"$key\" value=\"$value\">\n";

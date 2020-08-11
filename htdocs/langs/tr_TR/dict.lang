@@ -249,10 +249,10 @@ CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
 
 ##### Civilities #####
-CivilityMME=Bn.
+CivilityMME=Bayan
 CivilityMR=Bay
 CivilityMLE=Bn.
-CivilityMTRE=Master
+CivilityMTRE=Uzman
 CivilityDR=Doktor
 ##### Currencies #####
 Currencyeuros=Euro
@@ -266,8 +266,8 @@ CurrencyEUR=Euro
 CurrencySingEUR=Euro
 CurrencyFRF=Fransız Frangı
 CurrencySingFRF=Fransız Frangı
-CurrencyGBP=GB Poundu
-CurrencySingGBP=GB Poundu
+CurrencyGBP=İngiliz Sterlini
+CurrencySingGBP=İngiliz Sterlini
 CurrencyINR=Hint rupisi
 CurrencySingINR=Hint rupisi
 CurrencyMAD=Dirhem
@@ -290,7 +290,7 @@ CurrencyXOF=CFA Frangı BCEAO
 CurrencySingXOF=CFA Frangı BCEAO
 CurrencyXPF=CFP Frangı
 CurrencySingXPF=CFP Frangı
-CurrencyCentEUR=cents
+CurrencyCentEUR=kuruş
 CurrencyCentSingEUR=cent
 CurrencyCentINR=paisa
 CurrencyCentSingINR=paise
@@ -298,7 +298,7 @@ CurrencyThousandthSingTND=thousandth
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet
 DemandReasonTypeSRC_CAMP_MAIL=Posta kampanyası
-DemandReasonTypeSRC_CAMP_EMAIL=Eposta kampanyası
+DemandReasonTypeSRC_CAMP_EMAIL=E-posta kampanyası
 DemandReasonTypeSRC_CAMP_PHO=Telefon kampanyası
 DemandReasonTypeSRC_CAMP_FAX=Faks kampanyası
 DemandReasonTypeSRC_COMM=Ticari ilgili

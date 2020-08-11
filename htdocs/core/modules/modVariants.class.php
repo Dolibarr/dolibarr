@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -53,6 +53,8 @@ class modVariants extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
 		$this->family = "products";
+		// Module position in the family on 2 digits ('01', '10', '20', ...)
+		$this->module_position = '50';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -90,7 +92,7 @@ class modVariants extends DolibarrModules
 
 		// Array to add new pages in new tabs
 		$this->tabs = array(
-//			'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
+        //	'product:+combinations:Combinaciones:products:1:/variants/combinations.php?id=__ID__'
 		);
 
 		// Dictionaries

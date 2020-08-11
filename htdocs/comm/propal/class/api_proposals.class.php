@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 use Luracast\Restler\RestException;
@@ -92,7 +92,7 @@ class Proposals extends DolibarrApi
 	 * @param string	$sortorder	        Sort order
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
-	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposals. {@example '1' or '1,2,3'} {@pattern /^[0-9,]*$/i}
+	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter commercial proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'20160101')"
 	 * @return  array                       Array of order objects
 	 */
@@ -103,7 +103,7 @@ class Proposals extends DolibarrApi
 		$obj_ret = array();
 
 		// case of external user, $thirdparty_ids param is ignored and replaced by user's socid
-		$socids = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $thirdparty_ids;
+		$socids = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $thirdparty_ids;
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
@@ -227,7 +227,7 @@ class Proposals extends DolibarrApi
 	    }
 
 		if( ! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {
-		throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		    throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 	    }
 	    $this->propal->getLinesArray();
 	    $result = array();
@@ -255,7 +255,7 @@ class Proposals extends DolibarrApi
 
 		$result = $this->propal->fetch($id);
 		if (! $result) {
-		   throw new RestException(404, 'Commercial Proposal not found');
+		    throw new RestException(404, 'Commercial Proposal not found');
 		}
 
 		if (! DolibarrApi::_checkAccessToResource('propal', $this->propal->id)) {

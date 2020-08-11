@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - commercial
-Commercial=Kereskedelem
-CommercialArea=Kereskedelemi terület
+Commercial=Commerce
+CommercialArea=Commerce area
 Customer=Vevő
 Customers=Vevők
 Prospect=Kilátás
@@ -59,7 +59,7 @@ ActionAC_FAC=Számla küldése vevők levélben
 ActionAC_REL=Számla küldése vevőnek levélben (emlékeztető)
 ActionAC_CLO=Bezár
 ActionAC_EMAILING=Tömeges email küldés
-ActionAC_COM=Vevő rendelésének elküldése levélben
+ActionAC_COM=Send sales order by mail
 ActionAC_SHIP=Fuvarlevél küldése levélben
 ActionAC_SUP_ORD=Send purchase order by mail
 ActionAC_SUP_INV=Send vendor invoice by mail

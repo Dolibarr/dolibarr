@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -101,7 +101,7 @@ class ExpenseReports extends DolibarrApi
         $obj_ret = array();
 
         // case of external user, $societe param is ignored and replaced by user's socid
-        //$socid = DolibarrApiAccess::$user->societe_id ? DolibarrApiAccess::$user->societe_id : $societe;
+        //$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : $societe;
 
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as t";
@@ -500,6 +500,9 @@ class ExpenseReports extends DolibarrApi
     {
         // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
+
+        unset($object->cond_reglement);
+        unset($object->shipping_method_id);
 
         unset($object->barcode_type);
         unset($object->barcode_type_code);

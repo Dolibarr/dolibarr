@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,17 +32,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks","categories",'withdrawals','bills'));
+$langs->loadLangs(array("banks", "categories", 'withdrawals', 'bills'));
 
 // Securite acces client
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -75,7 +75,7 @@ if ($prev_id > 0 || $ref)
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent">'."\n";
+		print '<table class="border centpercent tableforfield">'."\n";
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
@@ -88,7 +88,7 @@ if ($prev_id > 0 || $ref)
 		print '</tr>';
 		*/
 
-		if($object->date_trans <> 0)
+		if ($object->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
@@ -100,7 +100,7 @@ if ($prev_id > 0 || $ref)
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if($object->date_credit <> 0)
+		if ($object->date_credit <> 0)
 		{
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
@@ -112,10 +112,10 @@ if ($prev_id > 0 || $ref)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 		$acc = new Account($db);
-		$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 		print '<tr><td class="titlefield">';
 		print $langs->trans("BankToReceiveWithdraw");
@@ -148,20 +148,20 @@ $rej = new RejetPrelevement($db, $user);
  * List errors
  */
 $sql = "SELECT pl.rowid, pl.amount, pl.statut";
-$sql.= " , s.rowid as socid, s.nom as name";
-$sql.= " , pr.motif, pr.afacturer, pr.fk_facture";
-$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-$sql.= " , ".MAIN_DB_PREFIX."societe as s";
-$sql.= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
-$sql.= " WHERE p.rowid=".$object->id;
-$sql.= " AND pl.fk_prelevement_bons = p.rowid";
-$sql.= " AND p.entity = ".$conf->entity;
-$sql.= " AND pl.fk_soc = s.rowid";
-$sql.= " AND pl.statut = 3 ";
-$sql.= " AND pr.fk_prelevement_lignes = pl.rowid";
-if ($socid) $sql.= " AND s.rowid = ".$socid;
-$sql.= " ORDER BY pl.amount DESC";
+$sql .= " , s.rowid as socid, s.nom as name";
+$sql .= " , pr.motif, pr.afacturer, pr.fk_facture";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql .= " WHERE p.rowid=".$object->id;
+$sql .= " AND pl.fk_prelevement_bons = p.rowid";
+$sql .= " AND p.entity = ".$conf->entity;
+$sql .= " AND pl.fk_soc = s.rowid";
+$sql .= " AND pl.statut = 3 ";
+$sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
+if ($socid) $sql .= " AND s.rowid = ".$socid;
+$sql .= " ORDER BY pl.amount DESC";
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -176,7 +176,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	}
 }
 
-$sql.= $db->plimit($limit+1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -186,7 +186,7 @@ if ($resql)
  	print_barre_liste($langs->trans("Rejects"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 
   	print"\n<!-- debut table -->\n";
-  	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+  	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
   	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   	print '<tr class="liste_titre">';
   	print '<td>'.$langs->trans("Line").'</td><td>'.$langs->trans("ThirdParty").'</td><td class="right">'.$langs->trans("Amount").'</td>';
@@ -203,7 +203,7 @@ if ($resql)
 
     		print '<tr class="oddeven"><td>';
 
-    		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid.'">';
+    		print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/line.php?id='.$obj->rowid.'">';
     		print img_picto('', 'statut'.$obj->statut).' ';
     		print substr('000000'.$obj->rowid, -6);
     		print '</a></td>';
@@ -212,8 +212,8 @@ if ($resql)
     		print '<td class="right">'.price($obj->amount)."</td>\n";
     		print '<td>'.$rej->motifs[$obj->motif].'</td>';
 
-    		print '<td align="center">'.yn($obj->afacturer).'</td>';
-    		print '<td align="center">'.$obj->fk_facture.'</td>';
+    		print '<td class="center">'.yn($obj->afacturer).'</td>';
+    		print '<td class="center">'.$obj->fk_facture.'</td>';
     		print "</tr>\n";
 
     		$total += $obj->amount;
@@ -223,7 +223,7 @@ if ($resql)
 	}
 	else
 	{
-	   print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	    print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
   	if ($num > 0)

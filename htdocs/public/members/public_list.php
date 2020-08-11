@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,14 +24,14 @@
  *  \brief      File sample to list members
  */
 
-if (! defined('NOLOGIN'))		define("NOLOGIN", 1);		// This means this output page does not require to be logged.
-if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1);	// We accept to go on this page from external web site.
-if (! defined('NOIPCHECK'))		define('NOIPCHECK', '1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
+if (!defined('NOLOGIN'))		define("NOLOGIN", 1); // This means this output page does not require to be logged.
+if (!defined('NOCSRFCHECK'))	define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
+if (!defined('NOIPCHECK'))		define('NOIPCHECK', '1'); // Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // TODO This should be useless. Because entity must be retreive from object ref and not from url.
-$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 require '../../main.inc.php';
@@ -79,18 +79,18 @@ function llxFooterVierge()
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $page = GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$filter=GETPOST('filter');
-$statut=GETPOST('statut');
+$filter = GETPOST('filter');
+$statut = GETPOST('statut');
 
-if (! $sortorder) {  $sortorder="ASC"; }
-if (! $sortfield) {  $sortfield="lastname"; }
+if (!$sortorder) {  $sortorder = "ASC"; }
+if (!$sortfield) {  $sortfield = "lastname"; }
 
 
 /*
@@ -99,19 +99,19 @@ if (! $sortfield) {  $sortfield="lastname"; }
 
 $form = new Form($db);
 
-$morehead='';
-if (! empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead='<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
-else $morehead='<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php'.'">';
+$morehead = '';
+if (!empty($conf->global->MEMBER_PUBLIC_CSS)) $morehead = '<link rel="stylesheet" type="text/css" href="'.$conf->global->MEMBER_PUBLIC_CSS.'">';
+else $morehead = '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/eldy/style.css.php'.'">';
 
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
 $sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, birth, photo";
-$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
-$sql.= " WHERE entity = ".$entity;
-$sql.= " AND statut = 1";
-$sql.= " AND public = 1";
-$sql.= $db->order($sortfield, $sortorder);
-$sql.= $db->plimit($conf->liste_limit+1, $offset);
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent";
+$sql .= " WHERE entity = ".$entity;
+$sql .= " AND statut = 1";
+$sql .= " AND public = 1";
+$sql .= $db->order($sortfield, $sortorder);
+$sql .= $db->plimit($conf->liste_limit + 1, $offset);
 //$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, zip, town, d.email, t.libelle as type, d.morphy, d.statut, t.subscription";
 //$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 //$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
@@ -123,9 +123,9 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 
-	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
+	$param = "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
 	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
-	print '<table class="public_border" width="100%">';
+	print '<table class="public_border centpercent">';
 
 	print '<tr class="public_liste_titre">';
 	print '<td><a href="'.$_SERVER["PHP_SELF"].'?page='.$page.'&sortorder=ASC&sortfield=firstname">'.dolGetFirstLastname($langs->trans("Firstname"), $langs->trans("Lastname")).'</a></td>';

@@ -5,18 +5,17 @@ SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Compte comptable per defecte per als pagament
 Salary=Sou
 Salaries=Sous
 NewSalaryPayment=Nou pagament de sous
+AddSalaryPayment=Afegeix pagament de sou
 SalaryPayment=Pagament de sous
 SalariesPayments=Pagaments de sous
 ShowSalaryPayment=Veure pagament de sous
 THM=Tarifa per hora mitjana
 TJM=Tarifa diaria mitjana
 CurrentSalary=Salari actual
-THMDescription=Aquest valor es pot utilitzar per calcular el cost del temps consumit per usuaris en un projecte sencer (si el mòdul del projecte està en ús)
+THMDescription=Aquest valor es pot utilitzar per calcular el cost del temps consumit en un projecte introduït pels usuaris si s'utilitza el projecte de mòdul
 TJMDescription=Aquest valor només és informatiu i no s'utilitza en cap càlcul
 LastSalaries=Últims %s pagaments de salari
 AllSalaries=Tots els pagaments de salari
-<<<<<<< HEAD
-SalariesStatistics=Statistiques salaires
-=======
-SalariesStatistics=Estadistiques de salaris
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
+SalariesStatistics=Estadístiques de salaris
+# Export
+SalariesAndPayments=Salaris i pagaments

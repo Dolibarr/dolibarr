@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -83,7 +83,7 @@ class html_cerfafr extends ModeleDon
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 
-		// Load traductions files requiredby by page
+		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "donations"));
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
@@ -322,82 +322,80 @@ class html_cerfafr extends ModeleDon
 			}
 			elseif ($dix[$i]==2) {
 				if ($unite[$i]==1) {
-				$secon[$i]='vingt et';
-				$prim[$i]=$chif[$unite[$i]];
-				}
-				else {
-				$secon[$i]='vingt';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='vingt et';
+                    $prim[$i]=$chif[$unite[$i]];
+				} else {
+                    $secon[$i]='vingt';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 			}
 			elseif ($dix[$i]==3) {
 				if ($unite[$i]==1) {
-				$secon[$i]='trente et';
-				$prim[$i]=$chif[$unite[$i]];
-				}
-				else {
-				$secon[$i]='trente';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='trente et';
+                    $prim[$i]=$chif[$unite[$i]];
+				} else {
+                    $secon[$i]='trente';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 			}
 			elseif ($dix[$i]==4) {
 				if ($unite[$i]==1) {
-				$secon[$i]='quarante et';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='quarante et';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 				else {
-				$secon[$i]='quarante';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='quarante';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 			}
 			elseif ($dix[$i]==5) {
 				if ($unite[$i]==1) {
-				$secon[$i]='cinquante et';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='cinquante et';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 				else {
-				$secon[$i]='cinquante';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='cinquante';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 			}
 			elseif ($dix[$i]==6) {
 				if ($unite[$i]==1) {
-				$secon[$i]='soixante et';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='soixante et';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 				else {
-				$secon[$i]='soixante';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='soixante';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 			}
 			elseif ($dix[$i]==7) {
 				if ($unite[$i]==1) {
-				$secon[$i]='soixante et';
-				$prim[$i]=$chif[$unite[$i]+10];
+                    $secon[$i]='soixante et';
+                    $prim[$i]=$chif[$unite[$i]+10];
 				}
 				else {
-				$secon[$i]='soixante';
-				$prim[$i]=$chif[$unite[$i]+10];
+                    $secon[$i]='soixante';
+                    $prim[$i]=$chif[$unite[$i]+10];
 				}
 			}
 			elseif ($dix[$i]==8) {
 				if ($unite[$i]==1) {
-				$secon[$i]='quatre-vingts et';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='quatre-vingts et';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 				else {
-				$secon[$i]='quatre-vingt';
-				$prim[$i]=$chif[$unite[$i]];
+                    $secon[$i]='quatre-vingt';
+                    $prim[$i]=$chif[$unite[$i]];
 				}
 			}
 			elseif ($dix[$i]==9) {
 				if ($unite[$i]==1) {
-				$secon[$i]='quatre-vingts et';
-				$prim[$i]=$chif[$unite[$i]+10];
+                    $secon[$i]='quatre-vingts et';
+                    $prim[$i]=$chif[$unite[$i]+10];
 				}
 				else {
-				$secon[$i]='quatre-vingts';
-				$prim[$i]=$chif[$unite[$i]+10];
+                    $secon[$i]='quatre-vingts';
+                    $prim[$i]=$chif[$unite[$i]+10];
 				}
 			}
 			if($cent[$i]==1) $trio[$i]='cent';

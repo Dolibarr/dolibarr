@@ -10,8 +10,8 @@
 */
 
 /**
- *	\file       advtargetingemaling/modules/mailings/advthirdparties.modules.php
- *	\ingroup    advtargetingemaling
+ *	\file       htdocs/core/modules/mailings/advthirdparties.modules.php
+ *	\ingroup    mailing
  *	\brief      Example file to provide a list of recipients for mailing module
  */
 
@@ -31,6 +31,10 @@ class mailing_advthirdparties extends MailingTargets
     public $require_admin=0;
 
     public $require_module=array("none");	// This module should not be displayed as Selector in mailling
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='company';
 
 	/**
@@ -65,7 +69,7 @@ class mailing_advthirdparties extends MailingTargets
         // phpcs:enable
 		global $conf, $langs;
 
-		dol_syslog(get_class($this)."::add_to_target socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
+		dol_syslog(get_class($this)."::add_to_target_spec socid=".var_export($socid, true).' contactid='.var_export($contactid, true));
 
 		$cibles = array();
 
@@ -86,9 +90,8 @@ class mailing_advthirdparties extends MailingTargets
     				$num = $this->db->num_rows($result);
     				$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found", LOG_DEBUG);
+    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found", LOG_DEBUG);
 
-    				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);
@@ -142,9 +145,8 @@ class mailing_advthirdparties extends MailingTargets
     				$num = $this->db->num_rows($result);
     				$i = 0;
 
-    				dol_syslog(get_class($this)."::add_to_target mailing ".$num." targets found");
+    				dol_syslog(get_class($this)."::add_to_target_spec mailing ".$num." targets found");
 
-    				$old = '';
     				while ($i < $num)
     				{
     					$obj = $this->db->fetch_object($result);
@@ -177,8 +179,9 @@ class mailing_advthirdparties extends MailingTargets
 		}
 
 
-		dol_syslog(get_class($this)."::add_to_target mailing cibles=".var_export($cibles, true), LOG_DEBUG);
-		return parent::add_to_target($mailing_id, $cibles);
+		dol_syslog(get_class($this)."::add_to_target_spec mailing cibles=".var_export($cibles, true), LOG_DEBUG);
+
+		return parent::addTargetsToDatabase($mailing_id, $cibles);
 	}
 
 

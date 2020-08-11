@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -48,7 +48,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class SupplierProposalTest extends PHPUnit_Framework_TestCase
+class SupplierProposalTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -231,7 +231,7 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
     	return $localobject;
     }
 
-   /**
+    /**
      * testSupplierProposalOther
      *
      * @param	SupplierProposal	$localobject	Proposal

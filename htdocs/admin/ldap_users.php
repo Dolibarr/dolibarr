@@ -5,6 +5,7 @@
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2016 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -73,6 +74,10 @@ if ($action == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION', GETPOST("fielddescription"), 'chaine', 0, '', $conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID', GETPOST("fieldsid"), 'chaine', 0, '', $conf->entity)) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_TITLE', GETPOST("fieldtitle"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_GROUPID', GETPOST("fieldgroupid"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_USERID', GETPOST("fielduserid"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_HOMEDIRECTORY', GETPOST("fieldhomedirectory"), 'chaine', 0, '', $conf->entity)) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_HOMEDIRECTORYPREFIX', GETPOST("fieldhomedirectoryprefix"), 'chaine', 0, '', $conf->entity)) $error++;
 
 	// This one must be after the others
 	$valkey='';
@@ -115,7 +120,7 @@ if (! function_exists("ldap_connect"))
 
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 
 dol_fiche_head($head, 'users', $langs->trans("LDAPSetup"), -1);
@@ -124,7 +129,7 @@ print $langs->trans("LDAPDescUsers").'<br>';
 print '<br>';
 
 
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
@@ -153,7 +158,7 @@ print '</tr>';
 
 print '</table>';
 print '<br>';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
@@ -301,6 +306,34 @@ print '</td><td>'.$langs->trans("LDAPFieldSidExample").'</td>';
 print '<td class="right"><input type="radio" name="key" value="LDAP_FIELD_SID"'.(($conf->global->LDAP_KEY_USERS && $conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_SID)?' checked':'')."></td>";
 print '</tr>';
 
+// Group id
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldGroupid").'</td><td>';
+print '<input size="25" type="text" name="fieldgroupid" value="'.$conf->global->LDAP_FIELD_GROUPID.'">';
+print '</td><td>'.$langs->trans("LDAPFieldGroupidExample").'</td>';
+print '<td class="right">&nbsp;</td>';
+print '</tr>';
+
+// Userid
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldUserid").'</td><td>';
+print '<input size="25" type="text" name="fielduserid" value="'.$conf->global->LDAP_FIELD_USERID.'">';
+print '</td><td>'.$langs->trans("LDAPFieldUseridExample").'</td>';
+print '<td class="right">&nbsp;</td>';
+print '</tr>';
+
+// Home Directory
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldHomedirectory").'</td><td>';
+print '<input size="25" type="text" name="fieldhomedirectory" value="'.$conf->global->LDAP_FIELD_HOMEDIRECTORY.'">';
+print '</td><td>'.$langs->trans("LDAPFieldHomedirectoryExample").'</td>';
+print '<td class="right">&nbsp;</td>';
+print '</tr>';
+
+// Home Directory Prefix
+print '<tr class="oddeven"><td>'.$langs->trans("LDAPFieldHomedirectoryprefix").'</td><td>';
+print '<input size="25" type="text" name="fieldhomedirectoryprefix" value="'.$conf->global->LDAP_FIELD_HOMEDIRECTORYPREFIX.'">';
+print '</td><td></td>';
+print '<td class="right">&nbsp;</td>';
+print '</tr>';
+
 print '</table>';
 
 print info_admin($langs->trans("LDAPDescValues"));
@@ -445,7 +478,7 @@ if (function_exists("ldap_connect"))
 				}
 			}
 			else
-		   {
+		    {
 				setEventMessages($ldap->error, $ldap->errors, 'errors');
 			}
 

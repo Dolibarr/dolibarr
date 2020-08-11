@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -71,14 +71,14 @@ class box_actions extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $conf;
 
 		$this->max=$max;
 
         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
         include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-        $societestatic = new Societe($db);
-        $actionstatic = new ActionComm($db);
+        $societestatic = new Societe($this->db);
+        $actionstatic = new ActionComm($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo", $max));
 
@@ -90,29 +90,29 @@ class box_actions extends ModeleBoxes
             $sql.= ", s.rowid as socid";
             $sql.= ", s.code_client";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ".MAIN_DB_PREFIX."actioncomm AS a";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
+			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON a.fk_soc = sc.fk_soc";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";
 			$sql.= " AND a.entity = ".$conf->entity;
 			$sql.= " AND a.percent >= 0 AND a.percent < 100";
-			if (! $user->rights->societe->client->voir && ! $user->societe_id) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
-			if($user->societe_id)   $sql.= " AND s.rowid = ".$user->societe_id;
+			if (! $user->rights->societe->client->voir && ! $user->socid) $sql.= " AND (a.fk_soc IS NULL OR sc.fk_user = " .$user->id . ")";
+			if($user->socid)   $sql.= " AND s.rowid = ".$user->socid;
 			if (! $user->rights->agenda->allactions->read) $sql.= " AND (a.fk_user_author = ".$user->id . " OR a.fk_user_action = ".$user->id . " OR a.fk_user_done = ".$user->id . ")";
 			$sql.= " ORDER BY a.datec DESC";
-			$sql.= $db->plimit($max, 0);
+			$sql.= $this->db->plimit($max, 0);
 
 			dol_syslog("Box_actions::loadBox", LOG_DEBUG);
-			$result = $db->query($sql);
+			$result = $this->db->query($sql);
             if ($result) {
 				$now=dol_now();
 				$delay_warning = $conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
-				$num = $db->num_rows($result);
+				$num = $this->db->num_rows($result);
 				$line = 0;
                 while ($line < $num) {
 					$late = '';
-					$objp = $db->fetch_object($result);
-					$datelimite = $db->jdate($objp->dp);
+					$objp = $this->db->fetch_object($result);
+					$datelimite = $this->db->jdate($objp->dp);
                     $actionstatic->id = $objp->id;
                     $actionstatic->label = $objp->label;
                     $actionstatic->type_label = $objp->type_label;
@@ -164,12 +164,12 @@ class box_actions extends ModeleBoxes
                         'text'=>$langs->trans("NoActionsToDo"),
                     );
 
-                $db->free($result);
+                $this->db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
                     'td' => '',
                     'maxlength'=>500,
-                    'text' => ($db->error().' sql='.$sql),
+                    'text' => ($this->db->error().' sql='.$sql),
                 );
             }
         } else {

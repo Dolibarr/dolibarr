@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -64,6 +64,8 @@ class MenuManager
      */
     public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
     {
+    	global $conf, $user, $langs;
+
 		// On sauve en session le menu principal choisi
 		if (isset($_GET["mainmenu"])) $_SESSION["mainmenu"]=$_GET["mainmenu"];
 		if (isset($_GET["idmenu"]))   $_SESSION["idmenu"]=$_GET["idmenu"];
@@ -77,7 +79,7 @@ class MenuManager
         	$_SESSION["leftmenuopened"]="";
         }
         else
-       {
+        {
         	// On va le chercher en session si non defini par le lien
         	$mainmenu=isset($_SESSION["mainmenu"])?$_SESSION["mainmenu"]:'';
         }
@@ -117,7 +119,7 @@ class MenuManager
 
     /**
      *  Show menu.
-     *  Module defined in sql tables were stored into $this->tabMenu BEFORE this is called.
+     *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
      *
      *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
      *  @param	array	$moredata		An array with more data to output

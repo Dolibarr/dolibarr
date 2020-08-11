@@ -270,8 +270,8 @@ CREATE TABLE llx_pos_cash_fence(
 
 
 -- Withdrawals / Prelevements
-UPDATE llx_const set name = 'PRELEVEMENT_END_TO_END' where name = 'END_TO_END';
-UPDATE llx_const set name = 'PRELEVEMENT_USTRD' where name = 'USTRD';
+UPDATE llx_const set name = __ENCRYPT('PRELEVEMENT_END_TO_END')__ where name = __ENCRYPT('END_TO_END')__;
+UPDATE llx_const set name = __ENCRYPT('PRELEVEMENT_USTRD')__ where name = __ENCRYPT('USTRD')__;
 
 
 -- Delete duplicate accounting account, but only if not used
@@ -284,7 +284,6 @@ DELETE from llx_accounting_account where rowid in (select minid from tmp_llx_acc
 --update llx_facturedet        set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_facture_fourn_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
 --update llx_expensereport_det set fk_code_ventilation = maxid WHERE fk_code_ventilation = minid;
-
 
 ALTER TABLE llx_accounting_account DROP INDEX uk_accounting_account;
 ALTER TABLE llx_accounting_account ADD UNIQUE INDEX uk_accounting_account (account_number, entity, fk_pcg_version);

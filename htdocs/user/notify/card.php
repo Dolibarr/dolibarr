@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ $action = GETPOST('action', 'aZ09');
 $actionid=GETPOST('actionid');
 
 // Security check
-if ($user->societe_id) $id=$user->societe_id;
+if ($user->socid) $id=$user->socid;
 $result = restrictedArea($user, 'societe', '', '');
 
 $limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -144,7 +144,7 @@ if ($result > 0)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">';
+    print '<table class="border centpercent tableforfield">';
 
     // Login
     print '<tr><td class="titlefield">'.$langs->trans("Login").'</td>';
@@ -179,10 +179,12 @@ if ($result > 0)
     print "\n";
 
     // Help
+    print '<span class="opacitymedium">';
     print '<br>'.$langs->trans("NotificationsDesc");
     print '<br>'.$langs->trans("NotificationsDescUser");
     print '<br>'.$langs->trans("NotificationsDescContact");
     print '<br>'.$langs->trans("NotificationsDescGlobal");
+    print '</span>';
 
     print '<br><br><br>'."\n";
 
@@ -191,7 +193,7 @@ if ($result > 0)
     print load_fiche_titre($langs->trans("AddNewNotification"), '', '');
 
     print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="post">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="action" value="add">';
 
     $param="&id=".$id;
@@ -206,7 +208,7 @@ if ($result > 0)
 	print "</tr>\n";
 
 
-//    $listofemails=$object->thirdparty_and_contact_email_array();
+    // $listofemails=$object->thirdparty_and_contact_email_array();
     if ($object->email)
     {
         $actions=array();
@@ -292,13 +294,12 @@ if ($result > 0)
 
     if ($num)
     {
-	   $i = 0;
+        $i = 0;
 
         $userstatic=new user($db);
 
         while ($i < $num)
         {
-
             $obj = $db->fetch_object($resql);
 
             $userstatic->id=$obj->userid;
@@ -432,7 +433,7 @@ if ($result > 0)
 
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<input type="hidden" name="token" value="'.newToken().'">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';

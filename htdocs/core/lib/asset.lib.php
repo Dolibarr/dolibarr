@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,7 +48,7 @@ function asset_admin_prepare_head()
 	//$this->tabs = array(
 	//	'entity:-tabname:Title:@assets:/asset/mypage.php?id=__ID__'
 	//); // to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assets_admin');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'assets_admin');
 
 	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/assets_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
@@ -60,7 +60,7 @@ function asset_admin_prepare_head()
 	$head[$h][2] = 'attributes_type';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assets_admin', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'assets_admin', 'remove');
 
 	return $head;
 }
@@ -68,11 +68,12 @@ function asset_admin_prepare_head()
 /**
  * Prepare admin pages header
  *
+ * @param   Contrat	$object		Object related to tabs
  * @return array head array with tabs
  */
-function asset_prepare_head()
+function asset_prepare_head(Asset $object)
 {
-	global $langs, $conf;
+	global $db, $langs, $conf;
 
 	$langs->load("assets");
 
@@ -96,12 +97,12 @@ function asset_prepare_head()
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-	$upload_dir = $conf->assets->dir_output . '/' . get_exdir($filename, 2, 0, 1, $object, 'assets'). '/'. dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->assets->dir_output . '/' . dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/asset/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
 	$h++;
 
@@ -110,7 +111,7 @@ function asset_prepare_head()
 	if(!empty($object->note_public)) $nbNote++;
 	$head[$h][0] = DOL_URL_ROOT.'/asset/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Notes");
-	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
+	if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
 

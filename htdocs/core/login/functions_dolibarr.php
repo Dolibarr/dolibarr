@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -110,7 +110,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 				else
 				{
 				    sleep(2);      // Anti brut force protection
-				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko bad password for '".$usertotest."', cryptType=".$cryptType);
+				    dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO bad password for '".$usertotest."', cryptType=".$cryptType, LOG_NOTICE);
 
 					// Load translation files required by the page
                     $langs->loadLangs(array('main', 'errors'));
@@ -129,7 +129,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 						$ret = $mc->checkRight($obj->rowid, $entitytotest);
 						if ($ret < 0)
 						{
-							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko entity '" . $entitytotest . "' not allowed for user '" . $obj->rowid . "'");
+							dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO entity '" . $entitytotest . "' not allowed for user '" . $obj->rowid . "'", LOG_NOTICE);
 							$login = ''; // force authentication failure
 						}
 					}
@@ -137,7 +137,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 			}
 			else
 			{
-				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko user not found for '".$usertotest."'");
+				dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO user not found for '".$usertotest."'", LOG_NOTICE);
 				sleep(1);
 
 				// Load translation files required by the page
@@ -148,7 +148,7 @@ function check_user_password_dolibarr($usertotest, $passwordtotest, $entitytotes
 		}
 		else
 		{
-			dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentification ko db error for '".$usertotest."' error=".$db->lasterror());
+			dol_syslog("functions_dolibarr::check_user_password_dolibarr Authentication KO db error for '".$usertotest."' error=".$db->lasterror(), LOG_ERR);
 			sleep(1);
 			$_SESSION["dol_loginmesg"]=$db->lasterror();
 		}

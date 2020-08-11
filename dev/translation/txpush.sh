@@ -9,6 +9,9 @@
 
 export project='dolibarr'
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR/../..
+
 # Syntax
 if [ "x$1" = "x" ]
 then

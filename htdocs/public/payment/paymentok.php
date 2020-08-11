@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -109,7 +109,7 @@ $ErrorCode=$ErrorShortMsg=$ErrorLongMsg=$ErrorSeverityCode='';
 
 $object = new stdClass();   // For triggers
 
-
+$error = 0;
 
 
 /*
@@ -205,11 +205,11 @@ if (! empty($conf->paypal->enabled))
 		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 		        {
 		        	// Nothing to do
-		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack, LOG_DEBUG, 0, '_payment');
 		        }
 		        else
 		        {
-		        	dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING);
+		        	dol_syslog("Call to GetExpressCheckoutDetails return error: ".json_encode($resArray), LOG_WARNING, '_payment');
 		        }
 
 		        dol_syslog("We call DoExpressCheckoutPayment token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
@@ -219,7 +219,7 @@ if (! empty($conf->paypal->enabled))
 		        $ack = strtoupper($resArray2["ACK"]);
 		        if ($ack=="SUCCESS" || $ack=="SUCCESSWITHWARNING")
 		        {
-		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack);
+		        	dol_syslog("Call to GetExpressCheckoutDetails return ".$ack, LOG_DEBUG, 0, '_payment');
 
 		        	$object->source		= $source;
 		        	$object->ref		= $ref;
@@ -238,7 +238,7 @@ if (! empty($conf->paypal->enabled))
 		        }
 		        else
 		        {
-		        	dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING);
+		        	dol_syslog("Call to DoExpressCheckoutPayment return error: ".json_encode($resArray2), LOG_WARNING, 0, '_payment');
 
 		            //Display a user friendly Error on the page using any of the following error information returned by PayPal
 		            $ErrorCode = urldecode($resArray2["L_ERRORCODE0"]);
@@ -316,6 +316,8 @@ if ($ispaymentok)
 		$result1 = $object->fetch($tmptag['MEM']);
 		$result2 = $adht->fetch($object->typeid);
 
+		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
+
 		if ($result1 > 0 && $result2 > 0)
 		{
 			$paymentTypeId = 0;
@@ -329,7 +331,9 @@ if ($ispaymentok)
 				$paymentTypeId = dol_getIdFromCode($db, $paymentType, 'c_paiement', 'code', 'id', 1);
 			}
 
-			$currencyCodeType   = $_SESSION['currencyCodeType'];
+			$currencyCodeType = $_SESSION['currencyCodeType'];
+
+			dol_syslog("FinalPaymentAmt=".$FinalPaymentAmt." paymentTypeId=".$paymentTypeId, LOG_DEBUG, 0, '_payment');
 
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (! empty($FinalPaymentAmt) && $paymentTypeId > 0)
@@ -342,6 +346,7 @@ if ($ispaymentok)
 					$postactionmessages[] = $errmsg;
 					$postactionmessages = array_merge($postactionmessages, $object->errors);
 					$ispostactionok = -1;
+					dol_syslog("Failed to validate member: ".$errmsg, LOG_ERR, 0, '_payment');
 				}
 
 				// Subscription informations
@@ -366,9 +371,10 @@ if ($ispaymentok)
 				if ($accountid < 0)
 				{
 					$error++;
-					$errmsg='Setup of bank accout to use for payment is not correctly done for payment method '.$paymentmethod;
+					$errmsg='Setup of bank account to use for payment is not correctly done for payment method '.$paymentmethod;
 					$postactionmessages[] = $errmsg;
 					$ispostactionok = -1;
+					dol_syslog("Failed to get the bank account to record payment: ".$errmsg, LOG_ERR, 0, '_payment');
 				}
 
 				$operation=$paymentType; // Payment mode code
@@ -471,18 +477,26 @@ if ($ispaymentok)
 
 						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
 						{
-							dol_syslog("No stripe profile found, so we add it", LOG_DEBUG, 0, '_payment');
+							dol_syslog("No stripe profile found, so we add it for TRANSACTIONID = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
-							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
-							$stripecu = $ch->customer;							// value 'cus_....'
+							try {
+								$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
+								$stripecu = $ch->customer;							// value 'cus_....'
 
-							$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
-							$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', " . $servicestatus . ", " . $conf->entity . ", '".$db->idate(dol_now())."', 0)";
-							$resql = $db->query($sql);
-							if (! $resql)
-							{
+								$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
+								$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', " . $servicestatus . ", " . $conf->entity . ", '".$db->idate(dol_now())."', 0)";
+								$resql = $db->query($sql);
+								if (! $resql)
+								{
+									$error++;
+									$errmsg='Failed to save customer stripe id in database ; '.$db->lasterror();
+									$postactionmessages[] = $errmsg;
+									$ispostactionok = -1;
+								}
+							}
+							catch(Exception $e) {
 								$error++;
-								$errmsg='Failed to save customer stripe id in database ; '.$db->lasterror();
+								$errmsg='Failed to save customer stripe id in database ; '.$e->getMessage();
 								$postactionmessages[] = $errmsg;
 								$ispostactionok = -1;
 							}
@@ -516,7 +530,7 @@ if ($ispaymentok)
 						// Set output language
 						$outputlangs = new Translate('', $conf);
 						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
-						// Load traductions files requiredby by page
+						// Load traductions files required by page
 						$outputlangs->loadLangs(array("main", "members"));
 						// Get email content from template
 						$arraydefaultmessage=null;
@@ -836,10 +850,12 @@ if ($ispaymentok)
 		if ($result)
 		{
 			dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0, '_payment');
+			//dol_syslog("EMail sent to ".$sendto, LOG_DEBUG, 0);
 		}
 		else
 		{
 			dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
+			//dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0);
 		}
 	}
 }

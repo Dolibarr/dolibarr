@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -30,17 +30,17 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("banks","categories",'withdrawals','bills'));
+$langs->loadLangs(array("banks", "categories", 'withdrawals', 'bills'));
 
 // Security check
-if ($user->societe_id > 0) accessforbidden();
+if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
@@ -72,7 +72,7 @@ if ($prev_id > 0 || $ref)
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border centpercent">'."\n";
+		print '<table class="border centpercent tableforfield">'."\n";
 
 		//print '<tr><td class="titlefield">'.$langs->trans("Ref").'</td><td>'.$object->getNomUrl(1).'</td></tr>';
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
@@ -85,7 +85,7 @@ if ($prev_id > 0 || $ref)
 		print '</tr>';
 		*/
 
-		if($object->date_trans <> 0)
+		if ($object->date_trans <> 0)
 		{
 			$muser = new User($db);
 			$muser->fetch($object->user_trans);
@@ -97,7 +97,7 @@ if ($prev_id > 0 || $ref)
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
 		}
-		if($object->date_credit <> 0)
+		if ($object->date_credit <> 0)
 		{
 			print '<tr><td>'.$langs->trans('CreditDate').'</td><td>';
 			print dol_print_date($object->date_credit, 'day');
@@ -109,10 +109,10 @@ if ($prev_id > 0 || $ref)
 		print '<br>';
 
 		print '<div class="underbanner clearboth"></div>';
-		print '<table class="border" width="100%">';
+		print '<table class="border centpercent tableforfield">';
 
 		$acc = new Account($db);
-		$result=$acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 		print '<tr><td class="titlefield">';
 		print $langs->trans("BankToReceiveWithdraw");
@@ -142,14 +142,14 @@ if ($prev_id > 0 || $ref)
 	/*
 	 * Stats
 	 */
-	$ligne=new LignePrelevement($db, $user);
+	$ligne = new LignePrelevement($db, $user);
 
 	$sql = "SELECT sum(pl.amount), pl.statut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
-	$sql.= " WHERE pl.fk_prelevement_bons = ".$object->id;
-	$sql.= " GROUP BY pl.statut";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+	$sql .= " WHERE pl.fk_prelevement_bons = ".$object->id;
+	$sql .= " GROUP BY pl.statut";
 
-	$resql=$db->query($sql);
+	$resql = $db->query($sql);
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -174,7 +174,7 @@ if ($prev_id > 0 || $ref)
 			print price($row[0]);
 
 			print '</td><td class="right">';
-			if ($object->amount) print round($row[0]/$object->amount*100, 2)." %";
+			if ($object->amount) print round($row[0] / $object->amount * 100, 2)." %";
 			print '</td>';
 
 			print "</tr>\n";
@@ -188,7 +188,7 @@ if ($prev_id > 0 || $ref)
 	}
 	else
 	{
-		print $db->error() . ' ' . $sql;
+		print $db->error().' '.$sql;
 	}
 }
 

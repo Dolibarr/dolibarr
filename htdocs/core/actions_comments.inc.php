@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  *
  * $elementype must be defined.
  */
@@ -56,6 +56,24 @@ if ($action == 'addcomment')
 			$action='';
 		}
 	}
+}
+if ($action === 'updatecomment')
+{
+    if ($comment->fetch($idcomment) >= 0)
+    {
+        $comment->description = GETPOST('comment_description', 'none');
+        if ($comment->update($user) > 0)
+        {
+            setEventMessages($langs->trans("CommentAdded"), null, 'mesgs');
+            header('Location: '.$varpage.'?id='.$id.($withproject?'&withproject=1#comment':''));
+            exit;
+        }
+        else
+        {
+            setEventMessages($comment->error, $comment->errors, 'errors');
+            $action='';
+        }
+    }
 }
 if ($action == 'deletecomment')
 {

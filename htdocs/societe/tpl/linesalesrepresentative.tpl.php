@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Protection to avoid direct call of template
@@ -42,6 +42,8 @@ if ($nbofsalesrepresentative > 0)
 		$userstatic->statut=$val['statut'];
 		$userstatic->photo=$val['photo'];
 		$userstatic->email=$val['email'];
+		$userstatic->phone=$val['phone'];
+		$userstatic->job=$val['job'];
 		$userstatic->entity=$val['entity'];
 		print $userstatic->getNomUrl(-1);
 		print ' ';

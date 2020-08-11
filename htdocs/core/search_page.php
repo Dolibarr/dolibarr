@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -113,9 +113,9 @@ else $searchform=$hookmanager->resPrint;
 
 print "\n";
 print "<!-- Begin SearchForm -->\n";
-print '<div class="center" align="center"><div align="center" style="padding: 6px;">';
+print '<div class="center"><div class="center" style="padding: 6px;">';
 print '<style>.menu_titre { padding-top: 7px; }</style>';
-print '<div id="blockvmenusearch">'."\n";
+print '<div id="blockvmenusearch" class="tagtable center searchpage">'."\n";
 print $searchform;
 print '</div>'."\n";
 print '</div></div>';

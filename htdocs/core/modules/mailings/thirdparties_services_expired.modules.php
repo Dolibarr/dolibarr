@@ -28,6 +28,10 @@ class mailing_thirdparties_services_expired extends MailingTargets
     public $require_admin=0;
 
     public $require_module=array('contrat');
+
+    /**
+     * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
+     */
     public $picto='company';
 
     /**
@@ -159,7 +163,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
         // ----- Your code end here -----
 
-        return parent::add_to_target($mailing_id, $cibles);
+        return parent::addTargetsToDatabase($mailing_id, $cibles);
     }
 
 

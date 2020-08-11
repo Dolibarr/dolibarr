@@ -17,7 +17,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
-$action=GETPOST('action', 'aZ09');
-$optioncss  = GETPOST('optioncss', 'aZ');												// Option for the css output (always '' except when 'print')
+$action = GETPOST('action', 'aZ09');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 if (!$user->rights->banque->configurer)
   accessforbidden();
@@ -59,10 +59,8 @@ if ($categid) {
 	$bankcateg = new BankCateg($db);
 
 	if ($bankcateg->fetch($categid) > 0) {
-
 		//Update category
 		if (GETPOST('update') && $label) {
-
 			$bankcateg->label = $label;
 			$bankcateg->update($user);
 		}
@@ -85,7 +83,7 @@ print load_fiche_titre($langs->trans("RubriquesTransactions"));
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
 /*print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -94,8 +92,8 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 */
 
-print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";
@@ -103,7 +101,6 @@ print "</tr>\n";
 // Line to add category
 if ($action != 'edit')
 {
-
 	print '<tr class="oddeven">';
 	print '<td>&nbsp;</td><td><input name="label" type="text" size="45"></td>';
 	print '<td class="center"><input type="submit" name="add" class="button" value="'.$langs->trans("Add").'"></td>';
@@ -112,9 +109,9 @@ if ($action != 'edit')
 
 
 $sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
-$sql.= " WHERE entity = ".$conf->entity;
-$sql.= " ORDER BY label";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_categ";
+$sql .= " WHERE entity = ".$conf->entity;
+$sql .= " ORDER BY label";
 
 $result = $db->query($sql);
 if ($result)
@@ -128,7 +125,7 @@ if ($result)
 
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/budget.php?bid='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid")== $objp->rowid)
+		if (GETPOST('action', 'aZ09') == 'edit' && GETPOST("categid") == $objp->rowid)
 		{
 			print "<td colspan=2>";
 			print '<input type="hidden" name="categid" value="'.$objp->rowid.'">';
@@ -142,7 +139,8 @@ if ($result)
 			print "<td >".$objp->label."</td>";
 			print '<td style="text-align: center;">';
 			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=edit">'.img_edit().'</a>&nbsp;&nbsp;';
-			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a></td>';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?categid='.$objp->rowid.'&amp;action=delete">'.img_delete().'</a>';
+			print '</td>';
 		}
 		print "</tr>";
 		$i++;

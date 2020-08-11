@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,10 +39,10 @@ $langs->load("commercial");
 $id = GETPOST('id', 'int');
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+    $action = '';
+    $socid = $user->socid;
 }
 
 $result = restrictedArea($user, 'agenda', $id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id');
@@ -102,7 +102,7 @@ if (! empty($conf->projet->enabled))
 }
 $morehtmlref.='</div>';
 
-dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
+dol_banner_tab($object, 'id', $linkback, ($user->socid?0:1), 'id', 'ref', $morehtmlref);
 
 print '<div class="underbanner clearboth"></div>';
 

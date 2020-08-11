@@ -410,3 +410,9 @@ source_file = htdocs/langs/en_US/workflow.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.zapier]
+file_filter = htdocs/langs/<lang>/zapier.lang
+source_file = htdocs/langs/en_US/zapier.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+

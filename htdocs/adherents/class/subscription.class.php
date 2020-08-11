@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -43,6 +43,11 @@ class Subscription extends CommonObject
     public $table_element='subscription';
 
     /**
+     * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
+     */
+    public $ismultientitymanaged = 'fk_adherent@adherent';
+
+    /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
     public $picto='payment';
@@ -53,21 +58,21 @@ class Subscription extends CommonObject
      * @var integer
      */
     public $datec;
-    
+
     /**
      * Date modification record (tms)
      *
      * @var integer
      */
     public $datem;
-    
+
     /**
      * Subscription start date (date subscription)
      *
      * @var integer
      */
     public $dateh;
-    
+
     /**
      * Subscription end date
      *
@@ -87,6 +92,21 @@ class Subscription extends CommonObject
      * @var int ID
      */
     public $fk_bank;
+
+    public $fields=array(
+    	'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+    	'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
+    	'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
+    	'fk_adherent' =>array('type'=>'integer', 'label'=>'Member', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+    	'dateadh' =>array('type'=>'datetime', 'label'=>'DateSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+    	'datef' =>array('type'=>'date', 'label'=>'DateEndSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+    	'subscription' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'isameasure'=>1),
+    	'fk_bank' =>array('type'=>'integer', 'label'=>'BankId', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+    	'note' =>array('type'=>'text', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+    	'fk_type' =>array('type'=>'integer', 'label'=>'MemberType', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+    	'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
+    	'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+    );
 
 
     /**
@@ -128,10 +148,11 @@ class Subscription extends CommonObject
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
 
-        if ($this->fk_type == null) {
-            require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-            $member=new Adherent($this->db);
-            $result=$member->fetch($this->fk_adherent);
+        require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+        $member=new Adherent($this->db);
+        $result=$member->fetch($this->fk_adherent);
+
+        if ($this->fk_type == null) {	// If type not defined, we use the type of member
             $type=$member->typeid;
         } else {
             $type=$this->fk_type;
@@ -151,11 +172,13 @@ class Subscription extends CommonObject
         if (! $error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+            $this->fk_type = $type;
         }
 
         if (! $error && ! $notrigger)
         {
-            // Call triggers
+        	$this->context = array('member'=>$member);
+        	// Call triggers
             $result=$this->call_trigger('MEMBER_SUBSCRIPTION_CREATE', $user);
             if ($result < 0) { $error++; }
             // End call triggers
@@ -257,7 +280,8 @@ class Subscription extends CommonObject
             $result=$member->update_end_date($user);
 
             if (! $error && ! $notrigger) {
-                // Call triggers
+            	$this->context = array('member'=>$member);
+            	// Call triggers
                 $result=$this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
                 if ($result < 0) { $error++; } //Do also here what you must do to rollback action if trigger fail
                 // End call triggers
@@ -427,10 +451,10 @@ class Subscription extends CommonObject
     /**
      *  Renvoi le libelle d'un statut donne
      *
-     *  @param	int			$statut      			Id statut
+     *  @param	int			$status      			Id status
      *  @return string      						Label
      */
-    public function LibStatut($statut)
+    public function LibStatut($status)
     {
         // phpcs:enable
         global $langs;

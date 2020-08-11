@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -520,15 +520,19 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
 
         $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 0);
-        $this->assertEquals("A string\n\n\n\n\nwith html tag", $after, "test2a 2 br and 3 \n give 5 \n");
+        $this->assertEquals("A string\n\n\n\n\nwith html tag", $after, 'test2a 2 br and 3 \n give 5 \n');
 
         $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 1);
-        $this->assertEquals("A string with html tag", $after, "test2b 2 br and 3 \n give 1 space");
+        $this->assertEquals("A string with html tag", $after, 'test2b 2 br and 3 \n give 1 space');
 
         $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 2);
-        $this->assertEquals("A string\n\nwith html tag", $after, "test2c 2 br and 3 \n give 2 \n");
+        $this->assertEquals("A string\n\nwith html tag", $after, 'test2c 2 br and 3 \n give 2 \n');
+
+        $text="A <b>string<b><br>\r\n<br>\r\n\r\nwith html tag<br>\n";
+        $after=dol_string_nohtmltag($text, 2);
+        $this->assertEquals("A string\n\nwith html tag", $after, 'test2c 2 br and 3 \r\n give 2 \n');
 
         $text="A string<br>Another string";
         $after=dol_string_nohtmltag($text, 0);
@@ -673,6 +677,26 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $filecontent=file_get_contents($file);
         $result=utf8_check($filecontent);
         $this->assertFalse($result);
+    }
+
+    /**
+     * testDolAsciiCheck
+     *
+     * @return void
+     */
+    public function testDolAsciiCheck()
+    {
+    	// True
+    	$result=ascii_check('azerty');
+    	$this->assertTrue($result);
+
+    	$result=ascii_check('é');
+    	$this->assertFalse($result);
+
+    	$file=dirname(__FILE__).'/textutf8.txt';
+    	$filecontent=file_get_contents($file);
+    	$result=ascii_check($filecontent);
+    	$this->assertFalse($result);
     }
 
     /**
@@ -901,7 +925,7 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
     {
         $s=img_picto('title', 'user');
         print __METHOD__." s=".$s."\n";
-        $this->assertContains('theme', $s, 'testImgPicto1');
+        $this->assertContains('fa-user', $s, 'testImgPicto1');
 
         $s=img_picto('title', 'img.png', 'style="float: right"', 0);
         print __METHOD__." s=".$s."\n";
@@ -1259,5 +1283,25 @@ class FunctionsLibTest extends PHPUnit\Framework\TestCase
         $this->assertEquals($newstring, 'This is a string with eldy and ltr and __C replaced__');
 
         return true;
+    }
+
+    /**
+     * testDolStringIsGoodIso
+     *
+     * @return boolean
+     */
+    public function testDolStringIsGoodIso()
+    {
+    	global $conf, $langs;
+
+    	$chaine='This is an ISO string';
+    	$result = dol_string_is_good_iso($chaine);
+    	$this->assertEquals($result, 1);
+
+    	$chaine='This is a not ISO string '.chr(0);
+    	$result = dol_string_is_good_iso($chaine);
+    	$this->assertEquals($result, 0);
+
+    	return true;
     }
 }

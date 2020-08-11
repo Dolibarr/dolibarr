@@ -1,23 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Impostazioni Paypal
-PaypalDesc=Questo modulo permette al cliente di pagare tramite <a href="http://www.paypal.com" target="_blank">PayPal</a>. Può essere usato per un pagamento generico o di uno specifico documento (fattura, ordine, ...)
-PaypalOrCBDoPayment=Paga con Paypal (Carta di Credito o Paypal)
-PaypalDoPayment=Paga con Paypal
+PaypalDesc=This module allows payment by customers via <a href="http://www.paypal.com" target="_blank">PayPal</a>. This can be used for a ad-hoc payment or for a payment related to a Dolibarr object (invoice, order, ...)
+PaypalOrCBDoPayment=Pay with PayPal (Card or PayPal)
+PaypalDoPayment=Pay with PayPal
 PAYPAL_API_SANDBOX=Modalità di test/sandbox
 PAYPAL_API_USER=Nome utente API
 PAYPAL_API_PASSWORD=Password API
 PAYPAL_API_SIGNATURE=Firma API
 PAYPAL_SSLVERSION=Versione SSL Curl
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offerta di pagamento completo (Carta di credito + Paypal) o solo Paypal
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Offer "integral" payment (Credit card+PayPal) or "PayPal" only
 PaypalModeIntegral=Completo
 PaypalModeOnlyPaypal=Solo PayPal
-ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ONLINE_PAYMENT_CSS_URL=Optional URL of CSS stylesheet on online payment page
 ThisIsTransactionId=L'id di transazione è: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Aggiungere l'URL di pagamento Paypal quando si invia un documento per posta
-YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
+PAYPAL_ADD_PAYMENT_URL=Include the PayPal payment url when you send a document by email
 NewOnlinePaymentReceived=Nuovo pagamento online ricevuto
 NewOnlinePaymentFailed=Nuovo tentativo di pagamento online fallito
-ONLINE_PAYMENT_SENDEMAIL=Email di avviso dopo un pagamento (a buon fine o no)
+ONLINE_PAYMENT_SENDEMAIL=Email address for notifications after each payment attempt (for success and fail)
 ReturnURLAfterPayment=URL di ritorno dopo il pagamento
 ValidationOfOnlinePaymentFailed=Validazione del pagamento online fallita
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error
@@ -28,7 +27,10 @@ ShortErrorMessage=Messaggio di errore breve
 ErrorCode=Codice errore
 ErrorSeverityCode=Error Severity Code
 OnlinePaymentSystem=Sistema di pagamento online
-PaypalLiveEnabled=Paypal live enabled (otherwise test/sandbox mode)
-PaypalImportPayment=Import Paypal payments
+PaypalLiveEnabled=PayPal "live" mode enabled (otherwise test/sandbox mode)
+PaypalImportPayment=Import PayPal payments
 PostActionAfterPayment=Post actions after payments
 ARollbackWasPerformedOnPostActions=A rollback was performed on all Post actions. You must complete post actions manually if they are necessary.
+ValidationOfPaymentFailed=Validation of payment has failed
+CardOwner=Card holder
+PayPalBalance=Paypal credit

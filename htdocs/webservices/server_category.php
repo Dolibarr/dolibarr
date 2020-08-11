@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -218,49 +218,49 @@ function getCategory($authentication, $id)
 			$result=$categorie->fetch($id);
 			if ($result > 0)
 			{
-					$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
-					$pdir = get_exdir($categorie->id, 2, 0, 0, $categorie, 'category') . $categorie->id ."/photos/";
-					$dir = $dir . '/'. $pdir;
+				$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
+				$pdir = get_exdir($categorie->id, 2, 0, 0, $categorie, 'category') . $categorie->id ."/photos/";
+				$dir = $dir . '/'. $pdir;
 
-					$cat = array(
-						'id' => $categorie->id,
-						'id_mere' => $categorie->id_mere,
-						'label' => $categorie->label,
-						'description' => $categorie->description,
-						'socid' => $categorie->socid,
-						//'visible'=>$categorie->visible,
-						'type' => $categorie->type,
-						'dir' => $pdir,
-						'photos' => $categorie->liste_photos($dir, $nbmax)
-			    	);
+				$cat = array(
+					'id' => $categorie->id,
+					'id_mere' => $categorie->id_mere,
+					'label' => $categorie->label,
+					'description' => $categorie->description,
+					'socid' => $categorie->socid,
+					//'visible'=>$categorie->visible,
+					'type' => $categorie->type,
+					'dir' => $pdir,
+					'photos' => $categorie->liste_photos($dir, $nbmax)
+		    	);
 
-					$cats = $categorie->get_filles();
-					if (count($cats) > 0)
+				$cats = $categorie->get_filles();
+				if (count($cats) > 0)
+				{
+				 	foreach($cats as $fille)
 					{
-					 	foreach($cats as $fille)
-						{
-							$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
-							$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category') . $fille->id ."/photos/";
-							$dir = $dir . '/'. $pdir;
-							$cat['filles'][] = array(
-								'id'=>$fille->id,
-								'id_mere' => $categorie->id_mere,
-								'label'=>$fille->label,
-								'description'=>$fille->description,
-								'socid'=>$fille->socid,
-								//'visible'=>$fille->visible,
-								'type'=>$fille->type,
-								'dir' => $pdir,
-								'photos' => $fille->liste_photos($dir, $nbmax)
-							);
-						}
+						$dir = (!empty($conf->categorie->dir_output)?$conf->categorie->dir_output:$conf->service->dir_output);
+						$pdir = get_exdir($fille->id, 2, 0, 0, $categorie, 'category') . $fille->id ."/photos/";
+						$dir = $dir . '/'. $pdir;
+						$cat['filles'][] = array(
+							'id'=>$fille->id,
+							'id_mere' => $categorie->id_mere,
+							'label'=>$fille->label,
+							'description'=>$fille->description,
+							'socid'=>$fille->socid,
+							//'visible'=>$fille->visible,
+							'type'=>$fille->type,
+							'dir' => $pdir,
+							'photos' => $fille->liste_photos($dir, $nbmax)
+						);
 					}
+				}
 
 			    // Create
 			    $objectresp = array(
 					'result'=>array('result_code'=>'OK', 'result_label'=>''),
 					'categorie'=> $cat
-			   );
+			    );
 			}
 			else
 			{

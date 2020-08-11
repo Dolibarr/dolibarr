@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * Library javascript to enable Browser notifications
  */
@@ -140,5 +140,5 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
         time_js_next_test += time_auto_update;
 		console.log('Updated time_js_next_test. New value is '+time_js_next_test);
     }
-<?php
+    <?php
 }

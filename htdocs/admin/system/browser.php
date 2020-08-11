@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -47,14 +47,17 @@ $tmp=getBrowserInfo($_SERVER["HTTP_USER_AGENT"]);
 
 // Browser
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td colspan="2">'.$langs->trans("Value").'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("UserAgent").'</td><td colspan="2">'.$_SERVER['HTTP_USER_AGENT'].'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("UserAgent").'</td><td colspan="2">'.dol_escape_htmltag($_SERVER['HTTP_USER_AGENT']).'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserName").'</td><td colspan="2">'.$tmp['browsername'].'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("BrowserOS").'</td><td colspan="2">'.$tmp['browseros'].'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Version").'</td><td colspan="2">'.$tmp['browserversion'].'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("Layout").' (phone/tablet/classic)</td><td colspan="2">'.$tmp['layout'].'</td></tr>'."\n";
-print '<tr class="oddeven"><td width="300">'.$langs->trans("IPAddress").'</td><td colspan="2">'.$_SERVER['REMOTE_ADDR'].'</td></tr>'."\n";
+print '<tr class="oddeven"><td width="300">'.$langs->trans("IPAddress").'</td><td colspan="2">'.dol_escape_htmltag($_SERVER['REMOTE_ADDR']);
+if (! empty($_SERVER['HTTP_CLIENT_IP'])) print ' (HTTP_CLIENT_IP='.dol_escape_htmltag($_SERVER['HTTP_CLIENT_IP']).')';
+if (! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) print ' (HTTP_X_FORWARDED_FOR='.dol_escape_htmltag($_SERVER['HTTP_X_FORWARDED_FOR']).')';
+print '</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionName").'</td><td colspan="2">'.session_name().'</td></tr>'."\n";
 print '<tr class="oddeven"><td width="300">'.$langs->trans("SessionId").'</td><td colspan="2">'.session_id().'</td></tr>'."\n";
 

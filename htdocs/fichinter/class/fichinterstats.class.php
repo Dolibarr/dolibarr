@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -86,7 +86,7 @@ class FichinterStats extends Stats
      * Return intervention number by month for a year
      *
      * @param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      * @return	array				Array with number by month
      */
     public function getNbByMonth($year, $format = 0)
@@ -129,7 +129,7 @@ class FichinterStats extends Stats
      * Return the intervention amount by month for a year
      *
      * @param	int		$year		Year to scan
-     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+     *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
      * @return	array				Array with amount by month
      */
     public function getAmountByMonth($year, $format = 0)
@@ -200,7 +200,7 @@ class FichinterStats extends Stats
 
         $sql = "SELECT product.ref, COUNT(product.ref) as nb, 0 as total, 0 as avg";
         $sql.= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-        //if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        //if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql.= " WHERE ".$this->where;
         $sql.= " AND c.rowid = tl.fk_fichinter AND tl.fk_product = product.rowid";
         $sql.= " AND c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";

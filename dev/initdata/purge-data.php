@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * THIS SCRIPT DELETE ALL MAIN TABLE CONTENT
  * WARNING, DO NOT USE ON A PRODUCTION INSTANCE
@@ -64,6 +64,10 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."paiement_facture where fk_facture IN (select rowid FROM ".MAIN_DB_PREFIX."facture where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."paiement where rowid NOT IN (SELECT fk_paiement FROM ".MAIN_DB_PREFIX."paiement_facture)",
     ),
+    'supplier_payment'=>array(
+    	"DELETE FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn where fk_facturefourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
+    	"DELETE FROM ".MAIN_DB_PREFIX."paiementfourn where rowid NOT IN (SELECT fk_paiementfourn FROM ".MAIN_DB_PREFIX."paiementfourn_facturefourn)",
+    ),
     'bank'=>array(
         "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank IN (SELECT rowid FROM ".MAIN_DB_PREFIX."bank WHERE datec < '__DATE__')",
@@ -103,6 +107,7 @@ $sqls=array(
         "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur where date_creation < '__DATE__'",
     ),
 	'supplier_invoice'=>array(
+		'@supplier_payment',
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn IN (select rowid FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__')",
         "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn where datec < '__DATE__'",
     ),

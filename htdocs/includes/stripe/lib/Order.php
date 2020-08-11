@@ -23,7 +23,7 @@ namespace Stripe;
  * @property Collection $returns
  * @property string $selected_shipping_method
  * @property mixed $shipping
- * @property mixed $shipping_methods
+ * @property array $shipping_methods
  * @property string $status
  * @property mixed $status_transitions
  * @property int $updated

@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -39,7 +39,7 @@ $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
@@ -137,7 +137,7 @@ if ($id > 0 || ! empty($ref))
 
 	// Object
 
-	print '<table width="100%" class="border">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Resource type
 	print '<tr>';

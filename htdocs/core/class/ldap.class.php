@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -609,7 +609,7 @@ class Ldap
 		}
 		if ($result <= 0)
 		{
-			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection)." ".$this->error;
+			$this->error = ldap_error($this->connection).' (Code '.ldap_errno($this->connection).") ".$this->error;
 			dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 			//print_r($info);
 			return -1;
@@ -944,7 +944,7 @@ class Ldap
 		// Only one entry should ever be returned
 		$entry = ldap_first_entry($this->connection, $search);
 
-		if (!$entry)
+		if (! $entry)
 		{
 			$this->ldapErrorCode = -1;
 			$this->ldapErrorText = "Couldn't find entry";
@@ -952,7 +952,7 @@ class Ldap
 		}
 
 		// Get values
-		if (! $values = ldap_get_attributes($this->connection, $entry))
+		if (! ($values = ldap_get_attributes($this->connection, $entry)))
 		{
 			$this->ldapErrorCode = ldap_errno($this->connection);
 			$this->ldapErrorText = ldap_error($this->connection);
@@ -1362,12 +1362,12 @@ class Ldap
 		}
 	}
 
-   /**
-    * 	UserAccountControl Flgs to more human understandable form...
-    *
-    *	@param	string		$uacf		UACF
-    *	@return	void
-    */
+    /**
+     * 	UserAccountControl Flgs to more human understandable form...
+     *
+     *	@param	string		$uacf		UACF
+     *	@return	void
+     */
     public function parseUACF($uacf)
 	{
 		//All flags array
@@ -1408,12 +1408,12 @@ class Ldap
 		return($retval);
 	}
 
-   /**
-    * 	SamAccountType value to text
-    *
-    *	@param	string	$samtype	SamType
-    *	@return	string				Sam string
-    */
+    /**
+     * 	SamAccountType value to text
+     *
+     *	@param	string	$samtype	SamType
+     *	@return	string				Sam string
+     */
     public function parseSAT($samtype)
 	{
 		$stypes = array(

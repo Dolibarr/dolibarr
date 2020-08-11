@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -40,7 +40,7 @@ llxHeader();
 
 print load_fiche_titre($langs->trans("AvailableModules"), '', 'title_setup');
 
-print $langs->trans("ToActivateModule").'<br>';
+print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span><br>';
 print "<br>\n";
 
 $modules = array();
@@ -103,7 +103,7 @@ foreach($modulesdir as $dir)
 }
 
 print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder" width="100%">';
+print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Modules").'</td>';
 print '<td>'.$langs->trans("Version").'</td>';

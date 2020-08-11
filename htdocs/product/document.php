@@ -19,7 +19,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,7 +48,7 @@ $confirm= GETPOST('confirm', 'alpha');
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid=$user->socid;
 $result=restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
@@ -62,33 +62,35 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="position_name";
+if (!$sortorder) $sortorder = "ASC";
+if (!$sortfield) $sortfield = "position_name";
 
 
 $object = new Product($db);
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     $result = $object->fetch($id, $ref);
 
-    if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
-    elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+    if (!empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
+    elseif (!empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
 
-	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
-	    if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
+	    if (!empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 	    else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2), 1, 1).'/'.substr(substr("000".$object->id, -2), 0, 1).'/'.$object->id."/photos";
 	}
 }
-$modulepart='produit';
+$modulepart = 'produit';
+
+$permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
 
 
 /*
  * Actions
  */
 
-$parameters=array('id'=>$id);
-$reshook=$hookmanager->executeHooks('doActions', $parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+$parameters = array('id'=>$id);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook))
@@ -102,10 +104,10 @@ if (empty($reshook))
 			$urlfile = GETPOST('urlfile', 'alpha');
 			$filename = basename($urlfile);
 			$filetomerge = new Propalmergepdfproduct($db);
-			$filetomerge->fk_product=$object->id;
-			$filetomerge->file_name=$filename;
-			$result=$filetomerge->delete_by_file($user);
-			if ($result<0) {
+			$filetomerge->fk_product = $object->id;
+			$filetomerge->file_name = $filename;
+			$result = $filetomerge->delete_by_file($user);
+			if ($result < 0) {
 				setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 			}
 		}
@@ -115,11 +117,10 @@ if (empty($reshook))
 	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 }
 
-if ($action=='filemerge')
+if ($action == 'filemerge')
 {
 	$is_refresh = GETPOST('refresh');
 	if (empty($is_refresh)) {
-
 		$filetomerge_file_array = GETPOST('filetoadd');
 
 		$filetomerge_file_array = GETPOST('filetoadd');
@@ -132,11 +133,11 @@ if ($action=='filemerge')
 		$filetomerge = new Propalmergepdfproduct($db);
 
 		if ($conf->global->MAIN_MULTILANGS) {
-			$result=$filetomerge->delete_by_product($user, $object->id, $lang_id);
+			$result = $filetomerge->delete_by_product($user, $object->id, $lang_id);
 		} else {
-			$result=$filetomerge->delete_by_product($user, $object->id);
+			$result = $filetomerge->delete_by_product($user, $object->id);
 		}
-		if ($result<0) {
+		if ($result < 0) {
 			setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 		}
 
@@ -150,8 +151,8 @@ if ($action=='filemerge')
 					$filetomerge->lang = $lang_id;
 				}
 
-				$result=$filetomerge->create($user);
-				if ($result<0) {
+				$result = $filetomerge->create($user);
+				if ($result < 0) {
 					setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 				}
 			}
@@ -171,13 +172,13 @@ $helpurl = '';
 $shortlabel = dol_trunc($object->label, 16);
 if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
 {
-	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Documents');
-	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	$title = $langs->trans('Product')." ".$shortlabel." - ".$langs->trans('Documents');
+	$helpurl = 'EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
 }
 if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
 {
-	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Documents');
-	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	$title = $langs->trans('Service')." ".$shortlabel." - ".$langs->trans('Documents');
+	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
 llxHeader('', $title, $helpurl);
@@ -216,7 +217,7 @@ if ($object->id)
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
-    if ($user->societe_id && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+    if ($user->socid && ! in_array('product', explode(',', $conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
     dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
@@ -234,9 +235,8 @@ if ($object->id)
 
     dol_fiche_end();
 
-    $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
-    $param = '&id=' . $object->id;
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
+    $param = '&id='.$object->id;
+    include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 
 
     // Merge propal PDF document PDF files
@@ -256,9 +256,8 @@ if ($object->id)
 
     	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
 
-    	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+    	if (!empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
     	{
-
     		$filearray = array_merge($filearray, dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
     	}
 
@@ -271,8 +270,8 @@ if ($object->id)
     			print $langs->trans('PropalMergePdfProductActualFile');
     		}
 
-    		print '<form name="filemerge" action="' . DOL_URL_ROOT . '/product/document.php?id=' . $object->id . '" method="post">';
-    		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+    		print '<form name="filemerge" action="'.DOL_URL_ROOT.'/product/document.php?id='.$object->id.'" method="post">';
+    		print '<input type="hidden" name="token" value="'.newToken().'">';
     		print '<input type="hidden" name="action" value="filemerge">';
     		if (count($filetomerge->lines) == 0) {
     			print $langs->trans('PropalMergePdfProductChooseFile');
@@ -282,7 +281,6 @@ if ($object->id)
 
     		// Get language
     		if ($conf->global->MAIN_MULTILANGS) {
-
     			$langs->load("languages");
 
     			print  '<tr class="liste_titre"><td>';
@@ -294,7 +292,7 @@ if ($object->id)
 			    print Form::selectarray('lang_id', $langs_available, $default_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
     			if ($conf->global->MAIN_MULTILANGS) {
-    				print  '<input type="submit" class="button" name="refresh" value="' . $langs->trans('Refresh') . '">';
+    				print  '<input type="submit" class="button" name="refresh" value="'.$langs->trans('Refresh').'">';
     			}
 
     			print  '</td></tr>';
@@ -309,9 +307,9 @@ if ($object->id)
 
     				if ($conf->global->MAIN_MULTILANGS)
     				{
-    					if (array_key_exists($filetoadd['name'] . '_' . $default_lang, $filetomerge->lines))
+    					if (array_key_exists($filetoadd['name'].'_'.$default_lang, $filetomerge->lines))
     					{
-    						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $default_lang);
+    						$filename = $filetoadd['name'].' - '.$langs->trans('Language_'.$default_lang);
     						$checked = ' checked ';
     					}
     				}
@@ -324,13 +322,13 @@ if ($object->id)
     				}
 
     				print  '<tr class="oddeven"><td>';
-    				print  '<input type="checkbox" ' . $checked . ' name="filetoadd[]" id="filetoadd" value="' . $filetoadd['name'] . '">' . $filename . '</input>';
+    				print  '<input type="checkbox" '.$checked.' name="filetoadd[]" id="filetoadd" value="'.$filetoadd['name'].'">'.$filename.'</input>';
     				print  '</td></tr>';
     			}
     		}
 
     		print  '<tr><td>';
-    		print  '<input type="submit" class="button" name="save" value="' . $langs->trans('Save') . '">';
+    		print  '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
     		print  '</td></tr>';
 
     		print  '</table>';

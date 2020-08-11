@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -63,6 +63,11 @@ class Comment extends CommonObject
 	public $fk_user_author;
 
 	/**
+     * @var int ID
+     */
+	public $fk_user_modif;
+
+	/**
 	 * @var int Entity
 	 */
 	public $entity;
@@ -94,17 +99,18 @@ class Comment extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $user;
 
 		$error=0;
 
 		// Insert request
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."comment (";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
 		$sql.= "description";
 		$sql.= ", datec";
 		$sql.= ", fk_element";
 		$sql.= ", element_type";
 		$sql.= ", fk_user_author";
+		$sql.= ", fk_user_modif";
 		$sql.= ", entity";
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
@@ -113,6 +119,7 @@ class Comment extends CommonObject
 		$sql.= ", '".(isset($this->fk_element)?$this->fk_element:"null")."'";
 		$sql.= ", '".$this->db->escape($this->element_type)."'";
 		$sql.= ", '".(isset($this->fk_user_author)?$this->fk_user_author:"null")."'";
+		$sql.= ", ".$user->id."";
 		$sql.= ", ".(!empty($this->entity)?$this->entity:'1');
 		$sql.= ", ".(!empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -128,7 +135,7 @@ class Comment extends CommonObject
 
 		if (! $error)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."projet_task_comment");
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
 			if (! $notrigger)
 			{
@@ -177,9 +184,10 @@ class Comment extends CommonObject
 		$sql.= " c.fk_element,";
 		$sql.= " c.element_type,";
 		$sql.= " c.fk_user_author,";
+		$sql.= " c.fk_user_modif,";
 		$sql.= " c.entity,";
 		$sql.= " c.import_key";
-		$sql.= " FROM ".MAIN_DB_PREFIX."comment as c";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 		$sql.= " WHERE c.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -196,8 +204,9 @@ class Comment extends CommonObject
 				$this->description			= $obj->description;
 				$this->element_type			= $obj->element_type;
 				$this->datec				= $this->db->jdate($obj->datec);
-				$this->tms					= $obj->tms;
+				$this->tms					= $this->db->jdate($obj->tms);
 				$this->fk_user_author		= $obj->fk_user_author;
+				$this->fk_user_modif		= $obj->fk_user_modif;
 				$this->fk_element			= $obj->fk_element;
 				$this->entity				= $obj->entity;
 				$this->import_key			= $obj->import_key;
@@ -225,22 +234,21 @@ class Comment extends CommonObject
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $user;
 		$error=0;
 
 		// Clean parameters
 		if (isset($this->fk_element)) $this->fk_project=(int) trim($this->fk_element);
-		if (isset($this->fk_user_author)) $this->fk_user_author=(int) trim($this->fk_user_author);
 		if (isset($this->description)) $this->description=trim($this->description);
 
 
 		// Update request
-		$sql = "UPDATE ".MAIN_DB_PREFIX."projet_task_comment SET";
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
 		$sql.= " description=".(isset($this->description)?"'".$this->db->escape($this->description)."'":"null").",";
 		$sql.= " datec=".($this->datec!=''?"'".$this->db->idate($this->datec)."'":'null').",";
 		$sql.= " fk_element=".(isset($this->fk_element)?$this->fk_element:"null").",";
 		$sql.= " element_type='".$this->db->escape($this->element_type)."',";
-		$sql.= " fk_user_author=".(isset($this->fk_user_author)?$this->fk_user_author:"null").",";
+		$sql.= " fk_user_modif=".$user->id.",";
 		$sql.= " entity=".(!empty($this->entity)?$this->entity:'1').",";
 		$sql.= " import_key=".(!empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= " WHERE rowid=".$this->id;
@@ -297,7 +305,7 @@ class Comment extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."comment";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql.= " WHERE rowid=".$this->id;
 
 		$resql = $this->db->query($sql);
@@ -345,7 +353,7 @@ class Comment extends CommonObject
 		if(!empty($element_type) && !empty($fk_element)) {
 			$sql = "SELECT";
 			$sql.= " c.rowid";
-			$sql.= " FROM ".MAIN_DB_PREFIX."comment as c";
+			$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as c";
 			$sql.= " WHERE c.fk_element = ".$fk_element;
 			$sql.= " AND c.element_type = '".$db->escape($element_type)."'";
 			$sql.= " AND c.entity = ".$conf->entity;

@@ -18,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 require '../../main.inc.php';
@@ -69,42 +69,9 @@ print load_fiche_titre($langs->trans("SupplierProposalSetup"), $linkback, 'title
 
 $head = supplier_proposal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), 0, 'supplier_proposal');
+dol_fiche_head($head, 'attributeslines', $langs->trans("CommRequests"), -1, 'supplier_proposal');
 
-
-print $langs->trans("DefineHereComplementaryAttributes", $textobject).'<br>'."\n";
-print '<br>';
-
-// Load attribute_label
-$extrafields->fetch_name_optionals_label($elementtype);
-
-print "<table summary=\"listofattributes\" class=\"noborder\" width=\"100%\">";
-
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Label").'</td>';
-print '<td>'.$langs->trans("AttributeCode").'</td>';
-print '<td>'.$langs->trans("Type").'</td>';
-print '<td class="right">'.$langs->trans("Size").'</td>';
-print '<td class="center">'.$langs->trans("Unique").'</td>';
-print '<td class="center">'.$langs->trans("Required").'</td>';
-print '<td width="80">&nbsp;</td>';
-print "</tr>\n";
-
-foreach($extrafields->attribute_type as $key => $value)
-{
-    print '<tr class="oddeven">';
-    print "<td>".$extrafields->attribute_label[$key]."</td>\n";
-    print "<td>".$key."</td>\n";
-    print "<td>".$type2label[$extrafields->attribute_type[$key]]."</td>\n";
-    print '<td class="right">'.$extrafields->attribute_size[$key]."</td>\n";
-    print '<td class="center">'.yn($extrafields->attribute_unique[$key])."</td>\n";
-    print '<td class="center">'.yn($extrafields->attribute_required[$key])."</td>\n";
-    print '<td class="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'">'.img_edit().'</a>';
-    print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
-    print "</tr>";
-}
-
-print "</table>";
+require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 dol_fiche_end();
 

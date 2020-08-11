@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -33,10 +33,10 @@ $mode=GETPOST('mode')?GETPOST('mode'):'';
 
 
 // Security check
-if ($user->societe_id > 0)
+if ($user->socid > 0)
 {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
 $result=restrictedArea($user, 'adherent', '', '', 'cotisation');
 
@@ -117,7 +117,7 @@ else
 }
 
 // Print array
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
 print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';

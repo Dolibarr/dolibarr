@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - externalsite
-ExternalSiteSetup=راه اندازی لينک به وب سايت های خارجی
-ExternalSiteURL=URL سايت خارجی
-ExternalSiteModuleNotComplete=ماژول سايت خارجی به درستی پيکربندی نشده است.
-ExampleMyMenuEntry=My menu entry
+ExternalSiteSetup=تنظیم پیوند به وبگاه بیرونی
+ExternalSiteURL=نشانی‌اینترنتی وبگاه بیرونی
+ExternalSiteModuleNotComplete=واحد ExternalSite  به درستی پیکربندی نشده است
+ExampleMyMenuEntry=عنوان فهرست من

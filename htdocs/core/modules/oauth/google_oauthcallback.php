@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -80,11 +80,13 @@ if ($action != 'delete' && empty($requestedpermissionsarray))
 //var_dump($requestedpermissionsarray);exit;
 
 // Instantiate the Api service using the credentials, http client and storage mechanism for the token
+// $requestedpermissionsarray contains list of scopes.
+// Conversion into URL is done by Reflection on constant with name SCOPE_scope_in_uppercase
 /** @var $apiService Service */
 $apiService = $serviceFactory->createService('Google', $credentials, $storage, $requestedpermissionsarray);
 
 // access type needed to have oauth provider refreshing token
-// alos note that a refresh token is sent only after a prompt
+// also note that a refresh token is sent only after a prompt
 $apiService->setAccessType('offline');
 
 $apiService->setApprouvalPrompt('force');
@@ -147,7 +149,7 @@ else // If entry on page with no parameter, we arrive here
     // Creation of record with state in this tables depend on the Provider used (see its constructor).
     if (GETPOST('state'))
     {
-        $url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
+    	$url = $apiService->getAuthorizationUri(array('state'=>GETPOST('state')));
     }
     else
     {

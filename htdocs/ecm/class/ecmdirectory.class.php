@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -795,18 +795,18 @@ class EcmDirectory // extends CommonObject
      *  NB2: if trigger fail, action should be canceled.
      *  NB3: Should be deleted if EcmDirectory extend CommonObject
      *
-     * @param   string    $trigger_name   trigger's name to execute
+     * @param   string    $triggerName   trigger's name to execute
      * @param   User      $user           Object user
      * @return  int                       Result of run_triggers
      */
-    public function call_trigger($trigger_name, $user)
+    public function call_trigger($triggerName, $user)
     {
         // phpcs:enable
         global $langs,$conf;
 
         include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
         $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers($trigger_name, $this, $user, $langs, $conf);
+        $result=$interface->run_triggers($triggerName, $this, $user, $langs, $conf);
         if ($result < 0) {
             if (!empty($this->errors))
             {

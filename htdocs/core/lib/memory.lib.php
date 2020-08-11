@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -55,7 +55,7 @@ function dol_setcache($memoryid, $data)
        		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
-       	
+
 	    $memoryid=session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
 		$dolmemcache->add($memoryid, $data);    // This fails if key already exists
@@ -79,7 +79,7 @@ function dol_setcache($memoryid, $data)
        		$result=$dolmemcache->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
-	    
+
        	$memoryid=session_name().'_'.$memoryid;
 		//$dolmemcache->setOption(Memcached::OPT_COMPRESSION, false);
 		$result=$dolmemcache->add($memoryid, $data);    // This fails if key already exists
@@ -122,7 +122,7 @@ function dol_getcache($memoryid)
        		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
-	    
+
 		$memoryid=session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		//print "Get memoryid=".$memoryid;
@@ -149,7 +149,7 @@ function dol_getcache($memoryid)
        		$result=$m->addServer($tmparray[0], $tmparray[1]?$tmparray[1]:11211);
        		if (! $result) return -1;
        	}
-	    
+
        	$memoryid=session_name().'_'.$memoryid;
 		//$m->setOption(Memcached::OPT_COMPRESSION, false);
 		$data=$m->get($memoryid);

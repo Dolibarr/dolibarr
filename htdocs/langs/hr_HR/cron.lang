@@ -2,7 +2,7 @@
 # About page
 # Right
 Permission23101 = Pročitaj planirani posao
-Permission23102 = Kreiraj/promjeni planirani posao
+Permission23102 = Izradi/promjeni planirani posao
 Permission23103 = Obriši planirani posao
 Permission23104 = Pokreni planirani posao
 # Admin
@@ -37,13 +37,13 @@ CronDtLastLaunch=Početni datum zadnjeg pokretanja
 CronDtLastResult=Datum završetka zadnjeg pokretanja
 CronFrequency=Učestalost
 CronClass=Klasa
-CronMethod=Metoda
+CronMethod=Način
 CronModule=Modul
 CronNoJobs=Nema registriranih poslova
 CronPriority=Prioritet
 CronLabel=Naziv
-CronNbRun=No. launches
-CronMaxRun=Max number launch
+CronNbRun=Number of launches
+CronMaxRun=Maximum number of launches
 CronEach=Svakih
 JobFinished=Posao pokrenut i završen
 #Page card
@@ -52,7 +52,7 @@ CronEvery=Izvrši posao svaki
 CronObject=Instanca/Objekt za kreiranje
 CronArgs=Parametri
 CronSaveSucess=Uspješno spremljeno
-CronNote=Komentar
+CronNote=Napomena
 CronFieldMandatory=Polja %s su obavezna
 CronErrEndDateStartDt=Datum kraja ne može biti prije datuma početka
 StatusAtInstall=Status at module installation
@@ -67,11 +67,11 @@ CronObjectHelp=The object name to load. <BR> For example to call the fetch metho
 CronMethodHelp=The object method to launch. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
 CronArgsHelp=The method arguments. <BR> For example to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
 CronCommandHelp=Sistemska komanda za pokretanje
-CronCreateJob=Kreiraj novi planirani posao
+CronCreateJob=Izradi novi planirani posao
 CronFrom=Od
 # Info
 # Common
-CronType=Tip posla
+CronType=Vrsta posla
 CronType_method=Call method of a PHP Class
 CronType_command=Shell command
 CronCannotLoadClass=Cannot load class file %s (to use class %s)
