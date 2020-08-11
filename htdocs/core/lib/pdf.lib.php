@@ -1129,6 +1129,7 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 	$linkedobjects = pdf_getLinkedObjects($object, $outputlangs);
 	if (! empty($linkedobjects))
 	{
+		$posy+=3;
 		foreach($linkedobjects as $linkedobject)
 		{
 		    $reftoshow = $linkedobject["ref_title"].' : '.$linkedobject["ref_value"];
@@ -1137,10 +1138,11 @@ function pdf_writeLinkedObjects(&$pdf, $object, $outputlangs, $posx, $posy, $w, 
 		        $reftoshow .= ' / '.$linkedobject["date_value"];
 		    }
 
-			$posy+=3;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->MultiCell($w, $h, $reftoshow, '', $align);
+
+			$posy = $pdf->getY();
 		}
 	}
 
