@@ -156,7 +156,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 	    }
 	}
 
-	if ($bankaccount <= 0) {
+	if ($bankaccount <= 0 && $pay != "delayed") {
 		$errormsg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount"));
 		$error++;
 	}
@@ -249,8 +249,8 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->paiementid = $paiementid;
 		$payment->num_payment = $invoice->ref;
 
-		$payment->create($user);
-		$payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
+		if ($pay!="delayed") $payment->create($user);
+		if ($pay!="delayed") $payment->addPaymentToBank($user, 'payment', '(CustomerInvoicePayment)', $bankaccount, '', '');
 
 		$remaintopay = $invoice->getRemainToPay(); // Recalculate remain to pay after the payment is recorded
 		if ($remaintopay == 0) {

@@ -372,6 +372,13 @@ print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
+// Delayed Pay Button
+print '<tr class="oddeven"><td>';
+print $langs->trans('AllowDelayedPayment');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_DELAYED_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
 // Numbering module
 //print '<tr class="oddeven"><td>';
 //print $langs->trans("BillsNumberingModule");
