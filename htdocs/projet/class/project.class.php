@@ -585,7 +585,12 @@ class Project extends CommonObject
 		} elseif ($type == 'loan')
 		{
 			$sql = 'SELECT l.rowid, l.fk_user_author as fk_user FROM '.MAIN_DB_PREFIX."loan as l WHERE l.entity IN (".getEntity('loan').") AND l.fk_projet IN (".$ids.")";
-		} else {
+		} elseif ($type == 'shipping')
+		{
+            $sql = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."expedition e JOIN ".MAIN_DB_PREFIX."element_element ee ON ee.fk_target=e.rowid AND ee.sourcetype='commande' AND ee.targettype='shipping' JOIN ".MAIN_DB_PREFIX."commande c on ee.fk_source=c.rowid WHERE c.".$projectkey." IN (".$ids.") AND e.entity IN (".getEntity($type).")";
+		}
+		else
+		{
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$ids.") AND entity IN (".getEntity($type).")";
 		}
 
