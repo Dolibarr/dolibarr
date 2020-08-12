@@ -118,11 +118,11 @@ if ($_POST) {
 			$price_impact = price2num($price_impact);
 
 			// for conf PRODUIT_MULTIPRICES
-			if($conf->global->PRODUIT_MULTIPRICES) {
+			if ($conf->global->PRODUIT_MULTIPRICES) {
 				$level_price_impact = array_map('price2num', $level_price_impact);
 				$level_price_impact_percent = array_map('price2num', $level_price_impact_percent);
 			}
-			else{
+			else {
 				$level_price_impact = array(1 => $weight_impact);
 				$level_price_impact_percent = array(1 => $price_impact_percent);
 			}
@@ -243,19 +243,20 @@ if ($_POST) {
 		$prodcomb->variation_weight = $weight_impact;
 
 		// for conf PRODUIT_MULTIPRICES
-		if($conf->global->PRODUIT_MULTIPRICES) {
+		if ($conf->global->PRODUIT_MULTIPRICES) {
 			$level_price_impact = array_map('price2num', $level_price_impact);
-			$level_price_impact_percent = array_map(function($a){ return !empty($a);}, $level_price_impact_percent);
+			$level_price_impact_percent = array_map(function ($a) {
+				return !empty($a);}, $level_price_impact_percent);
 
 			$prodcomb->variation_price = $level_price_impact[1];
-			$prodcomb->variation_price_percentage = (bool)$level_price_impact_percent[1];
+			$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
 		}
-		else{
+		else {
 			$level_price_impact = array(1 => $weight_impact);
 			$level_price_impact_percent = array(1 => $price_impact_percent);
 		}
 
-		if($conf->global->PRODUIT_MULTIPRICES){
+		if ($conf->global->PRODUIT_MULTIPRICES){
 			$prodcomb->combination_price_levels = array();
 			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++){
 				$productCombinationLevel = new ProductCombinationLevel($db);
@@ -634,23 +635,22 @@ if (!empty($id) || !empty($ref))
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
 			</tr>
-<?php 		if (empty($conf->global->PRODUIT_MULTIPRICES)){ ?>
+			<?php 		if (empty($conf->global->PRODUIT_MULTIPRICES)){ ?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label>
 				</td>
 			</tr>
-<?php 		}
-			else{
+			<?php 		}
+			else {
 				$prodcomb->fetchCombinationPriceLevels();
 
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
 				{
-
 					print '<tr>';
-					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel',$i).'</label>';
-					if($i===1){
+					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel', $i).'</label>';
+					if ($i===1){
 						print ' <a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
 					}
 					print '</td>';
@@ -672,7 +672,7 @@ if (!empty($id) || !empty($ref))
 		}
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)){
-?>
+			?>
 		<script>
 			$(document).ready(function() {
 				// Apply level 1 impact to all prices impact levels
@@ -690,11 +690,11 @@ if (!empty($id) || !empty($ref))
 				});
 			});
 		</script>
-<?php
+			<?php
 		}
 
 		dol_fiche_end();
-?>
+		?>
 		<div style="text-align: center">
 		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
 		&nbsp;
