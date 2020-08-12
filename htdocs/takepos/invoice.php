@@ -398,6 +398,7 @@ if ($action == "deleteline") {
         $invoice->deleteline($deletelineid);
         $invoice->fetch($placeid);
     }
+	if (count($invoice->lines)==0) $invoice->delete($user);
 }
 
 if ($action == "delete") {
