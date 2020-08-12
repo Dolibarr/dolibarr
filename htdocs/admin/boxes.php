@@ -112,7 +112,7 @@ if ($action == 'add') {
                         }
                         else dol_print_error($db);
 
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
+                        $sql = "INSERT IGNORE INTO ".MAIN_DB_PREFIX."boxes (";
                         $sql.= "box_id, position, box_order, fk_user, entity";
                         $sql.= ") values (";
                         $sql.= $boxid['value'].", ".$pos.", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
