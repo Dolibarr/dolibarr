@@ -278,7 +278,7 @@ class ProductCombination
 			$tmp->variation_weight = $result->variation_weight;
 
 			if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
-				$this->fetchCombinationPriceLevels();
+				$tmp->fetchCombinationPriceLevels();
 			}
 
 			$return[] = $tmp;
