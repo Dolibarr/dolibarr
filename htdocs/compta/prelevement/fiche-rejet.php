@@ -99,7 +99,7 @@ if ($prev_id > 0 || $ref)
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -230,7 +230,7 @@ if ($resql)
     		$i++;
     	}
 	} else {
-	    print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	    print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
   	if ($num > 0)

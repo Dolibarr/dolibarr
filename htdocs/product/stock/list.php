@@ -231,7 +231,7 @@ foreach ($search as $key => $val)
 		if ($search[$key] == '-1') $search[$key] = '';
 		$mode_search = 2;
 	}
-	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : $key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+	if ($search[$key] != '') $sql .= natural_search((($key == 'ref') ? 't.ref' : 't.' . $key), $search[$key], (($key == 'status') ? 2 : $mode_search));
 }
 if ($search_all) $sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 // Add where from extra fields
@@ -654,10 +654,10 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$urlsource .= str_replace('&amp;', '&', $param);
 
 	$filedir = $diroutputmassaction;
-	$genallowed = $user->rights->mymodule->read;
-	$delallowed = $user->rights->mymodule->create;
+	$genallowed = $user->rights->stock->lire;
+	$delallowed = $user->rights->stock->creer;
 
-	print $formfile->showdocuments('massfilesarea_mymodule', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('massfilesarea_stock', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 }
 
 // End of page

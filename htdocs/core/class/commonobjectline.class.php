@@ -51,6 +51,16 @@ abstract class CommonObjectLine extends CommonObject
 
 
 	/**
+	 *	Constructor
+	 *
+	 *  @param		DoliDB		$db      Database handler
+	 */
+	public function __construct($db)
+	{
+		$this->db = $db;
+	}
+
+	/**
 	 *	Returns the translation key from units dictionary.
 	 *  A langs->trans() must be called on result to get translated value.
 	 *
@@ -74,12 +84,12 @@ abstract class CommonObjectLine extends CommonObject
 			$label_type = 'short_label';
 		}
 
-		$sql = 'select '.$label_type.' from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
+		$sql = 'select '.$label_type.',code from '.MAIN_DB_PREFIX.'c_units where rowid='.$this->fk_unit;
 		$resql = $this->db->query($sql);
 		if ($resql && $this->db->num_rows($resql) > 0)
 		{
 			$res = $this->db->fetch_array($resql);
-			$label = $res[$label_type];
+			$label = ($label_type == 'short' ? $res[$label_type] : 'unit'.$res['code']);
 			$this->db->free($resql);
 			return $label;
 		} else {

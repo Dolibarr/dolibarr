@@ -67,7 +67,6 @@ SeeInMarkerPlace=Zie Marktplaats
 AchatTelechargement=Kopen / Downloaden
 GoModuleSetupArea=Ga naar het gedeelte Module-instellingen om een nieuwe module te implementeren / installeren: <a href="%s">%s</a> .
 DoliStoreDesc=DoliStore, de officiële markt voor externe Dolibarr ERP / CRM modules
-DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 WebSiteDesc=Externe websites voor meer add-on (niet-basis) modules ...
 BoxesActivated=Geactiveerde widgets
 DoNotStoreClearPassword=Versleutel wachtwoorden opgeslagen in database (NIET als platte tekst). Het wordt sterk aanbevolen om deze optie te activeren.

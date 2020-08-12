@@ -45,7 +45,7 @@ if (!$conf->global->TAKEPOS_QR_MENU) accessforbidden(); // If Restaurant Menu is
     <div class="grid-container">
       <div class="grid-x grid-padding-x menu2">
         <div class="cell small-12">
-          <h1><?php print $mysoc->name; ?> <small><?php print $langs->trans('RestaurantMenu'); ?></small></h1>
+          <h1><?php print $mysoc->name; ?> - <small><?php print $langs->trans('RestaurantMenu'); ?></small></h1>
 
 <?php
 $categorie = new Categorie($db);
@@ -99,7 +99,7 @@ foreach ($maincategories as $cat){
 	}
 	print '</div>';
 }
-?>		  
+?>
 			</div>
 		</div>
     </div>

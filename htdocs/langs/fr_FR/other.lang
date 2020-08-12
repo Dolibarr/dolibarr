@@ -280,7 +280,9 @@ LinesToImport=Lignes à importer
 
 MemoryUsage=Utilisation de la mémoire
 RequestDuration=Durée de la demande
+ProductsPerPopularity=Produits / services par popularité
 PopuProp=Produits / services par popularité dans les propositions
 PopuCom=Produits/services par popularité dans les commandes
 ProductStatistics=Statistiques sur les produits / services
 NbOfQtyInOrders=Qté en commandes
+SelectTheTypeOfObjectToAnalyze=Sélectionnez le type d'objet à analyser ...

@@ -117,3 +117,6 @@ HideCategoryImages=Hide Category Images
 HideProductImages=Hide Product Images
 NumberOfLinesToShow=Number of lines of images to show 
 DefineTablePlan=Define tables plan
+GiftReceiptButton=Gift receipt button
+GiftReceipt=Gift receipt
+ModuleReceiptPrinterMustBeEnabled=Module Receipt printer must have been enabled first

@@ -305,7 +305,6 @@ ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
 
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);
 
-
 -- VMYSQL4.3 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN fk_facture INTEGER NULL;
 -- VPGSQL8.2 ALTER TABLE llx_prelevement_facture_demande ALTER COLUMN fk_facture DROP NOT NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER NULL;

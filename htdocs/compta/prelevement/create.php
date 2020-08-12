@@ -88,11 +88,9 @@ if (empty($reshook))
 
 	    // $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
 	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
-		if ($result < 0)
-		{
+		if ($result < 0) {
 			setEventMessages($bprev->error, $bprev->errors, 'errors');
-		} elseif ($result == 0)
-		{
+		} elseif ($result == 0) {
 			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 			setEventMessages($mesg, null, 'errors');
 			$mesg .= '<br>'."\n";
@@ -370,10 +368,15 @@ if ($resql)
 
 			// RUM
 			print '<td>';
-			print $thirdpartystatic->display_rib('rum');
-			$format = $thirdpartystatic->display_rib('format');
-			if ($type != 'bank-transfer') {
-				if ($format) print ' ('.$format.')';
+			$rumtoshow = $thirdpartystatic->display_rib('rum');
+			if ($rumtoshow) {
+				print $rumtoshow;
+				$format = $thirdpartystatic->display_rib('format');
+				if ($type != 'bank-transfer') {
+					if ($format) print ' ('.$format.')';
+				}
+			} else {
+				print img_warning($langs->trans("NoBankAccount"));
 			}
 			print '</td>';
 			// Amount

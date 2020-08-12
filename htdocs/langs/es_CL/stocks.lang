@@ -66,7 +66,6 @@ IdWarehouse=Id almacén
 LieuWareHouse=Almacén de localización
 WarehousesAndProductsBatchDetail=Almacenes y productos (con detalle por lote / serie)
 AverageUnitPricePMPShort=Precio de entrada promedio ponderado
-AverageUnitPricePMP=Precio de entrada promedio ponderado
 SellPriceMin=Precio unitario de venta
 EstimatedStockValueSellShort=Valor para la venta
 EstimatedStockValueSell=Valor para la venta

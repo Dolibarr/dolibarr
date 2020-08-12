@@ -529,8 +529,19 @@ function Search2(keyCodeForEnter) {
 					ClickProduct(0);
 				}
 			}
+			if (eventKeyCode == keyCodeForEnter){
+				if (data.length == 0) {
+					$('#search').val('<?php
+					$langs->load('errors');
+					echo dol_escape_js($langs->trans("ErrorRecordNotFound"));
+					?>');
+					$('#search').select();
+				}
+				else ClearSearch();
+			}
 		});
 	}
+	
 }
 
 function Edit(number) {
@@ -631,7 +642,7 @@ function TakeposPrintingTemp(){
 }
 
 function OpenDrawer(){
-	console.log("OpenDrawer");
+	console.log("OpenDrawer call ajax url http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print");
 	$.ajax({
 		type: "POST",
 		url: 'http://<?php print $conf->global->TAKEPOS_PRINT_SERVER; ?>:8111/print',
@@ -640,7 +651,7 @@ function OpenDrawer(){
 }
 
 function DolibarrOpenDrawer() {
-	console.log("DolibarrOpenDrawer");
+	console.log("DolibarrOpenDrawer call ajax url /takepos/ajax/ajax.php?action=opendrawer&term=<?php print $_SESSION["takeposterminal"] ?>");
 	$.ajax({
 		type: "GET",
 		url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=opendrawer&term='.$_SESSION["takeposterminal"]; ?>",
