@@ -36,4 +36,4 @@ CREATE TABLE llx_c_format_cards
   custom_x double(24,8) NOT NULL,
   custom_y double(24,8) NOT NULL,
   active integer NOT NULL
-) ENGINE=InnoDB;
+) ENGINE=innodb;

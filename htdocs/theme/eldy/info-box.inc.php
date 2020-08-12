@@ -95,6 +95,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     max-width: 60%;
 }
 
+a.info-box-text.info-box-text-a {
+    display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+    font-size: 0.9em;
+}
+
 .info-box-icon-text{
     box-sizing: border-box;
     display: block;
@@ -381,12 +388,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	height: 0;
 }
 
+.info-box-title {
+	width: calc(100% - 20px);
+}
 .info-box-module {
 	min-width: 350px;
     max-width: 350px;
 }
-.info-box-title {
-	width: calc(100% - 20px);
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+	    min-width: 315px;
+	    max-width: 315px;
+	}
 }
 @media only screen and (max-width: 767px) {
 	.info-box-module {

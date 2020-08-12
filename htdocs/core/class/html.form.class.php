@@ -2743,9 +2743,9 @@ class Form
 
     			    $outval .= ' - '.$langs->transnoentities("VirtualStock").':';
     			    if ($virtualstock > 0) {
-    			        $outval .= ' - <span class="product_line_stock_ok">';
+    			        $outval .= '<span class="product_line_stock_ok">';
     			    }elseif ($virtualstock <= 0) {
-    			        $outval .= ' - <span class="product_line_stock_too_low">';
+    			        $outval .= '<span class="product_line_stock_too_low">';
     			    }
     			    $outval .= $virtualstock;
     			    $outval .= '</span>';
@@ -6744,7 +6744,7 @@ class Form
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $extrafields;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
@@ -6776,6 +6776,10 @@ class Form
 		    }
 		    if ($val['label'])
 		    {
+		    	if (! empty($val['langfile']) && is_object($langs)) {
+		    		$langs->load($val['langfile']);
+		    	}
+
 		        $lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked']) ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 			    $listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
 		    }

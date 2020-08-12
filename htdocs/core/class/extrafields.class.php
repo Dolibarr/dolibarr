@@ -154,8 +154,8 @@ class ExtraFields
 
 
 	public static $type2label = array(
-	    'varchar'=>'String',
-	    'text'=>'TextLong',
+	    'varchar'=>'String1Line',
+	    'text'=>'TextLongNLines',
 	    'html'=>'HtmlText',
 	    'int'=>'Int',
 	    'double'=>'Float',
@@ -842,7 +842,7 @@ class ExtraFields
 	/**
 	 * 	Load array this->attributes, or old this->attribute_xxx like attribute_label, attribute_type, ...
 	 *
-	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
+	 * 	@param	string		$elementtype		Type of element ('' = all or $object->table_element like 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
 	 * 	@return	array							Array of attributes keys+label for all extra fields.
 	 */
@@ -856,6 +856,7 @@ class ExtraFields
 		if ($elementtype == 'thirdparty')     $elementtype = 'societe';
 		if ($elementtype == 'contact')        $elementtype = 'socpeople';
 		if ($elementtype == 'order_supplier') $elementtype = 'commande_fournisseur';
+		if ($elementtype == 'stock_mouvement') $elementtype = 'movement';
 
 		$array_name_label = array();
 
@@ -2097,6 +2098,10 @@ class ExtraFields
 				elseif (in_array($key_type, array('html')))
 				{
 					$value_key = GETPOST("options_".$key, 'alpha');
+				}
+				elseif (in_array($key_type, array('text')))
+				{
+					$value_key = GETPOST("options_".$key, 'alphanohtml');
 				}
 				else
 				{

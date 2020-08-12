@@ -3787,6 +3787,7 @@ class Propal extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("propale");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'azur';

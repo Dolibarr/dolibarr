@@ -129,10 +129,12 @@ if (!empty($_SESSION['ipaddress']))      // To avoid to make action twice
     $ipaddress          = $_SESSION['ipaddress'];
     $errormessage       = $_SESSION['errormessage'];
 
-    // Call trigger
-    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
-    if ($result < 0) $error++;
-    // End call triggers
+    if (is_object($object) && method_exists($object, 'call_trigger')) {
+    	// Call trigger
+	    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
+	    if ($result < 0) $error++;
+	    // End call triggers
+    }
 
     // Send an email
     $sendemail = '';

@@ -22,7 +22,7 @@
 
 /**
  *	    \file       htdocs/core/lib/usergroups.lib.php
- *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
+ *		\brief      Set of function to manage users, groups and permissions
  */
 
 /**

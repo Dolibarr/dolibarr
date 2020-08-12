@@ -165,7 +165,7 @@ if ($action == 'update' && !empty($permissiontoadd))
 		} elseif (preg_match('/^(integer|price|real|double)/', $object->fields[$key]['type'])) {
             $value = price2num(GETPOST($key, 'none')); // To fix decimal separator according to lang setup
 		} elseif ($object->fields[$key]['type'] == 'boolean') {
-			$value = (GETPOST($key) == 'on' ? 1 : 0);
+			$value = ((GETPOST($key, 'aZ09') == 'on' || GETPOST($key, 'aZ09') == '1') ? 1 : 0);
 		} else {
 			$value = GETPOST($key, 'alpha');
 		}
@@ -219,7 +219,7 @@ if ($action == "update_extras" && !empty($permissiontoadd))
 		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOST($attributekeylong.'hour', 'int'), GETPOST($attributekeylong.'min', 'int'), GETPOST($attributekeylong.'sec', 'int'), GETPOST($attributekeylong.'month', 'int'), GETPOST($attributekeylong.'day', 'int'), GETPOST($attributekeylong.'year', 'int'));
 		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
 	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, ' alpha');
+		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
 	}
 
 	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);

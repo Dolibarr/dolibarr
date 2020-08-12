@@ -1348,7 +1348,7 @@ else
 	                print '</tr>';
                 }
 
-                // Validator
+                // Approver
                 if (!$edit && $action != 'editvalidator') {
                     print '<tr>';
                     print '<td class="titlefield">';
@@ -1359,7 +1359,7 @@ else
                     $include_users = $object->fetch_users_approver_holiday();
                     if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED)
                     {
-                        print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
+                        print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
                     }
                     print '</td>';
                     print '</tr>';

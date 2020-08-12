@@ -3860,6 +3860,7 @@ div.boximport {
 .fieldrequired { font-weight: bold; color: #000055; }
 
 .widthpictotitle { width: 40px; font-size: 1.4em; text-align: <?php echo $left; ?>; }
+table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
