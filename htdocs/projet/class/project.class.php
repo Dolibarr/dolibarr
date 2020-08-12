@@ -589,8 +589,7 @@ class Project extends CommonObject
 		{
             $sql = "SELECT e.rowid FROM ".MAIN_DB_PREFIX."expedition e JOIN ".MAIN_DB_PREFIX."element_element ee ON ee.fk_target=e.rowid AND ee.sourcetype='commande' AND ee.targettype='shipping' JOIN ".MAIN_DB_PREFIX."commande c on ee.fk_source=c.rowid WHERE c.".$projectkey." IN (".$ids.") AND e.entity IN (".getEntity($type).")";
 		}
-		else
-		{
+		else {
 			$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX.$tablename." WHERE ".$projectkey." IN (".$ids.") AND entity IN (".getEntity($type).")";
 		}
 
