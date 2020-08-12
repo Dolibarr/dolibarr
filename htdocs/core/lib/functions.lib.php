@@ -901,7 +901,11 @@ function dol_string_unaccent($str)
 		'%C3%B1' => 'n',
 		'%C3%B2' => 'o', '%C3%B3' => 'o', '%C3%B4' => 'o', '%C3%B5' => 'o', '%C3%B6' => 'o',
 		'%C3%B9' => 'u', '%C3%BA' => 'u', '%C3%BB' => 'u', '%C3%BC' => 'u',
-		'%C3%BF' => 'y'
+		'%C3%BF' => 'y',
+		// German umlauts
+		'%C3%84' => 'Ä', '%C3%A4' => 'ä',
+		'%C3%96' => 'Ö', '%C3%B6' => 'ö',
+		'%C3%9C' => 'Ü', '%C3%BC' => 'ü'
 		);
 		$string = strtr($string, $replacements);
 		return rawurldecode($string);
