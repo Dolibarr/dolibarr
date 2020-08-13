@@ -138,6 +138,8 @@ class ProductCombination
 	 */
 	public function fetchCombinationPriceLevels($fk_price_level = 0, $useCache = true)
 	{
+		global $conf;
+
 		// Check cache
 		if(!empty($this->combination_price_levels) && $useCache){
 			if((!empty($fk_price_level) && isset($this->combination_price_levels[$fk_price_level])) || empty($fk_price_level)){
@@ -154,8 +156,29 @@ class ProductCombination
 		$staticProductCombinationLevel = new ProductCombinationLevel($this->db);
 		$combination_price_levels = $staticProductCombinationLevel->fetchAll($this->id, $fk_price_level);
 
-		if (!$combination_price_levels || !is_array($combination_price_levels)) {
+		if (!is_array($combination_price_levels)) {
 			return -1;
+		}
+
+		if(empty($combination_price_levels)){
+
+			/**
+			 * for auto retrocompatibility with last behavior
+			 */
+			$productCombinationLevel = new ProductCombinationLevel($this->db);
+			$productCombinationLevel->fk_price_level = intval($fk_price_level);
+			$productCombinationLevel->fk_product_attribute_combination = $this->id;
+			$productCombinationLevel->variation_price = $this->variation_price;
+			$productCombinationLevel->variation_price_percentage = $this->variation_price_percentage;
+
+			if($fk_price_level>0){
+				$combination_price_levels[$fk_price_level] = $productCombinationLevel;
+			}
+			else{
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++){
+					$combination_price_levels[$i] = $productCombinationLevel;
+				}
+			}
 		}
 
 		$this->combination_price_levels = $combination_price_levels;
@@ -1032,17 +1055,19 @@ class ProductCombinationLevel
 
 		$combination_price_levels = $this->db->getRows($sql);
 
-		if (!$combination_price_levels || !is_array($combination_price_levels)) {
+		if (!is_array($combination_price_levels)) {
 			return -1;
 		}
 
 		$result = array();
 
-		// For more simple usage set level as array key
-		foreach($combination_price_levels as $k => $row){
-			$productCombinationLevel = new ProductCombinationLevel($this->db);
-			$productCombinationLevel->fetchFormObj($row);
-			$result[$row->fk_price_level] = $productCombinationLevel;
+		if(!empty($combination_price_levels)) {
+			// For more simple usage set level as array key
+			foreach($combination_price_levels as $k => $row){
+				$productCombinationLevel = new ProductCombinationLevel($this->db);
+				$productCombinationLevel->fetchFormObj($row);
+				$result[$row->fk_price_level] = $productCombinationLevel;
+			}
 		}
 
 		return $result;
