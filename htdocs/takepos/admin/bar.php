@@ -44,9 +44,15 @@ if (GETPOST('action', 'alpha') == 'set')
 {
 	$db->begin();
 
-	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
+	dol_syslog("admin/bar");
 
-	if (!$res > 0) $error++;
+	$suplement_category = GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha');
+	if ($suplement_category < 0) $suplement_category= 0;
+
+	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", $suplement_category, 'chaine', 0, '', $conf->entity);
+	if ($res <= 0) {
+	    $error++;
+	}
 
  	if (!$error)
     {
