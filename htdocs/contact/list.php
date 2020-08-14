@@ -410,8 +410,8 @@ else
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
 	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
 	{
 		$page = 0;
@@ -421,14 +421,14 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-$result = $db->query($sql);
-if (!$result)
+$resql = $db->query($sql);
+if (! $resql)
 {
 	dol_print_error($db);
 	exit;
 }
 
-$num = $db->num_rows($result);
+$num = $db->num_rows($resql);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -784,7 +784,7 @@ $i = 0;
 $totalarray = array();
 while ($i < min($num, $limit))
 {
-	$obj = $db->fetch_object($result);
+	$obj = $db->fetch_object($resql);
 
 	$arraysocialnetworks = (array) json_decode($obj->socialnetworks, true);
 	$contactstatic->lastname = $obj->lastname;
@@ -984,7 +984,7 @@ while ($i < min($num, $limit))
 	$i++;
 }
 
-$db->free($result);
+$db->free($resql);
 
 $parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
 $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook

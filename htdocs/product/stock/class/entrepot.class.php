@@ -104,6 +104,7 @@ class Entrepot extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' =>array('type'=>'integer', 'label'=>'ID', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'default'=>1, 'notnull'=>1, 'index'=>1, 'position'=>15),
 		'ref' =>array('type'=>'varchar(255)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>1, 'showoncombobox'=>1, 'position'=>25),
 		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=>1, 'position'=>30),
 		'description' =>array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'visible'=>-2, 'position'=>35),
@@ -441,6 +442,7 @@ class Entrepot extends CommonObject
 		}
 
 		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id";
+		$sql .= " , entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id)
 		{
@@ -460,6 +462,7 @@ class Entrepot extends CommonObject
 				$obj=$this->db->fetch_object($result);
 
 				$this->id             = $obj->rowid;
+				$this->entity         = $obj->entity;
 				$this->fk_parent      = $obj->fk_parent;
 				$this->ref            = $obj->label;
 				$this->label          = $obj->label;

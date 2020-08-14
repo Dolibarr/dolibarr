@@ -5842,7 +5842,7 @@ class Form
 		}
 		elseif ($typehour == 'text' || $typehour == 'textselect')
 		{
-			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" size="1" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('HourShort').'" type="number" min="0" name="'.$prefix.'hour"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputhour" value="'.(($hourSelected != '') ? ((int) $hourSelected) : '').'">';
 		}
 		else return 'BadValueForParameterTypeHour';
 
@@ -5866,7 +5866,7 @@ class Form
 		}
 		elseif ($typehour == 'text')
 		{
-			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" size="1" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
+			$retstring .= '<input placeholder="'.$langs->trans('MinuteShort').'" type="number" min="0" name="'.$prefix.'min"'.($disabled ? ' disabled' : '').' class="flat maxwidth50 inputminute" value="'.(($minSelected != '') ? ((int) $minSelected) : '').'">';
 		}
 
 		if ($typehour != 'text') $retstring .= ' '.$langs->trans('MinuteShort');
@@ -5953,7 +5953,7 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams ? $moreparams : '');
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter);
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';

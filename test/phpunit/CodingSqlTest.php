@@ -156,7 +156,10 @@ class CodingSqlTest extends PHPUnit\Framework\TestCase
                     continue;
 
                 print 'Check sql file '.$file."\n";
-                $filecontent=file_get_contents($dir.'/'.$file);
+                $filecontent = file_get_contents($dir.'/'.$file);
+
+                // Allow ` for 'rank' column name
+                $filecontent = str_replace('`rank`', '_rank_', $filecontent);
 
                 $result=strpos($filecontent, '`');
                 print __METHOD__." Result for checking we don't have back quote = ".$result."\n";

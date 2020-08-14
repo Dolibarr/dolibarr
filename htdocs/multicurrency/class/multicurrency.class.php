@@ -530,7 +530,7 @@ class MultiCurrency extends CommonObject
 		$sql1.= " AND m.entity IN (".getEntity('multicurrency').")";
 		$sql2= '';
 		if (!empty($conf->global->MULTICURRENCY_USE_RATE_ON_DOCUMENT_DATE) && !empty($date_document)) $sql2.= ' AND DATE_FORMAT(mc.date_sync, "%Y-%m-%d") = "'.date('Y-m-d', $date_document).'"';
-		$sql3.= ' ORDER BY mc.date_sync DESC LIMIT 1';
+		$sql3 = ' ORDER BY mc.date_sync DESC LIMIT 1';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 		$resql = $db->query($sql1.$sql2.$sql3);
