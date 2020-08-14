@@ -6071,6 +6071,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_PHONE__'] = $object->phone;
 				$substitutionarray['__MEMBER_PHONEPRO__'] = $object->phone_perso;
 				$substitutionarray['__MEMBER_PHONEMOBILE__'] = $object->phone_mobile;
+				$substitutionarray['__MEMBER_TYPE__'] = $object->type;
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
