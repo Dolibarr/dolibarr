@@ -102,7 +102,7 @@ $search = array();
 foreach ($object->fields as $key => $val)
 {
 	$search_key = $key;
-	if  ($search_key == 'statut') $search_key = 'status'; // remove this after refactor entrepot.class property statut to status
+	if ($search_key == 'statut') $search_key = 'status'; // remove this after refactor entrepot.class property statut to status
 	if (GETPOST('search_'.$search_key, 'alpha') !== '') $search[$search_key] = GETPOST('search_'.$search_key, 'alpha');
 }
 
@@ -228,7 +228,7 @@ if (!empty($conf->categorie->enabled))
 foreach ($search as $key => $val)
 {
 	$class_key = $key;
-	if  ($class_key == 'status') $class_key = 'statut'; // remove this after refactor entrepot.class property statut to status
+	if ($class_key == 'status') $class_key = 'statut'; // remove this after refactor entrepot.class property statut to status
 	if (($key == 'status' && $search[$key] == -1) || $key=='entity') continue;
 	$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 	if (strpos($object->fields[$key]['type'], 'integer:') === 0) {

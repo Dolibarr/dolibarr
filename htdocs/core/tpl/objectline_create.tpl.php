@@ -426,9 +426,9 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 
 	$prefillDates = false;
 
-	if(! empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && ! empty($object->lines))
+	if (!empty($conf->global->MAIN_FILL_SERVICE_DATES_FROM_LAST_SERVICE_LINE) && ! empty($object->lines))
     {
-	    for($i = count($object->lines) - 1; $i >= 0; $i--)
+	    for ($i = count($object->lines) - 1; $i >= 0; $i--)
 	    {
 		    $lastline = $object->lines[$i];
 
@@ -457,14 +457,14 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 		print $form->selectDate($date_end, 'date_end', empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, empty($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE) ? 0 : 1, 1, "addproduct", 1, 0);
 	};
 
-	if($prefillDates)
+	if ($prefillDates)
     {
         echo ' <span class="small"><a href="#" id="prefill_service_dates">' . $langs->trans('FillWithLastServiceDates') .  '</a></span>';
     }
 
 	print '<script>';
 
-	if($prefillDates)
+	if ($prefillDates)
 	{
 		?>
         function prefill_service_dates()
