@@ -356,7 +356,7 @@ class CMailFile
 
 			$smtps->setSubject($subjecttouse);
 			$smtps->setTO($this->getValidAddress($this->addr_to, 0, 1));
-			$smtps->setFrom($this->getValidAddress($this->from, 0, 1));
+			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
 			$smtps->setTrackId($this->trackid);
 			$smtps->setReplyTo($this->getValidAddress($this->replyto, 0, 1));
 
@@ -402,7 +402,7 @@ class CMailFile
 			$smtps->setDeliveryReceipt($this->deliveryreceipt);
 
 			$host = dol_getprefix('email');
-			$this->msgid = time().'.SMTPs-dolibarr-'.$trackid.'@'.$host;
+			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
 
 			$this->smtps = $smtps;
 		} elseif ($this->sendmode == 'swiftmailer') {
@@ -786,14 +786,14 @@ class CMailFile
 				$from = $this->smtps->getFrom('org');
 				if ($res && !$from)
 				{
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Sender address '$from' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Sender address '$from' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
 				$dest = $this->smtps->getTo();
 				if ($res && !$dest)
 				{
-					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Recipient address '$dest' invalid";
+					$this->error = "Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - Recipient address '$dest' invalid";
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res = false;
 				}
@@ -814,7 +814,7 @@ class CMailFile
 						$res = true;
 					} else {
 						if (empty($this->error)) $this->error = $result;
-						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>".$this->error, LOG_ERR);
+						dol_syslog("CMailFile::sendfile: mail end error with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport." - ".$this->error, LOG_ERR);
 						$res = false;
 					}
 				}
