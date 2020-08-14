@@ -219,3 +219,10 @@ create table llx_c_recruitment_origin
   label 	    varchar(64)	NOT NULL,
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
+
+
+
+ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte float;
+ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float; 
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float; 
