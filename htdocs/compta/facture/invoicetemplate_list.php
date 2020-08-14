@@ -53,6 +53,8 @@ $cancel     = GETPOST('cancel', 'alpha');
 $toselect   = GETPOST('toselect', 'array');
 $contextpage= GETPOST('contextpage', 'aZ')?GETPOST('contextpage', 'aZ'):'invoicetemplatelist';   // To manage different context of search
 
+$socid = GETPOST('socid', 'int');
+
 // Security check
 $id=(GETPOST('facid', 'int')?GETPOST('facid', 'int'):GETPOST('id', 'int'));
 $lineid=GETPOST('lineid', 'int');
@@ -141,6 +143,11 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 	}
 }
 
+if ($socid > 0) {
+        $tmpthirdparty = new Societe($db);
+        $res = $tmpthirdparty->fetch($socid);
+        if ($res > 0) $search_societe = $tmpthirdparty->name;
+}
 
 /*
  * Actions

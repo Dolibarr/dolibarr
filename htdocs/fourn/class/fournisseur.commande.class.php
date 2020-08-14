@@ -273,7 +273,7 @@ class CommandeFournisseur extends CommonOrder
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
-        $sql.= " WHERE c.entity = ".$conf->entity;
+        $sql.= " WHERE c.entity IN (".getEntity('supplier_order').")";
         if ($ref) $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         else $sql.= " AND c.rowid=".$id;
 
@@ -844,6 +844,7 @@ class CommandeFournisseur extends CommonOrder
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+
         if ($this->db->query($sql))
         {
         	if (! $error)
@@ -1815,7 +1816,6 @@ class CommandeFournisseur extends CommonOrder
 					if ($result < 0)
                     {
                         $error++;
-                        return -1;
                     }
 					// End call triggers
                 }
@@ -1923,6 +1923,7 @@ class CommandeFournisseur extends CommonOrder
             {
             	$this->errors[]='ErrorWhenRunningTrigger';
             	dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
+            	$this->db->rollback();
             	return -1;
             }
             // End call triggers

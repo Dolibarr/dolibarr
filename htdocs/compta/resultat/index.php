@@ -499,7 +499,7 @@ elseif ($modecompta=="BOOKKEEPING")
 }
 
 /*
- * Charges sociales non deductibles
+ * Social contributions
  */
 
 $subtotal_ht = 0;
@@ -512,7 +512,6 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
 		$sql.= " WHERE cs.fk_type = c.id";
-		$sql.= " AND c.deductible = 0";
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
 	}
@@ -524,7 +523,6 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 		$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
 		$sql.= " WHERE p.fk_charge = cs.rowid";
 		$sql.= " AND cs.fk_type = c.id";
-		$sql.= " AND c.deductible = 0";
     	if (! empty($date_start) && ! empty($date_end))
     		$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 	}
@@ -532,69 +530,7 @@ if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
 	$sql.= " AND cs.entity = ".$conf->entity;
 	$sql.= " GROUP BY c.libelle, dm";
 
-	dol_syslog("get social contributions deductible=0 ", LOG_DEBUG);
-	$result=$db->query($sql);
-	if ($result) {
-		$num = $db->num_rows($result);
-		$i = 0;
-		if ($num) {
-			while ($i < $num) {
-				$obj = $db->fetch_object($result);
-
-				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
-				$decaiss[$obj->dm] += $obj->amount;
-
-				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
-				$decaiss_ttc[$obj->dm] += $obj->amount;
-
-				$i++;
-			}
-		}
-	} else {
-		dol_print_error($db);
-	}
-}
-elseif ($modecompta=="BOOKKEEPING")
-{
-	// Nothing from this table
-}
-
-
-/*
- * Charges sociales deductibles
- */
-
-$subtotal_ht = 0;
-$subtotal_ttc = 0;
-if (! empty($conf->tax->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta=="RECETTES-DEPENSES"))
-{
-	if ($modecompta == 'CREANCES-DETTES')
-	{
-		$sql = "SELECT c.libelle as nom, date_format(cs.date_ech,'%Y-%m') as dm, sum(cs.amount) as amount";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
-		$sql.= " WHERE cs.fk_type = c.id";
-		$sql.= " AND c.deductible = 1";
-    	if (! empty($date_start) && ! empty($date_end))
-    		$sql.= " AND cs.date_ech >= '".$db->idate($date_start)."' AND cs.date_ech <= '".$db->idate($date_end)."'";
-	}
-	elseif ($modecompta=="RECETTES-DEPENSES")
-	{
-		$sql = "SELECT c.libelle as nom, date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-		$sql.= ", ".MAIN_DB_PREFIX."chargesociales as cs";
-		$sql.= ", ".MAIN_DB_PREFIX."paiementcharge as p";
-		$sql.= " WHERE p.fk_charge = cs.rowid";
-		$sql.= " AND cs.fk_type = c.id";
-		$sql.= " AND c.deductible = 1";
-    	if (! empty($date_start) && ! empty($date_end))
-    		$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-	}
-
-	$sql.= " AND cs.entity = ".$conf->entity;
-	$sql.= " GROUP BY c.libelle, dm";
-
-	dol_syslog("get social contributions paid deductible=1", LOG_DEBUG);
+	dol_syslog("get social contributions", LOG_DEBUG);
 	$result=$db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
@@ -734,7 +670,7 @@ elseif ($modecompta == 'BOOKKEEPING') {
 
 
 /*
- * Donation get dunning paiement
+ * Donation get dunning payments
  */
 
 if (! empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modecompta=="RECETTES-DEPENSES"))

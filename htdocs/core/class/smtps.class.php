@@ -428,7 +428,7 @@ class SMTPs
         $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
         $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
 
-        if ($usetls) $host='tls://'.$host;
+		if ($usetls && ! empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) $host = 'tls://'.$host;
 
         $hosth = $host;
 
@@ -554,6 +554,8 @@ class SMTPs
                 $host=preg_replace('@tcp://@i', '', $host);	// Remove prefix
                 $host=preg_replace('@ssl://@i', '', $host);	// Remove prefix
                 $host=preg_replace('@tls://@i', '', $host);	// Remove prefix
+
+                if ($usetls && ! empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) $host = 'tls://'.$host;
 
                 $hosth = $host;
 

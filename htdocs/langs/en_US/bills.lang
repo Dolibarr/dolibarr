@@ -555,3 +555,4 @@ AutoFillDateTo=Set end date for service line with next invoice date
 AutoFillDateToShort=Set end date
 MaxNumberOfGenerationReached=Max number of gen. reached
 BILL_DELETEInDolibarr=Invoice deleted
+UnitPriceXQtyLessDiscount=Unit price x Qty - Discount

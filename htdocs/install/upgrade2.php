@@ -3605,10 +3605,9 @@ function migrate_mode_reglement($db, $langs, $conf)
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @param	string		$versionto	Version target
  * @return	void
  */
-function migrate_clean_association($db, $langs, $conf, $versionto)
+function migrate_clean_association($db, $langs, $conf)
 {
     $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
     if ($result)	// result defined for version 3.2 or -

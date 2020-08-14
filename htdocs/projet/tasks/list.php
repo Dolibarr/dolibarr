@@ -58,6 +58,7 @@ $search_task_label=GETPOST('search_task_label');
 $search_task_description=GETPOST('search_task_description');
 $search_project_user=GETPOST('search_project_user');
 $search_task_user=GETPOST('search_task_user');
+$search_societe=GETPOST('search_societe');
 
 $mine = $_REQUEST['mode']=='mine' ? 1 : 0;
 if ($mine) { $search_task_user = $user->id; $mine = 0; }
