@@ -66,7 +66,7 @@ if ($id > 0 || !empty($ref))
 
 if ($cancel) $action = '';
 
-// Action association d'un sousproduit
+// Add subproduct to product
 if ($action == 'add_prod' && ($user->rights->produit->creer || $user->rights->service->creer))
 {
 	$error = 0;
