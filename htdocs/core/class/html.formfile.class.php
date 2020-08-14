@@ -352,7 +352,9 @@ class FormFile
 
 		// Add entity in $param if not already exists
 		if (!preg_match('/entity\=[0-9]+/', $param)) {
-			$param.= 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
+			$paramEntity = 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
+			if (!empty($param))	$paramEntity = '&' .$paramEntity;
+			$param .= $paramEntity;
 		}
 
 		$printer=0;
