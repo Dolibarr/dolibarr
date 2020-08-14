@@ -432,7 +432,7 @@ if ((!empty($conf->service->enabled) || ($object->element == 'contrat')) && $dat
 	    {
 		    $lastline = $object->lines[$i];
 
-		    if($lastline->product_type == Product::TYPE_SERVICE && (! empty($lastline->date_start) || ! empty($lastline->date_end)))
+		    if ($lastline->product_type == Product::TYPE_SERVICE && (! empty($lastline->date_start) || ! empty($lastline->date_end)))
 		    {
 			    $date_start_prefill = $lastline->date_start;
 			    $date_end_prefill = $lastline->date_end;
