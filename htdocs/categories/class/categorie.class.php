@@ -777,7 +777,9 @@ class Categorie extends CommonObject
 			    }
 			    else
 			    {
-				    $obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
+			        $classnameforobj = $this->MAP_OBJ_CLASS[$type];
+
+			        $obj = new $classnameforobj($this->db);
 				    $obj->fetch($rec['fk_' . $this->MAP_CAT_FK[$type]]);
 				    $objs[] = $obj;
 			    }
