@@ -11,7 +11,7 @@ You can freely use, study, modify or distribute it according to its Free Softwar
 
 You can use it as a standalone application or as a web application to be able to access it from the Internet or a LAN.
 
-Dolibarr has a large community ready to help you and [oficially preferred partners ready to offer commercial support should you need it](https://wiki.dolibarr.org/index.php/List_of_Dolibarr_partners_and_providers)
+Dolibarr has a large community ready to help you and [oficially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
 ![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
 
