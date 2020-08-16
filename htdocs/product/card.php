@@ -1107,7 +1107,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 	    {
 		    print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 		    print '<td colspan="3">';
-		    print $form->selectUnits('', 'units');
+		    print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, 'units');
 		    print '</td></tr>';
 	    }
 
