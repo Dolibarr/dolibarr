@@ -207,7 +207,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 	{
 		print "\n";
 		print '
-				<script type="text/javascript">
+				<script>
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{

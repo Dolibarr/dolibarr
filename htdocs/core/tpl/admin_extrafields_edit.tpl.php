@@ -39,7 +39,7 @@ $langs->load("modulebuilder");
 ?>
 
 <!-- BEGIN PHP TEMPLATE admin_extrafields_edit.tpl.php -->
-<script type="text/javascript">
+<script>
     jQuery(document).ready(function() {
     	function init_typeoffields(type)
     	{

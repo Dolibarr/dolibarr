@@ -224,7 +224,7 @@ if ($nolinesbefore) {
 				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS))
 				{
 					?>
-				<script type="text/javascript">
+				<script>
 					$(document).ready(function(){
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
 						$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
@@ -259,7 +259,7 @@ if ($nolinesbefore) {
 				if (!empty($conf->global->MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_SUPPLIER_PRODUCTS))
 				{
 					?>
-				<script type="text/javascript">
+				<script>
 					$(document).ready(function(){
 						// On first focus on a select2 combo, auto open the menu (this allow to use the keyboard only)
 						$(document).on('focus', '.select2-selection.select2-selection--single', function (e) {
