@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2011		Fabrice CHERRIER
- * Copyright (C) 2013-2019  Philippe Grand	            <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2020  Philippe Grand	            <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2018       Frédéric France             <frederic.france@netlogic.fr>
  *
@@ -500,7 +500,7 @@ class pdf_strato extends ModelePDFContract
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -550,7 +550,7 @@ class pdf_strato extends ModelePDFContract
 
     /**
      * Show footer signature of page
-     * @param   PDF         $pdf            Object PDF
+     * @param   TCPDF       $pdf            Object PDF
      * @param   int         $tab_top        tab height position
      * @param   int         $tab_height     tab height
      * @param   Translate   $outputlangs    Object language for output
@@ -579,8 +579,8 @@ class pdf_strato extends ModelePDFContract
     /**
      *  Show top header of page.
      *
-     *  @param	PDF			$pdf     		Object PDF
-     *  @param  CommonObject		$object     	Object to show
+     *  @param	TCPDF		$pdf     		Object PDF
+     *  @param  CommonObject	$object     	Object to show
      *  @param  int	    	$showaddress    0=no, 1=yes
      *  @param  Translate	$outputlangs	Object lang for output
      *  @return	void
