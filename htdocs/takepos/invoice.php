@@ -348,6 +348,7 @@ if ($action == "addline")
 		}
 	}
 	if ($idoflineadded <= 0) {
+		$invoice->fetch_thirdparty();
 		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
 	}
 
@@ -397,6 +398,7 @@ if ($action == "deleteline") {
         $invoice->deleteline($deletelineid);
         $invoice->fetch($placeid);
     }
+	if (count($invoice->lines)==0) $invoice->delete($user);
 }
 
 if ($action == "delete") {
@@ -425,6 +427,7 @@ if ($action == "delete") {
 			$sql .= " WHERE ref='(PROV-POS".$_SESSION["takeposterminal"]."-".$place.")'";
 			$resql3 = $db->query($sql);
 
+			$invoice->update_price(1);
             if ($resql1 && $resql2 && $resql3)
             {
             	$db->commit();
@@ -596,6 +599,9 @@ if ($action == "valid" || $action == "history")
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		if ($conf->global->TAKEPOS_GIFT_RECEIPT) {
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button><br>';
+		}
     }
     if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
     {
@@ -699,8 +705,8 @@ function SendTicket(id)
     $.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
 }
 
-function Print(id){
-    $.colorbox({href:"receipt.php?facid="+id, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
+function Print(id, gift){
+    $.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
     echo $langs->trans("PrintTicket"); ?>"});
 }
 
@@ -717,6 +723,7 @@ function TakeposPrinting(id){
 }
 
 function TakeposConnector(id){
+	console.log("TakeposConnector" + id);
 	var invoice='<?php
 	$data = json_encode($invoice);
 	$data = base64_encode($data);
@@ -730,7 +737,7 @@ function TakeposConnector(id){
 }
 
 function DolibarrTakeposPrinting(id) {
-    console.log('Printing invoice ticket ' + id)
+    console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
     $.ajax({
         type: "GET",
         url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,
@@ -845,7 +852,10 @@ print '<div class="div-table-responsive-no-min invoice">';
 print '<table id="tablelines" class="noborder noshadow postablelines" width="100%">';
 print '<tr class="liste_titre nodrag nodrop">';
 print '<td class="linecoldescription">';
-print '<span style="font-size:120%;" class="right">';
+// In phone version only show when it is invoice page
+if ($mobilepage == "invoice" || $mobilepage == "") {
+	print '<input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
+}
 if ($conf->global->TAKEPOS_BAR_RESTAURANT)
 {
     $sql = "SELECT floor, label FROM ".MAIN_DB_PREFIX."takepos_floor_tables where rowid=".((int) $place);
@@ -858,25 +868,28 @@ if ($conf->global->TAKEPOS_BAR_RESTAURANT)
     }
 	// In phone version only show when is invoice page
 	if ($mobilepage == "invoice" || $mobilepage == "") {
-		print $langs->trans('Place')." <b>".$label."</b> - ";
-		print $langs->trans('Floor')." <b>".$floor."</b> - ";
+		print '<span class="opacitymedium">'.$langs->trans('Place')."</span> <b>".$label."</b><br>";
+		print '<span class="opacitymedium">'.$langs->trans('Floor')."</span> <b>".$floor."</b>";
 	}
 	elseif (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) print $mysoc->name;
 	elseif ($mobilepage == "cats") print $langs->trans('Category');
 	elseif ($mobilepage == "products") print $langs->trans('Label');
+} else {
+	print $langs->trans("Products");
 }
-// In phone version only show when is invoice page
-if ($mobilepage == "invoice" || $mobilepage == "") {
-	print $langs->trans('TotalTTC');
-	print ' : <b>'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</b></span>';
-	print '<br><input type="hidden" name="invoiceid" id="invoiceid" value="'.$invoice->id.'">'.$sectionwithinvoicelink;
-	print '</td>';
-}
+print '</td>';
 if ($_SESSION["basiclayout"] != 1)
 {
 	print '<td class="linecolqty right">'.$langs->trans('ReductionShort').'</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
-	print '<td class="linecolht right nowraponall">'.$langs->trans('TotalTTCShort').'</td>';
+	print '<td class="linecolht right nowraponall">';
+	print '<span class="opacitymedium small">'.$langs->trans('TotalTTCShort').'</span><br>';
+	// In phone version only show when it is invoice page
+	if ($mobilepage == "invoice" || $mobilepage == "") {
+		print '<span id="linecolht-span-total" style="font-size:1.3em; font-weight: bold;">'.price($invoice->total_ttc, 1, '', 1, -1, -1, $conf->currency).'</span>';
+		print '</td>';
+	}
+	print '</td>';
 }
 elseif ($mobilepage == "invoice") print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 print "</tr>\n";

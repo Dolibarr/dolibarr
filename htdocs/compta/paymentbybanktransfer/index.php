@@ -68,7 +68,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 $thirdpartystatic = new Societe($db);
-$invoicestatic = new Facture($db);
+$invoicestatic = new FactureFournisseur($db);
 $bprev = new BonPrelevement($db);
 
 print '<div class="div-table-responsive-no-min">';
@@ -94,7 +94,7 @@ print '</td></tr></table></div><br>';
  */
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, f.fk_statut, f.paye, f.type,";
 $sql .= " pfd.date_demande, pfd.amount,";
-$sql .= " s.nom as name, s.email, s.rowid as socid";
+$sql .= " s.nom as name, s.email, s.rowid as socid, s.tva_intra";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
 $sql .= " ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -138,13 +138,14 @@ if ($resql)
             $thirdpartystatic->id = $obj->socid;
             $thirdpartystatic->name = $obj->name;
             $thirdpartystatic->email = $obj->email;
+            $thirdpartystatic->tva_intra = $obj->tva_intra;
 
             print '<tr class="oddeven"><td>';
             print $invoicestatic->getNomUrl(1, 'withdraw');
             print '</td>';
 
             print '<td>';
-            print $thirdpartystatic->getNomUrl(1, 'customer');
+            print $thirdpartystatic->getNomUrl(1, 'supplier');
             print '</td>';
 
             print '<td class="right">';

@@ -272,6 +272,10 @@ table.postablelines tr td {
     background-color: var(--colorbacklineimpair1);
 }
 
+.postablelines td.linecolht {
+    line-height: 1.3em !important;
+}
+
 div.paymentbordline
 {
 	width:calc(50% - 16px);

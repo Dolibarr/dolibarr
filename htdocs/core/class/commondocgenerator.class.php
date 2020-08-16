@@ -1072,7 +1072,8 @@ abstract class CommonDocGenerator
         $parameters = array(
             'curY' => &$curY,
             'columnText' => $columnText,
-            'colKey' => $colKey
+            'colKey' => $colKey,
+            'pdf' => &$pdf,
         );
         $reshook = $hookmanager->executeHooks('printStdColumnContent', $parameters, $this); // Note that $action and $object may have been modified by hook
         if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -1286,7 +1287,7 @@ abstract class CommonDocGenerator
         {
             // Sort extrafields by rank
             uasort($fields, function ($a, $b) {
-                return  ($a->rank > $b->rank) ? -1 : 1;
+                return  ($a->rank > $b->rank) ? 1 : -1;
 			});
 
             // define some HTML content with style

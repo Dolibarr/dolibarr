@@ -481,6 +481,8 @@ if ($id > 0)
 		}
 		$morehtmlref .= '</div>';
 
+		$morehtmlright = '';
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/sociales/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		$object->totalpaye = $totalpaye; // To give a chance to dol_banner_tab to use already paid amount to show correct status

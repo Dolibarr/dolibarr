@@ -177,6 +177,8 @@ class DoliDBPgsql extends DoliDB
 
 		    if ($type == 'dml')
 		    {
+		    	$reg = array();
+
                 $line = preg_replace('/\s/', ' ', $line); // Replace tabulation with space
 
 		        // we are inside create table statement so lets process datatypes

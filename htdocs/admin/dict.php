@@ -12,6 +12,7 @@
  * Copyright (C) 2015		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020		Open-Dsi				<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,11 @@ $hookmanager->initHooks(array('admin'));
 // Put here declaration of dictionaries properties
 
 // Sort order to show dictionary (0 is space). All other dictionaries (added by modules) will be at end of this.
-$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 27, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 39, 0, 15, 30, 0, 37, 0, 25, 0);
+if (! empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+	$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 39, 27, 40, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 0, 15, 30, 0, 37, 0, 25, 0);
+} else {
+	$taborder = array(9, 0, 4, 3, 2, 0, 1, 8, 19, 16, 27, 38, 0, 5, 11, 0, 32, 33, 34, 0, 6, 0, 29, 0, 7, 24, 28, 17, 35, 36, 0, 10, 23, 12, 13, 0, 14, 0, 22, 20, 18, 21, 0, 15, 30, 0, 37, 0, 25, 0);
+}
 
 // Name of SQL tables of dictionaries
 $tabname = array();
@@ -128,12 +133,14 @@ $tabname[30] = MAIN_DB_PREFIX."c_format_cards";
 $tabname[32] = MAIN_DB_PREFIX."c_hrm_public_holiday";
 $tabname[33] = MAIN_DB_PREFIX."c_hrm_department";
 $tabname[34] = MAIN_DB_PREFIX."c_hrm_function";
-
 $tabname[35] = MAIN_DB_PREFIX."c_exp_tax_cat";
 $tabname[36] = MAIN_DB_PREFIX."c_exp_tax_range";
 $tabname[37] = MAIN_DB_PREFIX."c_units";
 $tabname[38] = MAIN_DB_PREFIX."c_socialnetworks";
-$tabname[39]= MAIN_DB_PREFIX."c_transport_mode";
+$tabname[39] = MAIN_DB_PREFIX."c_prospectcontactlevel";
+$tabname[40] = MAIN_DB_PREFIX."c_stcommcontact";
+$tabname[41] = MAIN_DB_PREFIX."c_transport_mode";
+
 // Dictionary labels
 $tablib = array();
 $tablib[1] = "DictionaryCompanyJuridicalType";
@@ -174,7 +181,9 @@ $tablib[35] = "DictionaryExpenseTaxCat";
 $tablib[36] = "DictionaryExpenseTaxRange";
 $tablib[37] = "DictionaryMeasuringUnits";
 $tablib[38] = "DictionarySocialNetworks";
-$tablib[39] = "DictionaryTransportMode";
+$tablib[39] = "DictionaryProspectContactLevel";
+$tablib[40] = "DictionaryProspectContactStatus";
+$tablib[41] = "DictionaryTransportMode";
 
 // Requests to extract data
 $tabsql = array();
@@ -204,7 +213,7 @@ $tabsql[23] = "SELECT t.rowid as rowid, t.taux, t.revenuestamp_type, c.label as 
 $tabsql[24] = "SELECT rowid   as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_type_resource";
 $tabsql[25] = "SELECT rowid   as rowid, code, label, active, module FROM ".MAIN_DB_PREFIX."c_type_container as t WHERE t.entity IN (".getEntity('c_type_container').")";
 //$tabsql[26]= "SELECT rowid   as rowid, code, label, short_label, active FROM ".MAIN_DB_PREFIX."c_units";
-$tabsql[27] = "SELECT id      as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_stcomm";
+$tabsql[27] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcomm";
 $tabsql[28] = "SELECT h.rowid as rowid, h.code, h.label, h.affect, h.delay, h.newbymonth, h.fk_country as country_id, c.code as country_code, c.label as country, h.active FROM ".MAIN_DB_PREFIX."c_holiday_types as h LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON h.fk_country=c.rowid";
 $tabsql[29] = "SELECT rowid   as rowid, code, label, percent, position, active FROM ".MAIN_DB_PREFIX."c_lead_status";
 $tabsql[30] = "SELECT rowid, code, name, paper_size, orientation, metric, leftmargin, topmargin, nx, ny, spacex, spacey, width, height, font_size, custom_x, custom_y, active FROM ".MAIN_DB_PREFIX."c_format_cards";
@@ -216,7 +225,9 @@ $tabsql[35] = "SELECT c.rowid, c.label, c.active, c.entity FROM ".MAIN_DB_PREFIX
 $tabsql[36] = "SELECT r.rowid, r.fk_c_exp_tax_cat, r.range_ik, r.active, r.entity FROM ".MAIN_DB_PREFIX."c_exp_tax_range r";
 $tabsql[37] = "SELECT r.rowid, r.code, r.label, r.short_label, r.unit_type, r.scale, r.active FROM ".MAIN_DB_PREFIX."c_units r";
 $tabsql[38] = "SELECT rowid, entity, code, label, url, icon, active FROM ".MAIN_DB_PREFIX."c_socialnetworks";
-$tabsql[39] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
+$tabsql[39] = "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectcontactlevel";
+$tabsql[40] = "SELECT id      as rowid, code, libelle, picto, active FROM ".MAIN_DB_PREFIX."c_stcommcontact";
+$tabsql[41] = "SELECT rowid as rowid, code, label, active FROM ".MAIN_DB_PREFIX."c_transport_mode";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -258,7 +269,9 @@ $tabsqlsort[35] = "c.label ASC";
 $tabsqlsort[36] = "r.fk_c_exp_tax_cat ASC, r.range_ik ASC";
 $tabsqlsort[37] = "r.unit_type ASC, r.scale ASC, r.code ASC";
 $tabsqlsort[38] = "rowid, code ASC";
-$tabsqlsort[39] = "code ASC";
+$tabsqlsort[39] = "sortorder ASC";
+$tabsqlsort[40] = "code ASC";
+$tabsqlsort[41] = "code ASC";
 
 // Field names in select result for dictionary display
 $tabfield = array();
@@ -288,7 +301,7 @@ $tabfield[23] = "country_id,country,taux,revenuestamp_type,accountancy_code_sell
 $tabfield[24] = "code,label";
 $tabfield[25] = "code,label";
 //$tabfield[26]= "code,label,short_label";
-$tabfield[27] = "code,libelle";
+$tabfield[27] = "code,libelle,picto";
 $tabfield[28] = "code,label,affect,delay,newbymonth,country_id,country";
 $tabfield[29] = "code,label,percent,position";
 $tabfield[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
@@ -300,7 +313,9 @@ $tabfield[35] = "label";
 $tabfield[36] = "range_ik,fk_c_exp_tax_cat";
 $tabfield[37] = "code,label,short_label,unit_type,scale";
 $tabfield[38] = "code,label,url,icon,entity";
-$tabfield[39] = "code,label";
+$tabfield[39] = "code,libelle,sortorder";
+$tabfield[40] = "code,libelle,picto";
+$tabfield[41] = "code,label";
 
 // Edit field names for editing a record
 $tabfieldvalue = array();
@@ -330,7 +345,7 @@ $tabfieldvalue[23] = "country,taux,revenuestamp_type,accountancy_code_sell,accou
 $tabfieldvalue[24] = "code,label";
 $tabfieldvalue[25] = "code,label";
 //$tabfieldvalue[26]= "code,label,short_label";
-$tabfieldvalue[27] = "code,libelle";
+$tabfieldvalue[27] = "code,libelle,picto";
 $tabfieldvalue[28] = "code,label,affect,delay,newbymonth,country";
 $tabfieldvalue[29] = "code,label,percent,position";
 $tabfieldvalue[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
@@ -342,7 +357,9 @@ $tabfieldvalue[35] = "label";
 $tabfieldvalue[36] = "range_ik,fk_c_exp_tax_cat";
 $tabfieldvalue[37] = "code,label,short_label,unit_type,scale";
 $tabfieldvalue[38] = "code,label,url,icon";
-$tabfieldvalue[39] = "code,label";
+$tabfieldvalue[39] = "code,libelle,sortorder";
+$tabfieldvalue[40] = "code,libelle,picto";
+$tabfieldvalue[41] = "code,label";
 
 // Field names in the table for inserting a record
 $tabfieldinsert = array();
@@ -372,7 +389,7 @@ $tabfieldinsert[23] = "fk_pays,taux,revenuestamp_type,accountancy_code_sell,acco
 $tabfieldinsert[24] = "code,label";
 $tabfieldinsert[25] = "code,label";
 //$tabfieldinsert[26]= "code,label,short_label";
-$tabfieldinsert[27] = "code,libelle";
+$tabfieldinsert[27] = "code,libelle,picto";
 $tabfieldinsert[28] = "code,label,affect,delay,newbymonth,fk_country";
 $tabfieldinsert[29] = "code,label,percent,position";
 $tabfieldinsert[30] = "code,name,paper_size,orientation,metric,leftmargin,topmargin,nx,ny,spacex,spacey,width,height,font_size,custom_x,custom_y";
@@ -385,7 +402,9 @@ $tabfieldinsert[35] = "label";
 $tabfieldinsert[36] = "range_ik,fk_c_exp_tax_cat";
 $tabfieldinsert[37] = "code,label,short_label,unit_type,scale";
 $tabfieldinsert[38] = "code,label,url,icon,entity";
-$tabfieldinsert[39] = "code,label";
+$tabfieldinsert[39] = "code,label,sortorder";
+$tabfieldinsert[40] = "code,libelle,picto";
+$tabfieldinsert[41] = "code,label";
 
 // Rowid name of field depending if field is autoincrement on or off..
 // Use "" if id field is "rowid" and has autoincrement on
@@ -429,7 +448,9 @@ $tabrowid[35] = "";
 $tabrowid[36] = "";
 $tabrowid[37] = "";
 $tabrowid[38] = "";
-$tabrowid[39] = "";
+$tabrowid[39] = "code";
+$tabrowid[40] = "id";
+$tabrowid[41] = "";
 
 // Condition to show dictionary in setup page
 $tabcond = array();
@@ -471,7 +492,9 @@ $tabcond[35] = !empty($conf->expensereport->enabled);
 $tabcond[36] = !empty($conf->expensereport->enabled);
 $tabcond[37] = !empty($conf->product->enabled);
 $tabcond[38] = !empty($conf->socialnetworks->enabled);
-$tabcond[39] = !empty($conf->intracommreport->enabled);
+$tabcond[39] = (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
+$tabcond[40] = !empty($conf->societe->enabled);
+$tabcond[41] = !empty($conf->intracommreport->enabled);
 
 // List of help for fields
 $tabhelp = array();
@@ -501,7 +524,7 @@ $tabhelp[23] = array('revenuestamp_type'=>'FixedOrPercent');
 $tabhelp[24] = array('code'=>$langs->trans("EnterAnyCode"));
 $tabhelp[25] = array('code'=>$langs->trans('EnterAnyCode'));
 //$tabhelp[26] = array('code'=>$langs->trans("EnterAnyCode"));
-$tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[27] = array('code'=>$langs->trans("EnterAnyCode"),'picto'=>$langs->trans("PictoHelp"));
 $tabhelp[28] = array('affect'=>$langs->trans("FollowedByACounter"), 'delay'=>$langs->trans("MinimumNoticePeriod"), 'newbymonth'=>$langs->trans("NbAddedAutomatically"));
 $tabhelp[29] = array('code'=>$langs->trans("EnterAnyCode"), 'percent'=>$langs->trans("OpportunityPercent"), 'position'=>$langs->trans("PositionIntoComboList"));
 $tabhelp[30] = array('code'=>$langs->trans("EnterAnyCode"), 'name'=>$langs->trans("LabelName"), 'paper_size'=>$langs->trans("LabelPaperSize"));
@@ -514,6 +537,8 @@ $tabhelp[36] = array('range_ik'=>$langs->trans('PrevRangeToThisRange'));
 $tabhelp[37] = array('code'=>$langs->trans("EnterAnyCode"), 'unit_type' => $langs->trans('MeasuringUnitTypeDesc'), 'scale' => $langs->trans('MeasuringScaleDesc'));
 $tabhelp[38] = array('code'=>$langs->trans("EnterAnyCode"), 'url' => $langs->trans('UrlSocialNetworksDesc'), 'icon' => $langs->trans('FafaIconSocialNetworksDesc'));
 $tabhelp[39] = array('code'=>$langs->trans("EnterAnyCode"));
+$tabhelp[40] = array('code'=>$langs->trans("EnterAnyCode"),'picto'=>$langs->trans("PictoHelp"));
+$tabhelp[41] = array('code'=>$langs->trans("EnterAnyCode"));
 
 // List of check for fields (NOT USED YET)
 $tabfieldcheck = array();
@@ -556,6 +581,8 @@ $tabfieldcheck[36] = array();
 $tabfieldcheck[37] = array();
 $tabfieldcheck[38] = array();
 $tabfieldcheck[39] = array();
+$tabfieldcheck[40] = array();
+$tabfieldcheck[41] = array();
 
 // Complete all arrays with entries found into modules
 complete_dictionary_with_modules($taborder, $tabname, $tablib, $tabsql, $tabsqlsort, $tabfield, $tabfieldvalue, $tabfieldinsert, $tabrowid, $tabcond, $tabhelp, $tabfieldcheck);
@@ -657,7 +684,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		if ($value == 'dayrule' && empty($_POST['dayrule'])) continue;
 		if ($value == 'sortorder') continue; // For a column name 'sortorder', we use the field name 'position'
 		if ((!isset($_POST[$value]) || $_POST[$value] == '')
-        	&& (!in_array($listfield[$f], array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking'))  // Fields that are not mandatory
+        	&& (!in_array($listfield[$f], array('decalage', 'module', 'accountancy_code', 'accountancy_code_sell', 'accountancy_code_buy', 'tracking', 'picto'))  // Fields that are not mandatory
         	&& (!($id == 10 && $listfield[$f] == 'code')) // Code is mandatory fir table 10
         	)
 		) {

@@ -108,6 +108,7 @@ DisabledInMonoUserMode=Désactivé en mode maintenance
 UserAccountancyCode=Code comptable de l'utilisateur
 UserLogoff=Déconnexion de l'utilisateur
 UserLogged=Utilisateur connecté
+DateOfEmployment=Date d'embauche
 DateEmployment=Date d'embauche
 DateEmploymentEnd=Date de fin d'emploi
 CantDisableYourself=Vous ne pouvez pas désactiver votre propre compte utilisateur

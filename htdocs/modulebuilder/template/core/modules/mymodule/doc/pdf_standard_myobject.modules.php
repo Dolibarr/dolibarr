@@ -70,9 +70,9 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -147,7 +147,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 		$this->db = $db;
 		$this->name = "standard";
-		$this->description = $langs->trans('PDFStandardDescription');
+		$this->description = $langs->trans('DocumentModelStandardPDF');
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
 
 		// Dimension page

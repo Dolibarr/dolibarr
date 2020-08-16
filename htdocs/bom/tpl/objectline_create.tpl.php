@@ -58,7 +58,6 @@ if ($nolinesbefore) {
     }
     print '<td class="linecoldescription minwidth500imp">';
 	print '<div id="add"></div><span class="hideonsmartphone">'.$langs->trans('AddNewLine').'</span>';
-	// echo $langs->trans("FreeZone");
 	print '</td>';
 	print '<td class="linecolqty right">'.$langs->trans('Qty').'</td>';
 	if ($conf->global->PRODUCT_USE_UNITS)
@@ -114,7 +113,7 @@ if ($conf->global->PRODUCT_USE_UNITS)
 {
     $coldisplay++;
 	print '<td class="nobottom linecoluseunit left">';
-	print $form->selectUnits($line->fk_unit, "units");
+	print $form->selectUnits(empty($line->fk_unit) ? $conf->global->PRODUCT_USE_UNITS : $line->fk_unit, "units");
 	print '</td>';
 }
 

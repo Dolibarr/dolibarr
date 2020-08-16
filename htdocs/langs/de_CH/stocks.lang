@@ -14,7 +14,6 @@ StockLimit=Sicherungsbestand für autom. Benachrichtigung
 RealStock=Realer Lagerbestand
 VirtualStock=Theoretisches Warenlager
 AverageUnitPricePMPShort=Gewichteter Durchschnitts-Einstandspreis
-AverageUnitPricePMP=Gewichteter Durchschnittpreis bei Erwerb
 DesiredStockDesc=Dieser Bestand wird für die Nachbestellfunktion verwendet.
 UseVirtualStockByDefault=Nutze theoretische Lagerbestände anstatt des physischem Bestands für die Nachbestellungsfunktion
 UseVirtualStock=theoretisches Warenlager verwenden

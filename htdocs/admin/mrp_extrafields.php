@@ -68,7 +68,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("MrpSetupPage"), $linkback, 'title_setup');
 
 
-$head = mrpAdminPrepareHead(null);
+$head = mrpAdminPrepareHead();
 
 dol_fiche_head($head, 'mrp_extrafields', $langs->trans("ExtraFields"), -1, 'account');
 

@@ -29,7 +29,7 @@ print $langs->trans('SalesRepresentatives');
 print '</td>';
 if ($action != 'editsalesrepresentatives' && $user->rights->societe->creer) {
 	print '<td class="right">';
-	print '<a href="' . $_SERVER["PHP_SELF"] . '?action=editsalesrepresentatives&amp;socid=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
+	print '<a class="editfielda reposition" href="' . $_SERVER["PHP_SELF"] . '?action=editsalesrepresentatives&amp;socid=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('Edit'), 1) . '</a>';
 	print '</td>';
 }
 print '</tr></table>';
