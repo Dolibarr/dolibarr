@@ -869,7 +869,7 @@ class SupplierProposal extends CommonObject
         }
 
         // Multicurrency
-        if (!empty($this->multicurrency_code)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+        if (!empty($this->multicurrency_code)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
         if (empty($this->fk_multicurrency))
         {
             $this->multicurrency_code = $conf->currency;
@@ -2630,6 +2630,7 @@ class SupplierProposal extends CommonObject
         global $conf, $langs;
 
         $langs->load("supplier_proposal");
+		$outputlangs->load("products");
 
         if (!dol_strlen($modele)) {
             $modele = 'aurore';

@@ -173,7 +173,7 @@ class PdfDocTest extends PHPUnit\Framework\TestCase
         $file=dirname(__FILE__).'/img250x50.jpg';
         $result=pdf_getHeightForLogo($file);
         print __METHOD__." result=".$result."\n";
-    	$this->assertEquals($result, 22);
+    	$this->assertEquals($result, 20);
         $file=dirname(__FILE__).'/img250x20.png';
         $result=pdf_getHeightForLogo($file);
         print __METHOD__." result=".$result."\n";

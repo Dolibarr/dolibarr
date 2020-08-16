@@ -348,6 +348,7 @@ if ($action == "addline")
 		}
 	}
 	if ($idoflineadded <= 0) {
+		$invoice->fetch_thirdparty();
 		$idoflineadded = $invoice->addline($prod->description, $price, 1, $tva_tx, $localtax1_tx, $localtax2_tx, $idproduct, $customer->remise_percent, '', 0, 0, 0, '', $price_base_type, $price_ttc, $prod->type, -1, 0, '', 0, $parent_line, null, '', '', 0, 100, '', null, 0);
 	}
 
@@ -397,6 +398,7 @@ if ($action == "deleteline") {
         $invoice->deleteline($deletelineid);
         $invoice->fetch($placeid);
     }
+	if (count($invoice->lines)==0) $invoice->delete($user);
 }
 
 if ($action == "delete") {
@@ -597,6 +599,9 @@ if ($action == "valid" || $action == "history")
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="DolibarrTakeposPrinting('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
     } else {
         $sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.');">'.$langs->trans('PrintTicket').'</button>';
+		if ($conf->global->TAKEPOS_GIFT_RECEIPT) {
+			$sectionwithinvoicelink .= ' <button id="buttonprint" type="button" onclick="Print('.$placeid.', 1);">'.$langs->trans('GiftReceipt').'</button><br>';
+		}
     }
     if ($conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE > 0)
     {
@@ -700,8 +705,8 @@ function SendTicket(id)
     $.colorbox({href:"send.php?facid="+id, width:"70%", height:"30%", transition:"none", iframe:"true", title:"<?php echo $langs->trans("SendTicket"); ?>"});
 }
 
-function Print(id){
-    $.colorbox({href:"receipt.php?facid="+id, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
+function Print(id, gift){
+    $.colorbox({href:"receipt.php?facid="+id+"&gift="+gift, width:"40%", height:"90%", transition:"none", iframe:"true", title:"<?php
     echo $langs->trans("PrintTicket"); ?>"});
 }
 
@@ -718,6 +723,7 @@ function TakeposPrinting(id){
 }
 
 function TakeposConnector(id){
+	console.log("TakeposConnector" + id);
 	var invoice='<?php
 	$data = json_encode($invoice);
 	$data = base64_encode($data);
@@ -731,7 +737,7 @@ function TakeposConnector(id){
 }
 
 function DolibarrTakeposPrinting(id) {
-    console.log('Printing invoice ticket ' + id)
+    console.log("DolibarrTakeposPrinting Printing invoice ticket " + id)
     $.ajax({
         type: "GET",
         url: "<?php print dol_buildpath('/takepos/ajax/ajax.php', 1).'?action=printinvoiceticket&term='.$_SESSION["takeposterminal"].'&id='; ?>" + id,

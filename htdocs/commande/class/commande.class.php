@@ -3859,6 +3859,7 @@ class Commande extends CommonOrder
 		global $conf, $langs;
 
 		$langs->load("orders");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'einstein';

@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2019 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014      Cedric Gross         <c.gross@kreiz-it.fr>
  * Copyright (C) 2016      Florian Henry        <florian.henry@atm-consulting.fr>
- * Copyright (C) 2017      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2017-2020 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
  * Copyright (C) 2019-2020 Christophe Battarel	<christophe@altairis.fr>
  *
@@ -243,7 +243,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 			if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
 				if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
-					$dto = GETPOST("dto_".$reg[1].'_'.$reg[2]);
+					$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
 					if (!empty($dto)) {
 						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
 					}
@@ -269,14 +269,14 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 					if (!$error && !empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
 						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
-							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2]);
+							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
 							//update supplier price
 							if (GETPOSTISSET($saveprice)) {
 								// TODO Use class
 								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
 								$sql .= " SET unitprice='".GETPOST($pu)."'";
 								$sql .= ", price=".GETPOST($pu)."*quantity";
-								$sql .= ", remise_percent='".$dto."'";
+								$sql .= ", remise_percent='".(!empty($dto)?$dto:0)."'";
 								$sql .= " WHERE fk_soc=".$object->socid;
 								$sql .= " AND fk_product=".GETPOST($prod, 'int');
 
@@ -306,6 +306,16 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 
 			$fk_commandefourndet = 'fk_commandefourndet_'.$reg[1].'_'.$reg[2];
 
+			if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+				if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+					$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
+					if (!empty($dto)) {
+						$unit_price = price2num(GETPOST("pu_".$reg[1]) * (100 - $dto) / 100, 'MU');
+					}
+					$saveprice = "saveprice_".$reg[1].'_'.$reg[2];
+				}
+			}
+
 			// We ask to move a qty
 			if (GETPOST($qty) > 0) {
 				if (!(GETPOST($ent, 'int') > 0)) {
@@ -327,6 +337,24 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 					if ($result < 0) {
 						setEventMessages($object->error, $object->errors, 'errors');
 						$error++;
+					}
+
+					if (!$error && !empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
+						if (empty($conf->multicurrency->enabled) && empty($conf->dynamicprices->enabled)) {
+							$dto = GETPOST("dto_".$reg[1].'_'.$reg[2], 'int');
+							//update supplier price
+							if (GETPOSTISSET($saveprice)) {
+								// TODO Use class
+								$sql = "UPDATE ".MAIN_DB_PREFIX."product_fournisseur_price";
+								$sql .= " SET unitprice='".GETPOST($pu)."'";
+								$sql .= ", price=".GETPOST($pu)."*quantity";
+								$sql .= ", remise_percent='".(!empty($dto)?$dto:0)."'";
+								$sql .= " WHERE fk_soc=".$object->socid;
+								$sql .= " AND fk_product=".GETPOST($prod, 'int');
+
+								$resql = $db->query($sql);
+							}
+						}
 					}
 				}
 			}
@@ -715,7 +743,8 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="right">'.$langs->trans("SupplierRef").'</td>';
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
-				print '<td class="right">'.$langs->trans("QtyToDispatchShort").'</td>';
+				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
+                print '<br><a href="#" id="autoreset">'.$langs->trans("Reset").'</a></td>';
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -943,7 +972,7 @@ if ($id > 0 || !empty($ref)) {
 
 								// Discount
 								print '<td class="right">';
-								print '<input id="pu'.$suffix.'" name="dto'.$suffix.'" type="text" size="8" value="'.(GETPOST('dto'.$suffix) != '' ? GETPOST('dto'.$suffix) : '').'">';
+								print '<input id="dto' . $suffix . '" name="dto' . $suffix . '" type="text" size="8" value="' . (GETPOST('dto' . $suffix) != '' ? GETPOST('dto' . $suffix) : '') . '">';
 								print '</td>';
 
 								// Save price
@@ -1040,7 +1069,16 @@ if ($id > 0 || !empty($ref)) {
 				$("select[name=fk_default_warehouse]").change(function() {
 					var fk_default_warehouse = $("option:selected", this).val();
 					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
-				});
+                });
+				
+	            jQuery("#autoreset").click(function() {';
+    $i = 0;
+    while ($i < $nbproduct) {
+        print '           jQuery("#qty_0_'.$i.'").val("");';
+        $i++;
+    }
+    print '
+                });
 			});
 		</script>';
 

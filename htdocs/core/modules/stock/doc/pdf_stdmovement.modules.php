@@ -59,9 +59,9 @@ class pdf_stdmovement extends ModelePDFMovement
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -183,7 +183,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		StockMovements	$object				Object source to build document
+	 *	@param		MouvementStock	$object				Object source to build document
 	 *	@param		Translate		$outputlangs		Lang output object
 	 * 	@param		string			$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int				$hidedetails		Do not show line details

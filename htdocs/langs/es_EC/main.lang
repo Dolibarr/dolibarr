@@ -22,7 +22,6 @@ FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Conexión con la base de datos
 NoTemplateDefined=No hay plantilla disponible para este tipo de correo electrónico
 AvailableVariables=Variables de sustitución disponibles
-EmptySearchString=Enter non empty search criterias
 NoRecordFound=Ningún registro encontrado
 NoRecordDeleted=Ningún registro eliminado
 NoError=No hay error

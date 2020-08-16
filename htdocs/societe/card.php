@@ -1990,7 +1990,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
                     print '</span>';
                 }
                 print '</td>';
-                if ($conf->browser->layout == 'phone') print '</tr><tr>';
+                print '</tr><tr>';
                 print '<td>'.$form->editfieldkey($langs->transcountry("LocalTax2IsUsed", $mysoc->country_code), 'localtax2assuj_value', '', $object, 0).'</td><td>';
                 print $form->selectyesno('localtax2assuj_value', $object->localtax2_assuj, 1);
                 if (!isOnlyOneLocalTax(2))

@@ -250,7 +250,10 @@ INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, desc
 
 DELETE FROM llx_const WHERE name = __ENCRYPT('DONATION_ART885')__;
 
-ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable DROP DEFAULT;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields MODIFY COLUMN printable integer USING printable::integer;
+-- VPGSQL8.2 ALTER TABLE llx_extrafields ALTER COLUMN printable SET DEFAULT 0;
 ALTER TABLE llx_extrafields ADD COLUMN printable integer DEFAULT 0;
 
 UPDATE llx_const SET name = 'INVOICE_USE_RETAINED_WARRANTY' WHERE name = 'INVOICE_USE_SITUATION_RETAINED_WARRANTY';
@@ -302,7 +305,6 @@ ALTER TABLE llx_categorie ADD COLUMN fk_user_modif	integer;
 
 ALTER TABLE llx_commandedet ADD CONSTRAINT fk_commandedet_fk_commandefourndet FOREIGN KEY (fk_commandefourndet) REFERENCES llx_commande_fournisseurdet (rowid);
 
-
 -- VMYSQL4.3 ALTER TABLE llx_prelevement_facture_demande MODIFY COLUMN fk_facture INTEGER NULL;
 -- VPGSQL8.2 ALTER TABLE llx_prelevement_facture_demande ALTER COLUMN fk_facture DROP NOT NULL;
 ALTER TABLE llx_prelevement_facture_demande ADD COLUMN fk_facture_fourn INTEGER NULL;
@@ -327,3 +329,5 @@ ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_de
 
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (721, 72,    '0','0','VAT Rate 0',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,note,active) values (722, 72,   '18','0', '0.9', '1', 'VAT Rate 18+0.9', 1);
+
+ALTER TABLE llx_expedition ADD COLUMN billed smallint    DEFAULT 0;

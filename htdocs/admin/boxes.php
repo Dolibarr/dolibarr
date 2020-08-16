@@ -314,7 +314,7 @@ $boxactivated = InfoBox::listBoxes($db, 'activated', -1, null);
 
 print "<br>\n";
 print "\n\n".'<!-- Boxes Available -->'."\n";
-print load_fiche_titre($langs->trans("BoxesAvailable"));
+print load_fiche_titre($langs->trans("BoxesAvailable"), '', '');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
@@ -377,7 +377,7 @@ print "\n".'<!-- End Boxes Available -->'."\n";
 
 //var_dump($boxactivated);
 print "<br>\n\n";
-print load_fiche_titre($langs->trans("BoxesActivated"));
+print load_fiche_titre($langs->trans("BoxesActivated"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable liste">'."\n";
@@ -436,7 +436,7 @@ print '<br>';
 // Other parameters
 
 print "\n\n".'<!-- Other Const -->'."\n";
-print load_fiche_titre($langs->trans("Other"));
+print load_fiche_titre($langs->trans("Other"), '', '');
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addconst">';

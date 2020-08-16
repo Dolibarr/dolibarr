@@ -43,7 +43,7 @@ if (!empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies'));
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies', 'margins'));
 if (!empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $action = GETPOST('action', 'alpha');
@@ -107,7 +107,7 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('product');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 if (empty($action)) $action = 'list';
@@ -200,6 +200,7 @@ $arrayfields = array(
 	'p.numbuyprice'=>array('label'=>$langs->trans("BuyingPriceNumShort"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>42),
     'p.tva_tx'=>array('label'=>$langs->trans("VATRate"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>43),
     'p.pmp'=>array('label'=>$langs->trans("PMPValueShort"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>44),
+	'p.cost_price'=>array('label'=>$langs->trans("CostPrice"), 'checked'=>0, 'enabled'=>(!empty($user->rights->fournisseur->lire)), 'position'=>45),
 	'p.seuil_stock_alerte'=>array('label'=>$langs->trans("StockLimit"), 'checked'=>0, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>50),
 	'p.desiredstock'=>array('label'=>$langs->trans("DesiredStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>51),
 	'p.stock'=>array('label'=>$langs->trans("PhysicalStock"), 'checked'=>1, 'enabled'=>(!empty($conf->stock->enabled) && $user->rights->stock->lire && $contextpage != 'service'), 'position'=>52),
@@ -324,7 +325,7 @@ $sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p
 $sql .= ' p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 $sql .= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
 $sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export,';
-$sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock,';
+$sql .= ' p.datec as date_creation, p.tms as date_update, p.pmp, p.stock, p.cost_price,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units,';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ' p.fk_unit, cu.label as cu_label,';
 $sql .= ' MIN(pfp.unitprice) as minsellprice';
@@ -416,7 +417,7 @@ $sql .= $hookmanager->resPrint;
 $sql .= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
 $sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export,';
-$sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.pmp, p.stock,';
+$sql .= ' p.accountancy_code_buy, p.accountancy_code_buy_intra, p.accountancy_code_buy_export, p.pmp, p.cost_price, p.stock,';
 $sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units, p.surface, p.surface_units, p.volume, p.volume_units';
 if (!empty($conf->global->PRODUCT_USE_UNITS))   $sql .= ', p.fk_unit, cu.label';
 
@@ -646,7 +647,7 @@ if ($resql)
 	// Type
 	if (!empty($arrayfields['p.fk_product_type']['checked']))
 	{
-		print '<td class="liste_titre left">';
+		print '<td class="liste_titre center">';
 		$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('Product'), '1'=>$langs->trans('Service'));
 		print $form->selectarray('search_type', $array, $search_type);
 		print '</td>';
@@ -791,6 +792,13 @@ if ($resql)
 		print '&nbsp;';
 		print '</td>';
 	}
+	// cost_price
+	if (!empty($arrayfields['p.cost_price']['checked']))
+	{
+		print '<td class="liste_titre">';
+		print '&nbsp;';
+		print '</td>';
+	}
 	// Limit for alert
 	if (!empty($arrayfields['p.seuil_stock_alerte']['checked']))
 	{
@@ -867,7 +875,7 @@ if ($resql)
         print_liste_field_titre($arrayfields['p.label']['label'], $_SERVER["PHP_SELF"], "p.label", "", $param, "", $sortfield, $sortorder);
     }
     if (!empty($arrayfields['p.fk_product_type']['checked'])) {
-        print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder);
+        print_liste_field_titre($arrayfields['p.fk_product_type']['label'], $_SERVER["PHP_SELF"], "p.fk_product_type", "", $param, "", $sortfield, $sortorder, 'center ');
     }
     if (!empty($arrayfields['p.barcode']['checked'])) {
         print_liste_field_titre($arrayfields['p.barcode']['label'], $_SERVER["PHP_SELF"], "p.barcode", "", $param, "", $sortfield, $sortorder);
@@ -918,6 +926,9 @@ if ($resql)
     }
     if (!empty($arrayfields['p.pmp']['checked'])) {
         print_liste_field_titre($arrayfields['p.pmp']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
+    }
+    if (!empty($arrayfields['p.cost_price']['checked'])) {
+        print_liste_field_titre($arrayfields['p.cost_price']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'right ');
     }
     if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
         print_liste_field_titre($arrayfields['p.seuil_stock_alerte']['label'], $_SERVER["PHP_SELF"], "p.seuil_stock_alerte", "", $param, '', $sortfield, $sortorder, 'right ');
@@ -1075,9 +1086,21 @@ if ($resql)
 		// Type
 		if (!empty($arrayfields['p.fk_product_type']['checked']))
 		{
-			print '<td>';
-			if ($obj->fk_product_type == 0) print $langs->trans("Product");
-			else print $langs->trans("Service");
+			print '<td class="center">';
+			$s = '';
+			if ($obj->fk_product_type == 0)
+			{
+				//$s .= '<a class="product-type-back" title="'.$langs->trans("Product").'">';
+				$s .= img_picto($langs->trans("Product"), 'product', 'class="paddingleftonly paddingrightonly colorgrey"');
+				//$s .= dol_substr($langs->trans("Product"), 0, 1);
+				//$s .= '</a>';
+			} else {
+				//$s .= '<span class="service-type-back" title="'.$langs->trans("Service").'">';
+				$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');
+				//$s .= dol_substr($langs->trans("Service"), 0, 1);
+				//$s .= '</a>';
+			}
+			print $s;
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1312,7 +1335,7 @@ if ($resql)
 			print '</td>';
 		}
 
-        // Sell Tax Rate
+        // VAT or Sell Tax Rate
         if (!empty($arrayfields['p.tva_tx']['checked']))
         {
             print '<td class="right">';
@@ -1326,6 +1349,14 @@ if ($resql)
 		{
 			print '<td class="nowrap right">';
 			print price($product_static->pmp, 1, $langs);
+			print '</td>';
+		}
+		// Cost price
+		if (!empty($arrayfields['p.cost_price']['checked']))
+		{
+			print '<td class="nowrap right">';
+			//print $obj->cost_price;
+			print price($obj->cost_price).' '.$langs->trans("HT");
 			print '</td>';
 		}
 

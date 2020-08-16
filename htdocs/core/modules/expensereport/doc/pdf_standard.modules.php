@@ -66,9 +66,9 @@ class pdf_standard extends ModeleExpenseReport
 
     /**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -381,7 +381,7 @@ class pdf_standard extends ModeleExpenseReport
                             $pdf->setPage($pageposafter + 1);
                             $showpricebeforepagebreak = 1;
                             $nexY = $tab_top_newpage;
-                            $nexY += ($pdf->getFontSize() * 1.3); // Passe espace entre les lignes
+                            $nexY += ($pdf->getFontSize() * 1.3); // Add space between lines
                             $pdf->SetFont('', '', $default_font_size - 2); // Into loop to work with multipage
                             $pdf->SetTextColor(0, 0, 0);
 

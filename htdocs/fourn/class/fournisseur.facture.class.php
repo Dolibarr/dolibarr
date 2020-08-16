@@ -359,7 +359,7 @@ class FactureFournisseur extends CommonInvoice
         $remise = $this->remise;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
@@ -485,7 +485,7 @@ class FactureFournisseur extends CommonInvoice
                             $idligne,
                             $this->lines[$i]->description,
                             $this->lines[$i]->pu_ht,
-                            $this->lines[$i]->tva_tx,
+                        	$this->lines[$i]->tva_tx.($this->lines[$i]->vat_src_code ? ' ('.$this->lines[$i]->vat_src_code.')' : ''),
                             $this->lines[$i]->localtax1_tx,
                             $this->lines[$i]->localtax2_tx,
                             $this->lines[$i]->qty,
@@ -1259,7 +1259,7 @@ class FactureFournisseur extends CommonInvoice
         $this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-        $sql .= ' SET paye = 1, fk_statut=2';
+        $sql .= ' SET paye = 1, fk_statut = '.self::STATUS_CLOSED;
         $sql .= ' WHERE rowid = '.$this->id;
 
         dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);
@@ -1885,6 +1885,8 @@ class FactureFournisseur extends CommonInvoice
 
         $localtaxes_type = getLocalTaxesFromRate($vatrate, 0, $mysoc, $this->thirdparty);
 
+        $reg = array();
+
         // Clean vat code
         $vat_src_code = '';
         if (preg_match('/\((.*)\)/', $vatrate, $reg))
@@ -2265,7 +2267,8 @@ class FactureFournisseur extends CommonInvoice
 
         $result = '';
 
-        if ($option == 'document')	$url = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id;
+        if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id.'&type=bank-transfer';
+        elseif ($option == 'document')	$url = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id;
         else $url = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id;
 
         if ($short) return $url;
@@ -2570,6 +2573,8 @@ class FactureFournisseur extends CommonInvoice
         $object->id = 0;
         $object->statut = self::STATUS_DRAFT;
 
+        $object->fetch_thirdparty();	// We need it to recalculate VAT localtaxes according to main sale taxes and vendor
+
         // Clear fields
         $object->ref_supplier       = (empty($this->ref_supplier) ? $langs->trans("CopyOf").' '.$object->ref_supplier : $this->ref_supplier);
         $object->author             = $user->id;
@@ -2637,6 +2642,7 @@ class FactureFournisseur extends CommonInvoice
 		global $conf, $user, $langs;
 
 		$langs->load("suppliers");
+		$outputlangs->load("products");
 
 		// Set the model on the model name to use
 		if (empty($modele))

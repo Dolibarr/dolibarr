@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
@@ -78,6 +79,7 @@ if ($sortfield == "") $sortfield = "t.doc_date,t.rowid";
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new BookKeeping($db);
+$formfile = new FormFile($db);
 $hookmanager->initHooks(array('bookkeepingbyaccountlist'));
 
 $formaccounting = new FormAccounting($db);
@@ -543,7 +545,7 @@ while ($i < min($num, $limit))
 
 		// Show the break account
 		print "<tr>";
-		print '<td colspan="'.$totalarray['nbfield'].'" style="font-weight:bold; border-bottom: 1pt solid black;">';
+		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : 9).'" style="font-weight:bold; border-bottom: 1pt solid black;">';
 		if ($line->numero_compte != "" && $line->numero_compte != '-1') print length_accountg($line->numero_compte).' : '.$object->get_compte_desc($line->numero_compte);
 		else print '<span class="error">'.$langs->trans("Unknown").'</span>';
 		print '</td>';
