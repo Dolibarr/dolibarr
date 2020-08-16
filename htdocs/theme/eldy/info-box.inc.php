@@ -77,7 +77,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.08) !important
+	background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.info-box-module .info-box-icon {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .info-box-sm .info-box-icon {
     height: 80px;
@@ -436,7 +441,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 
 
 .info-box-module .info-box-content {
-	height: 6.4em;
+	height: 98px;
 }
 /* Disabled. This break the responsive on smartphone
 .box{

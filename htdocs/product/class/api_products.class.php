@@ -287,8 +287,8 @@ class Products extends DolibarrApi
         foreach ($request_data as $field => $value) {
             if ($field == 'id') { continue;
             }
-			if ($field == 'stock_reel') {
-				throw new RestException(400, 'Stock reel cannot be updated here. Use the /stockmovements endpoint instead');
+            if ($field == 'stock_reel') {
+                throw new RestException(400, 'Stock reel cannot be updated here. Use the /stockmovements endpoint instead');
             }
             $this->product->$field = $value;
         }
@@ -578,12 +578,12 @@ class Products extends DolibarrApi
         }
 
         if ($result > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-			$prodcustprice = new Productcustomerprice($this->db);
-			$filter = array();
-			$filter['t.fk_product'] .= $id;
-			if ($thirdparty_id) $filter['t.fk_soc'] .= $thirdparty_id;
-			$result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
+            require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
+            $prodcustprice = new Productcustomerprice($this->db);
+            $filter = array();
+            $filter['t.fk_product'] .= $id;
+            if ($thirdparty_id) $filter['t.fk_soc'] .= $thirdparty_id;
+            $result = $prodcustprice->fetch_all('', '', 0, 0, $filter);
         }
 
         if (empty($prodcustprice->lines)) {
@@ -624,8 +624,8 @@ class Products extends DolibarrApi
         }
 
         return array(
-        'prices_by_qty'=>$this->product->prices_by_qty[0], // 1 if price by quantity was activated for the product
-        'prices_by_qty_list'=>$this->product->prices_by_qty_list[0]
+            'prices_by_qty'=>$this->product->prices_by_qty[0], // 1 if price by quantity was activated for the product
+            'prices_by_qty_list'=>$this->product->prices_by_qty_list[0]
         );
     }
 
@@ -641,11 +641,11 @@ class Products extends DolibarrApi
      * @param	string		$ref_fourn			            Supplier ref
      * @param	float		$tva_tx				            New VAT Rate (For example 8.5. Should not be a string)
      * @param  	string		$charges			            costs affering to product
-	 * @param  	float		$remise_percent		            Discount  regarding qty (percent)
-	 * @param  	float		$remise				            Discount  regarding qty (amount)
-	 * @param  	int			$newnpr				            Set NPR or not
-	 * @param	int			$delivery_time_days	            Delay in days for delivery (max). May be '' if not defined.
-	 * @param   string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
+     * @param  	float		$remise_percent		            Discount  regarding qty (percent)
+     * @param  	float		$remise				            Discount  regarding qty (amount)
+     * @param  	int			$newnpr				            Set NPR or not
+     * @param	int			$delivery_time_days	            Delay in days for delivery (max). May be '' if not defined.
+     * @param   string      $supplier_reputation            Reputation with this product to the defined supplier (empty, FAVORITE, DONOTORDER)
      * @param   array		$localtaxes_array	            Array with localtaxes info array('0'=>type1,'1'=>rate1,'2'=>type2,'3'=>rate2) (loaded by getLocalTaxesFromRate(vatrate, 0, ...) function).
      * @param   string  	$newdefaultvatcode              Default vat code
      * @param  	float		$multicurrency_buyprice 	    Purchase price for the quantity min in currency
@@ -749,77 +749,77 @@ class Products extends DolibarrApi
      */
     public function getSupplierProducts($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $supplier = 0, $sqlfilters = '')
     {
-    	global $db, $conf;
-    	$obj_ret = array();
-    	$socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
-    	$sql = "SELECT t.rowid, t.ref, t.ref_ext";
-    	$sql .= " FROM ".MAIN_DB_PREFIX."product as t";
-    	if ($category > 0) {
-    		$sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
-    	}
-    	$sql .= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
+        global $db, $conf;
+        $obj_ret = array();
+        $socid = DolibarrApiAccess::$user->socid ? DolibarrApiAccess::$user->socid : '';
+        $sql = "SELECT t.rowid, t.ref, t.ref_ext";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product as t";
+        if ($category > 0) {
+            $sql .= ", ".MAIN_DB_PREFIX."categorie_product as c";
+        }
+        $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur_price as s";
 
-    	$sql .= ' WHERE t.entity IN ('.getEntity('product').')';
+        $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
-    	if ($supplier > 0) {
-    		$sql .= " AND s.fk_soc = ".$db->escape($supplier);
-    	}
-    	$sql .= " AND s.fk_product = t.rowid";
-    	// Select products of given category
-    	if ($category > 0) {
-    		$sql .= " AND c.fk_categorie = ".$db->escape($category);
-    		$sql .= " AND c.fk_product = t.rowid";
-    	}
-    	if ($mode == 1) {
-    		// Show only products
-    		$sql .= " AND t.fk_product_type = 0";
-    	} elseif ($mode == 2) {
-    		// Show only services
-    		$sql .= " AND t.fk_product_type = 1";
-    	}
-    	// Add sql filters
-    	if ($sqlfilters) {
-    		if (!DolibarrApi::_checkFilters($sqlfilters)) {
-    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
-    		}
-    		$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-    		$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
-    	}
-    	$sql .= $db->order($sortfield, $sortorder);
-    	if ($limit) {
-    		if ($page < 0) {
-    			$page = 0;
-    		}
-    		$offset = $limit * $page;
-    		$sql .= $db->plimit($limit + 1, $offset);
-    	}
-    	$result = $db->query($sql);
-    	if ($result) {
-    		$num = $db->num_rows($result);
-    		$min = min($num, ($limit <= 0 ? $num : $limit));
-    		$i = 0;
-    		while ($i < $min)
-    		{
-    			$obj = $db->fetch_object($result);
+        if ($supplier > 0) {
+            $sql .= " AND s.fk_soc = ".$db->escape($supplier);
+        }
+        $sql .= " AND s.fk_product = t.rowid";
+        // Select products of given category
+        if ($category > 0) {
+            $sql .= " AND c.fk_categorie = ".$db->escape($category);
+            $sql .= " AND c.fk_product = t.rowid";
+        }
+        if ($mode == 1) {
+            // Show only products
+            $sql .= " AND t.fk_product_type = 0";
+        } elseif ($mode == 2) {
+            // Show only services
+            $sql .= " AND t.fk_product_type = 1";
+        }
+        // Add sql filters
+        if ($sqlfilters) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+        $sql .= $db->order($sortfield, $sortorder);
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+            $sql .= $db->plimit($limit + 1, $offset);
+        }
+        $result = $db->query($sql);
+        if ($result) {
+            $num = $db->num_rows($result);
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            $i = 0;
+            while ($i < $min)
+            {
+                $obj = $db->fetch_object($result);
 
-    			$product_fourn = new ProductFournisseur($this->db);
-    			$product_fourn_list = $product_fourn->list_product_fournisseur_price($obj->rowid, '', '', 0, 0);
-    			foreach ($product_fourn_list as $tmpobj) {
-    				$this->_cleanObjectDatas($tmpobj);
-    			}
+                $product_fourn = new ProductFournisseur($this->db);
+                $product_fourn_list = $product_fourn->list_product_fournisseur_price($obj->rowid, '', '', 0, 0);
+                foreach ($product_fourn_list as $tmpobj) {
+                    $this->_cleanObjectDatas($tmpobj);
+                }
 
-   				//var_dump($product_fourn_list->db);exit;
-    			$obj_ret[$obj->rowid] = $product_fourn_list;
+                //var_dump($product_fourn_list->db);exit;
+                $obj_ret[$obj->rowid] = $product_fourn_list;
 
-    			$i++;
-    		}
-    	} else {
-    		throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
-    	}
-    	if (!count($obj_ret)) {
-    		throw new RestException(404, 'No product found');
-    	}
-    	return $obj_ret;
+                $i++;
+            }
+        } else {
+            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+        }
+        if (!count($obj_ret)) {
+            throw new RestException(404, 'No product found');
+        }
+        return $obj_ret;
     }
 
     /**
@@ -1057,7 +1057,7 @@ class Products extends DolibarrApi
         $result = $prodattr->delete(DolibarrApiAccess::$user);
 
         if ($result <= 0) {
-        	throw new RestException(500, "Error deleting attribute");
+            throw new RestException(500, "Error deleting attribute");
         }
 
         return $result;
@@ -1161,9 +1161,23 @@ class Products extends DolibarrApi
             throw new RestException(401);
         }
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '".trim($ref)."' AND fk_product_attribute = ".(int) $id;
+        $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute_value WHERE ref LIKE '".trim($ref)."' AND fk_product_attribute = ".(int) $id." AND entity IN (".getEntity('product').")";
+        $query = $this->db->query($sql);
 
-        if ($this->db->query($sql)) {
+        if (!$query) {
+            throw new RestException(401);
+        }
+
+        if (!$this->db->num_rows($query)) {
+            throw new RestException(404, 'Attribute value not found');
+        }
+
+        $result = $this->db->fetch_object($query);
+
+        $attrval = new ProductAttributeValue($this->db);
+        $attrval->id = $result->rowid;
+        $result = $attrval->delete(DolibarrApiAccess::$user);
+        if ($result > 0) {
             return 1;
         }
 
@@ -1328,7 +1342,7 @@ class Products extends DolibarrApi
         $objectval = new ProductAttributeValue($this->db);
         $objectval->id = (int) $id;
 
-        if ($objectval->delete() > 0) {
+        if ($objectval->delete(DolibarrApiAccess::$user) > 0) {
             return 1;
         }
         throw new RestException(500, "Error deleting attribute value");
@@ -1448,9 +1462,9 @@ class Products extends DolibarrApi
         $result = $prodcomb->createProductCombination(DolibarrApiAccess::$user, $this->product, $features, array(), $price_impact_is_percent, $price_impact, $weight_impact, $reference);
         if ($result > 0)
         {
-			return $result;
+            return $result;
         } else {
-			throw new RestException(500, "Error creating new product variant");
+            throw new RestException(500, "Error creating new product variant");
         }
     }
 
@@ -1573,7 +1587,7 @@ class Products extends DolibarrApi
         $result = $prodcomb->delete(DolibarrApiAccess::$user);
         if ($result <= 0)
         {
-        	throw new RestException(500, "Error deleting variant");
+            throw new RestException(500, "Error deleting variant");
         }
         return $result;
     }
@@ -1665,17 +1679,17 @@ class Products extends DolibarrApi
         }
 
         if ($includestockdata) {
-        	$this->product->load_stock();
+            $this->product->load_stock();
 
-        	if (is_array($this->product->stock_warehouse)) {
-        		foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {
-        			if (is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
-        				foreach ($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
-        					unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
-        				}
-        			}
-        		}
-        	}
+            if (is_array($this->product->stock_warehouse)) {
+                foreach ($this->product->stock_warehouse as $keytmp => $valtmp) {
+                    if (is_array($this->product->stock_warehouse[$keytmp]->detail_batch)) {
+                        foreach ($this->product->stock_warehouse[$keytmp]->detail_batch as $keytmp2 => $valtmp2) {
+                            unset($this->product->stock_warehouse[$keytmp]->detail_batch[$keytmp2]->db);
+                        }
+                    }
+                }
+            }
         }
 
         if ($includesubproducts) {

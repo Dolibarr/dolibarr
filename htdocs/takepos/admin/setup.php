@@ -274,14 +274,6 @@ print img_object('', 'category', 'class="paddingright"').$form->select_all_categ
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
 
-// VAT Grouped on ticket
-print '<tr class="oddeven"><td>';
-print $langs->trans('TicketVatGrouped');
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
-print "</td></tr>\n";
-
 // Sort product
 print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
@@ -428,14 +420,6 @@ print "</td></tr>\n";
 //
 //print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
 //print "</td></tr>\n";
-
-print '<tr class="oddeven"><td>';
-print $langs->trans("EnableBarOrRestaurantFeatures");
-print '</td>';
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
-print "</td></tr>\n";
 
 print '</table>';
 print '</div>';

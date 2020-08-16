@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2003      Rodolphe Quiedeville	<rodolphe@quiedeville.org>
--- Copyright (C) 2009-2016 Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2020      John BOTELLA         <john.botella@atm-consulting.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -18,14 +16,13 @@
 --
 -- ============================================================================
 
-create table llx_product_warehouse_properties
+CREATE TABLE llx_product_attribute_combination_price_level
 (
-  rowid           		integer AUTO_INCREMENT PRIMARY KEY,
-  tms             		timestamp,
-  fk_product      		integer NOT NULL,
-  fk_entrepot     		integer NOT NULL,
-  seuil_stock_alerte    float DEFAULT '0',
-  desiredstock    		float DEFAULT '0',
-  import_key      		varchar(14)               -- Import key
+  rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_attribute_combination INTEGER DEFAULT 1 NOT NULL,
+  fk_price_level INTEGER DEFAULT 1 NOT NULL,
+  variation_price DOUBLE(24,8) NOT NULL,
+  variation_price_percentage INTEGER NULL
 )ENGINE=innodb;
 
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE( fk_product_attribute_combination, fk_price_level);

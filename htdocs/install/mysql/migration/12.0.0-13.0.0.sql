@@ -175,6 +175,16 @@ ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_fk_
 
 
 
+CREATE TABLE llx_product_attribute_combination_price_level
+(
+  rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_attribute_combination INTEGER DEFAULT 1 NOT NULL,
+  fk_price_level INTEGER DEFAULT 1 NOT NULL,
+  variation_price DOUBLE(24,8) NOT NULL,
+  variation_price_percentage INTEGER NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE( fk_product_attribute_combination, fk_price_level);
 
 
 
@@ -219,3 +229,10 @@ create table llx_c_recruitment_origin
   label 	    varchar(64)	NOT NULL,
   active  	    tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;
+
+
+
+ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte float;
+ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float; 
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float; 

@@ -205,7 +205,7 @@ class Product extends CommonObject
     /**
      * Stock alert
      *
-     * @var int
+     * @var float
      */
     public $seuil_stock_alerte = 0;
 
@@ -995,7 +995,7 @@ class Product extends CommonObject
             $sql .= ", volume = ".($this->volume != '' ? "'".$this->db->escape($this->volume)."'" : 'null');
             $sql .= ", volume_units = ".($this->volume_units != '' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
             $sql .= ", fk_default_warehouse = ".($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
-            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (int) $this->seuil_stock_alerte : 'null');
+            $sql .= ", seuil_stock_alerte = ".((isset($this->seuil_stock_alerte) && is_numeric($this->seuil_stock_alerte)) ? (float) $this->seuil_stock_alerte : 'null');
             $sql .= ", description = '".$this->db->escape($this->description)."'";
             $sql .= ", url = ".($this->url ? "'".$this->db->escape($this->url)."'" : 'null');
             $sql .= ", customcode = '".$this->db->escape($this->customcode)."'";
@@ -1008,7 +1008,7 @@ class Product extends CommonObject
             $sql .= ", accountancy_code_sell= '".$this->db->escape($this->accountancy_code_sell)."'";
             $sql .= ", accountancy_code_sell_intra= '".$this->db->escape($this->accountancy_code_sell_intra)."'";
             $sql .= ", accountancy_code_sell_export= '".$this->db->escape($this->accountancy_code_sell_export)."'";
-            $sql .= ", desiredstock = ".((isset($this->desiredstock) && is_numeric($this->desiredstock)) ? (int) $this->desiredstock : "null");
+            $sql .= ", desiredstock = ".((isset($this->desiredstock) && is_numeric($this->desiredstock)) ? (float) $this->desiredstock : "null");
             $sql .= ", cost_price = ".($this->cost_price != '' ? $this->db->escape($this->cost_price) : 'null');
             $sql .= ", fk_unit= ".(!$this->fk_unit ? 'NULL' : (int) $this->fk_unit);
             $sql .= ", price_autogen = ".(!$this->price_autogen ? 0 : 1);
@@ -1077,7 +1077,7 @@ class Product extends CommonObject
                         $comb = new ProductCombination($this->db);
 
                         foreach ($comb->fetchAllByFkProductParent($this->id) as $currcomb) {
-                                 $currcomb->updateProperties($this, $user);
+                        	$currcomb->updateProperties($this, $user);
                         }
                     }
 
