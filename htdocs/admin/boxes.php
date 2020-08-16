@@ -115,7 +115,7 @@ if ($action == 'add') {
                         }
                         else dol_print_error($db);
 
-                        if (! $arrayofexistingboxid[$boxid['value']]) {
+                        if (empty($arrayofexistingboxid[$boxid['value']])) {
 	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
 	                        $sql .= "box_id, position, box_order, fk_user, entity";
 	                        $sql .= ") values (";
