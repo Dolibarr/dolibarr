@@ -399,7 +399,7 @@ class SupplierInvoices extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      */
-    public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPayment($id, $datepaye, $payment_mode_id, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
