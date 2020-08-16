@@ -192,13 +192,11 @@ class IntracommReport extends CommonObject
 				$TLinesFraisDePort = array();
 			}
 
-			while($res = $db->fetch_object($resql)) {
+			while ($res = $db->fetch_object($resql)) {
 				if ($exporttype == 'des')
 				{
 					$this->addItemXMlDes($declaration, $res, '', $i);
-				}
-				else
-				{
+				} else {
 					if (empty($res->fk_pays)) {
 						// On n'arrête pas la boucle car on veut savoir quels sont tous les tiers qui n'ont pas de pays renseigné
 						$this->errors[] = 'Pays non renseigné pour le tiers <a href="'.dol_buildpath('/societe/soc.php', 1).'?socid='.$res->id_client.'">'.$res->nom.'</a>';
@@ -364,8 +362,7 @@ class IntracommReport extends CommonObject
 	 *	@param     	int		$number		Number to verify / convert
 	 *	@return		int 				Number
 	 */
-	// La doc impose que le numéro soit un entier positif d'un maximum de 6 caractères
-	static function getDeclarationNumber($number)
+	public static function getDeclarationNumber($number)
 	{
 		return str_pad($number, 6, 0, STR_PAD_LEFT);
 	}
@@ -375,7 +372,7 @@ class IntracommReport extends CommonObject
 	 *
 	 *	@return		void
 	 */
-	function generateXMLFile()
+	public function generateXMLFile()
 	{
 
 		$name = $this->periode.'.xml';
