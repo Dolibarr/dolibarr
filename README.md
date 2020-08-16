@@ -5,7 +5,7 @@
 
 Dolibarr ERP & CRM is a modern software package that helps manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
-It's Open Source Software (written in PHP) designed for small, medium or large companies, foundations and freelancers.
+It's an Open Source Software suite (written in PHP with optional JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
 You can freely use, study, modify or distribute it according to its licence.
 
