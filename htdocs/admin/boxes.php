@@ -136,10 +136,8 @@ if ($action == 'add') {
 									setEventMessages($db->lasterror(), null, 'errors');
 									$error++;
 								}
-
 							}
 						}
-
 					}
                 }
             }
