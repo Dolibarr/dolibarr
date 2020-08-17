@@ -8146,9 +8146,8 @@ abstract class CommonObject
 
 		if (empty($error)) {
 			// Remove extrafields
-			if (!$error)
-			{
-				$tmpobjectline = new $tmpforobjectlineclass($this->db);
+			$tmpobjectline = new $tmpforobjectlineclass($this->db);
+			if (!isset($tmpobjectline->isextrafieldmanaged) || !empty($tmpobjectline->isextrafieldmanaged)) {
 				$tmpobjectline->id = $idline;
 				$result = $tmpobjectline->deleteExtraFields();
 				if ($result < 0)
