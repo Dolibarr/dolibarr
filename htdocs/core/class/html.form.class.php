@@ -5280,7 +5280,7 @@ class Form
 	 *	@param	int			$d				1=Show days, month, years
 	 * 	@param	int			$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
 	 * 	@param 	int			$disabled		Disable input fields
-	 *  @param  int			$fullday        When a checkbox with id #fullday is cheked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
+	 *  @param  int			$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
      *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
