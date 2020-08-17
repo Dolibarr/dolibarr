@@ -544,8 +544,8 @@ if (!empty($id) || !empty($ref))
         dol_fiche_head();
 
 
-		print '<table class="border" style="width: 100%">';
 		if ($action == 'add') {
+			print '<table class="border" style="width: 100%">';
 			print "<!--  Variant -->\n";
 			print '<tr>';
 			print '<td class="titlefieldcreate fieldrequired"><label for="attribute">'.$langs->trans('ProductAttribute').'</label></td>';
@@ -566,9 +566,9 @@ if (!empty($id) || !empty($ref))
 			print $langs->trans("Create");
 			print '</a>';*/
 
+			print '</td>';
+			print '</tr>';
 			?>
-				</td>
-			</tr>
 			<!-- Value -->
 			<tr>
 				<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
@@ -592,18 +592,19 @@ if (!empty($id) || !empty($ref))
 					<input type="submit" class="button" name="selectvariant" id="selectvariant" value="<?php echo dol_escape_htmltag($langs->trans("SelectCombination")); ?>">
 				</td>
 			</tr>
-			<tr><td></td><td>
-			<?php echo $listofvariantselected;
+			<?php
+			print '<tr><td></td><td>';
+			print $listofvariantselected;
 			print '</td>';
 			print '</tr>';
+
 			print '</table>';
 			print '<hr>';
         }
 
 		if (is_array($productCombination2ValuePairs1)) {
-			?>
-		<table class="border" style="width: 100%">
-			<?php
+			print '<table class="border" style="width: 100%">';
+
 			// When in edit mode
 			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1))
 			{
@@ -639,15 +640,17 @@ if (!empty($id) || !empty($ref))
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
 			</tr>
-			<?php 		if (empty($conf->global->PRODUIT_MULTIPRICES)){ ?>
+			<?php
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+			?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label>
 				</td>
 			</tr>
-			<?php 		}
-			else {
+			<?php
+			} else {
 				$prodcomb->fetchCombinationPriceLevels();
 
 				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
@@ -672,33 +675,35 @@ if (!empty($id) || !empty($ref))
 				print '<td><input type="text" id="weight_impact" name="weight_impact" value="'.price($weight_impact).'"></td>';
 				print '</tr>';
 			}
+
 			print '</table>';
 		}
 
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)){
 			?>
-		<script>
-			$(document).ready(function() {
-				// Apply level 1 impact to all prices impact levels
-				$('body').on('click', '#apply-price-impact-to-all-level', function(e) {
-					e.preventDefault();
-					let priceImpact = $( "#level_price_impact_1" ).val();
-					let priceImpactPrecent = $( "#level_price_impact_percent_1" ).prop("checked");
+			<script>
+				$(document).ready(function() {
+					// Apply level 1 impact to all prices impact levels
+					$('body').on('click', '#apply-price-impact-to-all-level', function(e) {
+						e.preventDefault();
+						let priceImpact = $( "#level_price_impact_1" ).val();
+						let priceImpactPrecent = $( "#level_price_impact_percent_1" ).prop("checked");
 
-					var multipricelimit = <?php print intval($conf->global->PRODUIT_MULTIPRICES_LIMIT); ?>
+						var multipricelimit = <?php print intval($conf->global->PRODUIT_MULTIPRICES_LIMIT); ?>
 
-					for (let i = 2; i <= multipricelimit; i++) {
-						$( "#level_price_impact_" + i ).val(priceImpact);
-						$( "#level_price_impact_percent_" + i  ).prop("checked", priceImpactPrecent);
-					}
+						for (let i = 2; i <= multipricelimit; i++) {
+							$( "#level_price_impact_" + i ).val(priceImpact);
+							$( "#level_price_impact_percent_" + i  ).prop("checked", priceImpactPrecent);
+						}
+					});
 				});
-			});
-		</script>
+			</script>
 			<?php
 		}
 
 		dol_fiche_end();
 		?>
+
 		<div style="text-align: center">
 		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
 		&nbsp;
@@ -731,7 +736,7 @@ if (!empty($id) || !empty($ref))
 
 		if ($productCombinations)
 		{
-			?>
+		?>
 
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
@@ -754,7 +759,8 @@ if (!empty($id) || !empty($ref))
 				});
 			</script>
 
-		<?php }
+		<?php
+		}
 
         // Buttons
 		print '<div class="tabsAction">';
