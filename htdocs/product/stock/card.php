@@ -466,12 +466,14 @@ else
 
             // Other attributes
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
 			}
+
 			print "</table>";
 
 			print '</div>';
@@ -767,6 +769,7 @@ else
             {
                 print $object->showOptionals($extrafields, 'edit', $parameters);
             }
+
 			// Tags-Categories
 			if ($conf->categorie->enabled)
 			{
@@ -781,6 +784,7 @@ else
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
+
 			print '</table>';
 
 			dol_fiche_end();
