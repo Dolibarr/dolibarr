@@ -1126,7 +1126,7 @@ class ProductCombinationLevel
 		if (!empty($this->id)) {
 			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element;
 			$sql .= ' SET variation_price = '.doubleval($this->variation_price).' , variation_price_percentage = '.intval($this->variation_price_percentage);
-			$sql .= ' WHERE rowid = '.intval($this->id);
+			$sql .= ' WHERE rowid = '.((int) $this->id);
 
 			$res = $this->db->query($sql);
 			if ($res>0){
@@ -1140,13 +1140,13 @@ class ProductCombinationLevel
 		}
 		else {
 			// ADD
-			$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (;
-			$sql .= " fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
-			$sql .= " ) VALUES (";
-			$sql .= intval($this->fk_product_attribute_combination);
-			$sql .= " , ".intval($this->fk_price_level);
-			$sql .= " , ".doubleval($this->variation_price);
-			$sql .= " , ".intval($this->variation_price_percentage);
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
+			$sql .= "fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
+			$sql .= ") VALUES (";
+			$sql .= (int) $this->fk_product_attribute_combination;
+			$sql .= ", ".intval($this->fk_price_level);
+			$sql .= ", ".doubleval($this->variation_price);
+			$sql .= ", ".intval($this->variation_price_percentage);
 			$sql .= ")";
 
 			$res = $this->db->query($sql);
