@@ -1204,7 +1204,7 @@ class ProductCombinationLevel
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE fk_product_attribute_combination = ".(int) $fk_product_attribute_combination;
-		$sql .= " AND fk_price_level > ".intval($conf->global->PRODUIT_MULTIPRICES_LIMIT) );
+		$sql .= " AND fk_price_level > ".intval($conf->global->PRODUIT_MULTIPRICES_LIMIT);
 		$res = $this->db->query($sql);
 
 		return $res ? 1 : -1;
