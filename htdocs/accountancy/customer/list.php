@@ -227,6 +227,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa2 ON p.accountancy
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.active = 1 AND aa3.fk_pcg_version = '".$chartaccountcode."' AND aa3.entity = ".$conf->entity;
 $sql .= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql .= " AND l.product_type <= 2";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 // Add search filter like
 if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);

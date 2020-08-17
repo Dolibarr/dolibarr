@@ -256,6 +256,10 @@ $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 $sql .= " AND f.fk_statut > 0";
 $sql .= " AND fd.product_type <= 2";
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
@@ -330,6 +334,10 @@ $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 $sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 $sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 $sql .= " AND f.fk_statut > 0";
 $sql .= " AND fd.product_type <= 2";
@@ -405,6 +413,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 	$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 	$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
+	// Define begin binding date
+	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+		$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
 	$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 	$sql .= " AND f.fk_statut > 0";
 	$sql .= " AND fd.product_type <= 2";
@@ -458,6 +470,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		$sql .= "  LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON f.rowid = fd.fk_facture";
 		$sql .= " WHERE f.datef >= '".$db->idate($search_date_start)."'";
 		$sql .= "  AND f.datef <= '".$db->idate($search_date_end)."'";
+		// Define begin binding date
+		if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+			$sql .= " AND f.datef >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+		}
 		$sql .= " AND f.entity IN (".getEntity('invoice', 0).")"; // We don't share object for accountancy
 		$sql .= " AND f.fk_statut > 0";
 		$sql .= " AND fd.product_type <= 2";
