@@ -127,7 +127,6 @@ if ($_POST) {
 				$level_price_impact_percent = array(1 => $price_impact_percent);
 			}
 
-
 			$sanit_features = array();
 
 			//First, sanitize
@@ -157,7 +156,6 @@ if ($_POST) {
 			// sanit_feature is an array with 1 (and only 1) value per attribute.
 			// For example:  Color->blue, Size->Small, Option->2
 			//var_dump($sanit_features);
-
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
 				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
@@ -171,7 +169,7 @@ if ($_POST) {
 					exit();
 				} else {
 					$langs->load("errors");
-					setEventMessages('', $prodcomb->errors, 'errors');
+					setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
 				}
 			} else {
 				setEventMessages($langs->trans('ErrorRecordAlreadyExists'), null, 'errors');
@@ -599,29 +597,32 @@ if (!empty($id) || !empty($ref))
 			print '</td>';
 			print '</tr>';
 			print '</table>';
+			print '<hr>';
         }
 
 		if (is_array($productCombination2ValuePairs1)) {
 			?>
-		<hr>
 		<table class="border" style="width: 100%">
+			<?php
+			// When in edit mode
+			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1))
+			{
+			?>
 			<tr>
-				<td class="titlefieldcreate fieldrequired tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
+				<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
 				<td class="tdtop">
 					<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-					if (is_array($productCombination2ValuePairs1))
-					{
                         foreach ($productCombination2ValuePairs1 as $key => $val) {
                             $result1 = $prodattr->fetch($val->fk_prod_attr);
                             $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+                            //print 'rr'.$result1.' '.$result2;
                             if ($result1 > 0 && $result2 > 0)
                             {
                                 print $prodattr->label.' - '.$prodattr_val->value.'<br>';
                                 // TODO Add delete link
                             }
                         }
-					}
 					?>
 					</div>
 					<!-- <div class="inline-block valignmiddle">
@@ -631,6 +632,9 @@ if (!empty($id) || !empty($ref))
 				<td>
 				</td>
 			</tr>
+			<?php
+			}
+			?>
 			<tr>
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
@@ -862,7 +866,7 @@ if (!empty($id) || !empty($ref))
     			print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
     			print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
     			print '<td class="right">';
-    			print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&valueid='.$currcomb->id.'">'.img_edit().'</a>';
+    			print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&valueid='.$currcomb->id.'">'.img_edit().'</a>';
     			print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&valueid='.$currcomb->id.'">'.img_delete().'</a>';
     			print '</td>';
     			print '<td class="nowrap center">';
