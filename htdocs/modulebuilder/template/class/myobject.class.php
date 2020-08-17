@@ -1085,4 +1085,19 @@ class MyObjectLine
 {
 	// To complete with content of an object MyObjectLine
 	// We should have a field rowid, fk_myobject and position
+
+	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
+
+	/**
+	 * Constructor
+	 *
+	 * @param DoliDb $db Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
 }
