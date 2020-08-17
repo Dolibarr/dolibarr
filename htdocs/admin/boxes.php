@@ -112,20 +112,35 @@ if ($action == 'add') {
                         }
                         else dol_print_error($db);
 
-                        $sql = "INSERT IGNORE INTO ".MAIN_DB_PREFIX."boxes (";
-                        $sql.= "box_id, position, box_order, fk_user, entity";
-                        $sql.= ") values (";
-                        $sql.= $boxid['value'].", ".$pos.", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
-                        $sql.= ")";
+						$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."boxes";
+						$sql.= " WHERE box_id = ".$boxid['value'];
+						$sql.= " AND position = ".$pos;
+						$sql.= " AND fk_user = ".$fk_user;
+						$sql.= " AND entity = ".$conf->entity;
+						$resql = $db->query($sql);
+						if ($resql)
+						{
+							$obj = $db->fetch_object($resql);
+							if (empty($obj->nb))
+							{
+								$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
+								$sql.= "box_id, position, box_order, fk_user, entity";
+								$sql.= ") values (";
+								$sql.= $boxid['value'].", ".$pos.", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
+								$sql.= ")";
 
-                        dol_syslog("boxes.php activate box", LOG_DEBUG);
-                        $resql = $db->query($sql);
-                        if (! $resql)
-                        {
-                            setEventMessages($db->lasterror(), null, 'errors');
-                            $error++;
-                        }
-                    }
+								dol_syslog("boxes.php activate box", LOG_DEBUG);
+								$resql = $db->query($sql);
+								if (! $resql)
+								{
+									setEventMessages($db->lasterror(), null, 'errors');
+									$error++;
+								}
+
+							}
+						}
+
+					}
                 }
             }
         }
