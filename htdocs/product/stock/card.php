@@ -299,10 +299,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Phone / Fax
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 	print img_picto('', 'object_phoning', 'class="paddingright"');
 	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	print '<td>';
 	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
@@ -735,10 +735,10 @@ else
 			print '</td></tr>';
 
 			// Phone / Fax
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning', 'class="paddingright"');
 			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
