@@ -2997,7 +2997,7 @@ class User extends CommonObject
     public function build_path_from_id_user($id_user, $protection = 0)
     {
         // phpcs:enable
-		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
+		//dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
 
 		if (!empty($this->users[$id_user]['fullpath']))
 		{
