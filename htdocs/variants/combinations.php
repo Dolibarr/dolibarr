@@ -608,32 +608,32 @@ if (!empty($id) || !empty($ref))
 			// When in edit mode
 			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1))
 			{
-			?>
-			<tr>
-				<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
-				<td class="tdtop">
-					<div class="inline-block valignmiddle quatrevingtpercent">
+				?>
+				<tr>
+					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
+					<td class="tdtop">
+						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-                        foreach ($productCombination2ValuePairs1 as $key => $val) {
-                            $result1 = $prodattr->fetch($val->fk_prod_attr);
-                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
-                            //print 'rr'.$result1.' '.$result2;
-                            if ($result1 > 0 && $result2 > 0)
-                            {
-                                print $prodattr->label.' - '.$prodattr_val->value.'<br>';
-                                // TODO Add delete link
-                            }
-                        }
+	                        foreach ($productCombination2ValuePairs1 as $key => $val) {
+	                            $result1 = $prodattr->fetch($val->fk_prod_attr);
+	                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+	                            //print 'rr'.$result1.' '.$result2;
+	                            if ($result1 > 0 && $result2 > 0)
+	                            {
+	                                print $prodattr->label.' - '.$prodattr_val->value.'<br>';
+	                                // TODO Add delete link
+	                            }
+	                        }
 					?>
-					</div>
-					<!-- <div class="inline-block valignmiddle">
-					<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
-					</div>-->
-				</td>
-				<td>
-				</td>
-			</tr>
-			<?php
+						</div>
+						<!-- <div class="inline-block valignmiddle">
+						<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
+						</div>-->
+					</td>
+					<td>
+					</td>
+				</tr>
+				<?php
 			}
 			?>
 			<tr>
@@ -642,14 +642,14 @@ if (!empty($id) || !empty($ref))
 			</tr>
 			<?php
 			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
-			?>
+				?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
 				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label>
 				</td>
 			</tr>
-			<?php
+				<?php
 			} else {
 				$prodcomb->fetchCombinationPriceLevels();
 
@@ -736,7 +736,7 @@ if (!empty($id) || !empty($ref))
 
 		if ($productCombinations)
 		{
-		?>
+			?>
 
 			<script type="text/javascript">
 				jQuery(document).ready(function() {
@@ -759,7 +759,7 @@ if (!empty($id) || !empty($ref))
 				});
 			</script>
 
-		<?php
+			<?php
 		}
 
         // Buttons
