@@ -291,10 +291,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Phone / Fax
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 	print img_picto('', 'object_phoning', 'class="paddingright"');
 	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	print '<td>';
 	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
@@ -454,12 +454,14 @@ if ($action == 'create')
 
             // Other attributes
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
 			}
+
 			print "</table>";
 
 			print '</div>';
@@ -719,10 +721,10 @@ if ($action == 'create')
 			print '</td></tr>';
 
 			// Phone / Fax
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning', 'class="paddingright"');
 			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
@@ -749,6 +751,7 @@ if ($action == 'create')
             {
                 print $object->showOptionals($extrafields, 'edit', $parameters);
             }
+
 			// Tags-Categories
 			if ($conf->categorie->enabled)
 			{
@@ -763,6 +766,7 @@ if ($action == 'create')
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
+
 			print '</table>';
 
 			dol_fiche_end();
