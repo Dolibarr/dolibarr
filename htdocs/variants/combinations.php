@@ -614,16 +614,16 @@ if (!empty($id) || !empty($ref))
 					<td class="tdtop">
 						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-	                        foreach ($productCombination2ValuePairs1 as $key => $val) {
-	                            $result1 = $prodattr->fetch($val->fk_prod_attr);
-	                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
-	                            //print 'rr'.$result1.' '.$result2;
-	                            if ($result1 > 0 && $result2 > 0)
-	                            {
-	                                print $prodattr->label.' - '.$prodattr_val->value.'<br>';
-	                                // TODO Add delete link
-	                            }
-	                        }
+					foreach ($productCombination2ValuePairs1 as $key => $val) {
+						$result1 = $prodattr->fetch($val->fk_prod_attr);
+						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+						//print 'rr'.$result1.' '.$result2;
+						if ($result1 > 0 && $result2 > 0)
+						{
+							print $prodattr->label.' - '.$prodattr_val->value.'<br>';
+							// TODO Add delete link
+						}
+					}
 					?>
 						</div>
 						<!-- <div class="inline-block valignmiddle">
