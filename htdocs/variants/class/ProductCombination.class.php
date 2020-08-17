@@ -93,8 +93,8 @@ class ProductCombination
 	/**
 	 * Retrieves a combination by its rowid
 	 *
-	 * @param int $rowid Row id
-	 * @return int <0 KO, >0 OK
+	 * @param 	int 	$rowid 		Row id
+	 * @return 	int 				<0 KO, >0 OK
 	 */
 	public function fetch($rowid)
 	{
@@ -132,9 +132,9 @@ class ProductCombination
 	/**
 	 * Retrieves combination price levels
 	 *
-	 * @param int $fk_price_level the price level to fetch, use 0 for all
-	 * @param bool $useCache to use cache or not
-	 * @return int <0 KO, >0 OK
+	 * @param 	int 	$fk_price_level The price level to fetch, use 0 for all
+	 * @param 	bool 	$useCache 		To use cache or not
+	 * @return 	int 					<0 KO, >0 OK
 	 */
 	public function fetchCombinationPriceLevels($fk_price_level = 0, $useCache = true)
 	{
@@ -189,14 +189,14 @@ class ProductCombination
 	/**
 	 * Retrieves combination price levels
 	 *
-	 * @param int $clean levels off PRODUIT_MULTIPRICES_LIMIT
-	 * @return int <0 KO, >0 OK
+	 * @param 	int 	$clean 		Levels off PRODUIT_MULTIPRICES_LIMIT
+	 * @return 	int 				<0 KO, >0 OK
 	 */
 	public function saveCombinationPriceLevels($clean = 1)
 	{
 		global $conf;
 
-		$errors = 0;
+		$error = 0;
 
 		$staticProductCombinationLevel = new ProductCombinationLevel($this->db);
 
@@ -220,12 +220,12 @@ class ProductCombination
 			if ($res<1){
 				$this->error = 'save combination price level '.$fk_price_level . ' '.$combination_price_level->error;
 				$this->errors[] = $this->error;
-				$errors ++;
+				$error++;
 			}
 		}
 
-		if ($errors > 0){
-			return $errors*-1;
+		if ($error){
+			return $error * -1;
 		}
 		else {
 			return 1;
@@ -1045,9 +1045,9 @@ class ProductCombinationLevel
 	public function fetchAll($fk_product_attribute_combination, $fk_price_level = 0)
 	{
 
-		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage"
-			." FROM ".MAIN_DB_PREFIX.$this->table_element
-			." WHERE fk_product_attribute_combination = ".intval($fk_product_attribute_combination);
+		$sql = "SELECT rowid, fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE fk_product_attribute_combination = ".intval($fk_product_attribute_combination);
 
 		if (!empty($fk_price_level)){
 			$sql.= ' AND fk_price_level = '.intval($fk_price_level);
@@ -1076,8 +1076,8 @@ class ProductCombinationLevel
 	/**
 	 * assign vars form an stdclass like sql obj
 	 *
-	 * @param int $rowid Row id
-	 * @return int <0 KO, >0 OK
+	 * @param 	int 	$obj		Object resultset
+	 * @return 	int 				<0 KO, >0 OK
 	 */
 	public function fetchFormObj($obj)
 	{
@@ -1102,8 +1102,7 @@ class ProductCombinationLevel
 	 */
 	public function save()
 	{
-		$errors = 0;
-
+		$error = 0;
 
 		if (empty($this->fk_product_attribute_combination) || empty($this->fk_price_level)){
 			return -1;
@@ -1181,8 +1180,8 @@ class ProductCombinationLevel
 	/**
 	 * delete all for a combination
 	 *
-	 * @param $fk_product_attribute_combination
-	 * @return int <0 KO, >0 OK
+	 * @param 	int		$fk_product_attribute_combination	Id of combination
+	 * @return 	int 										<0 KO, >0 OK
 	 */
 	public function deleteAllForCombination($fk_product_attribute_combination)
 	{
@@ -1196,17 +1195,17 @@ class ProductCombinationLevel
 	/**
 	 * Clean not needed price levels for a combination
 	 *
-	 * @param $fk_product_attribute_combination
-	 * @return int <0 KO, >0 OK
+	 * @param 	int		$fk_product_attribute_combination	Id of combination
+	 * @return 	int 										<0 KO, >0 OK
 	 */
 	public function clean($fk_product_attribute_combination)
 	{
 		global $conf;
 
-		$res = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX.$this->table_element
-			. " WHERE fk_product_attribute_combination = ".(int) $fk_product_attribute_combination
-			. " AND fk_price_level > ".intval($conf->global->PRODUIT_MULTIPRICES_LIMIT) );
-
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE fk_product_attribute_combination = ".(int) $fk_product_attribute_combination;
+		$sql .= " AND fk_price_level > ".intval($conf->global->PRODUIT_MULTIPRICES_LIMIT) );
+		$res = $this->db->query($sql);
 
 		return $res ? 1 : -1;
 	}
