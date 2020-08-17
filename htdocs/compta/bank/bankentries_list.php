@@ -569,7 +569,6 @@ if (!empty($search_type)) $mode_balance_ok = false;
 if (!empty($search_debit)) $mode_balance_ok = false;
 if (!empty($search_credit)) $mode_balance_ok = false;
 if (!empty($search_thirdparty)) $mode_balance_ok = false;
-if ($search_conciliated != '' && $search_conciliated != '-1') $mode_balance_ok = false;
 if (!empty($search_num_releve)) $mode_balance_ok = false;
 
 $sql .= $db->plimit($limit + 1, $offset);
