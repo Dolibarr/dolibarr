@@ -1038,9 +1038,9 @@ class ProductCombinationLevel
 	/**
 	 * Retrieves combination price levels
 	 *
-	 * @param int $fk_product_attribute_combination
-	 * @param int $fk_price_level the price level to fetch, use 0 for all
-	 * @return self[] | -1 on KO
+	 * @param 	int 	$fk_product_attribute_combination		Id of product combination
+	 * @param 	int 	$fk_price_level 						The price level to fetch, use 0 for all
+	 * @return  mixed											self[] | -1 on KO
 	 */
 	public function fetchAll($fk_product_attribute_combination, $fk_price_level = 0)
 	{
@@ -1111,10 +1111,10 @@ class ProductCombinationLevel
 
 		// check if level exist in DB before add
 		if (empty($this->id)){
-			$sql = "SELECT rowid id"
-				." FROM ".MAIN_DB_PREFIX . $this->table_element
-				." WHERE fk_product_attribute_combination = ".(int) $this->fk_product_attribute_combination
-				.' AND fk_price_level = '.intval($this->fk_price_level);
+			$sql = "SELECT rowid id";
+			$sql .= " FROM ".MAIN_DB_PREFIX . $this->table_element;
+			$sql .= " WHERE fk_product_attribute_combination = ".(int) $this->fk_product_attribute_combination;
+			$sql .= ' AND fk_price_level = '.intval($this->fk_price_level);
 
 			$existObj = $this->db->getRow($sql);
 			if ($existObj){
@@ -1124,10 +1124,9 @@ class ProductCombinationLevel
 
 		// Update
 		if (!empty($this->id)) {
-			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET '
-				. ' variation_price = '.doubleval($this->variation_price)
-				. ' , variation_price_percentage = '.intval($this->variation_price_percentage)
-				. ' WHERE rowid = '.intval($this->id);
+			$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element;
+			$sql .= ' SET variation_price = '.doubleval($this->variation_price).' , variation_price_percentage = '.intval($this->variation_price_percentage);
+			$sql .= ' WHERE rowid = '.intval($this->id);
 
 			$res = $this->db->query($sql);
 			if ($res>0){
@@ -1141,14 +1140,14 @@ class ProductCombinationLevel
 		}
 		else {
 			// ADD
-			$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " ("
-				. " fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage"
-				. " ) VALUES ( "
-				. intval($this->fk_product_attribute_combination)
-				. ' , '.intval($this->fk_price_level)
-				. ' , '.doubleval($this->variation_price)
-				. ' , '.intval($this->variation_price_percentage)
-				. " )";
+			$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (;
+			$sql .= " fk_product_attribute_combination, fk_price_level, variation_price, variation_price_percentage";
+			$sql .= " ) VALUES (";
+			$sql .= intval($this->fk_product_attribute_combination);
+			$sql .= " , ".intval($this->fk_price_level);
+			$sql .= " , ".doubleval($this->variation_price);
+			$sql .= " , ".intval($this->variation_price_percentage);
+			$sql .= ")";
 
 			$res = $this->db->query($sql);
 			if ($res){
@@ -1172,8 +1171,8 @@ class ProductCombinationLevel
 	 */
 	public function delete()
 	{
-		$res = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX.$this->table_element
-			." WHERE rowid = ".(int) $this->id);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".(int) $this->id;
+		$res = $this->db->query($sql);
 
 		return $res ? 1 : -1;
 	}
@@ -1187,8 +1186,8 @@ class ProductCombinationLevel
 	 */
 	public function deleteAllForCombination($fk_product_attribute_combination)
 	{
-		$res = $this->db->query("DELETE FROM ".MAIN_DB_PREFIX.$this->table_element
-			." WHERE fk_product_attribute_combination = ".(int) $fk_product_attribute_combination);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE fk_product_attribute_combination = ".(int) $fk_product_attribute_combination;
+		$res = $this->db->query($sql);
 
 		return $res ? 1 : -1;
 	}
