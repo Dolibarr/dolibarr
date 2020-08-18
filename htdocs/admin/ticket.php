@@ -348,7 +348,7 @@ if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) {
 // @todo Use module notification instead...
 
 // Email d'envoi des notifications
-print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("TicketEmailNotificationFrom").'</td>';
+print '<tr class="oddeven"><td>'.$langs->trans("TicketEmailNotificationFrom").'</td>';
 print '<td class="left">';
 print '<input type="text" class="minwidth200" name="TICKET_NOTIFICATION_EMAIL_FROM" value="'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'"></td>';
 print '<td class="center">';
