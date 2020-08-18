@@ -371,9 +371,9 @@ class modStock extends DolibarrModules
 		$this->remove($options);
 
 		//ODT template
-		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stock/template_stock.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/stock';
-		$dest = $dirodt.'/template_stock.odt';
+		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/stocks/template_warehouse.odt';
+		$dirodt = DOL_DATA_ROOT.'/doctemplates/stocks';
+		$dest = $dirodt.'/template_warehouse.odt';
 
 		if (file_exists($src) && !file_exists($dest))
 		{
