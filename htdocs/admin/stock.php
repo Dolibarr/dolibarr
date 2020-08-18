@@ -494,7 +494,7 @@ if ($virtualdiffersfromphysical)
  * Document templates generators
  */
 
-print load_fiche_titre($langs->trans("WarehouseModelModule"), '', '');
+print load_fiche_titre($langs->trans("WarehouseModelModules"), '', '');
 
 // Load array def with activated templates
 $def = array();
