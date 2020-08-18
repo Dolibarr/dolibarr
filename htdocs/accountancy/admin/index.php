@@ -256,7 +256,7 @@ if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 }
 print '</tr>';
 
-print '<tr>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
 if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=0">';
@@ -269,7 +269,7 @@ if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
 }
 print '</tr>';
 
-print '<tr>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_MANAGE_ZERO").'</td>';
 if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=0">';
@@ -322,7 +322,7 @@ if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
 }
 print '</tr>';
 
-print '<tr>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
 if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
 	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=0">';
