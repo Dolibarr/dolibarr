@@ -174,6 +174,42 @@ if ($action == 'setenablesubsidiarylist') {
     }
 }
 
+if ($action == 'setdisablebindingonsales') {
+	$setdisablebindingonsales = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setdisablebindingonpurchases') {
+	$setdisablebindingonpurchases = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_PURCHASES", $setdisablebindingonpurchases, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setdisablebindingonexpensereports') {
+	$setdisablebindingonexpensereports = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS", $setdisablebindingonexpensereports, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 /*
  * View
  */
@@ -354,6 +390,45 @@ foreach ($list_binding as $key)
 	print '</td>';
 	print '</tr>';
 }
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_SALES").'</td>';
+if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_SALES)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonsales&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonsales&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_PURCHASES").'</td>';
+if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonpurchases&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonpurchases&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS").'</td>';
+if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonexpensereports&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonexpensereports&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
 
 print '</table>';
 
