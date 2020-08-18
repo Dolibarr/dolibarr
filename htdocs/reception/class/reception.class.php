@@ -400,6 +400,7 @@ class Reception extends CommonObject
 				$this->date_reception = $this->db->jdate($obj->date_reception); // Date real
 				$this->date_delivery        = $this->db->jdate($obj->date_delivery); // Date planed
 				$this->fk_delivery_address  = $obj->fk_address;
+				$this->model_pdf            = $obj->model_pdf;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->shipping_method_id = $obj->fk_shipping_method;
 				$this->tracking_number      = $obj->tracking_number;

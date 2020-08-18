@@ -280,6 +280,7 @@ class FichinterRec extends Fichinter
                 $this->note_private = $obj->note_private;
                 $this->note_public			= $obj->note_public;
                 $this->user_author			= $obj->fk_user_author;
+                $this->model_pdf			= $obj->model_pdf;
                 $this->modelpdf				= $obj->model_pdf;
                 $this->rang = $obj->rang;
                 $this->special_code = $obj->special_code;

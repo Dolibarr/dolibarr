@@ -1244,6 +1244,7 @@ class SupplierProposal extends CommonObject
                 $this->total_ttc            = $obj->total;
                 $this->socid                = $obj->fk_soc;
                 $this->fk_project           = $obj->fk_project;
+                $this->model_pdf            = $obj->model_pdf;
                 $this->modelpdf             = $obj->model_pdf;
                 $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;

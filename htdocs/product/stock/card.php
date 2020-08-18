@@ -790,20 +790,20 @@ $modulepart = 'stock';
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete')
 {
-	print '<br/>';
+	print '<br>';
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre
 
     // Documents
     $objectref = dol_sanitizeFileName($object->ref);
-    $relativepath = $comref.'/'.$objectref.'.pdf';
+    $relativepath = $object->ref.'/'.$objectref.'.pdf';
     $filedir = $conf->stock->dir_output.'/'.$objectref;
     $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed = $usercanread;
     $delallowed = $usercancreate;
     $modulepart = 'stock';
 
-    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
     $somethingshown = $formfile->numoffiles;
 
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';

@@ -510,7 +510,7 @@ class pdf_standard extends ModelePDFStock
 					$nexY += 2;
 					$curY = $nexY;
 
-					if (! $object->specimen) {
+					if ($nblines > 0) {
 						$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
 						$pdf->line($this->marge_gauche, $curY - 1, $this->page_largeur - $this->marge_droite, $curY - 1);
 						$pdf->SetLineStyle(array('dash'=>0));
