@@ -419,9 +419,10 @@ class FormCompany extends Form
 	 *  @param  string	$selected   	Civility/Title code preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
 	 *  @param  string  $morecss        Add more css on SELECT element
+	 *  @param	int		$addjscombo		Add js combo
 	 *  @return	string					String with HTML select
 	 */
-	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth100')
+	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 0)
 	{
         // phpcs:enable
 		global $conf, $langs, $user;
@@ -451,7 +452,7 @@ class FormCompany extends Form
 					} else {
 						$out .= '<option value="'.$obj->code.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// If translation exists, we use it, otherwise, we use tha had coded label
 					$out .= ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 					$out .= '</option>';
 					$i++;
@@ -459,6 +460,12 @@ class FormCompany extends Form
 			}
 			$out .= '</select>';
 			if ($user->admin) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+			if ($addjscombo) {
+				// Enhance with select2
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname);
+			}
 		} else {
 			dol_print_error($this->db);
 		}
