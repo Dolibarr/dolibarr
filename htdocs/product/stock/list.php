@@ -449,7 +449,7 @@ print $hookmanager->resPrint;
 
 // Status
 if (!empty($arrayfields['t.statut']['checked'])) {
-	print '<td class="liste_titre right">';
+	print '<td class="liste_titre center">';
 	print $form->selectarray('search_status', $warehouse->statuts, $search_status, 1, 0, 0, '', 1);
 	print '</td>';
 }
@@ -500,7 +500,7 @@ $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $objec
 print $hookmanager->resPrint;
 
 if (!empty($arrayfields['t.statut']['checked'])) {
-	print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($arrayfields['t.statut']['label'], $_SERVER["PHP_SELF"], "t.statut", '', $param, '', $sortfield, $sortorder, 'center ');
 }
 
 // Action column
@@ -606,7 +606,7 @@ if ($num)
 
 		// Status
 		if (!empty($arrayfields['t.statut']['checked'])) {
-			print '<td class="right">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
+			print '<td class="center">'.$warehouse->LibStatut($obj->statut, 5).'</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
 
