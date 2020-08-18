@@ -107,7 +107,7 @@ if (empty($reshook))
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
 	                                // Extended modules
 	                                'memcached', 'numberwords', 'zipautofillfr');
-	$alwayshiddenuncheckedmodules = array('dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient',
+	$alwayshiddenuncheckedmodules = array('collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
 	                                // Extended modules
 	                                'awstats', 'bittorrent', 'bootstrap', 'cabinetmed', 'cmcic', 'concatpdf', 'customfield', 'datapolicy', 'deplacement', 'dolicloud', 'filemanager', 'lightbox', 'mantis', 'monitoring', 'moretemplates', 'multicompany', 'nltechno', 'numberingpack', 'openstreetmap',
 	                                'ovh', 'phenix', 'phpsysinfo', 'pibarcode', 'postnuke', 'dynamicprices', 'receiptprinter', 'selectbank', 'skincoloreditor', 'submiteverywhere', 'survey', 'thomsonphonebook', 'topten', 'tvacerfa', 'voyage', 'webcalendar', 'webmail');
