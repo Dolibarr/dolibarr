@@ -135,6 +135,8 @@ $usercanread = $user->rights->stock->mouvement->lire;
 $usercancreate = $user->rights->stock->mouvement->creer;
 $usercandelete = $user->rights->stock->mouvement->creer;
 
+$error = 0;
+
 
 /*
  * Actions
@@ -176,6 +178,25 @@ if (empty($reshook))
 	$objectlabel = 'MouvementStock';
 	$uploaddir = $conf->stock->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+}
+
+if ($action == 'update_extras') {
+	$tmpwarehouse = new Entrepot($db);
+	$tmpwarehouse->fetch($id);
+
+	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
+
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'none'));
+	if ($ret < 0) $error++;
+	if (!$error) {
+		$result = $tmpwarehouse->insertExtraFields();
+		if ($result < 0) {
+			setEventMessages($tmpwarehouse->error, $tmpwarehouse->errors, 'errors');
+			$error++;
+		}
+	}
+	if ($error) $action = 'edit_extras';
 }
 
 // Correct stock
