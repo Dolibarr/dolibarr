@@ -17,7 +17,7 @@
  */
 
 /**
- *	\file       htdocs/core/modules/stock/doc/pdf_stdmovement.modules.php
+ *	\file       htdocs/core/modules/movement/doc/pdf_standard.modules.php
  *	\ingroup    societe
  *	\brief      File of class to build PDF documents for stocks movements
  */
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_stdmovement extends ModelePDFMovement
+class pdf_stdandard extends ModelePDFMovement
 {
     /**
      * @var DoliDb Database handler

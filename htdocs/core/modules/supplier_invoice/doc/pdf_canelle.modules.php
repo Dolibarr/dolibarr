@@ -356,8 +356,10 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 					}
 				}
 
-				// Display notes
-				if (!empty($object->note_public))
+				// Displays notes
+				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+
+				if ($notetoshow)
 				{
 					$tab_top -= 2;
 

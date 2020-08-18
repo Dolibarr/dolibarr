@@ -40,6 +40,10 @@ ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
 
 -- For v13
 
+UPDATE llx_document_model set nom = 'standard' where nom = 'Standard' and type ='stock';
+UPDATE llx_document_model set nom = 'stdmovement', type = 'movement' where nom = 'StdMouvement' and type ='mouvement';
+
+
 UPDATE llx_const SET value = 0 WHERE name = 'FACTURE_TVAOPTION' and value = 'franchise';
 UPDATE llx_const SET value = 1 WHERE name = 'FACTURE_TVAOPTION' and value <> 'franchise' AND value <> '0' AND value <> '1';
 
