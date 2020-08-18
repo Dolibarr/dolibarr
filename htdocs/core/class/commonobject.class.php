@@ -5142,7 +5142,7 @@ abstract class CommonObject
 				}
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX.$table_element."_extrafields";
-			$sql .= " WHERE fk_object = ".$rowid;
+			$sql .= " WHERE fk_object = ".((int) $rowid);
 
 			//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
 			$resql = $this->db->query($sql);
