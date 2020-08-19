@@ -22,7 +22,7 @@ See the [COPYING](https://github.com/Dolibarr/dolibarr/blob/develop/COPYING) fil
 Other licenses apply for some included dependencies. See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) for a full list.
 
 ## Supported versions
-v10, v11 and v12 are stable and supported.
+The latest 3 versions of Dolibarr are stable and supported. You are very welcome to [report bugs for these](https://github.com/Dolibarr/dolibarr/issues).
 
 ## INSTALLING
 
