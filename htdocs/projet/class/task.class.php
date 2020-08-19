@@ -62,7 +62,7 @@ class Task extends CommonObject
 	/**
      * @var int ID parent task
      */
-    public $fk_task_parent=0;
+    public $fk_task_parent = 0;
 
     /**
      * @var string Label of task
