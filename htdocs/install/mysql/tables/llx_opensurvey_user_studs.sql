@@ -21,4 +21,4 @@ CREATE TABLE llx_opensurvey_user_studs (
     id_sondage VARCHAR(16) NOT NULL,
     reponses VARCHAR(100) NOT NULL,		-- Not used for 'F' surveys
     tms timestamp
-) ENGINE=InnoDB;
+) ENGINE=innodb;

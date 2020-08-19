@@ -20,7 +20,6 @@ FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
 DatabaseConnection=Connexion à la base de donnée
-EmptySearchString=Enter non empty search criterias
 ErrorCanNotCreateDir=Impossible de créer le dir %s
 ErrorCanNotReadDir=Impossible de lire le dir %s
 ErrorNoSocialContributionForSellerCountry=Erreur, aucun type de charges défini pour le pays '%s'.

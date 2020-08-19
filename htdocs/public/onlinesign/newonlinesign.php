@@ -45,6 +45,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 
 // Input are:
@@ -68,9 +69,6 @@ if (!$action)
     	exit;
     }
 }
-
-
-
 
 
 // Define $urlwithroot
@@ -132,7 +130,7 @@ $conf->dol_hide_leftmenu = 1;
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-// Check link validity
+// Check link validity for param 'source'
 if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
 {
     $langs->load("errors");

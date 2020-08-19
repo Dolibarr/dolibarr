@@ -375,6 +375,10 @@ foreach ($action_buttons as $button) {
     $newclass = $class.($button["class"] ? " ".$button["class"] : "");
 	print '<button type="button" class="'.$newclass.'" onclick="'.$button["function"].'"><span '.$button["span"].'>'.$button["text"].'</span></button>';
 }
+
+if ($conf->global->TAKEPOS_DELAYED_PAYMENT) {
+	print '<button type="button" class="calcbutton2" onclick="Validate(\'delayed\');">'.$langs->trans("Reported").'</button>';
+}
 ?>
 </div>
 

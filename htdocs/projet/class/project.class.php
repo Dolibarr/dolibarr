@@ -521,6 +521,7 @@ class Project extends CommonObject
 				$this->opp_amount	= $obj->opp_amount;
 				$this->opp_percent = $obj->opp_percent;
 				$this->budget_amount = $obj->budget_amount;
+				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf;
 				$this->usage_opportunity = (int) $obj->usage_opportunity;
 				$this->usage_task = (int) $obj->usage_task;

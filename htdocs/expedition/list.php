@@ -800,7 +800,7 @@ if ($resql)
 	}
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields'=>$arrayfields, 'totalarray' => $totalarray, 'sql'=>$sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

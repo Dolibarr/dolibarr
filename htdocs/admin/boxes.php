@@ -95,8 +95,10 @@ if ($action == 'add') {
                 {
                     if (!$error && $fk_user != '')
                     {
+                    	$arrayofexistingboxid = array();
                         $nbboxonleft = $nbboxonright = 0;
-                        $sql = "SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE position = ".$pos." AND fk_user = ".$fk_user." AND entity = ".$conf->entity;
+                        $sql = "SELECT box_id, box_order FROM ".MAIN_DB_PREFIX."boxes";
+                        $sql .= " WHERE position = ".$pos." AND fk_user = ".$fk_user." AND entity = ".$conf->entity;
                         dol_syslog("boxes.php activate box", LOG_DEBUG);
                         $resql = $db->query($sql);
                         if ($resql)
@@ -106,21 +108,26 @@ if ($action == 'add') {
                                 $boxorder = $obj->box_order;
                                 if (preg_match('/A/', $boxorder)) $nbboxonleft++;
                                 if (preg_match('/B/', $boxorder)) $nbboxonright++;
+                                $arrayofexistingboxid[$obj->box_id] = 1;
                             }
                         } else dol_print_error($db);
 
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
-                        $sql .= "box_id, position, box_order, fk_user, entity";
-                        $sql .= ") values (";
-                        $sql .= $boxid['value'].", ".$pos.", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
-                        $sql .= ")";
+                        if (empty($arrayofexistingboxid[$boxid['value']])) {
+	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (";
+	                        $sql .= "box_id, position, box_order, fk_user, entity";
+	                        $sql .= ") values (";
+	                        $sql .= $boxid['value'].", ".$pos.", '".(($nbboxonleft > $nbboxonright) ? 'B01' : 'A01')."', ".$fk_user.", ".$conf->entity;
+	                        $sql .= ")";
 
-                        dol_syslog("boxes.php activate box", LOG_DEBUG);
-                        $resql = $db->query($sql);
-                        if (!$resql)
-                        {
-                            setEventMessages($db->lasterror(), null, 'errors');
-                            $error++;
+	                        dol_syslog("boxes.php activate box", LOG_DEBUG);
+	                        $resql = $db->query($sql);
+	                        if (!$resql)
+	                        {
+	                            setEventMessages($db->lasterror(), null, 'errors');
+	                            $error++;
+	                        }
+                        } else {
+                        	dol_syslog("boxes.php activate box - already exists in database", LOG_DEBUG);
                         }
                     }
                 }
@@ -314,7 +321,7 @@ $boxactivated = InfoBox::listBoxes($db, 'activated', -1, null);
 
 print "<br>\n";
 print "\n\n".'<!-- Boxes Available -->'."\n";
-print load_fiche_titre($langs->trans("BoxesAvailable"));
+print load_fiche_titre($langs->trans("BoxesAvailable"), '', '');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.newToken().'">'."\n";
@@ -341,7 +348,7 @@ foreach ($boxtoadd as $box)
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
     print '<tr class="oddeven">'."\n";
-    print '<td>'.img_object("", $logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
+    print '<td>'.img_object("", $logo, 'height="14px"').' '.$langs->transnoentitiesnoconv($box->boxlabel);
     if (!empty($box->class) && preg_match('/graph_/', $box->class)) print ' ('.$langs->trans("Graph").')';
     print '</td>'."\n";
     print '<td>';
@@ -355,7 +362,7 @@ foreach ($boxtoadd as $box)
 
     // For each possible position, an activation link is displayed if the box is not already active for that position
     print '<td class="center">';
-    print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, 0, 1, 0, 0, '', 1)."\n";
+    print $form->selectarray("boxid[".$box->box_id."][pos]", $pos_name, -1, 1, 0, 0, '', 1)."\n";
     print '<input type="hidden" name="boxid['.$box->box_id.'][value]" value="'.$box->box_id.'">'."\n";
     print '</td>';
 
@@ -377,7 +384,7 @@ print "\n".'<!-- End Boxes Available -->'."\n";
 
 //var_dump($boxactivated);
 print "<br>\n\n";
-print load_fiche_titre($langs->trans("BoxesActivated"));
+print load_fiche_titre($langs->trans("BoxesActivated"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="tagtable liste">'."\n";
@@ -403,7 +410,7 @@ foreach ($boxactivated as $key => $box)
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
 	print '<tr class="oddeven">';
-	print '<td>'.img_object("", $logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
+	print '<td>'.img_object("", $logo, 'height="14px"').' '.$langs->transnoentitiesnoconv($box->boxlabel);
 	if (!empty($box->class) && preg_match('/graph_/', $box->class)) print ' ('.$langs->trans("Graph").')';
 	print '</td>';
 	print '<td>';
@@ -436,7 +443,7 @@ print '<br>';
 // Other parameters
 
 print "\n\n".'<!-- Other Const -->'."\n";
-print load_fiche_titre($langs->trans("Other"));
+print load_fiche_titre($langs->trans("Other"), '', '');
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="addconst">';

@@ -15,6 +15,7 @@
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2020  Frédéric France             <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Thibault Foucart            <support@ptibogxiv.net>
+ * Copyright (C) 2020       Open-Dsi         			<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -591,7 +592,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 				// '"' is dangerous because param in url can close the href= or src= and add javascript functions.
 				// '../' is dangerous because it allows dir transversals
 				$out = str_replace(array('"', '../'), '', trim($out));
-				$out = dol_string_nohtmltag($out, 1);
+				$out = dol_string_nohtmltag($out, 0);
 			}
 			break;
 		case 'restricthtml':		// Recommended for most html textarea
@@ -3012,7 +3013,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
         		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
         		'accountancy', 'address', 'bank_account', 'barcode', 'bank', 'bill', 'bookmark', 'bom', 'building',
         		'cash-register', 'category', 'check', 'clock', 'close_title', 'company', 'contact', 'contract', 'cubes',
-        		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'external-link-alt', 'external-link-square-alt',
+        		'delete', 'dolly', 'dollyrevert', 'edit', 'ellipsis-h', 'email', 'external-link-alt', 'external-link-square-alt',
         		'filter', 'file-code', 'file-export', 'file-import', 'file-upload', 'folder', 'folder-open', 'globe', 'globe-americas', 'grip', 'grip_title', 'help',
         		'intervention', 'label', 'language', 'list', 'listlight', 'lot',
         		'map-marker-alt', 'money-bill-alt', 'mrp', 'note',
@@ -3033,7 +3034,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				'setup', 'sign-out', 'split', 'stripe-s', 'switch_off', 'switch_on', 'tools', 'unlink', 'uparrow', 'user', 'vcard', 'wrench',
 				'jabber', 'skype', 'twitter', 'facebook', 'linkedin', 'instagram', 'snapchat', 'youtube', 'google-plus-g', 'whatsapp',
 				'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
-				'home', 'companies', 'products', 'commercial', 'invoicing', 'pencil-ruler', 'preview', 'project', 'projectpub', 'supplier_invoice', 'hrm', 'members', 'ticket', 'generic',
+        		'home', 'hrm', 'companies', 'products', 'commercial', 'invoicing', 'pencil-ruler', 'preview', 'project', 'projectpub', 'supplier_invoice', 'members', 'ticket', 'generic',
         		'error', 'warning', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
         		'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda'
 			)
@@ -3056,7 +3057,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'company'=>'building', 'contact'=>'address-book', 'contract'=>'suitcase', 'conversation'=>'comments', 'donation'=>'file-alt', 'dynamicprice'=>'hand-holding-usd',
 		    	'setup'=>'cog', 'companies'=>'building', 'products'=>'cube', 'commercial'=>'suitcase', 'invoicing'=>'coins',
 		    	'accounting'=>'chart-line', 'category'=>'tag', 'dollyrevert'=>'dolly',
-		    	'hrm'=>'umbrella-beach', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
+		    	'hrm'=>'user-tie', 'margin'=>'calculator', 'members'=>'users', 'ticket'=>'ticket-alt', 'globe'=>'external-link-alt', 'lot'=>'barcode',
 		    	'email'=>'at',
 		    	'edit'=>'pencil-alt', 'grip_title'=>'arrows-alt', 'grip'=>'arrows-alt', 'help'=>'question-circle',
 		    	'generic'=>'file', 'holiday'=>'umbrella-beach', 'label'=>'layer-group',
@@ -3306,9 +3307,14 @@ function img_picto_common($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0
  *
  *	@param	string		$titlealt       Text on alt and title of image. Alt only if param notitle is set to 1. If text is "TextA:TextB", use Text A on alt and Text B on title.
  *	@param  string		$numaction   	Action id or code to show
+ *	@param 	string		$picto      	Name of image file to show ('filenew', ...)
+ *                                      If no extension provided, we use '.png'. Image must be stored into theme/xxx/img directory.
+ *                                      Example: picto.png                  if picto.png is stored into htdocs/theme/mytheme/img
+ *                                      Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
+ *                                      Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@return string      				Return an img tag
  */
-function img_action($titlealt, $numaction)
+function img_action($titlealt, $numaction, $picto = '')
 {
 	global $langs;
 
@@ -3336,7 +3342,7 @@ function img_action($titlealt, $numaction)
 	}
 	if (!is_numeric($numaction)) $numaction = 0;
 
-	return img_picto($titlealt, 'stcomm'.$numaction.'.png');
+	return img_picto($titlealt, !empty($picto) ? $picto : 'stcomm'.$numaction.'.png');
 }
 
 /**
@@ -3844,7 +3850,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 		{
 			$out .= "<b>".$langs->trans("OS").":</b> ".php_uname()."<br>\n";
 		}
-		$out .= "<b>".$langs->trans("UserAgent").":</b> ".$_SERVER["HTTP_USER_AGENT"]."<br>\n";
+		$out .= "<b>".$langs->trans("UserAgent").":</b> ".dol_htmlentities($_SERVER["HTTP_USER_AGENT"], ENT_COMPAT, 'UTF-8')."<br>\n";
 		$out .= "<br>\n";
 		$out .= "<b>".$langs->trans("RequestedUrl").":</b> ".dol_htmlentities($_SERVER["REQUEST_URI"], ENT_COMPAT, 'UTF-8')."<br>\n";
 		$out .= "<b>".$langs->trans("Referer").":</b> ".(isset($_SERVER["HTTP_REFERER"]) ?dol_htmlentities($_SERVER["HTTP_REFERER"], ENT_COMPAT, 'UTF-8') : '')."<br>\n";
@@ -3920,7 +3926,7 @@ function dol_print_error($db = '', $error = '', $errors = null)
 	if (empty($dolibarr_main_prod)) print $out;
 	else {
 		// This should not happen, except if there is a bug somewhere. Enabled and check log in such case.
-		print 'This website or feature is currently temporarly not available.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
+		print 'This website or feature is currently temporarly not available or failed after a technical error.<br><br>This may be due to a maintenance operation. Current status of operation are on next line...<br><br>'."\n";
 		$langs->load("errors");
 		print $langs->trans("DolibarrHasDetectedError").'. ';
 		print $langs->trans("YouCanSetOptionDolibarrMainProdToZero");
@@ -5465,7 +5471,7 @@ function picto_required()
  *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag)
  *	@return string	    				String cleaned
  *
- * 	@see	dol_escape_htmltag() strip_tags() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
+ * 	@see	dol_escape_htmltag() strip_tags() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags(), dolStripPhpCode()
  */
 function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto = 'UTF-8', $strip_tags = 0)
 {
@@ -5501,17 +5507,17 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
  *	Clean a string to keep only desirable HTML tags.
  *
  *	@param	string	$stringtoclean			String to clean
- *  @param	string	$cleanalsosomestyles	Clean also some tags
+ *  @param	boolean	$cleanalsosomestyles	Remove absolute/fixed positioning from inline styles
+ *  @param	boolean	$removeclassattribute	Remove the class attribute from tags
  *	@return string	    					String cleaned
  *
  * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_neverthesehtmltags()
  */
-function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
+function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, $removeclassattribute = 1)
 {
 	$allowed_tags = array(
 		"html", "head", "meta", "body", "article", "a", "abbr", "b", "blockquote", "br", "cite", "div", "dl", "dd", "dt", "em", "font", "img", "ins", "hr", "i", "li", "link",
-		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title",
-		"table", "tr", "th", "td", "u", "ul"
+		"ol", "p", "q", "s", "section", "span", "strike", "strong", "title", "table", "tr", "th", "td", "u", "ul", "sup", "sub", "blockquote", "pre", "h1", "h2", "h3", "h4", "h5", "h6"
 	);
 	$allowed_tags_string = join("><", $allowed_tags);
 	$allowed_tags_string = preg_replace('/^>/', '', $allowed_tags_string);
@@ -5519,7 +5525,10 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1)
 	$allowed_tags_string = '<'.$allowed_tags_string.'>';
 
 	if ($cleanalsosomestyles) {
-		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+		$stringtoclean = preg_replace('/position\s*:\s*(absolute|fixed)\s*!\s*important/i', '', $stringtoclean); // Note: If hacker try to introduce css comment into string to bypass this regex, the string must also be encoded by the dol_htmlentitiesbr during output so it become harmless
+	}
+	if ($removeclassattribute) {
+		$stringtoclean = preg_replace('/(<[^>]+)\s+class=((["\']).*?\\3|\\w*)/i', '\\1', $stringtoclean);
 	}
 
 	$temp = strip_tags($stringtoclean, $allowed_tags_string);
@@ -6062,6 +6071,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__MEMBER_PHONE__'] = $object->phone;
 				$substitutionarray['__MEMBER_PHONEPRO__'] = $object->phone_perso;
 				$substitutionarray['__MEMBER_PHONEMOBILE__'] = $object->phone_mobile;
+				$substitutionarray['__MEMBER_TYPE__'] = $object->type;
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE__']       = dol_print_date($object->first_subscription_date, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_START__'] = dol_print_date($object->first_subscription_date_start, 'dayrfc');
 				$substitutionarray['__MEMBER_FIRST_SUBSCRIPTION_DATE_END__']   = dol_print_date($object->first_subscription_date_end, 'dayrfc');
@@ -6965,7 +6975,7 @@ function verifCond($strRights)
  * @param 	string	$s				String to evaluate
  * @param	int		$returnvalue	0=No return (used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
  * @param   int     $hideerrors     1=Hide errors
- * @return	mixed					Nothing or return of eval
+ * @return	mixed					Nothing or return result of eval
  */
 function dol_eval($s, $returnvalue = 0, $hideerrors = 1)
 {
@@ -8216,14 +8226,13 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
     }
 
     // TODO : add a hook
-
     if ($displayMode == 0) {
-        $return = !empty($html) ? $html : $statusLabel;
+    	$return = !empty($html) ? $html : (empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort));
     } elseif ($displayMode == 1) {
-        $return = !empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel);
+    	$return = !empty($html) ? $html : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
     } // Use status with images (for backward compatibility)
     elseif (!empty($conf->global->MAIN_STATUS_USES_IMAGES)) {
-        $return = '';
+    	$return = '';
         $htmlLabel      = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : $statusLabel).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
         $htmlLabelShort = (in_array($displayMode, array(1, 2, 5)) ? '<span class="hideonsmartphone">' : '').(!empty($html) ? $html : (!empty($statusLabelShort) ? $statusLabelShort : $statusLabel)).(in_array($displayMode, array(1, 2, 5)) ? '</span>' : '');
 
@@ -8268,17 +8277,17 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
         }
     } // Use new badge
     elseif (empty($conf->global->MAIN_STATUS_USES_IMAGES) && !empty($displayMode)) {
-        $statusLabelShort = !empty($statusLabelShort) ? $statusLabelShort : $statusLabel;
+    	$statusLabelShort = (empty($statusLabelShort) ? $statusLabel : $statusLabelShort);
 
 		$dolGetBadgeParams['attr']['class'] = 'badge-status';
 		$dolGetBadgeParams['attr']['title'] = $statusLabel;
 
         if ($displayMode == 3) {
-            $return = dolGetBadge($statusLabel, '', $statusType, 'dot', $url, $dolGetBadgeParams);
+        	$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), '', $statusType, 'dot', $url, $dolGetBadgeParams);
         } elseif ($displayMode === 5) {
             $return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
         } else {
-            $return = dolGetBadge($statusLabel, $html, $statusType, '', $url, $dolGetBadgeParams);
+        	$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
         }
     }
 
@@ -8410,7 +8419,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
         $attr['class'] .= ' classfortooltip';
     }
 
-    if (empty($id)) {
+    if (!empty($id)) {
         $attr['id'] = $id;
     }
 

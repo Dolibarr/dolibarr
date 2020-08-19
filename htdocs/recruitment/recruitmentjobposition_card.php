@@ -188,22 +188,6 @@ $title = $langs->trans("PositionToBeFilled");
 $help_url = '';
 llxHeader('', $title, $help_url);
 
-// Example : Adding jquery code
-print '<script type="text/javascript" language="javascript">
-jQuery(document).ready(function() {
-	function init_myfunc()
-	{
-		jQuery("#myid").removeAttr(\'disabled\');
-		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	}
-	init_myfunc();
-	jQuery("#mybutton").click(function() {
-		init_myfunc();
-	});
-});
-</script>';
-
-
 // Part to create
 if ($action == 'create')
 {
@@ -471,8 +455,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Back to draft
-			if ($object->status == $object::STATUS_VALIDATED)
-			{
+			if ($object->status == $object::STATUS_VALIDATED) {
 				if ($permissiontoadd)
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
@@ -480,18 +463,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Modify
-			if ($permissiontoadd)
-			{
+			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 			}
 
 			// Validate
-			if ($object->status == $object::STATUS_DRAFT)
-			{
-				if ($permissiontoadd)
-				{
+			if ($object->status == $object::STATUS_DRAFT) {
+				if ($permissiontoadd) {
 					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").'</a>';
@@ -503,39 +483,29 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Clone
-			if ($permissiontoadd)
-			{
+			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=recruitmentjobposition">'.$langs->trans("ToClone").'</a>'."\n";
 			}
 
 			/*
-			if ($permissiontoadd)
-			{
-				if ($object->status == $object::STATUS_ENABLED)
-				{
+			if ($permissiontoadd) {
+				if ($object->status == $object::STATUS_ENABLED) {
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
-				}
-				else
-				{
+				} else {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
 				}
-			}
+			}*/
 			if ($permissiontoadd)
 			{
-				if ($object->status == $object::STATUS_VALIDATED)
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=close">'.$langs->trans("Cancel").'</a>'."\n";
-				}
-				else
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen">'.$langs->trans("Re-Open").'</a>'."\n";
+				if ($object->status == $object::STATUS_VALIDATED) {
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_close&confirm=yes">'.$langs->trans("Cancel").'</a>'."\n";
+				} else {
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_reopen&confirm=yes">'.$langs->trans("Re-Open").'</a>'."\n";
 				}
 			}
-			*/
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
-			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd))
-			{
+			if ($permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd)) {
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
@@ -572,6 +542,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('recruitmentjobposition'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
+		// Show link to public job page
+		if ($object->status != RecruitmentJobPosition::STATUS_DRAFT)
+		{
+			print '<br><!-- Link to go on public job page -->'."\n";
+			// Load translation files required by the page
+			$langs->loadLangs(array('recruitment'));
+
+			$out = img_picto('', 'globe').' '.$langs->trans("PublicUrl").'<br>';
+
+			$url = getPublicJobPositionUrl(0, $object->ref);
+			$out .= '<input type="text" id="recruitmentjobpositionurl" class="quatrevingtpercent" value="'.$url.'">';
+			$out .= '<a href="'.$url.'" target="_blank">'.img_picto('', 'globe').'</a>';
+			$out .= ajax_autoselect("recruitmentjobpositionurl", 0);
+
+			print $out;
+		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

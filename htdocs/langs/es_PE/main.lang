@@ -19,7 +19,6 @@ FormatDateHourShort=%d/%m/%Y %H:%M
 FormatDateHourSecShort=%d/%m/%Y %H:%M:%S
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
-EmptySearchString=Enter non empty search criterias
 NoError=Sin error
 ErrorNoVATRateDefinedForSellerCountry=Error, no hay tipos de IGV definidos para el país '%s'.
 NotClosed=No se ha cerrado

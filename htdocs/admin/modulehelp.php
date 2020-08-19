@@ -262,7 +262,7 @@ print '<div class="centpercent">';
 
 $picto = 'object_'.$objMod->picto;
 
-print load_fiche_titre(($modulename ? $modulename : $moduledesc), $moreinfo, $picto);
+print load_fiche_titre(($modulename ? $modulename : $moduledesc), $moreinfo, $picto, 0, '', 'titlemodulehelp');
 print '<br>';
 
 dol_fiche_head($head, $mode, '', -1);

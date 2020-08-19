@@ -33,6 +33,10 @@ $ref = GETPOST('ref', 'alpha');
 $weight_impact = GETPOST('weight_impact', 'alpha');
 $price_impact = GETPOST('price_impact', 'alpha');
 $price_impact_percent = (bool) GETPOST('price_impact_percent');
+
+$level_price_impact = GETPOST('level_price_impact', 'array');
+$level_price_impact_percent = GETPOST('level_price_impact_percent', 'array');
+
 $reference = GETPOST('reference', 'alpha');
 $form = new Form($db);
 
@@ -112,6 +116,17 @@ if ($_POST) {
 		    }
 			$weight_impact = price2num($weight_impact);
 			$price_impact = price2num($price_impact);
+
+			// for conf PRODUIT_MULTIPRICES
+			if ($conf->global->PRODUIT_MULTIPRICES) {
+				$level_price_impact = array_map('price2num', $level_price_impact);
+				$level_price_impact_percent = array_map('price2num', $level_price_impact_percent);
+			}
+			else {
+				$level_price_impact = array(1 => $weight_impact);
+				$level_price_impact_percent = array(1 => $price_impact_percent);
+			}
+
 			$sanit_features = array();
 
 			//First, sanitize
@@ -141,11 +156,9 @@ if ($_POST) {
 			// sanit_feature is an array with 1 (and only 1) value per attribute.
 			// For example:  Color->blue, Size->Small, Option->2
 			//var_dump($sanit_features);
-			//var_dump($productCombination2ValuePairs1); exit;
-
 			if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features))
 			{
-				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact, $reference);
+				$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -156,7 +169,7 @@ if ($_POST) {
 					exit();
 				} else {
 					$langs->load("errors");
-					setEventMessages('', $prodcomb->errors, 'errors');
+					setEventMessages($prodcomb->error, $prodcomb->errors, 'errors');
 				}
 			} else {
 				setEventMessages($langs->trans('ErrorRecordAlreadyExists'), null, 'errors');
@@ -226,6 +239,32 @@ if ($_POST) {
 		$prodcomb->variation_price_percentage = $price_impact_percent;
 		$prodcomb->variation_price = $price_impact;
 		$prodcomb->variation_weight = $weight_impact;
+
+		// for conf PRODUIT_MULTIPRICES
+		if ($conf->global->PRODUIT_MULTIPRICES) {
+			$level_price_impact = array_map('price2num', $level_price_impact);
+			$level_price_impact_percent = array_map(function ($a) {
+				return !empty($a);}, $level_price_impact_percent);
+
+			$prodcomb->variation_price = $level_price_impact[1];
+			$prodcomb->variation_price_percentage = (bool) $level_price_impact_percent[1];
+		}
+		else {
+			$level_price_impact = array(1 => $weight_impact);
+			$level_price_impact_percent = array(1 => $price_impact_percent);
+		}
+
+		if ($conf->global->PRODUIT_MULTIPRICES){
+			$prodcomb->combination_price_levels = array();
+			for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++){
+				$productCombinationLevel = new ProductCombinationLevel($db);
+				$productCombinationLevel->fk_product_attribute_combination = $prodcomb->id;
+				$productCombinationLevel->fk_price_level = $i;
+				$productCombinationLevel->variation_price = $level_price_impact[$i];
+				$productCombinationLevel->variation_price_percentage = $level_price_impact_percent[$i];
+				$prodcomb->combination_price_levels[$i] = $productCombinationLevel;
+			}
+		}
 
 		if ($prodcomb->update($user) > 0) {
 			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
@@ -505,8 +544,8 @@ if (!empty($id) || !empty($ref))
         dol_fiche_head();
 
 
-		print '<table class="border" style="width: 100%">';
 		if ($action == 'add') {
+			print '<table class="border" style="width: 100%">';
 			print "<!--  Variant -->\n";
 			print '<tr>';
 			print '<td class="titlefieldcreate fieldrequired"><label for="attribute">'.$langs->trans('ProductAttribute').'</label></td>';
@@ -527,9 +566,9 @@ if (!empty($id) || !empty($ref))
 			print $langs->trans("Create");
 			print '</a>';*/
 
+			print '</td>';
+			print '</tr>';
 			?>
-				</td>
-			</tr>
 			<!-- Value -->
 			<tr>
 				<td class="fieldrequired"><label for="value"><?php echo $langs->trans('Value') ?></label></td>
@@ -553,64 +592,117 @@ if (!empty($id) || !empty($ref))
 					<input type="submit" class="button" name="selectvariant" id="selectvariant" value="<?php echo dol_escape_htmltag($langs->trans("SelectCombination")); ?>">
 				</td>
 			</tr>
-			<tr><td></td><td>
-			<?php echo $listofvariantselected;
+			<?php
+			print '<tr><td></td><td>';
+			print $listofvariantselected;
 			print '</td>';
 			print '</tr>';
+
 			print '</table>';
+			print '<hr>';
         }
 
 		if (is_array($productCombination2ValuePairs1)) {
-			?>
-		<hr>
-		<table class="border" style="width: 100%">
-			<tr>
-				<td class="titlefieldcreate fieldrequired tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
-				<td class="tdtop">
-					<div class="inline-block valignmiddle quatrevingtpercent">
+			print '<table class="border" style="width: 100%">';
+
+			// When in edit mode
+			if (is_array($productCombination2ValuePairs1) && count($productCombination2ValuePairs1))
+			{
+				?>
+				<tr>
+					<td class="titlefieldcreate tdtop"><label for="features"><?php echo $langs->trans('Combination') ?></label></td>
+					<td class="tdtop">
+						<div class="inline-block valignmiddle quatrevingtpercent">
 					<?php
-					if (is_array($productCombination2ValuePairs1))
-					{
-                        foreach ($productCombination2ValuePairs1 as $key => $val) {
-                            $result1 = $prodattr->fetch($val->fk_prod_attr);
-                            $result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
-                            if ($result1 > 0 && $result2 > 0)
-                            {
-                                print $prodattr->label.' - '.$prodattr_val->value.'<br>';
-                                // TODO Add delete link
-                            }
-                        }
+					foreach ($productCombination2ValuePairs1 as $key => $val) {
+						$result1 = $prodattr->fetch($val->fk_prod_attr);
+						$result2 = $prodattr_val->fetch($val->fk_prod_attr_val);
+						//print 'rr'.$result1.' '.$result2;
+						if ($result1 > 0 && $result2 > 0)
+						{
+							print $prodattr->label.' - '.$prodattr_val->value.'<br>';
+							// TODO Add delete link
+						}
 					}
 					?>
-					</div>
-					<!-- <div class="inline-block valignmiddle">
-					<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
-					</div>-->
-				</td>
-				<td>
-				</td>
-			</tr>
+						</div>
+						<!-- <div class="inline-block valignmiddle">
+						<a href="#" class="inline-block valignmiddle button" id="delfeature"><?php echo img_edit_remove() ?></a>
+						</div>-->
+					</td>
+					<td>
+					</td>
+				</tr>
+				<?php
+			}
+			?>
 			<tr>
 				<td><label for="reference"><?php echo $langs->trans('Reference') ?></label></td>
 				<td><input type="text" id="reference" name="reference" value="<?php echo trim($reference) ?>"></td>
 			</tr>
+			<?php
+			if (empty($conf->global->PRODUIT_MULTIPRICES)) {
+				?>
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
-				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label></td>
+				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label>
+				</td>
 			</tr>
-			<?php
+				<?php
+			} else {
+				$prodcomb->fetchCombinationPriceLevels();
+
+				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+				{
+					print '<tr>';
+					print '<td><label for="level_price_impact_'.$i.'">'.$langs->trans('ImpactOnPriceLevel', $i).'</label>';
+					if ($i===1){
+						print ' <a id="apply-price-impact-to-all-level" class="classfortooltip" href="#" title="'.$langs->trans('ApplyToAllPriceImpactLevelHelp').'">('.$langs->trans('ApplyToAllPriceImpactLevel').')</a>';
+					}
+					print '</td>';
+					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($prodcomb->combination_price_levels[$i]->variation_price).'">';
+					print '<input type="checkbox" class="level_price_impact_percent" id="level_price_impact_percent_'.$i.'" name="level_price_impact_percent['.$i.']" '. (!empty($prodcomb->combination_price_levels[$i]->variation_price_percentage) ? ' checked' : '' ).'> <label for="level_price_impact_percent_'.$i.'">'.$langs->trans('PercentageVariation').'</label>';
+
+					print '</td>';
+					print '</tr>';
+				}
+			}
+
             if ($object->isProduct()) {
 				print '<tr>';
 				print '<td><label for="weight_impact">'.$langs->trans('WeightImpact').'</label></td>';
 				print '<td><input type="text" id="weight_impact" name="weight_impact" value="'.price($weight_impact).'"></td>';
 				print '</tr>';
 			}
+
 			print '</table>';
 		}
 
+		if (!empty($conf->global->PRODUIT_MULTIPRICES)){
+			?>
+			<script>
+				$(document).ready(function() {
+					// Apply level 1 impact to all prices impact levels
+					$('body').on('click', '#apply-price-impact-to-all-level', function(e) {
+						e.preventDefault();
+						let priceImpact = $( "#level_price_impact_1" ).val();
+						let priceImpactPrecent = $( "#level_price_impact_percent_1" ).prop("checked");
+
+						var multipricelimit = <?php print intval($conf->global->PRODUIT_MULTIPRICES_LIMIT); ?>
+
+						for (let i = 2; i <= multipricelimit; i++) {
+							$( "#level_price_impact_" + i ).val(priceImpact);
+							$( "#level_price_impact_percent_" + i  ).prop("checked", priceImpactPrecent);
+						}
+					});
+				});
+			</script>
+			<?php
+		}
+
 		dol_fiche_end();
-        ?>
+		?>
 
 		<div style="text-align: center">
 		<input type="submit" name="create" <?php if (!is_array($productCombination2ValuePairs1)) print ' disabled="disabled"'; ?> value="<?php echo $action == 'add' ? $langs->trans('Create') : $langs->trans('Save') ?>" class="button">
@@ -667,7 +759,8 @@ if (!empty($id) || !empty($ref))
 				});
 			</script>
 
-		<?php }
+			<?php
+		}
 
         // Buttons
 		print '<div class="tabsAction">';
@@ -779,7 +872,7 @@ if (!empty($id) || !empty($ref))
     			print '<td class="center">'.$prodstatic->getLibStatut(2, 0).'</td>';
     			print '<td class="center">'.$prodstatic->getLibStatut(2, 1).'</td>';
     			print '<td class="right">';
-    			print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&valueid='.$currcomb->id.'">'.img_edit().'</a>';
+    			print '<a class="paddingleft paddingright editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit&valueid='.$currcomb->id.'">'.img_edit().'</a>';
     			print '<a class="paddingleft paddingright" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=delete&valueid='.$currcomb->id.'">'.img_delete().'</a>';
     			print '</td>';
     			print '<td class="nowrap center">';

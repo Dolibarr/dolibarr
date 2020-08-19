@@ -53,6 +53,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'inv
 
 $socid = GETPOST('socid', 'int');
 
+$socid = GETPOST('socid', 'int');
+
 // Security check
 $id = (GETPOST('facid', 'int') ?GETPOST('facid', 'int') : GETPOST('id', 'int'));
 $lineid = GETPOST('lineid', 'int');
@@ -106,7 +108,7 @@ $hookmanager->initHooks(array('invoicereclist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('facture_rec');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -151,6 +153,11 @@ if ($socid > 0) {
 }
 
 
+if ($socid > 0) {
+        $tmpthirdparty = new Societe($db);
+        $res = $tmpthirdparty->fetch($socid);
+        if ($res > 0) $search_societe = $tmpthirdparty->name;
+}
 
 /*
  * Actions

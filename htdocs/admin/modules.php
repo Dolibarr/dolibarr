@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "modulebuilder"));
 
-$mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : 'commonkanban';
+$mode = GETPOSTISSET('mode') ? GETPOST('mode', 'alpha') : (empty($conf->global->MAIN_MODULE_SETUP_ON_LIST_BY_DEFAULT) ? 'commonkanban' : 'common');
 if (empty($mode)) $mode = 'common';
 $action = GETPOST('action', 'alpha');
 //var_dump($_POST);exit;
@@ -506,10 +506,10 @@ if ($mode == 'common' || $mode == 'commonkanban')
 	$moreforfilter .= '<div class="floatright center marginrightonly hideonsmartphone" style="padding-top: 3px"><span class="">'.$moreinfo.'</span><br><b class="largenumber">'.$moreinfo2.'</b></div>';
 
 	$moreforfilter .= '<div class="colorbacktimesheet float valignmiddle">';
-	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $langs->trans('Keyword').': <input type="text" id="search_keyword" name="search_keyword" class="maxwidth100" value="'.dol_escape_htmltag($search_keyword).'">';
 	$moreforfilter .= '</div>';
-	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $langs->trans('Origin').': '.$form->selectarray('search_nature', $arrayofnatures, dol_escape_htmltag($search_nature), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	$moreforfilter .= '</div>';
 	if (!empty($conf->global->MAIN_FEATURES_LEVEL))
@@ -518,11 +518,11 @@ if ($mode == 'common' || $mode == 'commonkanban')
 		if ($conf->global->MAIN_FEATURES_LEVEL < 0) $array_version['deprecated'] = $langs->trans("Deprecated");
 		if ($conf->global->MAIN_FEATURES_LEVEL > 0) $array_version['experimental'] = $langs->trans("Experimental");
 		if ($conf->global->MAIN_FEATURES_LEVEL > 1) $array_version['development'] = $langs->trans("Development");
-		$moreforfilter .= '<div class="divsearchfield">';
+		$moreforfilter .= '<div class="divsearchfield paddingtop">';
 		$moreforfilter .= $langs->trans('Version').': '.$form->selectarray('search_version', $array_version, $search_version, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 		$moreforfilter .= '</div>';
 	}
-	$moreforfilter .= '<div class="divsearchfield">';
+	$moreforfilter .= '<div class="divsearchfield paddingtop">';
 	$moreforfilter .= $langs->trans('Status').': '.$form->selectarray('search_status', array('active'=>$langs->transnoentitiesnoconv("Enabled"), 'disabled'=>$langs->transnoentitiesnoconv("Disabled")), $search_status, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 	$moreforfilter .= '</div>';
 	$moreforfilter .= ' ';

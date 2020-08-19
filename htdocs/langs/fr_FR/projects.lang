@@ -178,6 +178,7 @@ TypeContact_project_task_internal_TASKCONTRIBUTOR=Contributeur
 TypeContact_project_task_external_TASKCONTRIBUTOR=Contributeur
 SelectElement=Séléctionnez l'élément
 AddElement=Associer l'élément
+LinkToElementShort=Lier à
 # Documents models
 DocumentModelBeluga=Modèle de document project pour l'aperçu des objets liées
 DocumentModelBaleine=Modèles de document de rapport de tâches de projets

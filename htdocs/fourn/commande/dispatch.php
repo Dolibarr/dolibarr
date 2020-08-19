@@ -743,7 +743,8 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="right">'.$langs->trans("SupplierRef").'</td>';
 				print '<td class="right">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="right">'.$langs->trans("QtyDispatchedShort").'</td>';
-				print '<td class="right">'.$langs->trans("QtyToDispatchShort").'</td>';
+				print ' <td class="right">'.$langs->trans("QtyToDispatchShort");
+                print '<br><a href="#" id="autoreset">'.$langs->trans("Reset").'</a></td>';
 				print '<td width="32"></td>';
 
 				if (!empty($conf->global->SUPPLIER_ORDER_CAN_UPDATE_BUYINGPRICE_DURING_RECEIPT)) {
@@ -971,7 +972,7 @@ if ($id > 0 || !empty($ref)) {
 
 								// Discount
 								print '<td class="right">';
-								print '<input id="pu'.$suffix.'" name="dto'.$suffix.'" type="text" size="8" value="'.(GETPOST('dto'.$suffix) != '' ? GETPOST('dto'.$suffix) : '').'">';
+								print '<input id="dto' . $suffix . '" name="dto' . $suffix . '" type="text" size="8" value="' . (GETPOST('dto' . $suffix) != '' ? GETPOST('dto' . $suffix) : '') . '">';
 								print '</td>';
 
 								// Save price
@@ -1068,7 +1069,16 @@ if ($id > 0 || !empty($ref)) {
 				$("select[name=fk_default_warehouse]").change(function() {
 					var fk_default_warehouse = $("option:selected", this).val();
 					$("select[name^=entrepot_]").val(fk_default_warehouse).change();
-				});
+                });
+				
+	            jQuery("#autoreset").click(function() {';
+    $i = 0;
+    while ($i < $nbproduct) {
+        print '           jQuery("#qty_0_'.$i.'").val("");';
+        $i++;
+    }
+    print '
+                });
 			});
 		</script>';
 

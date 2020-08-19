@@ -88,6 +88,7 @@ if ($action == 'update' || $action == 'add') {
 	$constnote = (GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
 
 	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
+	$constvalue = preg_replace('/:member$/', '', $constvalue);
 
 	$res = dolibarr_set_const($db, $constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
 
@@ -99,23 +100,6 @@ if ($action == 'update' || $action == 'add') {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
-
-// Action to enable a submodule of the adherent module
-if ($action == 'set') {
-    $result = dolibarr_set_const($db, GETPOST('name', 'alpha'), GETPOST('value'), '', 0, '', $conf->entity);
-    if ($result < 0) {
-        print $db->error();
-    }
-}
-
-// Action to disable a submodule of the adherent module
-if ($action == 'unset') {
-    $result = dolibarr_del_const($db, GETPOST('name', 'alpha'), $conf->entity);
-    if ($result < 0) {
-        print $db->error();
-    }
-}
-
 
 
 /*

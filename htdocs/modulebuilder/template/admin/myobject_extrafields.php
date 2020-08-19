@@ -68,7 +68,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_valu
 print load_fiche_titre($langs->trans("MyModuleSetup"), $linkback, 'title_setup');
 
 
-$head = mymoduleAdminPrepareHead(null);
+$head = mymoduleAdminPrepareHead();
 
 dol_fiche_head($head, 'myobject_extrafields', $langs->trans("MyObjectExtraFields"), -1, 'account');
 

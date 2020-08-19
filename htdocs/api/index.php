@@ -251,15 +251,17 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	if ($tmpmodule != 'api')
 		$tmpmodule = preg_replace('/api$/i', '', $tmpmodule);
 	$classfile = str_replace('_', '', $tmpmodule);
-	if ($module == 'supplierproposals')
+
+	// Special cases that does not match name rules conventions
+	if ($moduleobject == 'supplierproposals')
 		$classfile = 'supplier_proposals';
-	if ($module == 'supplierorders')
+	if ($moduleobject == 'supplierorders')
 		$classfile = 'supplier_orders';
-	if ($module == 'supplierinvoices')
+	if ($moduleobject == 'supplierinvoices')
 		$classfile = 'supplier_invoices';
-	if ($module == 'ficheinter')
+	if ($moduleobject == 'ficheinter')
 		$classfile = 'interventions';
-	if ($module == 'interventions')
+	if ($moduleobject == 'interventions')
 		$classfile = 'interventions';
 
 	$dir_part_file = dol_buildpath('/'.$moduledirforclass.'/class/api_'.$classfile.'.class.php', 0, 2);

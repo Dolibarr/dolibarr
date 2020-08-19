@@ -9,14 +9,18 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
             --btncolorborder: #FFF;
             --butactiondeletebg: rgb(234,228,225);
             /* tertiary color */
-            --butactionbg:rgb(218, 235, 225);
+            /* --butactionbg:rgb(218, 235, 225); */
             /* --butactionbg:rgb(228, 218, 235); */
+            --butactionbg:rgb(118, 145, 225);
 }
 
 <?php
-if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";
+	}
 	print "
-    @media (prefers-color-scheme: dark) {
       :root {
 
             --btncolortext: ;
@@ -26,8 +30,10 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
             --butactionbg:rgb(173,140,79);
             --butactiondeletebg: rgb(252,84,91);
 
-      }
-    }";
+      }\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "}";
+	}
 }
 ?>
 
@@ -53,6 +59,8 @@ span.butAction, span.butActionDelete {
 
 .butAction {
     background: var(--butactionbg);
+    color: #FFF !important;
+    border-radius: 3px;
     /* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
@@ -72,10 +80,10 @@ span.butAction, span.butActionDelete {
     /* border: 1px solid #aaa; */
     /* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 
-    border-top-right-radius: 0 !important;
+    /*border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
-    border-bottom-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;*/
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
     text-decoration: none;

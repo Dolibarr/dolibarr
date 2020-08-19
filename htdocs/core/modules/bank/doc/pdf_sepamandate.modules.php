@@ -424,7 +424,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -447,7 +447,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -485,7 +485,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *	Show area for the customer to sign
 	 *
-	 *	@param	PDF			$pdf            Object PDF
+	 *	@param	TCPDF		$pdf           Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Objet langs
@@ -527,7 +527,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Project		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -617,7 +617,7 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
+	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	Project		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text

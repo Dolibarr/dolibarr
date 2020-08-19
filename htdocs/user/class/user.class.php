@@ -1549,6 +1549,7 @@ class User extends CommonObject
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse ? "'".$this->db->escape($this->fk_warehouse)."'" : "null");
+		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -2996,7 +2997,7 @@ class User extends CommonObject
     public function build_path_from_id_user($id_user, $protection = 0)
     {
         // phpcs:enable
-		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
+		//dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
 
 		if (!empty($this->users[$id_user]['fullpath']))
 		{

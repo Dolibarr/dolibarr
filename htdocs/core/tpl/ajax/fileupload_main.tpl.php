@@ -25,7 +25,7 @@ if (empty($conf) || !is_object($conf))
 ?>
 
 <!-- START TEMPLATE FILE UPLOAD MAIN -->
-<script type="text/javascript">
+<script>
 window.locale = {
     "fileupload": {
         "errors": {

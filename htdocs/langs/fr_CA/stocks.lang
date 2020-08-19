@@ -36,7 +36,6 @@ IdWarehouse=Id entrepôt
 LieuWareHouse=Entrepôt de localisation
 WarehousesAndProductsBatchDetail=Entrepôts et produits (avec détail par lot / série)
 AverageUnitPricePMPShort=Prix ​​moyen pondéré des intrants
-AverageUnitPricePMP=Prix ​​moyen pondéré des intrants
 SellPriceMin=Prix ​​unitaire de vente
 EstimatedStockValueSellShort=Valeur à vendre
 EstimatedStockValueSell=Valeur à vendre
