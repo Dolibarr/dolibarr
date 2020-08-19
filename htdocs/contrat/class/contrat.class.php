@@ -726,6 +726,7 @@ class Contrat extends CommonObject
 
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
+					$this->model_pdf = $obj->model_pdf;
 					$this->modelpdf = $obj->model_pdf;
 
 					$this->fk_projet = $obj->fk_project; // deprecated
@@ -2309,6 +2310,8 @@ class Contrat extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		$sql .= " AND tosell = 1";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

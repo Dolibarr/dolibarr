@@ -1570,7 +1570,7 @@ function getListOfModels($db, $type, $maxfilenamelength = 0)
 
     $sql = "SELECT nom as id, nom as doc_template_name, libelle as label, description as description";
     $sql .= " FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= " WHERE type = '".$type."'";
+    $sql .= " WHERE type = '".$db->escape($type)."'";
     $sql .= " AND entity IN (0,".$conf->entity.")";
     $sql .= " ORDER BY description DESC";
 

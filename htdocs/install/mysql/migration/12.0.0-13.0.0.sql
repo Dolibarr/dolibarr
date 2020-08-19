@@ -40,6 +40,10 @@ ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
 
 -- For v13
 
+UPDATE llx_document_model set nom = 'standard' where nom = 'Standard' and type ='stock';
+UPDATE llx_document_model set nom = 'stdmovement', type = 'movement' where nom = 'StdMouvement' and type ='mouvement';
+
+
 UPDATE llx_const SET value = 0 WHERE name = 'FACTURE_TVAOPTION' and value = 'franchise';
 UPDATE llx_const SET value = 1 WHERE name = 'FACTURE_TVAOPTION' and value <> 'franchise' AND value <> '0' AND value <> '1';
 
@@ -80,6 +84,7 @@ ALTER TABLE llx_c_incoterms ADD COLUMN label varchar(100) NULL;
 CREATE TABLE llx_recruitment_recruitmentjobposition(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	entity INTEGER DEFAULT 1 NOT NULL, 
 	label varchar(255) NOT NULL, 
 	qty integer DEFAULT 1 NOT NULL, 
 	fk_soc integer, 
@@ -88,6 +93,7 @@ CREATE TABLE llx_recruitment_recruitmentjobposition(
 	fk_user_supervisor integer, 
 	fk_establishment integer, 
 	date_planned date, 
+	remuneration_suggested varchar(255), 
 	description text, 
 	note_public text, 
 	note_private text, 
@@ -112,6 +118,8 @@ ALTER TABLE llx_recruitment_recruitmentjobposition ADD CONSTRAINT llx_recruitmen
 ALTER TABLE llx_recruitment_recruitmentjobposition ADD INDEX idx_recruitment_recruitmentjobposition_status (status);
 
 ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN email_recruiter varchar(255);
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
+ALTER TABLE llx_recruitment_recruitmentjobposition ADD COLUMN remuneration_suggested varchar(255);
 
 create table llx_recruitment_recruitmentjobposition_extrafields
 (
@@ -122,6 +130,65 @@ create table llx_recruitment_recruitmentjobposition_extrafields
 ) ENGINE=innodb;
 
 ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_object(fk_object);
+
+
+
+CREATE TABLE llx_recruitment_recruitmentcandidature(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	fk_recruitmentjobposition INTEGER NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	description text, 
+	note_public text, 
+	note_private text, 
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	model_pdf varchar(255), 
+	status smallint NOT NULL, 
+	firstname varchar(128), 
+	lastname varchar(128), 
+	remuneration_requested integer, 
+	remuneration_proposed integer,
+	fk_recruitment_origin INTEGER NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_recruitment_origin INTEGER NULL;
+
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_rowid (rowid);
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_ref (ref);
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD CONSTRAINT llx_recruitment_recruitmentcandidature_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_status (status);
+
+
+
+create table llx_recruitment_recruitmentcandidature_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_fk_object(fk_object);
+
+
+
+
+CREATE TABLE llx_product_attribute_combination_price_level
+(
+  rowid INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  fk_product_attribute_combination INTEGER DEFAULT 1 NOT NULL,
+  fk_price_level INTEGER DEFAULT 1 NOT NULL,
+  variation_price DOUBLE(24,8) NOT NULL,
+  variation_price_percentage INTEGER NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE( fk_product_attribute_combination, fk_price_level);
+
 
 
 -- Add dictionary for prospect level and action commercial on contacts (Using this is not recommanded)
@@ -159,3 +226,16 @@ ALTER TABLE llx_socpeople ADD COLUMN fk_prospectcontactlevel varchar(12) AFTER p
 ALTER TABLE llx_socpeople ADD COLUMN fk_stcommcontact integer DEFAULT 0 NOT NULL AFTER fk_prospectcontactlevel;
 
 ALTER TABLE llx_societe ADD COLUMN old INTEGER NULL DEFAULT NULL AFTER parent;
+
+create table llx_c_recruitment_origin
+(
+  rowid      	integer AUTO_INCREMENT PRIMARY KEY,
+  code          varchar(32) NOT NULL,
+  label 	    varchar(64)	NOT NULL,
+  active  	    tinyint DEFAULT 1  NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte float;
+ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float; 
+ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float; 

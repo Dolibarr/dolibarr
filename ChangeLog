@@ -5,13 +5,14 @@ English Dolibarr ChangeLog
 ***** ChangeLog for 13.0.0 compared to 12.0.0 *****
 For users:
 NEW: Add module Credit transfer SEPA to manage payment of supplier using bank credit transfer SEPA files
+NEW: Module Reception (for a more accurate management of your receptions) moved from experimental to stable
 
 
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * Properties ->contactid has been renamed into ->contact_id
-
+* Rename property $paiementid in API api_supplier_invoices into $payment_mode_id
 
 
 ***** ChangeLog for 12.0.2 compared to 12.0.1 *****
@@ -61,6 +62,7 @@ FIX: Warning if no bank account defined
 FIX: We need to see unit line on PDF even though it's an option
 FIX: wrong element var for fetch_name_optionals_label function with expeditions
 FIX: wrong link to third invoice templates
+FIX: Disable svg as supported image by default (can contains javascript). Set MAIN_ALLOW_SVG_FILES_AS_IMAGES to 1 to have svg accepted
 FIX: #14076
 FIX: #14146
 FIX: #14209

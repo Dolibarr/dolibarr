@@ -451,8 +451,8 @@ class Entrepot extends CommonObject
 			return -1;
 		}
 
-		$sql  = "SELECT rowid, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax";
-		$sql .= ", entity";
+		$sql  = "SELECT rowid, entity, fk_parent, ref as label, description, statut, lieu, address, zip, town, fk_pays as country_id, phone, fax,";
+		$sql .= " model_pdf, import_key";
 		$sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
 		if ($id)
 		{
@@ -482,8 +482,11 @@ class Entrepot extends CommonObject
 				$this->zip            = $obj->zip;
 				$this->town           = $obj->town;
 				$this->country_id     = $obj->country_id;
-				$this->phone = $obj->phone;
-				$this->fax = $obj->fax;
+				$this->phone          = $obj->phone;
+				$this->fax            = $obj->fax;
+
+				$this->model_pdf      = $obj->model_pdf;
+				$this->import_key     = $obj->import_key;
 
                 // Retreive all extrafield
                 // fetch optionals attributes and labels

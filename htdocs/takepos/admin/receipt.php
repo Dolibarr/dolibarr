@@ -87,6 +87,7 @@ print '<input type="hidden" name="action" value="set">';
 
 print load_fiche_titre($langs->trans("PrintMethod"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td><td class="right">'.$langs->trans("Status").'</td>';
@@ -143,13 +144,24 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector")
 }
 print "</td></tr>\n";
 print '</table>';
+print '</div>';
+
 
 print load_fiche_titre($langs->trans("Setup"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
+
+// VAT Grouped on ticket
+print '<tr class="oddeven"><td>';
+print $langs->trans('TicketVatGrouped');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
+//print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
+print "</td></tr>\n";
 
 if ($conf->global->TAKEPOS_PRINT_METHOD == "takeposconnector") {
 	print '<tr class="oddeven value"><td>';
@@ -214,6 +226,7 @@ print $form->selectyesno("TAKEPOS_AUTO_PRINT_TICKETS", $conf->global->TAKEPOS_AU
 print "</td></tr>\n";
 
 print '</table>';
+print '</div>';
 
 print '<br>';
 

@@ -686,6 +686,7 @@ class Don extends CommonObject
                 $this->amount             = $obj->amount;
                 $this->note_private	      = $obj->note_private;
                 $this->note_public = $obj->note_public;
+                $this->model_pdf          = $obj->model_pdf;
                 $this->modelpdf           = $obj->model_pdf;
 
                 // Retreive all extrafield

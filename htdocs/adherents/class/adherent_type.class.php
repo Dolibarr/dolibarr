@@ -112,7 +112,7 @@ class AdherentType extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = 1;
+		$this->status = 1;
 	}
 
     /**
@@ -280,7 +280,7 @@ class AdherentType extends CommonObject
 
 		$error = 0;
 
-		$this->statut = (int) $this->statut;
+		$this->status = (int) $this->status;
 		$this->label = trim($this->label);
 
 		$this->db->begin();
@@ -347,7 +347,7 @@ class AdherentType extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
 		$sql .= "SET ";
-		$sql .= "statut = ".$this->statut.",";
+		$sql .= "statut = ".$this->status.",";
 		$sql .= "libelle = '".$this->db->escape($this->label)."',";
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
@@ -456,7 +456,6 @@ class AdherentType extends CommonObject
 				$this->ref            = $obj->rowid;
 				$this->label          = $obj->label;
 				$this->morphy         = $obj->morphy;
-				$this->statut         = $obj->status; // deprecated
 				$this->status         = $obj->status;
 				$this->duration       = $obj->duration;
 				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
@@ -483,9 +482,10 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return list of members' type
 	 *
-	 *  @return 	array	List of types of members
+	 *  @param	int		$status			Filter on status of type
+	 *  @return array					List of types of members
 	 */
-	public function liste_array()
+	public function liste_array($status = -1)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -495,6 +495,7 @@ class AdherentType extends CommonObject
 		$sql = "SELECT rowid, libelle as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status >= 0) $sql .= " AND statut = ".((int) $status);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -719,7 +720,7 @@ class AdherentType extends CommonObject
 		$this->subscription = 1;
 		$this->vote = 0;
 
-		$this->statut = 1;
+		$this->status = 1;
 
 		// Members of this member type is just me
 		$this->members = array(

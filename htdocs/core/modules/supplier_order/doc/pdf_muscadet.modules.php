@@ -693,7 +693,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *  Show payments table
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  CommandeFournisseur		$object			Object order
 	 *	@param	int			$posy			Position y in PDF
 	 *	@param	Translate	$outputlangs	Object langs for output
@@ -709,7 +709,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		CommandeFournisseur		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -717,13 +717,12 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs)
 	{
-        // phpcs:enable
-	    global $conf, $mysoc;
-	    $default_font_size = pdf_getPDFFontSize($outputlangs);
+		// phpcs:enable
+		global $conf, $mysoc;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-        // If France, show VAT mention if not applicable
-	    if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj))
-		{
+		// If France, show VAT mention if not applicable
+		if ($this->emetteur->country_code == 'FR' && empty($mysoc->tva_assuj)) {
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
@@ -733,39 +732,36 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		$posxval = 52;
 
-	    // Show payments conditions
-	    if (!empty($object->cond_reglement_code) || $object->cond_reglement)
-	    {
-	        $pdf->SetFont('', 'B', $default_font_size - 2);
-	        $pdf->SetXY($this->marge_gauche, $posy);
-	        $titre = $outputlangs->transnoentities("PaymentConditions").':';
-	        $pdf->MultiCell(80, 4, $titre, 0, 'L');
+		// Show payments conditions
+		if (!empty($object->cond_reglement_code) || $object->cond_reglement_id) {
+			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("PaymentConditions") . ':';
+			$pdf->MultiCell(80, 4, $titre, 0, 'L');
 
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
-			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) != ('PaymentCondition'.$object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition".$object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement);
+			$lib_condition_paiement = $outputlangs->transnoentities("PaymentCondition" . $object->cond_reglement_code) != ('PaymentCondition' . $object->cond_reglement_code) ? $outputlangs->transnoentities("PaymentCondition" . $object->cond_reglement_code) : $outputlangs->convToOutputCharset($object->cond_reglement_id);
 			$lib_condition_paiement = str_replace('\n', "\n", $lib_condition_paiement);
 			$pdf->MultiCell(80, 4, $lib_condition_paiement, 0, 'L');
 
-	        $posy = $pdf->GetY() + 3;
-	    }
+			$posy = $pdf->GetY() + 3;
+		}
 
-      	// Show payment mode
-        if (!empty($object->mode_reglement_code))
-        {
-        	$pdf->SetFont('', 'B', $default_font_size - 2);
-        	$pdf->SetXY($this->marge_gauche, $posy);
-        	$titre = $outputlangs->transnoentities("PaymentMode").':';
-        	$pdf->MultiCell(80, 5, $titre, 0, 'L');
+		// Show payment mode
+		if (!empty($object->mode_reglement_code)) {
+			$pdf->SetFont('', 'B', $default_font_size - 2);
+			$pdf->SetXY($this->marge_gauche, $posy);
+			$titre = $outputlangs->transnoentities("PaymentMode") . ':';
+			$pdf->MultiCell(80, 5, $titre, 0, 'L');
 
-        	$pdf->SetFont('', '', $default_font_size - 2);
-        	$pdf->SetXY($posxval, $posy);
-        	$lib_mode_reg = $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) != ('PaymentType'.$object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType".$object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
-        	$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
+			$pdf->SetFont('', '', $default_font_size - 2);
+			$pdf->SetXY($posxval, $posy);
+			$lib_mode_reg = $outputlangs->transnoentities("PaymentType" . $object->mode_reglement_code) != ('PaymentType' . $object->mode_reglement_code) ? $outputlangs->transnoentities("PaymentType" . $object->mode_reglement_code) : $outputlangs->convToOutputCharset($object->mode_reglement);
+			$pdf->MultiCell(80, 5, $lib_mode_reg, 0, 'L');
 
-        	$posy = $pdf->GetY() + 2;
-        }
-
+			$posy = $pdf->GetY() + 2;
+		}
 
 		return $posy;
 	}
@@ -775,7 +771,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *  Show total to pay
 	 *
-	 *  @param	PDF			$pdf           Object PDF
+	 *  @param	TCPDF		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -988,7 +984,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     /**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1094,7 +1090,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  CommandeFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -1174,7 +1170,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 				$pdf->SetXY($posx, $posy);
 				$langs->load("projects");
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->projet->ref), '', 'R');
+				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
 			}
 		}
 
@@ -1333,7 +1329,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *
-	 *  @param	PDF			$pdf     			PDF
+	 *  @param	TCPDF		$pdf     			PDF
 	 *  @param	CommandeFournisseur		$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text

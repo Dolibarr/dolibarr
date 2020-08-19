@@ -710,7 +710,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->note_private			= $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->model_pdf = $obj->model_pdf;
-                $this->modelpdf			    = $obj->model_pdf;
+                $this->modelpdf	= $obj->model_pdf;
                 $this->import_key = $obj->import_key;
 
 				//Incoterms
@@ -2425,6 +2425,7 @@ class FactureFournisseur extends CommonInvoice
         $sql = "SELECT rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."product";
         $sql .= " WHERE entity IN (".getEntity('product').")";
+        $sql .= $this->db->plimit(100);
 
         $resql = $this->db->query($sql);
         if ($resql)

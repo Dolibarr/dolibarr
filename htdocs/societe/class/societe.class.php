@@ -1639,6 +1639,7 @@ class Societe extends CommonObject
 				$this->note = $obj->note_private; // TODO Deprecated for backward comtability
 				$this->note_private = $obj->note_private;
 				$this->note_public = $obj->note_public;
+				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf;
 				$this->default_lang = $obj->default_lang;
 				$this->logo = $obj->logo;

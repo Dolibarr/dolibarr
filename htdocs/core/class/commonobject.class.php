@@ -314,7 +314,7 @@ abstract class CommonObject
 	 * @var string
 	 * @see SetDocModel()
 	 */
-	public $modelpdf;
+	public $model_pdf;
 
 	/**
 	 * @var string
@@ -2375,7 +2375,8 @@ abstract class CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			$this->modelpdf = $modelpdf;
+			$this->model_pdf = $modelpdf;
+			$this->modelpdf = $modelpdf;	// For bakward compatibility
 			return 1;
 		} else {
 			dol_print_error($this->db);
@@ -4538,7 +4539,7 @@ abstract class CommonObject
 	 * Common function for all objects extending CommonObject for generating documents
 	 *
 	 * @param 	string 		$modelspath 	Relative folder where generators are placed
-	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->modelpdf or GETPOST('modelpdf','alpha') for example.
+	 * @param 	string 		$modele 		Generator to use. Caller must set it to obj->model_pdf or GETPOST('model_pdf','alpha') for example.
 	 * @param 	Translate 	$outputlangs 	Output language to use
 	 * @param 	int 		$hidedetails 	1 to hide details. 0 by default
 	 * @param 	int 		$hidedesc 		1 to hide product description. 0 by default
@@ -5141,7 +5142,7 @@ abstract class CommonObject
 				}
 			}
 			$sql .= " FROM ".MAIN_DB_PREFIX.$table_element."_extrafields";
-			$sql .= " WHERE fk_object = ".$rowid;
+			$sql .= " WHERE fk_object = ".((int) $rowid);
 
 			//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
 			$resql = $this->db->query($sql);
@@ -8146,9 +8147,8 @@ abstract class CommonObject
 
 		if (empty($error)) {
 			// Remove extrafields
-			if (!$error)
-			{
-				$tmpobjectline = new $tmpforobjectlineclass($this->db);
+			$tmpobjectline = new $tmpforobjectlineclass($this->db);
+			if (!isset($tmpobjectline->isextrafieldmanaged) || !empty($tmpobjectline->isextrafieldmanaged)) {
 				$tmpobjectline->id = $idline;
 				$result = $tmpobjectline->deleteExtraFields();
 				if ($result < 0)

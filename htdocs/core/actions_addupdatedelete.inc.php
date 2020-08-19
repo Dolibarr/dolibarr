@@ -245,7 +245,11 @@ if ($action == 'confirm_delete' && !empty($permissiontodelete))
 // Remove a line
 if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissiontoadd))
 {
-	$result = $object->deleteline($user, $lineid);
+	if (method_exists('deleteline', $object)) {
+		$result = $object->deleteline($user, $lineid);		// For backward compatibility
+	} else {
+		$result = $object->deleteLine($user, $lineid);
+	}
 	if ($result > 0)
 	{
 		// Define output language
@@ -264,8 +268,10 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && !empty($permissionto
 			$outputlangs->setDefaultLang($newlang);
 		}
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-			$ret = $object->fetch($object->id); // Reload to get new records
-			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (method_exists($object, 'generateDocument')) {
+				$ret = $object->fetch($object->id); // Reload to get new records
+				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		}
 
 		setEventMessages($langs->trans('RecordDeleted'), null, 'mesgs');
@@ -283,8 +289,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
 	if ($result >= 0)
 	{
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
 			if (method_exists($object, 'generateDocument')) {
 				$outputlangs = $langs;
 				$newlang = '';
@@ -312,20 +317,21 @@ if ($action == 'confirm_close' && $confirm == 'yes' && $permissiontoadd)
 	if ($result >= 0)
 	{
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$model = $object->modelpdf;
-			$ret = $object->fetch($id); // Reload to get new records
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($object, 'generateDocument')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
 
-			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -351,20 +357,21 @@ if ($action == 'confirm_reopen' && $confirm == 'yes' && $permissiontoadd)
 	if ($result >= 0)
 	{
 		// Define output language
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-		{
-			$outputlangs = $langs;
-			$newlang = '';
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-			if (!empty($newlang)) {
-				$outputlangs = new Translate("", $conf);
-				$outputlangs->setDefaultLang($newlang);
-			}
-			$model = $object->modelpdf;
-			$ret = $object->fetch($id); // Reload to get new records
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+			if (method_exists($object, 'generateDocument')) {
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (!empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model = $object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
 
-			$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
 		}
 	} else {
 		setEventMessages($object->error, $object->errors, 'errors');

@@ -50,6 +50,11 @@ class Inventory extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * @var string String with name of icon for inventory
 	 */
 	public $picto = 'stock';
@@ -246,7 +251,16 @@ class Inventory extends CommonObject
 
 		$result = 0;
 
-		if ($result >= 0) {
+		if ($this->status == self::STATUS_DRAFT) {
+			// Delete inventory
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+
 			// Scan existing stock to prefill the inventory
 			$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,';
 			$sql .= ' pb.batch, pb.qty';
@@ -256,8 +270,8 @@ class Inventory extends CommonObject
 			$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
 			$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
 			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
-			if ($object->fk_product > 0) $sql .= ' AND ps.fk_product = '.$object->fk_product;
-			if ($object->fk_warehouse > 0) $sql .= ' AND ps.fk_entrepot = '.$object->fk_warehouse;
+			if ($this->fk_product > 0) $sql .= ' AND ps.fk_product = '.$this->fk_product;
+			if ($this->fk_warehouse > 0) $sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
 
 			$inventoryline = new InventoryLine($this->db);
 
@@ -315,6 +329,15 @@ class Inventory extends CommonObject
 	public function setDraft(User $user, $notrigger = false)
 	{
 		$this->db->begin();
+
+		// Delete inventory
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
 
 		$result = $this->setStatut($this::STATUS_DRAFT, null, '', 'INVENTORY_DRAFT');
 
@@ -426,6 +449,25 @@ class Inventory extends CommonObject
 	public function delete(User $user, $notrigger = false)
 	{
 		return $this->deleteCommon($user, $notrigger);
+	}
+
+	/**
+	 *  Delete a line of object in database
+	 *
+	 *	@param  User	$user       User that delete
+	 *  @param	int		$idline		Id of line to delete
+	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function deleteLine(User $user, $idline, $notrigger = false)
+	{
+		if ($this->status < 0)
+		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		return $this->deleteLineCommon($user, $idline, $notrigger);
 	}
 
 	/**
@@ -597,6 +639,11 @@ class InventoryLine extends CommonObjectLine
      * @var array  Does inventory support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      */
     public $ismultientitymanaged = 0;
+
+    /**
+     * @var int  Does object support extrafields ? 0=No, 1=Yes
+     */
+    public $isextrafieldmanaged = 0;
 
     /**
      * @var string String with name of icon for inventory

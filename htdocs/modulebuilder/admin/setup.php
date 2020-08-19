@@ -114,7 +114,7 @@ print "</tr>\n";
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	// What is use cas of this 2 options ?
+	// What is use case of this 2 options ?
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("UseAboutPage").'</td>';
@@ -123,9 +123,9 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	    print ajax_constantonoff('MODULEBUILDER_USE_ABOUT');
 	} else {
 	    if (empty($conf->global->MODULEBUILDER_USE_ABOUT)) {
-	        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	        print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=set_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	    } else {
-	        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	        print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=del_MODULEBUILDER_USE_ABOUT">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	    }
 	}
 	print '</td></tr>';

@@ -16,17 +16,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 /**
  * Class ProductAttribute
  * Used to represent a product attribute
  */
-class ProductAttribute
+class ProductAttribute extends CommonObject
 {
 	/**
 	 * Database handler
 	 * @var DoliDB
 	 */
-	private $db;
+	public $db;
 
 	/**
 	 * Id of the product attribute
@@ -119,7 +120,8 @@ class ProductAttribute
 
     			$return[] = $tmp;
     		}
-		} else dol_print_error($this->db);
+		}
+		else dol_print_error($this->db);
 
 		return $return;
 	}
@@ -127,11 +129,21 @@ class ProductAttribute
 	/**
 	 * Creates a product attribute
 	 *
-	 * @param	User	$user	Object user that create
+	 * @param   User    $user      Object user
+     * @param   int     $notrigger Do not execute trigger
 	 * @return 					int <0 KO, Id of new variant if OK
 	 */
-	public function create(User $user)
+	public function create(User $user, $notrigger = 0)
 	{
+	    if (empty($notrigger)) {
+	        // Call trigger
+	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_CREATE', $user);
+	        if ($result < 0) {
+	            return -1;
+	        }
+	        // End call triggers
+	    }
+
 		//Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
@@ -152,11 +164,21 @@ class ProductAttribute
 	/**
 	 * Updates a product attribute
 	 *
-	 * @param	User	$user		Object user
+	 * @param   User    $user      Object user
+     * @param   int     $notrigger Do not execute trigger
 	 * @return 	int 				<0 KO, >0 OK
 	 */
-	public function update(User $user)
+	public function update(User $user, $notrigger = 0)
 	{
+	    if (empty($notrigger)) {
+	        // Call trigger
+	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_MODIFY', $user);
+	        if ($result < 0) {
+	            return -1;
+	        }
+	        // End call triggers
+	    }
+
 		//Ref must be uppercase
 		$this->ref = trim(strtoupper($this->ref));
 		$this->label = trim($this->label);
@@ -173,11 +195,21 @@ class ProductAttribute
 	/**
 	 * Deletes a product attribute
 	 *
-	 * @param	User	$user		Object user
-	 * @return 	int 				<0 KO, >0 OK
+	 * @param   User    $user      Object user
+     * @param   int     $notrigger Do not execute trigger
+	 * @return 	int <0 KO, >0 OK
 	 */
-	public function delete($user = null)
+	public function delete(User $user, $notrigger = 0)
 	{
+	    if (empty($notrigger)) {
+	        // Call trigger
+	        $result = $this->call_trigger('PRODUCT_ATTRIBUTE_DELETE', $user);
+	        if ($result < 0) {
+	            return -1;
+	        }
+	        // End call triggers
+	    }
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $this->id;
 
 		if ($this->db->query($sql)) {

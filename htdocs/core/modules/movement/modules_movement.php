@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2018-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 /**
  *  \file       htdocs/core/modules/stock/modules_movement.php
  *  \ingroup    stock
- *  \brief      File with parent class for generating warehouse to PDF and File of class to manage warehouse movement
+ *  \brief      File with parent class for generating PDF of a stock movements
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
@@ -49,10 +49,12 @@ abstract class ModelePDFMovement extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type = 'mouvement';
+		$type = 'movement';
 		$liste = array();
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		$liste = getListOfModels($db, $type, $maxfilenamelength);
+
 		return $liste;
 	}
 }

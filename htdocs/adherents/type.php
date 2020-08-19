@@ -61,7 +61,7 @@ if (!$sortfield) {  $sortfield = "d.lastname"; }
 
 $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
-$statut = GETPOST("statut", "int");
+$status = GETPOST("status", "int");
 $subscription = GETPOST("subscription", "int");
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
@@ -108,7 +108,7 @@ if ($cancel) {
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label = trim($label);
 	$object->morphy         = trim($morphy);
-	$object->statut         = (int) $statut;
+	$object->status         = (int) $status;
 	$object->subscription   = (int) $subscription;
 	$object->duration_value     	 = $duration_value;
 	$object->duration_unit      	 = $duration_unit;
@@ -157,7 +157,7 @@ if ($action == 'update' && $user->rights->adherent->configurer) {
 
 	$object->label			= trim($label);
 	$object->morphy = trim($morphy);
-	$object->statut = (int) $statut;
+	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->duration_value     	 = $duration_value;
 	$object->duration_unit      	 = $duration_unit;
@@ -204,7 +204,6 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
-
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
@@ -317,7 +316,7 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-  	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
+  	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
   	print '</td></tr>';
 
     // Morphy
@@ -448,7 +447,7 @@ if ($rowid > 0) {
 		}
 
 		// Add
-        if ($user->rights->adherent->configurer && !empty($object->statut)) {
+        if ($user->rights->adherent->configurer && !empty($object->status)) {
             print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
         } else {
 		    print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
@@ -470,7 +469,7 @@ if ($rowid > 0) {
 
 		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
 		$sql .= " d.datefin,";
-		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
+		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut as status,";
 		$sql .= " t.libelle as type, t.subscription";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE d.fk_adherent_type = t.rowid ";
@@ -643,13 +642,13 @@ if ($rowid > 0) {
 
 		        // Statut
 		        print '<td class="nowrap">';
-		        print $adh->LibStatut($objp->statut, $objp->subscription, $datefin, 2);
+		        print $adh->LibStatut($objp->status, $objp->subscription, $datefin, 2);
 		        print "</td>";
 
 		        // Date end subscription
 		        if ($datefin) {
 			        print '<td class="nowrap center">';
-		            if ($datefin < dol_now() && $objp->statut > 0) {
+		            if ($datefin < dol_now() && $objp->status > 0) {
 		                print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
 		            } else {
 		                print dol_print_date($datefin, 'day');
@@ -659,7 +658,7 @@ if ($rowid > 0) {
 			        print '<td class="nowrap left">';
 			        if ($objp->subscription == 'yes') {
 		                print $langs->trans("SubscriptionNotReceived");
-		                if ($objp->statut > 0) print " ".img_warning();
+		                if ($objp->status > 0) print " ".img_warning();
 			        } else {
 			            print '&nbsp;';
 			        }
@@ -720,7 +719,7 @@ if ($rowid > 0) {
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-    	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->statut);
+    	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status);
     	print '</td></tr>';
 
         // Morphy
@@ -741,7 +740,7 @@ if ($rowid > 0) {
 
 		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
 		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
-		print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", ($object->duration_unit === '' ? 'y' : $object->duration_unit), 0, 1);
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
