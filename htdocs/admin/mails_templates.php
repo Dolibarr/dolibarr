@@ -540,7 +540,7 @@ print "</tr>";
 
 // Show fields for topic, join files and body
 $fieldsforcontent = array('topic', 'joinfiles', 'content');
-if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) { $fieldsforcontent = array('topic', 'content', 'content_lines', 'joinfiles' ); }
+if (!empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) { $fieldsforcontent = array('topic', 'joinfiles', 'content', 'content_lines'); }
 foreach ($fieldsforcontent as $tmpfieldlist)
 {
 	print '<tr class="impair nodrag nodrop nohover"><td colspan="6" class="nobottom">';
