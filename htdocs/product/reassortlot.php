@@ -284,8 +284,12 @@ if ($resql)
 	print '<td class="liste_titre center"><input class="flat" type="text" name="search_batch" size="6" value="'.$search_batch.'"></td>';
 	print '<td class="liste_titre right">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre">&nbsp;</td>';
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print '<td class="liste_titre">&nbsp;</td>';
+	}
+	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		print '<td class="liste_titre">&nbsp;</td>';
+	}
 	print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre maxwidthsearch">';
@@ -302,8 +306,12 @@ if ($resql)
 	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref", $param, "", '', $sortfield, $sortorder);
 	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'',$sortfield,$sortorder, 'right );
 	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch", $param, "", '', $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby", $param, "", '', $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pb.sellby", $param, "", '', $sortfield, $sortorder, 'center ');
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby", $param, "", '', $sortfield, $sortorder, 'center ');
+	}
+	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		print_liste_field_titre("SellByDate", $_SERVER["PHP_SELF"], "pb.sellby", $param, "", '', $sortfield, $sortorder, 'center ');
+	}
 	print_liste_field_titre("PhysicalStock", $_SERVER["PHP_SELF"], "stock_physique", $param, "", '', $sortfield, $sortorder, 'right ');
 	// TODO Add info of running suppliers/customers orders
 	//print_liste_field_titre("TheoreticalStock",$_SERVER["PHP_SELF"], "stock_theorique",$param,"",'',$sortfield,$sortorder, 'right ');
@@ -400,8 +408,12 @@ if ($resql)
 		}
 		print '</td>';
 
-		print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
-		print '<td class="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+			print '<td class="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+		}
+		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+			print '<td class="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+		}
 		print '<td class="right">';
         //if ($objp->seuil_stock_alerte && ($objp->stock_physique < $objp->seuil_stock_alerte)) print img_warning($langs->trans("StockTooLow")).' ';
 		print $objp->stock_physique;
