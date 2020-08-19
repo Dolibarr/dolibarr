@@ -245,8 +245,7 @@ class Categories extends DolibarrApi
         if ($this->category->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
+		} else
         {
             throw new RestException(500, $this->category->error);
         }
@@ -324,7 +323,7 @@ class Categories extends DolibarrApi
             throw new RestException(401);
         } elseif ($type == Categorie::TYPE_MEMBER && !DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
-      } elseif ($type == Categorie::TYPE_PROJECT && !DolibarrApiAccess::$user->rights->projet->lire) {
+        } elseif ($type == Categorie::TYPE_PROJECT && !DolibarrApiAccess::$user->rights->projet->lire) {
             throw new RestException(401);
         }
 
@@ -781,10 +780,10 @@ class Categories extends DolibarrApi
 		} elseif ($type == 'contact') {
 			$objects_api = new Contacts();
 		}
-            elseif ($type == 'project') {
+          elseif ($type == 'project') {
 			$objects_api = new Projects();
 		}
-		if (is_object($objects_api))
+		  if (is_object($objects_api))
 		{
     		foreach ($objects as $obj) {
     			$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
