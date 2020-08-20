@@ -62,6 +62,8 @@ function ticketAdminPrepareHead()
     //); // to remove a tab
     complete_head_from_modules($conf, $langs, null, $head, $h, 'ticketadmin');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ticketadmin', 'remove');
+
     return $head;
 }
 

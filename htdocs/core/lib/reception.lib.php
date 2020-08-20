@@ -47,8 +47,6 @@ function reception_prepare_head(Reception $object)
 	$head[$h][2] = 'reception';
 	$h++;
 
-
-
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 	    $objectsrc = $object;
@@ -65,6 +63,12 @@ function reception_prepare_head(Reception $object)
     	$h++;
 	}
 
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception');
+
     $nbNote = 0;
     if (!empty($object->note_private)) $nbNote++;
     if (!empty($object->note_public)) $nbNote++;
@@ -74,12 +78,7 @@ function reception_prepare_head(Reception $object)
 	$head[$h][2] = 'note';
 	$h++;
 
-
-
-
-
-
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception', 'remove');
 
     return $head;
 }
@@ -102,6 +101,7 @@ function reception_admin_prepare_head()
 	$head[$h][2] = 'reception';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'reception_admin');
 
 	if (!empty($conf->global->MAIN_SUBMODULE_RECEPTION))
 	{
@@ -118,8 +118,6 @@ function reception_admin_prepare_head()
 	    $head[$h][2] = 'attributeslines_reception';
 	    $h++;
 	}
-
-
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'reception_admin', 'remove');
 
