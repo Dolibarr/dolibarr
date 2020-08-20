@@ -62,7 +62,7 @@ class Task extends CommonObject
 	/**
      * @var int ID parent task
      */
-    public $fk_task_parent;
+    public $fk_task_parent = 0;
 
     /**
      * @var string Label of task
@@ -145,6 +145,9 @@ class Task extends CommonObject
 	{
 		global $conf, $langs;
 
+		//For the date
+		$now = dol_now();
+
 		$error = 0;
 
 		// Clean parameters
@@ -175,7 +178,7 @@ class Task extends CommonObject
 		$sql .= ", ".$this->fk_task_parent;
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
-		$sql .= ", '".$this->db->idate($this->date_c)."'";
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".$user->id;
 		$sql .= ", ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
 		$sql .= ", ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
