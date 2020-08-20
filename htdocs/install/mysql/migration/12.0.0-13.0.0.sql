@@ -240,3 +240,9 @@ ALTER TABLE llx_product MODIFY COLUMN seuil_stock_alerte float;
 ALTER TABLE llx_product MODIFY COLUMN desiredstock float;
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN seuil_stock_alerte float; 
 ALTER TABLE llx_product_warehouse_properties MODIFY COLUMN desiredstock float; 
+
+
+ALTER TABLE llx_projet ADD COLUMN email_msgid varchar(255);
+ALTER TABLE llx_ticket ADD COLUMN email_msgid varchar(255);
+ALTER TABLE llx_actioncomm ADD COLUMN reply_to varchar(255);
+

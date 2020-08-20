@@ -1261,90 +1261,128 @@ class EmailCollector extends CommonObject
                 $objectemail = null;
 
                 $reg = array();
-                if (!empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
+                if (!empty($headers['References']))
                 {
-                    $trackid = $reg[1].$reg[2];
+                	$arrayofreferences = preg_explode('/\s+/', $headers['References']);
 
-                    if ($reg[1] == 'inv')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Facture($this->db);
-                    }
-                    if ($reg[1] == 'proj')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Project($this->db);
-                    }
-                    if ($reg[1] == 'con')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Contact($this->db);
-                    }
-                    if ($reg[1] == 'thi')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Societe($this->db);
-                    }
-                    if ($reg[1] == 'use')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new User($this->db);
-                    }
-                    if ($reg[1] == 'tic')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Ticket($this->db);
-                    }
+                	foreach($arrayofreferences as $reference) {
+                		print "Process reference ".$reference."<br>\n";
+                		if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg)) {
+                			// This is a Dolibarr reference
+		                    $trackid = $reg[1].$reg[2];
 
-                    if (is_object($objectemail))
-                    {
-                        $result = $objectemail->fetch($objectid);
-                        if ($result > 0)
-                        {
-                            $fk_element_id = $objectemail->id;
-                            $fk_element_type = $objectemail->element;
-                            // Fix fk_element_type
-                            if ($fk_element_type == 'facture') $fk_element_type = 'invoice';
+		                    if ($reg[1] == 'inv')
+		                    {
+		                        $objectid = $reg[2];
+		                        $objectemail = new Facture($this->db);
+		                    }
+		                    if ($reg[1] == 'proj')
+		                    {
+		                        $objectid = $reg[2];
+		                        $objectemail = new Project($this->db);
+		                    }
+		                    if ($reg[1] == 'con')
+		                    {
+		                        $objectid = $reg[2];
+		                        $objectemail = new Contact($this->db);
+		                    }
+		                    if ($reg[1] == 'thi')
+		                    {
+		                        $objectid = $reg[2];
+		                        $objectemail = new Societe($this->db);
+		                    }
+		                    if ($reg[1] == 'use')
+		                    {
+		                        $objectid = $reg[2];
+		                        $objectemail = new User($this->db);
+		                    }
+		                    if ($reg[1] == 'tic')
+		                    {
+		                        $objectid = $reg[2];
+		                        $objectemail = new Ticket($this->db);
+		                    }
+                		} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
+							// This is an external reference, we check if we have it in our database
+                			if (! is_object($objectemail)) {
+                				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."'";
+								$resql = $this->db->query($sql);
+								if ($resql) {
+									$obj = $this->db->fetch_object($resql);
+									$objectid = $obj->rowid;
+									$objectemail = new Ticket($this->db);
+								} else {
+									$errorforemail++;
+								}
+                			}
 
-                            $thirdpartyid = $objectemail->fk_soc;
-                            $contactid = $objectemail->fk_socpeople;
-                            $projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
-                        }
-                    }
+							if (! is_object($objectemail)) {
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
+								$resql = $this->db->query($sql);
+								if ($resql) {
+									$obj = $this->db->fetch_object($resql);
+									$objectid = $obj->rowid;
+									$objectemail = new Project($this->db);
+								} else {
+									$errorforemail++;
+								}
+							}
+                		}
 
-                    // Project
-                    if ($projectid > 0)
-                    {
-                        $result = $projectstatic->fetch($projectid);
-                        if ($result <= 0) $projectstatic->id = 0;
-                        else {
-                            $projectid = $projectstatic->id;
-                            $projectfoundby = 'trackid ('.$trackid.')';
-                            if (empty($contactid)) $contactid = $projectstatic->fk_contact;
-                            if (empty($thirdpartyid)) $thirdpartyid = $projectstatic->fk_soc;
-                        }
-                    }
-                    // Contact
-                    if ($contactid > 0)
-                    {
-                        $result = $contactstatic->fetch($contactid);
-                        if ($result <= 0) $contactstatic->id = 0;
-                        else {
-                            $contactid = $contactstatic->id;
-                            $contactfoundby = 'trackid ('.$trackid.')';
-                            if (empty($thirdpartyid)) $thirdpartyid = $contactstatic->fk_soc;
-                        }
-                    }
-                    // Thirdparty
-                    if ($thirdpartyid > 0)
-                    {
-                        $result = $thirdpartystatic->fetch($thirdpartyid);
-                        if ($result <= 0) $thirdpartystatic->id = 0;
-                        else {
-                            $thirdpartyid = $thirdpartystatic->id;
-                            $thirdpartyfoundby = 'trackid ('.$trackid.')';
-                        }
-                    }
+                		if (is_object($objectemail))
+                		{
+                			$result = $objectemail->fetch($objectid);
+                			if ($result > 0)
+                			{
+                				$fk_element_id = $objectemail->id;
+                				$fk_element_type = $objectemail->element;
+                				// Fix fk_element_type
+                				if ($fk_element_type == 'facture') $fk_element_type = 'invoice';
+
+                				$thirdpartyid = $objectemail->fk_soc;
+                				$contactid = $objectemail->fk_socpeople;
+                				$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
+                			}
+                		}
+
+                		// Project
+                		if ($projectid > 0)
+                		{
+                			$result = $projectstatic->fetch($projectid);
+                			if ($result <= 0) $projectstatic->id = 0;
+                			else {
+                				$projectid = $projectstatic->id;
+                				$projectfoundby = 'trackid ('.$trackid.')';
+                				if (empty($contactid)) $contactid = $projectstatic->fk_contact;
+                				if (empty($thirdpartyid)) $thirdpartyid = $projectstatic->fk_soc;
+                			}
+                		}
+                		// Contact
+                		if ($contactid > 0)
+                		{
+                			$result = $contactstatic->fetch($contactid);
+                			if ($result <= 0) $contactstatic->id = 0;
+                			else {
+                				$contactid = $contactstatic->id;
+                				$contactfoundby = 'trackid ('.$trackid.')';
+                				if (empty($thirdpartyid)) $thirdpartyid = $contactstatic->fk_soc;
+                			}
+                		}
+                		// Thirdparty
+                		if ($thirdpartyid > 0)
+                		{
+                			$result = $thirdpartystatic->fetch($thirdpartyid);
+                			if ($result <= 0) $thirdpartystatic->id = 0;
+                			else {
+                				$thirdpartyid = $thirdpartystatic->id;
+                				$thirdpartyfoundby = 'trackid ('.$trackid.')';
+                			}
+                		}
+
+                		if (is_object($objectemail))
+                		{
+                			break;	// Exit loop of references. We already found an accurate reference
+                		}
+                	}
                 }
 
                 if (empty($contactid))		// Try to find contact using email
@@ -1355,7 +1393,7 @@ class EmailCollector extends CommonObject
                     {
                         $contactid = $contactstatic->id;
                         $contactfoundby = 'email of contact ('.$from.')';
-	                    if ($contactstatic->socid > 0)
+                        if (empty($thirdpartyid) && $contactstatic->socid > 0)
                         {
 	                        $result = $thirdpartystatic->fetch($contactstatic->socid);
                             if ($result > 0)
