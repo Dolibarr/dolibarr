@@ -932,6 +932,8 @@ class EmailCollector extends CommonObject
         $searchhead = '';
         $searchfilterdoltrackid = 0;
         $searchfilternodoltrackid = 0;
+        $searchfilterisanswer = 0;
+        $searchfilterisnotanswer = 0;
         foreach ($this->filters as $rule)
         {
             if (empty($rule['status'])) continue;
@@ -956,6 +958,9 @@ class EmailCollector extends CommonObject
 
             if ($rule['type'] == 'withtrackingid') { $searchfilterdoltrackid++; $searchhead .= '/References.*@'.preg_quote($host, '/').'/'; }
             if ($rule['type'] == 'withouttrackingid') { $searchfilternodoltrackid++; $searchhead .= '! /References.*@'.preg_quote($host, '/').'/'; }
+
+            if ($rule['type'] == 'isanswer') { $searchfilterisanswer++; $searchhead .= '/References.*@.*/'; }
+            if ($rule['type'] == 'isnotanswer') { $searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/'; }
         }
 
         if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
@@ -1077,10 +1082,14 @@ class EmailCollector extends CommonObject
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
                 $header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
+
                 $matches = array();
                 preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
                 $headers = array_combine($matches[1], $matches[2]);
                 //var_dump($headers);
+
+                if (!empty($headers['in-reply-to']) && empty($headers['In-Reply-To'])) { $headers['In-Reply-To'] = $headers['in-reply-to']; }
+                if (!empty($headers['references']) && empty($headers['References'])) { $headers['References'] = $headers['references']; }
 
                 dol_syslog("** Process email ".$i." References: ".$headers['References']);
 
@@ -1090,7 +1099,7 @@ class EmailCollector extends CommonObject
                     if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
-                        continue;
+                        continue;	// Exclude email
                     }
                 }
                 if ($searchfilternodoltrackid > 0)
@@ -1098,9 +1107,24 @@ class EmailCollector extends CommonObject
                     if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
-                        continue;
+                        continue;	// Exclude email
                     }
                 }
+                if ($searchfilterisanswer > 0) {
+                	if (empty($headers['In-Reply-To']))
+                	{
+                		$nbemailprocessed++;
+                		continue;	// Exclude email
+                	}
+                }
+                if ($searchfilterisnotanswer > 0) {
+                	if (!empty($headers['In-Reply-To']))
+                	{
+                		$nbemailprocessed++;
+                		continue;	// Exclude email
+                	}
+                }
+
 
                 $thirdpartystatic = new Societe($this->db);
                 $contactstatic = new Contact($this->db);
