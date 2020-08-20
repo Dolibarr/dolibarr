@@ -1136,6 +1136,7 @@ class EmailCollector extends CommonObject
                 $thirdpartyfoundby = '';
                 $contactfoundby = '';
                 $projectfoundby = '';
+                $ticketfoundby = '';
 
                 $this->db->begin();
 
@@ -1250,7 +1251,7 @@ class EmailCollector extends CommonObject
                 }
                 $fk_element_id = 0; $fk_element_type = '';
 
-                $contactid = 0; $thirdpartyid = 0; $projectid = 0;
+                $contactid = 0; $thirdpartyid = 0; $projectid = 0; $ticketid = 0;
 
                 // Analyze TrackId in field References. For example:
                 // References: <1542377954.SMTPs-dolibarr-thi649@8f6014fde11ec6cdec9a822234fc557e>
@@ -1263,10 +1264,10 @@ class EmailCollector extends CommonObject
                 $reg = array();
                 if (!empty($headers['References']))
                 {
-                	$arrayofreferences = preg_explode('/\s+/', $headers['References']);
+                	$arrayofreferences = preg_split('/\s+/', $headers['References']);
 
                 	foreach($arrayofreferences as $reference) {
-                		print "Process reference ".$reference."<br>\n";
+                		//print "Process reference ".dol_escape_htmltag($reference)."<br>\n";
                 		if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg)) {
                 			// This is a Dolibarr reference
 		                    $trackid = $reg[1].$reg[2];
@@ -1310,6 +1311,7 @@ class EmailCollector extends CommonObject
 									$obj = $this->db->fetch_object($resql);
 									$objectid = $obj->rowid;
 									$objectemail = new Ticket($this->db);
+									$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
 								} else {
 									$errorforemail++;
 								}
@@ -1322,12 +1324,14 @@ class EmailCollector extends CommonObject
 									$obj = $this->db->fetch_object($resql);
 									$objectid = $obj->rowid;
 									$objectemail = new Project($this->db);
+									$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
 								} else {
 									$errorforemail++;
 								}
 							}
                 		}
 
+                		// Load object linked to email
                 		if (is_object($objectemail))
                 		{
                 			$result = $objectemail->fetch($objectid);
@@ -1338,9 +1342,14 @@ class EmailCollector extends CommonObject
                 				// Fix fk_element_type
                 				if ($fk_element_type == 'facture') $fk_element_type = 'invoice';
 
-                				$thirdpartyid = $objectemail->fk_soc;
-                				$contactid = $objectemail->fk_socpeople;
-                				$projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
+                				if (get_class($objectemail) != 'Societe') $thirdpartyid = $objectemail->fk_soc;
+                				else $thirdpartyid = $objectemail->id;
+
+                				if (get_class($objectemail) != 'Contact') $contactid = $objectemail->fk_socpeople;
+                				else $contactid = $objectemail->id;
+
+                				if (get_class($objectemail) != 'Project') $projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
+                				else $projectid = $objectemail->id;
                 			}
                 		}
 
@@ -1351,7 +1360,7 @@ class EmailCollector extends CommonObject
                 			if ($result <= 0) $projectstatic->id = 0;
                 			else {
                 				$projectid = $projectstatic->id;
-                				$projectfoundby = 'trackid ('.$trackid.')';
+                				if ($trackid) $projectfoundby = 'trackid ('.$trackid.')';
                 				if (empty($contactid)) $contactid = $projectstatic->fk_contact;
                 				if (empty($thirdpartyid)) $thirdpartyid = $projectstatic->fk_soc;
                 			}
@@ -1363,7 +1372,7 @@ class EmailCollector extends CommonObject
                 			if ($result <= 0) $contactstatic->id = 0;
                 			else {
                 				$contactid = $contactstatic->id;
-                				$contactfoundby = 'trackid ('.$trackid.')';
+                				if ($trackid) $contactfoundby = 'trackid ('.$trackid.')';
                 				if (empty($thirdpartyid)) $thirdpartyid = $contactstatic->fk_soc;
                 			}
                 		}
@@ -1374,7 +1383,7 @@ class EmailCollector extends CommonObject
                 			if ($result <= 0) $thirdpartystatic->id = 0;
                 			else {
                 				$thirdpartyid = $thirdpartystatic->id;
-                				$thirdpartyfoundby = 'trackid ('.$trackid.')';
+                				if ($trackid) $thirdpartyfoundby = 'trackid ('.$trackid.')';
                 			}
                 		}
 
@@ -1558,7 +1567,6 @@ class EmailCollector extends CommonObject
                     	$alreadycreated = 0;
                     	// TODO Check if $msg ID already in database for $conf->entity
 
-
                     	if (!$alreadycreated)
                     	{
 	                        if ($projectstatic->id > 0)
@@ -1619,7 +1627,7 @@ class EmailCollector extends CommonObject
 
 	                        // Overwrite values with values extracted from source email
 	                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
-
+var_dump($actioncomm);
 	                        if ($errorforthisaction)
 	                        {
 	                            $errorforactions++;
@@ -1669,6 +1677,7 @@ class EmailCollector extends CommonObject
                         $projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 10), '...'.$langs->transnoentities("SeePrivateNote").'...');
                         $projecttocreate->note_private = $descriptionfull;
                         $projecttocreate->entity = $conf->entity;
+                        $projecttocreate->email_msgid = $msgid;
 
                         // Overwrite values with values extracted from source email.
                         // This may overwrite any $projecttocreate->xxx properties.
@@ -1778,6 +1787,7 @@ class EmailCollector extends CommonObject
                         $tickettocreate->notify_tiers_at_create = 0;
                         $tickettocreate->note_private = $descriptionfull;
                         $tickettocreate->entity = $conf->entity;
+                        $tickettocreate->email_msgid = $msgid;
                         //$tickettocreate->fk_contact = $contactstatic->id;
 
                         // Overwrite values with values extracted from source email.
@@ -1846,8 +1856,6 @@ class EmailCollector extends CommonObject
 							'fromtext' => $fromtext,
 
 							'actionparam'=>  $operation['actionparam'],
-
-
 
 							'thirdpartyid' => $thirdpartyid,
 							'objectid'=> $objectid,

@@ -171,6 +171,8 @@ class Ticket extends CommonObject
 	 */
 	public $notify_tiers_at_create;
 
+	public $email_msgid;
+
 	public $lines;
 
 	/**
@@ -238,6 +240,7 @@ class Ticket extends CommonObject
 		'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-1, 'enabled'=>1, 'position'=>520, 'notnull'=>1),
 		'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1,),
+		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
 		'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>-1, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'css'=>'right', 'help'=>"", 'isameasure'=>1),
 		'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-1, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
 		'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted')),
@@ -375,6 +378,7 @@ class Ticket extends CommonObject
 			$sql .= "origin_email,";
 			$sql .= "fk_user_create,";
 			$sql .= "fk_user_assign,";
+			$sql .= "email_msgid,";
 			$sql .= "subject,";
 			$sql .= "message,";
 			$sql .= "fk_statut,";
@@ -397,6 +401,7 @@ class Ticket extends CommonObject
 			$sql .= " ".(!isset($this->origin_email) ? 'NULL' : "'".$this->db->escape($this->origin_email)."'").",";
 			$sql .= " ".($this->fk_user_create > 0 ? $this->fk_user_create : ($user->id > 0 ? $user->id : 'NULL')).",";
 			$sql .= " ".($this->fk_user_assign > 0 ? $this->fk_user_assign : 'NULL').",";
+			$sql .= " ".(empty($this->email_msgid) ? 'NULL' : "'".$this->db->escape($this->email_msgid)."'").",";
 			$sql .= " ".(!isset($this->subject) ? 'NULL' : "'".$this->db->escape($this->subject)."'").",";
 			$sql .= " ".(!isset($this->message) ? 'NULL' : "'".$this->db->escape($this->message)."'").",";
 			$sql .= " ".(!isset($this->fk_statut) ? '0' : "'".$this->db->escape($this->fk_statut)."'").",";
@@ -483,6 +488,7 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
+		$sql .= " t.entity,";
 		$sql .= " t.ref,";
 		$sql .= " t.track_id,";
 		$sql .= " t.fk_soc,";
@@ -490,6 +496,7 @@ class Ticket extends CommonObject
 		$sql .= " t.origin_email,";
 		$sql .= " t.fk_user_create,";
 		$sql .= " t.fk_user_assign,";
+		$sql .= " t.email_msgid,";
 		$sql .= " t.subject,";
 		$sql .= " t.message,";
 		$sql .= " t.fk_statut as status,";
@@ -536,6 +543,7 @@ class Ticket extends CommonObject
 				$this->origin_email = $obj->origin_email;
 				$this->fk_user_create = $obj->fk_user_create;
 				$this->fk_user_assign = $obj->fk_user_assign;
+				$this->email_msgid = $obj->email_msgid;
 				$this->subject = $obj->subject;
 				$this->message = $obj->message;
 
