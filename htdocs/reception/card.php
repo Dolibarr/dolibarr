@@ -966,8 +966,12 @@ if ($action == 'create')
 				if (!empty($conf->productbatch->enabled))
 				{
 					print '<td class="left">'.$langs->trans("batch_number").'</td>';
-					print '<td class="left">'.$langs->trans("EatByDate").'</td>';
-					print '<td class="left">'.$langs->trans("SellByDate").'</td>';
+					if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+						print '<td class="left">'.$langs->trans("EatByDate").'</td>';
+					}
+					if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+						print '<td class="left">'.$langs->trans("SellByDate").'</td>';
+					}
 				}
                 print "</tr>\n";
             }
@@ -1114,12 +1118,16 @@ if ($action == 'create')
 						if (!empty($product->status_batch))
 						{
 							print '<td><input name="batch'.$indiceAsked.'" value="'.$dispatchLines[$indiceAsked]['lot'].'"></td>';
-							print '<td>';
-							print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
-							print '</td>';
-							print '<td>';
-							print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
-							print '</td>';
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								print '<td>';
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLC'], 'dlc'.$indiceAsked, '', '', 1, "");
+								print '</td>';
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								print '<td>';
+								print $form->selectDate($dispatchLines[$indiceAsked]['DLUO'], 'dluo'.$indiceAsked, '', '', 1, "");
+								print '</td>';
+							}
 						} else {
 							print '<td colspan="3"></td>';
 						}
@@ -1807,10 +1815,14 @@ if ($action == 'create')
 						if ($conf->productbatch->enabled && !empty($lines[$i]->product->status_batch))
 						{
 							print '<td>  <input name="batch'.$line_id.'" id="batch'.$line_id.'" type="text" value="'.$lines[$i]->batch.'"> </br>';
-							print $langs->trans('EatByDate').' : ';
-							print $form->selectDate($lines[$i]->eatby, 'dlc'.$line_id, '', '', 1, "").'</br>';
-							print $langs->trans('SellByDate').' : ';
-							print $form->selectDate($lines[$i]->sellby, 'dluo'.$line_id, '', '', 1, "");
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+								print $langs->trans('EatByDate').' : ';
+								print $form->selectDate($lines[$i]->eatby, 'dlc'.$line_id, '', '', 1, "").'</br>';
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+								print $langs->trans('SellByDate').' : ';
+								print $form->selectDate($lines[$i]->sellby, 'dluo'.$line_id, '', '', 1, "");
+							}
 							print '</td>';
 						}
 						print '</tr>';
@@ -1856,11 +1868,14 @@ if ($action == 'create')
 						$detail = '';
 						if ($lines[$i]->product->status_batch)
 						{
-								$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
+							$detail .= $langs->trans("Batch").': '.$lines[$i]->batch;
+							if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
 								$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($lines[$i]->sellby, "day");
+							}
+							if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 								$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($lines[$i]->eatby, "day");
-
-								$detail .= '<br>';
+							}
+							$detail .= '<br>';
 
 							print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"), $detail);
 						} else {
