@@ -1072,6 +1072,8 @@ if (count($listofextcals))
                     elseif ($icalevent['DESCRIPTION']) $event->label = dol_nl2br($icalevent['DESCRIPTION'], 1);
                     else $event->label = $langs->trans("ExtSiteNoLabel");
 
+                    if ($icalevent['LOCATION']) $event->location = $icalevent['LOCATION'];
+
                     $event->date_start_in_calendar = $event->datep;
 
                     if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar = $event->datef;
