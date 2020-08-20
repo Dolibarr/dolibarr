@@ -1685,6 +1685,7 @@ class EmailCollector extends CommonObject
                         if ($thirdpartystatic->id > 0)
                         {
                             $tickettocreate->socid = $thirdpartystatic->id;
+                            $tickettocreate->fk_soc = $thirdpartystatic->id;
                             if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
                         }
                         if ($contactstatic->id > 0)
@@ -1706,13 +1707,12 @@ class EmailCollector extends CommonObject
                         $tickettocreate->subject = $subject;
                         $tickettocreate->message = $description;
                         $tickettocreate->type_code = 0;
-                        $tickettocreate->category_code = 0;
-                        $tickettocreate->severity_code = 0;
+                        $tickettocreate->category_code = null;
+                        $tickettocreate->severity_code = null;
                         $tickettocreate->origin_email = $from;
                         $tickettocreate->fk_user_create = $user->id;
                         $tickettocreate->datec = $date;
                         $tickettocreate->fk_project = $projectstatic->id;
-                        $tickettocreate->fk_soc = $thirdpartystatic->id;
                         $tickettocreate->notify_tiers_at_create = 0;
                         $tickettocreate->note_private = $descriptionfull;
                         $tickettocreate->entity = $conf->entity;
