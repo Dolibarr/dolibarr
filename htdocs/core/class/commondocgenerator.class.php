@@ -851,7 +851,9 @@ abstract class CommonDocGenerator
 							}
 						}
 					}
-				}
+				} elseif ($extrafields->attributes[$object->table_element]['type'][$key] == 'sellist') {
+                    $object->array_options['options_'.$key] = $extrafields->showOutputField($key, $object->array_options['options_'.$key], '', $object->table_element);
+                }
 
 				$array_to_fill = array_merge($array_to_fill, array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 			}
