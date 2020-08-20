@@ -313,7 +313,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fetchActions();
 
 	$head = emailcollectorPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'emailcollector');
+	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'email');
 
 	$formconfirm = '';
 
