@@ -139,6 +139,10 @@ if ($action == 'update')
 
     $oldfile = $olddir.$oldlabel;
     $newfile = $newdir.$newlabel;
+	
+	if( ((strlen($oldfile)-strpos($oldfile, ".noexe")) == 6) && !( (strlen($newfile)-strpos($newfile, ".noexe")) == 6) ){
+    	$newfile .= ".noexe";
+    }
 
     // Now we update index of file
     $db->begin();
