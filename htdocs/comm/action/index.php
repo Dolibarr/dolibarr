@@ -1069,10 +1069,10 @@ if (count($listofextcals))
                     }
                     else
                     {
-                        $event->icalname = $namecal;
                         $event->type_code = "ICALEVENT";
                     }
 
+                    $event->icalname = $namecal;
                     $event->icalcolor = $colorcal;
                     $usertime = 0; // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
                     $event->datep = $datestart + $usertime;
