@@ -1266,7 +1266,7 @@ class EmailCollector extends CommonObject
                 {
                 	$arrayofreferences = preg_split('/\s+/', $headers['References']);
 
-                	foreach($arrayofreferences as $reference) {
+                	foreach ($arrayofreferences as $reference) {
                 		//print "Process reference ".dol_escape_htmltag($reference)."<br>\n";
                 		if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg)) {
                 			// This is a Dolibarr reference
@@ -1943,20 +1943,14 @@ class EmailCollector extends CommonObject
                     	{
                     		$errorforactions++;
                     	} else {
-                    		/*if (is_numeric($candidaturetocreate->ref) && $candidaturetocreate->ref <= 0)
+                    		// Create project
+                    		$result = $candidaturetocreate->create($user);
+                    		if ($result <= 0)
                     		{
                     			$errorforactions++;
-                    			$this->error = 'Failed to create cancidature: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
-                    		} else {*/
-                    			// Create project
-                    			$result = $candidaturetocreate->create($user);
-                    			if ($result <= 0)
-                    			{
-                    				$errorforactions++;
-                    				$this->error = 'Failed to create ticket: '.$langs->trans($candidaturetocreate->error);
-                    				$this->errors = $candidaturetocreate->errors;
-                    			}
-                    		//}
+                    			$this->error = 'Failed to create ticket: '.$langs->trans($candidaturetocreate->error);
+                    			$this->errors = $candidaturetocreate->errors;
+                    		}
                     	}
                     }
                     // Create event specific on hook

@@ -310,7 +310,6 @@ class modEmailCollector extends DolibarrModules
 		$tmpresql = $this->db->query($tmpsql);
 		if ($tmpresql) {
 			if ($this->db->num_rows($tmpresql) == 0) {
-
 				$descriptionA1 = 'This collector will scan your mailbox "Sent" directory to find emails that was sent as an answer of a Ticket (Module Ticket must be enabled) directly from your email browser instead of from Dolibarr. If such an email is found, the event of answer is recorded into Dolibarr.';
 
 				$sqlforexampleA1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
