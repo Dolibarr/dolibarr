@@ -1627,7 +1627,7 @@ class EmailCollector extends CommonObject
 
 	                        // Overwrite values with values extracted from source email
 	                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
-var_dump($actioncomm);
+
 	                        if ($errorforthisaction)
 	                        {
 	                            $errorforactions++;
@@ -1839,37 +1839,6 @@ var_dump($actioncomm);
                             }
                             $tickettocreate->ref = $defaultref;
                         }
-						 // Create event specific on hook
-						// this code action is hook..... for support this call
-						elseif (substr($operation['type'], 0, 4) == 'hook') {
-							global $hookmanager;
-
-							if (!is_object($hookmanager))
-							$hookmanager->initHooks(array('emailcollectorcard'));
-
-							$parameters = array(
-							'connection'=>  $connection,
-							'imapemail'=>$imapemail,
-							'overview'=>$overview,
-
-							'from' => $from,
-							'fromtext' => $fromtext,
-
-							'actionparam'=>  $operation['actionparam'],
-
-							'thirdpartyid' => $thirdpartyid,
-							'objectid'=> $objectid,
-							'objectemail'=> $objectemail,
-
-							'messagetext'=>$messagetext,
-							'subject'=>$subject,
-							'header'=>$header,
-							);
-							$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
-
-							if ($res < 0)
-							 $this->error = $hookmanager->resPrint;
-						}
 
                         if ($errorforthisaction)
                         {
@@ -1890,6 +1859,143 @@ var_dump($actioncomm);
                                 }
                             }
                         }
+                    }
+                    // Create candidature
+                    elseif ($operation['type'] == 'candidature')
+                    {
+                    	$candidaturetocreate = new RecruitmentCandidature($this->db);
+
+                    	$description = $descriptiontitle;
+                    	$description = dol_concatdesc($description, "-----");
+                    	$description = dol_concatdesc($description, $descriptionmeta);
+                    	$description = dol_concatdesc($description, "-----");
+                    	$description = dol_concatdesc($description, $messagetext);
+
+                    	$descriptionfull = $description;
+                    	$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+                    	$descriptionfull = dol_concatdesc($descriptionfull, $header);
+
+                    	$candidaturetocreate->subject = $subject;
+                    	$candidaturetocreate->message = $description;
+                    	$candidaturetocreate->type_code = 0;
+                    	$candidaturetocreate->category_code = null;
+                    	$candidaturetocreate->severity_code = null;
+                    	$candidaturetocreate->origin_email = $from;
+                    	$candidaturetocreate->fk_user_create = $user->id;
+                    	$candidaturetocreate->datec = $date;
+                    	$candidaturetocreate->fk_project = $projectstatic->id;
+                    	$candidaturetocreate->notify_tiers_at_create = 0;
+                    	$candidaturetocreate->note_private = $descriptionfull;
+                    	$candidaturetocreate->entity = $conf->entity;
+                    	$candidaturetocreate->email_msgid = $msgid;
+                    	//$candidaturetocreate->fk_contact = $contactstatic->id;
+
+                    	// Overwrite values with values extracted from source email.
+                    	// This may overwrite any $projecttocreate->xxx properties.
+                    	$errorforthisaction = $this->overwritePropertiesOfObject($candidaturetocreate, $operation['actionparam'], $messagetext, $subject, $header);
+
+                    	// Set candidature ref if not yet defined
+                    	/*if (empty($candidaturetocreate->ref))
+                    	{
+                    		// Get next project Ref
+                    		$defaultref = '';
+                    		$modele = empty($conf->global->CANDIDATURE_ADDON) ? 'mod_candidature_simple' : $conf->global->CANDIDATURE_ADDON;
+
+                    		// Search template files
+                    		$file = ''; $classname = ''; $filefound = 0; $reldir = '';
+                    		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+                    		foreach ($dirmodels as $reldir)
+                    		{
+                    			$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+                    			if (file_exists($file))
+                    			{
+                    				$filefound = 1;
+                    				$classname = $modele;
+                    				break;
+                    			}
+                    		}
+
+                    		if ($filefound)
+                    		{
+                    			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
+                    			$modCandidature = new $classname;
+
+                    			if ($savesocid > 0)
+                    			{
+                    				if ($savesocid != $candidaturetocreate->socid)
+                    				{
+                    					$errorforactions++;
+                    					setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+                    				}
+                    			} else {
+                    				if ($candidaturetocreate->socid > 0)
+                    				{
+                    					$thirdpartystatic->fetch($candidaturetocreate->socid);
+                    				}
+                    			}
+
+                    			$defaultref = $modCandidature->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
+                    		}
+                    		$candidaturetocreate->ref = $defaultref;
+                    	}*/
+
+                    	if ($errorforthisaction)
+                    	{
+                    		$errorforactions++;
+                    	} else {
+                    		/*if (is_numeric($candidaturetocreate->ref) && $candidaturetocreate->ref <= 0)
+                    		{
+                    			$errorforactions++;
+                    			$this->error = 'Failed to create cancidature: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
+                    		} else {*/
+                    			// Create project
+                    			$result = $candidaturetocreate->create($user);
+                    			if ($result <= 0)
+                    			{
+                    				$errorforactions++;
+                    				$this->error = 'Failed to create ticket: '.$langs->trans($candidaturetocreate->error);
+                    				$this->errors = $candidaturetocreate->errors;
+                    			}
+                    		//}
+                    	}
+                    }
+                    // Create event specific on hook
+                    // this code action is hook..... for support this call
+                    elseif (substr($operation['type'], 0, 4) == 'hook') {
+                    	global $hookmanager;
+
+                    	if (!is_object($hookmanager)) {
+                    		$hookmanager->initHooks(array('emailcollectorcard'));
+                    	}
+
+                    	$parameters = array(
+                    		'connection'=>  $connection,
+                    		'imapemail'=>$imapemail,
+                    		'overview'=>$overview,
+
+                    		'from' => $from,
+                    		'fromtext' => $fromtext,
+
+                    		'actionparam'=>  $operation['actionparam'],
+
+                    		'thirdpartyid' => $thirdpartyid,
+                    		'objectid'=> $objectid,
+                    		'objectemail'=> $objectemail,
+
+                    		'messagetext'=>$messagetext,
+                    		'subject'=>$subject,
+                    		'header'=>$header,
+                    	);
+                    	$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+
+                    	if ($res < 0) {
+                    		$errorforthisaction++;
+                    		$this->error = $hookmanager->resPrint;
+                    	}
+                    	if ($errorforthisaction)
+                    	{
+                    		$errorforactions++;
+                    	}
                     }
 
                     if (!$errorforactions)

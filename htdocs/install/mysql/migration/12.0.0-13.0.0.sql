@@ -139,7 +139,7 @@ ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_
 CREATE TABLE llx_recruitment_recruitmentcandidature(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
-	fk_recruitmentjobposition INTEGER NOT NULL, 
+	fk_recruitmentjobposition INTEGER NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	description text, 
 	note_public text, 
@@ -152,7 +152,9 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	model_pdf varchar(255), 
 	status smallint NOT NULL, 
 	firstname varchar(128), 
-	lastname varchar(128), 
+	lastname varchar(128),
+	email varchar(255),
+	phone varchar(64),
 	remuneration_requested integer, 
 	remuneration_proposed integer,
 	fk_recruitment_origin INTEGER NULL

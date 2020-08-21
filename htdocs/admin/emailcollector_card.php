@@ -561,6 +561,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) $arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
+	if ($conf->recruitment->enabled) $arrayoftypes['candidature'] = 'CreateCandidature';
 
 	// support hook for add action
 	$parameters = array('arrayoftypes' => $arrayoftypes);

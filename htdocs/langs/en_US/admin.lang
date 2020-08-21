@@ -1950,6 +1950,7 @@ LoadThirdPartyFromName=Load third party searching on %s (load only)
 LoadThirdPartyFromNameOrCreate=Load third party searching on %s (create if not found)
 WithDolTrackingID=Message from a conversation initiated by a first email sent from Dolibarr
 WithoutDolTrackingID=Message from a conversation initiated by a first email NOT sent from Dolibarr
+CreateCandidature=Create candidature
 FormatZip=Zip
 MainMenuCode=Menu entry code (mainmenu)
 ECMAutoTree=Show automatic ECM tree

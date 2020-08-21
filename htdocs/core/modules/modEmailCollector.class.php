@@ -375,6 +375,34 @@ class modEmailCollector extends DolibarrModules
 			}
 		} else dol_print_error($this->db);
 
+		$tmpsql = "SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity;
+		$tmpresql = $this->db->query($tmpsql);
+		if ($tmpresql) {
+			if ($this->db->num_rows($tmpresql) == 0) {
+				$descriptionC1 = "This collector will scan your mailbox to find emails send for a recruitment (Module Recruitment must be enabled). You can complete this collector if you want to automaticallycreate a candidature for a job request.";
+				$descriptionC1 .= "Note: With this initial example, the title of the candidature is generated including the email.";
+
+				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
+				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Candidatures', 'Example to collect leads', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+
+				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterC2 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC2 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'withouttrackingid', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleFilterC3 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, rulevalue, date_creation, fk_user_creat, status)";
+				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'to', 'jobs@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sqlforexampleC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
+				$sqlforexampleC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'candidature', 'tmp_from=EXTRACT:HEADER:^From:(.*);fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*);description=EXTRACT:BODY:(.*);title=SET:Candidature from __tmp_from__ received by email', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+
+				$sql[] = $sqlforexampleC1;
+				$sql[] = $sqlforexampleFilterC1;
+				$sql[] = $sqlforexampleFilterC2;
+				$sql[] = $sqlforexampleFilterC3;
+				$sql[] = $sqlforexampleC4;
+			}
+		} else dol_print_error($this->db);
+
 		return $this->_init($sql, $options);
 	}
 
