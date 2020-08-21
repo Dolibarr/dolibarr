@@ -44,6 +44,10 @@ ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
 
 ALTER TABLE llx_bom_bom ADD COLUMN bomtype integer DEFAULT 0;
 
+UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Ticket_Requests' WHERE ref = 'Collect_Ticket_Requets';
+UPDATE llx_emailcollector_emailcollector SET ref = 'Collect_Responses_In' WHERE ref = 'Collect_Responses';
+
+
 UPDATE llx_document_model set nom = 'standard' where nom = 'Standard' and type ='stock';
 UPDATE llx_document_model set nom = 'stdmovement', type = 'movement' where nom = 'StdMouvement' and type ='mouvement';
 
