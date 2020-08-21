@@ -37,6 +37,8 @@ ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_de
 
 ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
 
+ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
+
 
 -- For v13
 
