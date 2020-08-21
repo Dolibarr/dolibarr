@@ -573,7 +573,7 @@ if (empty($reshook))
 		}
 		$object->fetch_thirdparty();
 
-		$desc = GETPOST('np_desc','alpha');
+		$desc = GETPOST('np_desc', 'alpha');
 		$date_inter = dol_mktime(GETPOST('dihour', 'int'), GETPOST('dimin', 'int'), 0, GETPOST('dimonth', 'int'), GETPOST('diday', 'int'), GETPOST('diyear', 'int'));
 		$duration = convertTime2Seconds(GETPOST('durationhour', 'int'), GETPOST('durationmin', 'int'));
 
