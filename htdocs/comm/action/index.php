@@ -1081,8 +1081,8 @@ if (count($listofextcals))
                     // Transparency (see https://www.kanzaki.com/docs/ical/transp.html)
                     if ($icalevent['TRANSP'])
                     {
-                        if($icalevent['TRANSP'] == "TRANSPARENT") $event->transparency = 0;     // 0 = available / free
-                        if($icalevent['TRANSP'] == "OPAQUE") $event->transparency = 1;          // 1 = busy
+                        if ($icalevent['TRANSP'] == "TRANSPARENT") $event->transparency = 0;     // 0 = available / free
+                        if ($icalevent['TRANSP'] == "OPAQUE") $event->transparency = 1;          // 1 = busy
 
                         // TODO: MS outlook states
                         // X-MICROSOFT-CDO-BUSYSTATUS:FREE      + TRANSP:TRANSPARENT => Available / Free
