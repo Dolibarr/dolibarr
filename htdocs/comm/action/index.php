@@ -1065,6 +1065,7 @@ if (count($listofextcals))
                     if(!empty($userId))
                     {
                         $event->userassigned[$userId] = $userId;
+                        $event->percentage = -1;
                     }
                     else
                     {
