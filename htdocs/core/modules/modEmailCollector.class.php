@@ -382,7 +382,7 @@ class modEmailCollector extends DolibarrModules
 				$descriptionC1 .= "Note: With this initial example, the title of the candidature is generated including the email.";
 
 				$sqlforexampleC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollector (entity, ref, label, description, source_directory, date_creation, fk_user_creat, status)";
-				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Candidatures', 'Example to collect leads', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
+				$sqlforexampleC1 .= " VALUES (".$conf->entity.", 'Collect_Candidatures', 'Example to collect email for job candidatures', '".$this->db->escape($descriptionC1)."', 'INBOX', '".$this->db->idate(dol_now())."', ".$user->id.", 0)";
 
 				$sqlforexampleFilterC1 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectorfilter (fk_emailcollector, type, date_creation, fk_user_creat, status)";
 				$sqlforexampleFilterC1 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'isnotanswer', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
