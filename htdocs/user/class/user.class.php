@@ -3236,5 +3236,46 @@ class User extends CommonObject
             $this->errors[] = $this->db->lasterror();
             return -1;
         }
-    }
+	}
+
+	/**
+	 * Cache the SQL results of the function "findUserIdByEmail($email)"
+	 *
+	 * @var array
+	 */
+	private $findUserIdByEmailCache;
+
+	/**
+	 * Find a user by the given e-mail or part of a e-mail and return its user id when found
+	 *
+	 * @param string	$email	The full e-mail or a part of a e-mail 
+	 * @return int|null			The id of the user when found, otherwise null
+	 */
+	public function findUserIdByEmail($email)
+	{
+		if($this->findUserIdByEmailCache[$email])
+		{
+			return $this->findUserIdByEmailCache[$email];
+		}
+
+		$sql = 'SELECT rowid';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
+		$sql .= ' WHERE email LIKE "%'.$email.'%"';
+
+		$resql = $this->db->query($sql);
+		if (!$resql)
+		{
+			return 0;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		if (!$obj)
+		{
+			return 0;
+		}
+
+		$this->findUserIdByEmailCache[$email] = (int)$obj->rowid;
+
+		return (int)$obj->rowid;
+	}
 }
