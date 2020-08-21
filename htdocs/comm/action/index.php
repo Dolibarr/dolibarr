@@ -1062,13 +1062,12 @@ if (count($listofextcals))
                     $event->ref = $event->id;
 
                     $userId = $userstatic->findUserIdByEmail($namecal);
-                    if(!empty($userId))
+                    if (!empty($userId))
                     {
                         $event->userassigned[$userId] = $userId;
                         $event->percentage = -1;
                     }
-                    else
-                    {
+                    else {
                         $event->type_code = "ICALEVENT";
                     }
 

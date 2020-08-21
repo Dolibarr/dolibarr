@@ -3248,12 +3248,12 @@ class User extends CommonObject
 	/**
 	 * Find a user by the given e-mail or part of a e-mail and return its user id when found
 	 *
-	 * @param string	$email	The full e-mail or a part of a e-mail 
+	 * @param string    $email  The full e-mail or a part of a e-mail
 	 * @return int|null			The id of the user when found, otherwise null
 	 */
 	public function findUserIdByEmail($email)
 	{
-		if($this->findUserIdByEmailCache[$email])
+		if ($this->findUserIdByEmailCache[$email])
 		{
 			return $this->findUserIdByEmailCache[$email];
 		}
@@ -3274,8 +3274,8 @@ class User extends CommonObject
 			return 0;
 		}
 
-		$this->findUserIdByEmailCache[$email] = (int)$obj->rowid;
+		$this->findUserIdByEmailCache[$email] = (int) $obj->rowid;
 
-		return (int)$obj->rowid;
+		return (int) $obj->rowid;
 	}
 }
