@@ -41,7 +41,7 @@ $action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int'); // id of record
-$mode = GETPOST('mode', 'aZ09'); // '' or 'tmp'
+$mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
 $piece_num = GETPOST("piece_num", 'int'); // id of transaction (several lines share the same transaction id)
 
 // Security check
@@ -114,11 +114,13 @@ if ($action == "confirm_update") {
 			$object->credit = $credit;
 
 			if (floatval($debit) != 0.0) {
-				$object->montant = $debit;
+				$object->montant = $debit;	// deprecated
+				$object->amount = $debit;
 				$object->sens = 'D';
 			}
 			if (floatval($credit) != 0.0) {
-				$object->montant = $credit;
+				$object->montant = $credit;	// deprecated
+				$object->amount = $credit;
 				$object->sens = 'C';
 			}
 
@@ -138,9 +140,7 @@ if ($action == "confirm_update") {
 			}
 		}
 	}
-}
-
-elseif ($action == "add") {
+} elseif ($action == "add") {
 	$error = 0;
 
 	if ((floatval($debit) != 0.0) && (floatval($credit) != 0.0))
@@ -175,12 +175,14 @@ elseif ($action == "add") {
 		$object->fk_docdet = (int) GETPOST('fk_docdet', 'int');
 
 		if (floatval($debit) != 0.0) {
-			$object->montant = $debit;
+			$object->montant = $debit;	// deprecated
+			$object->amount = $debit;
 			$object->sens = 'D';
 		}
 
 		if (floatval($credit) != 0.0) {
-			$object->montant = $credit;
+			$object->montant = $credit;	// deprecated
+			$object->amount = $credit;
 			$object->sens = 'C';
 		}
 
@@ -199,9 +201,7 @@ elseif ($action == "add") {
 			$action = '';
 		}
 	}
-}
-
-elseif ($action == "confirm_delete") {
+} elseif ($action == "confirm_delete") {
 	$object = new BookKeeping($db);
 
 	$result = $object->fetch($id, null, $mode);
@@ -216,9 +216,7 @@ elseif ($action == "confirm_delete") {
 		}
 	}
 	$action = '';
-}
-
-elseif ($action == "confirm_create") {
+} elseif ($action == "confirm_create") {
 	$error = 0;
 
 	$object = new BookKeeping($db);
@@ -247,7 +245,8 @@ elseif ($action == "confirm_create") {
 		$object->journal_label = $journal_label;
 		$object->fk_doc = 0;
 		$object->fk_docdet = 0;
-		$object->montant = 0;
+		$object->montant = 0;	// deprecated
+		$object->amount = 0;
 
 		$result = $object->createStd($user, 0, $mode);
 		if ($result < 0) {
@@ -438,7 +437,7 @@ if ($action == 'create')
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate')
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('SetDate'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
@@ -462,7 +461,7 @@ if ($action == 'create')
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal')
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
@@ -486,7 +485,7 @@ if ($action == 'create')
 		print $langs->trans('Piece');
 		print '</td>';
 		if ($action != 'editdocref')
-		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
+		print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$object->piece_num.'&amp;mode='.$mode.'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
@@ -628,9 +627,7 @@ if ($action == 'create')
 						if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 						{
 							print $formaccounting->select_auxaccount((GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account), 'subledger_account', 1);
-						}
-						else
-						{
+						} else {
 							print '<input type="text" class="maxwidth150" name="subledger_account" value="'.(GETPOSTISSET("subledger_account") ? GETPOST("subledger_account", "alpha") : $line->subledger_account).'">';
 						}
 						print '</td>';
@@ -650,8 +647,8 @@ if ($action == 'create')
 						print '<td class="nowrap right">'.price($line->credit).'</td>';
 
 						print '<td class="center">';
-						print '<a href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.$line->piece_num.'&mode='.$mode.'">';
-						print img_edit();
+						print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=update&id='.$line->id.'&piece_num='.$line->piece_num.'&mode='.$mode.'">';
+						print img_edit('', 0, 'class="marginrightonly"');
 						print '</a> &nbsp;';
 
 						$actiontodelete = 'delete';
@@ -685,9 +682,7 @@ if ($action == 'create')
 					if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 					{
 						print $formaccounting->select_auxaccount('', 'subledger_account', 1);
-					}
-					else
-					{
+					} else {
 						print '<input type="text" class="maxwidth150" name="subledger_account" value="">';
 					}
 					print '</td>';
@@ -707,9 +702,7 @@ if ($action == 'create')
 					if ($total_debit == $total_credit)
 					{
 						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.$object->piece_num.'&action=valid">'.$langs->trans("ValidTransaction").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 

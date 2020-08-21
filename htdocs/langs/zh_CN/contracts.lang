@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=跟进合同的销售代表
 TypeContact_contrat_external_BILLING=结算客户联系
 TypeContact_contrat_external_CUSTOMER=后续的客户联系
 TypeContact_contrat_external_SALESREPSIGN=签约客户的联系人
+HideClosedServiceByDefault=Hide closed services by default
+ShowClosedServices=Show Closed Services
+HideClosedServices=Hide Closed Services

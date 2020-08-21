@@ -31,6 +31,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy"));
@@ -51,7 +52,9 @@ $list = array(
 //    'ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', // adjust size displayed for select account description for dol_trunc
 );
 
-
+$list_binding = array(
+	'ACCOUNTING_DATE_START_BINDING',
+);
 
 /*
  * Actions
@@ -75,6 +78,22 @@ if ($action == 'update') {
 	    if ($error) {
 	    	setEventMessages($langs->trans("Error"), null, 'errors');
 	    }
+
+		foreach ($list_binding as $constname)
+		{
+			$constvalue = GETPOST($constname, 'alpha');
+
+			if ($constname == 'ACCOUNTING_DATE_START_BINDING') {
+				$constvalue = dol_mktime(12, 0, 0, GETPOST($constname.'month', 'int'), GETPOST($constname.'day', 'int'), GETPOST($constname.'year', 'int'));
+			}
+
+			if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+				$error++;
+			}
+		}
+		if ($error) {
+			setEventMessages($langs->trans("Error"), null, 'errors');
+		}
 	}
 
     if (!$error) {
@@ -158,6 +177,7 @@ if ($action == 'setenablesubsidiarylist') {
 /*
  * View
  */
+$form = new Form($db);
 
 $title = $langs->trans('ConfigAccountingExpert');
 llxHeader('', $title);
@@ -200,42 +220,17 @@ print "</table>\n";
 print '<br>';
 */
 
-// Others params
-
+// Params
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans('OtherOptions').'</td>';
+print '<td colspan="2">'.$langs->trans('Options').'</td>';
 print "</tr>\n";
 
 if (!empty($user->admin))
 {
     // TO DO Mutualize code for yes/no constants
-    print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
-    if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=0">';
-        print img_picto($langs->trans("Activated"), 'switch_on');
-        print '</a></td>';
-    } else {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=1">';
-        print img_picto($langs->trans("Disabled"), 'switch_off');
-        print '</a></td>';
-    }
-    print '</tr>';
 
-    print '<tr>';
-    print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
-    if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=0">';
-        print img_picto($langs->trans("Activated"), 'switch_on');
-        print '</a></td>';
-    } else {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=1">';
-        print img_picto($langs->trans("Disabled"), 'switch_off');
-        print '</a></td>';
-    }
-    print '</tr>';
-
+    /* Set this option as a hidden option but keep it for some needs.
 	print '<tr>';
 	print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
 	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
@@ -248,8 +243,9 @@ if (!empty($user->admin))
 		print '</a></td>';
 	}
 	print '</tr>';
+	*/
 
-	print '<tr>';
+	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
 	if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
 		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=0">';
@@ -287,22 +283,81 @@ if (!empty($user->admin))
         print '</a></td>';
     }
     print '</tr>';
+
+	// Param a user $user->rights->accounting->chartofaccount can access
+	foreach ($list as $key)
+	{
+		print '<tr class="oddeven value">';
+
+		if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
+
+		// Param
+		$label = $langs->trans($key);
+		print '<td>'.$label.'</td>';
+		// Value
+		print '<td class="right">';
+		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+
+		print '</td>';
+
+		print '</tr>';
+	}
+}
+print '</table>';
+print '<br>';
+
+// Binding params
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans('BindingOptions').'</td>';
+print "</tr>\n";
+
+if (!empty($user->admin))
+{
+	// TO DO Mutualize code for yes/no constants
+	print '<tr class="oddeven">';
+	print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
+	if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
+
+	print '<tr>';
+	print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
+	if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
 }
 
-
 // Param a user $user->rights->accounting->chartofaccount can access
-foreach ($list as $key)
+foreach ($list_binding as $key)
 {
     print '<tr class="oddeven value">';
-
-    if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
 
     // Param
     $label = $langs->trans($key);
     print '<td>'.$label.'</td>';
     // Value
     print '<td class="right">';
-    print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+    if ($key == 'ACCOUNTING_DATE_START_BINDING') {
+		print $form->selectDate(($conf->global->$key ? $db->idate($conf->global->$key) : -1), $key, 0, 0, 1);
+	} else {
+		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+	}
+
     print '</td>';
 
     print '</tr>';
@@ -313,10 +368,6 @@ print '</table>';
 
 print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 
-print '<br>';
-print '<br>';
-
-print '<br>';
 print '</form>';
 
 // End of page

@@ -46,9 +46,9 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
    * Dolibarr version of the loaded document
@@ -142,8 +142,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				unset($listofdir[$key]); continue;
 			}
 			if (!is_dir($tmpdir)) $texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
-			else
-			{
+			else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
 				if (count($tmpfiles)) $listoffiles = array_merge($listoffiles, $tmpfiles);
 			}
@@ -225,7 +224,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param		Propale		$object				Object source to build document
+	 *	@param		Propal		$object				Object source to build document
 	 *	@param		Translate	$outputlangs		Lang output object
 	 * 	@param		string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int			$hidedetails		Do not show line details
@@ -306,9 +305,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				    $format = $conf->global->MAIN_DOC_USE_TIMING;
 				    if ($format == '1') $format = '%Y%m%d%H%M%S';
 					$filename = $newfiletmp.'-'.dol_print_date(dol_now(), $format).'.'.$newfileformat;
-				}
-				else
-				{
+				} else {
 					$filename = $newfiletmp.'.'.$newfileformat;
 				}
 				$file = $dir.'/'.$filename;
@@ -330,14 +327,19 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				}
 
 				// Recipient name
+				$contactobject = null;
 				if (!empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
-					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socobject = $object->contact;
-					else $socobject = $object->thirdparty;
-				}
-				else
-				{
+					if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT))
+					{
+						$socobject = $object->contact;
+					} else {
+						$socobject = $object->thirdparty;
+						// if we have a CUSTOMER contact and we dont use it as recipient we store the contact object for later use
+						$contactobject = $object->contact;
+					}
+				} else {
 					$socobject = $object->thirdparty;
 				}
 
@@ -374,8 +376,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 							'DELIMITER_RIGHT' => '}'
 						)
 					);
-				}
-				catch (Exception $e)
+				} catch (Exception $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($e->getMessage(), LOG_INFO);
@@ -391,8 +392,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				// Make substitutions into odt of freetext
 				try {
 					$odfHandler->setVars('free_text', $newfreetext, true, 'UTF-8');
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
@@ -405,7 +405,10 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$array_thirdparty = $this->get_substitutionarray_thirdparty($socobject, $outputlangs);
 				$array_other = $this->get_substitutionarray_other($outputlangs);
 
-				$tmparray = array_merge($substitutionarray, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other);
+				$array_thirdparty_contact = array();
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact = $this->get_substitutionarray_contact($contactobject, $outputlangs, 'contact');
+
+				$tmparray = array_merge($substitutionarray, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other, $array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
 				// Call the ODTSubstitution hook
@@ -419,25 +422,21 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 						{
 							if (file_exists($value)) $odfHandler->setImage($key, $value);
 							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else    // Text
+						} else // Text
 						{
 							$odfHandler->setVars($key, $value, true, 'UTF-8');
 						}
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
                         dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
 				// Replace tags of lines
-				try
-				{
+				try {
 					$foundtagforlines = 1;
 					try {
 						$listlines = $odfHandler->setSegment('lines');
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
 						// We may arrive here if tags for lines not present into template
 						$foundtagforlines = 0;
@@ -445,24 +444,23 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 					}
 					if ($foundtagforlines)
 					{
+						$linenumber = 0;
 						foreach ($object->lines as $line)
 						{
-							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs);
+							$linenumber++;
+							$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
 							// Call the ODTSubstitutionLine hook
 							$parameters = array('odfHandler'=>&$odfHandler, 'file'=>$file, 'object'=>$object, 'outputlangs'=>$outputlangs, 'substitutionarray'=>&$tmparray, 'line'=>$line);
 							$reshook = $hookmanager->executeHooks('ODTSubstitutionLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 							foreach ($tmparray as $key => $val)
 							{
-								try
-								{
+								try {
 									$listlines->setVars($key, $val, true, 'UTF-8');
-								}
-								catch (OdfException $e)
+								} catch (OdfException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
-								}
-								catch (SegmentException $e)
+								} catch (SegmentException $e)
 								{
 									dol_syslog($e->getMessage(), LOG_INFO);
 								}
@@ -471,8 +469,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 						}
 						$odfHandler->mergeSegment($listlines);
 					}
-				}
-				catch (OdfException $e)
+				} catch (OdfException $e)
 				{
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
@@ -485,8 +482,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				{
 					try {
 						$odfHandler->setVars($key, $value, true, 'UTF-8');
-					}
-					catch (OdfException $e)
+					} catch (OdfException $e)
 					{
                         dol_syslog($e->getMessage(), LOG_INFO);
 					}
@@ -505,8 +501,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
                         dol_syslog($e->getMessage(), LOG_INFO);
 						return -1;
 					}
-				}
-				else {
+				} else {
 					try {
 						$odfHandler->saveToDisk($file);
 					} catch (Exception $e) {
@@ -526,9 +521,7 @@ class doc_generic_supplier_proposal_odt extends ModelePDFSupplierProposal
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // Success
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return -1;
 			}

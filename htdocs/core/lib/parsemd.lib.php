@@ -33,7 +33,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
 {
     if (is_array($replaceimagepath))
     {
-        foreach($replaceimagepath as $key => $val)
+        foreach ($replaceimagepath as $key => $val)
         {
             $keytoreplace = ']('.$key;
             $valafter = ']('.$val;
@@ -45,9 +45,7 @@ function dolMd2Html($content, $parser = 'parsedown', $replaceimagepath = null)
         include_once DOL_DOCUMENT_ROOT.'/includes/parsedown/Parsedown.php';
         $Parsedown = new Parsedown();
         $content = $Parsedown->text($content);
-    }
-    else
-    {
+    } else {
         $content = nl2br($content);
     }
 
@@ -67,7 +65,7 @@ function dolMd2Asciidoc($content, $parser = 'dolibarr', $replaceimagepath = null
 {
     if (is_array($replaceimagepath))
     {
-        foreach($replaceimagepath as $key => $val)
+        foreach ($replaceimagepath as $key => $val)
         {
             $keytoreplace = ']('.$key;
             $valafter = ']('.$val;

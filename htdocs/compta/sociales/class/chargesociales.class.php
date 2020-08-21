@@ -171,14 +171,10 @@ class ChargeSociales extends CommonObject
                 $this->db->free($resql);
 
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             return -1;
         }
@@ -252,14 +248,11 @@ class ChargeSociales extends CommonObject
 			if (empty($error)) {
 				$this->db->commit();
 				return $this->id;
-			}
-			else {
+			} else {
 				$this->db->rollback();
 				return -1 * $error;
 			}
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             $this->db->rollback();
             return -1;
@@ -328,9 +321,7 @@ class ChargeSociales extends CommonObject
         {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -386,9 +377,7 @@ class ChargeSociales extends CommonObject
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -421,14 +410,10 @@ class ChargeSociales extends CommonObject
                 $obj = $this->db->fetch_object($result);
                 $this->db->free($result);
                 return $obj->amount;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             print $this->db->error();
             return -1;
         }
@@ -556,7 +541,7 @@ class ChargeSociales extends CommonObject
 
         if (empty($this->ref)) $this->ref = $this->label;
 
-        $label = '<u>'.$langs->trans("ShowSocialContribution").'</u>';
+        $label = '<u>'.$langs->trans("SocialContribution").'</u>';
         if (!empty($this->ref))
         	$label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->label))
@@ -569,7 +554,7 @@ class ChargeSociales extends CommonObject
         {
         	if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
-        		$label = $langs->trans("ShowSocialContribution");
+        		$label = $langs->trans("SocialContribution");
         		$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
@@ -612,9 +597,7 @@ class ChargeSociales extends CommonObject
 
             $this->db->free($resql);
             return $amount;
-        }
-        else
-        {
+        } else {
             return -1;
         }
     }
@@ -667,9 +650,7 @@ class ChargeSociales extends CommonObject
             }
 
             $this->db->free($result);
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
     }

@@ -47,8 +47,12 @@ class Opensurveysondage extends CommonObject
     /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
-    public $picto = 'opensurvey';
+    public $picto = 'poll';
 
+
+    /**
+     * @var string	ID survey
+     */
     public $id_sondage;
     /**
      * @deprecated
@@ -79,14 +83,12 @@ class Opensurveysondage extends CommonObject
     public $sujet;
 
     /**
-     * Allow comments on this poll
-     * @var bool
+     * @var int		Allow comments on this poll
      */
     public $allow_comments;
 
     /**
-     * Allow users see others vote
-     * @var bool
+     * @var int		Allow users see others vote
      */
     public $allow_spy;
 
@@ -195,9 +197,7 @@ class Opensurveysondage extends CommonObject
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -258,9 +258,7 @@ class Opensurveysondage extends CommonObject
 
                 $this->date_m = $this->db->jdate($obj->tls);
                 $ret = 1;
-            }
-            else
-            {
+            } else {
                 $sondage = ($id ? 'id='.$id : 'sondageid='.$numsurvey);
                 $this->error = 'Fetch no poll found for '.$sondage;
                 dol_syslog($this->error, LOG_ERR);
@@ -268,9 +266,7 @@ class Opensurveysondage extends CommonObject
             }
 
             $this->db->free($resql);
-        }
-        else
-        {
+        } else {
               $this->error = "Error ".$this->db->lasterror();
             $ret = -1;
         }
@@ -320,17 +316,12 @@ class Opensurveysondage extends CommonObject
         $resql = $this->db->query($sql);
         if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        if (!$error)
+        if (!$error && !$notrigger)
         {
-            if (!$notrigger)
-            {
-                // Call triggers
-                include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
-                $interface = new Interfaces($this->db);
-                $result = $interface->run_triggers('OPENSURVEY_MODIFY', $this, $user, $langs, $conf);
-                if ($result < 0) { $error++; $this->errors = $interface->errors; }
-                // End call triggers
-            }
+        	// Call trigger
+        	$result = $this->call_trigger('OPENSURVEY_MODIFY', $user);
+        	if ($result < 0) $error++;
+        	// End call triggers
         }
 
         // Commit or rollback
@@ -343,9 +334,7 @@ class Opensurveysondage extends CommonObject
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -409,9 +398,7 @@ class Opensurveysondage extends CommonObject
             }
             $this->db->rollback();
             return -1 * $error;
-        }
-        else
-        {
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -459,15 +446,14 @@ class Opensurveysondage extends CommonObject
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
         $linkend = '</a>';
 
         $result .= $linkstart;
-        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+        if ($withpicto) $result .= img_object(($notooltip ? '' : $label), $this->picto, ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
         if ($withpicto != 2) $result .= $this->ref;
         $result .= $linkend;
 
@@ -501,8 +487,7 @@ class Opensurveysondage extends CommonObject
                 $ret[] = $tmp;
                 $i++;
             }
-        }
-        else dol_print_error($this->db);
+        } else dol_print_error($this->db);
 
         $this->lines = $ret;
 

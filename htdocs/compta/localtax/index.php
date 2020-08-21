@@ -52,15 +52,11 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$q = GETPOST("q", "int");
 	if (empty($q))
 	{
-		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); }
-		else
-		{
+		if (GETPOST("month", "int")) { $date_start = dol_get_first_day($year_start, GETPOST("month", "int"), false); $date_end = dol_get_last_day($year_start, GETPOST("month", "int"), false); } else {
 			$date_start = dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START, false);
 			$date_end = dol_time_plus_duree($date_start, 1, 'y') - 1;
 		}
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -152,9 +148,7 @@ function pt($db, $sql, $date)
             	$amountpaid = 0;
             	$previousmode = '';
             	$previousmonth = '';
-            }
-            else
-            {
+            } else {
             	$previousmode = $obj->mode;
             	$previousmonth = $obj->dm;
             }
@@ -182,8 +176,7 @@ function pt($db, $sql, $date)
 
         print "</table>";
         $db->free($result);
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
@@ -250,7 +243,7 @@ llxHeader('', $name);
 
 //$textprevyear="<a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current-1) . "\">".img_previous()."</a>";
 //$textnextyear=" <a href=\"index.php?localTaxType=".$localTaxType."&year=" . ($year_current+1) . "\">".img_next()."</a>";
-//print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'invoicing');
+//print load_fiche_titre($langs->transcountry($LT,$mysoc->country_code),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear", 'bill');
 
 report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, array(), $calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
@@ -388,9 +381,7 @@ while ((($y < $yend) || ($y == $yend && $m <= $mend)) && $mcursor < 1000)	// $mc
 				'localtax2'			=>$x_paye[$my_paye_rate]['localtax2_list'][$id],
 				//'link'				=>$expensereport->getNomUrl(1)
 				);
-			}
-			else
-			{
+			} else {
 				//$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
 				//$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
 				//$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];

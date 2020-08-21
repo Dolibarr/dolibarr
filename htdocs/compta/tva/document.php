@@ -53,14 +53,14 @@ $result = restrictedArea($user, 'tax', '', 'vat', 'charges');
 
 
 // Get parameters
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) {
     $page = 0;
 }
-
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = "ASC";
@@ -70,8 +70,8 @@ if (!$sortfield) $sortfield = "name";
 $object = new Tva($db);
 if ($id > 0) $object->fetch($id);
 
-$upload_dir = $conf->tax->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$modulepart = 'tax';
+$upload_dir = $conf->tax->dir_output.'/vat/'.dol_sanitizeFileName($object->ref);
+$modulepart = 'tax-vat';
 
 
 /*
@@ -144,14 +144,11 @@ if ($object->id)
 
     dol_fiche_end();
 
-    $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
     $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id='.$object->id;
     include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
-}
-else
-{
+} else {
     print $langs->trans("ErrorUnknown");
 }
 

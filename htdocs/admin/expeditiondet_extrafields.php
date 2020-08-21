@@ -44,13 +44,13 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 
 // List of supported format
-$tmptype2label=ExtraFields::$type2label;
-$type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
+$tmptype2label = ExtraFields::$type2label;
+$type2label = array('');
+foreach ($tmptype2label as $key => $val) $type2label[$key] = $langs->transnoentitiesnoconv($val);
 
-$action=GETPOST('action', 'alpha');
-$attrname=GETPOST('attrname', 'alpha');
-$elementtype='expeditiondet'; //Must be the $table_element of the class that manage extrafield
+$action = GETPOST('action', 'alpha');
+$attrname = GETPOST('attrname', 'alpha');
+$elementtype = 'expeditiondet'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -67,17 +67,17 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Sendings");
+$textobject = $langs->transnoentitiesnoconv("Sendings");
 
 llxHeader('', $langs->trans("SendingsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("SendingsSetup"), $linkback, 'title_setup');
 print "<br>\n";
 
 $head = expedition_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines_shipment', $langs->trans("Sendings"), -1, 'sending');
+dol_fiche_head($head, 'attributeslines_shipment', $langs->trans("Sendings"), -1, 'shipment');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
@@ -112,7 +112,7 @@ if ($action == 'create')
 /* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'edit' && ! empty($attrname))
+if ($action == 'edit' && !empty($attrname))
 {
     print "<br>";
     print load_fiche_titre($langs->trans("FieldEdition", $attrname));

@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 WithdrawalReceipt=Orden de domiciliación bancaria
+Rejects=Rechazos
 StatusRefused=Rechazado

@@ -53,7 +53,7 @@ $result = restrictedArea($user, 'societe', $socid, '&societe');
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -449,6 +449,8 @@ while ($i < min($num, $limit))
 
 	// Store properties in $object
 	$objectwebsiteaccount->id = $obj->rowid;
+	$objectwebsiteaccount->login = $obj->login;
+	$objectwebsiteaccount->ref = $obj->login;
 	foreach ($objectwebsiteaccount->fields as $key => $val)
 	{
 		if (property_exists($obj, $key)) $object->$key = $obj->$key;
@@ -481,7 +483,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objectwebsiteaccount); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column

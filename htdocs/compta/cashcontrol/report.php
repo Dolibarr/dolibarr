@@ -40,6 +40,7 @@ $langs->load("bills");
 $id = GETPOST('id', 'int');
 
 $_GET['optioncss'] = "print";
+
 $cashcontrol = new CashControl($db);
 $cashcontrol->fetch($id);
 
@@ -68,6 +69,8 @@ $terminalid = $cashcontrol->posnumber;
 /*
  * View
  */
+
+$param = '';
 
 llxHeader('', $langs->trans("CashControl"), '', '', 0, 0, array(), array(), $param);
 
@@ -169,9 +172,7 @@ if ($resql)
             $bankaccounttmp->fetch($objp->bankid);
             $cachebankaccount[$objp->bankid] = $bankaccounttmp;
             $bankaccount = $bankaccounttmp;
-        }
-        else
-        {
+        } else {
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
 
@@ -205,8 +206,7 @@ if ($resql)
 		print $bankaccount->getNomUrl(1);
 		if ($cashcontrol->posmodule == "takepos") {
 			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH'.$cashcontrol->posnumber;
-		}
-		else {
+		} else {
 			$var1 = 'CASHDESK_ID_BANKACCOUNT_CASH';
 		}
 		if ($objp->code == 'CHQ') {
@@ -268,21 +268,21 @@ if ($resql)
 
 	print "<div style='text-align: right'><h2>";
 	print $langs->trans("Cash").": ".price($cash);
-	if ($cash != $cashcontrol->cash) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cash != $cashcontrol->cash) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cash).'</span>';
 	}
 	print "<br><br>";
 
 	//print '<br>';
 	print $langs->trans("PaymentTypeCHQ").": ".price($cheque);
-	if ($cheque != $cashcontrol->cheque) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $cheque != $cashcontrol->cheque) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->cheque).'</span>';
 	}
 	print "<br><br>";
 
 	//print '<br>';
 	print $langs->trans("PaymentTypeCB").": ".price($bank);
-	if ($bank != $cashcontrol->card) {
+	if ($cashcontrol->status == $cashcontrol::STATUS_VALIDATED && $bank != $cashcontrol->card) {
 		print ' <> <span class="amountremaintopay">'.$langs->trans("Declared").': '.price($cashcontrol->card).'</span>';
 	}
 	print "<br><br>";
@@ -308,9 +308,7 @@ if ($resql)
     print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

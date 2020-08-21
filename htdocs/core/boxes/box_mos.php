@@ -32,9 +32,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_mos extends ModeleBoxes
 {
-    public $boxcode="lastmos";
-    public $boximg="object_mrp";
-    public $boxlabel="BoxTitleLatestModifiedMos";
+    public $boxcode = "lastmos";
+    public $boximg = "object_mrp";
+    public $boxlabel = "BoxTitleLatestModifiedMos";
     public $depends = array("mrp");
 
 	/**
@@ -60,7 +60,7 @@ class box_mos extends ModeleBoxes
 
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->bom->read);
+        $this->hidden = !($user->rights->bom->read);
     }
 
     /**
@@ -87,18 +87,18 @@ class box_mos extends ModeleBoxes
         if ($user->rights->mrp->read)
         {
             $sql = "SELECT p.ref as product_ref";
-            $sql.= ", c.rowid";
-            $sql.= ", c.date_creation";
-            $sql.= ", c.tms";
-            $sql.= ", c.ref";
-            $sql.= ", c.status";
+            $sql .= ", c.rowid";
+            $sql .= ", c.date_creation";
+            $sql .= ", c.tms";
+            $sql .= ", c.ref";
+            $sql .= ", c.status";
             //$sql.= ", c.fk_user_valid";
-            $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-            $sql.= ", ".MAIN_DB_PREFIX."mrp_mo as c";
-            $sql.= " WHERE c.fk_product = p.rowid";
-            $sql.= " AND c.entity = ".$conf->entity;
-            $sql.= " ORDER BY c.tms DESC, c.ref DESC";
-            $sql.= " ".$this->db->plimit($max, 0);
+            $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+            $sql .= ", ".MAIN_DB_PREFIX."mrp_mo as c";
+            $sql .= " WHERE c.fk_product = p.rowid";
+            $sql .= " AND c.entity = ".$conf->entity;
+            $sql .= " ORDER BY c.tms DESC, c.ref DESC";
+            $sql .= " ".$this->db->plimit($max, 0);
 
             $result = $this->db->query($sql);
             if ($result) {
@@ -108,7 +108,7 @@ class box_mos extends ModeleBoxes
 
                 while ($line < $num) {
                     $objp = $this->db->fetch_object($result);
-                    $datem=$this->db->jdate($objp->tms);
+                    $datem = $this->db->jdate($objp->tms);
                     $mostatic->id = $objp->rowid;
                     $mostatic->ref = $objp->ref;
                     $mostatic->id = $objp->socid;
@@ -127,11 +127,11 @@ class box_mos extends ModeleBoxes
                         'asis' => 1,
                     );
 
-                    if (! empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
+                    if (!empty($conf->global->MRP_BOX_LAST_MOS_SHOW_VALIDATE_USER)) {
                         if ($objp->fk_user_valid > 0) $userstatic->fetch($objp->fk_user_valid);
                         $this->info_box_contents[$line][] = array(
                             'td' => 'class="right"',
-                            'text' => (($objp->fk_user_valid > 0)?$userstatic->getNomUrl(1):''),
+                            'text' => (($objp->fk_user_valid > 0) ? $userstatic->getNomUrl(1) : ''),
                             'asis' => 1,
                         );
                     }
@@ -149,7 +149,10 @@ class box_mos extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0) $this->info_box_contents[$line][0] = array('td' => 'class="center"','text'=>$langs->trans("NoRecordedOrders"));
+                if ($num == 0) $this->info_box_contents[$line][0] = array(
+                	'td' => 'class="center opacitymedium"',
+                	'text'=>$langs->trans("NoRecordedOrders")
+                );
 
                 $this->db->free($result);
             } else {

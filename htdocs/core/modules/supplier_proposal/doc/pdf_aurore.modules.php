@@ -60,9 +60,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -233,9 +233,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				{
 					$pdir = get_exdir($object->lines[$i]->fk_product, 2, 0, 0, $objphoto, 'product').$object->lines[$i]->fk_product."/photos/";
 					$dir = $conf->product->dir_output.'/'.$pdir;
-				}
-				else
-				{
+				} else {
 					$pdir = get_exdir(0, 2, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
 					$dir = $conf->product->dir_output.'/'.$pdir;
 				}
@@ -265,9 +263,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			{
 				$dir = $conf->supplier_proposal->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
-			}
-			else
-			{
+			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->supplier_proposal->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -432,8 +428,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						// Allows data in the first page if description is long enough to break in multiples pages
 						if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 							$showpricebeforepagebreak = 1;
-						else
-							$showpricebeforepagebreak = 0;
+						else $showpricebeforepagebreak = 0;
 					}
 
 					if (!empty($imglinesize['width']) && !empty($imglinesize['height']))
@@ -451,9 +446,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					if ($posYAfterImage > 0)
 					{
 						$descWidth = $this->posxpicture - $curX;
-					}
-					else
-					{
+					} else {
 						$descWidth = $this->posxtva - $curX;
 					}
 					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $descWidth, 3, $curX, $curY, $hideref, $hidedesc, 1);
@@ -479,18 +472,14 @@ class pdf_aurore extends ModelePDFSupplierProposal
 								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 								$pdf->setPage($pageposafter + 1);
 							}
-						}
-						else
-						{
+						} else {
 							// We found a page break
 							// Allows data in the first page if description is long enough to break in multiples pages
 							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
-							else
-								$showpricebeforepagebreak = 0;
+							else $showpricebeforepagebreak = 0;
 						}
-					}
-					else	// No pagebreak
+					} else // No pagebreak
 					{
 						$pdf->commitTransaction();
 					}
@@ -612,9 +601,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
-						}
-						else
-						{
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -628,9 +615,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						if ($pagenb == 1)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1);
-						}
-						else
-						{
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -647,9 +632,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				{
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-				}
-				else
-				{
+				} else {
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0);
 					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 				}
@@ -693,15 +676,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // No error
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->trans("ErrorConstantNotDefined", "SUPPLIER_PROPOSAL_OUTPUTDIR");
 			return 0;
 		}
@@ -712,7 +691,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Show payments table
 	 *
-     *  @param	PDF			$pdf           Object PDF
+     *  @param	TCPDF		$pdf            Object PDF
      *  @param  Object		$object         Object proposal
      *  @param  int			$posy           Position y in PDF
      *  @param  Translate	$outputlangs    Object langs for output
@@ -728,7 +707,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -758,8 +737,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
             $posy = $pdf->GetY() + 1;
-		}
-		else {
+		} else {
 			$outputlangs->load("sendings");
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -768,7 +746,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
 			//$dlp=dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true);
-			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
+			$pdf->MultiCell(80, 4, '', 0, 'L');
 
             $posy = $pdf->GetY() + 1;
 		}
@@ -896,7 +874,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			$pdf            Object PDF
+	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -942,9 +920,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL) && $tvaisnull)
 			{
 				// Nothing to do
-			}
-			else
-			{
+			} else {
 				//Local tax 1 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
@@ -1117,13 +1093,10 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
-		if (! empty($object->paye)) $resteapayer=0;
-		*/
+		if (!empty($object->paye)) $resteapayer = 0;
 
-		if ($deja_regle > 0)
-		{
+		if ($deja_regle > 0) {
 			$index++;
 
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -1169,7 +1142,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1275,7 +1248,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -1314,17 +1287,13 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			{
 			    $height = pdf_getHeightForLogo($logo);
 			    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-			}
-			else
-			{
+			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
-		}
-		else
-		{
+		} else {
 			$text = $this->emetteur->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 		}
@@ -1452,9 +1421,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 				if (!empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) $socname = $object->contact->socname;
 				else $socname = $object->thirdparty->name;
 				$carac_client_name = $outputlangs->convToOutputCharset($socname);
-			}
-			else
-			{
+			} else {
 				$carac_client_name = $outputlangs->convToOutputCharset($object->thirdparty->name);
 			}
 
@@ -1493,7 +1460,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
     /**
      *  Show footer of page. Need this->emetteur object
      *
-     *  @param  PDF			$pdf     			PDF
+     *  @param  TCPDF		$pdf     			PDF
      *  @param  Object		$object				Object to show
      *  @param  Translate	$outputlangs		Object lang for output
      *  @param  int			$hidefreetext		1=Hide free text

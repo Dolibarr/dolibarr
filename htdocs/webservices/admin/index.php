@@ -48,8 +48,7 @@ if ($actionsave)
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         $db->rollback();
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -65,7 +64,7 @@ llxHeader();
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("WebServicesSetup"), $linkback, 'title_setup');
 
-print $langs->trans("WebServicesDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("WebServicesDesc")."</span><br>\n";
 print "<br>\n";
 
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';

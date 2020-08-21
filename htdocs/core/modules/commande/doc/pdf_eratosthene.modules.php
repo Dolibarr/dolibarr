@@ -69,9 +69,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 	/**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -232,9 +232,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		        {
 		            $pdir[0] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/";
 		            $pdir[1] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/';
-		        }
-		        else
-		        {
+		        } else {
 		            $pdir[0] = get_exdir(0, 0, 0, 0, $objphoto, 'product').dol_sanitizeFileName($objphoto->ref).'/'; // default
 		            $pdir[1] = get_exdir($objphoto->id, 2, 0, 0, $objphoto, 'product').$objphoto->id."/photos/"; // alternative
 		        }
@@ -253,14 +251,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 		                        if ($obj['photo_vignette'])
 		                        {
 		                            $filename = $obj['photo_vignette'];
-		                        }
-		                        else
-		                        {
+		                        } else {
 		                            $filename = $obj['photo'];
 		                        }
-		                    }
-		                    else
-		                    {
+		                    } else {
 		                        $filename = $obj['photo'];
 		                    }
 
@@ -288,9 +282,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			{
 				$dir = $conf->commande->multidir_output[$conf->entity];
 				$file = $dir."/SPECIMEN.pdf";
-			}
-			else
-			{
+			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->commande->multidir_output[$object->entity]."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
@@ -410,6 +402,13 @@ class pdf_eratosthene extends ModelePDFCommandes
 					}
 				}
 
+                // Extrafields in note
+                $extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
+                if (!empty($extranote))
+                {
+                    $notetoshow = dol_concatdesc($notetoshow, $extranote);
+                }
+
 				$pagenb = $pdf->getPage();
 				if ($notetoshow)
 				{
@@ -480,8 +479,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				            if ($i > $pageposbeforenote) {
 				                $height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter);
 				                $pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-				            }
-				            else {
+				            } else {
 				                $height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
 				                $pdf->Rect($this->marge_gauche, $tab_top - 1, $tab_width, $height_note + 1);
 				            }
@@ -499,8 +497,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				        $height_note = $posyafter - $tab_top_newpage;
 				        $pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-				    }
-				    else // No pagebreak
+				    } else // No pagebreak
 				    {
 				        $pdf->commitTransaction();
 				        $posyafter = $pdf->GetY();
@@ -524,9 +521,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				    $tab_height = $tab_height - $height_note;
 				    $tab_top = $posyafter + 6;
-				}
-				else
-				{
+				} else {
 					$height_note = 0;
 				}
 
@@ -539,9 +534,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$this->pdfTabTitles($pdf, $tab_top, $tab_height, $outputlangs, $hidetop);
 				$pdf->rollbackTransaction(true);
 
-				$iniY = $tab_top + $this->tabTitleHeight + 2;
-				$curY = $tab_top + $this->tabTitleHeight + 2;
-				$nexY = $tab_top + $this->tabTitleHeight + 2;
+				$nexY = $tab_top + $this->tabTitleHeight;
 
 				// Loop on each lines
 				$pageposbeforeprintlines = $pdf->getPage();
@@ -560,12 +553,9 @@ class pdf_eratosthene extends ModelePDFCommandes
 					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
-					// Description of product line
-					$curX = $this->posxdesc - 1;
 
 					$showpricebeforepagebreak = 1;
 					$posYAfterImage = 0;
-					$posYAfterDescription = 0;
 
 					if ($this->getColumnStatus('photo'))
 					{
@@ -581,8 +571,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 							// Allows data in the first page if description is long enough to break in multiples pages
 							if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 								$showpricebeforepagebreak = 1;
-							else
-								$showpricebeforepagebreak = 0;
+							else $showpricebeforepagebreak = 0;
 					    }
 
 					    if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
@@ -596,15 +585,18 @@ class pdf_eratosthene extends ModelePDFCommandes
 					if ($this->getColumnStatus('desc'))
 					{
     					$pdf->startTransaction();
-    					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
-    					$pageposafter = $pdf->getPage();
+
+                        $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
+
+                        $pageposafter = $pdf->getPage();
     					if ($pageposafter > $pageposbefore)	// There is a pagebreak
     					{
     						$pdf->rollbackTransaction(true);
     						$pageposafter = $pageposbefore;
     						//print $pageposafter.'-'.$pageposbefore;exit;
     						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-    						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->getColumnContentWidth('desc'), 3, $this->getColumnContentXStart('desc'), $curY, $hideref, $hidedesc);
+
+                            $this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc);
     						$pageposafter = $pdf->getPage();
     						$posyafter = $pdf->GetY();
     						if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
@@ -616,22 +608,17 @@ class pdf_eratosthene extends ModelePDFCommandes
     								//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
     								$pdf->setPage($pageposafter + 1);
     							}
-    						}
-    						else
-    						{
+    						} else {
     							// We found a page break
 								// Allows data in the first page if description is long enough to break in multiples pages
-								if(!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+								if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
 									$showpricebeforepagebreak = 1;
-								else
-									$showpricebeforepagebreak = 0;
+								else $showpricebeforepagebreak = 0;
     						}
-    					}
-    					else	// No pagebreak
+    					} else // No pagebreak
     					{
     						$pdf->commitTransaction();
     					}
-    					$posYAfterDescription = $pdf->GetY();
 					}
 
 
@@ -702,6 +689,17 @@ class pdf_eratosthene extends ModelePDFCommandes
 					    $nexY = max($pdf->GetY(), $nexY);
 					}
 
+                    // Extrafields
+                    if (!empty($object->lines[$i]->array_options)) {
+                        foreach ($object->lines[$i]->array_options as $extrafieldColKey => $extrafieldValue) {
+                            if ($this->getColumnStatus($extrafieldColKey))
+                            {
+                                $extrafieldValue = $this->getExtrafieldContent($object->lines[$i], $extrafieldColKey);
+                                $this->printStdColumnContent($pdf, $curY, $extrafieldColKey, $extrafieldValue);
+                                $nexY = max($pdf->GetY(), $nexY);
+                            }
+                        }
+                    }
 
 					$parameters = array(
 					    'object' => $object,
@@ -757,11 +755,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
+						$pdf->line($this->marge_gauche, $nexY, $this->page_largeur - $this->marge_droite, $nexY);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 
-					$nexY += 2; // Add space between lines
 
 					// Detect if some page were added automatically and output _tableau for past pages
 					while ($pagenb < $pageposafter)
@@ -770,9 +767,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 						if ($pagenb == $pageposbeforeprintlines)
 						{
 						    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
-						}
-						else
-						{
+						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -786,9 +781,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 					    if ($pagenb == $pageposafter)
 						{
 						    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, $hidetop, 1, $object->multicurrency_code);
-					    }
-						else
-						{
+					    } else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -803,8 +796,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 				// Show square
 				if ($pagenb == $pageposbeforeprintlines)
 				    $this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
-				else
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
+				else $this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
 				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
 				// Affiche zone infos
@@ -846,15 +838,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 				$this->result = array('fullpath'=>$file);
 
 				return 1; // No error
-			}
-			else
-			{
+			} else {
 				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "COMMANDE_OUTPUTDIR");
 			return 0;
 		}
@@ -959,8 +947,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
 
             $posy = $pdf->GetY() + 1;
-        }
-        elseif ($object->availability_code || $object->availability)    // Show availability conditions
+        } elseif ($object->availability_code || $object->availability)    // Show availability conditions
 		{
 			$pdf->SetFont('', 'B', $default_font_size - 2);
 			$pdf->SetXY($this->marge_gauche, $posy);
@@ -1115,9 +1102,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 			if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_IFNULL) && $tvaisnull)
 			{
 				// Nothing to do
-			}
-			else
-			{
+			} else {
 				//Local tax 1 before VAT
 				//if (! empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
 				//{
@@ -1427,25 +1412,20 @@ class pdf_eratosthene extends ModelePDFCommandes
 				if (empty($conf->global->MAIN_PDF_USE_LARGE_LOGO))
 				{
 					$logo = $logodir.'/logos/thumbs/'.$this->emetteur->logo_small;
-				}
-				else {
+				} else {
 					$logo = $logodir.'/logos/'.$this->emetteur->logo;
 				}
 				if (is_readable($logo))
 				{
 				    $height = pdf_getHeightForLogo($logo);
 				    $pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
-				}
-				else
-				{
+				} else {
 					$pdf->SetTextColor(200, 0, 0);
 					$pdf->SetFont('', 'B', $default_font_size - 2);
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 					$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 				}
-			}
-			else
-			{
+			} else {
 				$text = $this->emetteur->name;
 				$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
 			}
@@ -1475,27 +1455,27 @@ class pdf_eratosthene extends ModelePDFCommandes
 			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("RefCustomer")." : ".$outputlangs->convToOutputCharset($object->ref_client), '', 'R');
 		}
 
-		if (! empty($conf->global->PDF_SHOW_PROJECT_TITLE))
+		if (!empty($conf->global->PDF_SHOW_PROJECT_TITLE))
 		{
 			$object->fetch_projet();
-			if (! empty($object->project->ref))
+			if (!empty($object->project->ref))
 			{
-				$posy+=3;
+				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : " . (empty($object->project->title)?'':$object->projet->title), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->projet->title), '', 'R');
 			}
 		}
 
-		if (! empty($conf->global->PDF_SHOW_PROJECT))
+		if (!empty($conf->global->PDF_SHOW_PROJECT))
 		{
 			$object->fetch_projet();
-			if (! empty($object->project->ref))
+			if (!empty($object->project->ref))
 			{
-				$posy+=3;
+				$posy += 3;
 				$pdf->SetXY($posx, $posy);
 				$pdf->SetTextColor(0, 0, 60);
-				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : " . (empty($object->project->ref)?'':$object->projet->ref), '', 'R');
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".(empty($object->project->ref) ? '' : $object->projet->ref), '', 'R');
 			}
 		}
 
@@ -1673,7 +1653,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
-	        'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+            'padding' => array(1, 0.5, 1, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 
 	    // Default field style for content
@@ -1710,10 +1690,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
-	            'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+                'padding' => array(0.5, 1, 0.5, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
 	            'align' => 'L',
+                'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	    );
 
@@ -1804,7 +1785,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 	        $this->cols['discount']['status'] = true;
 	    }
 
-	    $rank = $rank + 10;
+	    $rank = $rank + 1000; // add a big offset to be sure is the last col because default extrafield rank is 100
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
 	        'width' => 26, // in mm
@@ -1815,6 +1796,11 @@ class pdf_eratosthene extends ModelePDFCommandes
 	        'border-left' => true, // add left line separator
 	    );
 
+        // Add extrafields cols
+        if (!empty($object->lines)) {
+            $line = reset($object->lines);
+            $this->defineColumnExtrafield($line, $outputlangs, $hidedetails);
+        }
 
 	    $parameters = array(
 	        'object' => $object,
@@ -1828,13 +1814,10 @@ class pdf_eratosthene extends ModelePDFCommandes
 	    if ($reshook < 0)
 	    {
 	        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	    }
-	    elseif (empty($reshook))
+	    } elseif (empty($reshook))
 	    {
 	        $this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
-	    }
-	    else
-	    {
+	    } else {
 	        $this->cols = $hookmanager->resArray;
 	    }
     }

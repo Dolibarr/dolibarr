@@ -107,10 +107,10 @@ if (empty($reshook))
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
 	                                // Extended modules
 	                                'memcached', 'numberwords', 'zipautofillfr');
-	$alwayshiddenuncheckedmodules = array('dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient',
+	$alwayshiddenuncheckedmodules = array('collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
 	                                // Extended modules
-	                                'awstats', 'bittorrent', 'bootstrap', 'cabinetmed', 'cmcic', 'concatpdf', 'customfield', 'deplacement', 'dolicloud', 'filemanager', 'lightbox', 'mantis', 'monitoring', 'moretemplates', 'multicompany', 'nltechno', 'numberingpack', 'openstreetmap',
-	                                'ovh', 'phenix', 'phpsysinfo', 'pibarcode', 'postnuke', 'selectbank', 'skincoloreditor', 'submiteverywhere', 'survey', 'thomsonphonebook', 'topten', 'tvacerfa', 'voyage', 'webcalendar', 'webmail');
+	                                'awstats', 'bittorrent', 'bootstrap', 'cabinetmed', 'cmcic', 'concatpdf', 'customfield', 'datapolicy', 'deplacement', 'dolicloud', 'filemanager', 'lightbox', 'mantis', 'monitoring', 'moretemplates', 'multicompany', 'nltechno', 'numberingpack', 'openstreetmap',
+	                                'ovh', 'phenix', 'phpsysinfo', 'pibarcode', 'postnuke', 'dynamicprices', 'receiptprinter', 'selectbank', 'skincoloreditor', 'submiteverywhere', 'survey', 'thomsonphonebook', 'topten', 'tvacerfa', 'voyage', 'webcalendar', 'webmail');
 }
 
 // Search modules
@@ -144,17 +144,14 @@ foreach ($modulesdir as $dir)
 
                 if ($modName)
                 {
-		            try
-		            {
+		            try {
                         include_once $dir.$file;
                         $objMod = new $modName($db);
 
                         if ($objMod->numero > 0)
                         {
                             $j = $objMod->numero;
-                        }
-                        else
-                        {
+                        } else {
                             $j = 1000 + $i;
                         }
 
@@ -175,8 +172,7 @@ foreach ($modulesdir as $dir)
                             $j++;
                             $i++;
                         }
-		            }
-                    catch (Exception $e)
+		            } catch (Exception $e)
                     {
                         dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
                     }
@@ -274,13 +270,13 @@ print "\n";
 
 print '<div class="demoban demobackground">';
 print '<div class="right" style="padding-right: 30px; padding-top: 30px;">';
-print '<a alt="Official portal of your ERP CRM application" targe="_blank" href="https://www.dolibarr.org"><img class="demologo" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.png" alt="Dolibarr logo"></a>';
+print '<a alt="Official portal of your ERP CRM application" targe="_blank" href="https://www.dolibarr.org"><img class="demologo" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" alt="Dolibarr logo"></a>';
 print '</div>';
 print '</div>';
 
 print '<div class="demobantext" style="max-width: 1024px;">';
 print '<div style="font-size: 20px; padding: 40px;">';
-print '<div style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
+print '<div class="hideonsmartphone" style="text-align: justify;">'.$langs->trans("DemoDesc").'</div><br>';
 print '<div class="titre"><font style="font-size: 20px">'.$langs->trans("ChooseYourDemoProfil").'</font></div>';
 print '</div>';
 print '</div>';
@@ -380,9 +376,7 @@ foreach ($demoprofiles as $profilearray)
                 {
                     print "\n".'<!-- Module '.$modulekeyname.' hidden and always checked -->';
                     print '<input type="hidden" name="'.$modulekeyname.'" value="1">';
-                }
-                else
-                {
+                } else {
                     $modulo = ($j % $nbcolsmod);
         		    //if ($modulo == 0) print '<tr>';
                     print '<!-- id='.$val->numero.' -->';
@@ -423,20 +417,16 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIEN
 	if (empty($conf->dol_use_jmobile))
 	{
 		print '<div align="center">'."\n";
-		print '<script type="text/javascript"><!--'."\n";
+		print '<script><!--'."\n";
 		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
 		print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
 		print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
 		print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
 		print '//-->'."\n";
 		print '</script>'."\n";
-		print '<script type="text/javascript"'."\n";
-		print 'src="http://pagead2.googlesyndication.com/pagead/show_ads.js">'."\n";
-		print '</script>'."\n";
+		print '<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>'."\n";
 		print '</div>'."\n";
-	}
-	else
-	{
+	} else {
 		print '<!-- google js advert tag disabled with jmobile -->'."\n";
 	}
 }

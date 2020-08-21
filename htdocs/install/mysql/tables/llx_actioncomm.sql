@@ -17,7 +17,8 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
--- Actions commerciales
+-- Table of events and actions (past and to do). 
+-- This is also the table to track events on other Dolibarr objects.
 -- ========================================================================
 
 create table llx_actioncomm
@@ -40,7 +41,7 @@ create table llx_actioncomm
   fk_soc			integer,
   fk_contact		integer,
   fk_parent			integer NOT NULL default 0,
-  fk_user_action	integer,						-- user id of owner of action (note that users assigned to event are stored into another table)
+  fk_user_action	integer,						-- user id of owner of action (note that users assigned to event are stored into table 'actioncomm_resources')
   fk_user_done		integer,						-- user id of user that has made action (deprecated)
 
   transparency      integer,						-- transparency (ical standard). used to say if user assigned to event are busy or not by event. This field may be deprecated if we want to store transparency for each assigned user, moved into table llx_actioncomm_resources.
@@ -48,7 +49,6 @@ create table llx_actioncomm
   priority			smallint,						-- priority (ical standard)
   visibility		varchar(12) DEFAULT 'default',	-- visibility (ical standard) - 'default', 'public', 'private', 'confidential'
   fulldayevent		smallint NOT NULL default 0,    -- full day (ical standard)
-  punctual			smallint NOT NULL default 1,    -- deprecated. milestone is event with date start (datep) = date end (datep2)
   percent			smallint NOT NULL default 0,
   location			varchar(128),
   durationp			real,							-- planed duration
@@ -66,6 +66,7 @@ create table llx_actioncomm
   email_tocc		varchar(255),					-- when event was an email, we store here the email_tocc
   email_tobcc		varchar(255),					-- when event was an email, we store here the email_tobcc
   errors_to			varchar(255),					-- when event was an email, we store here the erros_to
+  reply_to			varchar(255),					-- when event was an email, we store here the reply_to
   
   recurid           varchar(128),                   -- used to store event id to link each other all the repeating event record. It can be the 'iCalUID' as in RFC5545 (an id similar for all the same serie)
   recurrule         varchar(128),					-- contains string with ical format recurring rule like 'FREQ=MONTHLY;INTERVAL=2;BYMONTHDAY=19' or 'FREQ=WEEKLY;BYDAY=MO'

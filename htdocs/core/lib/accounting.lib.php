@@ -53,12 +53,12 @@ function accounting_prepare_head(AccountingAccount $object)
 	global $langs, $conf;
 
 	$h = 0;
-	$head = array ();
+	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id=' . $object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][0] = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Asset");
 	$head[$h][2] = 'card';
-	$h ++;
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
@@ -96,18 +96,18 @@ function length_accountg($account)
 
 	if ($account < 0 || is_empty($account)) return '';
 
-	if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $account;
 
 	$g = $conf->global->ACCOUNTING_LENGTH_GACCOUNT;
-	if (! is_empty($g)) {
+	if (!is_empty($g)) {
 		// Clean parameters
 		$i = strlen($account);
 
 		if ($i >= 1) {
-			while ( $i < $g ) {
+			while ($i < $g) {
 				$account .= '0';
 
-				$i ++;
+				$i++;
 			}
 
 			return $account;
@@ -131,18 +131,18 @@ function length_accounta($accounta)
 
 	if ($accounta < 0 || is_empty($accounta)) return '';
 
-	if (! is_empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) return $accounta;
 
 	$a = $conf->global->ACCOUNTING_LENGTH_AACCOUNT;
-	if (! is_empty($a)) {
+	if (!is_empty($a)) {
 		// Clean parameters
 		$i = strlen($accounta);
 
 		if ($i >= 1) {
-			while ( $i < $a ) {
+			while ($i < $a) {
 				$accounta .= '0';
 
-				$i ++;
+				$i++;
 			}
 
 			return $accounta;
@@ -177,10 +177,10 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     print "\n\n<!-- start banner journal -->\n";
 
-    if(! is_empty($varlink)) $varlink = '?'.$varlink;
+    if (!is_empty($varlink)) $varlink = '?'.$varlink;
 
-    $head=array();
-    $h=0;
+    $head = array();
+    $h = 0;
     $head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
     $head[$h][1] = $langs->trans("Journalization");
     $head[$h][2] = 'journal';
@@ -190,7 +190,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 
     dol_fiche_head($head, 'journal');
 
-    foreach($moreparam as $key => $value)
+    foreach ($moreparam as $key => $value)
     {
         print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
     }
@@ -209,7 +209,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     {
         print '<tr>';
         print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
-        if (! $variante) print '<td colspan="3">';
+        if (!$variante) print '<td colspan="3">';
         else print '<td>';
         print $calcmode;
         if ($variante) print '</td><td colspan="2">'.$variante;
@@ -220,7 +220,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
     // Ligne de la periode d'analyse du rapport
     print '<tr>';
     print '<td>'.$langs->trans("ReportPeriod").'</td>';
-    if (! $periodlink) print '<td colspan="3">';
+    if (!$periodlink) print '<td colspan="3">';
     else print '<td>';
     if ($period) print $period;
     if ($periodlink) print '</td><td colspan="2">'.$periodlink;

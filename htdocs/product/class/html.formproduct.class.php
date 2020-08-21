@@ -101,13 +101,10 @@ class FormProduct
 			if (!empty($batch))
 			{
 				$sql .= ", pb.qty as stock";
-			}
-			else
-			{
+			} else {
 				$sql .= ", ps.reel as stock";
 			}
-		}
-		elseif ($sumStock)
+		} elseif ($sumStock)
 		{
 			$sql .= ", sum(ps.reel) as stock";
 		}
@@ -125,9 +122,7 @@ class FormProduct
 		if (count($warehouseStatus))
 		{
 			$sql .= " AND e.statut IN (".$this->db->escape(implode(',', $warehouseStatus)).")";
-		}
-		else
-		{
+		} else {
 			$sql .= " AND e.statut = 1";
 		}
 
@@ -178,9 +173,7 @@ class FormProduct
 			}
 
 			return $num;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -1;
 		}
@@ -237,50 +230,80 @@ class FormProduct
 	 */
 	public function selectWarehouses($selected = '', $htmlname = 'idwarehouse', $filterstatus = '', $empty = 0, $disabled = 0, $fk_product = 0, $empty_label = '', $showstock = 0, $forcecombo = 0, $events = array(), $morecss = 'minwidth200', $exclude = '', $showfullpath = 1, $stockMin = false, $orderBy = 'e.ref')
 	{
-		global $conf,$langs,$user;
+		global $conf, $langs, $user, $hookmanager;
 
 		dol_syslog(get_class($this)."::selectWarehouses $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $empty_label, $showstock, $forcecombo, $morecss", LOG_DEBUG);
 
-		$out='';
+		$out = '';
 		if (empty($conf->global->ENTREPOT_EXTRA_STATUS)) $filterstatus = '';
         if (!empty($fk_product))  $this->cache_warehouses = array();
-		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
-		$nbofwarehouses=count($this->cache_warehouses);
 
-		if ($conf->use_javascript_ajax && ! $forcecombo)
+		$this->loadWarehouses($fk_product, '', $filterstatus, true, $exclude, $stockMin, $orderBy);
+		$nbofwarehouses = count($this->cache_warehouses);
+
+		if ($conf->use_javascript_ajax && !$forcecombo)
 		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$comboenhancement = ajax_combobox($htmlname, $events);
-			$out.= $comboenhancement;
+			$out .= $comboenhancement;
 		}
 
-		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
-		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
-		foreach($this->cache_warehouses as $id => $arraytypes)
+		if (strpos($htmlname, 'search_') !== 0) {
+			if (empty($user->fk_warehouse) || $user->fk_warehouse == -1){
+				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $selected = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			}
+			else {
+				if (empty($selected) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER)) $selected = $user->fk_warehouse;
+			}
+		}
+
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
+		if ($empty) $out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+		foreach ($this->cache_warehouses as $id => $arraytypes)
 		{
-			$label='';
-			if ($showfullpath) $label.=$arraytypes['full_label'];
-			else $label.=$arraytypes['label'];
+			$label = '';
+			if ($showfullpath) $label .= $arraytypes['full_label'];
+			else $label .= $arraytypes['label'];
 			if (($fk_product || ($showstock > 0)) && ($arraytypes['stock'] != 0 || ($showstock > 0)))
 			{
 				if ($arraytypes['stock'] <= 0) {
-					$label.=' <span class= \'text-warning\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
-				}
-				else
-				{
-					$label.=' <span class=\'opacitymedium\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+					$label .= ' <span class= \'text-warning\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
+				} else {
+					$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").':'.$arraytypes['stock'].')</span>';
 				}
 			}
 
-			$out.='<option value="'.$id.'"';
-			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out.=' selected';
-			$out.=' data-html="'.dol_escape_htmltag($label).'"';
-			$out.='>';
-			$out.=$label;
-			$out.='</option>';
+			$out .= '<option value="'.$id.'"';
+			if ($selected == $id || ($selected == 'ifone' && $nbofwarehouses == 1)) $out .= ' selected';
+			$out .= ' data-html="'.dol_escape_htmltag($label).'"';
+			$out .= '>';
+			$out .= $label;
+			$out .= '</option>';
 		}
-		$out.='</select>';
-		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.(($selected>0)?$selected:'').'">';
+		$out .= '</select>';
+		if ($disabled) $out .= '<input type="hidden" name="'.$htmlname.'" value="'.(($selected > 0) ? $selected : '').'">';
+
+        $parameters = array(
+            'selected' => $selected,
+            'htmlname' => $htmlname,
+            'filterstatus' => $filterstatus,
+            'empty' => $empty,
+            'disabled ' => $disabled,
+            'fk_product' => $fk_product,
+            'empty_label' => $empty_label,
+            'showstock' => $showstock,
+            'forcecombo' => $forcecombo,
+            'events' => $events,
+            'morecss' => $morecss,
+            'exclude' => $exclude,
+            'showfullpath' => $showfullpath,
+            'stockMin' => $stockMin,
+            'orderBy' => $orderBy
+        );
+
+        $reshook = $hookmanager->executeHooks('selectWarehouses', $parameters, $this);
+        if ($reshook > 0) $out = $hookmanager->resPrint;
+		elseif ($reshook == 0) $out .= $hookmanager->resPrint;
 
 		return $out;
 	}
@@ -431,9 +454,7 @@ class FormProduct
 		if (!is_array($objectLines) || !count($objectLines))
 		{
 			if (!empty($fk_product)) $productIdArray[] = $fk_product;
-		}
-		else
-		{
+		} else {
 			foreach ($objectLines as $line) {
 				if ($line->fk_product) $productIdArray[] = $line->fk_product;
 			}
@@ -441,53 +462,50 @@ class FormProduct
 
 		$nboflot = $this->loadLotStock($productIdArray);
 
-		if ($conf->use_javascript_ajax && ! $forcecombo)
+		if ($conf->use_javascript_ajax && !$forcecombo)
 		{
-			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 			$comboenhancement = ajax_combobox($htmlname, $events);
-			$out.= $comboenhancement;
+			$out .= $comboenhancement;
 		}
 
-		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
-		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
-		if (! empty($fk_product))
+		$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled' : '').' id="'.$htmlname.'" name="'.($htmlname.($disabled ? '_disabled' : '')).'">';
+		if ($empty) $out .= '<option value="-1">'.($empty_label ? $empty_label : '&nbsp;').'</option>';
+		if (!empty($fk_product))
 		{
 			$productIdArray = array($fk_product); // only show lot stock for product
-		}
-		else
-		{
-			foreach($this->cache_lot as $key => $value)
+		} else {
+			foreach ($this->cache_lot as $key => $value)
 			{
 				$productIdArray[] = $key;
 			}
 		}
 
-		foreach($productIdArray as $productId)
+		foreach ($productIdArray as $productId)
 		{
-			foreach($this->cache_lot[$productId] as $id => $arraytypes)
+			foreach ($this->cache_lot[$productId] as $id => $arraytypes)
 			{
 				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id'])
 				{
-					$label=$arraytypes['entrepot_label'].' - ';
-					$label.=$arraytypes['batch'];
+					$label = $arraytypes['entrepot_label'].' - ';
+					$label .= $arraytypes['batch'];
 					if ($arraytypes['qty'] <= 0) {
-						$label.=' <span class=\'text-warning\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
-					}
-					else {
-						$label.=' <span class=\'opacitymedium\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
+						$label .= ' <span class=\'text-warning\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
+					} else {
+						$label .= ' <span class=\'opacitymedium\'>('.$langs->trans("Stock").' '.$arraytypes['qty'].')</span>';
 					}
 
-					$out.='<option value="'.$id.'"';
-					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) $out.=' selected';
-					$out.=' data-html="'.dol_escape_htmltag($label).'"';
-					$out.='>';
-					$out.=$label;
-					$out.='</option>';
+					$out .= '<option value="'.$id.'"';
+					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) $out .= ' selected';
+					$out .= ' data-html="'.dol_escape_htmltag($label).'"';
+					$out .= '>';
+					$out .= $label;
+					$out .= '</option>';
 				}
 			}
 		}
-		$out.='</select>';
-		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.(($selected>0)?$selected:'').'">';
+		$out .= '</select>';
+		if ($disabled) $out .= '<input type="hidden" name="'.$htmlname.'" value="'.(($selected > 0) ? $selected : '').'">';
 
 		return $out;
 	}
@@ -521,9 +539,7 @@ class FormProduct
 		if ($cacheLoaded)
 		{
 			return count($this->cache_lot);
-		}
-		else
-		{
+		} else {
 			// clear cache
 			$this->cache_lot = array();
 			$productIdList = implode(',', $productIdArray);
@@ -555,9 +571,7 @@ class FormProduct
 				}
 
 				return $num;
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db);
 				return -1;
 			}

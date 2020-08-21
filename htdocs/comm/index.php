@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ if (!empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/cl
 if (!empty($conf->propal->enabled))  require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (!empty($conf->supplier_proposal->enabled))  require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 if (!empty($conf->commande->enabled))  require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || ! empty($conf->supplier_order->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 if (!$user->rights->societe->lire) accessforbidden();
 
@@ -75,7 +76,7 @@ $companystatic = new Societe($db);
 if (!empty($conf->propal->enabled)) $propalstatic = new Propal($db);
 if (!empty($conf->supplier_proposal->enabled)) $supplierproposalstatic = new SupplierProposal($db);
 if (!empty($conf->commande->enabled)) $orderstatic = new Commande($db);
-if (!empty($conf->fournisseur->enabled)) $supplierorderstatic = new CommandeFournisseur($db);
+if (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) $supplierorderstatic = new CommandeFournisseur($db);
 
 llxHeader("", $langs->trans("CommercialArea"));
 
@@ -101,7 +102,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
         $listofsearchfields['search_supplier_proposal'] = array('text'=>'SupplierProposalShort');
     }
     // Search supplier order
-    if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
     {
     	$listofsearchfields['search_supplier_order'] = array('text'=>'SupplierOrder');
     }
@@ -149,6 +150,9 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 
 	$sql = "SELECT p.rowid, p.ref, p.ref_client, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
     $sql .= ", s.code_client";
+	$sql .= ", s.email";
+    $sql .= ", s.entity";
+    $sql .= ", s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -167,7 +171,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("ProposalsDraft").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="3">'.$langs->trans("ProposalsDraft").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num > 0)
 		{
@@ -193,6 +197,9 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
 				$companystatic->canvas = $obj->canvas;
+				$companystatic->entity = $obj->entity;
+                $companystatic->email = $obj->email;
+                $companystatic->code_compta = $obj->code_compta;
 				print $companystatic->getNomUrl(1, 'customer', 16);
 				print '</td>';
 				print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
@@ -202,22 +209,17 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
 		}
 		print "</table></div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -233,6 +235,9 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 
     $sql = "SELECT p.rowid, p.ref, p.total_ht, p.tva as total_tva, p.total as total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
     $sql .= ", s.code_client";
+    $sql .= ", s.code_fournisseur";
+	$sql .= ", s.entity";
+    $sql .= ", s.email";
     $sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
     $sql .= ", ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -276,6 +281,8 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas = $obj->canvas;
+				$companystatic->entity = $obj->entity;
+                $companystatic->email = $obj->email;
                 print $companystatic->getNomUrl(1, 'supplier', 16);
                 print '</td>';
                 print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
@@ -285,22 +292,17 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
             {
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
-        }
-        else
-        {
+        } else {
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table></div><br>";
 
         $db->free($resql);
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -315,6 +317,9 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
     $sql .= ", s.code_client";
+	$sql .= ", s.email";
+    $sql .= ", s.entity";
+    $sql .= ", s.code_compta";
 	$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
 	$sql .= ", ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -358,12 +363,13 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas = $obj->canvas;
+                $companystatic->email = $obj->email;
+                $companystatic->entity = $obj->entity;
 				print $companystatic->getNomUrl(1, 'customer', 16);
 				print '</td>';
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
-				}
-				else {
+				} else {
 					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
 				}
 				$i++;
@@ -372,23 +378,18 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
             {
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table>";
 		print "</div><br>";
 
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -397,13 +398,15 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 /*
  * Draft suppliers orders
  */
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled)) && $user->rights->fournisseur->commande->lire)
 {
     $langs->load("orders");
 
     $sql = "SELECT cf.rowid, cf.ref, cf.ref_supplier, cf.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
     $sql .= ", s.code_client";
     $sql .= ", s.code_fournisseur";
+	$sql .= ", s.entity";
+    $sql .= ", s.email";
     $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
     $sql .= ", ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -447,12 +450,13 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande-
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas = $obj->canvas;
+				$companystatic->entity = $obj->entity;
+                $companystatic->email = $obj->email;
                 print $companystatic->getNomUrl(1, 'supplier', 16);
                 print '</td>';
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="nowrap right">'.price($obj->total_ht).'</td></tr>';
-				}
-				else {
+				} else {
 					print '<td class="nowrap right">'.price($obj->total_ttc).'</td></tr>';
 				}
                 $i++;
@@ -461,14 +465,11 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande-
  			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
             {
                 print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td colspan="2" class="right">'.price($total)."</td></tr>";
             }
-        }
-        else
-        {
+        } else {
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoSupplierOrder").'</td></tr>';
         }
         print "</table>";
@@ -496,6 +497,9 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 
 	$sql = "SELECT s.rowid, s.nom as name, s.client, s.datec, s.tms, s.canvas";
     $sql .= ", s.code_client";
+	$sql .= ", s.code_compta";
+    $sql .= ", s.entity";
+    $sql .= ", s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.client IN (1, 2, 3)";
@@ -532,6 +536,9 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas = $objp->canvas;
+				$companystatic->code_compta = $objp->code_compta;
+                $companystatic->entity = $objp->entity;
+                $companystatic->email = $objp->email;
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'customer', 48).'</td>';
 				print '<td class="right" nowrap>';
@@ -543,9 +550,7 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 			}
 
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print "</table>";
@@ -554,12 +559,14 @@ if (!empty($conf->societe->enabled) && $user->rights->societe->lire)
 }
 
 // Last suppliers
-if (!empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->societe->lire)
 {
 	$langs->load("boxes");
 
 	$sql = "SELECT s.nom as name, s.rowid, s.datec as dc, s.canvas, s.tms as dm";
     $sql .= ", s.code_fournisseur";
+	$sql .= ", s.entity";
+    $sql .= ", s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.fournisseur = 1";
@@ -591,6 +598,8 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas = $objp->canvas;
+				$companystatic->entity = $objp->entity;
+                $companystatic->email = $objp->email;
                 print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$companystatic->getNomUrl(1, 'supplier', 44).'</td>';
 				print '<td class="right">'.dol_print_date($db->jdate($objp->dm), 'day').'</td>';
@@ -598,9 +607,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->societe->lire)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table>';
@@ -628,7 +635,7 @@ if ($user->rights->agenda->myactions->read)
 
 
 /*
- * Last contracts
+ * Latest contracts
  */
 if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
@@ -636,7 +643,9 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
 
 	$sql = "SELECT s.nom as name, s.rowid, s.canvas, ";
     $sql .= ", s.code_client";
-	$sql .= " c.statut, c.rowid as contratid, p.ref, c.fin_validite as datefin, c.date_cloture as dateclo";
+    $sql .= ", s.entity";
+    $sql .= ", s.email";
+    $sql .= ", c.statut, c.rowid as contratid, p.ref, c.fin_validite as datefin, c.date_cloture as dateclo";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."contrat as c";
 	$sql .= ", ".MAIN_DB_PREFIX."product as p";
@@ -673,6 +682,8 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
                 $companystatic->code_client = $objp->code_client;
                 $companystatic->code_fournisseur = $objp->code_fournisseur;
                 $companystatic->canvas = $objp->canvas;
+				$companystatic->entity = $objp->entity;
+                $companystatic->email = $objp->email;
                 print $companystatic->getNomUrl(1, 'customer', 44);
 				print '</td>'."\n";
 				print "<td class=\"right\">".$staticcontrat->LibStatut($obj->statut, 3)."</td></tr>\n";
@@ -682,9 +693,7 @@ if (!empty($conf->contrat->enabled) && $user->rights->contrat->lire && 0) // TOD
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -697,6 +706,8 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 	$langs->load("propal");
 
 	$sql = "SELECT s.nom as name, s.rowid, s.code_client";
+	$sql .= ", s.entity";
+    $sql .= ", s.email";
 	$sql .= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."propal as p";
@@ -718,7 +729,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 		{
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -760,14 +771,15 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas = $obj->canvas;
+				$companystatic->entity = $obj->entity;
+                $companystatic->email = $obj->email;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
 				print '<td class="right">';
 				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="right">'.price($obj->total_ht).'</td>';
-				}
-				else {
+				} else {
 					print '<td class="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut, 3).'</td>'."\n";
@@ -778,17 +790,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -802,6 +811,8 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 	$sql = "SELECT s.nom as name, s.rowid, c.rowid as commandeid, c.total_ttc, c.total_ht, c.tva as total_tva, c.ref, c.ref_client, c.fk_statut, c.date_valid as dv, c.facture as billed";
     $sql .= ", s.code_client";
+	$sql .= ", s.entity";
+    $sql .= ", s.email";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -822,7 +833,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 		{
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></th></tr>';
+			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=1"><span class="badge">'.$num.'</span></th></tr>';
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -864,14 +875,15 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas = $obj->canvas;
+				$companystatic->entity = $obj->entity;
+                $companystatic->email = $obj->email;
                 print $companystatic->getNomUrl(1, 'customer', 44);
                 print '</td>';
 				print '<td class="right">';
 				print dol_print_date($db->jdate($obj->dp), 'day').'</td>'."\n";
 				if (!empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
 					print '<td class="right">'.price($obj->total_ht).'</td>';
-				}
-				else {
+				} else {
 					print '<td class="right">'.price($obj->total_ttc).'</td>';
 				}
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut, $obj->billed, 3).'</td>'."\n";
@@ -882,17 +894,14 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td class=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

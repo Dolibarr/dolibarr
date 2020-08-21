@@ -25,14 +25,20 @@
  *	\brief      Page to show a receipt.
  */
 
-require '../main.inc.php'; // Load $user and permissions
+if (!isset($action)) require '../main.inc.php'; // If this file is called from send.php avoid load again
 include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 $langs->loadLangs(array("main", "cashdesk", "companies"));
 
-$place = (GETPOST('place', 'int') > 0 ? GETPOST('place', 'int') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
 
 $facid = GETPOST('facid', 'int');
+
+$gift = GETPOST('gift', 'int');
+
+if (empty($user->rights->takepos->run)) {
+	accessforbidden();
+}
 
 
 /*
@@ -85,31 +91,29 @@ if (!empty($hookmanager->resPrint)) {
 <br>
 <p class="left">
 <?php
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
+$constFreeText = 'TAKEPOS_HEADER' . $_SESSION['takeposterminal'];
+if (!empty($conf->global->TAKEPOS_HEADER) || !empty($conf->global->{$constFreeText}))
 {
+	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->TAKEPOS_HEADER))
-	{
-		$newfreetext = make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
-		echo $newfreetext;
-	}
+	if (!empty($conf->global->TAKEPOS_HEADER))      $newfreetext .= make_substitutions($conf->global->TAKEPOS_HEADER, $substitutionarray);
+	if (!empty($conf->global->{$constFreeText}))    $newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	print $newfreetext;
 }
 ?>
 </p>
 <p class="right">
 <?php
 print $langs->trans('Date')." ".dol_print_date($object->date, 'day').'<br>';
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT) print $conf->global->TAKEPOS_RECEIPT_NAME." ";
+if (!empty($conf->global->TAKEPOS_RECEIPT_NAME)) print $conf->global->TAKEPOS_RECEIPT_NAME." ";
 if ($object->statut == Facture::STATUS_DRAFT) print str_replace(")", "", str_replace("-", " ".$langs->trans('Place')." ", str_replace("(PROV-POS", $langs->trans("Terminal")." ", $object->ref)));
 else print $object->ref;
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOMER)
+if ($conf->global->TAKEPOS_SHOW_CUSTOMER)
 {
-	$soc = new Societe($db);
-	$soc->fetch($invoice->socid);
-	if ($invoice->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
+	if ($object->socid != $conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]})
 	{
 		$soc = new Societe($db);
-		if ($invoice->socid > 0) $soc->fetch($invoice->socid);
+		if ($object->socid > 0) $soc->fetch($object->socid);
 		else $soc->fetch($conf->global->{'CASHDESK_ID_THIRDPARTY'.$_SESSION["takeposterminal"]});
 		print "<br>".$langs->trans("Customer").': '.$soc->name;
 	}
@@ -123,8 +127,8 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
 	<tr>
         <th class="center"><?php print $langs->trans("Label"); ?></th>
         <th class="right"><?php print $langs->trans("Qty"); ?></th>
-        <th class="right"><?php print $langs->trans("Price"); ?></th>
-        <th class="right"><?php print $langs->trans("TotalTTC"); ?></th>
+        <th class="right"><?php if ($gift!=1) print $langs->trans("Price"); ?></th>
+        <th class="right"><?php if ($gift!=1) print $langs->trans("TotalTTC"); ?></th>
 	</tr>
     </thead>
     <tbody>
@@ -138,8 +142,8 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
         else echo $line->description; ?>
         </td>
         <td class="right"><?php echo $line->qty; ?></td>
-        <td class="right"><?php echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
-        <td class="right"><?php echo price($line->total_ttc, 1); ?></td>
+        <td class="right"><?php if ($gift!=1) echo price(price2num($line->total_ttc / $line->qty, 'MT'), 1); ?></td>
+        <td class="right"><?php if ($gift!=1) echo price($line->total_ttc, 1); ?></td>
     </tr>
         <?php
     }
@@ -149,8 +153,8 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
 <br>
 <table class="right">
 <tr>
-    <th class="right"><?php echo $langs->trans("TotalHT"); ?></th>
-    <td class="right"><?php echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+    <th class="right"><?php if ($gift!=1) echo $langs->trans("TotalHT"); ?></th>
+    <td class="right"><?php if ($gift!=1) echo price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php if ($conf->global->TAKEPOS_TICKET_VAT_GROUPPED) {
 	$vat_groups = array();
@@ -164,18 +168,18 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
 	foreach ($vat_groups as $key => $val) {
 	    ?>
 	<tr>
-		<th align="right"><?php echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
-		<td align="right"><?php echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+		<th align="right"><?php if ($gift!=1) echo $langs->trans("VAT").' '.vatrate($key, 1); ?></th>
+		<td align="right"><?php if ($gift!=1) echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 	</tr>
         <?php
 	}
 } else { ?>
 <tr>
-	<th class="right"><?php echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+	<th class="right"><?php if ($gift!=1) echo $langs->trans("TotalVAT").'</th><td class="right">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 <?php } ?>
 <tr>
-	<th class="right"><?php echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
+	<th class="right"><?php if ($gift!=1) echo ''.$langs->trans("TotalTTC").'</th><td class="right">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency)."\n"; ?></td>
 </tr>
 </table>
 <div style="border-top-style: double;">
@@ -183,13 +187,14 @@ if ($conf->global->TAKEPOS_CUSTOM_RECEIPT && $conf->global->TAKEPOS_SHOW_CUSTOME
 <br>
 <br>
 <?php
-if ($conf->global->TAKEPOS_CUSTOM_RECEIPT)
+$constFreeText = 'TAKEPOS_FOOTER' . $_SESSION['takeposterminal'];
+if (!empty($conf->global->TAKEPOS_FOOTER) || !empty($conf->global->{$constFreeText}))
 {
+	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
-	if (!empty($conf->global->TAKEPOS_FOOTER)) {
-		$newfreetext = make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
-		echo $newfreetext;
-	}
+	if (!empty($conf->global->{$constFreeText}))    $newfreetext .= make_substitutions($conf->global->{$constFreeText}, $substitutionarray);
+	if (!empty($conf->global->TAKEPOS_FOOTER))      $newfreetext .= make_substitutions($conf->global->TAKEPOS_FOOTER, $substitutionarray);
+	print $newfreetext;
 }
 ?>
 

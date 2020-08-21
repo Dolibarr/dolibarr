@@ -37,13 +37,11 @@ InterventionClassifiedBilledInDolibarr=Интервенция %s е фактур
 InterventionClassifiedUnbilledInDolibarr=Интервенция %s е нетаксувана
 InterventionSentByEMail=Интервенция %s е изпратена по имейл
 InterventionDeletedInDolibarr=Интервенция %s е изтрита
-InterventionsArea=Секция за интервенции
+InterventionsArea=Секция с интервенции
 DraftFichinter=Чернови интервенции
 LastModifiedInterventions=Интервенции: %s последно променени
 FichinterToProcess=Интервенции за извършване
-##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Последващ контакт на клиента
-# Modele numérotation
 PrintProductsOnFichinter=Отпечатване на редове от тип 'Продукт' (не само услуги) в интервенциите
 PrintProductsOnFichinterDetails=интервенции, генерирани от поръчки
 UseServicesDurationOnFichinter=Използване на продължителността на услугите за интервенции генерирани от поръчки
@@ -53,7 +51,6 @@ InterventionStatistics=Статистика на интервенции
 NbOfinterventions=Брой интервенции
 NumberOfInterventionsByMonth=Брой интервенции по месец (по дата на валидиране)
 AmountOfInteventionNotIncludedByDefault=Общата продължителност на интервенцията не е включена по подразбиране в печалбата (в повечето случаи за отчитане на времето се използват графиците за отделно време). Добавете опцията PROJECT_INCLUDE_INTERVENTION_AMOUNT_IN_PROFIT със стойност 1 в Начало -> Настройки -> Други настройки, за да я включите.
-##### Exports #####
 InterId=Идентификатор на интервенция
 InterRef=Съгласно интервенция №
 InterDateCreation=Дата на създаване на интервенцията
@@ -65,3 +62,5 @@ InterLineId=Идентификатор на реда в интервенцият
 InterLineDate=Дата на реда в интервенцията
 InterLineDuration=Продължителност на реда в интервенцията
 InterLineDesc=Описание на реда в интервенцията
+RepeatableIntervention=Шаблон на интервенция
+ToCreateAPredefinedIntervention=За да създадете предварително определена или повтаряща се интервенция, създайте интервенция и я превърнете в шаблон за интервенция.

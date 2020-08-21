@@ -76,11 +76,12 @@ TypeContact_propal_external_BILLING=Fakturační kontakt zákazníka
 TypeContact_propal_external_CUSTOMER=Kontakt se zákazníkem pro následující vypracované nabídky
 TypeContact_propal_external_SHIPPING=Zákaznický kontakt pro doručení
 # Document models
-DocModelAzurDescription=A complete proposal model 
-DocModelCyanDescription=A complete proposal model
+DocModelAzurDescription=Kompletní návrhový model (stará implementace azurové šablony)
+DocModelCyanDescription=Kompletní návrhový model
 DefaultModelPropalCreate=Tvorba z výchozí šablony
 DefaultModelPropalToBill=Výchozí šablona při uzavírání obchodní nabídky (bude se fakturovat)
 DefaultModelPropalClosed=Výchozí šablona při uzavírání obchodní nabídky (nevyfakturované)
 ProposalCustomerSignature=Písemný souhlas, razítko firmy, datum a podpis
 ProposalsStatisticsSuppliers=Statistika návrhů dodavatelů
-CaseFollowedBy=Case followed by
+CaseFollowedBy=Případ následovaný
+SignedOnly=Signed only

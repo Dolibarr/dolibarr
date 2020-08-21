@@ -58,7 +58,7 @@ $fourn_id = GETPOST("fourn_id", 'int');
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page < 0) $page = 0;
 if (!$sortfield) $sortfield = "p.ref";
 if (!$sortorder) $sortorder = "ASC";
@@ -109,11 +109,10 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
  * View
  */
 
-$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
-
 $form = new Form($db);
 $htmlother = new FormOther($db);
 
+$helpurl = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 $title = $langs->trans("ProductsAndServices");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
@@ -140,9 +139,7 @@ if (dol_strlen($type))
     if ($type == 1)
     {
         $sql .= " AND p.fk_product_type = '1'";
-    }
-    else
-    {
+    } else {
         $sql .= " AND p.fk_product_type <> '1'";
     }
 }
@@ -198,8 +195,7 @@ if ($resql)
 
 	if (isset($type))
 	{
-		if ($type == 1) { $texte = $langs->trans("Services"); }
-		else { $texte = $langs->trans("Products"); }
+		if ($type == 1) { $texte = $langs->trans("Services"); } else { $texte = $langs->trans("Products"); }
 	} else {
 		$texte = $langs->trans("ProductsAndServices");
 	}
@@ -230,10 +226,9 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'products', 0, '', '', $limit);
+	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'product', 0, '', '', $limit, 0, 0, 1);
 
 
 	if (!empty($catid))
@@ -424,9 +419,7 @@ if ($resql)
 	print '</form>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

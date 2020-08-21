@@ -43,3 +43,5 @@ ProductQtyInSuppliersReceptionAlreadyRecevied=已收到未清供應商訂單中�
 ValidateOrderFirstBeforeReception=您必須先驗證訂單，然後才能進行收貨。
 ReceptionsNumberingModules=收貨編號模組
 ReceptionsReceiptModel=收貨用文件範本
+NoMorePredefinedProductToDispatch=沒有更多預定義的產品要調度
+

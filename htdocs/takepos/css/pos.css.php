@@ -101,6 +101,8 @@ button.calcbutton {
     /* border-color: unset; */
     border-width: 0;
     margin: 1px;
+	font-size: 14pt;
+    border-radius: 3px;
 }
 
 button.calcbutton2 {
@@ -118,6 +120,9 @@ button.calcbutton2 {
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
 	font-weight: bold;
+	font-size: 10pt;
+	margin: 1px;
+    border-radius: 3px;
 }
 
 button.calcbutton3 {
@@ -128,16 +133,19 @@ button.calcbutton3 {
 	cursor: pointer;
 	vertical-align: middle;
 	text-align: center;
-	font-size:120%;
 	overflow: visible; /* removes extra width in IE */
 	width: calc(25% - 2px);
 	height: calc(25% - 2px);
+	font-size: 14pt;
+	margin: 1px;
+    border-radius: 3px;
 }
 
 button.actionbutton {
     background: #EABCA6;
     border: 2px solid #EEE;
     min-height: 40px;
+    border-radius: 3px;
 }
 
 button.actionbutton {
@@ -149,8 +157,33 @@ button.actionbutton {
 	vertical-align: middle;
 	text-align: center;
 	overflow: visible; /* removes extra width in IE */
-	width:33%;
+	width: calc(33.33% - 2px);
 	height: calc(25% - 2px);
+	margin: 1px;
+   	border-width: 0;
+}
+
+button.item_value {
+	background: #bbbbbb;
+	border: #000000 1px solid;
+	border-radius: 4px;
+	padding: 8px;
+}
+
+button.item_value.selected {
+	background: #ffffff;
+	color: #000000;
+	font-weight: bold;
+}
+
+div[aria-describedby="dialog-info"] button:before {
+    content: "\f788";
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    padding-right: 5px;
+}
+div[aria-describedby="dialog-info"].ui-dialog .ui-dialog-buttonpane {
+	border-width: 0;
 }
 
 .takepospay {
@@ -212,7 +245,7 @@ div.description{
 	text-align:center;
 
 	padding-top: 30px;
-    background: -webkit-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,0.98), rgba(255,255,255,1));
+    background: -webkit-linear-gradient(top, rgba(250,250,250,0), rgba(250,250,250,0.5), rgba(250,250,250,0.95), rgba(250,250,250,1));
 }
 
 div.catwatermark{
@@ -233,16 +266,24 @@ table.postablelines tr td {
     padding-top: 3px;
     padding-bottom: 3px;
 }
+
 .posinvoiceline td {
     height: 40px !important;
+    background-color: var(--colorbacklineimpair1);
+}
+
+.postablelines td.linecolht {
+    line-height: 1.3em !important;
 }
 
 div.paymentbordline
 {
-	width:50%;
+	width:calc(50% - 16px);
 	background-color:#888;
 	border-radius: 8px;
 	margin-bottom: 4px;
+	display: inline-block;
+	padding: 5px;
 }
 
 @media only screen and (max-aspect-ratio: 6/4) {
@@ -268,7 +309,7 @@ div.paymentbordline
 .row1withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: calc(50% - 35px);
+	height: calc(45% - 50px);
 	padding-top: 5px;
 }
 
@@ -281,7 +322,7 @@ div.paymentbordline
 .row2withhead{
 	margin: 0 auto;
 	width: 100%;
-	height: 50%;
+	height: 55%;
 }
 
 .div1{
@@ -292,7 +333,7 @@ div.paymentbordline
 	box-sizing: border-box;
 	overflow: auto;
 	/* background-color:white; */
-	padding-top: 0;
+	padding-top: 1px;
 	padding-bottom: 0;
 	padding-right: 5px;
 	padding-left: 5px;
@@ -392,7 +433,7 @@ p.description_content{
 div.description_content {
 	display: -webkit-box;
     -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: <?php echo $conf->global->TAKEPOS_LINES_TO_SHOW;?>;
     overflow: hidden;
     padding-left: 2px;
     padding-right: 2px;
@@ -401,26 +442,59 @@ div.description_content {
 .header{
 	margin: 0 auto;
 	width: 100%;
-	height: 35px;
+	height: 50px;
 	background: rgb(60,70,100);
 }
 
+.topnav-left {
+	float: left;
+}
+.topnav-right {
+
+}
+
+.topnav div.login_block_other, .topnav div.login_block_user {
+	max-width: unset;
+	width: unset;
+}
 .topnav{
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 	background-image: linear-gradient(-45deg, <?php echo colorAdjustBrightness(colorArrayToHex(colorStringToArray($colorbackhmenu1)), '5'); ?>, rgb(<?php echo $colorbackhmenu1 ?>));
 	overflow: hidden;
 	height: 100%;
 }
+.topnav .tmenu {
+    display: block;
+}
 
 .topnav a{
 	float: left;
 	color: #f2f2f2;
-	padding: 6px 16px;
 	text-decoration: none;
+}
+.topnav .login_block_other a {
+	padding: 5px 10px;
+    margin-left: 4px;
+    font-size: 1.3em;
+}
+
+@media screen and (max-width: 767px) {
+	.topnav .login_block_other a {
+		padding: 5px 5px;
+		font-size: 1.2em;
+	}
+}
+
+.topnav-right > a {
 	font-size: 17px;
 }
 
-.topnav a:hover{
+.topnav-left a {
+	padding: 7px 4px 7px 4px;
+    margin: 8px;
+    margin-left: 4px;
+}
+.topnav-left a:hover, .topnav .login_block_other a:hover {
 	background-color: #ddd;
 	color: black;
 }
@@ -434,17 +508,33 @@ div.description_content {
 	color: #000;
 	float: left;
 	border-bottom: none !important;
-	margin-top: 4px;
 	margin-left: 6px;
+	font-size: 1.3em;
+    max-width: 250px;
+    border-radius: 5px;
 }
 
+div#moreinfo, div#infowarehouse {
+    color: #aaa;
+    padding: 0 8px 0 8px;
+}
+
+.productprice {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: var(--colorbackhmenu1);
+    color: var(--colortextbackhmenu);
+    font-size: 2em;
+    padding: 5px;
+    border-radius: 2px;
+    opacity: 0.9;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+
 @media screen and (min-width: 892px) {
-	.calcbutton{
-		font-size: 18px;
-	}
-	.calcbutton2{
-		font-size: 14px;
-	}
 	.actionbutton{
 		font-size: 13px;
 	}
@@ -457,12 +547,6 @@ div.description_content {
 }
 
 @media (max-width: 891px) and (min-width: 386px) {
-	.calcbutton{
-		font-size: 12px;
-	}
-	.calcbutton2{
-		font-size: 9px;
-	}
 	.actionbutton{
 		font-size: 12px;
 	}
@@ -475,12 +559,6 @@ div.description_content {
 }
 
 @media screen and (max-width: 385px){
-	.calcbutton{
-		font-size: 8px;
-	}
-	.calcbutton2{
-		font-size: 7px;
-	}
 	.actionbutton{
 		font-size: 10px;
 	}
@@ -494,7 +572,23 @@ div.description_content {
 
 /* For small screens */
 
+@media screen and (max-width: 1024px) {
+	.topnav input[type="text"] {
+		max-width: 150px;
+	}
+}
+
 @media screen and (max-width: 767px) {
+	.header {
+	    position: sticky;
+	    top: 0;
+	    z-index: 10;
+	}
+
+	.topnav input[type="text"] {
+		max-width: 90px;
+	}
+
 	.topnav-right {
 		float: unset;
 	}
@@ -509,6 +603,14 @@ div.description_content {
 	}
 	div.wrapper2 {
 		width: 25%;
+	}
+
+	.row1withhead{
+		height: calc(45% - 100px);
+	}
+
+	div#moreinfo, div#infowarehouse {
+	    padding: 0 5px 0 5px;
 	}
 
 	div.div1 {
@@ -528,6 +630,7 @@ div.description_content {
 	}
 
 	div.div3 {
+		margin-top: 8px;
 		height: unset;
 	}
 
@@ -539,4 +642,9 @@ div.description_content {
 		font-size: 1.2em;
 	}
 
+	button.actionbutton {
+		min-height: 60px;
+		padding-left: 4px;
+		padding-right: 4px;
+	}
 }

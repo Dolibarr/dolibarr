@@ -55,8 +55,7 @@ if ($action == 'setbankorder') {
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
@@ -67,18 +66,15 @@ if ($action == 'setreportlastnumreleve') {
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
-}
-elseif ($action == 'unsetreportlastnumreleve') {
+} elseif ($action == 'unsetreportlastnumreleve') {
     if (dolibarr_set_const($db, "BANK_REPORT_LAST_NUM_RELEVE", 0, 'chaine', 0, '', $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
@@ -89,18 +85,15 @@ if ($action == 'setbankcolorizemovement') {
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
-}
-elseif ($action == 'unsetbankcolorizemovement') {
+} elseif ($action == 'unsetbankcolorizemovement') {
     if (dolibarr_set_const($db, "BANK_COLORIZE_MOVEMENT", 0, 'chaine', 0, '', $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else {
+    } else {
         dol_print_error($db);
     }
 }
@@ -127,9 +120,7 @@ if ($actionsave)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
         if (empty($errorsaved))	setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -141,8 +132,7 @@ if ($action == 'specimen') {
 
     if ($modele == 'sepamandate') {
         $object = new CompanyBankAccount($db);
-    }
-    else {
+    } else {
         $object = new Account($db);
     }
     $object->initAsSpecimen();
@@ -169,13 +159,11 @@ if ($action == 'specimen') {
         if ($module->write_file($object, $langs) > 0) {
             header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bank&file=SPECIMEN.pdf");
             return;
-        }
-        else {
+        } else {
             setEventMessages($module->error, null, 'errors');
             dol_syslog($module->error, LOG_ERR);
         }
-    }
-    else {
+    } else {
         setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
@@ -184,8 +172,7 @@ if ($action == 'specimen') {
 // Activate a model
 if ($action == 'set') {
     $ret = addDocumentModel($value, $type, $label, $scandir);
-}
-elseif ($action == 'del') {
+} elseif ($action == 'del') {
     $ret = delDocumentModel($value, $type);
     if ($ret > 0) {
         if ($conf->global->BANKADDON_PDF == "$value")
@@ -270,8 +257,7 @@ while ($i < $nbofbank) {
         print '<td class="center">';
         print img_picto($langs->trans("Activated"), 'on');
         print '</td>';
-    }
-    else {
+    } else {
         print '<td class="center"><a href="'.$_SERVER['PHP_SELF'].'?action=setbankorder&amp;value='.$i.'">';
         print img_picto($langs->trans("Disabled"), 'off');
         print '</a></td>';
@@ -308,8 +294,7 @@ if ($resql) {
         array_push($def, $array[0]);
         $i++;
     }
-}
-else {
+} else {
     dol_print_error($db);
 }
 
@@ -359,21 +344,19 @@ foreach ($dirmodels as $reldir) {
                                 print "</td><td>\n";
                                 if (method_exists($module, 'info'))
                                     print $module->info($langs);
-                                else
-                                    print $module->description;
+                                else print $module->description;
                                 print '</td>';
 
                                 // Active
                                 if (in_array($name, $def)) {
                                     print '<td class="center">'."\n";
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
                                     print img_picto($langs->trans("Enabled"), 'switch_on');
                                     print '</a>';
                                     print '</td>';
-                                }
-                                else {
+                                } else {
                                     print '<td class="center">'."\n";
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
                                     print "</td>";
                                 }
 
@@ -381,9 +364,8 @@ foreach ($dirmodels as $reldir) {
                                 print '<td class="center">';
                                 if ($conf->global->BANKADDON_PDF == $name) {
                                     print img_picto($langs->trans("Default"), 'on');
-                                }
-                                else {
-                                    print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+                                } else {
+                                    print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
                                 }
                                 print '</td>';
 
@@ -410,8 +392,7 @@ foreach ($dirmodels as $reldir) {
                                 print '<td class="center">';
                                 if ($module->type == 'pdf') {
                                     print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
-                                }
-                                else {
+                                } else {
                                     print img_object($langs->trans("PreviewNotAvailable"), 'generic');
                                 }
                                 print '</td>';
@@ -447,9 +428,7 @@ if ($conf->global->BANK_COLORIZE_MOVEMENT) {
     print img_picto($langs->trans("Enabled"), 'switch_on');
     print '</a>';
     print '</td>';
-}
-else
-{
+} else {
     print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setbankcolorizemovement">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
     print "</td>";
@@ -508,9 +487,7 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
     print img_picto($langs->trans("Enabled"), 'switch_on');
     print '</a>';
     print '</td>';
-}
-else
-{
+} else {
     print '<td class="center">'."\n";
     print '<a href="'.$_SERVER["PHP_SELF"].'?action=setreportlastnumreleve">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
     print "</td>";

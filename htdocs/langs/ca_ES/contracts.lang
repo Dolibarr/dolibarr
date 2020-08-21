@@ -99,3 +99,6 @@ TypeContact_contrat_internal_SALESREPFOLL=Agent comercial del seguiment del cont
 TypeContact_contrat_external_BILLING=Contacte client de facturació
 TypeContact_contrat_external_CUSTOMER=Contacte client seguiment
 TypeContact_contrat_external_SALESREPSIGN=Contacte client signant del contracte
+HideClosedServiceByDefault=Oculta els serveis tancats per defecte
+ShowClosedServices=Mostra els serveis tancats
+HideClosedServices=Oculta els serveis tancats

@@ -113,12 +113,12 @@ if (empty($reshook))
     	if (!$error)
     	{
     		$object->titre = GETPOST('nouveautitre', 'nohtml');
-    		$object->commentaires = GETPOST('nouveauxcommentaires', 'nohtml');
-    		$object->description = GETPOST('nouveauxcommentaires', 'nohtml');
+    		$object->commentaires = GETPOST('nouveauxcommentaires', 'restricthtml');
+    		$object->description = GETPOST('nouveauxcommentaires', 'restricthtml');
     		$object->mail_admin = GETPOST('nouvelleadresse', 'alpha');
     		$object->date_fin = $expiredate;
-    		$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? true : false;
-    		$object->allow_spy = GETPOST('canseeothersvote', 'alpha') == 'on' ? true : false;
+    		$object->allow_comments = GETPOST('cancomment', 'alpha') == 'on' ? 1 : 0;
+    		$object->allow_spy = GETPOST('canseeothersvote', 'alpha') == 'on' ? 1 : 0;
     		$object->mailsonde = GETPOST('mailsonde', 'alpha') == 'on' ? true : false;
 
     		$res = $object->update($user);
@@ -208,12 +208,13 @@ $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
 
 print '<form name="updatesurvey" action="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="update">';
 
 $head = opensurvey_prepare_head($object);
 
 
-dol_fiche_head($head, 'general', $langs->trans("Survey"), -1, DOL_URL_ROOT.'/opensurvey/img/object_opensurvey.png', 1);
+dol_fiche_head($head, 'general', $langs->trans("Survey"), -1, 'poll');
 
 $morehtmlref = '';
 
@@ -240,20 +241,17 @@ print $langs->trans("Title").'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
-}
-else print dol_htmlentities($object->titre);
+} else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
 // Description
 print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="2">';
 if ($action == 'edit')
 {
-	$doleditor = new DolEditor('nouveauxcommentaires', dol_htmlentities($object->commentaires), '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', 1, 1, 1, ROWS_7, '90%');
 	$doleditor->Create(0, '');
-}
-else
-{
-	 print (dol_textishtml($object->commentaires) ? $object->commentaires : dol_nl2br($object->commentaires, 1, true));
+} else {
+	print (dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
 }
 print '</td></tr>';
 
@@ -263,9 +261,8 @@ if (!$object->fk_user_creat) {
 	print '<tr><td>'.$langs->trans("EMail").'</td><td colspan="2">';
 	if ($action == 'edit')
 	{
-		print '<input type="text" name="nouvelleadresse" size="40" value="'.$object->mail_admin.'">';
-	}
-	else print dol_print_email($object->mail_admin, 0, 0, 1);
+		print '<input type="text" name="nouvelleadresse" class="minwith200" value="'.$object->mail_admin.'">';
+	} else print dol_print_email($object->mail_admin, 0, 0, 1);
 	print '</td></tr>';
 }
 
@@ -274,8 +271,7 @@ print '<tr><td>'.$langs->trans('ToReceiveEMailForEachVote').'</td><td colspan="2
 if ($action == 'edit')
 {
 	print '<input type="checkbox" name="mailsonde" '.($object->mailsonde ? 'checked="checked"' : '').'">';
-}
-else {
+} else {
 	print yn($object->mailsonde);
 
 	//If option is active and linked user does not have an email, we show a warning
@@ -292,8 +288,7 @@ print '<tr><td>'.$langs->trans('CanComment').'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	print '<input type="checkbox" name="cancomment" '.($object->allow_comments ? 'checked="checked"' : '').'">';
-}
-else print yn($object->allow_comments);
+} else print yn($object->allow_comments);
 print '</td></tr>';
 
 // Users can see others vote
@@ -301,15 +296,13 @@ print '<tr><td>'.$langs->trans('CanSeeOthersVote').'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	print '<input type="checkbox" name="canseeothersvote" '.($object->allow_spy ? 'checked="checked"' : '').'">';
-}
-else print yn($object->allow_spy);
+} else print yn($object->allow_spy);
 print '</td></tr>';
 
 // Expire date
 print '<tr><td>'.$langs->trans('ExpireDate').'</td><td colspan="2">';
 if ($action == 'edit') print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
-else
-{
+else {
     print dol_print_date($object->date_fin, 'day');
     if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) print img_warning($langs->trans("Expired"));
 }
@@ -391,10 +384,9 @@ if ($action == 'delete')
 
 
 
-print '<br>';
-
 
 print '<form name="formulaire5" action="#" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print load_fiche_titre($langs->trans("CommentsOfVoters"), '', '');
 
@@ -404,14 +396,12 @@ $comments = $object->getComments();
 if ($comments) {
 	foreach ($comments as $comment) {
 		if ($user->rights->opensurvey->write) {
-			print '<a href="'.dol_buildpath('/opensurvey/card.php', 1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+			print '<a href="'.dol_buildpath('/opensurvey/card.php', 1).'?deletecomment='.$comment->id_comment.'&id='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', '', 0).'</a> ';
 		}
 
 		print dol_htmlentities($comment->usercomment).': '.dol_nl2br(dol_htmlentities($comment->comment))." <br>";
 	}
-}
-else
-{
+} else {
 	print $langs->trans("NoCommentYet").'<br>';
 }
 
@@ -421,7 +411,7 @@ print '<br>';
 if ($object->allow_comments) {
 	print $langs->trans("AddACommentForPoll").'<br>';
 	print '<textarea name="comment" rows="2" class="quatrevingtpercent"></textarea><br>'."\n";
-	print $langs->trans("Name").': <input type="text" size="50" name="commentuser" value="'.$user->getFullName($langs).'"><br>'."\n";
+	print $langs->trans("Name").': <input type="text" class="minwidth300" name="commentuser" value="'.$user->getFullName($langs).'"> '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	if (isset($erreur_commentaire_vide) && $erreur_commentaire_vide == "yes") {
 		print "<font color=#FF0000>".$langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name"))."</font>";

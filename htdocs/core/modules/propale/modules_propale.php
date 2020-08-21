@@ -28,7 +28,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requis car utilise dans les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Requis car utilise dans les classes qui heritent
 
 
 /**
@@ -39,7 +39,7 @@ abstract class ModelePDFPropales extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -55,11 +55,11 @@ abstract class ModelePDFPropales extends CommonDocGenerator
         // phpcs:enable
 		global $conf;
 
-		$type='propal';
-		$liste=array();
+		$type = 'propal';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db, $type, $maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -74,7 +74,7 @@ abstract class ModeleNumRefPropales
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * Return if a module can be used or not
@@ -111,8 +111,8 @@ abstract class ModeleNumRefPropales
 	}
 
 	/**
-	 *  Checks if the numbers already in force in the data base do not
-	 *  cause conflicts that would prevent this numbering from working.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
 	 *  @return     boolean     false if conflict, true if ok
 	 */

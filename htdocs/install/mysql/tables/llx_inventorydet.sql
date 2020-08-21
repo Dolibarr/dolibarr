@@ -25,9 +25,9 @@ tms timestamp,
 fk_inventory integer DEFAULT 0, 
 fk_warehouse integer DEFAULT 0,
 fk_product integer DEFAULT 0,  
-batch varchar(30) DEFAULT NULL,	 -- Lot or serial number
+batch varchar(128) DEFAULT NULL,	 -- Lot or serial number
 qty_stock double DEFAULT NULL,   -- The targeted value. can be filled during draft edition
 qty_view double DEFAULT NULL, 	   -- must be filled once regulation is done
 qty_regulated double DEFAULT NULL  -- must be filled once regulation is done
 ) 
-ENGINE=InnoDB;
+ENGINE=innodb;

@@ -22,7 +22,7 @@
  *  \ingroup    produit
  *  \brief      File to describe module to manage dynamic prices in products
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -51,7 +51,7 @@ class modDynamicPrices extends DolibarrModules
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
-        $this->picto='technic';
+        $this->picto = 'dynamicprice';
 
         // Data directories to create when module is enabled
         $this->dirs = array();
@@ -82,6 +82,6 @@ class modDynamicPrices extends DolibarrModules
         //------------
         $this->rights = array();
         $this->rights_class = 'dynamicprices';
-        $r=0;
+        $r = 0;
     }
 }

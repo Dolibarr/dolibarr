@@ -58,7 +58,7 @@ $socid = GETPOST('socid', 'int');
 $selected = GETPOST('orders_to_invoice');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 if (!$sortfield)
 	$sortfield = 'c.rowid';
@@ -83,9 +83,7 @@ if ($action == 'create')
 	if (!GETPOST('createbill'))
 	{
 		$action = '';
-	}
-	else
-	{
+	} else {
 		if (!is_array($selected))
 		{
 			//$error++;
@@ -327,8 +325,6 @@ if ($action == 'create' && !$error) {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">'."\n";
 	print '<input name="ref" type="hidden" value="provisoire">';
-	print '<input name="ref_client" type="hidden" value="'.$ref_client.'">';
-	print '<input name="ref_int" type="hidden" value="'.$ref_int.'">';
 	print '<input type="hidden" name="origin" value="'.GETPOST('origin').'">';
 	print '<input type="hidden" name="originid" value="'.GETPOST('originid').'">';
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
@@ -450,9 +446,7 @@ if (($action != 'create' && $action != 'add') && !$error) {
 	if (empty($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS))
 	{
 		$sql .= " AND c.fk_statut IN (".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY.")"; // Must match filter in htdocs/fourn/card.php
-	}
-	else
-	{
+	} else {
 		// CommandeFournisseur::STATUS_ORDERSENT.", ".CommandeFournisseur::STATUS_RECEIVED_PARTIALLY.", ".CommandeFournisseur::STATUS_RECEIVED_COMPLETELY
 		$sql .= " AND c.fk_statut IN (".$db->escape($conf->global->SUPPLIER_ORDER_TO_INVOICE_STATUS).")";
 	}

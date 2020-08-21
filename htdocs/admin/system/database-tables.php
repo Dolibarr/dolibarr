@@ -28,21 +28,27 @@ require '../../main.inc.php';
 
 $langs->load("admin");
 
-if (!$user->admin)
+if (!$user->admin) {
 	accessforbidden();
+}
 
 $action = GETPOST('action', 'alpha');
 
 
 if ($action == 'convert')
 {
-    $sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ENGINE=INNODB";
+	$sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ENGINE=INNODB";
 	$db->query($sql);
 }
 if ($action == 'convertutf8')
 {
-    $sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
-    $db->query($sql);
+	$sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+	$db->query($sql);
+}
+if ($action == 'convertdynamic')
+{
+	$sql = "ALTER TABLE ".$db->escape(GETPOST("table", "aZ09"))." ROW_FORMAT=DYNAMIC;";
+	$db->query($sql);
 }
 
 
@@ -61,18 +67,15 @@ if (preg_match('/mysql/i', $conf->db->type))
 {
 	$sql = "SHOW TABLE STATUS";
 	$base = 1;
-}
-elseif ($conf->db->type == 'pgsql')
+} elseif ($conf->db->type == 'pgsql')
 {
 	$sql = "SELECT conname, contype FROM pg_constraint;";
 	$base = 2;
-}
-elseif ($conf->db->type == 'mssql')
+} elseif ($conf->db->type == 'mssql')
 {
 	//$sqls[0] = "";
 	//$base=3;
-}
-elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
+} elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
 {
 	//$sql = "SELECT name, type FROM sqlite_master";
 	$base = 4;
@@ -82,13 +85,11 @@ elseif ($conf->db->type == 'sqlite' || $conf->db->type == 'sqlite3')
 if (!$base)
 {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
-}
-else
-{
+} else {
 	if ($base == 1)
 	{
-        print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
@@ -117,15 +118,17 @@ else
 
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
-				if (isset($obj->Engine) && $obj->Engine == "MyISAM")
-				{
-				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDB</a></td>';
-				}
-				else
-				{
+				if (isset($obj->Engine) && $obj->Engine == "MyISAM") {
+				    print '<td><a class="reposition" href="database-tables.php?action=convert&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' InnoDb</a></td>';
+				} else {
 					print '<td>&nbsp;</td>';
 				}
-				print '<td>'.$obj->Row_format.'</td>';
+				print '<td>';
+				print $obj->Row_format;
+				if (isset($obj->Row_format) && (in_array($obj->Row_format, array("Compact")))) {
+					print '<br><a class="reposition" href="database-tables.php?action=convertdynamic&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' Dynamic</a>';
+				}
+				print '</td>';
 				print '<td align="right">'.$obj->Rows.'</td>';
 				print '<td align="right">'.$obj->Avg_row_length.'</td>';
 				print '<td align="right">'.$obj->Data_length.'</td>';
@@ -134,9 +137,8 @@ else
 				print '<td align="right">'.$obj->Auto_increment.'</td>';
 				print '<td align="right">'.$obj->Check_time.'</td>';
 				print '<td align="right">'.$obj->Collation;
-				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci"))))
-				{
-				    print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';
+				if (isset($obj->Collation) && (in_array($obj->Collation, array("utf8mb4_general_ci", "utf8mb4_unicode_ci", "latin1_swedish_ci")))) {
+					print '<br><a class="reposition" href="database-tables.php?action=convertutf8&amp;table='.$obj->Name.'">'.$langs->trans("Convert").' UTF8</a>';
 				}
 				print '</td>';
 				print '</tr>';
@@ -149,8 +151,8 @@ else
 
 	if ($base == 2)
 	{
-        print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>Nb of tuples</td>';
@@ -189,8 +191,8 @@ else
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-        print '<div class="div-table-responsive-no-min">';
-	    print '<table class="noborder">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';

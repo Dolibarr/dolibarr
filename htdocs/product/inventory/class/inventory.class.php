@@ -50,6 +50,11 @@ class Inventory extends CommonObject
 	public $ismultientitymanaged = 1;
 
 	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 1;
+
+	/**
 	 * @var string String with name of icon for inventory
 	 */
 	public $picto = 'stock';
@@ -93,13 +98,13 @@ class Inventory extends CommonObject
 		'fk_product'     => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'InventoryForASpecificProduct'),
 		'date_inventory' => array('type'=>'date', 'label'=>'DateValue', 'visible'=>1, 'enabled'=>1, 'position'=>35),
 
-		'date_creation' => array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
-		'tms'           => array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-		'date_validation' => array('type'=>'datetime',  'label'=>'DateValidation',   'visible'=>-2, 'enabled'=>1, 'position'=>502),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php',    'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510, 'foreignkey'=>'user.rowid'),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php',    'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
-		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php',    'label'=>'UserValidation',   'visible'=>-2, 'enabled'=>1, 'position'=>512),
-		'import_key'    => array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
+		'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
+		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>502),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>510, 'foreignkey'=>'user.rowid'),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'visible'=>-2, 'enabled'=>1, 'position'=>512),
+		'import_key'    => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0, 'position'=>1000),
 
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>4, 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'default'=>0, 'index'=>1, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Validated', 2=>'Recorded', 9=>'Canceled'))
 	);
@@ -190,11 +195,11 @@ class Inventory extends CommonObject
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	protected $childtables=array();
+	protected $childtables = array();
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	protected $childtablesoncascade=array('inventorydet');
+	protected $childtablesoncascade = array('inventorydet');
 
 	/**
 	 * @var InventoryLine[]     Array of subtable lines
@@ -228,7 +233,119 @@ class Inventory extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		return $this->createCommon($user, $notrigger);
+		$result = $this->createCommon($user, $notrigger);
+
+		return $result;
+	}
+
+	/**
+	 * Validate inventory (start it)
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function validate(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		$result = 0;
+
+		if ($this->status == self::STATUS_DRAFT) {
+			// Delete inventory
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+			$resql = $this->db->query($sql);
+			if (!$resql) {
+				$this->error = $this->db->lasterror();
+				$this->db->rollback();
+				return -1;
+			}
+
+			// Scan existing stock to prefill the inventory
+			$sql = 'SELECT ps.rowid, ps.fk_entrepot as fk_warehouse, ps.fk_product, ps.reel,';
+			$sql .= ' pb.batch, pb.qty';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'product_stock as ps';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_batch as pb ON pb.fk_product_stock = ps.rowid,';
+			$sql .= ' '.MAIN_DB_PREFIX.'product as p, '.MAIN_DB_PREFIX.'entrepot as e';
+			$sql .= ' WHERE p.entity IN ('.getEntity('product').')';
+			$sql .= ' AND ps.fk_product = p.rowid AND ps.fk_entrepot = e.rowid';
+			if (empty($conf->global->STOCK_SUPPORTS_SERVICES)) $sql .= " AND p.fk_product_type = 0";
+			if ($this->fk_product > 0) $sql .= ' AND ps.fk_product = '.$this->fk_product;
+			if ($this->fk_warehouse > 0) $sql .= ' AND ps.fk_entrepot = '.$this->fk_warehouse;
+
+			$inventoryline = new InventoryLine($this->db);
+
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+
+					$inventoryline->fk_inventory = $this->id;
+					$inventoryline->fk_warehouse = $obj->fk_warehouse;
+					$inventoryline->fk_product = $obj->fk_product;
+					$inventoryline->batch = $obj->batch;
+					$inventoryline->qty_stock = ($obj->batch ? $obj->qty : $obj->reel);		// If there is batch detail, we take qty for batch, else global qty
+					$inventoryline->datec = dol_now();
+
+					$resultline = $inventoryline->create($user);
+					if ($resultline <= 0) {
+						$this->error = $inventoryline->error;
+						$this->errors = $inventoryline->errors;
+						$result = -1;
+						break;
+					}
+
+					$i++;
+				}
+			} else {
+				$result = -1;
+				$this->error = $this->db->lasterror();
+			}
+		}
+
+		if ($result >= 0) {
+			$result = $this->setStatut($this::STATUS_VALIDATED, null, '', 'INVENTORY_VALIDATED');
+		}
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
+	}
+
+	/**
+	 * Go back to draft
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function setDraft(User $user, $notrigger = false)
+	{
+		$this->db->begin();
+
+		// Delete inventory
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'inventorydet WHERE fk_inventory = '.$this->id;
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+
+		$result = $this->setStatut($this::STATUS_DRAFT, null, '', 'INVENTORY_DRAFT');
+
+		if ($result > 0) {
+			$this->db->commit();
+		} else {
+			$this->db->rollback();
+		}
 	}
 
 	/**
@@ -335,6 +452,25 @@ class Inventory extends CommonObject
 	}
 
 	/**
+	 *  Delete a line of object in database
+	 *
+	 *	@param  User	$user       User that delete
+	 *  @param	int		$idline		Id of line to delete
+	 *  @param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
+	 *  @return int         		>0 if OK, <0 if KO
+	 */
+	public function deleteLine(User $user, $idline, $notrigger = false)
+	{
+		if ($this->status < 0)
+		{
+			$this->error = 'ErrorDeleteLineNotAllowedByObjectStatus';
+			return -2;
+		}
+
+		return $this->deleteLineCommon($user, $idline, $notrigger);
+	}
+
+	/**
 	 *  Return a link to the object card (with optionaly the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -371,8 +507,7 @@ class Inventory extends CommonObject
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart .= $linkclose.'>';
@@ -413,10 +548,13 @@ class Inventory extends CommonObject
 
 		$labelStatus = array();
 		$labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+		$labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' ('.$langs->trans('Started').')';
 		$labelStatus[self::STATUS_CANCELED] = $langs->trans('Canceled');
+		$labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+		$labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Started');
+		$labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Canceled');
 
-		return dolGetStatus($labelStatus[$status], $labelStatus[$status], '', 'status'.$status, $mode);
+		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', 'status'.$status, $mode);
 	}
 
 	/**
@@ -465,9 +603,7 @@ class Inventory extends CommonObject
 			}
 
 			$this->db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -505,10 +641,14 @@ class InventoryLine extends CommonObjectLine
     public $ismultientitymanaged = 0;
 
     /**
+     * @var int  Does object support extrafields ? 0=No, 1=Yes
+     */
+    public $isextrafieldmanaged = 0;
+
+    /**
      * @var string String with name of icon for inventory
      */
     public $picto = 'stock';
-
 
     /**
      *  'type' if the field format.
@@ -531,17 +671,17 @@ class InventoryLine extends CommonObjectLine
     /**
      * @var array  Array with all fields and their property
      */
-    public $fields=array(
+    public $fields = array(
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'visible'=>-1, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>'Id',),
         'fk_inventory'  => array('type'=>'integer:Inventory:product/inventory/class/inventory.class.php', 'label'=>'Inventory', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToInventory'),
         'fk_warehouse'  => array('type'=>'integer:Entrepot:product/stock/class/entrepot.class.php', 'label'=>'Warehouse', 'visible'=>1, 'enabled'=>1, 'position'=>30, 'index'=>1, 'help'=>'LinkToThirparty'),
         'fk_product'    => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Product', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
         'batch'         => array('type'=>'string', 'label'=>'Batch', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'LinkToProduct'),
-        'datec'         => array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
-        'tms'           => array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
-        'qty_stock'     => array('type'=>'double', 'label'=>'QtyFound',  'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'Qty we found/want (to define during draft edition)'),
+        'datec'         => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>500),
+        'tms'           => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>501),
+        'qty_stock'     => array('type'=>'double', 'label'=>'QtyFound', 'visible'=>1, 'enabled'=>1, 'position'=>32, 'index'=>1, 'help'=>'Qty we found/want (to define during draft edition)'),
         'qty_view'      => array('type'=>'double', 'label'=>'QtyBefore', 'visible'=>1, 'enabled'=>1, 'position'=>33, 'index'=>1, 'help'=>'Qty before (filled once movements are validated)'),
-        'qty_regulated' => array('type'=>'double', 'label'=>'QtyDelta',  'visible'=>1, 'enabled'=>1, 'position'=>34, 'index'=>1, 'help'=>'Qty aadded or removed (filled once movements are validated)'),
+        'qty_regulated' => array('type'=>'double', 'label'=>'QtyDelta', 'visible'=>1, 'enabled'=>1, 'position'=>34, 'index'=>1, 'help'=>'Qty aadded or removed (filled once movements are validated)'),
     );
 
     /**
@@ -549,6 +689,28 @@ class InventoryLine extends CommonObjectLine
      */
     public $rowid;
 
+    public $fk_inventory;
+    public $fk_warehouse;
+    public $fk_product;
+    public $batch;
+    public $datec;
+    public $tms;
+    public $qty_stock;
+    public $qty_view;
+    public $qty_regulated;
+
+
+    /**
+     * Create object in database
+     *
+     * @param User $user       User that creates
+     * @param bool $notrigger  false=launch triggers after, true=disable triggers
+     * @return int             <0 if KO, >0 if OK
+     */
+    public function create(User $user, $notrigger = false)
+    {
+    	return $this->createCommon($user, $notrigger);
+    }
 
 	/**
 	 * Load object in memory from the database

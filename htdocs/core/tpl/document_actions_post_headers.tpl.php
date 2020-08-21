@@ -23,6 +23,7 @@
 // $permissiontoadd = permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
 // $modulepart  = for download
 // $param       = param to add to download links
+// $moreparam   = param to add to download link for the form_attach_new_file function
 // $upload_dir
 // $object
 // $filearray
@@ -37,17 +38,17 @@ if (empty($langs) || !is_object($langs))
 
 
 $langs->load("link");
-if (empty($relativepathwithnofile)) $relativepathwithnofile='';
+if (empty($relativepathwithnofile)) $relativepathwithnofile = '';
 
-if (! isset($permission)) $permission = $permissiontoadd;
-if (! isset($permtoedit)) $permtoedit = $permissiontoadd;
+if (!isset($permission)) $permission = $permissiontoadd;
+if (!isset($permtoedit)) $permtoedit = $permissiontoadd;
 
 // Drag and drop for up and down allowed on product, thirdparty, ...
 // The drag and drop call the page core/ajax/row.php
 // If you enable the move up/down of files here, check that page that include template set its sortorder on 'position_name' instead of 'name'
 // Also the object->fk_element must be defined.
-$disablemove=1;
-if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) $disablemove=0;
+$disablemove = 1;
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) $disablemove = 0;
 
 
 
@@ -69,13 +70,14 @@ if ($action == 'delete')
 	);
 }
 
-$formfile=new FormFile($db);
+$formfile = new FormFile($db);
+
 
 // We define var to enable the feature to add prefix of uploaded files.
 // Caller of this include can make
 // $savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
-	$savingdocmask='';
+	$savingdocmask = '';
 	if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX)) {
 		//var_dump($modulepart);
 		if (in_array($modulepart, array(
@@ -92,13 +94,14 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 			'project_task',
 			'expensereport',
 			'tax',
+			'tax-vat',
 			'produit',
 			'product_batch',
 			'bom',
 			'mrp'
 		)))
 		{
-			$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
+			$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 		}
 		/*if (in_array($modulepart,array('member')))
 		{
@@ -109,7 +112,7 @@ if (!isset($savingdocmask) || !empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_
 
 // Show upload form (document and links)
 $formfile->form_attach_new_file(
-    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject)?'':'&withproject=1'),
+    $_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
     '',
     0,
     0,

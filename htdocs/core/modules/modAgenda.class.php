@@ -97,9 +97,7 @@ class modAgenda extends DolibarrModules
 		        //if (preg_match('/^_MODIFY/',$obj->code)) continue;    // We don't track such events by default.
 		        $this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 		    }
-		}
-		else
-		{
+		} else {
 		    dol_print_error($this->db->lasterror());
 		}
 
@@ -325,7 +323,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'List',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda',
+			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda',
 			'langs'=>'agenda',
 			'position'=>110,
 			'perms'=>'$user->rights->agenda->myactions->read',
@@ -339,7 +337,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuToDoMyActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
+			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>111,
 			'perms'=>'$user->rights->agenda->myactions->read',
@@ -353,7 +351,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuDoneMyActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
+			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filter=mine',
 			'langs'=>'agenda',
 			'position'=>112,
 			'perms'=>'$user->rights->agenda->myactions->read',
@@ -367,7 +365,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuToDoActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
+			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=todo&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>113,
 			'perms'=>'$user->rights->agenda->allactions->read',
@@ -381,7 +379,7 @@ class modAgenda extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'MenuDoneActions',
 			'mainmenu'=>'agenda',
-			'url'=>'/comm/action/list.php?mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
+			'url'=>'/comm/action/list.php?action=show_list&amp;mainmenu=agenda&amp;leftmenu=agenda&amp;status=done&amp;filtert=-1',
 			'langs'=>'agenda',
 			'position'=>114,
 			'perms'=>'$user->rights->agenda->allactions->read',

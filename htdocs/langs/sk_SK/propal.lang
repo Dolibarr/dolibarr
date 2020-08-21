@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Zákazník faktúra kontakt
 TypeContact_propal_external_CUSTOMER=Kontakt so zákazníkom nasledujúce vypracovaného návrhu
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Predvolené model, tvorba
 DefaultModelPropalToBill=Predvolená šablóna pri zatváraní obchodnej návrh (bude faktúrovať)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Predvolená šablóna pri zatváraní obchodnej návrh 
 ProposalCustomerSignature=Písomná akceptácia, firemná pečiatka, dátum a podpis
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

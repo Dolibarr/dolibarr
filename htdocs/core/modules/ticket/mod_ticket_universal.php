@@ -43,14 +43,14 @@ class mod_ticket_universal extends ModeleNumRefTicket
     /**
 	 * @var string Nom du modele
 	 * @deprecated
-	 * @see name
+	 * @see $name
 	 */
-	public $nom='Universal';
+	public $nom = 'Universal';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Universal';
+	public $name = 'Universal';
 
     /**
      *  Returns the description of the numbering model
@@ -62,13 +62,13 @@ class mod_ticket_universal extends ModeleNumRefTicket
         global $db, $conf, $langs;
 
         // Load translation files required by the page
-        $langs->loadLangs(array("ticket","admin"));
+        $langs->loadLangs(array("ticket", "admin"));
 
         $form = new Form($db);
 
-        $texte = $langs->trans('GenericNumRefModelDesc') . "<br>\n";
-        $texte .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
-        $texte .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+        $texte = $langs->trans('GenericNumRefModelDesc')."<br>\n";
+        $texte .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+        $texte .= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         $texte .= '<input type="hidden" name="action" value="updateMask">';
         $texte .= '<input type="hidden" name="maskconstticket" value="TICKET_UNIVERSAL_MASK">';
         $texte .= '<table class="nobordernopadding" width="100%">';
@@ -80,10 +80,10 @@ class mod_ticket_universal extends ModeleNumRefTicket
         $tooltip .= $langs->trans("GenericMaskCodes5");
 
         // Parametrage du prefix
-        $texte .= '<tr><td>' . $langs->trans("Mask") . ':</td>';
-        $texte .= '<td class="right">' . $form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="' . $conf->global->TICKET_UNIVERSAL_MASK . '">', $tooltip, 1, 1) . '</td>';
+        $texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
+        $texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="'.$conf->global->TICKET_UNIVERSAL_MASK.'">', $tooltip, 1, 1).'</td>';
 
-        $texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="Button"></td>';
+        $texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
 
         $texte .= '</tr>';
 
@@ -124,7 +124,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
     {
         global $db, $conf;
 
-        include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
         // On defini critere recherche compteur
         $mask = $conf->global->TICKET_UNIVERSAL_MASK;

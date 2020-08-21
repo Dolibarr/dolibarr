@@ -59,7 +59,7 @@ if (!empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
-$page = GETPOST('page', 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -116,9 +116,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergrou
 if (!empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && !$user->entity)))
 {
 	$sql .= " WHERE g.entity IS NOT NULL";
-}
-else
-{
+} else {
 	$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 }
 if (!empty($search_group)) natural_search(array("g.nom", "g.note"), $search_group);
@@ -135,15 +133,15 @@ if ($resql)
 
     $i = 0;
 
-    $param="&amp;search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
-    if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+    $param = "&amp;search_group=".urlencode($search_group)."&amp;sall=".urlencode($sall);
+    if ($optioncss != '') $param .= '&amp;optioncss='.$optioncss;
 
     $text = $langs->trans("ListOfGroups");
 
-    $newcardbutton='';
+    $newcardbutton = '';
     if ($caneditperms)
     {
-        $newcardbutton.= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
+        $newcardbutton .= dolGetButtonTitle($langs->trans('NewGroup'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=');
     }
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
@@ -152,11 +150,10 @@ if ($resql)
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="mode" value="'.$mode.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'object_group', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
     if ($sall)
     {
@@ -222,9 +219,7 @@ if ($resql)
     print "</form>\n";
 
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

@@ -57,14 +57,10 @@ if ($action == 'updateMask')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'specimen')
+} elseif ($action == 'specimen')
 {
 	$modele = GETPOST('module', 'alpha');
 
@@ -95,15 +91,11 @@ elseif ($action == 'specimen')
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=bom&file=SPECIMEN.pdf");
 			return;
-		}
-		else
-		{
+		} else {
 			setEventMessages($module->error, null, 'errors');
 			dol_syslog($module->error, LOG_ERR);
 		}
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
@@ -113,9 +105,7 @@ elseif ($action == 'specimen')
 elseif ($action == 'set')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
-}
-
-elseif ($action == 'del')
+} elseif ($action == 'del')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -140,17 +130,13 @@ elseif ($action == 'setdoc')
 	{
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
-}
-
-elseif ($action == 'setmod')
+} elseif ($action == 'setmod')
 {
 	// TODO Check if numbering module chosen can be activated
 	// by calling method canBeActivated
 
 	dolibarr_set_const($db, "BOM_ADDON", $value, 'chaine', 0, '', $conf->entity);
-}
-
-elseif ($action == 'set_BOM_DRAFT_WATERMARK')
+} elseif ($action == 'set_BOM_DRAFT_WATERMARK')
 {
 	$draft = GETPOST("BOM_DRAFT_WATERMARK");
 	$res = dolibarr_set_const($db, "BOM_DRAFT_WATERMARK", trim($draft), 'chaine', 0, '', $conf->entity);
@@ -160,14 +146,10 @@ elseif ($action == 'set_BOM_DRAFT_WATERMARK')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
-}
-
-elseif ($action == 'set_BOM_FREE_TEXT')
+} elseif ($action == 'set_BOM_FREE_TEXT')
 {
 	$freetext = GETPOST("BOM_FREE_TEXT", 'none'); // No alpha here, we want exact string
 
@@ -178,9 +160,7 @@ elseif ($action == 'set_BOM_FREE_TEXT')
  	if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
@@ -261,9 +241,7 @@ foreach ($dirmodels as $reldir)
 						if ($conf->global->BOM_ADDON == $file)
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
+						} else {
 							print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
@@ -327,9 +305,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -394,15 +370,13 @@ foreach ($dirmodels as $reldir)
 	                            if (in_array($name, $def))
 	                            {
 	                            	print '<td class="center">'."\n";
-	                            	print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
+	                            	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=del&value='.$name.'">';
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print '<td class="center">'."\n";
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+	                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
 	                            }
 
@@ -411,10 +385,8 @@ foreach ($dirmodels as $reldir)
 	                            if ($conf->global->BOM_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else
-	                            {
-	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	                            } else {
+	                                print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scan_dir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
 
@@ -441,9 +413,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'bill').'</a>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';
@@ -488,9 +458,7 @@ $variablename = 'BOM_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
     print '<textarea name="'.$variablename.'" class="flat" cols="120">'.$conf->global->$variablename.'</textarea>';
-}
-else
-{
+} else {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
     $doleditor = new DolEditor($variablename, $conf->global->$variablename, '', 80, 'dolibarr_notes');
     print $doleditor->Create();

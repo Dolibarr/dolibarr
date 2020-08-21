@@ -1,17 +1,18 @@
 # Dolibarr language file - en_US - hrm
 # Admin
-HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
-Establishments=Establishments
-Establishment=Establishment
-NewEstablishment=New establishment
-DeleteEstablishment=Delete establishment
-ConfirmDeleteEstablishment=Are-you sure to delete this establishment?
-OpenEtablishment=Open establishment
-CloseEtablishment=Close establishment
+HRM_EMAIL_EXTERNAL_SERVICE=E-mail a HRM (emberi erőforrás) külső szolgáltatásának megakadályozására
+Establishments=Létesítmények
+Establishment=Létesítmény
+NewEstablishment=Új létesítmény
+DeleteEstablishment=A létesítmény törlése
+ConfirmDeleteEstablishment=Biztosan törli ezt a létesítményt?
+OpenEtablishment=Létesítmény megnyitása
+CloseEtablishment=Létesítmény lezárása
 # Dictionary
-DictionaryDepartment=HRM - Department list
-DictionaryFunction=HRM - Function list
+DictionaryPublicHolidays=HRM - ünnepnapok
+DictionaryDepartment=HRM - Osztálylista
+DictionaryFunction=HRM - Job positions
 # Module
-Employees=Employees
+Employees=Alkalmazottak
 Employee=Foglalkoztató
-NewEmployee=New employee
+NewEmployee=Új alkalmazott

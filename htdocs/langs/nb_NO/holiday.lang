@@ -15,6 +15,7 @@ CancelCP=Kansellert
 RefuseCP=Nektet
 ValidatorCP=Godkjenner
 ListeCP=Liste over permisjoner
+Leave=Feriesøknad
 LeaveId=Ferie-ID
 ReviewedByCP=Vil bli godkjent av
 UserID=Bruker-ID

@@ -24,8 +24,8 @@ CREATE TABLE llx_product_batch (
   fk_product_stock integer NOT NULL,
   eatby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
   sellby datetime DEFAULT NULL,			-- deprecated. should not be used here but should be stored into a table llx_product_lot
-  batch varchar(30) NOT NULL,
+  batch varchar(128) NOT NULL,
   qty double NOT NULL DEFAULT 0,
   import_key varchar(14) DEFAULT NULL
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

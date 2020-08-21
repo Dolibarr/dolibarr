@@ -77,8 +77,7 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans('MyObject'), $help_url);
 
-if ($id > 0 || !empty($ref))
-{
+if ($id > 0 || !empty($ref)) {
 	$object->fetch_thirdparty();
 
 	$head = myobjectPrepareHead($object);

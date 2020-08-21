@@ -68,9 +68,7 @@ if ($fielvalue)
 {
 	if ($user->socid) $socid = $user->socid;
 	$result = restrictedArea($user, 'banque', $fieldvalue, 'bank_account&bank_account', '', '', $fieldtype);
-}
-else
-{
+} else {
 	if ($user->socid) $socid = $user->socid;
 	$result = restrictedArea($user, 'banque');
 }
@@ -98,7 +96,7 @@ if (empty($dateop)) $dateop = -1;
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 $pageplusone = GETPOST("pageplusone", 'int');
 if ($pageplusone) $page = $pageplusone - 1;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
@@ -107,14 +105,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (!$sortorder) $sortorder = 'desc,desc,desc';
 if (!$sortfield) $sortfield = 'b.datev,b.dateo,b.rowid';
-
-$mode_balance_ok = false;
-//if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))    // TODO Manage balance when account not selected
-if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
-{
-    $sortfield = 'b.datev,b.dateo,b.rowid';
-    if ($id > 0 || !empty($ref) || $search_account > 0) $mode_balance_ok = true;
-}
 
 $object = new Account($db);
 if ($id > 0 || !empty($ref))
@@ -130,6 +120,13 @@ if ($id > 0 || !empty($ref))
     }
 }
 
+$mode_balance_ok = false;
+//if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))    // TODO Manage balance when account not selected
+if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
+{
+	$sortfield = 'b.datev,b.dateo,b.rowid';
+	if ($id > 0 || !empty($ref) || $search_account > 0) $mode_balance_ok = true;
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
@@ -242,16 +239,12 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
                     }
                 }
             }
-        }
-        else
-        {
+        } else {
             $error++;
             $langs->load("errors");
             setEventMessages($langs->trans("NoRecordSelected"), null, 'errors');
         }
-    }
-    else
-    {
+    } else {
         $error++;
         $langs->load("errors");
         setEventMessages($langs->trans("ErrorPleaseTypeBankTransactionReportName"), null, 'errors');
@@ -287,9 +280,7 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
     if (price2num($_POST["addcredit"]) > 0)
     {
         $amount = price2num($_POST["addcredit"]);
-    }
-    else
-    {
+    } else {
         $amount = - price2num($_POST["adddebit"]);
     }
 
@@ -338,14 +329,10 @@ if (GETPOST('save') && !$cancel && $user->rights->banque->modifier)
             setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
             header("Location: ".$_SERVER['PHP_SELF'].($id ? "?id=".$id : ''));
             exit;
-        }
-        else
-        {
+        } else {
             setEventMessages($object->error, $object->errors, 'errors');
         }
-    }
-    else
-    {
+    } else {
         $action = 'addline';
     }
 }
@@ -469,9 +456,7 @@ if ($id > 0 || !empty($ref))
             }
         }
     }
-}
-else
-{
+} else {
 	llxHeader('', $langs->trans("BankTransactions"), '', '', 0, 0, array(), array(), $param);
 }
 
@@ -574,6 +559,7 @@ if ($page >= $nbtotalofpages)
     if ($page < 0) $page = 0;
 }
 
+
 // If not account defined $mode_balance_ok=false
 if (empty($search_account)) $mode_balance_ok = false;
 // If a search is done $mode_balance_ok=false
@@ -583,7 +569,7 @@ if (!empty($search_type)) $mode_balance_ok = false;
 if (!empty($search_debit)) $mode_balance_ok = false;
 if (!empty($search_credit)) $mode_balance_ok = false;
 if (!empty($search_thirdparty)) $mode_balance_ok = false;
-if ($search_conciliated != '') $mode_balance_ok = false;
+if ($search_conciliated != '' && $search_conciliated != '-1') $mode_balance_ok = false;
 if (!empty($search_num_releve)) $mode_balance_ok = false;
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -674,9 +660,7 @@ if ($resql)
 	        if ($numr >= $nbmax) $liste = "... &nbsp; ".$liste;
 	        print $liste;
 	        if ($numr <= 0) print '<b>'.$langs->trans("None").'</b>';
-	    }
-	    else
-	    {
+	    } else {
 	        dol_print_error($db);
 	    }
 
@@ -751,8 +735,8 @@ if ($resql)
 			print '</td>';
 		}*/
 		print '<td class="center">';
-		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
-		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+		print '<input type="submit" name="save" class="button buttongen marginbottomonly" value="'.$langs->trans("Add").'"><br>';
+		print '<input type="submit" name="cancel" class="button buttongen marginbottomonly" value="'.$langs->trans("Cancel").'">';
 		print '</td></tr>';
 
 		print '</table>';
@@ -792,21 +776,18 @@ if ($resql)
 			if (empty($conf->global->BANK_USE_OLD_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
 			    $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
-			}
-			else												// If direct entries is not done using miscellaneous payments
+			} else // If direct entries is not done using miscellaneous payments
 			{
                 $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', $user->rights->banque->modifier);
 			}
-		}
-		else
-		{
+		} else {
             $newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param, '', -1);
 		}
 	}
 
 	$morehtml = '<div class="inline-block '.(($buttonreconcile || $newcardbutton) ? 'marginrightonly' : '').'">';
 	$morehtml .= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
-	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25" value="'.($page + 1).'">';
+	$morehtml .= '<input type="text" name="pageplusone" id="pageplusone" class="flat right width25 pageplusone" value="'.($page + 1).'">';
 	$morehtml .= '/'.$nbtotalofpages.' ';
 	$morehtml .= '</div>';
 
@@ -815,9 +796,9 @@ if ($resql)
 		$morehtml .= $buttonreconcile;
 	}
 
-	$morehtml .= $newcardbutton;
+	$morehtml .= '<!-- Add New button -->'.$newcardbutton;
 
-	$picto = 'title_bank';
+	$picto = 'bank_account';
 	if ($id > 0 || !empty($ref)) $picto = '';
 
 	print_barre_liste($langs->trans("BankTransactions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $picto, 0, $morehtml, '', $limit);
@@ -873,88 +854,88 @@ if ($resql)
 		print '</div>'."\n";
 	}
 
-    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+    $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
     print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 
 	print '<tr class="liste_titre_filter">';
-	if (! empty($arrayfields['b.rowid']['checked']))
+	if (!empty($arrayfields['b.rowid']['checked']))
 	{
 	    print '<td class="liste_titre">';
     	print '<input type="text" class="flat" name="search_ref" size="2" value="'.dol_escape_htmltag($search_ref).'">';
 	    print '</td>';
 	}
-	if (! empty($arrayfields['b.label']['checked']))
+	if (!empty($arrayfields['b.label']['checked']))
 	{
 	    print '<td class="liste_titre">';
     	print '<input type="text" class="flat maxwidth100" name="search_description" value="'.dol_escape_htmltag($search_description).'">';
     	print '</td>';
 	}
-	if (! empty($arrayfields['b.dateo']['checked']))
+	if (!empty($arrayfields['b.dateo']['checked']))
 	{
         print '<td class="liste_titre">&nbsp;</td>';
 	}
-	if (! empty($arrayfields['b.datev']['checked']))
+	if (!empty($arrayfields['b.datev']['checked']))
 	{
         print '<td class="liste_titre">&nbsp;</td>';
 	}
-	if (! empty($arrayfields['type']['checked']))
+	if (!empty($arrayfields['type']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
-        $form->select_types_paiements(empty($search_type)?'':$search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
+        $form->select_types_paiements(empty($search_type) ? '' : $search_type, 'search_type', '', 2, 1, 1, 0, 1, 'maxwidth100');
         print '</td>';
 	}
-	if (! empty($arrayfields['b.num_chq']['checked']))
+	if (!empty($arrayfields['b.num_chq']['checked']))
 	{
         // Numero
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="req_nb" value="'.dol_escape_htmltag($search_req_nb).'" size="2"></td>';
 	}
-	if (! empty($arrayfields['bu.label']['checked']))
+	if (!empty($arrayfields['bu.label']['checked']))
 	{
 	    print '<td class="liste_titre"><input type="text" class="flat maxwidth75" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 	}
-	if (! empty($arrayfields['ba.ref']['checked']))
+	if (!empty($arrayfields['ba.ref']['checked']))
 	{
     	print '<td class="liste_titre">';
-    	$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || ! empty($ref)?' disabled="disabled"':''), 0, 'maxwidth100');
+    	$form->select_comptes($search_account, 'search_account', 0, '', 1, ($id > 0 || !empty($ref) ? ' disabled="disabled"' : ''), 0, 'maxwidth100');
     	print '</td>';
 	}
-	if (! empty($arrayfields['b.debit']['checked']))
+	if (!empty($arrayfields['b.debit']['checked']))
 	{
     	print '<td class="liste_titre right">';
     	print '<input type="text" class="flat width50" name="search_debit" value="'.dol_escape_htmltag($search_debit).'">';
     	print '</td>';
 	}
-	if (! empty($arrayfields['b.credit']['checked']))
+	if (!empty($arrayfields['b.credit']['checked']))
 	{
     	print '<td class="liste_titre right">';
     	print '<input type="text" class="flat width50" name="search_credit" value="'.dol_escape_htmltag($search_credit).'">';
     	print '</td>';
 	}
-	if (! empty($arrayfields['balancebefore']['checked']))
+	if (!empty($arrayfields['balancebefore']['checked']))
 	{
 		print '<td class="liste_titre right">';
-		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
+		$htmltext = $langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
 	}
-	if (! empty($arrayfields['balance']['checked']))
+	if (!empty($arrayfields['balance']['checked']))
 	{
 		print '<td class="liste_titre right">';
-		$htmltext=$langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
+		$htmltext = $langs->trans("BalanceVisibilityDependsOnSortAndFilters", $langs->transnoentitiesnoconv("DateValue"));
 		print $form->textwithpicto('', $htmltext, 1);
 		print '</td>';
 	}
 	// Numero statement
-	if (! empty($arrayfields['b.num_releve']['checked']))
+	if (!empty($arrayfields['b.num_releve']['checked']))
 	{
         print '<td class="liste_titre" align="center"><input type="text" class="flat" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'" size="3"></td>';
 	}
 	// Conciliated
-	if (! empty($arrayfields['b.conciliated']['checked']))
+	if (!empty($arrayfields['b.conciliated']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
         print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
@@ -1039,15 +1020,12 @@ if ($resql)
                 	if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
                 	{
                 		$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
-                	}
-                	// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
-                	else
-                	{
+                	} // If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
+                	else {
                 		$balance = $objforbalance->previoustotal;
                 	}
                 }
-            }
-            else dol_print_error($db);
+            } else dol_print_error($db);
 
             $balancecalculated = true;
 
@@ -1116,7 +1094,7 @@ if ($resql)
 						});
 						</script>';
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance + 2).'">';
 				print '&nbsp;';
 				print '</td>';
             	print '</tr>';
@@ -1128,9 +1106,7 @@ if ($resql)
         {
         	$balance = price2num($balancebefore, 'MT'); // balance = balancebefore of previous line (sort is desc)
         	$balancebefore = price2num($balancebefore - ($sign * $objp->amount), 'MT');
-        }
-		else
-		{
+        } else {
 			$balancebefore = price2num($balance, 'MT'); // balancebefore = balance of previous line (sort is asc)
 			$balance = price2num($balance + ($sign * $objp->amount), 'MT');
 		}
@@ -1141,9 +1117,7 @@ if ($resql)
             $bankaccounttmp->fetch($objp->bankid);
             $cachebankaccount[$objp->bankid] = $bankaccounttmp;
             $bankaccount = $bankaccounttmp;
-        }
-        else
-        {
+        } else {
             $bankaccount = $cachebankaccount[$objp->bankid];
         }
 
@@ -1157,14 +1131,14 @@ if ($resql)
                 } else {
                     $color = '#'.$conf->global->BANK_COLORIZE_MOVEMENT_COLOR1;
                 }
-                $backgroundcolor = 'style="background-color: '.$color.';"';
+                $backgroundcolor = 'style="background: '.$color.';"';
             } else {
                 if (empty($conf->global->BANK_COLORIZE_MOVEMENT_COLOR2)) {
                     $color = '#7fdb86';
                 } else {
                     $color = '#'.$conf->global->BANK_COLORIZE_MOVEMENT_COLOR2;
                 }
-                $backgroundcolor = 'style="background-color: '.$color.';"';
+                $backgroundcolor = 'style="background: '.$color.';"';
             }
         }
         print '<tr class="oddeven" '.$backgroundcolor.'>';
@@ -1187,7 +1161,13 @@ if ($resql)
     	    $reg = array();
     	    preg_match('/\((.+)\)/i', $objp->label, $reg); // Si texte entoure de parenthee on tente recherche de traduction
     	    if ($reg[1] && $langs->trans($reg[1]) != $reg[1]) print $langs->trans($reg[1]);
-    	    else print dol_trunc($objp->label, 40);
+    	    else {
+    	    	if ($objp->label == '(payment_salary)') {
+    	    		print dol_trunc($langs->trans("SalaryPayment", 40));
+    	    	} else {
+    	    		print dol_trunc($objp->label, 40);
+    	    	}
+    	    }
     	    //print "</a>&nbsp;";
 
     	    // Add links after description
@@ -1195,68 +1175,59 @@ if ($resql)
     	    $cachebankaccount = array();
     	    foreach ($links as $key=>$val)
     	    {
+    	    	print '<!-- '.$links[$key]['type'].' -->';
     	    	if ($links[$key]['type'] == 'withdraw')
     	    	{
     	    		$banktransferstatic->id = $links[$key]['url_id'];
     	    		$banktransferstatic->ref = $links[$key]['label'];
     	    		print ' '.$banktransferstatic->getNomUrl(0);
-    	    	}
-    	    	elseif ($links[$key]['type'] == 'payment')
+    	    	} elseif ($links[$key]['type'] == 'payment')
     	        {
     	            $paymentstatic->id = $links[$key]['url_id'];
     	            $paymentstatic->ref = $links[$key]['url_id']; // FIXME This is id, not ref of payment
     	            print ' '.$paymentstatic->getNomUrl(2);
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_supplier')
+    	        } elseif ($links[$key]['type'] == 'payment_supplier')
     	        {
     	            $paymentsupplierstatic->id = $links[$key]['url_id'];
     	            $paymentsupplierstatic->ref = $links[$key]['url_id']; // FIXME This is id, not ref of payment
     	            print ' '.$paymentsupplierstatic->getNomUrl(2);
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_sc')
+    	        } elseif ($links[$key]['type'] == 'payment_sc')
     	        {
     	            print '<a href="'.DOL_URL_ROOT.'/compta/payment_sc/card.php?id='.$links[$key]['url_id'].'">';
     	            print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
     	            //print $langs->trans("SocialContributionPayment");
     	            print '</a>';
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_vat')
+    	        } elseif ($links[$key]['type'] == 'payment_vat')
     	        {
     	            $paymentvatstatic->id = $links[$key]['url_id'];
     	            $paymentvatstatic->ref = $links[$key]['url_id'];
     	            print ' '.$paymentvatstatic->getNomUrl(2);
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_salary')
+    	        } elseif ($links[$key]['type'] == 'payment_salary')
     	        {
     	            $paymentsalstatic->id = $links[$key]['url_id'];
     	            $paymentsalstatic->ref = $links[$key]['url_id'];
     	            print ' '.$paymentsalstatic->getNomUrl(2);
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_loan')
+    	        } elseif ($links[$key]['type'] == 'payment_loan')
     	        {
     	            print '<a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$links[$key]['url_id'].'">';
     	            print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
     	            print '</a>';
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_donation')
+    	        } elseif ($links[$key]['type'] == 'payment_donation')
     	        {
     	            print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$links[$key]['url_id'].'">';
     	            print ' '.img_object($langs->trans('ShowPayment'), 'payment').' ';
     	            print '</a>';
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_expensereport')
+    	        } elseif ($links[$key]['type'] == 'payment_expensereport')
     	        {
     	            $paymentexpensereportstatic->id = $links[$key]['url_id'];
     	            $paymentexpensereportstatic->ref = $links[$key]['url_id'];
     	            print ' '.$paymentexpensereportstatic->getNomUrl(2);
-    	        }
-    	        elseif ($links[$key]['type'] == 'payment_various')
+    	        } elseif ($links[$key]['type'] == 'payment_various')
     	        {
     	            $paymentvariousstatic->id = $links[$key]['url_id'];
     	            $paymentvariousstatic->ref = $links[$key]['url_id'];
     	            print ' '.$paymentvariousstatic->getNomUrl(2);
-    	        }
-    	        elseif ($links[$key]['type'] == 'banktransfert')
+    	        } elseif ($links[$key]['type'] == 'banktransfert')
     	        {
     	            // Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
     	            if ($objp->amount > 0)
@@ -1271,9 +1242,7 @@ if ($resql)
     	                $bankstatic->label = $objp->bankref;
     	                print $bankstatic->getNomUrl(1, '');
     	                print ')';
-    	            }
-    	            else
-    	            {
+    	            } else {
     	                $bankstatic->id = $objp->bankid;
     	                $bankstatic->label = $objp->bankref;
     	                print ' ('.$langs->trans("TransferFrom").' ';
@@ -1286,21 +1255,15 @@ if ($resql)
     	                print ')';
     	            }
     	            //var_dump($links);
-    	        }
-    	        elseif ($links[$key]['type'] == 'company')
+    	        } elseif ($links[$key]['type'] == 'company')
     	        {
-    	        }
-    	        elseif ($links[$key]['type'] == 'user')
+    	        } elseif ($links[$key]['type'] == 'user')
     	        {
-    	        }
-    	        elseif ($links[$key]['type'] == 'member')
+    	        } elseif ($links[$key]['type'] == 'member')
     	        {
-    	        }
-    	        elseif ($links[$key]['type'] == 'sc')
+    	        } elseif ($links[$key]['type'] == 'sc')
     	        {
-    	        }
-    	        else
-    	        {
+    	        } else {
     	            // Show link with label $links[$key]['label']
     	            if (!empty($objp->label) && !empty($links[$key]['label'])) print ' - ';
     	            print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
@@ -1309,9 +1272,7 @@ if ($resql)
     	                // Label generique car entre parentheses. On l'affiche en le traduisant
     	                if ($reg[1] == 'paiement') $reg[1] = 'Payment';
     	                print ' '.$langs->trans($reg[1]);
-    	            }
-    	            else
-    	            {
+    	            } else {
     	                print ' '.$links[$key]['label'];
     	            }
     	            print '</a>';
@@ -1374,7 +1335,7 @@ if ($resql)
 		// Third party
     	if (!empty($arrayfields['bu.label']['checked']))
     	{
-        	print "<td>";
+        	print '<td class="tdoverflowmax150">';
 			if ($objp->url_id)
 			{
 				$companystatic->id = $objp->url_id;
@@ -1388,9 +1349,7 @@ if ($resql)
 				$companystatic->code_compta = $objp->code_compta;
 				$companystatic->code_compta_fournisseur = $objp->code_compta_fournisseur;
 				print $companystatic->getNomUrl(1);
-			}
-			else
-			{
+			} else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -1442,14 +1401,10 @@ if ($resql)
     			if ($balancebefore >= 0)
     			{
     				print '<td class="nowrap right">&nbsp;'.price($balancebefore).'</td>';
-    			}
-    			else
-    			{
+    			} else {
     				print '<td class="error nowrap right">&nbsp;'.price($balancebefore).'</td>';
     			}
-    		}
-    		else
-    		{
+    		} else {
     			print '<td class="right">-</td>';
     		}
     		if (!$i) $totalarray['nbfield']++;
@@ -1462,14 +1417,10 @@ if ($resql)
     			if ($balance >= 0)
     			{
     				print '<td class="nowrap right">&nbsp;'.price($balance).'</td>';
-    			}
-    			else
-    			{
+    			} else {
     				print '<td class="error nowrap right">&nbsp;'.price($balance).'</td>';
     			}
-    		}
-    		else
-    		{
+    		} else {
     			print '<td class="right">-</td>';
     		}
     		if (!$i) $totalarray['nbfield']++;
@@ -1512,21 +1463,17 @@ if ($resql)
     	// Transaction reconciliated or edit link
     	if ($objp->conciliated && $bankaccount->canBeConciliated() > 0)  // If line not conciliated and account can be conciliated
     	{
-    	    print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	    print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	    print img_edit();
     	    print '</a>';
-    	}
-    	else
-    	{
+    	} else {
     	    if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
     	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	        print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_edit();
     	        print '</a>';
-    	    }
-    	    else
-    	    {
-    	        print '<a href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
+    	    } else {
+    	        print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/bank/line.php?save_lastsearch_values=1&amp;rowid='.$objp->rowid.'&amp;account='.$objp->bankid.'&amp;page='.$page.'">';
     	        print img_view();
     	        print '</a>';
     	    }
@@ -1540,7 +1487,7 @@ if ($resql)
     	    if ($user->rights->banque->modifier)
     	    {
     	        print '<a href="'.$_SERVER["PHP_SELF"].'?action=delete&amp;rowid='.$objp->rowid.'&amp;id='.$objp->bankid.'&amp;page='.$page.'">';
-    	        print img_delete();
+    	        print img_delete('', 'class="marginleftonly"');
     	        print '</a>';
     	    }
     	}
@@ -1574,17 +1521,15 @@ if ($resql)
 	        if ($i == 1)
 	        {
 	            if ($num < $limit && empty($offset)) print '<td class="left">'.$langs->trans("Total").'</td>';
-	            else print '<td class="left">'.$langs->trans("Totalforthispage").'</td>';
-	        }
-	        elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
+	            else print '<td class="left tdoverflowmax50" title="'.$langs->trans("Totalforthispage").'">'.$langs->trans("Totalforthispage").'</td>';
+	        } elseif ($totalarray['totaldebfield'] == $i) print '<td class="right">'.price(-1 * $totalarray['totaldeb']).'</td>';
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td class="right">'.price($totalarray['totalcred']).'</td>';
 	        elseif ($i == $posconciliatecol)
 	        {
 	        	print '<td class="center">';
 	        	if ($user->rights->banque->consolidate && $action == 'reconcile') print '<input class="button" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
 	        	print '</td>';
-	        }
-	        else print '<td></td>';
+	        } else print '<td></td>';
 	    }
 	    print '</tr>';
 	}
@@ -1602,9 +1547,7 @@ if ($resql)
 
     print '</form>';
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

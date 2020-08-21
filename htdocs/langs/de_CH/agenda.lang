@@ -27,10 +27,16 @@ ContractSentByEMail=Contract %s per E-Mail versandt
 OrderSentByEMail=Bestellung %sper E-Mail versandt
 InvoiceSentByEMail=Kundenrechnung %sper E-Mail versandt
 SupplierOrderSentByEMail=Lieferantenbestellung %sper E-Mail versandt
+ORDER_SUPPLIER_DELETEInDolibarr=Lieferantenbestellung %s  gelöscht
 SupplierInvoiceSentByEMail=Lieferantenrechnung %sper E-Mail versandt
 ShippingSentByEMail=Lieferung %s per E-Mail versandt
 PRODUCT_CREATEInDolibarr=Produkt %s erzeugt
 PRODUCT_MODIFYInDolibarr=Produkt %s bearbeitet
+HOLIDAY_CREATEInDolibarr=Ferienantrag %s erzeugt
+HOLIDAY_MODIFYInDolibarr=Ferienantrag %s geändert
+HOLIDAY_APPROVEInDolibarr=Ferienantrag %s frei gegeben
+HOLIDAY_VALIDATEInDolibarr=Ferienantrag %s bestätigt
+HOLIDAY_DELETEInDolibarr=Ferienantrag %s gelöscht
 EXPENSE_REPORT_CREATEInDolibarr=Spesenabrechnung %s erzeugt
 EXPENSE_REPORT_VALIDATEInDolibarr=Spesenabrechnung %s geprüft
 EXPENSE_REPORT_APPROVEInDolibarr=Spesenabrechnung %s freigegeben
@@ -40,11 +46,20 @@ TICKET_CREATEInDolibarr=Ticket %s erzeugt
 TICKET_MODIFYInDolibarr=Ticket %s bearbeitet
 TICKET_CLOSEInDolibarr=Ticket %s geschlossen.
 TICKET_DELETEInDolibarr=Ticket %s gelöscht
+BOM_VALIDATEInDolibarr=Materialliste (BOM) bestätigt
+BOM_UNVALIDATEInDolibarr=Materialliste (BOM) unbestätigt
+BOM_CLOSEInDolibarr=Materialliste (BOM) gesperrt
+BOM_REOPENInDolibarr=Materialliste (BOM) wiedereröffnet
+BOM_DELETEInDolibarr=Materialliste (BOM) gelöscht
+MRP_MO_VALIDATEInDolibarr=Arbeitsauftrag (MO) genehmigt
+MRP_MO_PRODUCEDInDolibarr=Arbeitsauftrag (MO) fertig gestellt.
+MRP_MO_DELETEInDolibarr=Arbeitsauftrag (MO) gelöscht
 AgendaModelModule=Vorlagen zum Ereignis
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ,zum Aktionen, die nicht vom Benutzer <b>%s</b> sind, anzuzeigen.
 AgendaUrlOptions4=<b>logint=%s</b> ,um Einträge für dem Benutzer <b>%s</b> zugewiesene Aktionen anzuzeigen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um Aktionen vom Projekt <b>__PROJECT_ID__</b> anzuzeigen.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, um automatische Einträge auszublenden.
+AgendaUrlOptionsIncludeHolidays=Setze <b>includeholidays=1</b> um Ferien im Kalender anzuzeigen.
 AgendaHideBirthdayEvents=Geburtstage von Kontakten verstecken
 ExtSitesEnableThisTool=Externe Kalender gemäss systemweiten Einstellungen anzeigen. Externe Kalender, die Benutzer definiert haben, sind davon nicht betroffen.
 DateActionBegin=Beginnzeit des Ereignis

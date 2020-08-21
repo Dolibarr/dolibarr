@@ -1,4 +1,22 @@
 <?php
+/* Copyright (C) 2013-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
+
+// variable $listofopplabel and $listofoppstatus should be defined
+
 if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
@@ -29,19 +47,15 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $obj = $db->fetch_object($resql);
 	        if ($obj)
 	        {
-	            //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
-	            {
-	                $valsnb[$obj->opp_status] = $obj->nb;
-	                $valsamount[$obj->opp_status] = $obj->opp_amount;
-	                $totalnb += $obj->nb;
-	                if ($obj->opp_status) $totaloppnb += $obj->nb;
-				if (!in_array($obj->code, array('WON', 'LOST')))
-	                {
+                $valsnb[$obj->opp_status] = $obj->nb;
+                $valsamount[$obj->opp_status] = $obj->opp_amount;
+                $totalnb += $obj->nb;
+                if ($obj->opp_status) $totaloppnb += $obj->nb;
+				if (!in_array($obj->code, array('WON', 'LOST'))) {
 					$totalamount += $obj->opp_amount;
 					$ponderated_opp_amount += $obj->ponderated_opp_amount;
 				}
-	            }
-	            $total += $row[0];
+	            $total += $obj->nb;
 	        }
 	        $i++;
 	    }
@@ -58,7 +72,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    	$labelStatus = '';
 
 			$code = dol_getIdFromCode($db, $status, 'c_lead_status', 'rowid', 'code');
-	        if ($code) $labelStatus = $langs->trans("OppStatus".$code);
+	        if ($code) $labelStatus = $langs->transnoentitiesnoconv("OppStatus".$code);
 	        if (empty($labelStatus)) $labelStatus = $listofopplabel[$status];
 
 	        //$labelStatus .= ' ('.$langs->trans("Coeff").': '.price2num($listofoppstatus[$status]).')';
@@ -75,16 +89,17 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    }
 	    if ($conf->use_javascript_ajax)
 	    {
-	        print '<tr><td class="center" colspan="2">';
+	        print '<tr><td class="center nopaddingleftimp nopaddingrightimp" colspan="2">';
 
 	        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	        $dolgraph = new DolGraph();
 	        $dolgraph->SetData($dataseries);
-	        $dolgraph->setShowLegend(1);
+	        $dolgraph->SetDataColor(array_values($colorseries));
+	        $dolgraph->setShowLegend(2);
 	        $dolgraph->setShowPercent(1);
 	        $dolgraph->SetType(array('pie'));
-	        $dolgraph->setWidth('100%');
-	        $dolgraph->SetHeight(180);
+	        //$dolgraph->setWidth('100%');
+	        $dolgraph->SetHeight('200');
 	        $dolgraph->draw('idgraphstatus');
 	        print $dolgraph->show($totaloppnb ? 0 : 1);
 
@@ -101,9 +116,7 @@ if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    print "</div>";
 
 	    print "<br>";
-	}
-	else
-	{
+	} else {
 	    dol_print_error($db);
 	}
 }
