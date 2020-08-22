@@ -36,8 +36,13 @@ function recruitmentAdminPrepareHead()
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/recruitment/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
+	$head[$h][1] = $langs->trans("JobPositions");
 	$head[$h][2] = 'settings';
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/recruitment/admin/setup_candidatures.php", 1);
+	$head[$h][1] = $langs->trans("RecruitmentCandidatures");
+	$head[$h][2] = 'settings_candidatures';
 	$h++;
 
 	$head[$h][0] = dol_buildpath("/recruitment/admin/public_interface.php", 1);
