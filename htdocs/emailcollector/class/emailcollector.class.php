@@ -1138,6 +1138,7 @@ class EmailCollector extends CommonObject
                 $contactfoundby = '';
                 $projectfoundby = '';
                 $ticketfoundby = '';
+                $candidaturefoundby = '';
 
                 $this->db->begin();
 
@@ -1145,7 +1146,7 @@ class EmailCollector extends CommonObject
                 // GET Email meta datas
                 $overview = imap_fetch_overview($connection, $imapemail, 0);
 
-                dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
+                dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
                 // Decode $overview[0]->subject according to RFC2047
                 // Can use also imap_mime_header_decode($str)
@@ -1273,35 +1274,34 @@ class EmailCollector extends CommonObject
                 			// This is a Dolibarr reference
 		                    $trackid = $reg[1].$reg[2];
 
+		                    $objectid = $reg[2];
 		                    if ($reg[1] == 'inv')
 		                    {
-		                        $objectid = $reg[2];
 		                        $objectemail = new Facture($this->db);
 		                    }
 		                    if ($reg[1] == 'proj')
 		                    {
-		                        $objectid = $reg[2];
 		                        $objectemail = new Project($this->db);
 		                    }
 		                    if ($reg[1] == 'con')
 		                    {
-		                        $objectid = $reg[2];
 		                        $objectemail = new Contact($this->db);
 		                    }
 		                    if ($reg[1] == 'thi')
 		                    {
-		                        $objectid = $reg[2];
 		                        $objectemail = new Societe($this->db);
 		                    }
 		                    if ($reg[1] == 'use')
 		                    {
-		                        $objectid = $reg[2];
 		                        $objectemail = new User($this->db);
 		                    }
 		                    if ($reg[1] == 'tic')
 		                    {
-		                        $objectid = $reg[2];
 		                        $objectemail = new Ticket($this->db);
+		                    }
+		                    if ($reg[1] == 'recruitmentcandidature')
+		                    {
+		                    	$objectemail = new RecruitmentCandidature($this->db);
 		                    }
                 		} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
 							// This is an external reference, we check if we have it in our database
@@ -1326,6 +1326,19 @@ class EmailCollector extends CommonObject
 									$objectid = $obj->rowid;
 									$objectemail = new Project($this->db);
 									$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+								} else {
+									$errorforemail++;
+								}
+							}
+
+							if (! is_object($objectemail)) {
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
+								$resql = $this->db->query($sql);
+								if ($resql) {
+									$obj = $this->db->fetch_object($resql);
+									$objectid = $obj->rowid;
+									$objectemail = new RecruitmentCandidature($this->db);
+									$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
 								} else {
 									$errorforemail++;
 								}
@@ -1881,14 +1894,16 @@ class EmailCollector extends CommonObject
                     	$candidaturetocreate->type_code = 0;
                     	$candidaturetocreate->category_code = null;
                     	$candidaturetocreate->severity_code = null;
-                    	$candidaturetocreate->origin_email = $from;
-                    	$candidaturetocreate->fk_user_create = $user->id;
-                    	$candidaturetocreate->datec = $date;
+                    	$candidaturetocreate->email = $from;
+                    	//$candidaturetocreate->lastname = $langs->trans("Anonymous").' - '.$from;
+                    	$candidaturetocreate->fk_user_creat = $user->id;
+                    	$candidaturetocreate->date_creation = $date;
                     	$candidaturetocreate->fk_project = $projectstatic->id;
-                    	$candidaturetocreate->notify_tiers_at_create = 0;
+                    	$candidaturetocreate->description = $description;
                     	$candidaturetocreate->note_private = $descriptionfull;
                     	$candidaturetocreate->entity = $conf->entity;
                     	$candidaturetocreate->email_msgid = $msgid;
+                    	$candidaturetocreate->status = 0;
                     	//$candidaturetocreate->fk_contact = $contactstatic->id;
 
                     	// Overwrite values with values extracted from source email.
@@ -1949,7 +1964,7 @@ class EmailCollector extends CommonObject
                     		if ($result <= 0)
                     		{
                     			$errorforactions++;
-                    			$this->error = 'Failed to create ticket: '.$langs->trans($candidaturetocreate->error);
+                    			$this->error = 'Failed to create ticket: '.join(', ', $candidaturetocreate->errors);
                     			$this->errors = $candidaturetocreate->errors;
                     		}
                     	}

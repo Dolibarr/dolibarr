@@ -145,6 +145,7 @@ ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_
 CREATE TABLE llx_recruitment_recruitmentcandidature(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	entity integer NOT NULL DEFAULT 1,
 	fk_recruitmentjobposition INTEGER NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	description text, 
@@ -163,10 +164,13 @@ CREATE TABLE llx_recruitment_recruitmentcandidature(
 	phone varchar(64),
 	remuneration_requested integer, 
 	remuneration_proposed integer,
+	email_msgid varchar(255),
 	fk_recruitment_origin INTEGER NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
 
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN entity integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD COLUMN fk_recruitment_origin INTEGER NULL;
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_rowid (rowid);

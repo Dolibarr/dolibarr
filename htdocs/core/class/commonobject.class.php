@@ -238,23 +238,29 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @see getFullAddress(), state
+	 * @see getFullAddress(), $state
 	 */
     public $state_code;
 
-    /**
-	 * @var string
-	 * @see getFullAddress(), region
+	/**
+	 * @var int
+	 * @see getFullAddress(), $region_code, $region
 	 */
-	public $region;
+	public $region_id;
 
 	/**
 	 * @var string
-	 * @see getFullAddress(), region
+	 * @see getFullAddress(), $region_id, $region
 	 */
     public $region_code;
 
-	/**
+    /**
+     * @var string
+     * @see getFullAddress(), $region_id, $region_code
+     */
+    public $region;
+
+    /**
 	 * @var int
 	 * @see fetch_barcode()
 	 */
