@@ -73,7 +73,7 @@ class Paiement extends CommonObject
 	public $multicurrency_amount;          // Total amount of payment (in the currency of the bank account)
 	public $amounts = array();               // array: invoice ID => amount for that invoice (in the main currency)>
 	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
-	
+
 	public $takepos_change = 0;	// Excess received in TakePOS cash payment
 
 	public $author;
