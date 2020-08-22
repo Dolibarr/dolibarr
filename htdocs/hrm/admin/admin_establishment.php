@@ -40,6 +40,7 @@ static $tmpstatus2label = array(
 $status2label = array('');
 foreach ($tmpstatus2label as $key => $val) $status2label[$key] = $langs->trans($val);
 
+
 /*
  * Actions
  */
@@ -97,7 +98,7 @@ if ($result)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "e.ref", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "e.label", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Address", $_SERVER["PHP_SELF"], "e.address", "", "", "", $sortfield, $sortorder);
-	print_liste_field_titre("Zipcode", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
+	print_liste_field_titre("Zip", $_SERVER["PHP_SELF"], "e.zip", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Town", $_SERVER["PHP_SELF"], "e.town", "", "", "", $sortfield, $sortorder);
 	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "e.status", "", "", '', $sortfield, $sortorder, 'right ');
 	print "</tr>\n";
