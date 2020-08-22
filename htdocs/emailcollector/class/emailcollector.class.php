@@ -1448,19 +1448,14 @@ class EmailCollector extends CommonObject
                     if ($this->source_directory == 'Sent') $actioncode = 'EMAIL_OUT';
 
                     $description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
-                    if (in_array($operation['type'], array('recordevent', 'project', 'ticket')))
-                    {
-                        if ($operation['type'] == 'project') $descriptiontitle = $langs->trans("ProjectCreatedByEmailCollector", $msgid);
-                        elseif ($operation['type'] == 'ticket') $descriptiontitle = $langs->trans("TicketCreatedByEmailCollector", $msgid);
-                        else $descriptiontitle = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
-                        if ($sender) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTo").($langs->trans("MailTo") != 'To' ? ' (To)' : '').' : '.dol_escape_htmltag($to));
-                        if ($sendtocc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
-                        //if ($bcc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Bcc").' : '.dol_escape_htmltag($bcc));
-                    }
+                    $descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $msgid);
+
+                    $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
+                    $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
+                    if ($sender) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
+                    $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTo").($langs->trans("MailTo") != 'To' ? ' (To)' : '').' : '.dol_escape_htmltag($to));
+                    if ($sendtocc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
 
                     // Search and create thirdparty
                     if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')

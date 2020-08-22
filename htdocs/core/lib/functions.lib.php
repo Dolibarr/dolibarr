@@ -3070,7 +3070,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		    	'error'=>'exclamation-triangle', 'warning'=>'exclamation-triangle',
 		    	'other'=>'square',
 		    	'playdisabled'=>'play', 'poll'=>'check-double', 'preview'=>'binoculars', 'project'=>'sitemap', 'projectpub'=>'sitemap', 'projecttask'=>'tasks', 'propal'=>'file-signature',
-		    	'recruitmentjobposition'=>'door-open', 'recruitmentcandidature'=>'door-open',
+		    	'recruitmentjobposition'=>'id-card-alt', 'recruitmentcandidature'=>'id-badge',
 		    	'resize'=>'crop', 'supplier_order'=>'dol-order_supplier', 'supplier_proposal'=>'file-signature',
 		    	'payment'=>'money-check-alt', 'phoning'=>'phone', 'phoning_mobile'=>'mobile-alt', 'phoning_fax'=>'fax', 'printer'=>'print', 'product'=>'cube', 'service'=>'concierge-bell',
 		    	'resource'=>'laptop-house',

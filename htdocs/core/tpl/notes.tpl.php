@@ -91,7 +91,7 @@ print '<div class="tagtr table-border-row">'."\n";
 print '<div class="tagtd tagtdnote tdtop sensiblehtmlcontent table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 print $form->editfieldkey("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, $moreparam, '', 0);
 print '</div>'."\n";
-print '<div class="tagtd table-val-border-col sensiblehtmlcontent">'."\n";
+print '<div class="tagtd wordbreak table-val-border-col sensiblehtmlcontent">'."\n";
 print $form->editfieldval("NotePublic", $note_public, $value_public, $object, $permission, $typeofdata, '', null, null, $moreparam, 1)."\n";
 print '</div>'."\n";
 print '</div>'."\n";
@@ -101,7 +101,7 @@ if (empty($user->socid)) {
 	print '<div class="tagtd tagtdnote tdtop sensiblehtmlcontent table-key-border-col'.(empty($cssclass) ? '' : ' '.$cssclass).'"'.($colwidth ? ' style="width: '.$colwidth.'%"' : '').'>'."\n";
 	print $form->editfieldkey("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, $moreparam, '', 0);
 	print '</div>'."\n";
-	print '<div class="tagtd table-val-border-col sensiblehtmlcontent">'."\n";
+	print '<div class="tagtd wordbreak table-val-border-col sensiblehtmlcontent">'."\n";
 	print $form->editfieldval("NotePrivate", $note_private, $value_private, $object, $permission, $typeofdata, '', null, null, $moreparam, 1);
 	print '</div>'."\n";
 	print '</div>'."\n";

@@ -255,10 +255,7 @@ YourPasswordHasBeenReset=Your password has been reset successfully
 ApplicantIpAddress=IP address of applicant
 SMSSentTo=SMS sent to %s
 MissingIds=Missing ids
-ThirdPartyCreatedByEmailCollector=Third party created by email collector from email MSGID %s
-ContactCreatedByEmailCollector=Contact/address created by email collector from email MSGID %s
-ProjectCreatedByEmailCollector=Project created by email collector from email MSGID %s
-TicketCreatedByEmailCollector=Ticket created by email collector from email MSGID %s
+RecordCreatedByEmailCollector=Record created by email collector from email MSGID %s
 OpeningHoursFormatDesc=Use a - to separate opening and closing hours.<br>Use a space to enter different ranges.<br>Example: 8-12 14-18
 
 ##### Export #####
