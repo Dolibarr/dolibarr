@@ -506,7 +506,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Refuse - Decline
-			if ($object->status >= $object::STATUS_DRAFT && $object->status < $object::STATUS_CANCELED)
+			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_CANCELED)
 			{
 				if ($permissiontoadd)
 				{
