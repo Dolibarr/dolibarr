@@ -260,3 +260,7 @@ ALTER TABLE llx_projet ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_actioncomm ADD COLUMN reply_to varchar(255);
 
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_CREATE','Contact address created','Executed when a contact is created','contact',50);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_SENTBYMAIL','Mails sent from third party card','Executed when you send email from contact adress card','contact',51);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_DELETE','Contact address deleted','Executed when a contact is deleted','contact',52);
+

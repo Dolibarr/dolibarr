@@ -347,7 +347,7 @@ if (!empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text .= $langs->trans("War
 print info_admin($text);
 print '<br>';
 
-$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+//$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = '';
 //$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
@@ -432,11 +432,11 @@ if ($num > 0)
 		print '</td>';
 
 		// Label
-		print '<td>';
+		print '<td class="tdoverflowmax300">';
 		if (!empty($obj->label))
 		{
 			$object->ref = $langs->trans($obj->label);
-			print $object->getNomUrl(0, '', 1);
+			print '<span title="'.dol_escape_htmltag($langs->trans($obj->label)).'">'.$object->getNomUrl(0, '', 1).'</span>';
 			$object->ref = $obj->rowid;
 		} else {
 			//print $langs->trans('CronNone');

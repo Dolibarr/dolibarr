@@ -128,7 +128,11 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_PRODUCED','MO produced','Executed when a MO is produced','bom',661);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_DELETE','MO deleted','Executed when a MO is deleted','bom',662);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MRP_MO_CANCEL','MO canceled','Executed when a MO is canceled','bom',663);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_CREATE','Contact address created','Executed when a contact is created','contact',50);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_SENTBYMAIL','Mails sent from third party card','Executed when you send email from contact adress card','contact',51);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_DELETE','Contact address deleted','Executed when a contact is deleted','contact',52);
 -- actions not enabled by default : they are excluded when we enable the module Agenda (except TASK_...)
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_CREATE','Task created','Executed when a project task is created','project',150);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_MODIFY','Task modified','Executed when a project task is modified','project',151);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('TASK_DELETE','Task deleted','Executed when a project task is deleted','project',152);
+

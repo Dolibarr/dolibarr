@@ -56,7 +56,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 *      $object->actiontypecode (translation action code: AC_OTH, ...)
 	 *      $object->actionmsg (note, long text)
 	 *      $object->actionmsg2 (label, short text)
-	 *      $object->sendtoid (id of contact or array of ids)
+	 *      $object->sendtoid (id of contact or array of ids of contacts)
 	 *      $object->socid (id of thirdparty)
 	 *      $object->fk_project
 	 *      $object->fk_element
@@ -71,7 +71,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-        if (empty($conf->agenda->enabled)) return 0; // Module not active, we do nothing
+		if (empty($conf->agenda->enabled)) return 0; // Module not active, we do nothing
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
 
@@ -92,7 +92,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("NewCompanyToDolibarr", $object->name);
             $object->actionmsg = $langs->transnoentities("NewCompanyToDolibarr", $object->name);
-            if (!empty($object->prefix)) $object->actionmsg .= " (".$object->prefix.")";
 
 			$object->sendtoid = 0;
 			$object->socid = $object->id;
@@ -105,7 +104,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
             // Parameters $object->sendtoid defined by caller
             //$object->sendtoid=0;
-		} elseif ($action == 'CONTRACT_VALIDATE')
+        } elseif ($action == 'CONTACT_CREATE')
+        {
+        	// Load translation files required by the page
+        	$langs->loadLangs(array("agenda", "other", "companies"));
+
+        	if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities("CONTACT_CREATEInDolibarr", $object->getFullName($langs));
+        	$object->actionmsg = $langs->transnoentities("CONTACT_CREATEInDolibarr", $object->getFullName($langs));
+
+        	$object->sendtoid = array($object->id => $object->id);
+        	$object->socid = $object->socid;
+        } elseif ($action == 'CONTRACT_VALIDATE')
         {
             // Load translation files required by the page
             $langs->loadLangs(array("agenda", "other", "contracts"));
@@ -769,8 +778,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $object->sendtoid = 0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, ...
+		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, ...
 		{
+
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
 		    // Note that these key can be set in agenda setup, only if defined into c_action_trigger
 		    // Load translation files required by the page
@@ -779,7 +789,9 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities($action."InDolibarr", $object->ref);
 		    if (empty($object->actionmsg))  $object->actionmsg = $langs->transnoentities($action."InDolibarr", $object->ref);
 
-		    $object->sendtoid = 0;
+		    if (! isset($object->sendtoid) || ! is_array($object->sendtoid)) {
+		    	$object->sendtoid = 0;
+		    }
 		}
 
 		$object->actionmsg = $langs->transnoentities("Author").': '.$user->login."\n".$object->actionmsg;
@@ -797,12 +809,12 @@ class InterfaceActionsAuto extends DolibarrTriggers
                 $object->actionmsg = dol_concatdesc($object->actionmsg, "\n".$langs->transnoentities("AttachedFiles").': '.$attachs);
 			}
 		}
-
         require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
         require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactforaction = new Contact($this->db);
         $societeforaction = new Societe($this->db);
         // Set contactforaction if there is only 1 contact.
+
         if (is_array($object->sendtoid))
         {
             if (count($object->sendtoid) == 1) $contactforaction->fetch(reset($object->sendtoid));
@@ -838,7 +850,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->durationp   = 0;
 		$actioncomm->percentage  = -1; // Not applicable
 		$actioncomm->socid       = $societeforaction->id;
-		$actioncomm->contact_id   = $contactforaction->id;
+		$actioncomm->contact_id   = $contactforaction->id;		// deprecated, use ->socpeopleassigned instead
 		$actioncomm->authorid    = $user->id; // User saving action
 		$actioncomm->userownerid = $user->id; // Owner of action
         // Fields defined when action is an email (content should be into object->actionmsg to be added into note, subject into object->actionms2 to be added into label)
@@ -852,7 +864,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->errors_to     = $object->errors_to;
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
-		// for such objects because there is already a dedicated field into table llx_actioncomm.
+		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.
 		if (!in_array($elementtype, array('societe', 'contact', 'project')))
 		{
 			$actioncomm->fk_element  = $elementid;
@@ -864,6 +876,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		}
 		if (property_exists($object, 'sendtouserid') && is_array($object->sendtouserid) && count($object->sendtouserid) > 0) {
 			$actioncomm->userassigned = $object->sendtouserid;
+		}
+		if (property_exists($object, 'sendtoid') && is_array($object->sendtoid) && count($object->sendtoid) > 0) {
+			foreach($object->sendtoid as $val) {
+				$actioncomm->socpeopleassigned[$val] = $val;
+			}
 		}
 
 		$ret = $actioncomm->create($user); // User creating action
