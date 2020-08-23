@@ -8,6 +8,7 @@
  * Copyright (C) 2016		Charlie Benke         <charlie@patas-monkey.com>
  * Copyright (C) 2019       Frédéric France       <frederic.france@netlogic.fr>
  * Copyright (C) 2020       Pierre Ardoin         <mapiolca@me.com>
+ * Copyright (C) 2020       Josep Lluís Amador    <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -731,7 +732,7 @@ class ProductFournisseur extends Product
         $sql .= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql .= " WHERE s.entity IN (".getEntity('societe').")";
-        $sql .= " AND pfp.entity = ".$conf->entity; // only current entity
+        $sql .= " AND pfp.entity IN (".getEntity('productsupplierprice').")";
         $sql .= " AND pfp.fk_product = ".$prodid;
         $sql .= " AND pfp.fk_soc = s.rowid";
         $sql .= " AND s.status = 1"; // only enabled society
