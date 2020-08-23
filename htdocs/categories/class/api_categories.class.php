@@ -242,11 +242,9 @@ class Categories extends DolibarrApi
             $this->category->$field = $value;
         }
 
-        if ($this->category->update(DolibarrApiAccess::$user) > 0)
-        {
+        if ($this->category->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
-		} else
-        {
+		} else {
             throw new RestException(500, $this->category->error);
         }
     }
@@ -779,12 +777,10 @@ class Categories extends DolibarrApi
 			$objects_api = new Products();
 		} elseif ($type == 'contact') {
 			$objects_api = new Contacts();
-		}
-          elseif ($type == 'project') {
+		} elseif ($type == 'project') {
 			$objects_api = new Projects();
 		}
-		  if (is_object($objects_api))
-		{
+		if (is_object($objects_api)) {
     		foreach ($objects as $obj) {
     			$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
     		}
