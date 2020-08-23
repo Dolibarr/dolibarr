@@ -178,8 +178,6 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_rec
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD CONSTRAINT llx_recruitment_recruitmentcandidature_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD INDEX idx_recruitment_recruitmentcandidature_status (status);
 
-
-
 create table llx_recruitment_recruitmentcandidature_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -190,6 +188,7 @@ create table llx_recruitment_recruitmentcandidature_extrafields
 
 ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_fk_object(fk_object);
 
+ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitmentcandidature_email_msgid(email_msgid);
 
 
 
@@ -263,4 +262,7 @@ ALTER TABLE llx_actioncomm ADD COLUMN reply_to varchar(255);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_CREATE','Contact address created','Executed when a contact is created','contact',50);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_SENTBYMAIL','Mails sent from third party card','Executed when you send email from contact adress card','contact',51);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_DELETE','Contact address deleted','Executed when a contact is deleted','contact',52);
+
+ALTER TABLE llx_ecm_directories CHANGE COLUMN date_md tms timestamp;
+ALTER TABLE llx_ecm_files CHANGE COLUMN date_md tms timestamp;
 
