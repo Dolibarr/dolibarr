@@ -463,7 +463,7 @@ class FormMail extends Form
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
 					'shipping_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
-					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'all'
+					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'all'
                 )))
 			{
 				// If list of template is empty
@@ -474,8 +474,9 @@ class FormMail extends Form
 				$out .= '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" disabled="disabled" id="modelselected">';
 				$out .= ' &nbsp; ';
 				$out .= '</div>';
+			} else {
+				$out .= '<!-- No template available for $this->param["models"] = '.$this->param['models'].' -->';
 			}
-
 
 
 			$out .= '<table class="tableforemailform boxtablenotop" width="100%">'."\n";
@@ -924,6 +925,8 @@ class FormMail extends Form
 					$this->substit['__ONLINE_PAYMENT_URL__'] = '';
 				}
 
+				$this->substit['__ONLINE_INTERVIEW_SCHEDULER_TEXT_AND_URL__'] = '';
+
 				// Add lines substitution key from each line
 				$lines = '';
 				$defaultlines = $arraydefaultmessage->content_lines;
@@ -944,6 +947,9 @@ class FormMail extends Form
 					$atleastonecomponentishtml++;
 				}
 				if (strpos($defaultmessage, '__ONLINE_PAYMENT_TEXT_AND_URL__') !== false && dol_textishtml($this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'])) {
+					$atleastonecomponentishtml++;
+				}
+				if (strpos($defaultmessage, '__ONLINE_INTERVIEW_SCHEDULER_TEXT_AND_URL__') !== false && dol_textishtml($this->substit['__ONLINE_INTERVIEW_SCHEDULER_TEXT_AND_URL__'])) {
 					$atleastonecomponentishtml++;
 				}
 				if (dol_textishtml($defaultmessage)) {
