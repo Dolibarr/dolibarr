@@ -6132,8 +6132,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$substitutionarray['__THIRDPARTY_TVAINTRA__'] = (is_object($object->thirdparty) ? $object->thirdparty->tva_intra : '');
 				$substitutionarray['__THIRDPARTY_NOTE_PUBLIC__'] = (is_object($object->thirdparty) ? dol_htmlentitiesbr($object->thirdparty->note_public) : '');
 				$substitutionarray['__THIRDPARTY_NOTE_PRIVATE__'] = (is_object($object->thirdparty) ? dol_htmlentitiesbr($object->thirdparty->note_private) : '');
-			} elseif (is_object($object) && $object->element == 'recruitmentcandidature') {
-				$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
+			}
+
+			if (is_object($object) && $object->element == 'recruitmentcandidature') {
+				if ($object->id > 0) {
+					$substitutionarray['__CANDIDATE_FULLNAME__'] = $object->getFullName($outputlangs);
+				}
 			}
 
 			if (is_object($object->project) && $object->project->id > 0)
