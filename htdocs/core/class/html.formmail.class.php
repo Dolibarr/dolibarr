@@ -418,7 +418,11 @@ class FormMail extends Form
 			}
 			foreach ($this->param as $key=>$value)
 			{
-				$out .= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
+				if (is_array($value)) {
+					$out .= "<!-- param key=".$key." is array, we do not output input filed for it -->\n";
+				} else {
+					$out .= '<input type="hidden" id="'.$key.'" name="'.$key.'" value="'.$value.'" />'."\n";
+				}
 			}
 
 			$modelmail_array = array();
@@ -1243,12 +1247,8 @@ class FormMail extends Form
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
 				} elseif ($type_template == 'fichinter_send') {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
-				} elseif ($type_template == 'thirdparty') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty");
-				} elseif ($type_template == 'user') {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentUser");
 				} elseif (!empty($type_template)) {
-					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template));
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 				}
 
 				$ret->label = 'default';

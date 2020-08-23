@@ -1527,6 +1527,29 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 
         print "</div>";
 
+        //Select mail models is same action as presend
+        if (GETPOST('modelselected')) {
+        	$action = 'presend';
+        }
+
+        if ($action != 'presend')
+        {
+        	print '<div class="fichecenter"><div class="fichehalfleft">';
+
+        	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+        	$MAXEVENT = 10;
+
+        	$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
+
+        	// List of actions on element
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+        	$formactions = new FormActions($db);
+        	$somethingshown = $formactions->showactions($object, 'contact', $object->socid, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for thirdparty
+
+        	print '</div></div></div>';
+        }
+
 	    // Presend form
 	    $modelmail = 'contact';
 	    $defaulttopic = 'Information';

@@ -39,6 +39,7 @@ create table llx_projet
   fk_user_close    integer DEFAULT NULL,
   note_private     text,
   note_public      text,
+  email_msgid      varchar(255),				-- if project or lead is created by email collector, we store here MSG ID
   --budget_days      real,                      -- budget in days is sum of field planned_workload of tasks
   opp_amount       double(24,8),
   budget_amount    double(24,8),

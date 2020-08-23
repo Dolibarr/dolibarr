@@ -1092,6 +1092,8 @@ if (count($listofextcals))
                         // X-MICROSOFT-CDO-BUSYSTATUS:OOF       + TRANSP:OPAQUE      => Away from the office / off-site
                     }
 
+                    if ($icalevent['LOCATION']) $event->location = $icalevent['LOCATION'];
+
                     $event->date_start_in_calendar = $event->datep;
 
                     if ($event->datef != '' && $event->datef >= $event->datep) $event->date_end_in_calendar = $event->datef;

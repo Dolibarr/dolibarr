@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
 
 
 /**
@@ -932,6 +933,8 @@ class EmailCollector extends CommonObject
         $searchhead = '';
         $searchfilterdoltrackid = 0;
         $searchfilternodoltrackid = 0;
+        $searchfilterisanswer = 0;
+        $searchfilterisnotanswer = 0;
         foreach ($this->filters as $rule)
         {
             if (empty($rule['status'])) continue;
@@ -956,6 +959,9 @@ class EmailCollector extends CommonObject
 
             if ($rule['type'] == 'withtrackingid') { $searchfilterdoltrackid++; $searchhead .= '/References.*@'.preg_quote($host, '/').'/'; }
             if ($rule['type'] == 'withouttrackingid') { $searchfilternodoltrackid++; $searchhead .= '! /References.*@'.preg_quote($host, '/').'/'; }
+
+            if ($rule['type'] == 'isanswer') { $searchfilterisanswer++; $searchhead .= '/References.*@.*/'; }
+            if ($rule['type'] == 'isnotanswer') { $searchfilterisnotanswer++; $searchhead .= '! /References.*@.*/'; }
         }
 
         if (empty($targetdir))	// Use last date as filter if there is no targetdir defined.
@@ -1077,10 +1083,14 @@ class EmailCollector extends CommonObject
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
                 $header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
+
                 $matches = array();
                 preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
                 $headers = array_combine($matches[1], $matches[2]);
                 //var_dump($headers);
+
+                if (!empty($headers['in-reply-to']) && empty($headers['In-Reply-To'])) { $headers['In-Reply-To'] = $headers['in-reply-to']; }
+                if (!empty($headers['references']) && empty($headers['References'])) { $headers['References'] = $headers['references']; }
 
                 dol_syslog("** Process email ".$i." References: ".$headers['References']);
 
@@ -1090,7 +1100,7 @@ class EmailCollector extends CommonObject
                     if (empty($headers['References']) || !preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
-                        continue;
+                        continue;	// Exclude email
                     }
                 }
                 if ($searchfilternodoltrackid > 0)
@@ -1098,9 +1108,24 @@ class EmailCollector extends CommonObject
                     if (!empty($headers['References']) && preg_match('/@'.preg_quote($host, '/').'/', $headers['References']))
                     {
                         $nbemailprocessed++;
-                        continue;
+                        continue;	// Exclude email
                     }
                 }
+                if ($searchfilterisanswer > 0) {
+                	if (empty($headers['In-Reply-To']))
+                	{
+                		$nbemailprocessed++;
+                		continue;	// Exclude email
+                	}
+                }
+                if ($searchfilterisnotanswer > 0) {
+                	if (!empty($headers['In-Reply-To']))
+                	{
+                		$nbemailprocessed++;
+                		continue;	// Exclude email
+                	}
+                }
+
 
                 $thirdpartystatic = new Societe($this->db);
                 $contactstatic = new Contact($this->db);
@@ -1112,6 +1137,8 @@ class EmailCollector extends CommonObject
                 $thirdpartyfoundby = '';
                 $contactfoundby = '';
                 $projectfoundby = '';
+                $ticketfoundby = '';
+                $candidaturefoundby = '';
 
                 $this->db->begin();
 
@@ -1119,7 +1146,7 @@ class EmailCollector extends CommonObject
                 // GET Email meta datas
                 $overview = imap_fetch_overview($connection, $imapemail, 0);
 
-                dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." subject=".$overview[0]->subject);
+                dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
                 // Decode $overview[0]->subject according to RFC2047
                 // Can use also imap_mime_header_decode($str)
@@ -1226,7 +1253,7 @@ class EmailCollector extends CommonObject
                 }
                 $fk_element_id = 0; $fk_element_type = '';
 
-                $contactid = 0; $thirdpartyid = 0; $projectid = 0;
+                $contactid = 0; $thirdpartyid = 0; $projectid = 0; $ticketid = 0;
 
                 // Analyze TrackId in field References. For example:
                 // References: <1542377954.SMTPs-dolibarr-thi649@8f6014fde11ec6cdec9a822234fc557e>
@@ -1237,90 +1264,148 @@ class EmailCollector extends CommonObject
                 $objectemail = null;
 
                 $reg = array();
-                if (!empty($headers['References']) && preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $headers['References'], $reg))
+                if (!empty($headers['References']))
                 {
-                    $trackid = $reg[1].$reg[2];
+                	$arrayofreferences = preg_split('/\s+/', $headers['References']);
 
-                    if ($reg[1] == 'inv')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Facture($this->db);
-                    }
-                    if ($reg[1] == 'proj')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Project($this->db);
-                    }
-                    if ($reg[1] == 'con')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Contact($this->db);
-                    }
-                    if ($reg[1] == 'thi')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Societe($this->db);
-                    }
-                    if ($reg[1] == 'use')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new User($this->db);
-                    }
-                    if ($reg[1] == 'tic')
-                    {
-                        $objectid = $reg[2];
-                        $objectemail = new Ticket($this->db);
-                    }
+                	foreach ($arrayofreferences as $reference) {
+                		//print "Process reference ".dol_escape_htmltag($reference)."<br>\n";
+                		if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg)) {
+                			// This is a Dolibarr reference
+		                    $trackid = $reg[1].$reg[2];
 
-                    if (is_object($objectemail))
-                    {
-                        $result = $objectemail->fetch($objectid);
-                        if ($result > 0)
-                        {
-                            $fk_element_id = $objectemail->id;
-                            $fk_element_type = $objectemail->element;
-                            // Fix fk_element_type
-                            if ($fk_element_type == 'facture') $fk_element_type = 'invoice';
+		                    $objectid = $reg[2];
+		                    if ($reg[1] == 'inv')
+		                    {
+		                        $objectemail = new Facture($this->db);
+		                    }
+		                    if ($reg[1] == 'proj')
+		                    {
+		                        $objectemail = new Project($this->db);
+		                    }
+		                    if ($reg[1] == 'con')
+		                    {
+		                        $objectemail = new Contact($this->db);
+		                    }
+		                    if ($reg[1] == 'thi')
+		                    {
+		                        $objectemail = new Societe($this->db);
+		                    }
+		                    if ($reg[1] == 'use')
+		                    {
+		                        $objectemail = new User($this->db);
+		                    }
+		                    if ($reg[1] == 'tic')
+		                    {
+		                        $objectemail = new Ticket($this->db);
+		                    }
+		                    if ($reg[1] == 'recruitmentcandidature')
+		                    {
+		                    	$objectemail = new RecruitmentCandidature($this->db);
+		                    }
+                		} elseif (preg_match('/<(.*@.*)>/', $reference, $reg)) {
+							// This is an external reference, we check if we have it in our database
+                			if (! is_object($objectemail)) {
+                				$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."ticket where email_msgid = '".$this->db->escape($reg[1])."'";
+								$resql = $this->db->query($sql);
+								if ($resql) {
+									$obj = $this->db->fetch_object($resql);
+									$objectid = $obj->rowid;
+									$objectemail = new Ticket($this->db);
+									$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+								} else {
+									$errorforemail++;
+								}
+                			}
 
-                            $thirdpartyid = $objectemail->fk_soc;
-                            $contactid = $objectemail->fk_socpeople;
-                            $projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
-                        }
-                    }
+							if (! is_object($objectemail)) {
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."projet where email_msgid = '".$this->db->escape($reg[1])."'";
+								$resql = $this->db->query($sql);
+								if ($resql) {
+									$obj = $this->db->fetch_object($resql);
+									$objectid = $obj->rowid;
+									$objectemail = new Project($this->db);
+									$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+								} else {
+									$errorforemail++;
+								}
+							}
 
-                    // Project
-                    if ($projectid > 0)
-                    {
-                        $result = $projectstatic->fetch($projectid);
-                        if ($result <= 0) $projectstatic->id = 0;
-                        else {
-                            $projectid = $projectstatic->id;
-                            $projectfoundby = 'trackid ('.$trackid.')';
-                            if (empty($contactid)) $contactid = $projectstatic->fk_contact;
-                            if (empty($thirdpartyid)) $thirdpartyid = $projectstatic->fk_soc;
-                        }
-                    }
-                    // Contact
-                    if ($contactid > 0)
-                    {
-                        $result = $contactstatic->fetch($contactid);
-                        if ($result <= 0) $contactstatic->id = 0;
-                        else {
-                            $contactid = $contactstatic->id;
-                            $contactfoundby = 'trackid ('.$trackid.')';
-                            if (empty($thirdpartyid)) $thirdpartyid = $contactstatic->fk_soc;
-                        }
-                    }
-                    // Thirdparty
-                    if ($thirdpartyid > 0)
-                    {
-                        $result = $thirdpartystatic->fetch($thirdpartyid);
-                        if ($result <= 0) $thirdpartystatic->id = 0;
-                        else {
-                            $thirdpartyid = $thirdpartystatic->id;
-                            $thirdpartyfoundby = 'trackid ('.$trackid.')';
-                        }
-                    }
+							if (! is_object($objectemail)) {
+								$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature where email_msgid = '".$this->db->escape($reg[1])."'";
+								$resql = $this->db->query($sql);
+								if ($resql) {
+									$obj = $this->db->fetch_object($resql);
+									$objectid = $obj->rowid;
+									$objectemail = new RecruitmentCandidature($this->db);
+									$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+								} else {
+									$errorforemail++;
+								}
+							}
+                		}
+
+                		// Load object linked to email
+                		if (is_object($objectemail))
+                		{
+                			$result = $objectemail->fetch($objectid);
+                			if ($result > 0)
+                			{
+                				$fk_element_id = $objectemail->id;
+                				$fk_element_type = $objectemail->element;
+                				// Fix fk_element_type
+                				if ($fk_element_type == 'facture') $fk_element_type = 'invoice';
+
+                				if (get_class($objectemail) != 'Societe') $thirdpartyid = $objectemail->fk_soc;
+                				else $thirdpartyid = $objectemail->id;
+
+                				if (get_class($objectemail) != 'Contact') $contactid = $objectemail->fk_socpeople;
+                				else $contactid = $objectemail->id;
+
+                				if (get_class($objectemail) != 'Project') $projectid = isset($objectemail->fk_project) ? $objectemail->fk_project : $objectemail->fk_projet;
+                				else $projectid = $objectemail->id;
+                			}
+                		}
+
+                		// Project
+                		if ($projectid > 0)
+                		{
+                			$result = $projectstatic->fetch($projectid);
+                			if ($result <= 0) $projectstatic->id = 0;
+                			else {
+                				$projectid = $projectstatic->id;
+                				if ($trackid) $projectfoundby = 'trackid ('.$trackid.')';
+                				if (empty($contactid)) $contactid = $projectstatic->fk_contact;
+                				if (empty($thirdpartyid)) $thirdpartyid = $projectstatic->fk_soc;
+                			}
+                		}
+                		// Contact
+                		if ($contactid > 0)
+                		{
+                			$result = $contactstatic->fetch($contactid);
+                			if ($result <= 0) $contactstatic->id = 0;
+                			else {
+                				$contactid = $contactstatic->id;
+                				if ($trackid) $contactfoundby = 'trackid ('.$trackid.')';
+                				if (empty($thirdpartyid)) $thirdpartyid = $contactstatic->fk_soc;
+                			}
+                		}
+                		// Thirdparty
+                		if ($thirdpartyid > 0)
+                		{
+                			$result = $thirdpartystatic->fetch($thirdpartyid);
+                			if ($result <= 0) $thirdpartystatic->id = 0;
+                			else {
+                				$thirdpartyid = $thirdpartystatic->id;
+                				if ($trackid) $thirdpartyfoundby = 'trackid ('.$trackid.')';
+                			}
+                		}
+
+                		if (is_object($objectemail))
+                		{
+                			break;	// Exit loop of references. We already found an accurate reference
+                		}
+                	}
                 }
 
                 if (empty($contactid))		// Try to find contact using email
@@ -1331,7 +1416,7 @@ class EmailCollector extends CommonObject
                     {
                         $contactid = $contactstatic->id;
                         $contactfoundby = 'email of contact ('.$from.')';
-	                    if ($contactstatic->socid > 0)
+                        if (empty($thirdpartyid) && $contactstatic->socid > 0)
                         {
 	                        $result = $thirdpartystatic->fetch($contactstatic->socid);
                             if ($result > 0)
@@ -1363,19 +1448,14 @@ class EmailCollector extends CommonObject
                     if ($this->source_directory == 'Sent') $actioncode = 'EMAIL_OUT';
 
                     $description = $descriptiontitle = $descriptionmeta = $descriptionfull = '';
-                    if (in_array($operation['type'], array('recordevent', 'project', 'ticket')))
-                    {
-                        if ($operation['type'] == 'project') $descriptiontitle = $langs->trans("ProjectCreatedByEmailCollector", $msgid);
-                        elseif ($operation['type'] == 'ticket') $descriptiontitle = $langs->trans("TicketCreatedByEmailCollector", $msgid);
-                        else $descriptiontitle = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
 
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
-                        if ($sender) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
-                        $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTo").($langs->trans("MailTo") != 'To' ? ' (To)' : '').' : '.dol_escape_htmltag($to));
-                        if ($sendtocc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
-                        //if ($bcc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Bcc").' : '.dol_escape_htmltag($bcc));
-                    }
+                    $descriptiontitle = $langs->trans("RecordCreatedByEmailCollector", $msgid);
+
+                    $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTopic").' : '.dol_escape_htmltag($subject));
+                    $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailFrom").($langs->trans("MailFrom") != 'From' ? ' (From)' : '').' : '.dol_escape_htmltag($fromstring));
+                    if ($sender) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("Sender").($langs->trans("Sender") != 'Sender' ? ' (Sender)' : '').' : '.dol_escape_htmltag($sender));
+                    $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailTo").($langs->trans("MailTo") != 'To' ? ' (To)' : '').' : '.dol_escape_htmltag($to));
+                    if ($sendtocc) $descriptionmeta = dol_concatdesc($descriptionmeta, $langs->trans("MailCC").($langs->trans("MailCC") != 'CC' ? ' (CC)' : '').' : '.dol_escape_htmltag($sendtocc));
 
                     // Search and create thirdparty
                     if ($operation['type'] == 'loadthirdparty' || $operation['type'] == 'loadandcreatethirdparty')
@@ -1494,8 +1574,7 @@ class EmailCollector extends CommonObject
                     elseif ($operation['type'] == 'recordevent')
                     {
                     	$alreadycreated = 0;
-                    	// TODO Check if $msg ID already in database for $conf->entity
-
+                    	// TODO Check if $msgid already in database for $conf->entity
 
                     	if (!$alreadycreated)
                     	{
@@ -1571,255 +1650,368 @@ class EmailCollector extends CommonObject
 	                        }
                     	}
                     }
-                    // Create event
+                    // Create project / lead
                     elseif ($operation['type'] == 'project')
                     {
-                        $projecttocreate = new Project($this->db);
-                        if ($thirdpartystatic->id > 0)
-                        {
-                            $projecttocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
-                        }
-                        if ($contactstatic->id > 0)
-                        {
-                            $projecttocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
-                        }
+                    	$projecttocreate = new Project($this->db);
 
-                        $description = $descriptiontitle;
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $descriptionmeta);
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $messagetext);
+                    	$alreadycreated = $projecttocreate->fetch(0, '', $msgid);
+                    	if ($alreadycreated == 0)
+                    	{
+	                        if ($thirdpartystatic->id > 0)
+	                        {
+	                            $projecttocreate->socid = $thirdpartystatic->id;
+	                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+	                        }
+	                        if ($contactstatic->id > 0)
+	                        {
+	                            $projecttocreate->contact_id = $contactstatic->id;
+	                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+	                        }
 
-                        $descriptionfull = $description;
-                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
+	                        $description = $descriptiontitle;
+	                        $description = dol_concatdesc($description, "-----");
+	                        $description = dol_concatdesc($description, $descriptionmeta);
+	                        $description = dol_concatdesc($description, "-----");
+	                        $description = dol_concatdesc($description, $messagetext);
 
-                        $id_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'rowid');
-                        $percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
+	                        $descriptionfull = $description;
+	                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+	                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
-                        $projecttocreate->title = $subject;
-                        $projecttocreate->date_start = $date;
-                        $projecttocreate->date_end = '';
-                        $projecttocreate->opp_status = $id_opp_status;
-                        $projecttocreate->opp_percent = $percent_opp_status;
-                        $projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 10), '...'.$langs->transnoentities("SeePrivateNote").'...');
-                        $projecttocreate->note_private = $descriptionfull;
-                        $projecttocreate->entity = $conf->entity;
+	                        $id_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'rowid');
+	                        $percent_opp_status = dol_getIdFromCode($this->db, 'PROSP', 'c_lead_status', 'code', 'percent');
 
-                        // Overwrite values with values extracted from source email.
-                        // This may overwrite any $projecttocreate->xxx properties.
-                        $savesocid = $projecttocreate->socid;
-                        $errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
+	                        $projecttocreate->title = $subject;
+	                        $projecttocreate->date_start = $date;
+	                        $projecttocreate->date_end = '';
+	                        $projecttocreate->opp_status = $id_opp_status;
+	                        $projecttocreate->opp_percent = $percent_opp_status;
+	                        $projecttocreate->description = dol_concatdesc(dolGetFirstLineOfText(dol_string_nohtmltag($description, 2), 10), '...'.$langs->transnoentities("SeePrivateNote").'...');
+	                        $projecttocreate->note_private = $descriptionfull;
+	                        $projecttocreate->entity = $conf->entity;
+	                        $projecttocreate->email_msgid = $msgid;
 
-                        // Set project ref if not yet defined
-                        if (empty($projecttocreate->ref))
-                        {
-                            // Get next project Ref
-                            $defaultref = '';
-                            $modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
+	                        // Overwrite values with values extracted from source email.
+	                        // This may overwrite any $projecttocreate->xxx properties.
+	                        $savesocid = $projecttocreate->socid;
+	                        $errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
 
-                            // Search template files
-                            $file = ''; $classname = ''; $filefound = 0; $reldir = '';
-                            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-                            foreach ($dirmodels as $reldir)
-                            {
-                                $file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
-                                if (file_exists($file))
-                                {
-                                    $filefound = 1;
-                                    $classname = $modele;
-                                    break;
-                                }
-                            }
+	                        // Set project ref if not yet defined
+	                        if (empty($projecttocreate->ref))
+	                        {
+	                            // Get next Ref
+	                            $defaultref = '';
+	                            $modele = empty($conf->global->PROJECT_ADDON) ? 'mod_project_simple' : $conf->global->PROJECT_ADDON;
 
-                            if ($filefound)
-                            {
-                                $result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
-                                $modProject = new $classname;
+	                            // Search template files
+	                            $file = ''; $classname = ''; $filefound = 0; $reldir = '';
+	                            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	                            foreach ($dirmodels as $reldir)
+	                            {
+	                                $file = dol_buildpath($reldir."core/modules/project/".$modele.'.php', 0);
+	                                if (file_exists($file))
+	                                {
+	                                    $filefound = 1;
+	                                    $classname = $modele;
+	                                    break;
+	                                }
+	                            }
 
-                                if ($savesocid > 0)
-                                {
-                                    if ($savesocid != $projecttocreate->socid)
-                                    {
-                                        $errorforactions++;
-                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
-                                    }
-                                } else {
-                                    if ($projecttocreate->socid > 0)
-                                    {
-                                        $thirdpartystatic->fetch($projecttocreate->socid);
-                                    }
-                                }
+	                            if ($filefound)
+	                            {
+	                                if ($savesocid > 0)
+	                                {
+	                                    if ($savesocid != $projecttocreate->socid)
+	                                    {
+	                                        $errorforactions++;
+	                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$projecttocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+	                                    }
+	                                } else {
+	                                    if ($projecttocreate->socid > 0)
+	                                    {
+	                                        $thirdpartystatic->fetch($projecttocreate->socid);
+	                                    }
+	                                }
 
-                                $defaultref = $modProject->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
-                            }
-                            $projecttocreate->ref = $defaultref;
-                        }
+	                                $result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
+	                                $modModuleToUseForNextValue = new $classname;
+	                                $defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $projecttocreate);
+	                            }
+	                            $projecttocreate->ref = $defaultref;
+	                        }
 
-                        if ($errorforthisaction)
-                        {
-                            $errorforactions++;
-                        } else {
-                            if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
-                            {
-                                $errorforactions++;
-                                $this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
-                            } else {
-                                // Create project
-                                $result = $projecttocreate->create($user);
-                                if ($result <= 0)
-                                {
-                                    $errorforactions++;
-                                    $this->error = 'Failed to create project: '.$langs->trans($projecttocreate->error);
-                                    $this->errors = $projecttocreate->errors;
-                                }
-                            }
-                        }
+	                        if ($errorforthisaction)
+	                        {
+	                            $errorforactions++;
+	                        } else {
+	                            if (empty($projecttocreate->ref) || (is_numeric($projecttocreate->ref) && $projecttocreate->ref <= 0))
+	                            {
+	                                $errorforactions++;
+	                                $this->error = 'Failed to create project: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
+	                            } else {
+	                                // Create project
+	                                $result = $projecttocreate->create($user);
+	                                if ($result <= 0)
+	                                {
+	                                    $errorforactions++;
+	                                    $this->error = 'Failed to create project: '.$langs->trans($projecttocreate->error);
+	                                    $this->errors = $projecttocreate->errors;
+	                                }
+	                            }
+	                        }
+                    	}
                     }
-                    // Create event
+                    // Create ticket
                     elseif ($operation['type'] == 'ticket')
                     {
-                        $tickettocreate = new Ticket($this->db);
-                        if ($thirdpartystatic->id > 0)
-                        {
-                            $tickettocreate->socid = $thirdpartystatic->id;
-                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
-                        }
-                        if ($contactstatic->id > 0)
-                        {
-                            $tickettocreate->contact_id = $contactstatic->id;
-                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
-                        }
+                    	$tickettocreate = new Ticket($this->db);
 
-                        $description = $descriptiontitle;
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $descriptionmeta);
-                        $description = dol_concatdesc($description, "-----");
-                        $description = dol_concatdesc($description, $messagetext);
+                    	$alreadycreated = $tickettocreate->fetch(0, '', '', $msgid);
+                    	if ($alreadycreated == 0)
+                    	{
+	                        if ($thirdpartystatic->id > 0)
+	                        {
+	                            $tickettocreate->socid = $thirdpartystatic->id;
+	                            $tickettocreate->fk_soc = $thirdpartystatic->id;
+	                            if ($thirdpartyfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Third party found from '.$thirdpartyfoundby);
+	                        }
+	                        if ($contactstatic->id > 0)
+	                        {
+	                            $tickettocreate->contact_id = $contactstatic->id;
+	                            if ($contactfoundby) $descriptionmeta = dol_concatdesc($descriptionmeta, 'Contact/address found from '.$contactfoundby);
+	                        }
 
-                        $descriptionfull = $description;
-                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
-                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
+	                        $description = $descriptiontitle;
+	                        $description = dol_concatdesc($description, "-----");
+	                        $description = dol_concatdesc($description, $descriptionmeta);
+	                        $description = dol_concatdesc($description, "-----");
+	                        $description = dol_concatdesc($description, $messagetext);
 
-                        $tickettocreate->subject = $subject;
-                        $tickettocreate->message = $description;
-                        $tickettocreate->type_code = 0;
-                        $tickettocreate->category_code = 0;
-                        $tickettocreate->severity_code = 0;
-                        $tickettocreate->origin_email = $from;
-                        $tickettocreate->fk_user_create = $user->id;
-                        $tickettocreate->datec = $date;
-                        $tickettocreate->fk_project = $projectstatic->id;
-                        $tickettocreate->fk_soc = $thirdpartystatic->id;
-                        $tickettocreate->notify_tiers_at_create = 0;
-                        $tickettocreate->note_private = $descriptionfull;
-                        $tickettocreate->entity = $conf->entity;
-                        //$tickettocreate->fk_contact = $contactstatic->id;
+	                        $descriptionfull = $description;
+	                        $descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+	                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
-                        // Overwrite values with values extracted from source email.
-                        // This may overwrite any $projecttocreate->xxx properties.
-                        $savesocid = $tickettocreate->socid;
-                        $errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
+	                        $tickettocreate->subject = $subject;
+	                        $tickettocreate->message = $description;
+	                        $tickettocreate->type_code = 0;
+	                        $tickettocreate->category_code = null;
+	                        $tickettocreate->severity_code = null;
+	                        $tickettocreate->origin_email = $from;
+	                        $tickettocreate->fk_user_create = $user->id;
+	                        $tickettocreate->datec = $date;
+	                        $tickettocreate->fk_project = $projectstatic->id;
+	                        $tickettocreate->notify_tiers_at_create = 0;
+	                        $tickettocreate->note_private = $descriptionfull;
+	                        $tickettocreate->entity = $conf->entity;
+	                        $tickettocreate->email_msgid = $msgid;
+	                        //$tickettocreate->fk_contact = $contactstatic->id;
 
-                        // Set ticket ref if not yet defined
-                        if (empty($tickettocreate->ref))
-                        {
-                            // Get next project Ref
-                            $defaultref = '';
-                            $modele = empty($conf->global->TICKET_ADDON) ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
+	                        // Overwrite values with values extracted from source email.
+	                        // This may overwrite any $projecttocreate->xxx properties.
+	                        $savesocid = $tickettocreate->socid;
+	                        $errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
 
-                            // Search template files
-                            $file = ''; $classname = ''; $filefound = 0; $reldir = '';
-                            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-                            foreach ($dirmodels as $reldir)
-                            {
-                                $file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
-                                if (file_exists($file))
-                                {
-                                    $filefound = 1;
-                                    $classname = $modele;
-                                    break;
-                                }
-                            }
+	                        // Set ticket ref if not yet defined
+	                        if (empty($tickettocreate->ref))
+	                        {
+	                            // Get next Ref
+	                            $defaultref = '';
+	                            $modele = empty($conf->global->TICKET_ADDON) ? 'mod_ticket_simple' : $conf->global->TICKET_ADDON;
 
-                            if ($filefound)
-                            {
-                                $result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
-                                $modTicket = new $classname;
+	                            // Search template files
+	                            $file = ''; $classname = ''; $filefound = 0; $reldir = '';
+	                            $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	                            foreach ($dirmodels as $reldir)
+	                            {
+	                                $file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+	                                if (file_exists($file))
+	                                {
+	                                    $filefound = 1;
+	                                    $classname = $modele;
+	                                    break;
+	                                }
+	                            }
 
-                                if ($savesocid > 0)
-                                {
-                                    if ($savesocid != $tickettocreate->socid)
-                                    {
-                                        $errorforactions++;
-                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
-                                    }
-                                } else {
-                                    if ($tickettocreate->socid > 0)
-                                    {
-                                        $thirdpartystatic->fetch($tickettocreate->socid);
-                                    }
-                                }
+	                            if ($filefound)
+	                            {
+	                                if ($savesocid > 0)
+	                                {
+	                                    if ($savesocid != $tickettocreate->socid)
+	                                    {
+	                                        $errorforactions++;
+	                                        setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$tickettocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+	                                    }
+	                                } else {
+	                                    if ($tickettocreate->socid > 0)
+	                                    {
+	                                        $thirdpartystatic->fetch($tickettocreate->socid);
+	                                    }
+	                                }
 
-                                $defaultref = $modTicket->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
-                            }
-                            $tickettocreate->ref = $defaultref;
-                        }
-						 // Create event specific on hook
-						// this code action is hook..... for support this call
-						elseif (substr($operation['type'], 0, 4) == 'hook') {
-							global $hookmanager;
+	                                $result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
+	                                $modModuleToUseForNextValue = new $classname;
+	                                $defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
+	                            }
+	                            $tickettocreate->ref = $defaultref;
+	                        }
 
-							if (!is_object($hookmanager))
-							$hookmanager->initHooks(array('emailcollectorcard'));
+	                        if ($errorforthisaction)
+	                        {
+	                            $errorforactions++;
+	                        } else {
+	                            if (is_numeric($tickettocreate->ref) && $tickettocreate->ref <= 0)
+	                            {
+	                                $errorforactions++;
+	                                $this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
+	                            } else {
+	                                // Create project
+	                                $result = $tickettocreate->create($user);
+	                                if ($result <= 0)
+	                                {
+	                                    $errorforactions++;
+	                                    $this->error = 'Failed to create ticket: '.$langs->trans($tickettocreate->error);
+	                                    $this->errors = $tickettocreate->errors;
+	                                }
+	                            }
+	                        }
+                    	}
+                    }
+                    // Create candidature
+                    elseif ($operation['type'] == 'candidature')
+                    {
+                    	$candidaturetocreate = new RecruitmentCandidature($this->db);
 
-							$parameters = array(
-							'connection'=>  $connection,
-							'imapemail'=>$imapemail,
-							'overview'=>$overview,
+                    	$alreadycreated = $candidaturetocreate->fetch(0, '', $msgid);
+                    	if ($alreadycreated == 0)
+                    	{
+	                    	$description = $descriptiontitle;
+	                    	$description = dol_concatdesc($description, "-----");
+	                    	$description = dol_concatdesc($description, $descriptionmeta);
+	                    	$description = dol_concatdesc($description, "-----");
+	                    	$description = dol_concatdesc($description, $messagetext);
 
-							'from' => $from,
-							'fromtext' => $fromtext,
+	                    	$descriptionfull = $description;
+	                    	$descriptionfull = dol_concatdesc($descriptionfull, "----- Header");
+	                    	$descriptionfull = dol_concatdesc($descriptionfull, $header);
 
-							'actionparam'=>  $operation['actionparam'],
+	                    	$candidaturetocreate->subject = $subject;
+	                    	$candidaturetocreate->message = $description;
+	                    	$candidaturetocreate->type_code = 0;
+	                    	$candidaturetocreate->category_code = null;
+	                    	$candidaturetocreate->severity_code = null;
+	                    	$candidaturetocreate->email = $from;
+	                    	//$candidaturetocreate->lastname = $langs->trans("Anonymous").' - '.$from;
+	                    	$candidaturetocreate->fk_user_creat = $user->id;
+	                    	$candidaturetocreate->date_creation = $date;
+	                    	$candidaturetocreate->fk_project = $projectstatic->id;
+	                    	$candidaturetocreate->description = $description;
+	                    	$candidaturetocreate->note_private = $descriptionfull;
+	                    	$candidaturetocreate->entity = $conf->entity;
+	                    	$candidaturetocreate->email_msgid = $msgid;
+	                    	$candidaturetocreate->status = $candidaturetocreate::STATUS_DRAFT;
+	                    	//$candidaturetocreate->fk_contact = $contactstatic->id;
 
+	                    	// Overwrite values with values extracted from source email.
+	                    	// This may overwrite any $projecttocreate->xxx properties.
+	                    	$errorforthisaction = $this->overwritePropertiesOfObject($candidaturetocreate, $operation['actionparam'], $messagetext, $subject, $header);
 
+	                    	// Set candidature ref if not yet defined
+	                    	/*if (empty($candidaturetocreate->ref))				We do not need this because we create object in draft status
+	                    	{
+	                    		// Get next Ref
+	                    		$defaultref = '';
+	                    		$modele = empty($conf->global->CANDIDATURE_ADDON) ? 'mod_candidature_simple' : $conf->global->CANDIDATURE_ADDON;
 
-							'thirdpartyid' => $thirdpartyid,
-							'objectid'=> $objectid,
-							'objectemail'=> $objectemail,
+	                    		// Search template files
+	                    		$file = ''; $classname = ''; $filefound = 0; $reldir = '';
+	                    		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+	                    		foreach ($dirmodels as $reldir)
+	                    		{
+	                    			$file = dol_buildpath($reldir."core/modules/ticket/".$modele.'.php', 0);
+	                    			if (file_exists($file))
+	                    			{
+	                    				$filefound = 1;
+	                    				$classname = $modele;
+	                    				break;
+	                    			}
+	                    		}
 
-							'messagetext'=>$messagetext,
-							'subject'=>$subject,
-							'header'=>$header,
-							);
-							$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+	                    		if ($filefound)
+	                    		{
+	                    			if ($savesocid > 0)
+	                    			{
+	                    				if ($savesocid != $candidaturetocreate->socid)
+	                    				{
+	                    					$errorforactions++;
+	                    					setEventMessages('You loaded a thirdparty (id='.$savesocid.') and you force another thirdparty id (id='.$candidaturetocreate->socid.') by setting socid in operation with a different value', null, 'errors');
+	                    				}
+	                    			} else {
+	                    				if ($candidaturetocreate->socid > 0)
+	                    				{
+	                    					$thirdpartystatic->fetch($candidaturetocreate->socid);
+	                    				}
+	                    			}
 
-							if ($res < 0)
-							 $this->error = $hookmanager->resPrint;
-						}
+	                    			$result = dol_include_once($reldir."core/modules/ticket/".$modele.'.php');
+	                    			$modModuleToUseForNextValue = new $classname;
+	                    			$defaultref = $modModuleToUseForNextValue->getNextValue(($thirdpartystatic->id > 0 ? $thirdpartystatic : null), $tickettocreate);
+	                    		}
+	                    		$candidaturetocreate->ref = $defaultref;
+	                    	}*/
 
-                        if ($errorforthisaction)
-                        {
-                            $errorforactions++;
-                        } else {
-                            if (is_numeric($tickettocreate->ref) && $tickettocreate->ref <= 0)
-                            {
-                                $errorforactions++;
-                                $this->error = 'Failed to create ticket: Can\'t get a valid value for the field ref with numbering template = '.$modele.', thirdparty id = '.$thirdpartystatic->id;
-                            } else {
-                                // Create project
-                                $result = $tickettocreate->create($user);
-                                if ($result <= 0)
-                                {
-                                    $errorforactions++;
-                                    $this->error = 'Failed to create ticket: '.$langs->trans($tickettocreate->error);
-                                    $this->errors = $tickettocreate->errors;
-                                }
-                            }
-                        }
+	                    	if ($errorforthisaction)
+	                    	{
+	                    		$errorforactions++;
+	                    	} else {
+	                    		// Create project
+	                    		$result = $candidaturetocreate->create($user);
+	                    		if ($result <= 0)
+	                    		{
+	                    			$errorforactions++;
+	                    			$this->error = 'Failed to create ticket: '.join(', ', $candidaturetocreate->errors);
+	                    			$this->errors = $candidaturetocreate->errors;
+	                    		}
+	                    	}
+                    	}
+                    }
+                    // Create event specific on hook
+                    // this code action is hook..... for support this call
+                    elseif (substr($operation['type'], 0, 4) == 'hook') {
+                    	global $hookmanager;
+
+                    	if (!is_object($hookmanager)) {
+                    		$hookmanager->initHooks(array('emailcollectorcard'));
+                    	}
+
+                    	$parameters = array(
+                    		'connection'=>  $connection,
+                    		'imapemail'=>$imapemail,
+                    		'overview'=>$overview,
+
+                    		'from' => $from,
+                    		'fromtext' => $fromtext,
+
+                    		'actionparam'=>  $operation['actionparam'],
+
+                    		'thirdpartyid' => $thirdpartyid,
+                    		'objectid'=> $objectid,
+                    		'objectemail'=> $objectemail,
+
+                    		'messagetext'=>$messagetext,
+                    		'subject'=>$subject,
+                    		'header'=>$header,
+                    	);
+                    	$res = $hookmanager->executeHooks('doCollectOneCollector', $parameters, $this, $operation['type']);
+
+                    	if ($res < 0) {
+                    		$errorforthisaction++;
+                    		$this->error = $hookmanager->resPrint;
+                    	}
+                    	if ($errorforthisaction)
+                    	{
+                    		$errorforactions++;
+                    	}
                     }
 
                     if (!$errorforactions)

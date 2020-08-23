@@ -324,7 +324,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']));
 //}
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton.' '.$linkback, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'email', 0, $newcardbutton.' '.$linkback, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
 /*$topicmail="";
@@ -332,12 +332,6 @@ $modelmail="";
 $objecttmp=new EmailCollector($db);
 $trackid='xxxx'.$object->id;*/
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-
-if ($sall)
-{
-	foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
-}
 
 $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';

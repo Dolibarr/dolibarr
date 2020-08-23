@@ -279,10 +279,10 @@ if ($action == 'presend')
 		}
 	}
 
-	// Tableau des substitutions
+	// Array of substitutions
 	$formmail->substit = $substitutionarray;
 
-	// Tableau des parametres complementaires
+	// Array of other parameters
 	$formmail->param['action'] = 'send';
 	$formmail->param['models'] = $modelmail;
 	$formmail->param['models_id'] = GETPOST('modelmailselected', 'int');

@@ -492,7 +492,7 @@ class ActionComm extends CommonObject
         $sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
         $sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
         $sql .= " '".$this->db->escape($this->note_private)."', ";
-        $sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", ";
+        $sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", ";	// deprecated, use ->socpeopleassigned
         $sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
         $sql .= ($userownerid > 0 ? $userownerid : "null").", ";
         $sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
@@ -1141,8 +1141,17 @@ class ActionComm extends CommonObject
         if (!empty($socid)) $sql .= " AND a.fk_soc = ".$socid;
         if (!empty($elementtype))
         {
-            if ($elementtype == 'project') $sql .= ' AND a.fk_project = '.$fk_element;
-            else $sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
+        	if ($elementtype == 'project') {
+        		$sql .= ' AND a.fk_project = '.$fk_element;
+        	}
+            elseif ($elementtype == 'contact') {
+            	$sql .= ' AND a.id IN';
+            	$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
+            	$sql .= " element_type = 'socpeople' AND fk_element = ".$fk_element.')';
+            }
+            else {
+            	$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
+            }
         }
         if (!empty($filter)) $sql .= $filter;
 		if ($sortorder && $sortfield) $sql .= $db->order($sortfield, $sortorder);
