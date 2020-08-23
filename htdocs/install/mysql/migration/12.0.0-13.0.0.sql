@@ -256,5 +256,5 @@ ALTER TABLE llx_projet ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_actioncomm ADD COLUMN reply_to varchar(255);
 
-ALTER TABLE llx_paiement ADD takepos_change DOUBLE(24,8) DEFAULT 0 AFTER fk_export_compta;
+ALTER TABLE llx_paiement ADD pos_change DOUBLE(24,8) DEFAULT 0 AFTER fk_export_compta;
 
