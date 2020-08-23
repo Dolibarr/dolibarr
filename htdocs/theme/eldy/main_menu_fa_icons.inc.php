@@ -149,7 +149,7 @@ div.mainmenu.generic4::before {
 	opacity: 0.7;
 	color: #440;
 }
-.fa-at, .fa-external-link-alt {
+.fa-at, .fa-external-link-alt, .fa-share-alt {
 	opacity: 0.7;
 	color: #304;
 }
