@@ -2129,7 +2129,7 @@ function pdf_getLinkedObjects($object,$outputlangs)
 			    {
 			        $elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
 			        if (! empty($elementobject->linkedObjectsIds['commande'])){
-						include_once DOL_DOCUMENT_ROOT.'/commande/commande.class.php';
+						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 						$order = new Commande($db);
 						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
 						if ($ret < 1) { $order=null; }
