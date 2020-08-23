@@ -261,7 +261,7 @@ class modSociete extends DolibarrModules
 		$this->export_icon[$r] = 'company';
 		$this->export_permission[$r] = array(array("societe", "export"));
 		$this->export_fields_array[$r] = array(
-			's.rowid'=>"Id", 's.nom'=>"Name", 's.name_alias'=>"AliasNameShort", 'ps.nom'=>"ParentCompany", 
+			's.rowid'=>"Id", 's.nom'=>"Name", 's.name_alias'=>"AliasNameShort", 'ps.nom'=>"ParentCompany",
 			's.status'=>"Status", 's.client'=>"Customer", 's.fournisseur'=>"Supplier", 's.datec'=>"DateCreation", 's.tms'=>"DateLastModification",
 			's.code_client'=>"CustomerCode", 's.code_fournisseur'=>"SupplierCode", 's.code_compta'=>"AccountancyCode", 's.code_compta_fournisseur'=>"SupplierAccountancyCode",
 			's.address'=>"Address", 's.zip'=>"Zip", 's.town'=>"Town", 'd.nom'=>'State', 'r.nom'=>'Region', 'c.label'=>"Country", 'c.code'=>"CountryCode", 's.phone'=>"Phone", 's.fax'=>"Fax",
@@ -292,7 +292,7 @@ class modSociete extends DolibarrModules
 		//	's.fk_stcomm'=>'List:c_stcomm:libelle:code','d.nom'=>'List:c_departements:nom:rowid'
 		//);
 		$this->export_TypeFields_array[$r] = array(
-			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text", 
+			's.rowid'=>"Numeric", 's.nom'=>"Text", 's.name_alias'=>"Text", 'ps.nom'=>"Text",
 			's.status'=>"Numeric", 's.client'=>"Numeric", 's.fournisseur'=>"Boolean", 's.datec'=>"Date", 's.tms'=>"Date",
 			's.code_client'=>"Text", 's.code_fournisseur'=>"Text", 's.code_compta'=>"Text", 's.code_compta_fournisseur'=>"Text",
 			's.address'=>"Text", 's.zip'=>"Text",'s.town'=>"Text", 'd.nom'=>'Text', 'r.nom'=>'Text', 'c.label'=>"List:c_country:label:label", 'c.code'=>"Text", 's.phone'=>"Text", 's.fax'=>"Text",
@@ -417,7 +417,7 @@ class modSociete extends DolibarrModules
 		$this->import_fields_array[$r] = array(//field order as per structure of table llx_societe
 			's.nom' => "Name*",
 			's.name_alias' => "AliasNameShort",
-			's.parent' => "ParentCompany", 
+			's.parent' => "ParentCompany",
 			's.status' => "Status",
 			's.code_client' => "CustomerCode",
 			's.code_fournisseur' => "SupplierCode",
@@ -524,15 +524,15 @@ class modSociete extends DolibarrModules
 				'class' => 'Account',
 				'method' => 'fetch',
 				'element' => 'BankAccount'
-//			),
-//			TODO
-//			's.fk_incoterms' => array(
-//				'rule' => 'fetchidfromcodeid',
-//				'classfile' => '/core/class/cincoterm.class.php',
-//				'class' => 'Cincoterm',
-//				'method' => 'fetch',
-//				'dict' => 'IncotermLabel'
-			)		
+		//          ),
+		//          TODO
+		//          's.fk_incoterms' => array(
+		//              'rule' => 'fetchidfromcodeid',
+		//              'classfile' => '/core/class/cincoterm.class.php',
+		//              'class' => 'Cincoterm',
+		//              'method' => 'fetch',
+		//              'dict' => 'IncotermLabel'
+			)
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
 		$this->import_regex_array[$r] = array(//field order as per structure of table llx_societe
