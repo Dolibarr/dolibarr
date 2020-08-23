@@ -41,7 +41,7 @@ class InfoBox
 		{
         	return array(
         		0 => 'Home',
-        		27 => 'Accountancy Home'
+        		27 => 'AccountancyHome'
         	);
 		}
 		else
@@ -74,7 +74,7 @@ class InfoBox
 				24 => 'expensereportindex',
 				25 => 'mailingindex',
 				26 => 'opensurveyindex',
-				27 => 'Accountancy Home'
+				27 => 'AccountancyHome'
 			);
 		}
     }
