@@ -194,7 +194,7 @@ class modProduct extends DolibarrModules
 		);
 		if (is_object($mysoc) && $mysoc->useNPR()) $this->export_fields_array[$r]['p.recuperableonly'] = 'NPR';
 		if (!empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.cost_price'=>'CostPrice'));
-		if (!empty($conf->stock->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
+		if (!empty($conf->stock->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('e.ref'=>'DefaultWarehouse', 'p.tobatch'=>'ManageLotSerial', 'p.stock'=>'Stock', 'p.seuil_stock_alerte'=>'StockLimit', 'p.desiredstock'=>'DesiredStock', 'p.pmp'=>'PMPValue'));
 		if (!empty($conf->barcode->enabled)) $this->export_fields_array[$r] = array_merge($this->export_fields_array[$r], array('p.barcode'=>'BarCode'));
 		$keyforselect = 'product'; $keyforelement = 'product'; $keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
@@ -216,7 +216,7 @@ class modProduct extends DolibarrModules
 			'p.price_base_type'=>"Text", 'p.price'=>"Numeric", 'p.price_ttc'=>"Numeric", 'p.tva_tx'=>'Numeric',
 			'p.datec'=>'Date', 'p.tms'=>'Date'
 		);
-		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
+		if (!empty($conf->stock->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('e.ref'=>'Text', 'p.tobatch'=>'Numeric', 'p.stock'=>'Numeric', 'p.seuil_stock_alerte'=>'Numeric', 'p.desiredstock'=>'Numeric', 'p.pmp'=>'Numeric', 'p.cost_price'=>'Numeric'));
 		if (!empty($conf->barcode->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('p.barcode'=>'Text'));
 		if (!empty($conf->fournisseur->enabled)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('s.nom'=>'Text', 'pf.ref_fourn'=>'Text', 'pf.unitprice'=>'Numeric', 'pf.quantity'=>'Numeric', 'pf.remise_percent'=>'Numeric', 'pf.delivery_time_days'=>'Numeric'));
 		if (!empty($conf->global->MAIN_MULTILANGS)) $this->export_TypeFields_array[$r] = array_merge($this->export_TypeFields_array[$r], array('l.lang'=>'Text', 'l.label'=>'Text', 'l.description'=>'Text', 'l.note'=>'Text'));
@@ -239,6 +239,7 @@ class modProduct extends DolibarrModules
 		if (!empty($conf->global->MAIN_MULTILANGS)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_lang as l ON l.fk_product = p.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra ON p.rowid = extra.fk_object';
 		if (!empty($conf->fournisseur->enabled)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pf ON pf.fk_product = p.rowid LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON s.rowid = pf.fk_soc';
+		if (!empty($conf->stock->enabled)) $this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'entrepot as e ON e.rowid = p.fk_default_warehouse';
 		$this->export_sql_end[$r] .= ' WHERE p.fk_product_type = 0 AND p.entity IN ('.getEntity('product').')';
 		if (!empty($conf->global->EXPORTTOOL_CATEGORIES)) $this->export_sql_order[$r] = ' GROUP BY p.rowid'; // FIXME The group by used a generic value to say "all fields in select except function fields"
 
@@ -417,13 +418,6 @@ class modProduct extends DolibarrModules
 			'p.datec' => 'DateCreation',
 			'p.cost_price' => "CostPrice",
 		);
-        if (!empty($conf->stock->enabled)) {//if Stock module enabled
-            $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
-                'p.seuil_stock_alerte' => 'StockLimit', //lower limit for warning
-                'p.pmp' => 'PMPValue', //weighted average price
-                'p.desiredstock' => 'DesiredStock'//desired stock for replenishment feature
-            ));
-        }
 
         $this->import_convertvalue_array[$r] = array(
         	    'p.weight_units' => array(
@@ -483,12 +477,48 @@ class modProduct extends DolibarrModules
                 )
 		);
 
+		$this->import_regex_array[$r] = array(
+            'p.ref' => '[^ ]',
+            'p.price_base_type' => '\AHT\z|\ATTC\z',
+            'p.tosell' => '^[0|1]$',
+            'p.tobuy' => '^[0|1]$',
+            'p.fk_product_type' => '^[0|1]$',
+            'p.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
+            'p.recuperableonly' => '^[0|1]$',
+            'p.finished' => '^[0|1]$'
+        );
+
+        if (!empty($conf->stock->enabled)) {//if Stock module enabled
+            $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array(
+				'p.fk_default_warehouse'=>'DefaultWarehouse',
+				'p.tobatch'=>'ManageLotSerial',
+                'p.seuil_stock_alerte' => 'StockLimit', //lower limit for warning
+                'p.pmp' => 'PMPValue', //weighted average price
+                'p.desiredstock' => 'DesiredStock'//desired stock for replenishment feature
+            ));
+
+            $this->import_regex_array[$r] = array_merge($this->import_regex_array[$r], array(
+				'p.tobatch' => '^[0|1]$'
+            ));
+
+			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
+					'p.fk_default_warehouse' => array(
+					'rule' => 'fetchidfromref',
+					'classfile' => '/product/stock/class/entrepot.class.php',
+					'class' => 'Entrepot',
+					'method' => 'fetch',
+					'element'=> 'Warehouse'
+				)
+			));
+        }
+
 		if (!empty($conf->fournisseur->enabled) || !empty($conf->margin->enabled)) $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.cost_price'=>'CostPrice'));
 		if (is_object($mysoc) && $mysoc->useNPR()) $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.recuperableonly'=>'NPR'));
 		if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.localtax1_tx'=>'LT1', 'p.localtax1_type'=>'LT1Type'));
 		if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.localtax2_tx'=>'LT2', 'p.localtax2_type'=>'LT2Type'));
 		if (!empty($conf->barcode->enabled)) $this->import_fields_array[$r] = array_merge($this->import_fields_array[$r], array('p.barcode'=>'BarCode'));
 		if (!empty($conf->global->PRODUCT_USE_UNITS)) $this->import_fields_array[$r]['p.fk_unit'] = 'Unit';
+
 		// Add extra fields
 		$import_extrafield_sample = array();
 		$sql = "SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'product' AND entity IN (0, ".$conf->entity.")";
@@ -505,16 +535,6 @@ class modProduct extends DolibarrModules
 		}
 		// End add extra fields
 		$this->import_fieldshidden_array[$r] = array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'product'); // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
-		$this->import_regex_array[$r] = array(
-            'p.ref' => '[^ ]',
-            'p.price_base_type' => '\AHT\z|\ATTC\z',
-            'p.tosell' => '^[0|1]$',
-            'p.tobuy' => '^[0|1]$',
-            'p.fk_product_type' => '^[0|1]$',
-            'p.datec' => '^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$',
-            'p.recuperableonly' => '^[0|1]$',
-            'p.finished' => '^[0|1]$'
-        );
 
 		// field order as per structure of table llx_product
 		$import_sample = array(
@@ -559,6 +579,7 @@ class modProduct extends DolibarrModules
         );
         //clauses copied from import_fields_array
         if (!empty($conf->stock->enabled)) $import_sample = array_merge($import_sample, array(
+				'p.tobatch'=>"0 (don't use) / 1 (use batch/serial number)",
                 'p.seuil_stock_alerte' => '',
                 'p.pmp' => '0',
                 'p.desiredstock' => ''
@@ -576,7 +597,6 @@ class modProduct extends DolibarrModules
                 )
             );
 
-            if (!is_array($this->import_convertvalue_array[$r])) $this->import_convertvalue_array[$r] = array();
 			$this->import_convertvalue_array[$r] = array_merge($this->import_convertvalue_array[$r], array(
 				'p.fk_unit' => array(
 					'rule' => 'fetchidfromcodeorlabel',
