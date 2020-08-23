@@ -74,7 +74,7 @@ class Paiement extends CommonObject
 	public $amounts = array();               // array: invoice ID => amount for that invoice (in the main currency)>
 	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
 
-	public $takepos_change = 0;	// Excess received in TakePOS cash payment
+	public $pos_change = 0;	// Excess received in TakePOS cash payment
 
 	public $author;
 	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
@@ -291,8 +291,8 @@ class Paiement extends CommonObject
 		$num_payment = ($this->num_payment ? $this->num_payment : $this->num_paiement);
 		$note = ($this->note_public ? $this->note_public : $this->note);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, takepos_change)";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".$this->takepos_change.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".$this->pos_change.")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
