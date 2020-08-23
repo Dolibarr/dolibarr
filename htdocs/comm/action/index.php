@@ -1072,6 +1072,26 @@ if (count($listofextcals))
                     elseif ($icalevent['DESCRIPTION']) $event->label = dol_nl2br($icalevent['DESCRIPTION'], 1);
                     else $event->label = $langs->trans("ExtSiteNoLabel");
 
+                    // Priority (see https://www.kanzaki.com/docs/ical/priority.html)
+                    // LOW      = 0 to 4
+                    // MEDIUM   = 5
+                    // HIGH     = 6 to 9
+                    if ($icalevent['PRIORITY']) $event->priority = $icalevent['PRIORITY'];
+
+                    // Transparency (see https://www.kanzaki.com/docs/ical/transp.html)
+                    if ($icalevent['TRANSP'])
+                    {
+                        if ($icalevent['TRANSP'] == "TRANSPARENT") $event->transparency = 0;     // 0 = available / free
+                        if ($icalevent['TRANSP'] == "OPAQUE") $event->transparency = 1;          // 1 = busy
+
+                        // TODO: MS outlook states
+                        // X-MICROSOFT-CDO-BUSYSTATUS:FREE      + TRANSP:TRANSPARENT => Available / Free
+                        // X-MICROSOFT-CDO-BUSYSTATUS:FREE      + TRANSP:OPAQUE      => Work another place
+                        // X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE + TRANSP:OPAQUE      => With reservations
+                        // X-MICROSOFT-CDO-BUSYSTATUS:BUSY      + TRANSP:OPAQUE      => Busy
+                        // X-MICROSOFT-CDO-BUSYSTATUS:OOF       + TRANSP:OPAQUE      => Away from the office / off-site
+                    }
+
                     if ($icalevent['LOCATION']) $event->location = $icalevent['LOCATION'];
 
                     $event->date_start_in_calendar = $event->datep;
