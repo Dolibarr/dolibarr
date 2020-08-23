@@ -27,7 +27,6 @@
  */
 function salaries_prepare_head($object)
 {
-
     global $db, $langs, $conf;
 
     $h = 0;
@@ -86,14 +85,14 @@ function salaries_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'salaries_admin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_admin');
 
     $head[$h][0] = DOL_URL_ROOT.'/salaries/admin/salaries_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsSalaries");
     $head[$h][2] = 'attributes';
     $h++;
 
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'salaries_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'salaries_admin', 'remove');
 
     return $head;
 }
