@@ -1072,8 +1072,14 @@ if ($action == 'create')
                 print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
                 print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
                 print '<td class="center">'.$langs->trans("QtyToShip");
-                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
-                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+				if (empty($conf->productbatch->enabled))
+				{
+	                print '<br><a href="#" id="autofill">'.$langs->trans("Fill").'</a>';	
+	                print ' / ';	
+				} else {
+					print '<br>';
+				}
+				print '<a href="#" id="autoreset">'.$langs->trans("Reset").'</a>';
                 print '</td>';
                 if (!empty($conf->stock->enabled))
                 {
