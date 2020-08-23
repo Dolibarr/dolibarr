@@ -163,6 +163,12 @@ if (empty($reshook))
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
+	if ($action == 'confirm_decline' && $confirm == 'yes' && $permissiontoadd) {
+		$result = $object->setStatut($object::STATUS_REFUSED, null, '', 'RECRUITMENTCANDIDATURE_DECLINE');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
 
 	// Actions to send emails
 	$triggersendname = 'RECRUITMENTCANDIDATURE_SENTBYMAIL';
