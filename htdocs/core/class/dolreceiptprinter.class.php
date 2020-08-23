@@ -776,7 +776,7 @@ class dolReceiptPrinter extends Printer
                         }
 						break;
 					case 'DOL_PRINT_PAYMENT':
-						$sql = "SELECT p.takepos_change as takepos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+						$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
 						$sql .= " cp.code";
 						$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
 						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
@@ -792,13 +792,13 @@ class dolReceiptPrinter extends Printer
 								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
 								$spaces = str_repeat(' ', $spacestoadd);
 								$amount_payment=($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
-								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->takepos_change; // Show amount with excess received if is cash payment
+								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
 								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
-								if ($row->code == "LIQ" && $row->takepos_change>0) // Print change only in cash payments
+								if ($row->code == "LIQ" && $row->pos_change>0) // Print change only in cash payments
 								{
 									$spacestoadd = $nbcharactbyline - strlen($langs->trans("Change")) - 12;
 									$spaces = str_repeat(' ', $spacestoadd);
-									$this->printer->text($spaces.$langs->trans("Change").' '.str_pad(price($row->takepos_change), 10, ' ', STR_PAD_LEFT)."\n");
+									$this->printer->text($spaces.$langs->trans("Change").' '.str_pad(price($row->pos_change), 10, ' ', STR_PAD_LEFT)."\n");
 								}
 								$i++;
 							}
