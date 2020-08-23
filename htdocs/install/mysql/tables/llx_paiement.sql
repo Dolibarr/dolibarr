@@ -38,5 +38,5 @@ create table llx_paiement
   fk_user_modif    integer,								-- utilisateur qui a modifie l'info
   statut           smallint DEFAULT 0 NOT NULL,			-- Satut, 0 ou 1, 1 n'est plus supprimable
   fk_export_compta integer DEFAULT 0 NOT NULL,			-- fk_export_compta 0 pas exporte
-  takepos_change   double(24,8) DEFAULT 0  				-- Excess received in TakePOS cash payment
+  pos_change       double(24,8) DEFAULT 0  				-- Excess received in TakePOS cash payment
 )ENGINE=innodb;
