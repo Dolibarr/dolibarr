@@ -333,13 +333,16 @@ class RecruitmentCandidature extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param 	int    	$id   			Id object
+	 * @param	string 	$ref  			Ref
+	 * @param	string	$email_msgid	Email msgid
+	 * @return	int         			<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = null)
+	public function fetch($id, $ref = null, $email_msgid = '')
 	{
-		$result = $this->fetchCommon($id, $ref);
+		$morewhere = '';
+		if ($email_msgid) $morewhere = " AND email_msgid = '".$this->db->escape($email_msgid)."'";
+		$result = $this->fetchCommon($id, $ref, $morewhere);
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}

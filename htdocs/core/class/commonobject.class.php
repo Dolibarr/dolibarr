@@ -7763,11 +7763,11 @@ abstract class CommonObject
 		$sql = 'SELECT '.$fieldlist;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
-		if (!empty($id))  $sql .= ' WHERE rowid = '.$id;
+		if (!empty($id)) $sql .= ' WHERE rowid = '.$id;
 		elseif (!empty($ref)) $sql .= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 		else $sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' AND entity IN ('.getEntity($this->table_element).')';
-		if ($morewhere)   $sql .= $morewhere;
+		if ($morewhere) $sql .= $morewhere;
 		$sql .= ' LIMIT 1'; // This is a fetch, to be sure to get only one record
 
 		$res = $this->db->query($sql);
