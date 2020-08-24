@@ -921,13 +921,13 @@ class Products extends DolibarrApi
         }
 
         $fields = ["id", "ref", "ref_ext", "label", "rang"];
-        
+
         foreach ($prodattr as $field => $value) {
             if (!in_array($field, $fields)) {
                 unset($prodattr->{$field});
             }
         }
-        
+
         return $prodattr;
     }
 
