@@ -961,6 +961,14 @@ class Products extends DolibarrApi
                 unset($prodattr->{$field});
             }
         }
+        
+        $sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid";
+        $sql .= " WHERE pac2v.fk_prod_attr = ".(int) $prodattr->id." AND pac.entity IN (".getEntity('product').")";
+        $query = $this->db->query($sql);
+        $result = $this->db->fetch_object($query);
+        
+        $prodattr->is_used_by_products = (bool) $result->count;
 
         return $prodattr;
     }
@@ -998,6 +1006,14 @@ class Products extends DolibarrApi
         $attr['ref_ext'] = $result->ref_ext;
         $attr['label'] = $result->label;
         $attr['rang'] = $result->rang;
+        
+        $sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid";
+        $sql .= " WHERE pac2v.fk_prod_attr = ".(int) $result->rowid." AND pac.entity IN (".getEntity('product').")";
+        $query = $this->db->query($sql);
+        $result = $this->db->fetch_object($query);
+        
+        $attr["is_used_by_products"] = (bool) $result->count;
 
         return $attr;
     }
@@ -1035,6 +1051,14 @@ class Products extends DolibarrApi
         $attr['ref_ext'] = $result->ref_ext;
         $attr['label'] = $result->label;
         $attr['rang'] = $result->rang;
+        
+        $sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid";
+        $sql .= " WHERE pac2v.fk_prod_attr = ".(int) $result->rowid." AND pac.entity IN (".getEntity('product').")";
+        $query = $this->db->query($sql);
+        $result = $this->db->fetch_object($query);
+        
+        $attr["is_used_by_products"] = (bool) $result->count;
 
         return $attr;
     }
