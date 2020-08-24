@@ -894,7 +894,7 @@ if (!$variants) {
 						print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder centpercent"><tr><td width="10%"></td>';
-						//                      print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
+						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
 						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
 							print '<td class="center" width="10%">';
 							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
