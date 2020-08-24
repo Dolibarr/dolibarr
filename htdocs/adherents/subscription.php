@@ -580,7 +580,7 @@ if ($rowid > 0) {
      * List of subscriptions
      */
     if ($action != 'addsubscription' && $action != 'create_thirdparty') {
-        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, c.fk_type as type,";
+        $sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, d.fk_adherent_type as type,";
         $sql .= " c.rowid as crowid, c.subscription,";
         $sql .= " c.datec, c.fk_type as cfk_type,";
         $sql .= " c.dateadh as dateh,";
@@ -628,11 +628,8 @@ if ($rowid > 0) {
                 $subscriptionstatic->ref = $objp->crowid;
                 $subscriptionstatic->id = $objp->crowid;
 
-                $typeid = ($objp->cfk_type > 0 ? $objp->cfk_type : $adh->typeid);
-                if ($typeid > 0) {
-                    $adht->fetch($typeid);
-                }
-
+                $typeid = $objp->cfk_type;
+                
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
