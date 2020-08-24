@@ -878,21 +878,55 @@ class Products extends DolibarrApi
 
     /**
      * Get attributes.
-     *
+     * @param  string $sortfield  Sort field
+     * @param  string $sortorder  Sort order
+     * @param  int    $limit      Limit for list
+     * @param  int    $page       Page number
+     * @param  string $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:color)"
      * @return array
      *
      * @throws RestException
      *
      * @url GET attributes
      */
-    public function getAttributes()
+    public function getAttributes($sortfield = "t.ref", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
     {
         if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
-
-        $prodattr = new ProductAttribute($this->db);
-        return $prodattr->fetchAll();
+        
+        $sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.rang, t.entity";
+        $sql .= " FROM ".MAIN_DB_PREFIX."product_attribute as t";
+        $sql .= ' WHERE t.entity IN ('.getEntity('product_attribute').')';
+        
+        // Add sql filters
+        if ($sqlfilters) {
+            if (!DolibarrApi::_checkFilters($sqlfilters)) {
+                throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+            }
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+        }
+        
+        $sql .= $this->db->order($sortfield, $sortorder);
+        if ($limit) {
+            if ($page < 0) {
+                $page = 0;
+            }
+            $offset = $limit * $page;
+            
+            $sql .= $this->db->plimit($limit + 1, $offset);
+        }
+        
+        $result = $this->db->query($sql);
+        if (!$result) {
+            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+        }
+        if (!count($result)) {
+            throw new RestException(404, 'No product attribute found');
+        }
+        
+        return $result;
     }
 
     /**
