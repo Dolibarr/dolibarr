@@ -780,7 +780,6 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// TODO Merge all previous cases into this generic one
 		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, ...
 		{
-
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
 		    // Note that these key can be set in agenda setup, only if defined into c_action_trigger
 		    // Load translation files required by the page
@@ -878,7 +877,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$actioncomm->userassigned = $object->sendtouserid;
 		}
 		if (property_exists($object, 'sendtoid') && is_array($object->sendtoid) && count($object->sendtoid) > 0) {
-			foreach($object->sendtoid as $val) {
+			foreach ($object->sendtoid as $val) {
 				$actioncomm->socpeopleassigned[$val] = $val;
 			}
 		}
