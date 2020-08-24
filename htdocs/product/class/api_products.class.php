@@ -920,6 +920,14 @@ class Products extends DolibarrApi
             throw new RestException(404, "Attribute not found");
         }
 
+        $fields = ["id", "ref", "ref_ext", "label", "rang"];
+        
+        foreach ($prodattr as $field => $value) {
+            if (!in_array($field, $fields)) {
+                unset($prodattr->{$field});
+            }
+        }
+        
         return $prodattr;
     }
 
@@ -940,7 +948,7 @@ class Products extends DolibarrApi
             throw new RestException(401);
         }
 
-        $sql = "SELECT rowid, ref, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
+        $sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".trim($ref)."' AND entity IN (".getEntity('product').")";
 
         $query = $this->db->query($sql);
 
@@ -953,6 +961,44 @@ class Products extends DolibarrApi
         $attr = [];
         $attr['id'] = $result->rowid;
         $attr['ref'] = $result->ref;
+        $attr['ref_ext'] = $result->ref_ext;
+        $attr['label'] = $result->label;
+        $attr['rang'] = $result->rang;
+
+        return $attr;
+    }
+
+    /**
+     * Get attributes by ref_ext.
+     *
+     * @param  string $ref_ext External reference of Attribute
+     * @return array
+     *
+     * @throws RestException 500
+     * @throws RestException 401
+     *
+     * @url GET attributes/ref_ext/{ref_ext}
+     */
+    public function getAttributesByRefExt($ref_ext)
+    {
+        if (!DolibarrApiAccess::$user->rights->produit->lire) {
+            throw new RestException(401);
+        }
+
+        $sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref_ext LIKE '".trim($ref_ext)."' AND entity IN (".getEntity('product').")";
+
+        $query = $this->db->query($sql);
+
+        if (!$this->db->num_rows($query)) {
+            throw new RestException(404);
+        }
+
+        $result = $this->db->fetch_object($query);
+
+        $attr = [];
+        $attr['id'] = $result->rowid;
+        $attr['ref'] = $result->ref;
+        $attr['ref_ext'] = $result->ref_ext;
         $attr['label'] = $result->label;
         $attr['rang'] = $result->rang;
 
@@ -964,6 +1010,7 @@ class Products extends DolibarrApi
      *
      * @param  string $ref   Reference of Attribute
      * @param  string $label Label of Attribute
+     * @param  string $ref_ext   Reference of Attribute
      * @return int
      *
      * @throws RestException 500
@@ -971,7 +1018,7 @@ class Products extends DolibarrApi
      *
      * @url POST attributes
      */
-    public function addAttributes($ref, $label)
+    public function addAttributes($ref, $label, $ref_ext)
     {
         if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
@@ -980,6 +1027,7 @@ class Products extends DolibarrApi
         $prodattr = new ProductAttribute($this->db);
         $prodattr->label = $label;
         $prodattr->ref = $ref;
+        $prodattr->ref_ext = $ref_ext;
 
         $resid = $prodattr->create(DolibarrApiAccess::$user);
         if ($resid <= 0) {
