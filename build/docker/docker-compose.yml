@@ -1,32 +1,44 @@
-mariadb:
-    build: mariadb
-    environment:
-        MYSQL_ROOT_PASSWORD: root
-        MYSQL_DATABASE: dolibarr
+version: '3'
+# This docker-compose.yml file is used to build and test quickly
+# a specific version of Dolibarr
+#
+# Before build, define the variable DOLI_VERSION as following:
+# $ export DOLI_VERSION=4.0.4
+# And then, you can run :
+# $ docker-compose up
+#
+# More informations about Docker-compose : https://docs.docker.com/compose/
+networks:
+    internal-pod:
+        internal: true
+    external-pod:
+        internal: false
 
-phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-        PMA_HOST: mariadb
-    links:
-        - mariadb
-    ports:
-        - "8080:80"
+services:
+    mariadb:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: dolibarr
+        networks:
+            - internal-pod
 
-web:
-    build: .
-    environment:
-        HOST_USER_ID: $HOST_USER_ID
-    volumes:
-        - ../../htdocs:/var/www/html
-    links:
-        - mariadb
-        - mail
-    ports:
-        - "80:80"
-
-mail:
-    image: maildev/maildev
-    ports:
-        - "8081:80"
-        - "25:25"
+    web:
+        build:
+            context: ./docker-compose-links/${DOLI_VERSION}${PHP_VERSION}
+        image: tuxgasy/dolibarr:${DOLI_VERSION}${PHP_VERSION}
+        depends_on:
+            - mariadb
+        environment:
+            DOLI_DB_HOST: mariadb
+            DOLI_DB_USER: root
+            DOLI_DB_PASSWORD: root
+            DOLI_DB_NAME: dolibarr
+            DOLI_URL_ROOT: 'http://0.0.0.0'
+            WWW_USER_ID: 1000
+            WWW_GROUP_ID: 1000
+        ports:
+            - "80:80"
+        networks:
+            - internal-pod
+            - external-pod
