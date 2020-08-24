@@ -894,11 +894,11 @@ class Products extends DolibarrApi
         if (!DolibarrApiAccess::$user->rights->produit->lire) {
             throw new RestException(401);
         }
-        
+
         $sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.rang, t.entity";
         $sql .= " FROM ".MAIN_DB_PREFIX."product_attribute as t";
         $sql .= ' WHERE t.entity IN ('.getEntity('product_attribute').')';
-        
+
         // Add sql filters
         if ($sqlfilters) {
             if (!DolibarrApi::_checkFilters($sqlfilters)) {
@@ -907,17 +907,17 @@ class Products extends DolibarrApi
             $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql .= $this->db->order($sortfield, $sortorder);
         if ($limit) {
             if ($page < 0) {
                 $page = 0;
             }
             $offset = $limit * $page;
-            
+
             $sql .= $this->db->plimit($limit + 1, $offset);
         }
-        
+
         $result = $this->db->query($sql);
         if (!$result) {
             throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
@@ -925,7 +925,7 @@ class Products extends DolibarrApi
         if (!count($result)) {
             throw new RestException(404, 'No product attribute found');
         }
-        
+
         return $result;
     }
 
