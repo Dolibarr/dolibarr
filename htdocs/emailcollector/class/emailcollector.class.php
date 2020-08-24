@@ -808,7 +808,12 @@ class EmailCollector extends CommonObject
                         {
                             //var_dump($regforval[count($regforval)-1]);exit;
                             // Overwrite param $tmpproperty
-                            $object->$tmpproperty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
+                        	$valueextracted = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
+                        	if (strtolower($sourcefield) == 'header') {
+                        		$object->$tmpproperty = $this->decodeSMTPSubject($valueextracted);
+                        	} else {
+                        		$object->$tmpproperty = $valueextracted;
+                        	}
                         } else {
                             // Regex not found
                             $object->$tmpproperty = null;
@@ -939,7 +944,16 @@ class EmailCollector extends CommonObject
         {
             if (empty($rule['status'])) continue;
 
-            if ($rule['type'] == 'to')      $search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+            if ($rule['type'] == 'to')      {
+            	$tmprulevaluearray = explode('*', $rule['rulevalue']);
+            	if (count($tmprulevaluearray) >= 2) {
+            		foreach ($tmprulevaluearray as $tmprulevalue) {
+            			$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $tmprulevalue).'"';
+            		}
+            	} else {
+            		$search .= ($search ? ' ' : '').'TO "'.str_replace('"', '', $rule['rulevalue']).'"';
+            	}
+            }
             if ($rule['type'] == 'bcc')     $search .= ($search ? ' ' : '').'BCC';
             if ($rule['type'] == 'cc')      $search .= ($search ? ' ' : '').'CC';
             if ($rule['type'] == 'from')    $search .= ($search ? ' ' : '').'FROM "'.str_replace('"', '', $rule['rulevalue']).'"';
@@ -1083,14 +1097,17 @@ class EmailCollector extends CommonObject
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
                 $header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
+                /*print $header;
+                print $header;*/
 
                 $matches = array();
                 preg_match_all('/([^: ]+): (.+?(?:\r\n\s(?:.+?))*)\r\n/m', $header, $matches);
                 $headers = array_combine($matches[1], $matches[2]);
-                //var_dump($headers);
 
                 if (!empty($headers['in-reply-to']) && empty($headers['In-Reply-To'])) { $headers['In-Reply-To'] = $headers['in-reply-to']; }
                 if (!empty($headers['references']) && empty($headers['References'])) { $headers['References'] = $headers['references']; }
+                if (!empty($headers['message-id']) && empty($headers['Message-ID'])) { $headers['Message-ID'] = $headers['message-id']; }
+                $headers['Subject'] = $this->decodeSMTPSubject($headers['Subject']);
 
                 dol_syslog("** Process email ".$i." References: ".$headers['References']);
 
@@ -1111,6 +1128,7 @@ class EmailCollector extends CommonObject
                         continue;	// Exclude email
                     }
                 }
+
                 if ($searchfilterisanswer > 0) {
                 	if (empty($headers['In-Reply-To']))
                 	{
@@ -1121,8 +1139,16 @@ class EmailCollector extends CommonObject
                 if ($searchfilterisnotanswer > 0) {
                 	if (!empty($headers['In-Reply-To']))
                 	{
-                		$nbemailprocessed++;
-                		continue;	// Exclude email
+                		// Note: we can have
+                		// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewriten)
+                		$isanswer = 0;
+                		if (preg_match('/Re:\s+/i', $headers['Subject'])) $isanswer = 1;
+                		//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
+                		//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
+                		if ($isanswer) {
+                			$nbemailprocessed++;
+                			continue;	// Exclude email
+                		}
                 	}
                 }
 
@@ -1148,25 +1174,9 @@ class EmailCollector extends CommonObject
 
                 dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
-                // Decode $overview[0]->subject according to RFC2047
-                // Can use also imap_mime_header_decode($str)
-                // Can use also mb_decode_mimeheader($str)
-                // Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
-                if (function_exists('iconv_mime_decode')) {
-                	$overview[0]->subject = iconv_mime_decode($overview[0]->subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
-                } elseif (function_exists('imap_mime_header_decode')) {
-                	$elements = imap_mime_header_decode($overview[0]->subject);
-                	$newstring = '';
-                	if (!empty($elements)) {
-                        $num = count($elements);
-	                	for ($i = 0; $i < $num; $i++) {
-	                		$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
-	                	}
-	                	$overview[0]->subject = $newstring;
-                	}
-                } elseif (function_exists('mb_decode_mimeheader')) {
-                	$overview[0]->subject = mb_decode_mimeheader($overview[0]->subject);
-                }
+                $overview[0]->subject = $this->decodeSMTPSubject($overview[0]->subject);
+                $overview[0]->from = $this->decodeSMTPSubject($overview[0]->from);
+
                 // Removed emojis
                 $overview[0]->subject = preg_replace('/[\x{10000}-\x{10FFFF}]/u', "\xEF\xBF\xBD", $overview[0]->subject);
 
@@ -1233,6 +1243,7 @@ class EmailCollector extends CommonObject
                 //exit;
 
                 $fromstring = $overview[0]->from;
+
                 $sender = $overview[0]->sender;
                 $to = $overview[0]->to;
                 $sendtocc = $overview[0]->cc;
@@ -1310,9 +1321,11 @@ class EmailCollector extends CommonObject
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
-									$objectid = $obj->rowid;
-									$objectemail = new Ticket($this->db);
-									$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+									if ($obj) {
+										$objectid = $obj->rowid;
+										$objectemail = new Ticket($this->db);
+										$ticketfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+									}
 								} else {
 									$errorforemail++;
 								}
@@ -1323,9 +1336,11 @@ class EmailCollector extends CommonObject
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
-									$objectid = $obj->rowid;
-									$objectemail = new Project($this->db);
-									$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+									if ($obj) {
+										$objectid = $obj->rowid;
+										$objectemail = new Project($this->db);
+										$projectfoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+									}
 								} else {
 									$errorforemail++;
 								}
@@ -1336,9 +1351,11 @@ class EmailCollector extends CommonObject
 								$resql = $this->db->query($sql);
 								if ($resql) {
 									$obj = $this->db->fetch_object($resql);
-									$objectid = $obj->rowid;
-									$objectemail = new RecruitmentCandidature($this->db);
-									$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+									if ($obj) {
+										$objectid = $obj->rowid;
+										$objectemail = new RecruitmentCandidature($this->db);
+										$candidaturefoundby = $langs->transnoentitiesnoconv("EmailMsgID").' ('.$reg[1].')';
+									}
 								} else {
 									$errorforemail++;
 								}
@@ -1498,7 +1515,7 @@ class EmailCollector extends CommonObject
                                         {
                                             //var_dump($regforval[count($regforval)-1]);exit;
                                             // Overwrite param $tmpproperty
-                                            $nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ?trim($regforval[count($regforval) - 1]) : null;
+                                            $nametouseforthirdparty = isset($regforval[count($regforval) - 1]) ? trim($regforval[count($regforval) - 1]) : null;
                                         } else {
                                             // Regex not found
                                             $nametouseforthirdparty = null;
@@ -1692,9 +1709,10 @@ class EmailCollector extends CommonObject
 	                        $projecttocreate->entity = $conf->entity;
 	                        $projecttocreate->email_msgid = $msgid;
 
+	                        $savesocid = $projecttocreate->socid;
+
 	                        // Overwrite values with values extracted from source email.
 	                        // This may overwrite any $projecttocreate->xxx properties.
-	                        $savesocid = $projecttocreate->socid;
 	                        $errorforthisaction = $this->overwritePropertiesOfObject($projecttocreate, $operation['actionparam'], $messagetext, $subject, $header);
 
 	                        // Set project ref if not yet defined
@@ -1807,9 +1825,10 @@ class EmailCollector extends CommonObject
 	                        $tickettocreate->email_msgid = $msgid;
 	                        //$tickettocreate->fk_contact = $contactstatic->id;
 
+	                        $savesocid = $tickettocreate->socid;
+
 	                        // Overwrite values with values extracted from source email.
 	                        // This may overwrite any $projecttocreate->xxx properties.
-	                        $savesocid = $tickettocreate->socid;
 	                        $errorforthisaction = $this->overwritePropertiesOfObject($tickettocreate, $operation['actionparam'], $messagetext, $subject, $header);
 
 	                        // Set ticket ref if not yet defined
@@ -2254,5 +2273,36 @@ class EmailCollector extends CommonObject
   			throw new Exception('Mime string encoding conversion failed');
   		}
   		return $convertedString;
+  	}
+
+  	/**
+  	 * Decode a subject string
+  	 *
+  	 * @param 	string	$subject		Subject
+  	 * @return 	string					Decoded subject
+  	 */
+  	protected function decodeSMTPSubject($subject)
+  	{
+  		// Decode $overview[0]->subject according to RFC2047
+  		// Can use also imap_mime_header_decode($str)
+  		// Can use also mb_decode_mimeheader($str)
+  		// Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
+  		if (function_exists('iconv_mime_decode')) {
+  			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
+  		} elseif (function_exists('imap_mime_header_decode')) {
+  			$elements = imap_mime_header_decode($subject);
+  			$newstring = '';
+  			if (!empty($elements)) {
+  				$num = count($elements);
+  				for ($i = 0; $i < $num; $i++) {
+  					$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
+  				}
+  				$subject = $newstring;
+  			}
+  		} elseif (function_exists('mb_decode_mimeheader')) {
+  			$subject = mb_decode_mimeheader($subject);
+  		}
+
+  		return $subject;
   	}
 }
