@@ -1556,7 +1556,7 @@ if ($action == 'create')
 
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	$form->select_conditions_paiements( empty($soc->cond_reglement_id) ? (GETPOST('cond_reglement_id', 'int') ? GETPOST('cond_reglement_id', 'int') : '' ) : $soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
+	$form->select_conditions_paiements(empty($soc->cond_reglement_id) ? (GETPOST('cond_reglement_id', 'int') ? GETPOST('cond_reglement_id', 'int') : '' ) : $soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 	// Mode of payment
