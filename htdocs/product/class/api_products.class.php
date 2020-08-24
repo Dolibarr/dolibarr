@@ -1018,7 +1018,7 @@ class Products extends DolibarrApi
      *
      * @url POST attributes
      */
-    public function addAttributes($ref, $label, $ref_ext)
+    public function addAttributes($ref, $label, $ref_ext = '')
     {
         if (!DolibarrApiAccess::$user->rights->produit->creer) {
             throw new RestException(401);
