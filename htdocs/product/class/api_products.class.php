@@ -915,18 +915,33 @@ class Products extends DolibarrApi
             }
             $offset = $limit * $page;
 
-            $sql .= $this->db->plimit($limit + 1, $offset);
+            $sql .= $this->db->plimit($limit, $offset);
         }
 
         $result = $this->db->query($sql);
+        
         if (!$result) {
             throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
-        if (!count($result)) {
+        
+        $return = [];
+        while ($result = $this->db->fetch_object($query)) {
+            $tmp = new stdClass();
+            $tmp->id = $result->rowid;
+            $tmp->ref = $result->ref;
+            $tmp->ref_ext = $result->ref_ext;
+            $tmp->label = $result->label;
+            $tmp->rang = $result->rang;
+            $tmp->entity = $result->entity;
+            
+            $return[] = $tmp;
+        }
+        
+        if (!count($return)) {
             throw new RestException(404, 'No product attribute found');
         }
-
-        return $result;
+        
+        return $return;
     }
 
     /**
