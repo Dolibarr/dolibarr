@@ -706,6 +706,8 @@ class RecruitmentCandidature extends CommonObject
 		$label = '<u>'.$langs->trans("RecruitmentCandidature").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
+		$label .= '<br><b>'.$langs->trans('Fullname').':</b> '.$this->getFullName($langs);
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
