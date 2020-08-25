@@ -158,3 +158,6 @@ DateStartPlusOne=Date de début + 1 heure
 SetAllEventsToTodo=Réglez tous les événements à "A faire"
 SetAllEventsToInProgress=Définir tous les événements à "En cours"
 SetAllEventsToFinished=Définir tous les événements sur "Terminés"
+ReminderTime=Durée du rappel
+TimeType=Type de durée
+ReminderType=Type de rappel

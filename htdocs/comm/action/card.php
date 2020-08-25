@@ -1118,22 +1118,29 @@ if ($action == 'create')
         print '<table class="border centpercent">';
 
         //Reminder
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminder").'</td><td colspan="3">';
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
         print '<input type="number" name="offsetvalue" value="10" size="5">';
         print '</td></tr>';
 
-        //Reminder Type
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+        //Time Type
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
         print $form->select_type_duration('offsetunit');
         print '</td></tr>';
 
-        //Notification
+        //Reminder Type
         $TRemindTypes = array();
         if(!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['mail'] = $langs->trans('EMail');
         if(!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['push'] = $langs->trans('OSNotif');
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TypeRemind").'</td><td colspan="3">';
-        print $form->selectarray('typeremind',$TRemindTypes);
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+        print $form->selectarray('remindertype',$TRemindTypes);
         print '</td></tr>';
+
+        //Mail Model
+        //TODO : ajouter les conditions pour l'affichage de ce champs : si au moins un model existe et si Email est le type de rappel sélectionné
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Model").'</td><td colspan="3">';
+        print $form->select_model_mail('eventpush', 'event_push');
+        print '</td></tr>';
+
 
         print '</table>';
     }
