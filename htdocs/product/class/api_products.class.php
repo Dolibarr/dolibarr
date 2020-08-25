@@ -1799,7 +1799,7 @@ class Products extends DolibarrApi
         if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
-		
+
 		$prodcomb = new ProductCombination($this->db);
         $this->product->fk_product_combination = null;
         if ($prodcomb->fetchByFkProductChild($this->product->id) > 0) {
