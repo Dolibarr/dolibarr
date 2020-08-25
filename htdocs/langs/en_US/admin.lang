@@ -2019,3 +2019,4 @@ MeasuringScaleDesc=The scale is the number of places you have to move the decima
 TemplateAdded=Template added
 TemplateUpdated=Template updated
 TemplateDeleted=Template deleted
+MailToSendEventPush=Notification événement
