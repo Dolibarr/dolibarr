@@ -1110,26 +1110,33 @@ if ($action == 'create')
 
 	print '</table>';
 
-    print '<br><hr><br>';
 
-    print '<table class="border centpercent">';
+    if($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+    {
+        print '<br><hr><br>';
 
-    //Reminder
-    print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminder").'</td><td colspan="3">';
-    print '<input type="number" name="offsetvalue" value="10" size="5">';
-    print '</td></tr>';
+        print '<table class="border centpercent">';
 
-    //Reminder Type
-    print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-    print $form->select_type_duration('offsetunit');
-    print '</td></tr>';
+        //Reminder
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminder").'</td><td colspan="3">';
+        print '<input type="number" name="offsetvalue" value="10" size="5">';
+        print '</td></tr>';
 
-    //Notification
-    print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TypeRemind").'</td><td colspan="3">';
-    print $form->selectarray('typeremind', array('mail'=>$langs->trans('EMail'), 'push'=>$langs->trans('OSNotif')));
-    print '</td></tr>';
+        //Reminder Type
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+        print $form->select_type_duration('offsetunit');
+        print '</td></tr>';
 
-    print '</table>';
+        //Notification
+        $TRemindTypes = array();
+        if(!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['mail'] = $langs->trans('EMail');
+        if(!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['push'] = $langs->trans('OSNotif');
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TypeRemind").'</td><td colspan="3">';
+        print $form->selectarray('typeremind',$TRemindTypes);
+        print '</td></tr>';
+
+        print '</table>';
+    }
 
     dol_fiche_end();
 
