@@ -786,8 +786,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    // Note that these key can be set in agenda setup, only if defined into c_action_trigger
 		    // Load translation files required by the page
             if (empty($object->actionmsg2)) {
+            	$langs->loadLangs(array("agenda", "other"));
             	if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
-            		$langs->loadLangs(array("agenda", "other"));
             		$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
             	} else {	// generic translation key
             		$tmp = explode('_', $action);
@@ -795,8 +795,8 @@ class InterfaceActionsAuto extends DolibarrTriggers
             	}
             }
             if (empty($object->actionmsg))  {
+            	$langs->loadLangs(array("agenda", "other"));
             	if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
-            		$langs->loadLangs(array("agenda", "other"));
             		$object->actionmsg = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
             	} else {	// generic translation key
             		$tmp = explode('_', $action);
