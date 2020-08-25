@@ -3240,9 +3240,9 @@ class User extends CommonObject
 
 	/**
 	 * Cache the SQL results of the function "findUserIdByEmail($email)"
-	 * 
+	 *
 	 * NOTE: findUserIdByEmailCache[...] === -1 means not found in database
-	 * 
+	 *
 	 * @var array
 	 */
 	private $findUserIdByEmailCache;
@@ -3270,13 +3270,12 @@ class User extends CommonObject
 
 		$sql = 'SELECT rowid';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
-		
+
 		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR))
 		{
 			$sql .= ' WHERE email LIKE "%'.$email.'%"';
 		}
-		else
-		{
+		else {
 			$sql .= ' WHERE email = "'.$email.'"';
 		}
 
