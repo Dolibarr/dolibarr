@@ -238,7 +238,7 @@ class ProductCombination
             return 1;
         }
     }
-    
+
     /**
      * Get fk_product_parent by fk_product_child
      *
@@ -249,23 +249,23 @@ class ProductCombination
     {
         $sql = "SELECT fk_product_parent FROM ".MAIN_DB_PREFIX."product_attribute_combination";
         $sql .= " WHERE fk_product_child = ".(int) $fk_child." AND entity IN (".getEntity('product').") LIMIT 1";
-        
+
         $query = $this->db->query($sql);
-        
+
         if (!$query) {
             return -1;
         }
-        
+
         if (!$this->db->num_rows($query)) {
             return -1;
         }
-        
+
         $row = $this->db->fetch_object($query);
-        
+
         return (int) $row->fk_product_parent;
     }
-    
-    
+
+
     /**
      * Retrieves all product combinations by the child product row id
      *
@@ -275,17 +275,17 @@ class ProductCombination
     public function fetchAllByFkProductChild($fk_child)
     {
         global $conf;
-        
+
         $sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight, variation_ref_ext FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_child = ".(int) $fk_child." AND entity IN (".getEntity('product').")";
-        
+
         $query = $this->db->query($sql);
-        
+
         if (!$query) {
             return -1;
         }
-        
+
         $return = array();
-        
+
         while ($result = $this->db->fetch_object($query)) {
             $tmp = new ProductCombination($this->db);
             $tmp->id = $result->rowid;
@@ -295,14 +295,14 @@ class ProductCombination
             $tmp->variation_price_percentage = $result->variation_price_percentage;
             $tmp->variation_weight = $result->variation_weight;
             $tmp->variation_ref_ext = $result->variation_ref_ext;
-            
+
             if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
                 $tmp->fetchCombinationPriceLevels();
             }
-            
+
             $return[] = $tmp;
         }
-        
+
         return $return;
     }
 
