@@ -1067,8 +1067,7 @@ if (count($listofextcals))
                         $event->userassigned[$userId] = $userId;
                         $event->percentage = -1;
                     }
-                    else
-                    {
+                    else {
                         $event->type_code = "ICALEVENT";
                     }
 
