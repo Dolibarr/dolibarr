@@ -77,7 +77,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->recruitment->multidir_output[$object->entity?$object->entity:$conf->entity] . "/recruitmentjobposition/" . dol_sanitizeFileName($object->id);
 if ($id > 0 || !empty($ref)) $upload_dir = $conf->recruitment->multidir_output[$object->entity ? $object->entity : $conf->entity]."/recruitmentjobposition/".dol_sanitizeFileName($object->ref);
 
 // Security check - Protection if external user
@@ -190,10 +189,8 @@ if ($object->id)
 	dol_fiche_end();
 
 	$modulepart = 'recruitment';
-	//$permission = $user->rights->recruitment->recruitmentjobposition->write;
-	$permission = 1;
-	//$permtoedit = $user->rights->recruitment->recruitmentjobposition->write;
-	$permtoedit = 1;
+	$permission = $user->rights->recruitment->recruitmentjobposition->write;
+	$permtoedit = $user->rights->recruitment->recruitmentjobposition->write;
 	$param = '&id='.$object->id;
 
 	//$relativepathwithnofile='recruitmentjobposition/' . dol_sanitizeFileName($object->id).'/';

@@ -107,7 +107,7 @@ if (empty($reshook))
 									'mailmanspip', 'notification', 'oauth', 'syslog', 'user', 'webservices', 'workflow',
 	                                // Extended modules
 	                                'memcached', 'numberwords', 'zipautofillfr');
-	$alwayshiddenuncheckedmodules = array('dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient',
+	$alwayshiddenuncheckedmodules = array('collab', 'dav', 'debugbar', 'emailcollector', 'ftp', 'hrm', 'modulebuilder', 'printing', 'webservicesclient', 'zappier',
 	                                // Extended modules
 	                                'awstats', 'bittorrent', 'bootstrap', 'cabinetmed', 'cmcic', 'concatpdf', 'customfield', 'datapolicy', 'deplacement', 'dolicloud', 'filemanager', 'lightbox', 'mantis', 'monitoring', 'moretemplates', 'multicompany', 'nltechno', 'numberingpack', 'openstreetmap',
 	                                'ovh', 'phenix', 'phpsysinfo', 'pibarcode', 'postnuke', 'dynamicprices', 'receiptprinter', 'selectbank', 'skincoloreditor', 'submiteverywhere', 'survey', 'thomsonphonebook', 'topten', 'tvacerfa', 'voyage', 'webcalendar', 'webmail');
@@ -417,16 +417,14 @@ if (!empty($conf->google->enabled) && !empty($conf->global->MAIN_GOOGLE_AD_CLIEN
 	if (empty($conf->dol_use_jmobile))
 	{
 		print '<div align="center">'."\n";
-		print '<script type="text/javascript"><!--'."\n";
+		print '<script><!--'."\n";
 		print 'google_ad_client = "'.$conf->global->MAIN_GOOGLE_AD_CLIENT.'";'."\n";
 		print 'google_ad_slot = "'.$conf->global->MAIN_GOOGLE_AD_SLOT.'";'."\n";
 		print 'google_ad_width = '.$conf->global->MAIN_GOOGLE_AD_WIDTH.';'."\n";
 		print 'google_ad_height = '.$conf->global->MAIN_GOOGLE_AD_HEIGHT.';'."\n";
 		print '//-->'."\n";
 		print '</script>'."\n";
-		print '<script type="text/javascript"'."\n";
-		print 'src="http://pagead2.googlesyndication.com/pagead/show_ads.js">'."\n";
-		print '</script>'."\n";
+		print '<script src="//pagead2.googlesyndication.com/pagead/show_ads.js"></script>'."\n";
 		print '</div>'."\n";
 	} else {
 		print '<!-- google js advert tag disabled with jmobile -->'."\n";

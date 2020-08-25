@@ -121,7 +121,7 @@ $arrayfields = array(
 	'd.gender'=>array('label'=>$langs->trans("Gender"), 'checked'=>0),
 	'd.company'=>array('label'=>$langs->trans("Company"), 'checked'=>1),
 	'd.login'=>array('label'=>$langs->trans("Login"), 'checked'=>1),
-	'd.morphy'=>array('label'=>$langs->trans("MorPhy"), 'checked'=>1),
+	'd.morphy'=>array('label'=>$langs->trans("MemberNature"), 'checked'=>1),
 	't.libelle'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
 	'd.email'=>array('label'=>$langs->trans("Email"), 'checked'=>1),
 	'd.address'=>array('label'=>$langs->trans("Address"), 'checked'=>0),
@@ -707,9 +707,20 @@ while ($i < min($num, $limit)) {
 		print "<td>".$obj->login."</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
-	// Moral/Physique
+	// Nature (Moral/Physical)
 	if (!empty($arrayfields['d.morphy']['checked'])) {
-		print "<td>".$memberstatic->getmorphylib($obj->morphy)."</td>\n";
+		print '<td class="center">';
+		$s = '';
+		if ($obj->morphy == 'phy')
+		{
+			$s .= '<span class="customer-back" title="'.$langs->trans("Physical").'">'.dol_substr($langs->trans("Physical"), 0, 1).'</span>';
+		}
+		if ($obj->morphy == 'mor')
+		{
+			$s .= '<span class="vendor-back" title="'.$langs->trans("Moral").'">'.dol_substr($langs->trans("Moral"), 0, 1).'</span>';
+		}
+		print $s;
+		print "</td>\n";
 		if (!$i) $totalarray['nbfield']++;
 	}
 	// Type label

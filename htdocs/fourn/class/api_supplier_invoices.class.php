@@ -293,9 +293,9 @@ class SupplierInvoices extends DolibarrApi
     }
 
     /**
-     * Validate an order
+     * Validate an invoice
      *
-     * @param   int $id             Order ID
+     * @param   int $id             Invoice ID
      * @param   int $idwarehouse    Warehouse ID
      * @param   int $notrigger      1=Does not execute triggers, 0= execute triggers
      *
@@ -325,7 +325,7 @@ class SupplierInvoices extends DolibarrApi
 
         $result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
         if ($result == 0) {
-            throw new RestException(304, 'Error nothing done. May be object is already validated');
+            throw new RestException(304, 'Error nothing done. The invoice is already validated');
         }
         if ($result < 0) {
             throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
@@ -454,6 +454,7 @@ class SupplierInvoices extends DolibarrApi
         $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
         $paiement->paiementid = $paiementid;
         $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
+        $paiement->oper = $paiement->paiementcode;	// For backward compatibility
         $paiement->num_payment = $num_payment;
         $paiement->note_public = $comment;
 

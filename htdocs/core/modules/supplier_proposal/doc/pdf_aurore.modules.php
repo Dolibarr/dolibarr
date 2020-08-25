@@ -691,7 +691,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Show payments table
 	 *
-     *  @param	PDF			$pdf           Object PDF
+     *  @param	TCPDF		$pdf            Object PDF
      *  @param  Object		$object         Object proposal
      *  @param  int			$posy           Position y in PDF
      *  @param  Translate	$outputlangs    Object langs for output
@@ -707,7 +707,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *   Show miscellaneous information (payment mode, payment term, ...)
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		Object		$object			Object to show
 	 *   @param		int			$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
@@ -746,7 +746,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$pdf->SetFont('', '', $default_font_size - 2);
 			$pdf->SetXY($posxval, $posy);
 			//$dlp=dol_print_date($object->date_livraison,"daytext",false,$outputlangs,true);
-			$pdf->MultiCell(80, 4, $dlp, 0, 'L');
+			$pdf->MultiCell(80, 4, '', 0, 'L');
 
             $posy = $pdf->GetY() + 1;
 		}
@@ -874,7 +874,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF			$pdf            Object PDF
+	 *	@param	TCPDF		$pdf            Object PDF
 	 *	@param  Facture		$object         Object invoice
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
@@ -1093,13 +1093,10 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		$pdf->SetTextColor(0, 0, 0);
 
-		/*
 		$resteapayer = $object->total_ttc - $deja_regle;
-		if (! empty($object->paye)) $resteapayer=0;
-		*/
+		if (!empty($object->paye)) $resteapayer = 0;
 
-		if ($deja_regle > 0)
-		{
+		if ($deja_regle > 0) {
 			$index++;
 
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
@@ -1145,7 +1142,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1251,7 +1248,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -1463,7 +1460,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
     /**
      *  Show footer of page. Need this->emetteur object
      *
-     *  @param  PDF			$pdf     			PDF
+     *  @param  TCPDF		$pdf     			PDF
      *  @param  Object		$object				Object to show
      *  @param  Translate	$outputlangs		Object lang for output
      *  @param  int			$hidefreetext		1=Hide free text

@@ -34,7 +34,7 @@
 	--oddevencolor: #202020;
 	--colorboxstatsborder: #e0e0e0;
 	--dolgraphbg: rgba(255,255,255,0);
-	--fieldrequiredcolor: #000055;
+	--fieldrequiredcolor: #804000;
 	--colortextbacktab: #<?php print $colortextbacktab; ?>;
 	--colorboxiconbg: #eee;
 	--refidnocolor:#444;
@@ -45,10 +45,12 @@
 }
 
 <?php
-if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
-	print "@media (prefers-color-scheme: dark) {
-	      :root {
-
+if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+	print "/* For dark mode */\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "@media (prefers-color-scheme: dark) {";
+	}
+	print ":root {
 	            --colorbackhmenu1: #1d1e20;
 	            --colorbackvmenu1: #2b2c2e;
 	            --colorbacktitle1: #2b2d2f;
@@ -84,8 +86,10 @@ if (!empty($conf->global->MAIN_THEME_DARKMODEENABLED)) {
 	            --amountremaintopaycolor:rgb(252,84,91);
 	            --amountpaymentcomplete:rgb(101,184,77);
 	            --amountremaintopaybackcolor:rbg(245,130,46);
-	      }
-	    }";
+	      }\n";
+	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+		print "}\n";
+	}
 }
 ?>
 
@@ -186,8 +190,17 @@ input, select {
 }
 #mainbody input.button:not(.buttongen):not(.bordertransp) {
 	background: var(--butactionbg);
+	color: #FFF !important;
+
+	/* -webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1); */
+
+	border-radius: 3px;
     border-collapse: collapse;
     border: none;
+}
+#mainbody span.websitetools input.button:not(.buttongen):not(.bordertransp) {
+    color: #000 !important;
 }
 #mainbody input.buttongen, #mainbody button.buttongen {
 	padding: 3px 4px;
@@ -371,6 +384,9 @@ input.pageplusone {
 }
 .colorwhite {
 	color: #fff;
+}
+.colorgrey {
+    color: #888 !important;
 }
 .colorblack {
 	color: #000;
@@ -1795,6 +1811,9 @@ img.photoref, div.photoref {
 	height: 80px;
 	width: 80px;
     object-fit: contain;
+}
+div.photoref .fa, div.photoref .fas, div.photoref .far {
+	font-size: 2.5em;
 }
 img.fitcontain {
     object-fit: contain;
@@ -3245,11 +3264,7 @@ div.pagination li:first-child span {
   /*border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;*/
 }
-div.pagination li:last-child a,
-div.pagination li:last-child span {
-  /*border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;*/
-}
+
 div.pagination li a:hover,
 div.pagination li:not(.paginationafterarrows,.title-button) span:hover,
 div.pagination li a:focus,
@@ -3972,10 +3987,11 @@ div.boximport {
 .product_line_stock_ok { color: #002200; }
 .product_line_stock_too_low { color: #884400; }
 
-.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor); }
+.fieldrequired { font-weight: bold; color: var(--fieldrequiredcolor) !important; }
 
 td.widthpictotitle { width: 26px; text-align: <?php echo $left; ?>; }
-span.widthpictotitle { font-size: 1.7em; };
+span.widthpictotitle { font-size: 1.7em; }
+table.titlemodulehelp tr td img.widthpictotitle { width: 80px; }
 
 .dolgraphtitle { margin-top: 6px; margin-bottom: 4px; }
 .dolgraphtitlecssboxes { /* margin: 0px; */ }
@@ -4040,6 +4056,8 @@ div.titre {
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
+    font-size: 1.05em;
+    /* text-transform: uppercase; */
     /* font-weight: 600; */
 }
 div.titre {

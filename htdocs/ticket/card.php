@@ -894,8 +894,6 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		if ($object->fk_user_assign > 0) {
 			$userstat->fetch($object->fk_user_assign);
 			print $userstat->getNomUrl(1);
-		} else {
-			print $langs->trans('None');
 		}
 
 		// Show user list to assignate one if status is "read"
@@ -1027,7 +1025,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
 			print '</td></tr>';
 			// Group
-			print '<tr><td>'.$langs->trans("TicketGroup").'</td><td>';
+			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td>';
 			print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
 			print '</td></tr>';
 			// Severity
@@ -1178,7 +1176,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			{
 				// Show link to add a message (if read and not closed)
 				if ($object->fk_statut < Ticket::STATUS_CLOSED && $action != "presend" && $action != "presend_addmessage") {
-					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init">'.$langs->trans('TicketAddMessage').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction reposition" href="card.php?track_id='.$object->track_id.'&action=presend_addmessage&mode=init">'.$langs->trans('TicketAddMessage').'</a></div>';
 				}
 
 				// Link to create an intervention
@@ -1207,7 +1205,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			}
 			print '</div>'."\n";
 		} else {
-			print '<br>';
+			//print '<br>';
 		}
 
 		// Select mail models is same action as presend
@@ -1256,6 +1254,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 			$morehtmlright .= $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("TicketMessageSubstitutionReplacedByGenericValues").'</span>', $help, 1, 'helpclickable', '', 0, 3, 'helpsubstitution');
 
 			print '<div>';
+
 			print load_fiche_titre($langs->trans('TicketAddMessage'), $morehtmlright, 'messages@ticket');
 
 			print '<hr>';

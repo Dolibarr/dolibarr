@@ -14,7 +14,7 @@ Architecture: all
 Depends: libapache2-mod-php5 | libapache2-mod-php5filter | php5-cgi | php5-fpm | php5 | libapache2-mod-php | libapache2-mod-phpfilter | php-cgi | php-fpm | php,
     php5-cli | php-cli,
 # Required PHP extensions
-    php5-mysql | php5-mysqli | php-mysql | php-mysqli, php5-curl | php-curl, php5-gd | php-gd, php5-ldap | php-gd,
+    php5-mysql | php5-mysqli | php-mysql | php-mysqli, php5-curl | php-curl, php5-gd | php-gd, php5-ldap | php-gd, php5-zip | php-zip,
 # Required PHP libraries
     php-pear, php-mail-mime,
 #    php-tcpdf,

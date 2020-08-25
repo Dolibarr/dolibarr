@@ -313,7 +313,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$object->fetchActions();
 
 	$head = emailcollectorPrepareHead($object);
-	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'emailcollector');
+	dol_fiche_head($head, 'card', $langs->trans("EmailCollector"), -1, 'email');
 
 	$formconfirm = '';
 
@@ -494,7 +494,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    'larger'=>array('label'=>'LargerThan', 'data-placeholder'=>$langs->trans('NumberOfBytes')),
 	    'X3'=>'---',
 	    'withtrackingid'=>array('label'=>'WithDolTrackingID', 'data-noparam'=>1),
-	    'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1)
+	    'withouttrackingid'=>array('label'=>'WithoutDolTrackingID', 'data-noparam'=>1),
+		'X4'=>'---',
+		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
+		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
 	);
 	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', '', 0, '', 2);
 
@@ -558,6 +561,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    'recordevent'=>'RecordEvent');
 	if ($conf->projet->enabled) $arrayoftypes['project'] = 'CreateLeadAndThirdParty';
 	if ($conf->ticket->enabled) $arrayoftypes['ticket'] = 'CreateTicketAndThirdParty';
+	if ($conf->recruitment->enabled) $arrayoftypes['candidature'] = 'CreateCandidature';
 
 	// support hook for add action
 	$parameters = array('arrayoftypes' => $arrayoftypes);
@@ -572,11 +576,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print $form->selectarray('operationtype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth300');
 	print '</td><td>';
 	print '<input type="text" name="operationparam">';
+	print '</td>';
+	print '<td>';
 	$htmltext = $langs->transnoentitiesnoconv("OperationParamDesc");
-	//var_dump($htmltext);
 	print $form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'operationparamtt');
 	print '</td>';
-	print '<td></td>';
 	print '<td class="right"><input type="submit" name="addoperation" id="addoperation" class="flat button" value="'.$langs->trans("Add").'"></td>';
 	print '</tr>';
 	// List operations

@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2019       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2020       Open-Dsi     			<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -457,6 +458,23 @@ if (empty($reshook))
        		}
         }
     }
+
+    if ($action == 'setprospectcontactlevel' && $user->rights->societe->contact->creer)
+    {
+		$object->fetch($id);
+		$object->fk_prospectlevel = GETPOST('prospect_contact_level_id', 'alpha');
+		$result = $object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
+
+	// set communication status
+	if ($action == 'setstcomm')
+	{
+		$object->fetch($id);
+		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
+		$result = $object->update($object->id, $user);
+		if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+	}
 
     // Actions to send emails
 	$triggersendname = 'CONTACT_SENTBYMAIL';
@@ -1333,8 +1351,51 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         print '</td></tr>';
 
         print '</table>';
-
         print '</div>';
+
+		$object->fetch_thirdparty();
+
+		if (! empty($conf->global->THIRDPARTY_ENABLE_PROSPECTION_ON_ALTERNATIVE_ADRESSES)) {
+			if ($object->thirdparty->client == 2 || $object->thirdparty->client == 3)
+			{
+				print '<br>';
+
+				print '<div class="underbanner clearboth"></div>';
+				print '<table class="border" width="100%">';
+
+				// Level of prospect
+				print '<tr><td class="titlefield nowrap">';
+				print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+				print $langs->trans('ProspectLevel');
+				print '<td>';
+				if ($action != 'editlevel' && $user->rights->societe->contact->creer) print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editlevel&amp;id=' . $object->id . '">' . img_edit($langs->trans('Modify'), 1) . '</a></td>';
+				print '</tr></table>';
+				print '</td><td>';
+				if ($action == 'editlevel') {
+					$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
+				} else {
+					print $object->getLibProspLevel();
+				}
+				print "</td>";
+				print '</tr>';
+
+				// Status of prospection
+				$object->loadCacheOfProspStatus();
+				print '<tr><td>' . $langs->trans("StatusProsp") . '</td><td>' . $object->getLibProspCommStatut(4, $object->cacheprospectstatus[$object->stcomm_id]['label']);
+				print ' &nbsp; &nbsp; ';
+				print '<div class="floatright">';
+				foreach ($object->cacheprospectstatus as $key => $val) {
+					$titlealt = 'default';
+					if (!empty($val['code']) && !in_array($val['code'], array('ST_NO', 'ST_NEVER', 'ST_TODO', 'ST_PEND', 'ST_DONE'))) $titlealt = $val['label'];
+					if ($object->stcomm_id != $val['id']) print '<a class="pictosubstatus" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&stcomm=' . $val['code'] . '&action=setstcomm">' . img_action($titlealt, $val['code'], $val['picto']) . '</a>';
+				}
+				print '</div></td></tr>';
+
+				print "</table>";
+				print '</div>';
+			}
+		}
+
         print '<div class="fichehalfright"><div class="ficheaddleft">';
 
         print '<div class="underbanner clearboth"></div>';
@@ -1465,6 +1526,29 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
         }
 
         print "</div>";
+
+        //Select mail models is same action as presend
+        if (GETPOST('modelselected')) {
+        	$action = 'presend';
+        }
+
+        if ($action != 'presend')
+        {
+        	print '<div class="fichecenter"><div class="fichehalfleft">';
+
+        	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+        	$MAXEVENT = 10;
+
+        	$morehtmlright = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-list-alt imgforviewmode', DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id);
+
+        	// List of actions on element
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+        	$formactions = new FormActions($db);
+        	$somethingshown = $formactions->showactions($object, 'contact', $object->socid, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for thirdparty
+
+        	print '</div></div></div>';
+        }
 
 	    // Presend form
 	    $modelmail = 'contact';

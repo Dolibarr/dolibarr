@@ -85,7 +85,7 @@ create table llx_user
   openid            varchar(255),
   statut            tinyint DEFAULT 1,
   photo             varchar(255),				-- filename or url of photo
-  lang              varchar(6),
+  lang              varchar(6),					-- default language for communication. Note that language selected by user as interface language is savec into llx_user_param.
   color				varchar(6),
   barcode			varchar(255) DEFAULT NULL,
   fk_barcode_type	integer      DEFAULT 0,

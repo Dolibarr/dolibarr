@@ -147,7 +147,7 @@ print '<td class="liste_titre">';
 print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
 print '</td>';
 print '</tr>';
-print '<tr '.$bc[false].'><td style="padding-left: 8px">';
+print '<tr class="oddeven"><td style="padding-left: 8px">';
 print '<table class="centpercent">';
 print '<tr>';
 print '<td class="tdtop">';

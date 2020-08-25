@@ -230,7 +230,8 @@ if (!empty($conf->global->RECRUITMENT_NEWFORM_TEXT))
 }
 if (empty($text))
 {
-	$text .= '<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("JobOfferToBeFilled", $mysoc->name).'</strong>';
+	$text .= '<tr><td class="textpublicpayment"><br>'.$langs->trans("JobOfferToBeFilled", $mysoc->name);
+	$text .= ' &nbsp; - &nbsp; <strong>'.$mysoc->name.'</strong>';
 	$text .= ' &nbsp; - &nbsp; <span class="fa fa-calendar secondary"></span> '.dol_print_date($object->date_creation);
 	$text .= '</td></tr>'."\n";
 	$text .= '<tr><td class="textpublicpayment"><h1>'.$object->label.'</h1><br></td></tr>'."\n";
@@ -250,12 +251,10 @@ $found = true;
 print '<br>';
 
 // Label
-
 print $langs->trans("Label").' : ';
 print '<b>'.$object->label.'</b><br>';
 
 // Date
-
 print  $langs->trans("DateExpected").' : ';
 print '<b>';
 if ($object->date_planned > $now) {
@@ -264,6 +263,31 @@ if ($object->date_planned > $now) {
 	print $langs->trans("ASAP");
 }
 print '</b><br>';
+
+// Remuneration
+print  $langs->trans("Remuneration").' : ';
+print '<b>';
+print $object->remuneration_suggested;
+print '</b><br>';
+
+// Contact
+$tmpuser = new User($db);
+$tmpuser->fetch($object->fk_user_recruiter);
+
+print  $langs->trans("ContactForRecruitment").' : ';
+$emailforcontact = $object->email_recruiter;
+if (empty($emailforcontact)) {
+	$emailforcontact = $tmpuser->email;
+	if (empty($emailforcontact)) {
+		$emailforcontact = $mysoc->email;
+	}
+}
+print '<b>';
+print $tmpuser->getFullName(-1);
+print ' - '.img_picto('', 'email', 'class="paddingrightonly"').dol_print_email($emailforcontact);
+print '</b>';
+print '</b><br>';
+
 
 print '<br>';
 

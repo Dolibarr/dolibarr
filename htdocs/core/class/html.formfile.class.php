@@ -356,7 +356,7 @@ class FormFile
 
 		// Add entity in $param if not already exists
 		if (!preg_match('/entity\=[0-9]+/', $param)) {
-			$param .= 'entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
+			$param .= ($param ? '&' : '').'entity='.(!empty($object->entity) ? $object->entity : $conf->entity);
 		}
 
 		$printer = 0;
@@ -1526,10 +1526,18 @@ class FormFile
 		{
 			include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 			$object_instance = new Holiday($this->db);
+		} elseif ($modulepart == 'recruitment-recruitmentcandidature')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/recruitment/class/recruitmentcandidature.class.php';
+			$object_instance = new RecruitmentCandidature($this->db);
 		} elseif ($modulepart == 'banque')
 		{
 		    include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		    $object_instance = new Account($this->db);
+		} elseif ($modulepart == 'mrp-mo')
+		{
+			include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+			$object_instance = new Mo($this->db);
 		}
 
 		foreach ($filearray as $key => $file)
@@ -1546,9 +1554,24 @@ class FormFile
 				$id = 0; $ref = ''; $label = '';
 
 				// To show ref or specific information according to view to show (defined by $module)
-				if ($modulepart == 'company' || $modulepart == 'tax') { preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); } elseif ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) { $id = $ref; $ref = ''; } }	// $ref may be also id with old supplier invoices
-				elseif ($modulepart == 'user' || $modulepart == 'holiday') { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); } elseif (in_array($modulepart, array('invoice', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'project', 'fichinter', 'expensereport', 'banque')))
-				{
+				$reg = array();
+				if ($modulepart == 'company' || $modulepart == 'tax') { preg_match('/(\d+)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); }
+				elseif ($modulepart == 'invoice_supplier') { preg_match('/([^\/]+)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : ''); if (is_numeric($ref)) { $id = $ref; $ref = ''; } }	// $ref may be also id with old supplier invoices
+				elseif ($modulepart == 'user' || $modulepart == 'holiday') { preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $id = (isset($reg[1]) ? $reg[1] : ''); }
+				elseif (in_array($modulepart, array(
+					'invoice',
+					'propal',
+					'supplier_proposal',
+					'order',
+					'order_supplier',
+					'contract',
+					'product',
+					'project',
+					'fichinter',
+					'expensereport',
+					'recruitment-recruitmentcandidature',
+					'mrp-mo',
+					'banque'))) {
 					preg_match('/(.*)\/[^\/]+$/', $relativefile, $reg); $ref = (isset($reg[1]) ? $reg[1] : '');
 				} else {
 				    //print 'Error: Value for modulepart = '.$modulepart.' is not yet implemented in function list_of_autoecmfiles'."\n";

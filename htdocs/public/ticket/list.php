@@ -201,7 +201,7 @@ if ($action == "view_ticketlist")
 
         // fetch optionals attributes and labels
         $extrafields = new ExtraFields($db);
-        $extrafields->fetch_name_optionals_label('ticket');
+        $extrafields->fetch_name_optionals_label($object->table_element);
 
         $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 

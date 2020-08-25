@@ -2641,9 +2641,9 @@ class Form
 
     			    $outval .= ' - '.$langs->transnoentities("VirtualStock").':';
     			    if ($virtualstock > 0) {
-    			        $outval .= ' - <span class="product_line_stock_ok">';
+    			        $outval .= '<span class="product_line_stock_ok">';
     			    } elseif ($virtualstock <= 0) {
-    			        $outval .= ' - <span class="product_line_stock_too_low">';
+    			        $outval .= '<span class="product_line_stock_too_low">';
     			    }
     			    $outval .= $virtualstock;
     			    $outval .= '</span>';
@@ -5280,7 +5280,7 @@ class Form
 	 *	@param	int			$d				1=Show days, month, years
 	 * 	@param	int			$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
 	 * 	@param 	int			$disabled		Disable input fields
-	 *  @param  int			$fullday        When a checkbox with id #fullday is cheked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
+	 *  @param  int			$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
      *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
@@ -5772,7 +5772,7 @@ class Form
 	 * @param	int				$disabled			1=Html component is disabled
 	 * @param	string	        $selected_input_value	Value of preselected input text (for use with ajax)
 	 * @return	string								Return HTML string
-	 * @see selectForFormsList() select_thirdparty
+	 * @see selectForFormsList() select_thirdparty()
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{
@@ -5830,7 +5830,7 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams ? $moreparams : '');
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter);
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
@@ -6496,7 +6496,7 @@ class Form
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $extrafields;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
@@ -6528,6 +6528,10 @@ class Form
 		    }
 		    if ($val['label'])
 		    {
+		    	if (! empty($val['langfile']) && is_object($langs)) {
+		    		$langs->load($val['langfile']);
+		    	}
+
 		        $lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked']) ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 			    $listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
 		    }

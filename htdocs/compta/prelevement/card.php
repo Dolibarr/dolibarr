@@ -86,7 +86,11 @@ if (empty($reshook))
         $res = $object->delete($user);
         if ($res > 0)
         {
-            header("Location: index.php");
+        	if ($object->type == 'bank-transfer') {
+        		header("Location: ".DOL_URL_ROOT.'/compta/paymentbybanktransfer/index.php');
+        	} else {
+        		header("Location: ".DOL_URL_ROOT.'/compta/prelevement/index.php');
+        	}
             exit;
         }
     }
@@ -142,11 +146,9 @@ if (empty($reshook))
 		$dt = dol_mktime(12, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
 
         $error = $object->set_infocredit($user, $dt);
-
         if ($error)
         {
-            header("Location: card.php?id=".$id."&error=$error");
-            exit;
+        	setEventMessages($object->error, $object->errors, 'errors');
         }
     }
 }

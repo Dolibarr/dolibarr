@@ -20,7 +20,6 @@ ImportPostgreSqlDesc=To import a backup file, you must use the pg_restore comman
 CommandsToDisableForeignKeysForImportWarning=This is mandatory if you want to restore your sql dumps later
 ModulesMarketPlaceDesc=You can find more modules to download from external websites on the Internet...
 ModulesMarketPlaces=Find external applications and modules
-DoliPartnersDesc=List of companies providing custom-developed modules or features.<br>Note: since Dolibarr is an open source application, <i>anyone</i> experienced in PHP programming should be able to develop a module.
 AvailableOnlyIfJavascriptAndAjaxNotDisabled=Available only if JavaScript is enabled
 InstrucToEncodePass=To have password encoded into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="...";</b><br>with<br><b>$dolibarr_main_db_pass="crypted:%s";</b>
 InstrucToClearPass=To have password decoded (clear) into the <b>conf.php</b> file, replace the line <br><b>$dolibarr_main_db_pass="crypted:...";</b><br>with<br><b>$dolibarr_main_db_pass="%s";</b>

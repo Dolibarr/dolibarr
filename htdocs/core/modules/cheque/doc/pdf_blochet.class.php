@@ -213,7 +213,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Generate Header
 	 *
-	 *	@param  PDF			$pdf        	Pdf object
+	 *	@param  TCPDF		$pdf        	Pdf object
 	 *	@param  int			$page        	Current page number
 	 *	@param  int			$pages       	Total number of pages
 	 *	@param	Translate	$outputlangs	Object language for output
@@ -321,7 +321,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Output array
 	 *
-	 *	@param	PDF			$pdf			PDF object
+	 *	@param	TCPDF		$pdf			PDF object
 	 *	@param	int			$pagenb			Page nb
 	 *	@param	int			$pages			Pages
 	 *	@param	Translate	$outputlangs	Object lang
@@ -390,7 +390,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *  Show footer of page. Need this->emetteur object
      *
-	 *  @param	PDF			$pdf     			PDF
+	 *  @param	TCPDF		$pdf     			PDF
 	 *  @param	Object		$object				Object to show
 	 *  @param	Translate	$outputlangs		Object lang for output
 	 *  @param	int			$hidefreetext		1=Hide free text
@@ -404,6 +404,8 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 
 		// Line of free text
+		$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+		complete_substitutions_array($substitutionarray, $outputlangs, $object);
 		$newfreetext = '';
 		$paramfreetext = 'BANK_CHEQUERECEIPT_FREE_TEXT';
 		if (!empty($conf->global->$paramfreetext))

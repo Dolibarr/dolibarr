@@ -710,7 +710,7 @@ class FactureFournisseur extends CommonInvoice
                 $this->note_private			= $obj->note_private;
                 $this->note_public = $obj->note_public;
                 $this->model_pdf = $obj->model_pdf;
-                $this->modelpdf			    = $obj->model_pdf;
+                $this->modelpdf	= $obj->model_pdf;
                 $this->import_key = $obj->import_key;
 
 				//Incoterms
@@ -1259,7 +1259,7 @@ class FactureFournisseur extends CommonInvoice
         $this->db->begin();
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn';
-        $sql .= ' SET paye = 1, fk_statut=2';
+        $sql .= ' SET paye = 1, fk_statut = '.self::STATUS_CLOSED;
         $sql .= ' WHERE rowid = '.$this->id;
 
         dol_syslog("FactureFournisseur::set_paid", LOG_DEBUG);
@@ -2267,7 +2267,8 @@ class FactureFournisseur extends CommonInvoice
 
         $result = '';
 
-        if ($option == 'document')	$url = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id;
+        if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id.'&type=bank-transfer';
+        elseif ($option == 'document')	$url = DOL_URL_ROOT.'/fourn/facture/document.php?facid='.$this->id;
         else $url = DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$this->id;
 
         if ($short) return $url;
@@ -2424,6 +2425,7 @@ class FactureFournisseur extends CommonInvoice
         $sql = "SELECT rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."product";
         $sql .= " WHERE entity IN (".getEntity('product').")";
+        $sql .= $this->db->plimit(100);
 
         $resql = $this->db->query($sql);
         if ($resql)
@@ -2641,6 +2643,7 @@ class FactureFournisseur extends CommonInvoice
 		global $conf, $user, $langs;
 
 		$langs->load("suppliers");
+		$outputlangs->load("products");
 
 		// Set the model on the model name to use
 		if (empty($modele))

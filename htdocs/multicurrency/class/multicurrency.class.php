@@ -548,7 +548,7 @@ class MultiCurrency extends CommonObject
      *
      * @param	int		$fk_facture		id of facture
      * @param	double	$amount			amount to convert
-     * @param	string	$way			dolibarr mean the amount is in dolibarr currency
+     * @param	string	$way			'dolibarr' mean the amount is in dolibarr currency
      * @param	string	$table			facture or facture_fourn
      * @return	double					amount converted
      */
@@ -558,8 +558,8 @@ class MultiCurrency extends CommonObject
 
         if ($multicurrency_tx)
         {
-            if ($way == 'dolibarr') return $amount * $multicurrency_tx;
-            else return $amount / $multicurrency_tx;
+        	if ($way == 'dolibarr') return price2num($amount * $multicurrency_tx, 'MU');
+        	else return price2num($amount / $multicurrency_tx, 'MU');
         } else return $amount;
     }
 

@@ -77,7 +77,12 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	text-align: center;
 	font-size: 45px;
 	line-height: 90px;
-	background: rgba(0, 0, 0, 0.08) !important
+	background: rgba(0, 0, 0, 0.08) !important;
+}
+
+.info-box-module .info-box-icon {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 .info-box-sm .info-box-icon {
     height: 80px;
@@ -99,6 +104,13 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 }
 .info-box-module .info-box-icon > img {
     max-width: 60%;
+}
+
+a.info-box-text.info-box-text-a {
+    display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+    font-size: 0.9em;
 }
 
 .info-box-icon-text{
@@ -166,15 +178,21 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 	padding: 5px 10px;
 	margin-left: 84px;
 }
-
 .info-box-sm .info-box-content{
     margin-left: 80px;
 }
-/*.info-box-setup span {
-    color: var(--colortexttitlenotab2);
+.info-box-sm .info-box-module-enabled {
+    /* background: linear-gradient(0.35turn, #fff, #fff, #f6faf8, #e4efe8) */
+    background: linear-gradient(0.4turn, #fff, #fff, #fff, #e4efe8);
 }
-.tdsetuppicto span {
-    color: var(--colortexttitlenotab2);
+.info-box-content-warning span.font-status4 {
+	color: #bc9526 !important;
+}
+/*.info-box-sm .info-box-content-warning {
+	background: #ffd7a3;
+}*/
+/*.info-box-icon.info-box-icon-module-enabled {
+    background: #e4f0e4 !important;
 }*/
 
 .info-box-number {
@@ -212,6 +230,8 @@ a.info-box-text{ text-decoration: none;}
 
 
 
+
+
 /* ICONS INFO BOX */
 <?php
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -234,7 +254,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 }
 
 .customer-back {
-	background-color: #99a17d !important;
+	background-color: #95a55d !important;
 	color: #FFF !important;
 	padding: 2px;
 	margin: 2px;
@@ -248,14 +268,16 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	border-radius: 3px;
 }
 
+
+
 .bg-infobox-project{
 	<?php echo $prefix; ?>color: #6c6aa8 !important;
 }
 .bg-infobox-action{
-	<?php echo $prefix; ?>color: #a47080 !important;
+	<?php echo $prefix; ?>color: #b06080 !important;
 }
 .bg-infobox-propal, .bg-infobox-facture, .bg-infobox-commande {
-	<?php echo $prefix; ?>color: #99a17d !important;
+	<?php echo $prefix; ?>color: #95a55d !important;
 }
 .bg-infobox-supplier_proposal, .bg-infobox-invoice_supplier, .bg-infobox-order_supplier {
 	<?php echo $prefix; ?>color: #599caf !important;
@@ -264,7 +286,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	<?php echo $prefix; ?>color: #46a676 !important;
 }
 .bg-infobox-bank_account{
-	<?php echo $prefix; ?>color: #b0a53e !important;
+	<?php echo $prefix; ?>color: #b0bb39 !important;
 }
 .bg-infobox-adherent, .bg-infobox-member {
 	<?php echo $prefix; ?>color: #79633f !important;
@@ -283,12 +305,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	color: #6c6aa8 !important;
 }
 .infobox-action{
-	color: #a47080 !important;
+	color: #b06080 !important;
 }
 .infobox-propal,
 .infobox-facture,
 .infobox-commande{
-	color: #99a17d !important;
+	color: #95a55d !important;
 }
 .infobox-supplier_proposal,
 .infobox-invoice_supplier,
@@ -299,7 +321,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	color: #46a676 !important;
 }
 .infobox-bank_account{
-	color: #b0a53e !important;
+	color: #b0bb39 !important;
 }
 .infobox-adherent, .infobox-member {
 	color: #79633f !important;
@@ -419,7 +441,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 
 
 .info-box-module .info-box-content {
-	height: 6.4em;
+	height: 98px;
 }
 /* Disabled. This break the responsive on smartphone
 .box{

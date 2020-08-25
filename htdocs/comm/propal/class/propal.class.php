@@ -825,7 +825,6 @@ class Propal extends CommonObject
 			//Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new PropaleLigne($this->db);
 			$line->fetch($rowid);
-			$line->fetch_optionals();
 
 			$staticline = clone $line;
 
@@ -1494,6 +1493,7 @@ class Propal extends CommonObject
 				$this->fk_project = $obj->fk_project;
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
+				$this->model_pdf            = $obj->model_pdf;
 				$this->modelpdf             = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->note                 = $obj->note_private; // TODO deprecated
@@ -3341,6 +3341,8 @@ class Propal extends CommonObject
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -3664,6 +3666,7 @@ class Propal extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("propale");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'azur';

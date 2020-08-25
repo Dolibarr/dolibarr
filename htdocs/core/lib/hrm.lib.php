@@ -85,9 +85,9 @@ function hrm_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin');
 
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'hrm_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'hrm_admin', 'remove');
 
     return $head;
 }

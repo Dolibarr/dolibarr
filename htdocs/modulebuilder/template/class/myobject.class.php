@@ -33,6 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class MyObject extends CommonObject
 {
 	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'mymodule';
+
+	/**
 	 * @var string ID to identify managed object.
 	 */
 	public $element = 'myobject';
@@ -310,7 +315,7 @@ class MyObject extends CommonObject
 			foreach ($object->array_options as $key => $option)
 			{
 				$shortkey = preg_replace('/options_/', '', $key);
-				if (!empty($extrafields->attributes[$this->element]['unique'][$shortkey]))
+				if (!empty($extrafields->attributes[$this->table_element]['unique'][$shortkey]))
 				{
 					//var_dump($key); var_dump($clonedObj->array_options[$key]); exit;
 					unset($object->array_options[$key]);
@@ -1070,6 +1075,11 @@ class MyObjectLine extends CommonObjectLine
 {
 	// To complete with content of an object MyObjectLine
 	// We should have a field rowid, fk_myobject and position
+
+	/**
+	 * @var int  Does object support extrafields ? 0=No, 1=Yes
+	 */
+	public $isextrafieldmanaged = 0;
 
 	/**
 	 * Constructor
