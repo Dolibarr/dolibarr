@@ -64,6 +64,10 @@ $apmin = GETPOST('apmin');
 $p2hour = GETPOST('p2hour');
 $p2min = GETPOST('p2min');
 
+$offsetvalue = GETPOST('offsetvalue');
+$offsetunit = GETPOST('offsetunittype_duration');
+$typeremind = GETPOST('typeremind');
+
 $datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
 $datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
 
@@ -1106,7 +1110,28 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+    print '<br><hr><br>';
+
+    print '<table class="border centpercent">';
+
+    //Reminder
+    print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Reminder").'</td><td colspan="3">';
+    print '<input type="number" name="offsetvalue" value="10" size="5">';
+    print '</td></tr>';
+
+    //Reminder Type
+    print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+    print $form->select_type_duration('offsetunit');
+    print '</td></tr>';
+
+    //Notification
+    print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TypeRemind").'</td><td colspan="3">';
+    print $form->selectarray('typeremind', array('mail'=>$langs->trans('EMail'), 'push'=>$langs->trans('OSNotif')));
+    print '</td></tr>';
+
+    print '</table>';
+
+    dol_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';

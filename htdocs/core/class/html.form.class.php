@@ -5673,6 +5673,27 @@ class Form
 		return $retstring;
 	}
 
+	public function select_type_duration($prefix){
+
+        global $langs;
+
+        $retstring = '';
+
+        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'minute'=>$langs->trans('Minutes'));
+
+        $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+
+        foreach($TDurationTypes as $key=>$typeduration){
+            $retstring .= '<option value="'.$key.'"';
+            $retstring .= ">".$typeduration."</option>";
+        }
+
+        $retstring .= "</select>";
+
+        print $retstring;
+        return;
+    }
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to show a form to select a duration on a page
