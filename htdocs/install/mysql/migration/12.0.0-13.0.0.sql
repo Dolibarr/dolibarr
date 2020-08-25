@@ -273,3 +273,16 @@ INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_u
 ALTER TABLE llx_product_attribute ADD COLUMN ref_ext varchar(255) AFTER ref;
 ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
 
+ALTER TABLE llx_product_attribute ADD COLUMN ref_ext varchar(255) AFTER ref;
+ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
+
+ALTER TABLE llx_c_action_trigger MODIFY COLUMN code varchar(64) NOT NULL;
+
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTJOBPOSITION_CREATE','Job created','Executed when a job is created','recruitment',7500);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTJOBPOSITION_MODIFY','Job modified','Executed when a job is modified','recruitment',7502);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTJOBPOSITION_SENTBYMAIL','Mails sent from job record','Executed when you send email from job record','recruitment',7504);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTJOBPOSITION_DELETE','Job deleted','Executed when a job is deleted','recruitment',7506);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_CREATE','Candidature created','Executed when a candidature is created','recruitment',7510);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_MODIFY','Candidature modified','Executed when a candidature is modified','recruitment',7512);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_SENTBYMAIL','Mails sent from candidature record','Executed when you send email from candidature record','recruitment',7514);
+insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_DELETE','Candidature deleted','Executed when a candidature is deleted','recruitment',7516);
