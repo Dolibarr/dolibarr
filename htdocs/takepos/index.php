@@ -43,13 +43,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant or multiple sales
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
-
 if ($setterminal > 0)
 {
 	$_SESSION["takeposterminal"] = $setterminal;
+  $_SESSION["urlfrom"] = '/takepos/index.php?setterminal='.$setterminal;
+} else {
+  $_SESSION["urlfrom"] = '/takepos/index.php';
 }
 
-$_SESSION["urlfrom"] = '/takepos/index.php?setterminal='.$_SESSION["takeposterminal"];
+$langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
