@@ -1194,7 +1194,7 @@ class Product extends CommonObject
                 }
 
                 //We also check if it is a child product
-                if (!$error && ($prodcomb->fetchByFkProductChild($this->id) > 0) && ($prodcomb->delete($user) < 0)) {
+                if (!$error && ($prodcomb->getFkProductParentByFkProductChild($this->id) > 0) && ($prodcomb->delete($user) < 0)) {
                     $error++;
                     $this->errors[] = 'Error deleting child combination';
                 }
