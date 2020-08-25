@@ -1800,10 +1800,13 @@ class Products extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-		$prodcomb = new ProductCombination($this->db);
-        $this->product->fk_product_combination = null;
-        if ($prodcomb->fetchByFkProductChild($this->product->id) > 0) {
-            $this->product->fk_product_combination = $prodcomb->id;
+		$this->product->fk_product_parent = null;
+        $sql = "SELECT fk_product_parent FROM ".MAIN_DB_PREFIX."product_attribute_combination";
+        $sql .= " WHERE fk_product_child = ".(int) $this->product->id." AND entity IN (".getEntity('product').") LIMIT 1";
+        $query = $this->db->query($sql);
+        if ($this->db->num_rows($query)) {
+            $row = $this->db->fetch_object($query);
+            $this->product->fk_product_parent = $row->fk_product_parent;
         }
 
         if ($includestockdata) {
