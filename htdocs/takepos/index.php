@@ -49,7 +49,7 @@ if ($setterminal > 0)
 	$_SESSION["takeposterminal"] = $setterminal;
 }
 
-$_SESSION["urlfrom"] = '/takepos/index.php';
+$_SESSION["urlfrom"] = '/takepos/index.php?setterminal='.$_SESSION["takeposterminal"];
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
 
