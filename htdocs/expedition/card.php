@@ -1074,8 +1074,8 @@ if ($action == 'create')
                 print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled))
 				{
-	                print '<br><a href="#" id="autofill">'.$langs->trans("Fill").'</a>';	
-	                print ' / ';	
+	                print '<br><a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
+	                print ' / ';
 				} else {
 					print '<br>';
 				}

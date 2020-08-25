@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2020  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class RecruitmentCandidature extends CommonObject
 {
 	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'recruitment';
+
+	/**
 	 * @var string ID to identify managed object.
 	 */
 	public $element = 'recruitmentcandidature';
@@ -61,6 +65,7 @@ class RecruitmentCandidature extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	//const STATUS_INTERVIEW_SCHEDULED = 2;
 	const STATUS_CONTRACT_PROPOSED = 3;
 	const STATUS_CONTRACT_SIGNED = 5;
 	const STATUS_REFUSED = 8;
@@ -706,6 +711,8 @@ class RecruitmentCandidature extends CommonObject
 		$label = '<u>'.$langs->trans("RecruitmentCandidature").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		$label .= '<br><b>'.$langs->trans('Email').':</b> '.$this->email;
+		$label .= '<br><b>'.$langs->trans('Fullname').':</b> '.$this->getFullName($langs);
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}

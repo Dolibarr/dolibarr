@@ -59,10 +59,11 @@ class InterfaceActionsAuto extends DolibarrTriggers
 	 *      $object->sendtoid (id of contact or array of ids of contacts)
 	 *      $object->socid (id of thirdparty)
 	 *      $object->fk_project
-	 *      $object->fk_element
-	 *      $object->elementtype
+	 *      $object->fk_element	(ID of object to link action event to)
+	 *      $object->elementtype (->element of object to link action to)
+	 *      $object->module (if defined, elementtype in llx_actioncomm will be elementtype@module)
 	 *
-	 * @param string		$action		Event action code
+	 * @param string		$action		Event action code ('CONTRACT_MODIFY', 'RECRUITMENTCANDIDATURE_MODIFIY', ...)
 	 * @param Object		$object     Object
 	 * @param User		    $user       Object user
 	 * @param Translate 	$langs      Object langs
@@ -74,6 +75,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		if (empty($conf->agenda->enabled)) return 0; // Module not active, we do nothing
 
 		$key = 'MAIN_AGENDA_ACTIONAUTO_'.$action;
+		//var_dump($action.' - '.$conf->global->$key);exit;
 
 		// Do not log events not enabled for this action
 		if (empty($conf->global->$key)) {
@@ -778,16 +780,29 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $object->sendtoid = 0;
 		}
 		// TODO Merge all previous cases into this generic one
-		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, ...
+		else // $action = BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 		{
-
 		    // Note: We are here only if $conf->global->MAIN_AGENDA_ACTIONAUTO_action is on (tested at begining of this function).
 		    // Note that these key can be set in agenda setup, only if defined into c_action_trigger
 		    // Load translation files required by the page
-            $langs->loadLangs(array("agenda", "other"));
-
-		    if (empty($object->actionmsg2)) $object->actionmsg2 = $langs->transnoentities($action."InDolibarr", $object->ref);
-		    if (empty($object->actionmsg))  $object->actionmsg = $langs->transnoentities($action."InDolibarr", $object->ref);
+            if (empty($object->actionmsg2)) {
+            	$langs->loadLangs(array("agenda", "other"));
+            	if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
+            		$object->actionmsg2 = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+            	} else {	// generic translation key
+            		$tmp = explode('_', $action);
+            		$object->actionmsg2 = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+            	}
+            }
+            if (empty($object->actionmsg))  {
+            	$langs->loadLangs(array("agenda", "other"));
+            	if ($langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref)) != $action."InDolibarr") {	// specific translation key
+            		$object->actionmsg = $langs->transnoentities($action."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+            	} else {	// generic translation key
+            		$tmp = explode('_', $action);
+            		$object->actionmsg = $langs->transnoentities($tmp[count($tmp)-1]."InDolibarr", ($object->newref ? $object->newref : $object->ref));
+            	}
+            }
 
 		    if (! isset($object->sendtoid) || ! is_array($object->sendtoid)) {
 		    	$object->sendtoid = 0;
@@ -828,14 +843,15 @@ class InterfaceActionsAuto extends DolibarrTriggers
         $projectid = isset($object->fk_project) ? $object->fk_project : 0;
         if ($object->element == 'project') $projectid = $object->id;
 
-        $elementid = $object->id;
+        $elementid = $object->id;			// id of object
         $elementtype = $object->element;
+        $elementmodule = $object->module;
         if ($object->element == 'subscription')
         {
         	$elementid = $object->fk_adherent;
         	$elementtype = 'member';
         }
-        //var_dump($societeforaction);var_dump($contactforaction);exit;
+        //var_dump($societeforaction);var_dump($contactforaction);var_dump($elementid);var_dump($elementtype);exit;
 
 		// Insertion action
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -868,7 +884,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		if (!in_array($elementtype, array('societe', 'contact', 'project')))
 		{
 			$actioncomm->fk_element  = $elementid;
-			$actioncomm->elementtype = $elementtype;
+			$actioncomm->elementtype = $elementtype.($elementmodule ? '@'.$elementmodule : '');
 		}
 
 		if (property_exists($object, 'attachedfiles') && is_array($object->attachedfiles) && count($object->attachedfiles) > 0) {
@@ -878,7 +894,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$actioncomm->userassigned = $object->sendtouserid;
 		}
 		if (property_exists($object, 'sendtoid') && is_array($object->sendtoid) && count($object->sendtoid) > 0) {
-			foreach($object->sendtoid as $val) {
+			foreach ($object->sendtoid as $val) {
 				$actioncomm->socpeopleassigned[$val] = $val;
 			}
 		}
