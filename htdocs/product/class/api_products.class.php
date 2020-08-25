@@ -919,11 +919,11 @@ class Products extends DolibarrApi
         }
 
         $result = $this->db->query($sql);
-        
+
         if (!$result) {
             throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
         }
-        
+
         $return = [];
         while ($result = $this->db->fetch_object($query)) {
             $tmp = new stdClass();
@@ -933,14 +933,14 @@ class Products extends DolibarrApi
             $tmp->label = $result->label;
             $tmp->rang = $result->rang;
             $tmp->entity = $result->entity;
-            
+
             $return[] = $tmp;
         }
-        
+
         if (!count($return)) {
             throw new RestException(404, 'No product attribute found');
         }
-        
+
         return $return;
     }
 
