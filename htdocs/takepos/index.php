@@ -46,9 +46,9 @@ $setterminal = GETPOST('setterminal', 'int');
 if ($setterminal > 0)
 {
 	$_SESSION["takeposterminal"] = $setterminal;
-  $_SESSION["urlfrom"] = '/takepos/index.php?setterminal='.$setterminal;
+	$_SESSION["urlfrom"] = '/takepos/index.php?setterminal='.$setterminal;
 } else {
-  $_SESSION["urlfrom"] = '/takepos/index.php';
+	$_SESSION["urlfrom"] = '/takepos/index.php';
 }
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk", "receiptprinter", "banks"));
