@@ -1062,7 +1062,7 @@ if (count($listofextcals))
                     $event->ref = $event->id;
 
                     $userId = $userstatic->findUserIdByEmail($namecal);
-                    if(!empty($userId))
+                    if (!empty($userId) && $userId > 0)
                     {
                         $event->userassigned[$userId] = $userId;
                         $event->percentage = -1;
