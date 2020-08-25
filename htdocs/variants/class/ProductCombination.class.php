@@ -216,6 +216,12 @@ class ProductCombination
 		}
 
 		foreach ($this->combination_price_levels as $fk_price_level => $combination_price_level){
+
+			// if saveCombinationPriceLevels is call after a create need id
+			if(empty($combination_price_level->fk_product_attribute_combination)){
+				$combination_price_level->fk_product_attribute_combination = $this->id;
+			}
+
 			$res = $combination_price_level->save();
 			if($res<1){
 				$this->error = 'save combination price level '.$fk_price_level . ' '.$combination_price_level->error;
@@ -352,14 +358,14 @@ class ProductCombination
 			return -1;
 		}
 
+		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute_combination');
+
 		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$res = $this->saveCombinationPriceLevels();
 			if($res<0){
 				return -2;
 			}
 		}
-
-		$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'product_attribute_combination');
 
 		return 1;
 	}
