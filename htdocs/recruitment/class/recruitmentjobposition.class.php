@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020  Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class RecruitmentJobPosition extends CommonObject
 {
+	/**
+	 * @var string ID of module.
+	 */
+	public $module = 'recruitment';
+
 	/**
 	 * @var string ID to identify managed object
 	 */
