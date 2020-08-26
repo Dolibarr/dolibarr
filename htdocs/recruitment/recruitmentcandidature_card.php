@@ -138,7 +138,7 @@ if (empty($reshook))
 			else $backtopage = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 		}
 	}
-	$triggermodname = 'RECRUITMENT_RECRUITMENTCANDIDATURE_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'RECRUITMENTCANDIDATURE_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -155,16 +155,12 @@ if (empty($reshook))
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'set_thirdparty' && $permissiontoadd)
-	{
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'RECRUITMENTCANDIDATURE_MODIFY');
-	}
 	if ($action == 'classin' && $permissiontoadd)
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 	if ($action == 'confirm_decline' && $confirm == 'yes' && $permissiontoadd) {
-		$result = $object->setStatut($object::STATUS_REFUSED, null, '', 'RECRUITMENTCANDIDATURE_DECLINE');
+		$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -506,7 +502,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Refuse - Decline
-			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_CANCELED)
+			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_REFUSED)
 			{
 				if ($permissiontoadd)
 				{

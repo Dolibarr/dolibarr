@@ -1077,4 +1077,8 @@ AmountMustBePositive=Amount must be positive
 ByStatus=By status
 InformationMessage=Information
 ASAP=As Soon As Possible
- 
+CREATEInDolibarr=Record %s create
+MODIFYInDolibarr=Record %s modified
+DELETEInDolibarr=Record %s deleted
+VALIDATEInDolibarr=Record %s validated
+APPROVEDInDolibarr=Record %s approved
