@@ -1043,4 +1043,4 @@ AmountMustBePositive=Le montant doit être positif.
 ByStatus=Par statut
 InformationMessage=Information
 ASAP=Dès que possible
-
+ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel de cet événement

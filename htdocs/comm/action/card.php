@@ -387,7 +387,7 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
-                //Reminder
+                //Create eminder
                 if($addreminder == 'on'){
 
                     $actionCommReminder = new ActionCommReminder($db);
@@ -416,6 +416,15 @@ if (empty($reshook) && $action == 'add')
                     if($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
                     $res = $actionCommReminder->create($user);
+
+                    if($res <= 0){
+                        // If error
+                        $db->rollback();
+                        $langs->load("errors");
+                        $error = $langs->trans('ErrorReminderActionCommCreation');
+                        setEventMessages($error, null, 'errors');
+                        $action = 'create'; $donotclearsession = 1;
+                    }
                 }
 
 				$db->commit();

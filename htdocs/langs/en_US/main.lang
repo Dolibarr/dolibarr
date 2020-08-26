@@ -1082,3 +1082,4 @@ MODIFYInDolibarr=Record %s modified
 DELETEInDolibarr=Record %s deleted
 VALIDATEInDolibarr=Record %s validated
 APPROVEDInDolibarr=Record %s approved
+ErrorReminderActionCommCreation=Error creating the reminder notification for this event
