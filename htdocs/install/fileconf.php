@@ -31,7 +31,7 @@ include_once 'inc.php';
 
 global $langs;
 
-$err = 0;
+$err = 0
 
 $setuplang = GETPOST("selectlang", '', 3) ?GETPOST("selectlang", '', 3) : (isset($_GET["lang"]) ? $_GET["lang"] : 'auto');
 $langs->setDefaultLang($setuplang);
