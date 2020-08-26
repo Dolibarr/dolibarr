@@ -69,7 +69,7 @@ $addreminder = GETPOST('addreminder');
 $offsetvalue = GETPOST('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration');
 $remindertype = GETPOST('selectremindertype');
-$modelmail = GETPOST('eventpushmodel_mail');
+$modelmail = GETPOST('agendasendmodel_mail');
 
 //var_dump($_POST); exit;
 
@@ -412,8 +412,8 @@ if (empty($reshook) && $action == 'add')
                     $actionCommReminder->offsetunit = $offsetunit;
                     $actionCommReminder->offsetvalue = $offsetvalue;
                     $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
-                    $actionCommReminder->fk_project = $object->id;
-                    //TODO : $fk_project
+                    $actionCommReminder->fk_actioncomm = $object->id;
+                    if($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
                     $res = $actionCommReminder->create($user);
                 }
@@ -1181,7 +1181,7 @@ if ($action == 'create')
 
         //Mail Model
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-        print $form->select_model_mail('eventpush', 'event_push');
+        print $form->select_model_mail('agendasend', 'agenda_send');
         print '</td></tr>';
 
 
@@ -1201,9 +1201,9 @@ if ($action == 'create')
 	            		$("#selectremindertype").click(function(){	         
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
-	            		        $("#select_eventpushmodel_mail").closest("tr").show();
+	            		        $("#select_agendasendmodel_mail").closest("tr").show();
 	            		    } else {
-	            			    $("#select_eventpushmodel_mail").closest("tr").hide();
+	            			    $("#select_agendasendmodel_mail").closest("tr").hide();
 	            		    };
 	            		});	            		 	   	
                    })';
