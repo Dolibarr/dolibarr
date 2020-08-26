@@ -64,6 +64,7 @@ $apmin = GETPOST('apmin');
 $p2hour = GETPOST('p2hour');
 $p2min = GETPOST('p2min');
 
+$addreminder = GETPOST('addreminder');
 $offsetvalue = GETPOST('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration');
 $remindertype = GETPOST('remindertype');
@@ -1114,7 +1115,26 @@ if ($action == 'create')
 
     if($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
     {
-        print '<br><br><hr>';
+
+        //checkbox create reminder
+        print '<br>';
+        print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder"></td></tr>';
+
+        print "\n".'<script type="text/javascript">';
+        print '$(document).ready(function () {
+	            		$("#addreminder").click(function(){
+	            		    if (this.checked) {
+	            		      $(".reminderparameters").show();
+                            } else {
+                            $(".reminderparameters").hide();
+                            }
+	            		 });
+                   })';
+        print '</script>'."\n";
+
+        print '<div class="reminderparameters" style="display: none;">';
+
+        print '<hr>';
         print load_fiche_titre($langs->trans("AddReminder"), '', '');
 
         print '<table class="border centpercent">';
@@ -1145,6 +1165,7 @@ if ($action == 'create')
 
 
         print '</table>';
+        print '</div>';
     }
 
     dol_fiche_end();
