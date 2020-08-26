@@ -109,6 +109,9 @@ class ActionCommReminder extends CommonObject
 	 */
 	public $status;
 
+    const STATUS_TODO = 0;
+    const STATUS_DONE = 1;
+
 	// END MODULEBUILDER PROPERTIES
 
 

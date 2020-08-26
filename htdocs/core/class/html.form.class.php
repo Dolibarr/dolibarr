@@ -5673,13 +5673,13 @@ class Form
 		return $retstring;
 	}
 
-	public function select_type_duration($prefix, $selected = 'month'){
+	public function select_type_duration($prefix, $selected = 'minute'){
 
         global $langs;
 
         $retstring = '';
 
-        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'),'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
+        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
 
         $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 

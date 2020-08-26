@@ -411,13 +411,10 @@ if (empty($reshook) && $action == 'add')
                     $actionCommReminder->fk_user = $user;
                     $actionCommReminder->offsetunit = $offsetunit;
                     $actionCommReminder->offsetvalue = $offsetvalue;
-                    $actionCommReminder->offsetvalue = 'todo';
+                    $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
                     //TODO : $fk_project
 
                     $res = $actionCommReminder->create($user);
-
-                    var_dump($res); exit;
-
                 }
 
 				$db->commit();
