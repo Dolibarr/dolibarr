@@ -389,26 +389,34 @@ if (empty($reshook) && $action == 'add')
 
                 //Reminder
                 if($addreminder == 'on'){
+
                     $actionCommReminder = new ActionCommReminder($db);
 
-//                    if($offsetunit == 'minute'){
-//                        $timeBeforeEvent = convertTime2Seconds('', $offsetvalue);
-//                    } elseif($offsetunit == 'hour'){
-//                        $timeBeforeEvent = convertTime2Seconds($offsetvalue);
-//                    } elseif ($offsetunit == 'day') {
-//                        $timeBeforeEvent = 3600 * 24 * $offsetvalue;
-//                    } elseif ($offsetunit == 'week') {
-//                        $timeBeforeEvent = 3600 * 24 * 7 * $offsetvalue;
-//                    } elseif ($offsetunit == 'month') {
-//                        $timeBeforeEvent = 3600 * 24 * 7 * $offsetvalue;
-//                    }
-//                    var_dump($datep); exit;
-//
-//                    $actionCommReminder->typeremind = $remindertype;
-//                    $actionCommReminder->fk_user = $user;
-//                    $actionCommReminder->offsetunit = $offsetunit;
-//                    $actionCommReminder->offsetvalue = $offsetvalue;
-//                    $actionCommReminder->offsetvalue = 'todo';
+                    if($offsetunit == 'minute'){
+                        $dateremind = strtotime("-".$offsetvalue." minutes", $datep);
+                    } elseif($offsetunit == 'hour'){
+                        $dateremind = strtotime("-".$offsetvalue." hours", $datep);
+                    } elseif ($offsetunit == 'day') {
+                        $dateremind = strtotime("-".$offsetvalue." day", $datep);
+                    } elseif ($offsetunit == 'week') {
+                        $dateremind = strtotime("-".$offsetvalue." week", $datep);
+                    } elseif ($offsetunit == 'month') {
+                        $dateremind = strtotime("-".$offsetvalue." month", $datep);
+                    } elseif ($offsetunit == 'year') {
+                        $dateremind = strtotime("-".$offsetvalue." year", $datep);
+                    }
+
+                    $actionCommReminder->dateremind = date('Y-m-d H:i:s', $dateremind);
+                    $actionCommReminder->typeremind = $remindertype;
+                    $actionCommReminder->fk_user = $user;
+                    $actionCommReminder->offsetunit = $offsetunit;
+                    $actionCommReminder->offsetvalue = $offsetvalue;
+                    $actionCommReminder->offsetvalue = 'todo';
+                    //TODO : $fk_project
+
+                    $res = $actionCommReminder->create($user);
+
+                    var_dump($res); exit;
 
                 }
 
@@ -1174,7 +1182,6 @@ if ($action == 'create')
         print '</td></tr>';
 
         //Mail Model
-        //TODO : ajouter les conditions pour l'affichage de ce champs : si au moins un model existe et si Email est le type de rappel sélectionné
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Model").'</td><td colspan="3">';
         print $form->select_model_mail('eventpush', 'event_push');
         print '</td></tr>';
