@@ -653,7 +653,9 @@ if (empty($reshook))
 	 */
 	if ($action == 'updateline' && $user->rights->fournisseur->commande->creer && !GETPOST('cancel', 'alpha'))
 	{
-		$vat_rate = (GETPOST('tva_tx') ?GETPOST('tva_tx') : 0);
+		$db->begin();
+
+		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
    		if ($lineid)
 		{
@@ -783,9 +785,13 @@ if (empty($reshook))
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) dol_print_error($db, $result);
 			}
+
+			$db->commit();
 		}
 		else
 		{
+			$db->rollback();
+
 			dol_print_error($db, $object->error);
 			exit;
 		}
@@ -794,6 +800,8 @@ if (empty($reshook))
 	// Remove a product line
 	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $user->rights->fournisseur->commande->creer)
 	{
+		$db->begin();
+
 		$result = $object->deleteline($lineid);
 		if ($result > 0)
 		{
@@ -812,15 +820,22 @@ if (empty($reshook))
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
-
-			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-			exit;
 		}
 		else
 		{
+			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
-			/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
+			// Reset action to avoid asking again confirmation on failure
 			$action = '';
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -830,6 +845,8 @@ if (empty($reshook))
 		|| (!empty($conf->global->MAIN_USE_ADVANCED_PERMS) && !empty($user->rights->fournisseur->supplier_order_advance->validate)))
 		)
 	{
+		$db->begin();
+
 		$object->date_commande = dol_now();
 		$result = $object->valid($user);
 		if ($result >= 0)
@@ -849,7 +866,10 @@ if (empty($reshook))
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result < 0) dol_print_error($db, $result);
+				if ($result < 0) {
+					$error++;
+					dol_print_error($db, $result);
+				}
 			}
 		}
 		else
@@ -863,10 +883,18 @@ if (empty($reshook))
 		{
 			$action = 'confirm_approve'; // can make standard or first level approval also if permission is set
 		}
+
+		if (! $error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 
 	if (($action == 'confirm_approve' || $action == 'confirm_approve2') && $confirm == 'yes' && $user->rights->fournisseur->commande->approuver)
 	{
+		$db->begin();
+
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
@@ -906,13 +934,21 @@ if (empty($reshook))
 					}
 					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-				exit;
 			}
 			else
 			{
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+			exit;
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -942,6 +978,8 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $user->rights->fournisseur->commande->commander)
 	{
+		$db->begin();
+
 		$result = $object->commande($user, GETPOST("datecommande"), GETPOST("methode", 'int'), GETPOST('comment', 'alphanohtml'));
 		if ($result > 0)
 		{
@@ -958,12 +996,20 @@ if (empty($reshook))
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			$action = '';
-			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-			exit;
 		}
 		else
 		{
+			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+			exit;
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -1014,6 +1060,8 @@ if (empty($reshook))
 	// Set status of reception (complete, partial, ...)
 	if ($action == 'livraison' && $user->rights->fournisseur->commande->receptionner)
 	{
+		$db->begin();
+
 		if (GETPOST("type") != '')
 		{
 			$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
@@ -1027,16 +1075,25 @@ if (empty($reshook))
 			}
 			elseif ($result == -3)
 			{
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 			else
 			{
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
 		{
+			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
+		}
+
+		if (! $error) {
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -1971,7 +2028,7 @@ elseif (!empty($object->id))
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
                 $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
             }
