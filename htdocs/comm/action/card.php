@@ -66,7 +66,8 @@ $p2min = GETPOST('p2min');
 
 $offsetvalue = GETPOST('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration');
-$typeremind = GETPOST('typeremind');
+$remindertype = GETPOST('remindertype');
+$modelmail = GETPOST('eventpushmodel_mail');
 
 $datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
 $datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
@@ -1113,7 +1114,8 @@ if ($action == 'create')
 
     if($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
     {
-        print '<br><hr><br>';
+        print '<br><br><hr>';
+        print load_fiche_titre($langs->trans("AddReminder"), '', '');
 
         print '<table class="border centpercent">';
 

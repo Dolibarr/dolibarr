@@ -5673,7 +5673,7 @@ class Form
 		return $retstring;
 	}
 
-	public function select_type_duration($prefix){
+	public function select_type_duration($prefix, $selected = 'month'){
 
         global $langs;
 
@@ -5684,7 +5684,12 @@ class Form
         $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 
         foreach($TDurationTypes as $key=>$typeduration){
+
             $retstring .= '<option value="'.$key.'"';
+            if($key == $selected)
+            {
+                $retstring .= " selected";
+            }
             $retstring .= ">".$typeduration."</option>";
         }
 
