@@ -1183,7 +1183,7 @@ if ($action == 'create')
         //Reminder Type
         $TRemindTypes = array();
         if(!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
-        if(!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['push'] = $langs->trans('OSNotif');
+        if(!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['push'] = $langs->trans('BrowserPush');
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
         print $form->selectarray('selectremindertype',$TRemindTypes);
         print '</td></tr>';

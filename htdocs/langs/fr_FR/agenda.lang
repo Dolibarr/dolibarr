@@ -162,3 +162,5 @@ ReminderTime=Délai de rappel avant l'événement
 TimeType=Type de durée
 ReminderType=Type de rappel
 AddReminder=Créer une notification de rappel automatique pour cet évènement
+ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel de cet événement
+BrowserPush=Notification navigateur

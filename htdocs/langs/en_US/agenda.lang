@@ -164,3 +164,5 @@ ReminderTime=Reminder period before the event
 TimeType=Duration type
 ReminderType=Callback type
 AddReminder=Create an automatic reminder notification for this event
+ErrorReminderActionCommCreation=Error creating the reminder notification for this event
+BrowserPush=Browser Notification
