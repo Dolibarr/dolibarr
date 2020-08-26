@@ -821,7 +821,7 @@ $( document ).ready(function() {
       		if (empty($adh->statut)) {
 				$s .= '<br>'.$langs->trans("MemberStatusResiliated");
       		}
-			else if ($adh->datefin)
+			elseif ($adh->datefin)
 			{
 				$s .= '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
 				if ($adh->hasDelay()) {
