@@ -1180,7 +1180,7 @@ if ($action == 'create')
         print '</td></tr>';
 
         //Mail Model
-        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Model").'</td><td colspan="3">';
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
         print $form->select_model_mail('eventpush', 'event_push');
         print '</td></tr>';
 
