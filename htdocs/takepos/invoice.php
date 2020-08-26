@@ -818,7 +818,7 @@ $( document ).ready(function() {
 			$adh->ref = $adh->getFullName($langs);
 			$s .= $adh->getFullName($langs);
 			$s .= ' - '.$adh->type;
-      		if (empty($adh->statut)) {
+      		if (empty($adh->statut) && $adh->datefin) {
 				$s .= '<br>'.$langs->trans("MemberStatusResiliated");
       		}
 			elseif ($adh->datefin)
