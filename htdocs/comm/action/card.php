@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -67,8 +68,10 @@ $p2min = GETPOST('p2min');
 $addreminder = GETPOST('addreminder');
 $offsetvalue = GETPOST('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration');
-$remindertype = GETPOST('remindertype');
+$remindertype = GETPOST('selectremindertype');
 $modelmail = GETPOST('eventpushmodel_mail');
+
+//var_dump($_POST); exit;
 
 $datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
 $datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
@@ -383,6 +386,31 @@ if (empty($reshook) && $action == 'add')
 
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
+
+                //Reminder
+                if($addreminder == 'on'){
+                    $actionCommReminder = new ActionCommReminder($db);
+
+//                    if($offsetunit == 'minute'){
+//                        $timeBeforeEvent = convertTime2Seconds('', $offsetvalue);
+//                    } elseif($offsetunit == 'hour'){
+//                        $timeBeforeEvent = convertTime2Seconds($offsetvalue);
+//                    } elseif ($offsetunit == 'day') {
+//                        $timeBeforeEvent = 3600 * 24 * $offsetvalue;
+//                    } elseif ($offsetunit == 'week') {
+//                        $timeBeforeEvent = 3600 * 24 * 7 * $offsetvalue;
+//                    } elseif ($offsetunit == 'month') {
+//                        $timeBeforeEvent = 3600 * 24 * 7 * $offsetvalue;
+//                    }
+//                    var_dump($datep); exit;
+//
+//                    $actionCommReminder->typeremind = $remindertype;
+//                    $actionCommReminder->fk_user = $user;
+//                    $actionCommReminder->offsetunit = $offsetunit;
+//                    $actionCommReminder->offsetvalue = $offsetvalue;
+//                    $actionCommReminder->offsetvalue = 'todo';
+
+                }
 
 				$db->commit();
 				if (!empty($backtopage))
@@ -1139,10 +1167,10 @@ if ($action == 'create')
 
         //Reminder Type
         $TRemindTypes = array();
-        if(!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['mail'] = $langs->trans('EMail');
+        if(!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
         if(!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['push'] = $langs->trans('OSNotif');
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-        print $form->selectarray('remindertype',$TRemindTypes);
+        print $form->selectarray('selectremindertype',$TRemindTypes);
         print '</td></tr>';
 
         //Mail Model
@@ -1165,9 +1193,9 @@ if ($action == 'create')
                             }
 	            		 });
 	            		 
-	            		$("#remindertype").click(function(){	         
-	            	        var selected_option = $("#remindertype option:selected").val();
-	            		    if(selected_option == "mail") {
+	            		$("#selectremindertype").click(function(){	         
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
 	            		        $("#select_eventpushmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_eventpushmodel_mail").closest("tr").hide();
