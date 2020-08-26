@@ -877,6 +877,12 @@ class Commande extends CommonOrder
 
 		// $date_commande is deprecated
 		$date = ($this->date_commande ? $this->date_commande : $this->date);
+		
+		
+		if (empty($this->warehouse_id) || $this->warehouse_id  = -1){
+			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $this->warehouse_id  = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && $user->fk_warehouse > -1) $this->warehouse_id  = $user->fk_warehouse;
+		}
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
@@ -1337,6 +1343,10 @@ class Commande extends CommonOrder
 		$this->date_livraison       = $object->date_livraison;
 		$this->shipping_method_id   = $object->shipping_method_id;
 		$this->warehouse_id         = $object->warehouse_id;
+		if (empty($this->warehouse_id) || $this->warehouse_id  = -1){
+			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE)) $this->warehouse_id  = $conf->global->MAIN_DEFAULT_WAREHOUSE;
+			if (!empty($conf->global->MAIN_DEFAULT_WAREHOUSE_USER) && $user->fk_warehouse > -1) $this->warehouse_id  = $user->fk_warehouse;
+		}
 		$this->fk_delivery_address  = $object->fk_delivery_address;
 		$this->contact_id            = $object->contact_id;
 		$this->ref_client           = $object->ref_client;

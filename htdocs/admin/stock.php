@@ -169,7 +169,6 @@ elseif ($action == 'setdoc')
 	}
 }
 
-
 /*
  * View
  */
@@ -660,13 +659,17 @@ print "<td>".$langs->trans("Other")."</td>\n";
 print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="warehouse">';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
 print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<input type="submit" $action = "warehouse" class="button" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
+print '</form>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';
