@@ -1120,18 +1120,6 @@ if ($action == 'create')
         print '<br>';
         print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder"></td></tr>';
 
-        print "\n".'<script type="text/javascript">';
-        print '$(document).ready(function () {
-	            		$("#addreminder").click(function(){
-	            		    if (this.checked) {
-	            		      $(".reminderparameters").show();
-                            } else {
-                            $(".reminderparameters").hide();
-                            }
-	            		 });
-                   })';
-        print '</script>'."\n";
-
         print '<div class="reminderparameters" style="display: none;">';
 
         print '<hr>';
@@ -1166,6 +1154,27 @@ if ($action == 'create')
 
         print '</table>';
         print '</div>';
+
+        print "\n".'<script type="text/javascript">';
+        print '$(document).ready(function () {
+	            		$("#addreminder").click(function(){
+	            		    if (this.checked) {
+	            		      $(".reminderparameters").show();
+                            } else {
+                            $(".reminderparameters").hide();
+                            }
+	            		 });
+	            		 
+	            		$("#remindertype").click(function(){	         
+	            	        var selected_option = $("#remindertype option:selected").val();
+	            		    if(selected_option == "mail") {
+	            		        $("#select_eventpushmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_eventpushmodel_mail").closest("tr").hide();
+	            		    };
+	            		});	            		 	   	
+                   })';
+        print '</script>'."\n";
     }
 
     dol_fiche_end();
