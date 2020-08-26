@@ -5679,7 +5679,7 @@ class Form
 
         $retstring = '';
 
-        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'minute'=>$langs->trans('Minutes'));
+        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'),'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
 
         $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 
