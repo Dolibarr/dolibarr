@@ -143,7 +143,7 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 			if ($pse->update($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseUpdated'), null, 'mesgs');
 		} else {
 			// Create
-			$pse->fk_entrepot = GETPOST('fk_entrepot');
+			$pse->fk_entrepot = GETPOST('fk_entrepot', 'int');
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
@@ -243,10 +243,10 @@ if ($action == "correct_stock" && !$cancel)
 			{
 				$result = $object->correct_stock_batch(
 					$user,
-					GETPOST("id_entrepot"),
+					GETPOST("id_entrepot", 'int'),
 					GETPOST("nbpiece"),
 					GETPOST("mouvement"),
-					GETPOST("label"), // label movement
+					GETPOST("label", 'alphanohtml'), // label movement
 					$priceunit,
 					$d_eatby,
 					$d_sellby,
@@ -258,10 +258,10 @@ if ($action == "correct_stock" && !$cancel)
 			} else {
 				$result = $object->correct_stock(
 		    		$user,
-		    		GETPOST("id_entrepot"),
+		    		GETPOST("id_entrepot", 'int'),
 		    		GETPOST("nbpiece"),
 		    		GETPOST("mouvement"),
-		    		GETPOST("label"),
+		    		GETPOST("label", 'alphanohtml'),
 		    		$priceunit,
 					GETPOST('inventorycode'),
 					$origin_element,
@@ -397,7 +397,7 @@ if ($action == "transfert_stock" && !$cancel)
     			    // Remove stock
     				$result1 = $object->correct_stock(
     					$user,
-    					GETPOST("id_entrepot"),
+    					GETPOST("id_entrepot", 'int'),
     					GETPOST("nbpiece"),
     					1,
     					GETPOST("label"),
@@ -411,7 +411,7 @@ if ($action == "transfert_stock" && !$cancel)
     				// Add stock
     				$result2 = $object->correct_stock(
     					$user,
-    					GETPOST("id_entrepot_destination"),
+    					GETPOST("id_entrepot_destination", 'int'),
     					GETPOST("nbpiece"),
     					0,
     					GETPOST("label"),
@@ -552,7 +552,7 @@ if ($id > 0 || $ref)
 			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			print '</td></tr>';
 
-			// PMP
+			// AWP
 			print '<tr><td class="titlefield">'.$form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc")).'</td>';
 			print '<td>';
 			if ($object->pmp > 0) print price($object->pmp).' '.$langs->trans("HT");
