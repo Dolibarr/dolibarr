@@ -70,11 +70,8 @@ class FormContract
 		if (!empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		// Search all contacts
-		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
-		if ($showRef)
-		{
-			$sql .= ', c.ref_customer, c.ref_supplier';
-		}
+		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut,';
+		$sql .= ' c.ref_customer, c.ref_supplier';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'contrat as c';
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
