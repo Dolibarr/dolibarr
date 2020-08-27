@@ -20,18 +20,18 @@
  */
 
 /**
- *  \file       htdocs/core/boxes/box_project.php
+ *  \file       htdocs/core/boxes/box_validated_projects.php
  *  \ingroup    projet
- *  \brief      Module to show Projet activity of the current Year
+ *  \brief      Module to show validated projects whose tasks are assigned to the connected person, without any time entered by the connected person
  */
 include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 /**
  * Class to manage the box to show last projet
  */
-class box_project extends ModeleBoxes
+class box_validated_projects extends ModeleBoxes
 {
-    public $boxcode="project";
+    public $boxcode="validated_project";
     public $boximg="object_projectpub";
     public $boxlabel;
     //var $depends = array("projet");
@@ -60,7 +60,7 @@ class box_project extends ModeleBoxes
         $langs->loadLangs(array('boxes', 'projects'));
 
         $this->db = $db;
-        $this->boxlabel = "OpenedProjects";
+        $this->boxlabel = "ValidatedProjects";
 
         $this->hidden = ! ($user->rights->projet->lire);
     }
@@ -81,11 +81,12 @@ class box_project extends ModeleBoxes
         $totalnb = 0;
         $totalnbTask=0;
 
-        $textHead = $langs->trans("OpenedProjects");
+        $textHead = $langs->trans("ValidatedProjects");
         $this->info_box_head = array('text' => $textHead, 'limit'=> dol_strlen($textHead));
 
         // list the summary of the orders
         if ($user->rights->projet->lire) {
+
             include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
             $projectstatic = new Project($this->db);
 
@@ -96,17 +97,20 @@ class box_project extends ModeleBoxes
             $projectsListId='';
             if (! $user->rights->projet->all->lire) $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 
-            $sql = "SELECT p.rowid, p.ref, p.title, p.fk_statut as status, p.public";
-            $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-            $sql.= " WHERE p.entity IN (".getEntity('project').")"; // Only current entity or severals if permission ok
-			$sql.= " AND p.fk_statut = 1"; // Only open projects
-            if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
-
-            $sql.= " ORDER BY p.datec DESC";
-            //$sql.= $this->db->plimit($max, 0);
-
+            $sql = "SELECT p.rowid, p.ref as Ref, p.fk_soc as Client, p.dateo as startDate,";
+            $sql.= " (SELECT COUNT(t.rowid) FROM ".MAIN_DB_PREFIX."projet_task AS t";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
+            $sql.= " WHERE t.fk_projet = p.rowid AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time)) AS 'taskNumber'";
+            $sql.= " FROM ".MAIN_DB_PREFIX."projet AS p";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
+            $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
+            $sql.= " WHERE p.fk_statut = 1"; // Only open projects
+			$sql.= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time)";
+			$sql.= " AND c.fk_socpeople = ".$user->id;
+			$sql.= " GROUP BY p.ref";
+            $sql.= " ORDER BY p.dateo ASC";
+var_dump($user->id);
             $result = $this->db->query($sql);
-
             if ($result) {
                 $num = $this->db->num_rows($result);
                 $i = 0;
@@ -114,10 +118,10 @@ class box_project extends ModeleBoxes
                     $objp = $this->db->fetch_object($result);
 
                     $projectstatic->id = $objp->rowid;
-                    $projectstatic->ref = $objp->ref;
-                    $projectstatic->title = $objp->title;
-                    $projectstatic->public = $objp->public;
-                    $projectstatic->statut = $objp->status;
+                    $projectstatic->ref = $objp->Ref;
+                    $projectstatic->customer = $objp->Client;
+                    $projectstatic->startDate = $objp->startDate;
+                    $projectstatic->taskNumber = $objp->taskNumber;
 
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="nowraponall"',
@@ -127,67 +131,24 @@ class box_project extends ModeleBoxes
 
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
-                        'text' => $objp->title,
+                        'text' => $objp->Client,
                     );
 
-                    $sql ="SELECT count(*) as nb, sum(progress) as totprogress";
-                    $sql.=" FROM ".MAIN_DB_PREFIX."projet as p LEFT JOIN ".MAIN_DB_PREFIX."projet_task as pt on pt.fk_projet = p.rowid";
-                       $sql.= " WHERE p.entity IN (".getEntity('project').')';
-                    $sql.=" AND p.rowid = ".$objp->rowid;
-                    $resultTask = $this->db->query($sql);
-                    if ($resultTask) {
-                        $objTask = $this->db->fetch_object($resultTask);
-                        $this->info_box_contents[$i][] = array(
-                            'td' => 'class="right"',
-                            'text' => $objTask->nb."&nbsp;".$langs->trans("Tasks"),
-                        );
-                        if ($objTask->nb  > 0)
-                            $this->info_box_contents[$i][] = array(
-                                'td' => 'class="right"',
-                                'text' => round($objTask->totprogress/$objTask->nb, 0)."%",
-                            );
-                        else
-                            $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
-                        $totalnbTask += $objTask->nb;
-                    } else {
-                        $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => round(0));
-                        $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => "N/A&nbsp;");
-                    }
-                    $this->info_box_contents[$i][] = array('td' => 'class="right"', 'text' => $projectstatic->getLibStatut(3));
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
+                        'text' => $objp->startDate,
+                    );
 
-                    $i++;
-                }
-                if ($max < $num)
-                {
-                    $this->info_box_contents[$i][] = array('td' => 'colspan="5"', 'text' => '...');
+                    $this->info_box_contents[$i][] = array(
+                        'td' => 'class="nowraponall"',
+                        'text' => $objp->taskNumber."&nbsp;".$langs->trans("Tasks"),
+                    );
                     $i++;
                 }
             }
         }
 
 
-        // Add the sum à the bottom of the boxes
-        $this->info_box_contents[$i][] = array(
-            'td' => 'class="liste_total"',
-            'text' => $langs->trans("Total")."&nbsp;".$textHead,
-             'text' => "&nbsp;",
-        );
-        $this->info_box_contents[$i][] = array(
-            'td' => 'class="right liste_total" ',
-            'text' => round($num, 0)."&nbsp;".$langs->trans("Projects"),
-        );
-        $this->info_box_contents[$i][] = array(
-            'td' => 'class="right liste_total" ',
-            'text' => (($max < $num) ? '' : (round($totalnbTask, 0)."&nbsp;".$langs->trans("Tasks"))),
-        );
-        $this->info_box_contents[$i][] = array(
-            'td' => 'class="liste_total"',
-            'text' => "&nbsp;",
-        );
-        $this->info_box_contents[$i][] = array(
-        	'td' => 'class="liste_total"',
-        	'text' => "&nbsp;",
-        );
     }
 
     /**
