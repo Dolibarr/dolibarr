@@ -1643,10 +1643,10 @@ class EmailCollector extends CommonObject
                     // Create event
                     elseif ($operation['type'] == 'recordevent')
                     {
-                    	$alreadycreated = 0;
-                    	// TODO Check if $msgid already in database for $conf->entity
+                    	$actioncomm = new ActionComm($this->db);
 
-                    	if (!$alreadycreated)
+                    	$alreadycreated = $actioncomm->fetch(0, '', '', $msgid);
+                    	if ($alreadycreated == 0)
                     	{
 	                        if ($projectstatic->id > 0)
 	                        {
@@ -1672,7 +1672,6 @@ class EmailCollector extends CommonObject
 	                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
 	                        // Insert record of emails sent
-	                        $actioncomm = new ActionComm($this->db);
 	                        $actioncomm->type_code   = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 	                        $actioncomm->code        = 'AC_'.$actioncode;
 	                        $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
@@ -1736,7 +1735,7 @@ class EmailCollector extends CommonObject
                     {
                     	$projecttocreate = new Project($this->db);
 
-                    	$alreadycreated = $projecttocreate->fetch(0, '', $msgid);
+                    	$alreadycreated = $projecttocreate->fetch(0, '', '', $msgid);
                     	if ($alreadycreated == 0)
                     	{
 	                        if ($thirdpartystatic->id > 0)

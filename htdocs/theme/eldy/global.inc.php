@@ -3321,7 +3321,9 @@ table.hidepaginationprevious .paginationprevious {
 table.hidepaginationnext .paginationnext {
 	display: none;
 }
-
+.tabBar .arearef .pagination.paginationref {
+    max-width: calc(30%);
+}
 
 
 /* Set the color for hover lines */
