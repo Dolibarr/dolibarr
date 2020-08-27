@@ -1061,12 +1061,21 @@ if (count($listofextcals))
                     $event->id = $icalevent['UID'];
                     $event->ref = $event->id;
 
+                    $userId = $userstatic->findUserIdByEmail($namecal);
+                    if (!empty($userId) && $userId > 0)
+                    {
+                        $event->userassigned[$userId] = $userId;
+                        $event->percentage = -1;
+                    }
+                    else {
+                        $event->type_code = "ICALEVENT";
+                    }
+
                     $event->icalname = $namecal;
                     $event->icalcolor = $colorcal;
                     $usertime = 0; // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
                     $event->datep = $datestart + $usertime;
                     $event->datef = $dateend + $usertime;
-                    $event->type_code = "ICALEVENT";
 
                     if ($icalevent['SUMMARY']) $event->label = $icalevent['SUMMARY'];
                     elseif ($icalevent['DESCRIPTION']) $event->label = dol_nl2br($icalevent['DESCRIPTION'], 1);

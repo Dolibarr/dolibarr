@@ -271,7 +271,7 @@ if ($num == 1 && !empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".DOL_URL_ROOT.'/assets/card.php?id='.$id);
+	header("Location: ".DOL_URL_ROOT.'/asset/card.php?id='.$id);
 	exit;
 }
 

@@ -331,7 +331,7 @@ class Asset extends CommonObject
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
-		$url = dol_buildpath('/assets/card.php', 1).'?id='.$this->id;
+		$url = dol_buildpath('/asset/card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink')
 		{
