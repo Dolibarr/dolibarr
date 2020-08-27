@@ -1076,6 +1076,7 @@ NotUsedForThisCustomer=Not used for this customer
 AmountMustBePositive=Amount must be positive
 ByStatus=By status
 InformationMessage=Information
+Used=Used
 ASAP=As Soon As Possible
 CREATEInDolibarr=Record %s create
 MODIFYInDolibarr=Record %s modified
