@@ -81,7 +81,7 @@ class ActionCommReminder extends CommonObject
 		'offsetvalue' => array('type'=>'integer', 'label'=>'OffsetValue', 'visible'=>1, 'enabled'=>1, 'position'=>56, 'notnull'=>1,),
 		'offsetunit' => array('type'=>'varchar(1)', 'label'=>'OffsetUnit', 'visible'=>1, 'enabled'=>1, 'position'=>57, 'notnull'=>1, 'comment'=>"m, h, d, w",),
 		'status' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>58, 'notnull'=>1, 'default'=>0, 'index'=>0, 'arrayofkeyval'=>array('0'=>'ToDo', '1'=>'Done')),
-		'fk_actioncomm' => array('type'=>'integer', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>59, 'notnull'=>1),
+		'fk_actioncomm' => array('type'=>'integer', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>59, 'notnull'=>1, 'index'=>1,),
 		'fk_email_template' => array('type'=>'integer', 'label'=>'EmailTemplate', 'visible'=>1, 'enabled'=>1, 'position'=>60, 'notnull'=>0),
 	);
 
