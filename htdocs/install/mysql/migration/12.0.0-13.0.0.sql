@@ -35,9 +35,23 @@ ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-orde
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 
+ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
+
 ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
 
-ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
+ALTER TABLE llx_bom_bom_extrafields ADD INDEX idx_bom_bom_extrafields_fk_object (fk_object);
+
+create table llx_mrp_mo_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo_extrafields DROP INDEX idx_fk_object;
+
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
 
 -- For v13
@@ -138,7 +152,7 @@ create table llx_recruitment_recruitmentjobposition_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_recruitmentjobposition_fk_object(fk_object);
 
 
 
@@ -186,9 +200,10 @@ create table llx_recruitment_recruitmentcandidature_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_recruitmentcandidature_fk_object(fk_object);
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitmentcandidature_email_msgid(email_msgid);
+
 
 
 
