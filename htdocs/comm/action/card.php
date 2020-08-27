@@ -388,13 +388,12 @@ if (empty($reshook) && $action == 'add')
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
                 //Create eminder
-                if($addreminder == 'on'){
-
+                if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
-                    if($offsetunit == 'minute'){
+                    if ($offsetunit == 'minute'){
                         $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
-                    } elseif($offsetunit == 'hour'){
+                    } elseif ($offsetunit == 'hour'){
                         $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'h');
                     } elseif ($offsetunit == 'day') {
                         $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'd');
@@ -413,11 +412,11 @@ if (empty($reshook) && $action == 'add')
                     $actionCommReminder->offsetvalue = $offsetvalue;
                     $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
                     $actionCommReminder->fk_actioncomm = $object->id;
-                    if($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+                    if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
 
                     $res = $actionCommReminder->create($user);
 
-                    if($res <= 0){
+                    if ($res <= 0){
                         // If error
                         $db->rollback();
                         $langs->load("errors");
@@ -1156,9 +1155,8 @@ if ($action == 'create')
 	print '</table>';
 
 
-    if($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+    if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
     {
-
         //checkbox create reminder
         print '<br>';
         print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder"></td></tr>';
@@ -1182,10 +1180,10 @@ if ($action == 'create')
 
         //Reminder Type
         $TRemindTypes = array();
-        if(!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
-        if(!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+        if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
+        if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
-        print $form->selectarray('selectremindertype',$TRemindTypes);
+        print $form->selectarray('selectremindertype', $TRemindTypes);
         print '</td></tr>';
 
         //Mail Model
