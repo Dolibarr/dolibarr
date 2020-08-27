@@ -251,7 +251,7 @@ class EmailCollector extends CommonObject
         if (is_array($this->filters) && count($this->filters)) {
         	$emailcollectorfilter = new EmailCollectorFilter($this->db);
 
-        	foreach($this->filters as $filter) {
+        	foreach ($this->filters as $filter) {
         		$emailcollectorfilter->type = $filter['type'];
         		$emailcollectorfilter->rulevalue = $filter['rulevalue'];
         		$emailcollectorfilter->fk_emailcollector = $this->id;
@@ -264,7 +264,7 @@ class EmailCollector extends CommonObject
         if (is_array($this->filters) && count($this->filters)) {
         	$emailcollectoroperation = new EmailCollectorAction($this->db);
 
-        	foreach($this->actions as $operation) {
+        	foreach ($this->actions as $operation) {
         		$emailcollectoroperation->type = $operation['type'];
         		$emailcollectoroperation->actionparam = $operation['actionparam'];
         		$emailcollectoroperation->fk_emailcollector = $this->id;
