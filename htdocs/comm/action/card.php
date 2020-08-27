@@ -69,7 +69,7 @@ $addreminder = GETPOST('addreminder');
 $offsetvalue = GETPOST('offsetvalue');
 $offsetunit = GETPOST('offsetunittype_duration');
 $remindertype = GETPOST('selectremindertype');
-$modelmail = GETPOST('agendasendmodel_mail');
+$modelmail = GETPOST('actioncommsendmodel_mail');
 
 //var_dump($_POST); exit;
 
@@ -1188,7 +1188,7 @@ if ($action == 'create')
 
         //Mail Model
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-        print $form->select_model_mail('agendasend', 'agenda_send');
+        print $form->select_model_mail('actioncommsend', 'actioncomm_send');
         print '</td></tr>';
 
 
@@ -1208,9 +1208,9 @@ if ($action == 'create')
 	            		$("#selectremindertype").click(function(){	         
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
-	            		        $("#select_agendasendmodel_mail").closest("tr").show();
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
-	            			    $("#select_agendasendmodel_mail").closest("tr").hide();
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
 	            		    };
 	            		});	            		 	   	
                    })';
