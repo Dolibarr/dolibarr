@@ -539,7 +539,7 @@ if (empty($reshook))
 
 					// Links with users
 					$salesreps = GETPOST('commercial', 'array');
-					$result = $object->setSalesRep($salesreps);
+					$result = $object->setSalesRep($salesreps, true);
 					if ($result < 0)
 					{
 						$error++;
