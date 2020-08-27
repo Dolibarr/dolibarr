@@ -36,13 +36,28 @@ function recruitmentAdminPrepareHead()
 	$head = array();
 
 	$head[$h][0] = dol_buildpath("/recruitment/admin/setup.php", 1);
-	$head[$h][1] = $langs->trans("Settings");
+	$head[$h][1] = $langs->trans("JobPositions");
 	$head[$h][2] = 'settings';
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/recruitment/admin/setup_candidatures.php", 1);
+	$head[$h][1] = $langs->trans("RecruitmentCandidatures");
+	$head[$h][2] = 'settings_candidatures';
 	$h++;
 
 	$head[$h][0] = dol_buildpath("/recruitment/admin/public_interface.php", 1);
 	$head[$h][1] = $langs->trans("PublicUrl");
 	$head[$h][2] = 'publicurl';
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/recruitment/admin/jobposition_extrafields.php", 1);
+	$head[$h][1] = $langs->trans("ExtrafieldsJobPosition");
+	$head[$h][2] = 'jobposition_extrafields';
+	$h++;
+
+	$head[$h][0] = dol_buildpath("/recruitment/admin/candidature_extrafields.php", 1);
+	$head[$h][1] = $langs->trans("ExtrafieldsCandidature");
+	$head[$h][2] = 'candidature_extrafields';
 	$h++;
 
 	// Show more tabs from modules

@@ -469,11 +469,13 @@ class Project extends CommonObject
 	/**
 	 * 	Get object from database
 	 *
-	 * 	@param      int		$id       	Id of object to load
-	 * 	@param		string	$ref		Ref of project
-	 * 	@return     int      		   	>0 if OK, 0 if not found, <0 if KO
+	 * 	@param      int		$id       		Id of object to load
+	 * 	@param		string	$ref			Ref of project
+	 * 	@param		string	$ref_ext		Ref ext of project
+	 *  @param		string	$email_msgid	Email msgid
+	 * 	@return     int      		   		>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $ref = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
 	{
 		global $conf;
 
@@ -485,11 +487,16 @@ class Project extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id))
 		{
-			$sql .= " WHERE rowid=".$id;
-		} elseif (!empty($ref))
-		{
-			$sql .= " WHERE ref='".$this->db->escape($ref)."'";
-			$sql .= " AND entity IN (".getEntity('project').")";
+			$sql .= " WHERE rowid = ".$id;
+		} else {
+			$sql .= " WHERE entity IN (".getEntity('project').")";
+			if (! empty($ref)) {
+				$sql .= " AND ref = '".$this->db->escape($ref)."'";
+			} elseif (! empty($ref_ext)) {
+				$sql .= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
+			} else {
+				$sql .= " AND email_msgid = '".$this->db->escape($email_msgid)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);

@@ -167,6 +167,10 @@ a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
 TITLE BUTTON
  */
 
+div.pagination li:first-child a.btnTitle {
+    margin-left: 10px;
+}
+
 .btnTitle, a.btnTitle {
     display: inline-block;
     padding: 6px 12px;
@@ -194,6 +198,11 @@ TITLE BUTTON
     font-size: 12px;
     font-weight: 300;
     background-color: #fbfbfb;
+}
+
+a.btnTitle.btnTitleSelected {
+    border: 1px solid #ccc;
+    border-radius: 3px;
 }
 
 .btnTitle > .btnTitle-icon{

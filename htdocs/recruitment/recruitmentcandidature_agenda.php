@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       recruitmentjobposition_agenda.php
+ *  \file       recruitmentcandidature_agenda.php
  *  \ingroup    recruitment
- *  \brief      Page of RecruitmentJobPosition events
+ *  \brief      Page of RecruitmentCandidature events
  */
 
 // Load Dolibarr environment
@@ -40,8 +40,8 @@ if (!$res) die("Include of main fails");
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-dol_include_once('/recruitment/class/recruitmentjobposition.class.php');
-dol_include_once('/recruitment/lib/recruitment_recruitmentjobposition.lib.php');
+dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
+dol_include_once('/recruitment/lib/recruitment_recruitmentcandidature.lib.php');
 
 
 // Load translation files required by the page
@@ -74,10 +74,10 @@ if (!$sortfield) $sortfield = 'a.datep,a.id';
 if (!$sortorder) $sortorder = 'DESC,DESC';
 
 // Initialize technical objects
-$object = new RecruitmentJobPosition($db);
+$object = new RecruitmentCandidature($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->recruitment->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('recruitmentjobpositionagenda', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('recruitmentcandidatureagenda', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
@@ -134,14 +134,14 @@ if ($object->id > 0)
 	llxHeader('', $title, $help_url);
 
 	if (!empty($conf->notification->enabled)) $langs->load("mails");
-	$head = recruitmentjobpositionPrepareHead($object);
+	$head = recruitmentCandidaturePrepareHead($object);
 
 
-	dol_fiche_head($head, 'agenda', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	dol_fiche_head($head, 'agenda', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentjobposition_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentcandidature_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -152,7 +152,7 @@ if ($object->id > 0)
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	if (! empty($conf->projet->enabled))
+	/*if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project') . ' ';
@@ -181,7 +181,7 @@ if ($object->id > 0)
 				$morehtmlref .= '';
 			}
 		}
-	}
+	}*/
 	$morehtmlref .= '</div>';
 
 

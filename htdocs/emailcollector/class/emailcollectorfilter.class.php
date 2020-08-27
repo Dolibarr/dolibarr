@@ -169,7 +169,7 @@ class EmailCollectorFilter extends CommonObject
 		{
 			$langs->load("errors");
 			$this->errors[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SearchString"));
-			return -1;
+			return -2;
 		}
 
 		return $this->createCommon($user, $notrigger);

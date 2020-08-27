@@ -470,12 +470,13 @@ class Ticket extends CommonObject
 	/**
 	 *  Load object in memory from the database
 	 *
-	 *  @param  int        	$id    		Id object
-	 *  @param	string		$ref		Ref
-	 *  @param	string		$track_id	Track id, a hash like ref
-	 *  @return int              		<0 if KO, >0 if OK
+	 *  @param  int        	$id    			Id object
+	 *  @param	string		$ref			Ref
+	 *  @param	string		$track_id		Track id, a hash like ref
+	 *  @param	string		$email_msgid	Email msgid
+	 *  @return int              			<0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $ref = '', $track_id = '')
+	public function fetch($id = '', $ref = '', $track_id = '', $email_msgid = '')
 	{
 		global $langs;
 
@@ -520,10 +521,12 @@ class Ticket extends CommonObject
 			$sql .= " WHERE t.rowid = ".$this->db->escape($id);
 		} else {
 			$sql .= " WHERE t.entity IN (".getEntity($this->element, 1).")";
-			if ($track_id) {
-				$sql .= " AND t.track_id = '".$this->db->escape($track_id)."'";
-			} elseif ($ref) {
+			if (! empty($ref)) {
 				$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			} elseif ($track_id) {
+				$sql .= " AND t.track_id = '".$this->db->escape($track_id)."'";
+			} else {
+				$sql .= " AND t.email_msgid = '".$this->db->escape($email_msgid)."'";
 			}
 		}
 

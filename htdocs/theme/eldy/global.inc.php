@@ -319,6 +319,10 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 11px;
 }
+.logopublicpayment #dolpaymentlogo {
+	max-height: 100px;
+}
+
 a.buttonticket {
 	padding-left: 5px;
 	padding-right: 5px;
@@ -3317,7 +3321,9 @@ table.hidepaginationprevious .paginationprevious {
 table.hidepaginationnext .paginationnext {
 	display: none;
 }
-
+.tabBar .arearef .pagination.paginationref {
+    max-width: calc(30%);
+}
 
 
 /* Set the color for hover lines */

@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,7 +137,7 @@ if (empty($reshook))
 			else $backtopage = dol_buildpath('/recruitment/recruitmentcandidature_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 		}
 	}
-	$triggermodname = 'RECRUITMENT_RECRUITMENTCANDIDATURE_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'RECRUITMENTCANDIDATURE_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -155,13 +154,15 @@ if (empty($reshook))
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'set_thirdparty' && $permissiontoadd)
-	{
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'RECRUITMENTCANDIDATURE_MODIFY');
-	}
 	if ($action == 'classin' && $permissiontoadd)
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
+	}
+	if ($action == 'confirm_decline' && $confirm == 'yes' && $permissiontoadd) {
+		$result = $object->setStatut($object::STATUS_REFUSED, null, '', $triggermodname);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Actions to send emails
@@ -381,8 +382,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
-	//unset($object->fields['fk_project']);				// Hide field already shown in banner
+	$keyforbreak='description';	// We change column just before this field
+	unset($object->fields['email']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
@@ -464,7 +465,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		{
 			// Send
 			if (empty($user->socid)) {
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init&sendto='.urlencode($object->email).'#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
 			}
 
 			// Back to draft
@@ -500,7 +501,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Refuse - Decline
-			if ($object->status >= $object::STATUS_DRAFT && $object->status < $object::STATUS_CANCELED)
+			if ($object->status >= $object::STATUS_VALIDATED && $object->status < $object::STATUS_REFUSED)
 			{
 				if ($permissiontoadd)
 				{
@@ -569,8 +570,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$relativepath = $objref . '/' . $objref . '.pdf';
 			$filedir = $conf->recruitment->dir_output.'/'.$object->element.'/'.$objref;
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-			$genallowed = $user->rights->recruitment->recruitmentcandidature->read;	// If you can read, you can build the PDF to read content
-			$delallowed = $user->rights->recruitment->recruitmentcandidature->write;	// If you can create/edit, you can remove a file on card
+			$genallowed = $user->rights->recruitment->recruitmentjobposition->read;	// If you can read, you can build the PDF to read content
+			$delallowed = $user->rights->recruitment->recruitmentjobposition->write;	// If you can create/edit, you can remove a file on card
 			print $formfile->showdocuments('recruitment:RecruitmentCandidature', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
@@ -599,7 +600,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (GETPOST('modelselected')) $action = 'presend';
 
 	// Presend form
-	$modelmail = 'recruitmentcandidature';
+	$modelmail = 'recruitmentcandidature_send';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->recruitment->dir_output;
 	$trackid = 'recruitmentcandidature'.$object->id;

@@ -62,6 +62,8 @@ function ticketAdminPrepareHead()
     //); // to remove a tab
     complete_head_from_modules($conf, $langs, null, $head, $h, 'ticketadmin');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ticketadmin', 'remove');
+
     return $head;
 }
 
@@ -209,9 +211,9 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
     print '<body id="mainbody" class="publicnewticketform">';
+    print '<div class="center">';
 
     // Define urllogo
-    $width = 0;
     if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO) || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC)) {
         // Print logo
         if (!empty($conf->global->TICKET_SHOW_COMPANY_LOGO))
@@ -220,17 +222,14 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
         	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
         		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-        		$width = 150;
         	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
         		$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
-        		$width = 150;
         	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
         		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
         	}
         }
     }
 
-    print '<div class="center">';
     // Output html code for logo
     if ($urllogo || !empty($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC))
     {
@@ -239,7 +238,6 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     	if ($urllogo) {
 	    	print '<a href="'.($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)).'">';
 	    	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	    	if ($width) print ' width="'.$width.'"';
 	    	print '>';
 	    	print '</a>';
     	}

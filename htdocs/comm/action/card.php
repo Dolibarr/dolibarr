@@ -248,7 +248,7 @@ if (empty($reshook) && $action == 'add')
 	if (!$error)
 	{
 		// Initialisation objet actioncomm
-		$object->priority = GETPOST("priority") ?GETPOST("priority") : 0;
+		$object->priority = GETPOST("priority") ? GETPOST("priority") : 0;
 		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
 		$object->location = GETPOST("location");
 		$object->label = trim(GETPOST('label'));
@@ -1706,6 +1706,7 @@ if ($id > 0)
 			}
 			print '</td></tr>';
 		}
+
 		// Categories
 		if ($conf->categorie->enabled) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td colspan="3">';
@@ -1781,7 +1782,7 @@ if ($id > 0)
 		}
 
 		// Description
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3" class="wordbreak">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
 

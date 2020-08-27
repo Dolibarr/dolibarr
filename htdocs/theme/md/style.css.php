@@ -452,6 +452,9 @@ input.buttonpaymentstripe {
 	background-repeat: no-repeat;
 	background-position: 8px 7px;
 }
+.logopublicpayment #dolpaymentlogo {
+	max-height: 100px;
+}
 a.buttonticket {
 	padding-left: 5px;
 	padding-right: 5px;

@@ -17,9 +17,9 @@
  */
 
 /**
- *  \file       recruitmentjobposition_document.php
+ *  \file       recruitmentcandidature_document.php
  *  \ingroup    recruitment
- *  \brief      Tab for documents linked to RecruitmentJobPosition
+ *  \brief      Tab for documents linked to RecruitmentCandidature
  */
 
 // Load Dolibarr environment
@@ -41,8 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-dol_include_once('/recruitment/class/recruitmentjobposition.class.php');
-dol_include_once('/recruitment/lib/recruitment_recruitmentjobposition.lib.php');
+dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
+dol_include_once('/recruitment/lib/recruitment_recruitmentcandidature.lib.php');
 
 // Load translation files required by the page
 $langs->loadLangs(array("recruitment", "companies", "other", "mails"));
@@ -67,17 +67,17 @@ if (!$sortfield) $sortfield = "name";
 //if (! $sortfield) $sortfield="position_name";
 
 // Initialize technical objects
-$object = new RecruitmentJobPosition($db);
+$object = new RecruitmentCandidature($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->recruitment->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('recruitmentjobpositiondocument', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('recruitmentcandidaturedocument', 'globalcard')); // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 
-if ($id > 0 || !empty($ref)) $upload_dir = $conf->recruitment->multidir_output[$object->entity ? $object->entity : $conf->entity]."/recruitmentjobposition/".dol_sanitizeFileName($object->ref);
+if ($id > 0 || !empty($ref)) $upload_dir = $conf->recruitment->multidir_output[$object->entity ? $object->entity : $conf->entity]."/recruitmentcandidature/".dol_sanitizeFileName($object->ref);
 
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
@@ -111,9 +111,9 @@ if ($object->id)
 	/*
 	 * Show tabs
 	 */
-	$head = recruitmentjobpositionPrepareHead($object);
+	$head = recruitmentCandidaturePrepareHead($object);
 
-	dol_fiche_head($head, 'document', $langs->trans("RecruitmentJobPosition"), -1, $object->picto);
+	dol_fiche_head($head, 'document', $langs->trans("RecruitmentCandidature"), -1, $object->picto);
 
 
 	// Build file list
@@ -126,7 +126,7 @@ if ($object->id)
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentjobposition_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.dol_buildpath('/recruitment/recruitmentcandidature_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	/*
@@ -137,7 +137,7 @@ if ($object->id)
 	 $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	*/
 	// Project
-	if (! empty($conf->projet->enabled))
+	/*if (! empty($conf->projet->enabled))
 	{
 		$langs->load("projects");
 		$morehtmlref .= $langs->trans('Project') . ' ';
@@ -166,7 +166,7 @@ if ($object->id)
 				$morehtmlref .= '';
 			}
 		}
-	}
+	}*/
 	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -193,8 +193,7 @@ if ($object->id)
 	$permtoedit = $user->rights->recruitment->recruitmentjobposition->write;
 	$param = '&id='.$object->id;
 
-	//$relativepathwithnofile='recruitmentjobposition/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile = 'recruitmentjobposition/'.dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = 'recruitmentcandidature/'.dol_sanitizeFileName($object->ref).'/';
 
 	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
 } else {
