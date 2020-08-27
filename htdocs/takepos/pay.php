@@ -341,8 +341,7 @@ if ($conf->global->TAKEPOS_ENABLE_SUMUP) {
 	if (!empty($conf->global->$keyforsumupbank)) {
 		print '<button type="button" class="calcbutton2" onclick="ValidateSumup();">Sumup</button>';
 	} else {
-		$langs->load("errors");
-		$langs->load("admin");
+		$langs->loadLangs(array("errors", "admin"));
 		print '<button type="button" class="calcbutton2 disabled" title="'.$langs->trans("SetupNotComplete").'">Sumup</button>';
 	}
 }
