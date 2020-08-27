@@ -186,7 +186,7 @@ class dolReceiptPrinter extends Printer
         	'dol_value_month' => 'DOL_VALUE_MONTH',
         	'dol_value_day' => 'DOL_VALUE_DAY',
         	'dol_value_day_letters' => 'DOL_VALUE_DAY',
-            //'dol_print_payment',
+            'dol_print_payment' => 'DOL_PRINT_PAYMENT',
         	'dol_print_logo' => 'DOL_PRINT_LOGO',
         	'dol_print_logo_old' => 'DOL_PRINT_LOGO_OLD',
         	'dol_value_object_id' => 'InvoiceID',
@@ -774,6 +774,35 @@ class dolReceiptPrinter extends Printer
 								$this->printer->text(strip_tags(htmlspecialchars_decode($line->desc))."\n");
 							}
                         }
+						break;
+					case 'DOL_PRINT_PAYMENT':
+						$sql = "SELECT p.pos_change as pos_change, p.datep as date, p.fk_paiement, p.num_paiement as num, pf.amount as amount, pf.multicurrency_amount,";
+						$sql .= " cp.code";
+						$sql .= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
+						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON p.fk_paiement = cp.id";
+						$sql .= " WHERE pf.fk_paiement = p.rowid AND pf.fk_facture = ".$object->id;
+						$sql .= " ORDER BY p.datep";
+						$resql = $this->db->query($sql);
+						if ($resql)
+						{
+							$num = $this->db->num_rows($resql);
+							$i = 0;
+							while ($i < $num) {
+								$row = $this->db->fetch_object($resql);
+								$spacestoadd = $nbcharactbyline - strlen($langs->transnoentitiesnoconv("PaymentTypeShort".$row->code)) - 12;
+								$spaces = str_repeat(' ', $spacestoadd);
+								$amount_payment=($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $row->multicurrency_amount : $row->amount;
+								if ($row->code == "LIQ") $amount_payment = $amount_payment + $row->pos_change; // Show amount with excess received if is cash payment
+								$this->printer->text($spaces.$langs->transnoentitiesnoconv("PaymentTypeShort".$row->code).' '.str_pad(price($amount_payment), 10, ' ', STR_PAD_LEFT)."\n");
+								if ($row->code == "LIQ" && $row->pos_change>0) // Print change only in cash payments
+								{
+									$spacestoadd = $nbcharactbyline - strlen($langs->trans("Change")) - 12;
+									$spaces = str_repeat(' ', $spacestoadd);
+									$this->printer->text($spaces.$langs->trans("Change").' '.str_pad(price($row->pos_change), 10, ' ', STR_PAD_LEFT)."\n");
+								}
+								$i++;
+							}
+						}
 						break;
                     default:
                         $this->printer->text($vals[$tplline]['tag']);
