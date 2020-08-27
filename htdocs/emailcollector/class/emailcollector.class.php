@@ -1225,6 +1225,7 @@ class EmailCollector extends CommonObject
                 dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
                 $overview[0]->subject = $this->decodeSMTPSubject($overview[0]->subject);
+
                 $overview[0]->from = $this->decodeSMTPSubject($overview[0]->from);
 
                 // Removed emojis
@@ -1313,6 +1314,7 @@ class EmailCollector extends CommonObject
                     $fromtext = '';
                 }
                 $fk_element_id = 0; $fk_element_type = '';
+
 
                 $contactid = 0; $thirdpartyid = 0; $projectid = 0; $ticketid = 0;
 
@@ -2356,12 +2358,11 @@ class EmailCollector extends CommonObject
   		// Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
 		if (function_exists('imap_mime_header_decode') && function_exists('iconv_mime_decode')) {
   			$elements = imap_mime_header_decode($subject);
-  			//var_dump($elements);
   			$newstring = '';
   			if (!empty($elements)) {
   				$num = count($elements);
   				for ($i = 0; $i < $num; $i++) {
-  					$stringinutf8 = (in_array(strtoupper($elements[$i]->charset), array('default', 'UTF-8')) ? $elements[$i]->text : iconv_mime_decode($elements[$i]->text, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, $elements[$i]->charset));
+  					$stringinutf8 = (in_array(strtoupper($elements[$i]->charset), array('DEFAULT', 'UTF-8')) ? $elements[$i]->text : iconv_mime_decode($elements[$i]->text, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, $elements[$i]->charset));
   					$newstring .= $stringinutf8;
   				}
   				$subject = $newstring;
