@@ -28,6 +28,8 @@
  */
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+
 
 
 /**
@@ -1949,7 +1951,7 @@ class ActionComm extends CommonObject
      */
     public function sendEmailsReminder()
     {
-    	global $conf, $langs;
+    	global $conf, $langs, $user;
 
     	$error = 0;
     	$this->output = '';
@@ -1975,6 +1977,21 @@ class ActionComm extends CommonObject
     	$this->db->begin();
 
         // TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
+
+    	$sql = "SELECT rowid as id, fk_email_template FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE typeremind = 'email'";
+        $resql = $this->db->query($sql);
+
+        if($resql){
+            while($obj = $this->db->fetch_object($resql)){
+                $formmail = new FormMail($this->db);
+
+                $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($obj->fk_email_template)) ? $obj->fk_email_template : 0, 1, '(SendingReminderActionComm)');
+
+            }
+        } else {
+            $error++;
+        }
+
 
         // Delete also very old past events (we do not keep more than 1 month record in past)
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
