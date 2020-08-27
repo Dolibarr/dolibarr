@@ -71,7 +71,7 @@ class FormContract
 
 		// Search all contacts
 		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
-		if($showRef)
+		if ($showRef)
 		{
 			$sql .= ', c.ref_customer, c.ref_supplier';
 		}
@@ -111,10 +111,10 @@ class FormContract
 					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
 
-						if($showRef)
+						if ($showRef)
 						{
-							if($obj->ref_customer) $labeltoshow = $labeltoshow." - ".$obj->ref_customer;
-							if($obj->ref_supplier) $labeltoshow = $labeltoshow." - ".$obj->ref_supplier;
+							if ($obj->ref_customer) $labeltoshow = $labeltoshow." - ".$obj->ref_customer;
+							if ($obj->ref_supplier) $labeltoshow = $labeltoshow." - ".$obj->ref_supplier;
 						}
 
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
