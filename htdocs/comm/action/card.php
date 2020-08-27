@@ -393,20 +393,20 @@ if (empty($reshook) && $action == 'add')
                     $actionCommReminder = new ActionCommReminder($db);
 
                     if($offsetunit == 'minute'){
-                        $dateremind = strtotime("-".$offsetvalue." minutes", $datep);
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
                     } elseif($offsetunit == 'hour'){
-                        $dateremind = strtotime("-".$offsetvalue." hours", $datep);
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'h');
                     } elseif ($offsetunit == 'day') {
-                        $dateremind = strtotime("-".$offsetvalue." day", $datep);
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'd');
                     } elseif ($offsetunit == 'week') {
-                        $dateremind = strtotime("-".$offsetvalue." week", $datep);
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'w');
                     } elseif ($offsetunit == 'month') {
-                        $dateremind = strtotime("-".$offsetvalue." month", $datep);
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'm');
                     } elseif ($offsetunit == 'year') {
-                        $dateremind = strtotime("-".$offsetvalue." year", $datep);
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'y');
                     }
 
-                    $actionCommReminder->dateremind = date('Y-m-d H:i:s', $dateremind);
+                    $actionCommReminder->dateremind = $db->idate($dateremind);
                     $actionCommReminder->typeremind = $remindertype;
                     $actionCommReminder->fk_user = $user;
                     $actionCommReminder->offsetunit = $offsetunit;
