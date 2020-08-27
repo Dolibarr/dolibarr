@@ -1,3 +1,6 @@
 # Dolibarr language file - Source file is en_US - orders
 StatusOrderCanceledShort=Cancelado
 StatusOrderCanceled=Cancelado
+PDFEinsteinDescription=A complete order model
+StatusSupplierOrderCanceledShort=Cancelado
+StatusSupplierOrderCanceled=Cancelado

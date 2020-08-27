@@ -5,7 +5,7 @@ DeleteResource=Dzēst resursu
 ConfirmDeleteResourceElement=Apstiprināt resursu dzēšanu šim elementam
 NoResourceInDatabase=Nav datubāzē resursu
 NoResourceLinked=Nav saistītu resursu
-
+ActionsOnResource=Notikumi šim resursam
 ResourcePageIndex=Resursu saraksts
 ResourceSingular=Resursi
 ResourceCard=Resursu karte
@@ -30,7 +30,7 @@ DictionaryResourceType=Resursa veids
 
 SelectResource=Izvēlēties resursu
 
-IdResource=Id resource
+IdResource=Id resurss
 AssetNumber=Sērijas numurs
-ResourceTypeCode=Resource type code
+ResourceTypeCode=Resursa veida kods
 ImportDataset_resource_1=Resursi

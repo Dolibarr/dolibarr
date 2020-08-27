@@ -3,7 +3,7 @@
  * Copyright (C) 2014-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2018-2019  Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,18 +16,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- * \file    ProductEntrepot/ProductStockEntrepot.class.php
+ * \file    htdocs/product/stock/class/productstockentrepot.class.php
  * \ingroup ProductEntrepot
  * \brief   This file is an example for a CRUD class file (Create/Read/Update/Delete)
  *          Put some comments here
  */
 
 // Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
@@ -44,23 +44,27 @@ class ProductStockEntrepot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ProductStockEntrepot';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'product_warehouse_properties';
 
-	/**
-	 */
-
 	public $tms = '';
+
+	/**
+     * @var int ID
+     */
 	public $fk_product;
+
+	/**
+     * @var int ID
+     */
 	public $fk_entrepot;
+
 	public $seuil_stock_alerte;
 	public $desiredstock;
 	public $import_key;
-
-	/**
-	 */
 
 
 	/**
@@ -89,8 +93,8 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
-		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->fk_product)) $this->fk_product = (int) $this->fk_product;
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = (int) $this->fk_entrepot;
 		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
 		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
@@ -99,22 +103,22 @@ class ProductStockEntrepot extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = 'INSERT INTO ' . MAIN_DB_PREFIX . $this->table_element . '(';
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.$this->table_element.'(';
 
-		$sql.= 'fk_product,';
-		$sql.= 'fk_entrepot,';
-		$sql.= 'seuil_stock_alerte,';
-		$sql.= 'desiredstock,';
-		$sql.= 'import_key';
+		$sql .= 'fk_product,';
+		$sql .= 'fk_entrepot,';
+		$sql .= 'seuil_stock_alerte,';
+		$sql .= 'desiredstock,';
+		$sql .= 'import_key';
 
 
 		$sql .= ') VALUES (';
 
-		$sql .= ' '.(! isset($this->fk_product)?'NULL':$this->fk_product).',';
-		$sql .= ' '.(! isset($this->fk_entrepot)?'NULL':$this->fk_entrepot).',';
-		$sql .= ' '.(! isset($this->seuil_stock_alerte)?'0':$this->seuil_stock_alerte).',';
-		$sql .= ' '.(! isset($this->desiredstock)?'0':$this->desiredstock).',';
-		$sql .= ' '.(! isset($this->import_key)?'NULL':"'".$this->db->escape($this->import_key)."'");
+		$sql .= ' '.(!isset($this->fk_product) ? 'NULL' : $this->fk_product).',';
+		$sql .= ' '.(!isset($this->fk_entrepot) ? 'NULL' : $this->fk_entrepot).',';
+		$sql .= ' '.(!isset($this->seuil_stock_alerte) ? '0' : $this->seuil_stock_alerte).',';
+		$sql .= ' '.(!isset($this->desiredstock) ? '0' : $this->desiredstock).',';
+		$sql .= ' '.(!isset($this->import_key) ? 'NULL' : "'".$this->db->escape($this->import_key)."'");
 
 
 		$sql .= ')';
@@ -123,15 +127,15 @@ class ProductStockEntrepot extends CommonObject
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-			if (!$notrigger) {
+			//if (!$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
 
@@ -139,14 +143,14 @@ class ProductStockEntrepot extends CommonObject
 				//$result=$this->call_trigger('MYOBJECT_CREATE',$user);
 				//if ($result < 0) $error++;
 				//// End call triggers
-			}
+			//}
 		}
 
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -157,37 +161,35 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id  Id object
-	 * @param int    $fk_product Id product
-	 * @param int    $fk_entrepot  Id warehouse
-	 *
-	 * @return int <0 if KO, 0 if not found, >0 if OK
+	 * @param int    $id  				Id object
+	 * @param int    $fk_product 		Id product
+	 * @param int    $fk_entrepot  		Id warehouse
+	 * @return int 						<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $fk_product, $fk_entrepot)
+	public function fetch($id, $fk_product = 0, $fk_entrepot = 0)
 	{
-		if(empty($id) && (empty($fk_product) || empty($fk_entrepot))) return -1;
+		if (empty($id) && (empty($fk_product) || empty($fk_entrepot))) return -1;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-
 		$sql .= " t.tms,";
 		$sql .= " t.fk_product,";
 		$sql .= " t.fk_entrepot,";
 		$sql .= " t.seuil_stock_alerte,";
 		$sql .= " t.desiredstock,";
 		$sql .= " t.import_key";
-
-
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
-		if(!empty($id)) $sql .= ' WHERE t.rowid = ' . $id;
-		else $sql.= ' WHERE t.fk_product = '.$fk_product.' AND t.fk_entrepot = '.$fk_entrepot;
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		if (!empty($id)) $sql .= ' WHERE t.rowid = '.$id;
+		else $sql .= ' WHERE t.fk_product = '.$fk_product.' AND t.fk_entrepot = '.$fk_entrepot;
 
 		$resql = $this->db->query($sql);
-		if ($resql) {
+		if ($resql)
+		{
 			$numrows = $this->db->num_rows($resql);
-			if ($numrows) {
+			if ($numrows)
+			{
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
@@ -198,8 +200,6 @@ class ProductStockEntrepot extends CommonObject
 				$this->seuil_stock_alerte = $obj->seuil_stock_alerte;
 				$this->desiredstock = $obj->desiredstock;
 				$this->import_key = $obj->import_key;
-
-
 			}
 
 			// Retreive all extrafield
@@ -216,10 +216,10 @@ class ProductStockEntrepot extends CommonObject
 				return 0;
 			}
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -237,7 +237,7 @@ class ProductStockEntrepot extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function fetchAll($fk_product='', $fk_entrepot='', $sortorder='', $sortfield='', $limit=0, $offset=0, array $filter = array(), $filtermode='AND')
+	public function fetchAll($fk_product = '', $fk_entrepot = '', $sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -252,7 +252,7 @@ class ProductStockEntrepot extends CommonObject
 		$sql .= " t.import_key";
 
 
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 
 		$sql .= ' WHERE 1=1';
 
@@ -260,23 +260,22 @@ class ProductStockEntrepot extends CommonObject
 		$sqlwhere = array();
 		if (count($filter) > 0) {
 			foreach ($filter as $key => $value) {
-				$sqlwhere [] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+				$sqlwhere [] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
 			}
 		}
-		if (count($sqlwhere) > 0) $sql .= ' AND ' . implode(' '.$filtermode.' ', $sqlwhere);
+		if (count($sqlwhere) > 0) $sql .= ' AND '.implode(' '.$filtermode.' ', $sqlwhere);
 
-		if(!empty($fk_product)) $sql .= ' AND fk_product = '.$fk_product;
-		elseif(!empty($fk_entrepot)) $sql .= ' AND fk_entrepot = '.$fk_entrepot;
+		if (!empty($fk_product)) $sql .= ' AND fk_product = '.$fk_product;
+		elseif (!empty($fk_entrepot)) $sql .= ' AND fk_entrepot = '.$fk_entrepot;
 		// "elseif" used instead of "if" because getting list with specified fk_product and specified fk_entrepot would be the same as doing a fetch
 
-		if (!empty($sortfield)) $sql .= $this->db->order($sortfield,$sortorder);
-		if (!empty($limit)) $sql .=  ' ' . $this->db->plimit($limit, $offset);
+		if (!empty($sortfield)) $sql .= $this->db->order($sortfield, $sortorder);
+		if (!empty($limit)) $sql .= ' '.$this->db->plimit($limit, $offset);
 
 		$lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
-
 			while ($obj = $this->db->fetch_object($resql)) {
 				$lines[$obj->rowid] = array(
 										'id'=>$obj->rowid
@@ -290,10 +289,10 @@ class ProductStockEntrepot extends CommonObject
 
 			return $lines;
 		} else {
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -313,8 +312,8 @@ class ProductStockEntrepot extends CommonObject
 
 		// Clean parameters
 
-		if (isset($this->fk_product)) $this->fk_product = trim($this->fk_product);
-		if (isset($this->fk_entrepot)) $this->fk_entrepot = trim($this->fk_entrepot);
+		if (isset($this->fk_product)) $this->fk_product = (int) $this->fk_product;
+		if (isset($this->fk_entrepot)) $this->fk_entrepot = (int) $this->fk_entrepot;
 		if (isset($this->seuil_stock_alerte)) $this->seuil_stock_alerte = trim($this->seuil_stock_alerte);
 		if (isset($this->desiredstock)) $this->desiredstock = trim($this->desiredstock);
 		if (isset($this->import_key)) $this->import_key = trim($this->import_key);
@@ -324,28 +323,28 @@ class ProductStockEntrepot extends CommonObject
 		// Put here code to add a control on parameters values
 
 		// Update request
-		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
 
 		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'").',';
-		$sql .= ' fk_product = '.(isset($this->fk_product)?$this->fk_product:"null").',';
-		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot)?$this->fk_entrepot:"null").',';
-		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte)?$this->seuil_stock_alerte:"null").',';
-		$sql .= ' desiredstock = '.(isset($this->desiredstock)?$this->desiredstock:"null").',';
-		$sql .= ' import_key = '.(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
+		$sql .= ' fk_product = '.(isset($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= ' fk_entrepot = '.(isset($this->fk_entrepot) ? $this->fk_entrepot : "null").',';
+		$sql .= ' seuil_stock_alerte = '.(isset($this->seuil_stock_alerte) ? $this->seuil_stock_alerte : "null").',';
+		$sql .= ' desiredstock = '.(isset($this->desiredstock) ? $this->desiredstock : "null").',';
+		$sql .= ' import_key = '.(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
 
 
-		$sql .= ' WHERE rowid=' . $this->id;
+		$sql .= ' WHERE rowid='.$this->id;
 
 		$this->db->begin();
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
-			$error ++;
-			$this->errors[] = 'Error ' . $this->db->lasterror();
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			$error++;
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
 
-		if (!$error && !$notrigger) {
+		//if (!$error && !$notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
 
@@ -353,13 +352,13 @@ class ProductStockEntrepot extends CommonObject
 			//$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
 			//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 			//// End call triggers
-		}
+		//}
 
 		// Commit or rollback
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -383,8 +382,7 @@ class ProductStockEntrepot extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error) {
-			if (!$notrigger) {
+		//if (!$error && !$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action calls a trigger.
 
@@ -392,18 +390,17 @@ class ProductStockEntrepot extends CommonObject
 				//$result=$this->call_trigger('MYOBJECT_DELETE',$user);
 				//if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
 				//// End call triggers
-			}
-		}
+		//}
 
 		if (!$error) {
-			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . $this->table_element;
-			$sql .= ' WHERE rowid=' . $this->id;
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.$this->table_element;
+			$sql .= ' WHERE rowid='.$this->id;
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
-				$error ++;
-				$this->errors[] = 'Error ' . $this->db->lasterror();
-				dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+				$error++;
+				$this->errors[] = 'Error '.$this->db->lasterror();
+				dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 			}
 		}
 
@@ -411,7 +408,7 @@ class ProductStockEntrepot extends CommonObject
 		if ($error) {
 			$this->db->rollback();
 
-			return - 1 * $error;
+			return -1 * $error;
 		} else {
 			$this->db->commit();
 
@@ -422,15 +419,14 @@ class ProductStockEntrepot extends CommonObject
 	/**
 	 * Load an object from its id and create a new one in database
 	 *
-	 * @param int $fromid Id of object to clone
-	 *
-	 * @return int New id of clone
+	 * @param	User	$user	   User making the clone
+	 * @param   int     $fromid    Id of object to clone
+	 * @return  int                New id of clone
 	 */
-	public function createFromClone($fromid)
+	public function createFromClone(User $user, $fromid)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
-		global $user;
 		$error = 0;
 		$object = new ProductStockEntrepot($this->db);
 
@@ -445,14 +441,17 @@ class ProductStockEntrepot extends CommonObject
 		// ...
 
 		// Create clone
+		$object->context['createfromclone'] = 'createfromclone';
 		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0) {
-			$error ++;
+			$error++;
 			$this->errors = $object->errors;
-			dol_syslog(__METHOD__ . ' ' . implode(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 		}
+
+		unset($object->context['createfromclone']);
 
 		// End
 		if (!$error) {
@@ -462,7 +461,7 @@ class ProductStockEntrepot extends CommonObject
 		} else {
 			$this->db->rollback();
 
-			return - 1;
+			return -1;
 		}
 	}
 
@@ -477,7 +476,7 @@ class ProductStockEntrepot extends CommonObject
      *  @param  string  $morecss            Add more css on link
 	 *	@return	string						String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $maxlen = 24, $morecss = '')
 	{
 		global $langs, $conf, $db;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
@@ -487,23 +486,23 @@ class ProductStockEntrepot extends CommonObject
         $result = '';
         $companylink = '';
 
-        $label = '<u>' . $langs->trans("MyModule") . '</u>';
-        $label.= '<div width="100%">';
-        $label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+        $label = '<u>'.$langs->trans("MyModule").'</u>';
+        $label .= '<div width="100%">';
+        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
         $link = '<a href="'.DOL_URL_ROOT.'/ProductEntrepot/card.php?id='.$this->id.'"';
-        $link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
-        $link.= '>';
-		$linkend='</a>';
+        $link .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
+        $link .= '>';
+		$linkend = '</a>';
 
         if ($withpicto)
         {
-            $result.=($link.img_object(($notooltip?'':$label), 'label', ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
-            if ($withpicto != 2) $result.=' ';
-		}
-		$result.= $link . $this->ref . $linkend;
-		return $result;
-	}
+            $result .= ($link.img_object(($notooltip ? '' : $label), 'label', ($notooltip ? '' : 'class="classfortooltip"'), 0, 0, $notooltip ? 0 : 1).$linkend);
+            if ($withpicto != 2) $result .= ' ';
+        }
+        $result .= $link.$this->ref.$linkend;
+        return $result;
+    }
 
 	/**
 	 *  Retourne le libelle du status d'un user (actif, inactif)
@@ -511,11 +510,12 @@ class ProductStockEntrepot extends CommonObject
 	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return	string 			       Label of status
 	 */
-	function getLibStatut($mode=0)
+	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Renvoi le libelle d'un status donne
 	 *
@@ -523,40 +523,35 @@ class ProductStockEntrepot extends CommonObject
 	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string 			       	Label of status
 	 */
-	function LibStatut($status,$mode=0)
+	public function LibStatut($status, $mode = 0)
 	{
+        // phpcs:enable
 		global $langs;
 
 		if ($mode == 0)
 		{
-			$prefix='';
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 1)
+			elseif ($status == 0) return $langs->trans('Disabled');
+		} elseif ($mode == 1)
 		{
 			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
-		}
-		if ($mode == 2)
+			elseif ($status == 0) return $langs->trans('Disabled');
+		} elseif ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 3)
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		} elseif ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
-		}
-		if ($mode == 4)
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5');
+		} elseif ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
-		}
-		if ($mode == 5)
+			if ($status == 1) return img_picto($langs->trans('Enabled'), 'statut4').' '.$langs->trans('Enabled');
+			elseif ($status == 0) return img_picto($langs->trans('Disabled'), 'statut5').' '.$langs->trans('Disabled');
+		} elseif ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'), 'statut4');
+			elseif ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'), 'statut5');
 		}
 	}
 
@@ -572,13 +567,10 @@ class ProductStockEntrepot extends CommonObject
 		$this->id = 0;
 
 		$this->tms = '';
-		$this->fk_product = '';
-		$this->fk_entrepot = '';
+		$this->fk_product = null;
+		$this->fk_entrepot = null;
 		$this->seuil_stock_alerte = '';
 		$this->desiredstock = '';
 		$this->import_key = '';
-
-
 	}
-
 }

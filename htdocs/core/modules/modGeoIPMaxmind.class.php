@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -23,7 +23,7 @@
  *	\brief      File of geoipmaxmind module descriptor
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -37,7 +37,7 @@ class modGeoIPMaxmind extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		$this->db = $db;
 		$this->numero = 2900;
@@ -46,7 +46,7 @@ class modGeoIPMaxmind extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "GeoIP Maxmind conversions capabilities";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -56,7 +56,7 @@ class modGeoIPMaxmind extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/images directory, use this->picto=DOL_URL_ROOT.'/module/images/file.png'
-		$this->picto = 'globe';
+		$this->picto = 'geoip';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/geoipmaxmind");
@@ -65,13 +65,13 @@ class modGeoIPMaxmind extends DolibarrModules
 		$this->config_page_url = array("geoipmaxmind.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4);
 		$this->phpmax = array();
-		$this->need_dolibarr_version = array(2,7,-1);	// Minimum version of Dolibarr required by module
+		$this->need_dolibarr_version = array(2, 7, -1); // Minimum version of Dolibarr required by module
 		$this->need_javascript_ajax = 1;
 
 		// Constants
@@ -83,6 +83,6 @@ class modGeoIPMaxmind extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'geoipmaxmind';
-		$r=0;
+		$r = 0;
 	}
 }

@@ -12,8 +12,10 @@ ShowSalaryPayment=Show salary payment
 THM=Average hourly rate
 TJM=Average daily rate
 CurrentSalary=Current salary
-THMDescription=This value may be used to calculate cost of time consumed on a project entered by users if module project is used
-TJMDescription=This value is currently as information only and is not used for any calculation
+THMDescription=This value may be used to calculate the cost of time consumed on a project entered by users if module project is used
+TJMDescription=This value is currently for information only and is not used for any calculation
 LastSalaries=Latest %s salary payments
 AllSalaries=All salary payments
 SalariesStatistics=Salary statistics
+# Export
+SalariesAndPayments=Salaries and payments

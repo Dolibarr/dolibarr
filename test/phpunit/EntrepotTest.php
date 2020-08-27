@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class EntrepotTest extends PHPUnit_Framework_TestCase
+class EntrepotTest extends PHPUnit\Framework\TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -58,8 +58,10 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return EntrepotTest
 	 */
-	function __construct()
+	public function __construct()
 	{
+		parent::__construct();
+
 		//$this->sharedFixture
 		global $conf,$user,$langs,$db;
 		$this->savconf=$conf;
@@ -72,8 +74,12 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
+    public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
 
@@ -84,7 +90,11 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -137,7 +147,7 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->create($user);
 
         print __METHOD__." result=".$result."\n";
-    	$this->assertLessThanOrEqual($result, 0);
+        $this->assertGreaterThan(0, $result);
 
     	return $result;
     }
@@ -185,7 +195,7 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		$localobject->note='New note after update';
-    	$result=$localobject->update($localobject->id,$user);
+    	$result=$localobject->update($localobject->id, $user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0);
 
@@ -209,6 +219,7 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		//$this->assertLessThan(1, 0);
 
         return $localobject->id;
     }
@@ -235,27 +246,8 @@ class EntrepotTest extends PHPUnit_Framework_TestCase
 
     	$result=$localobject->delete($user);
 		print __METHOD__." id=".$id." result=".$result."\n";
-    	$this->assertLessThan($result, 0);
+    	$this->assertLessThan($result, 0, $localobject->errorsToString());
 
     	return $result;
-    }
-
-    /**
-     * testEntrepotStatic
-     *
-     * @return	void
-     */
-    public function testEntrepotStatic()
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $localobject=new Entrepot($db);
-
-
-        return;
     }
 }

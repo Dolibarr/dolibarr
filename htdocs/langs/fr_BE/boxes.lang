@@ -1,9 +1,4 @@
 # Dolibarr language file - Source file is en_US - boxes
-BoxLastRssInfos=Information RSS
-BoxTitleProductsAlertStock=Alerte de produits en stock
-BoxTitleOldestUnpaidCustomerBills=%s plus vieilles factures client impayées
-BoxTitleOldestUnpaidSupplierBills=%s plus vieilles factures fournisseur impayées
-BoxTitleCurrentAccounts=Balance des comptes ouverts
 BoxGlobalActivity=Activité globale (factures, propales, commandes)
 NoRecordedBookmarks=Aucun bookmark défini
 ClickToAdd=Cliquer ici pour ajouter
@@ -16,14 +11,7 @@ NoRecordedProspects=Aucun prospect enregistré
 NoContractedProducts=Aucun produit/service contraté
 NoRecordedContracts=Aucun contrat enregistré
 NoRecordedInterventions=Aucune intervention enregistrée
-BoxCustomersInvoicesPerMonth=Factures client par mois
-BoxSuppliersInvoicesPerMonth=Factures fournisseur par mois
-BoxCustomersOrdersPerMonth=Commandes client par mois
-BoxSuppliersOrdersPerMonth=Commandes fournisseur par mois
 BoxProposalsPerMonth=Propales par mois
-NoTooLowStockProducts=Aucun produit sous la limite minimum de stock
-BoxProductDistribution=Distribution de produits/services
-BoxProductDistributionFor=Distribution de %s pour %s
 ForCustomersInvoices=Factures client
 ForCustomersOrders=Commandes client
 ForProposals=Propales

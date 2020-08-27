@@ -1,23 +1,22 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduļa iestatīšana
-PaypalDesc=Šis modulis piedāvā lapas, lai ļautu maksājumu ar <a href="http://www.paypal.com" target="_blank">PayPal</a> klienti. To var izmantot par brīvu maksājumu vai maksājumu par konkrētu Dolibarr objektu (rēķins, rīkojums, ...)
-PaypalOrCBDoPayment=Maksāt ar Paypal (kredītkarti vai PayPal)
-PaypalDoPayment=Maksāt ar Paypal
+PaypalDesc=Šis modulis ļauj klientiem veikt maksājumus, izmantojot <a href="http://www.paypal.com" target="_blank"> PayPal </a>. To var izmantot īpašam maksājumam vai maksājumam, kas saistīts ar Dolibarr objektu (rēķins, pasūtījums, ...)
+PaypalOrCBDoPayment=Maksājiet ar PayPal (karti vai PayPal)
+PaypalDoPayment=Maksāt ar PayPal
 PAYPAL_API_SANDBOX=Mode tests / sandbox
 PAYPAL_API_USER=API lietotājvārds
 PAYPAL_API_PASSWORD=API parole
 PAYPAL_API_SIGNATURE=API paraksts
 PAYPAL_SSLVERSION=Curl SSL versija
-PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Akcija maksājums &quot;neatņemama sastāvdaļa&quot; (Kredītkaršu + Paypal), vai &quot;Paypal&quot; tikai
+PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Piedāvāt tikai "integrālo" maksājumu (kredītkarti + PayPal) vai "PayPal"
 PaypalModeIntegral=Integrālis
 PaypalModeOnlyPaypal=PayPal tikai
-ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
+ONLINE_PAYMENT_CSS_URL=CSS stilu lapas izvēles URL, izmantojot tiešsaistes maksājuma lapu
 ThisIsTransactionId=Tas ir id darījuma: <b>%s</b>
-PAYPAL_ADD_PAYMENT_URL=Pievieno url Paypal maksājumu, kad jūs sūtīt dokumentu pa pastu
-YouAreCurrentlyInSandboxMode=Pašlaik esat %s "smilškastes" režīmā
+PAYPAL_ADD_PAYMENT_URL=Iesniedzot dokumentu pa e-pastu, iekļaujiet PayPal maksājumu URL
 NewOnlinePaymentReceived=Saņemts jauns tiešsaistes maksājums
 NewOnlinePaymentFailed=Jauns tiešsaistes maksājums tika izmēģināts, bet neizdevās
-ONLINE_PAYMENT_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
+ONLINE_PAYMENT_SENDEMAIL=E-pasta adrese paziņojumiem pēc katra maksājuma mēģinājuma (lai gūtu panākumus un neizdotos)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Neveiksmīgs tiešsaistes maksājumu apstiprinājums
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Maksājuma apstiprinājuma lapa tika izsaukta ar maksājumu sistēmu, atgriezās kļūda
@@ -28,7 +27,10 @@ ShortErrorMessage=Īss kļūdas ziņojums
 ErrorCode=Kļūdas kods
 ErrorSeverityCode=Error Severity Code
 OnlinePaymentSystem=Tiešsaistes maksājumu sistēma
-PaypalLiveEnabled=Ieslēgts Paypal tiešraidē (citādi tests / smilškastes režīms)
-PaypalImportPayment=Importēt Paypal maksājumus
+PaypalLiveEnabled=Iespējots PayPal "tiešraides" režīms (citādi testēšanas / smilškastes režīms)
+PaypalImportPayment=Importēt PayPal maksājumus
 PostActionAfterPayment=Ievietot darbības pēc maksājumiem
 ARollbackWasPerformedOnPostActions=Atkārtojums tika veikts visos Post darbībās. Ja nepieciešams, jums ir jāaizpilda pasta darbības manuāli.
+ValidationOfPaymentFailed=Maksājuma apstiprināšana nav izdevies
+CardOwner=Kartes turētājs
+PayPalBalance=Paypal kredīts

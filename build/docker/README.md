@@ -23,3 +23,6 @@ The URL to go to the Dolibarr is :
 The URL to go to PhpMyAdmin is (login/password is root/root) :
 
         http://0.0.0.0:8080
+
+Setup the database connection during the installation process, please use mariad
+b (name of the database container) as database host.

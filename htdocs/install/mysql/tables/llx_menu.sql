@@ -1,7 +1,7 @@
 -- ========================================================================
 -- Copyright (C) 2007		Patrick Raguin		<patrick.raguin@gmail.com>
 -- Copyright (C) 2007-2008	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+-- Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
 -- Copyright (C) 2012		Marcos García		<marcosgdf@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
 
@@ -25,7 +25,7 @@ CREATE TABLE llx_menu
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	menu_handler  varchar(16) NOT NULL,						-- Menu handler name
 	entity        integer DEFAULT 1 NOT NULL,				-- Multi company id
-	module        varchar(64),								-- Module name if record is added by a module
+	module        varchar(255),								-- Module name if record is added by a module
 	type          varchar(4) NOT NULL,						-- Menu top or left
 	mainmenu      varchar(100) NOT NULL,					-- Name family/module for top menu (home, companies, ...)
     leftmenu      varchar(100) NULL,						-- Name family/module for left menu (setup, info, ...)

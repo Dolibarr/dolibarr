@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  *
  * WARNING, THIS WILL LOAD MASS DATA ON YOUR INSTANCE
  */
@@ -30,12 +30,12 @@ $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
 if (substr($sapi_type, 0, 3) == 'cgi') {
-    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
     exit;
 }
 
 // Recupere root dolibarr
-$path=preg_replace('/import-thirdparties.php/i','',$_SERVER["PHP_SELF"]);
+$path=preg_replace('/import-thirdparties.php/i', '', $_SERVER["PHP_SELF"]);
 require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -57,7 +57,7 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".implode(',',$argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $mode = $argv[1];
 $filepath = $argv[2];
@@ -66,7 +66,7 @@ $filepatherr = $filepath.'.err';
 $startlinenb = empty($argv[3])?1:$argv[3];
 $endlinenb = empty($argv[4])?0:$argv[4];
 
-if (empty($mode) || ! in_array($mode,array('test','confirm','confirmforced')) || empty($filepath)) {
+if (empty($mode) || ! in_array($mode, array('test','confirm','confirmforced')) || empty($filepath)) {
     print "Usage:  $script_file (test|confirm|confirmforced) filepath.csv [startlinenb] [endlinenb]\n";
     print "Usage:  $script_file test myfilepath.csv 2 1002\n";
     print "\n";
@@ -78,7 +78,7 @@ if (! file_exists($filepath)) {
     exit(-1);
 }
 
-$ret=$user->fetch('','admin');
+$ret=$user->fetch('', 'admin');
 if (! $ret > 0)
 {
 	print 'A user with login "admin" and all permissions must be created to use this script.'."\n";
@@ -93,7 +93,7 @@ if (! $confirmed)
     $input = trim(fgets(STDIN));
 }
 
-// Open input and ouput files
+// Open input and output files
 $fhandle = fopen($filepath, 'r');
 if (! $fhandle)
 {
@@ -181,9 +181,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in create result code = ".$ret." - ".$object->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - Creation OK with name ".$object->name." - id = ".$ret;
     	}
     }
@@ -199,22 +197,20 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 	{
     	$salesrep=new User($db);
 
-    	$tmp=explode(' ',$fields[3],2);
+    	$tmp=explode(' ', $fields[3], 2);
     	$salesrep->firstname = trim($tmp[0]);
     	$salesrep->lastname = trim($tmp[1]);
     	if ($salesrep->lastname) $salesrep->login = strtolower(substr($salesrep->firstname, 0, 1)) . strtolower(substr($salesrep->lastname, 0));
     	else $salesrep->login=strtolower($salesrep->firstname);
-    	$salesrep->login=preg_replace('/ /','',$salesrep->login);
-    	$salesrep->fetch(0,$salesrep->login);
+    	$salesrep->login=preg_replace('/ /', '', $salesrep->login);
+    	$salesrep->fetch(0, $salesrep->login);
 
     	$result = $object->add_commercial($user, $salesrep->id);
     	if ($result < 0)
     	{
     	    print " - Error in create link with sale representative result code = ".$result." - ".$object->errorsToString();
     	    $errorrecord++;
-    	}
-    	else
-    	{
+    	} else {
     	    print " - create link sale representative OK";
     	}
 	}
@@ -243,9 +239,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in create contact result code = ".$ret1." ".$ret2." - ".$object->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - create contact OK";
     	}
 	}
@@ -277,9 +271,7 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
         {
             print " - Error in create contact result code = ".$ret1." ".$ret2." - ".$object->errorsToString();
             $errorrecord++;
-        }
-    	else
-    	{
+        } else {
     	    print " - create contact OK";
     	}
 	}
@@ -305,9 +297,7 @@ if ($mode != 'confirmforced' && ($error || $mode != 'confirm'))
 {
     print "Rollback any changes.\n";
     $db->rollback();
-}
-else
-{
+} else {
     print "Commit all changes.\n";
     $db->commit();
 }

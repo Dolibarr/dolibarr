@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
  use Luracast\Restler\RestException;
@@ -43,10 +43,10 @@ class Warehouses extends DolibarrApi
     /**
      * Constructor
      */
-    function __construct()
+    public function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->warehouse = new Entrepot($this->db);
     }
 
@@ -57,25 +57,25 @@ class Warehouses extends DolibarrApi
      *
      * @param 	int 	$id ID of warehouse
      * @return 	array|mixed data without useless information
-	 *
+     *
      * @throws 	RestException
      */
-    function get($id)
+    public function get($id)
     {
-		if(! DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
-		}
+        if (!DolibarrApiAccess::$user->rights->stock->lire) {
+            throw new RestException(401);
+        }
 
         $result = $this->warehouse->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'warehouse not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (!DolibarrApi::_checkAccessToResource('warehouse', $this->warehouse->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-		return $this->_cleanObjectDatas($this->warehouse);
+        return $this->_cleanObjectDatas($this->warehouse);
     }
 
     /**
@@ -87,68 +87,77 @@ class Warehouses extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
      * @param int		$page		Page number
+	 * @param  int    $category   Use this param to filter list by category
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
      * @return array                Array of warehouse objects
      *
-	 * @throws RestException
+     * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $category = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
 
-         if(! DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
-		}
+        if (!DolibarrApiAccess::$user->rights->stock->lire) {
+            throw new RestException(401);
+        }
 
         $sql = "SELECT t.rowid";
-        $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as t";
-        $sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
+        $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as t";
+    	if ($category > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_societe as c";
+    	}
+        $sql .= ' WHERE t.entity IN ('.getEntity('stock').')';
+    	// Select warehouses of given category
+    	if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_warehouse = t.rowid ";
+    	}
         // Add sql filters
         if ($sqlfilters)
         {
-            if (! DolibarrApi::_checkFilters($sqlfilters))
+            if (!DolibarrApi::_checkFilters($sqlfilters))
             {
                 throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
             }
-	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-            $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+            $regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+            $sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
 
-        $sql.= $db->order($sortfield, $sortorder);
-        if ($limit)	{
+        $sql .= $db->order($sortfield, $sortorder);
+        if ($limit) {
             if ($page < 0)
             {
                 $page = 0;
             }
             $offset = $limit * $page;
 
-            $sql.= $db->plimit($limit + 1, $offset);
+            $sql .= $db->plimit($limit + 1, $offset);
         }
 
         $result = $db->query($sql);
         if ($result)
         {
-        	$i=0;
+            $i = 0;
             $num = $db->num_rows($result);
             $min = min($num, ($limit <= 0 ? $num : $limit));
             while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $warehouse_static = new Entrepot($db);
-                if($warehouse_static->fetch($obj->rowid)) {
+                if ($warehouse_static->fetch($obj->rowid)) {
                     $obj_ret[] = $this->_cleanObjectDatas($warehouse_static);
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve warehouse list : '.$db->lasterror());
         }
-        if( ! count($obj_ret)) {
+        if (!count($obj_ret)) {
             throw new RestException(404, 'No warehouse found');
         }
-		return $obj_ret;
+        return $obj_ret;
     }
 
 
@@ -158,16 +167,16 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Request data
      * @return int  ID of warehouse
      */
-    function post($request_data = null)
+    public function post($request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
-		}
+        if (!DolibarrApiAccess::$user->rights->stock->creer) {
+            throw new RestException(401);
+        }
 
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             $this->warehouse->$field = $value;
         }
         if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
@@ -183,28 +192,28 @@ class Warehouses extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = null)
+    public function put($id, $request_data = null)
     {
-        if(! DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
-		}
+        if (!DolibarrApiAccess::$user->rights->stock->creer) {
+            throw new RestException(401);
+        }
 
         $result = $this->warehouse->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'warehouse not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-        foreach($request_data as $field => $value) {
+        foreach ($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->warehouse->$field = $value;
         }
 
-        if($this->warehouse->update($id, DolibarrApiAccess::$user))
-            return $this->get ($id);
+        if ($this->warehouse->update($id, DolibarrApiAccess::$user))
+            return $this->get($id);
 
         return false;
     }
@@ -215,22 +224,22 @@ class Warehouses extends DolibarrApi
      * @param int $id   Warehouse ID
      * @return array
      */
-    function delete($id)
+    public function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->stock->supprimer) {
-			throw new RestException(401);
-		}
+        if (!DolibarrApiAccess::$user->rights->stock->supprimer) {
+            throw new RestException(401);
+        }
         $result = $this->warehouse->fetch($id);
-        if( ! $result ) {
+        if (!$result) {
             throw new RestException(404, 'warehouse not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
-        if (! $this->warehouse->delete(DolibarrApiAccess::$user)) {
-            throw new RestException(401,'error when delete warehouse');
+        if (!$this->warehouse->delete(DolibarrApiAccess::$user)) {
+            throw new RestException(401, 'error when delete warehouse');
         }
 
         return array(
@@ -242,14 +251,16 @@ class Warehouses extends DolibarrApi
     }
 
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
     /**
      * Clean sensible object datas
      *
      * @param   Entrepot  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
-
+    protected function _cleanObjectDatas($object)
+    {
+        // phpcs:enable
         $object = parent::_cleanObjectDatas($object);
 
         // Remove the subscriptions because they are handled as a subresource.
@@ -267,7 +278,7 @@ class Warehouses extends DolibarrApi
      *
      * @throws RestException
      */
-    function _validate($data)
+    private function _validate($data)
     {
         $warehouse = array();
         foreach (Warehouses::$FIELDS as $field) {

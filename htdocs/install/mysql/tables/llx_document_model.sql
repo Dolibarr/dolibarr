@@ -1,7 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 -- Table with list of document templates for document generation (odt/pdf/...)
@@ -25,7 +25,7 @@ create table llx_document_model
   	rowid			integer AUTO_INCREMENT PRIMARY KEY,
   	nom				varchar(50),
   	entity			integer DEFAULT 1 NOT NULL,	-- multi company id
-  	type			varchar(20) NOT NULL,
+  	type			varchar(64) NOT NULL,
   	libelle			varchar(255),
   	description		text
 )ENGINE=innodb;

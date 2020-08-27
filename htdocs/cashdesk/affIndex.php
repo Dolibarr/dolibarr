@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
+ * Copyright (C) 2009      Regis Houssin         <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,7 +15,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -27,18 +27,17 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/environnement.php';
 require_once DOL_DOCUMENT_ROOT.'/cashdesk/include/keypad.php';
 
-$error=GETPOST('error');
+$error = GETPOST('error');
 
 // Test if already logged
-if ( $_SESSION['uid'] <= 0 )
+if ($_SESSION['uid'] <= 0)
 {
 	header('Location: index.php');
 	exit;
 }
 
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "compta", "cashdesk"));
 
 
 /*
@@ -47,10 +46,10 @@ $langs->load("cashdesk");
 
 $form = new Form($db);
 
-$arrayofjs=array();
-$arrayofcss=array('/cashdesk/css/style.css');
+$arrayofjs = array();
+$arrayofcss = array('/cashdesk/css/style.css');
 
-top_htmlhead($head,$langs->trans("CashDesk"),0,0,$arrayofjs,$arrayofcss);
+top_htmlhead($head, $langs->trans("CashDesk"), 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body>'."\n";
 

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2018 Frédéric France       <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -44,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class FactureTest extends PHPUnit_Framework_TestCase
+class FactureTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,9 +58,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
      *
      * @return FactureTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -71,7 +74,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -84,7 +91,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -226,10 +237,11 @@ class FactureTest extends PHPUnit_Framework_TestCase
 			$newlocalobject,
 			true,
 			array(
-				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem',
-				'ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
+				'newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','date_modification',
+				'ref','statut','paye','specimen','ref','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement',
 				'cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva',
-				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx'
+				'multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx',
+                'retained_warranty' ,'retained_warranty_date_limit', 'retained_warranty_fk_cond_reglement'
 			)
 		);
         $this->assertEquals($arraywithdiff, array());    // Actual, Expected
@@ -237,7 +249,7 @@ class FactureTest extends PHPUnit_Framework_TestCase
         return $localobject;
     }
 
-   /**
+    /**
      * testFactureOther
      *
      * @param   Object $localobject Invoice
@@ -346,22 +358,20 @@ class FactureTest extends PHPUnit_Framework_TestCase
      * @param   array $fieldstoignorearray      Array of fields to ignore in diff
      * @return  array                           Array with differences
      */
-    public function objCompare($oA,$oB,$ignoretype=true,$fieldstoignorearray=array('id'))
+    public function objCompare($oA, $oB, $ignoretype = true, $fieldstoignorearray = array('id'))
     {
         $retAr=array();
 
         if (get_class($oA) !== get_class($oB))
         {
             $retAr[]="Supplied objects are not of same class.";
-        }
-        else
-        {
+        } else {
             $oVarsA=get_object_vars($oA);
             $oVarsB=get_object_vars($oB);
             $aKeys=array_keys($oVarsA);
-            foreach($aKeys as $sKey)
+            foreach ($aKeys as $sKey)
             {
-                if (in_array($sKey,$fieldstoignorearray)) continue;
+                if (in_array($sKey, $fieldstoignorearray)) continue;
                 if (! $ignoretype && $oVarsA[$sKey] !== $oVarsB[$sKey])
                 {
                     $retAr[]=$sKey.' : '.(is_object($oVarsA[$sKey])?get_class($oVarsA[$sKey]):$oVarsA[$sKey]).' <> '.(is_object($oVarsB[$sKey])?get_class($oVarsB[$sKey]):$oVarsB[$sKey]);

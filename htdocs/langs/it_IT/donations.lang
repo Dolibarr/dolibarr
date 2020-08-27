@@ -17,6 +17,7 @@ DonationStatusPromiseNotValidatedShort=Bozza
 DonationStatusPromiseValidatedShort=Promessa convalidata
 DonationStatusPaidShort=Ricevuta
 DonationTitle=Ricevuta di donazione
+DonationDate=Data di donazione
 DonationDatePayment=Data di pagamento
 ValidPromess=Convalida promessa
 DonationReceipt=Ricevuta per donazione

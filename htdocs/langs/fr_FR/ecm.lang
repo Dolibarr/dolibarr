@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Nombre de documents du répertoire
+ECMNbOfDocs=Nb. de documents du répertoire
 ECMSection=Répertoire
 ECMSectionManual=Répertoire manuel
 ECMSectionAuto=Répertoire automatique
@@ -34,6 +34,8 @@ ECMDocsByProjects=Documents associés aux projets
 ECMDocsByUsers=Documents associés aux utilisateurs
 ECMDocsByInterventions=Documents associés aux interventions
 ECMDocsByExpenseReports=Documents associés aux notes de frais
+ECMDocsByHolidays=Documents liés aux congès
+ECMDocsBySupplierProposals=Documents liés aux propositions fournisseurs
 ECMNoDirectoryYet=Aucun répertoire créé
 ShowECMSection=Afficher répertoire
 DeleteSection=Suppression répertoire

@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - users
 DeleteUser=Löschen
 DeleteGroup=Löschen
-DefaultRightsDesc=Definieren Sie hier die, neu erstellten Benutzern automatisch zugewiesenen, Standardberechtigungen.
 PasswordChangedAndSentTo=Passwort geändert und an <b>%s</b> gesandt.
 PasswordChangeRequestSent=Antrag auf eine Änderung das Passworts für <b>%s</b> an <b>%s</b> gesandt.
 LinkedToDolibarrUser=Mit Systembenutzer verknüpfen

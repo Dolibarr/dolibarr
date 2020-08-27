@@ -12,7 +12,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,72 +29,68 @@ $graphwidth = 700;
 $mapratio = 0.5;
 $graphheight = round($graphwidth * $mapratio);
 
-$mode=GETPOST('mode')?GETPOST('mode'):'';
+$mode = GETPOST('mode') ?GETPOST('mode') : '';
 
 
 // Security check
-if ($user->societe_id > 0)
-{
+if ($user->socid > 0) {
     $action = '';
-    $socid = $user->societe_id;
+    $socid = $user->socid;
 }
-$result=restrictedArea($user,'adherent','','','cotisation');
+$result = restrictedArea($user, 'adherent', '', '', 'cotisation');
 
 $year = strftime("%Y", time());
-$startyear=$year-2;
-$endyear=$year;
+$startyear = $year - 2;
+$endyear = $year;
 
-$langs->load("members");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "members"));
 
 
 /*
  * View
  */
 
-$memberstatic=new Adherent($db);
+$memberstatic = new Adherent($db);
 
-llxHeader('',$langs->trans("MembersStatisticsByProperties"),'','',0,0,array('https://www.google.com/jsapi'));
+llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, array('https://www.google.com/jsapi'));
 
-$title=$langs->trans("MembersStatisticsByProperties");
+$title = $langs->trans("MembersStatisticsByProperties");
 
-print load_fiche_titre($title, $mesg);
+print load_fiche_titre($title, '', 'object_group');
 
 dol_mkdir($dir);
 
-$tab='byproperties';
+$tab = 'byproperties';
 
 $data = array();
-$sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, d.morphy as code";
-$sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
-$sql.=" WHERE d.entity IN (".getEntity('adherent').")";
-$sql.=" AND d.statut = 1";
-$sql.=" GROUP BY d.morphy";
+$sql .= "SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX(s.dateadh) as lastsubscriptiondate, d.morphy as code";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
+$sql .= " WHERE d.entity IN (".getEntity('adherent').")";
+$sql .= " AND d.statut = 1";
+$sql .= " GROUP BY d.morphy";
 
-$foundphy=$foundmor=0;
+$foundphy = $foundmor = 0;
 
 // Define $data array
 dol_syslog("Count member", LOG_DEBUG);
-$resql=$db->query($sql);
-if ($resql)
-{
-	$num=$db->num_rows($resql);
-	$i=0;
-	while ($i < $num)
-	{
-		$obj=$db->fetch_object($resql);
+$resql = $db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
 
 		if ($obj->code == 'phy') $foundphy++;
 		if ($obj->code == 'mor') $foundmor++;
 
-		$data[]=array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate));
+		$data[] = array('label'=>$obj->code, 'nb'=>$obj->nb, 'lastdate'=>$db->jdate($obj->lastdate), 'lastsubscriptiondate'=>$db->jdate($obj->lastsubscriptiondate));
 
 		$i++;
 	}
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -105,37 +101,33 @@ dol_fiche_head($head, 'statsbyproperties', $langs->trans("Statistics"), -1, 'use
 
 
 // Print title
-if (! count($data))
-{
+if (!count($data)) {
 	print $langs->trans("NoValidatedMemberYet").'<br>';
 	print '<br>';
-}
-else
-{
-	print load_fiche_titre($langs->trans("MembersByNature"),'','');
+} else {
+	print $langs->trans("MembersByNature").'<br>';
+	print '<br>';
 }
 
 // Print array
-print '<table class="liste" width="100%">';
+print '<table class="liste centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Nature").'</td>';
-print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
-print '<td align="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+print '<td class="right">'.$langs->trans("NbOfMembers").'</td>';
+print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
+print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
 print '</tr>';
 
-if (! $foundphy) $data[]=array('label'=>'phy','nb'=>'0','lastdate'=>'');
-if (! $foundmor) $data[]=array('label'=>'mor','nb'=>'0','lastdate'=>'');
+if (!$foundphy) $data[] = array('label'=>'phy', 'nb'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
+if (!$foundmor) $data[] = array('label'=>'mor', 'nb'=>'0', 'lastdate'=>'', 'lastsubscriptiondate'=>'');
 
-$oldyear=0;
-foreach ($data as $val)
-{
-	$year = $val['year'];
+foreach ($data as $val) {
 	print '<tr class="oddeven">';
 	print '<td>'.$memberstatic->getmorphylib($val['label']).'</td>';
-	print '<td align="right">'.$val['nb'].'</td>';
-	print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
+	print '<td class="right">'.$val['nb'].'</td>';
+	print '<td class="center">'.dol_print_date($val['lastdate'], 'dayhour').'</td>';
+	print '<td class="center">'.dol_print_date($val['lastsubscriptiondate'], 'dayhour').'</td>';
 	print '</tr>';
-	$oldyear=$year;
 }
 
 print '</table>';

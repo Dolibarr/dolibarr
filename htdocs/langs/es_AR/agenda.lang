@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - agenda
+Event=Evento
+ShipmentValidatedInDolibarr=Envío %s validado
+ShippingSentByEMail=Detalle de entrega %s enviado por correo
+ShippingValidated=Envío %s validado
+DateActionEnd=Fecha de fin

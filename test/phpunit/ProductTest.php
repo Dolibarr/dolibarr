@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ProductTest extends PHPUnit_Framework_TestCase
+class ProductTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -58,8 +58,10 @@ class ProductTest extends PHPUnit_Framework_TestCase
      *
      * @return ProductTest
      */
-    function __construct()
+    public function __construct()
     {
+        parent::__construct();
+
         //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
@@ -72,7 +74,11 @@ class ProductTest extends PHPUnit_Framework_TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -83,7 +89,12 @@ class ProductTest extends PHPUnit_Framework_TestCase
 
         print __METHOD__."\n";
     }
-    // teardownafterclass
+
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -167,6 +178,31 @@ class ProductTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * testProductGetArboEachProd
+     *
+     * @return  void
+     */
+    public function testProductGetArboEachProd()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+		/*
+    	$localobject=new Product($db);
+    	$localobject->fetch(208);
+    	$localobject->get_sousproduits_arbo();
+    	$localobject->get_arbo_each_prod();
+
+    	var_dump($localobject->res); print (json_encode($localobject->res)); exit;
+		*/
+
+    	return;
+    }
+
+    /**
      * testProductUpdate
      *
      * @param   Product $localobject    Product
@@ -184,7 +220,7 @@ class ProductTest extends PHPUnit_Framework_TestCase
         $db=$this->savdb;
 
         $localobject->note='New note after update';
-        $result=$localobject->update($localobject->id,$user);
+        $result=$localobject->update($localobject->id, $user);
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
         $this->assertLessThan($result, 0);
 

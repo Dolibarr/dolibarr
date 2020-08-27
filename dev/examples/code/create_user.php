@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -48,8 +48,8 @@ $langs->load("main");				// To load language file for default language
 @set_time_limit(0);
 
 // Load user and its permissions
-$result=$user->fetch('','admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
-if (! $result > 0) { dol_print_error('',$user->error); exit; }
+$result=$user->fetch('', 'admin');	// Load user for login 'admin'. Comment line to run as anonymous user.
+if (! $result > 0) { dol_print_error('', $user->error); exit; }
 $user->getrights();
 
 
@@ -74,20 +74,16 @@ if ($idobject > 0)
 	// Change status to validated
 	$result=$obj->setStatut(1);
 	if ($result > 0) print "OK Object created with id ".$idobject."\n";
-	else
-	{
+	else {
 		$error++;
-		dol_print_error($db,$obj->error);
+		dol_print_error($db, $obj->error);
 	}
-}
-else if ($obj->error == 'ErrorLoginAlreadyExists')
+} elseif ($obj->error == 'ErrorLoginAlreadyExists')
 {
      print "User with login ".$obj->login." already exists\n";
-}
-else
-{
+} else {
 	$error++;
-	dol_print_error($db,$obj->error);
+	dol_print_error($db, $obj->error);
 }
 
 
@@ -97,9 +93,7 @@ if (! $error)
 {
 	$db->commit();
 	print '--- end ok'."\n";
-}
-else
-{
+} else {
 	print '--- end error code='.$error."\n";
 	$db->rollback();
 }

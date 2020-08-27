@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ecm
-ECMNbOfDocs=Broj dokumenata u direktoriju
+ECMNbOfDocs=No. of documents in directory
 ECMSection=Direktorij
 ECMSectionManual=Ručni direktorij
 ECMSectionAuto=Automatski direktorij
@@ -34,6 +34,8 @@ ECMDocsByProjects=Dokumenti vezani za projekte
 ECMDocsByUsers=Dokumenti povezani s korisnicima
 ECMDocsByInterventions=Documents linked to interventions
 ECMDocsByExpenseReports=Documents linked to expense reports
+ECMDocsByHolidays=Documents linked to holidays
+ECMDocsBySupplierProposals=Documents linked to supplier proposals
 ECMNoDirectoryYet=Nema kreiranih direktorija
 ShowECMSection=Prikaži direktorij
 DeleteSection=Ukloni direktorij
@@ -46,6 +48,5 @@ ECMSelectASection=Select a directory in the tree...
 DirNotSynchronizedSyncFirst=This directory seems to be created or modified outside ECM module. You must click on "Resync" button first to synchronize disk and database to get content of this directory.
 ReSyncListOfDir=Resync list of directories
 HashOfFileContent=Hash of file content
-FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)
-FileSharedViaALink=File shared via a link
 NoDirectoriesFound=No directories found
+FileNotYetIndexedInDatabase=File not yet indexed into database (try to re-upload it)

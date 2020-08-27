@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class UserGroupTest extends PHPUnit_Framework_TestCase
+class UserGroupTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,9 +57,11 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
      *
      * @return UserGroupTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -71,7 +73,11 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -80,7 +86,11 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -117,7 +127,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupCreate
-     * 
+     *
      * @return	void
      */
     public function testUserGroupCreate()
@@ -139,7 +149,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupFetch
-     * 
+     *
      * @param   int $id             Id of group
      * @return  void
      * @depends testUserGroupCreate
@@ -163,7 +173,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupUpdate
-     * 
+     *
      * @param   Object $localobject Group
      * @return  void
      * @depends testUserGroupFetch
@@ -187,7 +197,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupAddRight
-     * 
+     *
      * @param   Object $localobject Object to show
      * @return  void
      * @depends testUserGroupUpdate
@@ -201,7 +211,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->addrights(1,'bookmarks');
+        $result=$localobject->addrights(1, 'bookmarks');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         $this->assertLessThan($result, 0);
@@ -210,7 +220,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupDelRight
-     * 
+     *
      * @param   Object $localobject Object
      * @return  void
      * @depends testUserGroupAddRight
@@ -224,7 +234,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $result=$localobject->delrights(1,'bookmarks');
+        $result=$localobject->delrights(1, 'bookmarks');
         print __METHOD__." id=".$localobject->id." result=".$result."\n";
 
         $this->assertLessThan($result, 0);
@@ -233,7 +243,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupOther
-     * 
+     *
      * @param   Object $localobject Object
      * @return  void
      * @depends testUserGroupDelRight
@@ -261,7 +271,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupDelete
-     * 
+     *
      * @param   int $id             Id of object
      * @return  void
      * @depends testUserGroupOther
@@ -277,11 +287,10 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
         $localobject=new UserGroup($this->savdb);
         $result=$localobject->fetch($id);
-        $result=$localobject->delete($id);
+        $result=$localobject->delete($user);
 
         print __METHOD__." id=".$id." result=".$result."\n";
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

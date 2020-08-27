@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2011 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -36,24 +36,29 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
-     *  @param  integer	$maxfilenamelength  Max length of value to show
-     *  @return	array						List of templates
+	 *  @param  DoliDB  $db                 Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return array                       List of templates
 	 */
-	static function liste_modeles($db,$maxfilenamelength=0)
+	public static function liste_modeles($db, $maxfilenamelength = 0)
 	{
+		// phpcs:enable
 		global $conf;
 
-		$type='delivery';
-		$liste=array();
+		$type = 'delivery';
+		$liste = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
 	}
@@ -62,19 +67,22 @@ abstract class ModelePDFDeliveryOrder extends CommonDocGenerator
 
 
 /**
- *	\class      ModeleNumRefDeliveryOrder
- *	\brief      Classe mere des modeles de numerotation des references de bon de livraison
+ *  \class      ModeleNumRefDeliveryOrder
+ *  \brief      Classe mere des modeles de numerotation des references de bon de livraison
  */
 abstract class ModeleNumRefDeliveryOrder
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 	/**
 	 * Return if a module can be used or not
 	 *
-	 * @return		boolean     true if module can be used
+	 * @return      boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -84,7 +92,7 @@ abstract class ModeleNumRefDeliveryOrder
 	 *
 	 * @return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 		$langs->load("deliveries");
@@ -92,11 +100,11 @@ abstract class ModeleNumRefDeliveryOrder
 	}
 
 	/**
-	 * Renvoi un exemple de numerotation
+	 * Return an example of numbering
 	 *
 	 * @return     string      Example
 	 */
-	function getExample()
+	public function getExample()
 	{
 		global $langs;
 		$langs->load("deliveries");
@@ -104,12 +112,12 @@ abstract class ModeleNumRefDeliveryOrder
 	}
 
 	/**
-	 * Test si les numeros deja en vigueur dans la base ne provoquent pas d
-	 * de conflits qui empechera cette numerotation de fonctionner.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 * @return     boolean     false si conflit, true si ok
+	 * @return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		return true;
 	}
@@ -117,11 +125,11 @@ abstract class ModeleNumRefDeliveryOrder
 	/**
 	 * Renvoi prochaine valeur attribuee
 	 *
-	 *	@param	Societe		$objsoc     	Object third party
-	 *  @param  Object		$object			Object delivery
-	 *	@return	string						Valeur
+	 *	@param  Societe     $objsoc         Object third party
+	 *  @param  Object      $object         Object delivery
+	 *	@return string                      Valeur
 	 */
-	function getNextValue($objsoc, $object)
+	public function getNextValue($objsoc, $object)
 	{
 		global $langs;
 		return $langs->trans("NotAvailable");
@@ -132,15 +140,15 @@ abstract class ModeleNumRefDeliveryOrder
 	 *
 	 * @return     string      Valeur
 	 */
-	function getVersion()
+	public function getVersion()
 	{
 		global $langs;
 		$langs->load("admin");
 
 		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
-		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-		if ($this->version == 'dolibarr') return DOL_VERSION;
-		if ($this->version) return $this->version;
-		return $langs->trans("NotAvailable");
+		elseif ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("NotAvailable");
 	}
 }

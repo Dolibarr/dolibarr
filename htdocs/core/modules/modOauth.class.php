@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /** \defgroup   oauth     Module oauth
@@ -25,7 +25,7 @@
  *  \ingroup    oauth
  *  \brief      File of class to describe and activate module Oauth
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 
@@ -40,19 +40,19 @@ class modOauth extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function  __construct($db)
+    public function __construct($db)
     {
-        $this->db = $db ;
+        $this->db = $db;
         $this->numero = 66000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
         $this->family = "interface";
-        $this->module_position = 510;
+        $this->module_position = '31';
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable OAuth authentication";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.
@@ -67,12 +67,12 @@ class modOauth extends DolibarrModules
         $this->config_page_url = array("oauth.php");
 
         // Dependencies
-        $this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
-		$this->phpmin = array(5,4);		// Minimum version of PHP required by module                    // Minimum version of PHP required by module
-        $this->need_dolibarr_version = array(3,7,-2);   // Minimum version of Dolibarr required by module
+        $this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
+		$this->phpmin = array(5, 4); // Minimum version of PHP required by module                    // Minimum version of PHP required by module
+        $this->need_dolibarr_version = array(3, 7, -2); // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("oauth");
 
@@ -86,7 +86,7 @@ class modOauth extends DolibarrModules
         $this->rights = array();
         $this->rights_class = 'oauth';
 
-        $r=0;
+        $r = 0;
         // $this->rights[$r][0]     Id permission (unique tous modules confondus)
         // $this->rights[$r][1]     Libelle par defaut si traduction de cle "PermissionXXX" non trouvee (XXX = Id permission)
         // $this->rights[$r][2]     Non utilise
@@ -102,8 +102,8 @@ class modOauth extends DolibarrModules
         $this->rights[$r][4] = 'read';*/
 
         // Main menu entries
-        $this->menus = array();         // List of menus to add
-        $r=0;
+        $this->menus = array(); // List of menus to add
+        $r = 0;
 
         // This is to declare the Top Menu entry:
         //$this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu
@@ -119,8 +119,6 @@ class modOauth extends DolibarrModules
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
 
         //$r++;
-
-
     }
 
 
@@ -132,7 +130,7 @@ class modOauth extends DolibarrModules
      *      @param      string  $options    Options when enabling module ('', 'noboxes')
      *      @return     int                 1 if OK, 0 if KO
      */
-    function init($options='')
+    public function init($options = '')
     {
         global $conf;
 

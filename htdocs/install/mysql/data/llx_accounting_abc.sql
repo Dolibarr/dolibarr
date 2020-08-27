@@ -3,10 +3,11 @@
 -- Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
--- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
+-- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2018      Abbes bahfir         <dolipar@dolipar.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see <http://www.gnu.org/licenses/>.
+-- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 --
 
@@ -29,13 +30,13 @@
 --
 
 
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT', 'ACCOUNTING_SELL_JOURNAL',           2, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC', 'ACCOUNTING_PURCHASE_JOURNAL',       3, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ', 'FinanceJournal',           4, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD', 'ACCOUNTING_MISCELLANEOUS_JOURNAL',          1, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN', 'ACCOUNTING_HAS_NEW_JOURNAL',        9, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER', 'ExpenseReportsJournal', 5, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal'    , 8, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT',  'ACCOUNTING_SELL_JOURNAL',          2, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC',  'ACCOUNTING_PURCHASE_JOURNAL',      3, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ',  'FinanceJournal',                   4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD',  'ACCOUNTING_MISCELLANEOUS_JOURNAL', 1, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN',  'ACCOUNTING_HAS_NEW_JOURNAL',       9, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER',  'ExpenseReportsJournal',            5, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal',                 8, 1, 1);
 
 
 -- Description of chart of account FR PCG99-ABREGE
@@ -44,6 +45,10 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-BASE', 'The base accountancy french plan', 1);
 -- Description of chart of account FR PCG14-DEV
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
+-- Description of chart of account FR PCG18-ASSOC
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG18-ASSOC', 'French foundation chart of accounts 2018', 1);
+-- Description of chart of account FR PCGAFR14-DEV 
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCGAFR14-DEV', 'The developed farm accountancy french plan 2014', 1);
 
 -- Description of chart of account BE PCMN-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  2, 'PCMN-BASE', 'The base accountancy belgium plan', 1);
@@ -64,6 +69,9 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account TN PCT
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 10, 'PCT', 'The Tunisia plan', 1);
 
+-- Description of chart of account AT AT-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 41, 'AT-BASE', 'Plan Austria', 1);
+
 -- Description of chart of account CL CL-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 67, 'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
 
@@ -75,6 +83,12 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account MA PCG
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 12, 'PCG', 'The Moroccan chart of accounts', 1);
+
+-- Description of chart of account SE BAS-K1-MINI
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 20, 'BAS-K1-MINI', 'The Swedish mini chart of accounts', 1);
+
+
+--DELETE FROM llx_accounting_system WHERE pcg_version = 'SYSCOHADA';
 
 -- Description of chart of account BJ SYSCOHADA
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA-BJ', 'Plan comptable Ouest-Africain', 1);
@@ -124,3 +138,11 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account RO RO-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  188, 'RO-BASE', 'Plan de conturi romanesc', 1);
 
+-- Description of chart of account DZ NSCF
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  13, 'NSCF', 'Nouveau système comptable financier', 1);
+
+-- Description of chart of account NL NL-VERKORT
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  17, 'NL-VERKORT', 'Verkort rekeningschema', 1);
+
+-- Description of chart of account EC EC-SUPERCIAS
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  84, 'EC-SUPERCIAS', 'Plan de cuentas Ecuador', 1);

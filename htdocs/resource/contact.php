@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2012  Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2009  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
@@ -16,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -34,16 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array('resource', 'sendings', 'companies'));
 
-$id = GETPOST('id','int');
-$ref = GETPOST('ref','alpha');
-$action = GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'resource', $id, 'resource');
 
 $object = new DolResource($db);
-$result = $object->fetch($id,$ref);
+$result = $object->fetch($id, $ref);
 
 
 /*
@@ -52,19 +52,17 @@ $result = $object->fetch($id,$ref);
 
 if ($action == 'addcontact' && $user->rights->resource->write)
 {
-    if ($result > 0 && $id > 0)
-    {
-    	$contactid = (GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('contactid','int'));
-  		$result = $object->add_contact($contactid, GETPOST('type','int'), GETPOST('source','alpha'));
-    }
+	if ($result > 0 && $id > 0)
+	{
+		$contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+  		$result = $object->add_contact($contactid, GETPOST('type', 'int'), GETPOST('source', 'alpha'));
+	}
 
 	if ($result >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$mesg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -77,22 +75,21 @@ if ($action == 'addcontact' && $user->rights->resource->write)
 }
 
 // Toggle the status of a contact
-else if ($action == 'swapstatut' && $user->rights->resource->write)
+elseif ($action == 'swapstatut' && $user->rights->resource->write)
 {
-    $result=$object->swapContactStatus(GETPOST('ligne','int'));
+	$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
 }
 
 // Erase a contact
-else if ($action == 'deletecontact' && $user->rights->resource->write)
+elseif ($action == 'deletecontact' && $user->rights->resource->write)
 {
-	$result = $object->delete_contact(GETPOST('lineid','int'));
+	$result = $object->delete_contact(GETPOST('lineid', 'int'));
 
 	if ($result >= 0)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -104,14 +101,14 @@ else if ($action == 'deletecontact' && $user->rights->resource->write)
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$contactstatic=new Contact($db);
-$userstatic=new User($db);
+$contactstatic = new Contact($db);
+$userstatic = new User($db);
 
-llxHeader('',$langs->trans("Resource"));
+llxHeader('', $langs->trans("Resource"));
 
 // Mode vue et edition
 
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
 	$soc = new Societe($db);
 	$soc->fetch($object->socid);
@@ -121,11 +118,11 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_head($head, 'contact', $langs->trans("ResourceSingular"), -1, 'resource');
 
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/resource/list.php'.(!empty($socid) ? '?id='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 
-	$morehtmlref='<div class="refidno">';
-	$morehtmlref.='</div>';
+	$morehtmlref = '<div class="refidno">';
+	$morehtmlref .= '</div>';
 
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -137,11 +134,11 @@ if ($id > 0 || ! empty($ref))
 
 	// Object
 
-	print '<table width="100%" class="border">';
+	print '<table class="border tableforfield centpercent">';
 
 	// Resource type
 	print '<tr>';
-	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
+	print '<td class="titlefield">'.$langs->trans("ResourceType").'</td>';
 	print '<td>';
 	print $object->type_label;
 	print '</td>';
@@ -154,10 +151,10 @@ if ($id > 0 || ! empty($ref))
 
 	print '<br>';
 
-	if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser=1;
-	if (! empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty=1;
+	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER))     $hideaddcontactforuser = 1;
+	if (!empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)) $hideaddcontactforthirdparty = 1;
 
-	$permission=1;
+	$permission = 1;
 	// Contacts lines
 	include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 }

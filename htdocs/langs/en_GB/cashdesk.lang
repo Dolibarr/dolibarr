@@ -6,4 +6,5 @@ NewSell=New sale
 RestartSelling=Go back to sales
 NoProductFound=No product found
 NoArticle=No product
-UserNeedPermissionToEditStockToUsePos=You ask to decrease stock on invoice creation, so users that use POS need to have permission to edit stock.
+NumberOfLinesToShow=Number of lines to show in image box
+DefineTablePlan=Define table plan

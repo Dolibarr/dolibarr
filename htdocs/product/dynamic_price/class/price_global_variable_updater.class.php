@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,30 +29,60 @@
  */
 class PriceGlobalVariableUpdater
 {
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
-    var $types=array(0, 1);				//!< Updater types
-    var $update_min = 5;				//!< Minimal update rate
-    var $id;
-    var $type;
-    var $description;
-    var $parameters;
-    var $fk_variable;
-    var $update_interval;				//!< Interval in mins
-    var $next_update;					//!< Next update timestamp
-    var $last_status;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    public $types = array(0, 1); //!< Updater types
+    public $update_min = 5; //!< Minimal update rate
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    public $type;
+
+    /**
+     * @var string description
+     */
+    public $description;
+
+    public $parameters;
+
+    /**
+     * @var int ID
+     */
+    public $fk_variable;
+
+    public $update_interval; //!< Interval in mins
+    public $next_update; //!< Next update timestamp
+    public $last_status;
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element = "c_price_global_variable_updater";
 
     /**
      *  Constructor
      *
-     *  @param	DoliDb		$db      Database handler
+     *  @param  DoliDb      $db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -63,36 +93,36 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         $this->checkParameters();
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
-        $sql.= "type, description, parameters, fk_variable, update_interval, next_update, last_status";
-        $sql.= ") VALUES (";
-        $sql.= " ".$this->type.",";
-        $sql.= " ".(isset($this->description)?"'".$this->db->escape($this->description)."'":"''").",";
-        $sql.= " ".(isset($this->parameters)?"'".$this->db->escape($this->parameters)."'":"''").",";
-        $sql.= " ".$this->fk_variable.",";
-        $sql.= " ".$this->update_interval.",";
-        $sql.= " ".$this->next_update.",";
-        $sql.= " ".(isset($this->last_status)?"'".$this->db->escape($this->last_status)."'":"''");
-        $sql.= ")";
+        $sql .= "type, description, parameters, fk_variable, update_interval, next_update, last_status";
+        $sql .= ") VALUES (";
+        $sql .= " ".$this->type.",";
+        $sql .= " ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
+        $sql .= " ".(isset($this->parameters) ? "'".$this->db->escape($this->parameters)."'" : "''").",";
+        $sql .= " ".$this->fk_variable.",";
+        $sql .= " ".$this->update_interval.",";
+        $sql .= " ".$this->next_update.",";
+        $sql .= " ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
+        $sql .= ")";
 
         $this->db->begin();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        if (! $error)
+        if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-            if (! $notrigger)
+            if (!$notrigger)
             {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
@@ -107,16 +137,14 @@ class PriceGlobalVariableUpdater
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -129,38 +157,34 @@ class PriceGlobalVariableUpdater
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT type, description, parameters, fk_variable, update_interval, next_update, last_status";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE rowid = ".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " WHERE rowid = ".$id;
 
         dol_syslog(__METHOD__);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id				= $id;
-                $this->type				= $obj->type;
+                $this->id = $id;
+                $this->type = $obj->type;
                 $this->description		= $obj->description;
-                $this->parameters		= $obj->parameters;
+                $this->parameters = $obj->parameters;
                 $this->fk_variable		= $obj->fk_variable;
-                $this->update_interval	= $obj->update_interval;
+                $this->update_interval = $obj->update_interval;
                 $this->next_update		= $obj->next_update;
                 $this->last_status		= $obj->last_status;
                 $this->checkParameters();
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
-            $this->error="Error ".$this->db->lasterror();
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -172,56 +196,54 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    public function update($user = 0, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         $this->checkParameters();
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= " type = ".$this->type.",";
-        $sql.= " description = ".(isset($this->description)?"'".$this->db->escape($this->description)."'":"''").",";
-        $sql.= " parameters = ".(isset($this->parameters)?"'".$this->db->escape($this->parameters)."'":"''").",";
-        $sql.= " fk_variable = ".$this->fk_variable.",";
-        $sql.= " update_interval = ".$this->update_interval.",";
-        $sql.= " next_update = ".$this->next_update.",";
-        $sql.= " last_status = ".(isset($this->last_status)?"'".$this->db->escape($this->last_status)."'":"''");
-        $sql.= " WHERE rowid = ".$this->id;
+        $sql .= " type = ".$this->type.",";
+        $sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
+        $sql .= " parameters = ".(isset($this->parameters) ? "'".$this->db->escape($this->parameters)."'" : "''").",";
+        $sql .= " fk_variable = ".$this->fk_variable.",";
+        $sql .= " update_interval = ".$this->update_interval.",";
+        $sql .= " next_update = ".$this->next_update.",";
+        $sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
+        $sql .= " WHERE rowid = ".$this->id;
 
         $this->db->begin();
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
 
-                //// Call triggers
-                //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-                //// End call triggers
-             }
-        }
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
 
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -235,16 +257,16 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
-    function delete($rowid, $user, $notrigger=0)
+    public function delete($rowid, $user, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         $this->db->begin();
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
+        //if (! $error)
+        //{
+        //    if (! $notrigger)
+        //    {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
 
@@ -252,32 +274,30 @@ class PriceGlobalVariableUpdater
                 //$result=$this->call_trigger('MYOBJECT_DELETE',$user);
                 //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
                 //// End call triggers
-            }
-        }
+        //    }
+        //}
 
-        if (! $error)
+        if (!$error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " WHERE rowid = ".$rowid;
+            $sql .= " WHERE rowid = ".$rowid;
 
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
         }
 
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -289,24 +309,24 @@ class PriceGlobalVariableUpdater
      *
      *	@return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
-        $this->id=0;
-        $this->type=0;
-        $this->description='';
-        $this->parameters='';
-        $this->fk_variable=0;
-        $this->update_interval=0;
-        $this->next_update=0;
-        $this->last_status='';
+        $this->id = 0;
+        $this->type = 0;
+        $this->description = '';
+        $this->parameters = '';
+        $this->fk_variable = 0;
+        $this->update_interval = 0;
+        $this->next_update = 0;
+        $this->last_status = '';
     }
 
     /**
-     *	Returns the last updated time in string html format, returns "never" if its less than 1
+     *  Returns the last updated time in string html format, returns "never" if its less than 1
      *
-     *	@return	string
+     *  @return	string
      */
-    function getLastUpdated()
+    public function getLastUpdated()
     {
         global $langs;
         $last = $this->next_update - ($this->update_interval * 60);
@@ -322,18 +342,18 @@ class PriceGlobalVariableUpdater
      *
      *	@return	void
      */
-    function checkParameters()
+    public function checkParameters()
     {
         // Clean parameters
-        if (isset($this->description)) $this->description=trim($this->description);
-        if (isset($this->parameters)) $this->parameters=trim($this->parameters);
-        else $this->parameters="";
-        if (isset($this->last_status)) $this->last_status=trim($this->last_status);
+        if (isset($this->description)) $this->description = trim($this->description);
+        if (isset($this->parameters)) $this->parameters = trim($this->parameters);
+        else $this->parameters = "";
+        if (isset($this->last_status)) $this->last_status = trim($this->last_status);
 
         // Check parameters
-        if (empty($this->type) || !is_numeric($this->type) || !in_array($this->type, $this->types)) $this->type=0;
-        if (empty($this->update_interval) || !is_numeric($this->update_interval) || $this->update_interval < 1) $this->update_interval=$this->update_min;
-        if (empty($this->next_update) || !is_numeric($this->next_update) || $this->next_update < 0) $this->next_update=0;
+        if (empty($this->type) || !is_numeric($this->type) || !in_array($this->type, $this->types)) $this->type = 0;
+        if (empty($this->update_interval) || !is_numeric($this->update_interval) || $this->update_interval < 1) $this->update_interval = $this->update_min;
+        if (empty($this->next_update) || !is_numeric($this->next_update) || $this->next_update < 0) $this->next_update = 0;
     }
 
     /**
@@ -341,13 +361,13 @@ class PriceGlobalVariableUpdater
      *
      *  @return	array				Array of price global variable updaters
      */
-    function listUpdaters()
+    public function listUpdaters()
     {
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $retarray = array();
@@ -355,24 +375,22 @@ class PriceGlobalVariableUpdater
             while ($record = $this->db->fetch_array($resql))
             {
                 $updater_obj = new PriceGlobalVariableUpdater($this->db);
-                $updater_obj->id				= $record["rowid"];
-                $updater_obj->type				= $record["type"];
+                $updater_obj->id = $record["rowid"];
+                $updater_obj->type = $record["type"];
                 $updater_obj->description		= $record["description"];
-                $updater_obj->parameters		= $record["parameters"];
+                $updater_obj->parameters = $record["parameters"];
                 $updater_obj->fk_variable		= $record["fk_variable"];
-                $updater_obj->update_interval	= $record["update_interval"];
+                $updater_obj->update_interval = $record["update_interval"];
                 $updater_obj->next_update		= $record["next_update"];
                 $updater_obj->last_status		= $record["last_status"];
                 $updater_obj->checkParameters();
-                $retarray[]=$updater_obj;
+                $retarray[] = $updater_obj;
             }
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
-            $this->error=$this->db->error();
+        } else {
+            $this->error = $this->db->error();
             return -1;
         }
     }
@@ -382,14 +400,14 @@ class PriceGlobalVariableUpdater
      *
      *  @return	array				Array of price global variable updaters
      */
-    function listPendingUpdaters()
+    public function listPendingUpdaters()
     {
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE next_update < ".dol_now();
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " WHERE next_update < ".dol_now();
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $retarray = array();
@@ -397,34 +415,32 @@ class PriceGlobalVariableUpdater
             while ($record = $this->db->fetch_array($resql))
             {
                 $updater_obj = new PriceGlobalVariableUpdater($this->db);
-                $updater_obj->id				= $record["rowid"];
-                $updater_obj->type				= $record["type"];
+                $updater_obj->id = $record["rowid"];
+                $updater_obj->type = $record["type"];
                 $updater_obj->description		= $record["description"];
-                $updater_obj->parameters		= $record["parameters"];
+                $updater_obj->parameters = $record["parameters"];
                 $updater_obj->fk_variable		= $record["fk_variable"];
-                $updater_obj->update_interval	= $record["update_interval"];
+                $updater_obj->update_interval = $record["update_interval"];
                 $updater_obj->next_update		= $record["next_update"];
                 $updater_obj->last_status		= $record["last_status"];
                 $updater_obj->checkParameters();
-                $retarray[]=$updater_obj;
+                $retarray[] = $updater_obj;
             }
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
-            $this->error=$this->db->error();
+        } else {
+            $this->error = $this->db->error();
             return -1;
         }
     }
 
     /**
-     *	Handles the processing of this updater
+     *  Handles the processing of this updater
      *
      *  @return	int					 <0 if KO, 0 if OK but no global variable found, >0 if OK
      */
-    function process()
+    public function process()
     {
         global $langs, $user;
         $langs->load("errors");
@@ -467,9 +483,9 @@ class PriceGlobalVariableUpdater
             if ($this->type == 0) {
                 // Call JSON request
                 include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
-                $tmpresult=getURLContent($url);
-                $code=$tmpresult['http_code'];
-                $result=$tmpresult['content'];
+                $tmpresult = getURLContent($url);
+                $code = $tmpresult['http_code'];
+                $result = $tmpresult['content'];
 
                 if (!isset($result)) {
                     $this->error = $langs->trans("ErrorGlobalVariableUpdater0", "empty response");
@@ -502,9 +518,9 @@ class PriceGlobalVariableUpdater
                 //SOAP client
                 require_once NUSOAP_PATH.'/nusoap.php';
                 $soap_client = new nusoap_client($url);
-                $soap_client->soap_defencoding='UTF-8';
+                $soap_client->soap_defencoding = 'UTF-8';
                 $soap_client->decodeUTF8(false);
-                $result = $soap_client->call($method, $data, $ns,'');
+                $result = $soap_client->call($method, $data, $ns, '');
 
                 //Check if result is a error
                 if ($result === false) {
@@ -530,6 +546,7 @@ class PriceGlobalVariableUpdater
         return 1;
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update next_update into database
      *
@@ -538,42 +555,42 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_next_update($next_update, $user=0, $notrigger=0)
+    public function update_next_update($next_update, $user = 0, $notrigger = 0)
     {
-        $error=0;
+        // phpcs:enable
+        $error = 0;
 
         $this->next_update = $next_update;
         $this->checkParameters();
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= " next_update = ".$this->next_update;
-        $sql.= " WHERE rowid = ".$this->id;
+        $sql .= " next_update = ".$this->next_update;
+        $sql .= " WHERE rowid = ".$this->id;
 
         $this->db->begin();
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return 1;
         }
     }
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Update last_status into database
      *
@@ -582,37 +599,36 @@ class PriceGlobalVariableUpdater
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update_status($last_status, $user=0, $notrigger=0)
+    public function update_status($last_status, $user = 0, $notrigger = 0)
     {
-        $error=0;
+        // phpcs:enable
+        $error = 0;
 
         $this->last_status = $last_status;
         $this->checkParameters();
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= " last_status = ".(isset($this->last_status)?"'".$this->db->escape($this->last_status)."'":"''");
-        $sql.= " WHERE rowid = ".$this->id;
+        $sql .= " last_status = ".(isset($this->last_status) ? "'".$this->db->escape($this->last_status)."'" : "''");
+        $sql .= " WHERE rowid = ".$this->id;
 
         $this->db->begin();
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return 1;
         }

@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -24,7 +24,7 @@
  *	\brief      Fichier de description et activation du module externalrss
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -38,7 +38,7 @@ class modExternalRss extends DolibarrModules
 	 *
 	 *   @param      DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
 		global $conf;
 
@@ -47,12 +47,12 @@ class modExternalRss extends DolibarrModules
 
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		$this->description = "Ajout de files d'informations RSS dans les ecrans Dolibarr";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->picto='rss';
+		$this->picto = 'rss';
 
 		// Data directories to create when module is enabled
 		$this->dirs = array("/externalrss/temp");
@@ -63,7 +63,7 @@ class modExternalRss extends DolibarrModules
 		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
-		$this->phpmin = array(4,2,0);
+		$this->phpmin = array(4, 2, 0);
 		$this->phpmax = array();
 
 		// Constants
@@ -86,23 +86,23 @@ class modExternalRss extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
-	function init($options='')
+	public function init($options = '')
 	{
 		global $conf;
 
 		$sql = array();
 
 		// Recherche configuration de boites
-		$this->boxes=array();
-		$sql="select name, value from ".MAIN_DB_PREFIX."const";
-		$sql.= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
-		$sql.= " AND entity = ".$conf->entity;
-		$result=$this->db->query($sql);
+		$this->boxes = array();
+		$sql = "select name, value from ".MAIN_DB_PREFIX."const";
+		$sql .= " WHERE name like 'EXTERNAL_RSS_TITLE_%'";
+		$sql .= " AND entity = ".$conf->entity;
+		$result = $this->db->query($sql);
 		if ($result)
 		{
 			while ($obj = $this->db->fetch_object($result))
 			{
-				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i',$obj->name,$reg))
+				if (preg_match('/EXTERNAL_RSS_TITLE_([0-9]+)/i', $obj->name, $reg))
 				{
 					// Definie la boite si on a trouvee une ancienne configuration
 					//$this->boxes[$reg[1]][0] = "(ExternalRSSInformations)";
@@ -115,7 +115,7 @@ class modExternalRss extends DolibarrModules
 
 		$sql = array();
 
-		return $this->_init($sql,$options);
+		return $this->_init($sql, $options);
 	}
 
     /**
@@ -126,14 +126,13 @@ class modExternalRss extends DolibarrModules
      *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
      */
-    function remove($options='')
+    public function remove($options = '')
     {
 		$sql = array();
 
 		// Delete old declarations of RSS box
 		$this->boxes[0]['file'] = "box_external_rss.php";
 
-		return $this->_remove($sql,$options);
+		return $this->_remove($sql, $options);
     }
-
 }

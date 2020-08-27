@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -45,7 +45,7 @@ $conf->global->MAIN_UMASK = '0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
+class RestAPIDocumentTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -62,6 +62,8 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
      */
     public function __construct()
     {
+        parent::__construct();
+
         //$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf = $conf;
@@ -74,7 +76,11 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         echo "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -83,7 +89,11 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         echo __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -94,6 +104,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
 
     /**
      * Init phpunit tests.
+     * @return void
      */
     protected function setUp()
     {
@@ -125,6 +136,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
 
     /**
      * End phpunit tests.
+     * @return void
      */
     protected function tearDown()
     {
@@ -145,7 +157,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         echo __METHOD__.' Request POST url='.$url."\n";
 
 
-        // Send to non existant directory
+        // Send to non existent directory
 
         dol_delete_dir_recursive(DOL_DATA_ROOT.'/medias/tmpphpunit');
 
@@ -167,7 +179,7 @@ class RestAPIDocumentTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('401', $object['error']['code']);
 
 
-        // Send to existant directory
+        // Send to existent directory
 
         dol_mkdir(DOL_DATA_ROOT.'/medias/tmpphpunit/tmpphpunit2');
 

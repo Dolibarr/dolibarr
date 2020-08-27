@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 // Create the autoloader for Luracast
@@ -47,7 +47,7 @@ class DolibarrApiAccess implements iAuthenticate
 	/**
 	 * @var array $requires	role required by API method		user / external / admin
 	 */
-	public static $requires = array('user','external','admin');
+	public static $requires = array('user', 'external', 'admin');
 
 	/**
 	 * @var string $role		user role
@@ -59,16 +59,18 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public static $user = '';
 
-    // @codingStandardsIgnoreStart
-
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * Check access
 	 *
 	 * @return bool
-	 * @throws RestException
+	 *
+	 * @throws RestException 401 Forbidden
+	 * @throws RestException 503 Technical error
 	 */
 	public function __isAllowed()
 	{
+        // phpcs:enable
 		global $conf, $db;
 
 		$login = '';
@@ -91,11 +93,11 @@ class DolibarrApiAccess implements iAuthenticate
 		if (isset($_GET['DOLAPIKEY']))
 		{
 		    // TODO Add option to disable use of api key on url. Return errors if used.
-		    $api_key = $_GET['DOLAPIKEY'];                     // With GET method
+		    $api_key = $_GET['DOLAPIKEY']; // With GET method
 		}
 		if (isset($_SERVER['HTTP_DOLAPIKEY']))         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
 		{
-		    $api_key = $_SERVER['HTTP_DOLAPIKEY'];     // With header method (recommanded)
+		    $api_key = $_SERVER['HTTP_DOLAPIKEY']; // With header method (recommanded)
 		}
 
 		if ($api_key)
@@ -103,9 +105,9 @@ class DolibarrApiAccess implements iAuthenticate
 			$userentity = 0;
 
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
-			$sql.= " u.tms as date_modification, u.entity";
-			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql.= " WHERE u.api_key = '".$db->escape($api_key)."'";
+			$sql .= " u.tms as date_modification, u.entity";
+			$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+			$sql .= " WHERE u.api_key = '".$db->escape($api_key)."'";
 			// TODO Check if 2 users has same API key.
 
 			$result = $db->query($sql);
@@ -118,16 +120,15 @@ class DolibarrApiAccess implements iAuthenticate
 					$stored_key = $obj->api_key;
 					$userentity = $obj->entity;
 
-					if (! defined("DOLENTITY") && $conf->entity != ($obj->entity?$obj->entity:1))		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
+					if (!defined("DOLENTITY") && $conf->entity != ($obj->entity ? $obj->entity : 1))		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
 					{
-						$conf->entity = ($obj->entity?$obj->entity:1);
+						$conf->entity = ($obj->entity ? $obj->entity : 1);
 						// We must also reload global conf to get params from the entity
-						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity .") and we have to reload configuration.", LOG_WARNING);
+						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity.") and we have to reload configuration.", LOG_WARNING);
 						$conf->setValues($db);
 					}
 				}
-			}
-			else {
+			} else {
 				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
 			}
 
@@ -136,56 +137,54 @@ class DolibarrApiAccess implements iAuthenticate
 				return false;
 			}
 
-			if (! $login)
+			if (!$login)
 			{
 			    throw new RestException(503, 'Error when searching login user from api key');
 			}
 			$fuser = new User($db);
-			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity));	// If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
+			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity)); // If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
 			if ($result <= 0) {
 				throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');
 			}
 			$fuser->getrights();
 			static::$user = $fuser;
 
-			if($fuser->societe_id)
+			if ($fuser->socid) {
 				static::$role = 'external';
+            }
 
-			if($fuser->admin)
+			if ($fuser->admin) {
 				static::$role = 'admin';
-        }
-		else
-		{
+            }
+        } else {
 		    throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 
 	    $userClass::setCacheIdentifier(static::$role);
 	    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
 	    $requirefortest = static::$requires;
-	    if (! is_array($requirefortest)) $requirefortest=explode(',',$requirefortest);
+	    if (!is_array($requirefortest)) $requirefortest = explode(',', $requirefortest);
 	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName
 	/**
 	 * @return string string to be used with WWW-Authenticate header
-	 * @example Basic
-	 * @example Digest
-	 * @example OAuth
 	 */
-	public function __getWWWAuthenticateString()
+    public function __getWWWAuthenticateString()
     {
+        // phpcs:enable
         return '';
     }
-    // @codingStandardsIgnoreEnd
 
-	/**
-	 * Verify access
-	 *
-	 * @param   array $m Properties of method
-	 *
-	 * @access private
-	 * @return bool
-	 */
+    /**
+     * Verify access
+     *
+     * @param   array $m Properties of method
+     *
+     * @access private
+     * @return bool
+     */
     public static function verifyAccess(array $m)
     {
         $requires = isset($m['class']['DolibarrApiAccess']['properties']['requires'])
@@ -196,6 +195,5 @@ class DolibarrApiAccess implements iAuthenticate
         return $requires
             ? static::$role == 'admin' || in_array(static::$role, (array) $requires)
             : true;
-
     }
 }

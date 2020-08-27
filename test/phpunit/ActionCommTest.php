@@ -12,8 +12,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class ActionCommTest extends PHPUnit_Framework_TestCase
+class ActionCommTest extends PHPUnit\Framework\TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -57,9 +57,11 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
      *
      * @return ActionCommTest
      */
-    function __construct()
+    public function __construct()
     {
-        //$this->sharedFixture
+    	parent::__construct();
+
+    	//$this->sharedFixture
         global $conf,$user,$langs,$db;
         $this->savconf=$conf;
         $this->savuser=$user;
@@ -71,7 +73,11 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -82,7 +88,11 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -138,7 +148,7 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
         $localobject->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
         $localobject->code        = 'AC_PHPUNITTEST';
         $localobject->label       = 'This is a description';
-        $localobject->note        = 'This is note';
+        $localobject->note_private = 'This is note';
         $localobject->fk_project  = 0;
         $localobject->datep       = $now;
         $localobject->datef       = $now;
@@ -213,7 +223,7 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
     	$result=$localobject->update($user);
 
     	$this->assertLessThan($result, 0);
-    	print __METHOD__." id=".$id." result=".$result."\n";
+    	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	return $localobject->id;
     }
 
@@ -242,5 +252,4 @@ class ActionCommTest extends PHPUnit_Framework_TestCase
         $this->assertLessThan($result, 0);
         return $result;
     }
-
 }

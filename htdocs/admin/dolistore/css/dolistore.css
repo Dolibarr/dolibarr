@@ -6,10 +6,10 @@ div.divsearchfield {
 }
 
 .margeCoteGauche,.margeCote{
-    padding-right: 20px!important;   
+    padding-right: 20px!important;
 }
 .margeCote,.margeCoteDroite{
-    padding-left: 20px!important;    
+    padding-left: 20px!important;
 }
 .nomargesupinf{
     margin-top: 0;
@@ -26,13 +26,13 @@ div.divsearchfield {
     width: 100%;
 }
 .tree{
-    margin: 0px 0px 0px 0px; 
+    margin: 0px 0px 0px 0px;
     padding:0px;
     list-style: none; line-height: 2em; font-family: Arial;
 }
 .tree li{
     font-size: 16px;
-    position: relative;list-style: none; 
+    position: relative;list-style: none;
 }
 .tree li:before{
     position: absolute;
@@ -65,7 +65,7 @@ div.divsearchfield {
 .tree li.root:after{
     display: none;
 }
-.tree li:last-child:after{ 
+.tree li:last-child:after{
     display: none
 }
 .blockUI {
@@ -159,7 +159,7 @@ textarea.row4{
 
 .reviewList {
     max-height: 150px;
-    overflow-y: scroll; 
+    overflow-y: scroll;
 }
 
 .reviewRow{

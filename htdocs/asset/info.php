@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,11 +12,11 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
- *  \file       info.php
+ *  \file       htdocs/asset/info.php
  *  \ingroup    asset
  *  \brief      Page to show an asset information
  */
@@ -29,12 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
-$id = GETPOST('id','int');
-$ref=GETPOST('ref','alpha');
-$action=GETPOST('action','alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->societe_id) $socid=$user->societe_id;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'asset', $id, '');
 
 $object = new Asset($db);
@@ -44,25 +44,28 @@ $object->fetch($id);
  * Actions
  */
 
+
+
 /*
  * View
  */
-$title = $langs->trans('Asset') . " - " . $langs->trans('Info');
-$helpurl = "";
-llxHeader('', $title, $helpurl);
 
 $form = new Form($db);
 
+$title = $langs->trans('Asset')." - ".$langs->trans('Info');
+$helpurl = "";
+llxHeader('', $title, $helpurl);
+
 $object->info($id);
 
-$head = AssetsPrepareHead($object);
+$head = asset_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("Asset"), -1, 'generic');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(!empty($socid) ? '?socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
-$morehtmlref='<div class="refidno">';
-$morehtmlref.='</div>';
+$morehtmlref = '<div class="refidno">';
+$morehtmlref .= '</div>';
 
 dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
 

@@ -2,7 +2,7 @@
 Delivery=配達
 DeliveryRef=Ref Delivery
 DeliveryCard=Receipt card
-DeliveryOrder=配送指示書
+DeliveryOrder=Delivery receipt
 DeliveryDate=配達日
 CreateDeliveryOrder=Generate delivery receipt
 DeliveryStateSaved=Delivery state saved
@@ -18,13 +18,14 @@ StatusDeliveryCanceled=キャンセル
 StatusDeliveryDraft=ドラフト
 StatusDeliveryValidated=受信された
 # merou PDF model
-NameAndSignature=名前と署名：
+NameAndSignature=Name and Signature:
 ToAndDate=To___________________________________ ____ / _____ / __________で
 GoodStatusDeclaration=、良好な状態で上記の品物を受け取っている
-Deliverer=配達：
+Deliverer=Deliverer:
 Sender=差出人
 Recipient=受信者
 ErrorStockIsNotEnough=There's not enough stock
 Shippable=Shippable
 NonShippable=Not Shippable
 ShowReceiving=Show delivery receipt
+NonExistentOrder=Nonexistent order

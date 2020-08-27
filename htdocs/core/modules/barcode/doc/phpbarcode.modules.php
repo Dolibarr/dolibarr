@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,8 +13,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * or see http://www.gnu.org/
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ * or see https://www.gnu.org/
  */
 
 /**
@@ -24,7 +24,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';    // This is to include def like $genbarcode_loc and $font_loc
+require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // This is to include def like $genbarcode_loc and $font_loc
 
 
 /**
@@ -32,8 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';    // This is to inc
  */
 class modPhpbarcode extends ModeleBarCode
 {
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error='';
+	/**
+     * Dolibarr version of the loaded document
+     * @var string
+     */
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
+
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error = '';
 
 
 	/**
@@ -41,7 +49,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *
 	 *  @return		boolean     true if module can be used
 	 */
-	function isEnabled()
+	public function isEnabled()
 	{
 		return true;
 	}
@@ -52,7 +60,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *
 	 * 	@return     string      Texte descripif
 	 */
-	function info()
+	public function info()
 	{
 		global $langs;
 
@@ -63,12 +71,12 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 	/**
-	 *  Test si les numeros deja en vigueur dans la base ne provoquent pas de
-	 *  de conflits qui empechera cette numerotation de fonctionner.
+	 *  Checks if the numbers already in the database do not
+	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@return     boolean     false si conflit, true si ok
+	 *	@return     boolean     false if conflict, true if ok
 	 */
-	function canBeActivated()
+	public function canBeActivated()
 	{
 		global $langs;
 
@@ -82,22 +90,21 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string	$encoding		Encoding norm
 	 *	@return	int						>0 if supported, 0 if not
 	 */
-	function encodingIsSupported($encoding)
+	public function encodingIsSupported($encoding)
 	{
 		global $genbarcode_loc;
         //print 'genbarcode_loc='.$genbarcode_loc.' encoding='.$encoding;exit;
 
-		$supported=0;
-		if ($encoding == 'EAN13') $supported=1;
-		if ($encoding == 'ISBN')  $supported=1;
+		$supported = 0;
+		if ($encoding == 'EAN13') $supported = 1;
+		if ($encoding == 'ISBN')  $supported = 1;
 		// Formats that hangs on Windows (when genbarcode.exe for Windows is called, so they are not
 		// activated on Windows)
-		if (file_exists($genbarcode_loc) && empty($_SERVER["WINDIR"]))
-		{
-			if ($encoding == 'EAN8')  $supported=1;
-			if ($encoding == 'UPC')   $supported=1;
-			if ($encoding == 'C39')   $supported=1;
-			if ($encoding == 'C128')  $supported=1;
+		if (file_exists($genbarcode_loc) && empty($_SERVER["WINDIR"])) {
+			if ($encoding == 'EAN8')  $supported = 1;
+			if ($encoding == 'UPC')   $supported = 1;
+			if ($encoding == 'C39')   $supported = 1;
+			if ($encoding == 'C128')  $supported = 1;
 		}
 		return $supported;
 	}
@@ -109,33 +116,33 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
      */
-	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+    public function buildBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $_GET,$_SERVER;
+		global $_GET, $_SERVER;
 		global $conf;
 		global $genbarcode_loc, $bar_color, $bg_color, $text_color, $font_loc;
 
-		if (! $this->encodingIsSupported($encoding)) return -1;
+		if (!$this->encodingIsSupported($encoding)) return -1;
 
 		if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
-		if ($encoding == 'C39' || $encoding == 'C128')   $encoding = substr($encoding,1);
+		if ($encoding == 'C39' || $encoding == 'C128')   $encoding = substr($encoding, 1);
 
-		$mode='png';
+		$mode = 'png';
 
-		$_GET["code"]=$code;
-		$_GET["encoding"]=$encoding;
-		$_GET["scale"]=$scale;
-		$_GET["mode"]=$mode;
+		$_GET["code"] = $code;
+		$_GET["encoding"] = $encoding;
+		$_GET["scale"] = $scale;
+		$_GET["mode"] = $mode;
 
 		dol_syslog(get_class($this)."::buildBarCode $code,$encoding,$scale,$mode");
-		if ($code) $result=barcode_print($code,$encoding,$scale,$mode);
+		if ($code) $result = barcode_print($code, $encoding, $scale, $mode);
 
-		if (! is_array($result))
+		if (!is_array($result))
 		{
-			$this->error=$result;
+			$this->error = $result;
 			if (empty($nooutputiferror)) print $this->error;
 			return -1;
 		}
@@ -150,23 +157,21 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
 	 */
-	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
+	public function writeBarCode($code, $encoding, $readable = 'Y', $scale = 1, $nooutputiferror = 0)
 	{
-		global $conf,$filebarcode;
+		global $conf, $filebarcode;
 
 		dol_mkdir($conf->barcode->dir_temp);
 
-		$file=$conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
+		$file = $conf->barcode->dir_temp.'/barcode_'.$code.'_'.$encoding.'.png';
 
-		$filebarcode=$file;	// global var to be used in barcode_outimage called by barcode_print in buildBarCode
+		$filebarcode = $file; // global var to be used in barcode_outimage called by barcode_print in buildBarCode
 
-		$result=$this->buildBarCode($code,$encoding,$readable,$scale,$nooutputiferror);
+		$result = $this->buildBarCode($code, $encoding, $readable, $scale, $nooutputiferror);
 
 		return $result;
 	}
-
 }
-

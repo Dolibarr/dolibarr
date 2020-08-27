@@ -2,6 +2,6 @@
 HRM_EMAIL_EXTERNAL_SERVICE=E-mail para evitar HRM serviço externo
 Establishments=Estabelecimentos
 DeleteEstablishment=Excluir estabelecimento
-ConfirmDeleteEstablishment=Você tem certeza que deseja excluir este estabelecimento?
+ConfirmDeleteEstablishment=Tem certeza de que deseja excluir este estabelecimento?
+DictionaryPublicHolidays=RH - Licenças
 DictionaryDepartment=RH - Lista de departamentos
-DictionaryFunction=RH - Lista de funções

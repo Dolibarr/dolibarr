@@ -28,3 +28,4 @@ ErrorStockIsNotEnough=Le stock est insuffisant
 Shippable=Expédiable
 NonShippable=Non expédiable
 ShowReceiving=Afficher le bon de réception
+NonExistentOrder=Commande inexistante

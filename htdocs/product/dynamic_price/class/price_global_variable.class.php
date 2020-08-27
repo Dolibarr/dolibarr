@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -29,13 +29,38 @@
  */
 class PriceGlobalVariable
 {
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
-    var $id;
-    var $code;
-    var $description;
-    var $value;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+     * @var string Error code (or message)
+     */
+    public $error = '';
+
+    /**
+     * @var string[] Error codes (or messages)
+     */
+    public $errors = array();
+
+    /**
+     * @var int ID
+     */
+    public $id;
+
+    public $code;
+
+    /**
+     * @var string description
+     */
+    public $description;
+
+    public $value;
+
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element = "c_price_global_variable";
 
     /**
@@ -43,10 +68,9 @@ class PriceGlobalVariable
      *
      *  @param	DoliDb		$db      Database handler
      */
-    function __construct($db)
+    public function __construct($db)
     {
         $this->db = $db;
-        return 1;
     }
 
 
@@ -57,32 +81,32 @@ class PriceGlobalVariable
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    public function create($user, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         $this->checkParameters();
 
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (";
-        $sql.= "code, description, value";
-        $sql.= ") VALUES (";
-        $sql.= " ".(isset($this->code)?"'".$this->db->escape($this->code)."'":"''").",";
-        $sql.= " ".(isset($this->description)?"'".$this->db->escape($this->description)."'":"''").",";
-        $sql.= " ".$this->value;
-        $sql.= ")";
+        $sql .= "code, description, value";
+        $sql .= ") VALUES (";
+        $sql .= " ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
+        $sql .= " ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
+        $sql .= " ".$this->value;
+        $sql .= ")";
 
         $this->db->begin();
 
         dol_syslog(__METHOD__);
-        $resql=$this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        if (! $error)
+        if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-            if (! $notrigger)
+            if (!$notrigger)
             {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
@@ -97,16 +121,14 @@ class PriceGlobalVariable
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return $this->id;
         }
@@ -119,34 +141,30 @@ class PriceGlobalVariable
      *  @param		int		$id    	Id object
      *  @return		int			    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
-    function fetch($id)
+    public function fetch($id)
     {
         $sql = "SELECT code, description, value";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " WHERE rowid = ".$id;
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " WHERE rowid = ".$id;
 
         dol_syslog(__METHOD__);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
             if ($obj)
             {
-                $this->id			= $id;
+                $this->id = $id;
                 $this->code			= $obj->code;
-                $this->description	= $obj->description;
+                $this->description = $obj->description;
                 $this->value		= $obj->value;
                 $this->checkParameters();
                 return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
-            $this->error="Error ".$this->db->lasterror();
+        } else {
+            $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -158,52 +176,50 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=0, $notrigger=0)
+    public function update($user = 0, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         $this->checkParameters();
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-        $sql.= " code = ".(isset($this->code)?"'".$this->db->escape($this->code)."'":"''").",";
-        $sql.= " description = ".(isset($this->description)?"'".$this->db->escape($this->description)."'":"''").",";
-        $sql.= " value = ".$this->value;
-        $sql.= " WHERE rowid = ".$this->id;
+        $sql .= " code = ".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "''").",";
+        $sql .= " description = ".(isset($this->description) ? "'".$this->db->escape($this->description)."'" : "''").",";
+        $sql .= " value = ".$this->value;
+        $sql .= " WHERE rowid = ".$this->id;
 
         $this->db->begin();
 
         dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
-        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-        if (! $error)
-        {
-            if (! $notrigger)
-            {
-                // Uncomment this and change MYOBJECT to your own tag if you
-                // want this action calls a trigger.
+        // if (! $error)
+        // {
+        //     if (! $notrigger)
+        //     {
+        //         // Uncomment this and change MYOBJECT to your own tag if you
+        //         // want this action calls a trigger.
 
-                //// Call triggers
-                //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
-                //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
-                //// End call triggers
-             }
-        }
+        //         //// Call triggers
+        //         //$result=$this->call_trigger('MYOBJECT_MODIFY',$user);
+        //         //if ($result < 0) { $error++; //Do also what you must do to rollback action if trigger fail}
+        //         //// End call triggers
+        //     }
+        // }
 
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -218,15 +234,15 @@ class PriceGlobalVariable
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return	int					 <0 if KO, >0 if OK
      */
-    function delete($rowid, $user, $notrigger=0)
+    public function delete($rowid, $user, $notrigger = 0)
     {
-        $error=0;
+        $error = 0;
 
         $this->db->begin();
 
-        if (! $error)
+        if (!$error)
         {
-            if (! $notrigger)
+            if (!$notrigger)
             {
                 // Uncomment this and change MYOBJECT to your own tag if you
                 // want this action calls a trigger.
@@ -238,29 +254,27 @@ class PriceGlobalVariable
             }
         }
 
-        if (! $error)
+        if (!$error)
         {
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " WHERE rowid = ".$rowid;
+            $sql .= " WHERE rowid = ".$rowid;
 
             dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
-            if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+            if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
         }
 
         // Commit or rollback
         if ($error)
         {
-            foreach($this->errors as $errmsg)
+            foreach ($this->errors as $errmsg)
             {
                 dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
-                $this->error.=($this->error?', '.$errmsg:$errmsg);
+                $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
             }
             $this->db->rollback();
-            return -1*$error;
-        }
-        else
-        {
+            return -1 * $error;
+        } else {
             $this->db->commit();
             return 1;
         }
@@ -272,12 +286,12 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
-    function initAsSpecimen()
+    public function initAsSpecimen()
     {
-        $this->id=0;
-        $this->code='';
-        $this->description='';
-        $this->value='';
+        $this->id = 0;
+        $this->code = '';
+        $this->description = '';
+        $this->value = '';
     }
 
     /**
@@ -285,14 +299,14 @@ class PriceGlobalVariable
      *
      *	@return	void
      */
-    function checkParameters()
+    public function checkParameters()
     {
         // Clean parameters
-        if (isset($this->code)) $this->code=trim($this->code);
-        if (isset($this->description)) $this->description=trim($this->description);
+        if (isset($this->code)) $this->code = trim($this->code);
+        if (isset($this->description)) $this->description = trim($this->description);
 
         // Check parameters
-        if (empty($this->value) || !is_numeric($this->value)) $this->value=0;
+        if (empty($this->value) || !is_numeric($this->value)) $this->value = 0;
     }
 
     /**
@@ -300,14 +314,14 @@ class PriceGlobalVariable
      *
      *    @return	array				Array of price global variables
      */
-    function listGlobalVariables()
+    public function listGlobalVariables()
     {
         $sql = "SELECT rowid, code, description, value";
-        $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
-        $sql.= " ORDER BY code";
+        $sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+        $sql .= " ORDER BY code";
 
         dol_syslog(__METHOD__, LOG_DEBUG);
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             $retarray = array();
@@ -315,20 +329,18 @@ class PriceGlobalVariable
             while ($record = $this->db->fetch_array($resql))
             {
                 $variable_obj = new PriceGlobalVariable($this->db);
-                $variable_obj->id			= $record["rowid"];
-                $variable_obj->code			= $record["code"];
-                $variable_obj->description	= $record["description"];
-                $variable_obj->value			= $record["value"];
+                $variable_obj->id = $record["rowid"];
+                $variable_obj->code = $record["code"];
+                $variable_obj->description = $record["description"];
+                $variable_obj->value = $record["value"];
                 $variable_obj->checkParameters();
-                $retarray[]=$variable_obj;
+                $retarray[] = $variable_obj;
             }
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
-            $this->error=$this->db->error();
+        } else {
+            $this->error = $this->db->error();
             return -1;
         }
     }

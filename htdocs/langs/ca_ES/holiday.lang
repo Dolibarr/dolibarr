@@ -8,7 +8,6 @@ NotActiveModCP=Ha d'activar el mòdul Dies lliures retribuïts per veure aquesta
 AddCP=Realitzar una petició de dies lliures
 DateDebCP=Data inici
 DateFinCP=Data fi
-DateCreateCP=Data de creació
 DraftCP=Esborrany
 ToReviewCP=A l'espera d'aprovació
 ApprovedCP=Aprovada
@@ -16,8 +15,10 @@ CancelCP=Anul·lada
 RefuseCP=Rebutjada
 ValidatorCP=Validador
 ListeCP=Llista de dies lliures
+Leave=Fitxa de dies lliures
 LeaveId=Identificador de baixa
 ReviewedByCP=Serà revisada per
+UserID=ID d'usuari
 UserForApprovalID=Usuari per al ID d'aprovació
 UserForApprovalFirstname=Nom de l'usuari d'aprovació
 UserForApprovalLastname=Cognom de l'usuari d'aprovació
@@ -39,16 +40,12 @@ TypeOfLeaveId=Tipus d'identificador de baixa
 TypeOfLeaveCode=Tipus de codi de baixa
 TypeOfLeaveLabel=Tipus d'etiqueta de baixa
 NbUseDaysCP=Nombre de dies lliures consumits
-<<<<<<< HEAD
-NbUseDaysCPShort=Days consumed
-NbUseDaysCPShortInMonth=Days consumed in month
-DateStartInMonth=Start date in month
-=======
+NbUseDaysCPHelp=El càlcul té en compte els dies festius i les vacances definides al diccionari.
 NbUseDaysCPShort=Dies consumits
 NbUseDaysCPShortInMonth=Dies consumits al mes
+DayIsANonWorkingDay=%s és un dia no laborable
 DateStartInMonth=Data d'inici al mes
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
-DateEndInMonth=End date in month
+DateEndInMonth=Data de finalització al mes
 EditCP=Modificar
 DeleteCP=Eliminar
 ActionRefuseCP=Rebutja
@@ -103,16 +100,12 @@ AllHolidays=Totes les sol·licituds de permís
 HalfDay=Mig dia
 NotTheAssignedApprover=No sou l'aprovador assignat
 LEAVE_PAID=Vacances pagades
-<<<<<<< HEAD
-LEAVE_SICK=Sick leave
-=======
 LEAVE_SICK=Baixa per enfermetat
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
-LEAVE_OTHER=Other leave
+LEAVE_OTHER=Altres sortides
 LEAVE_PAID_FR=Vacances pagades
 ## Configuration du Module ##
 LastUpdateCP=Última actualització automàtica de reserva de dies lliures
-MonthOfLastMonthlyUpdate=Mes de l'última actualització automàtica de reserva de dies lliures
+MonthOfLastMonthlyUpdate=Mes de la última actualització automàtica de reserva de dies lliures
 UpdateConfCPOK=Actualització efectuada correctament.
 Module27130Name= Gestió de dies lliures
 Module27130Desc= Gestió de dies lliures
@@ -132,3 +125,10 @@ HolidaysCanceledBody=La seva solicitud de dies lliures retribuïts del %s al %s 
 FollowedByACounter=1: Aquest tipus de dia lliure necessita el seguiment d'un comptador. El comptador s'incrementa manualment o automàticament i quan hi ha una petició de dia lliure validada, el comptador es decrementa.<br>0: No seguit per un comptador.
 NoLeaveWithCounterDefined=No s'han definit els tipus de dies lliures que son necessaris per poder seguir-los amb comptador
 GoIntoDictionaryHolidayTypes=Ves a <strong>Inici - Configuració - Diccionaris - Tipus de dies lliures</strong> per configurar els diferents tipus de dies lliures
+HolidaySetup=Configuració del mòdul Vacances
+HolidaysNumberingModules=Models numerats de sol·licituds de dies lliures
+TemplatePDFHolidays=Plantilla de sol · licitud de dies lliures en PDF
+FreeLegalTextOnHolidays=Text gratuït a PDF
+WatermarkOnDraftHolidayCards=Marques d'aigua sobre esborranys de sol·licituds de dies lliures
+HolidaysToApprove=Vacances per aprovar
+NobodyHasPermissionToValidateHolidays=Ningú té permís per validar vacances
