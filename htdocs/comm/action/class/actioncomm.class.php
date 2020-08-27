@@ -1979,7 +1979,7 @@ class ActionComm extends CommonObject
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
     	//Select all action comm reminder
-    	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE typeremind = 'email'";
+    	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE typeremind = 'email' AND status = 0";
         $resql = $this->db->query($sql);
 
         if($resql){
@@ -2013,7 +2013,7 @@ class ActionComm extends CommonObject
                         $sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
 
                         //Topic
-                        $sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : $langs->trans('EventReminder');
+                        $sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic :  html_entity_decode($langs->trans('EventReminder'));
 
                         // Recipient
                         $recipient = new User($this->db);
