@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2017	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2015	    Alexandre Spangaro	<aspangaro@open-dsi.fr>
+ * Copyright (C) 2015-2020  Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -152,6 +152,15 @@ function user_prepare_head($object)
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;
 		$head[$h][1] = $langs->trans("HRAndBank");
 		$head[$h][2] = 'bank';
+		$h++;
+	}
+
+	if (!empty($conf->multismtp->enabled) && !empty($user->rights->multismtp->read))
+	{
+		// Multismtp
+		$head[$h][0] = DOL_URL_ROOT.'/user/smtp.php?id='.$object->id;
+		$head[$h][1] = $langs->trans("Email");
+		$head[$h][2] = 'email';
 		$h++;
 	}
 

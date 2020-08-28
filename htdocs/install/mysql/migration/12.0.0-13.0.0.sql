@@ -297,3 +297,24 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_MODIFY','Candidature modified','Executed when a candidature is modified','recruitment',7512);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_SENTBYMAIL','Mails sent from candidature record','Executed when you send email from candidature record','recruitment',7514);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_DELETE','Candidature deleted','Executed when a candidature is deleted','recruitment',7516);
+
+create table llx_user_smtp
+(
+  fk_user		integer PRIMARY KEY NOT NULL,
+  smtp_server	varchar(255),
+  smtp_port		integer,
+  smtp_tls		integer,
+  smtp_starttls	integer,
+  smtp_id		varchar(255),
+  smtp_pw		varchar(255),
+  imap_server	varchar(255),
+  imap_port		integer,
+  imap_tls		integer,
+  imap_id		varchar(255),
+  imap_pw		varchar(255),
+  imap_folder	varchar(255)
+)ENGINE=innodb;
+
+ALTER TABLE llx_user_smtp ADD UNIQUE INDEX uk_user_smtp (entity, fk_user);
+
+ALTER TABLE llx_user_smtp ADD CONSTRAINT fk_user_smtp_fk_fk_user FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
