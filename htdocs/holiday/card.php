@@ -144,7 +144,7 @@ if (empty($reshook))
 		    elseif ($endhalfday == 'morning') $halfday = 1;
 
 		    $valideur = GETPOST('valideur', 'int');
-		    $description = trim(GETPOST('description'));
+		    $description = trim(GETPOST('description', 'none'));
 
 	    	// If no type
 		    if ($type <= 0)

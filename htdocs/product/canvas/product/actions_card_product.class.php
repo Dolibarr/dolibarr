@@ -320,7 +320,7 @@ class ActionsCardProduct
 			if ($field['enabled'])
 			{
 				$fieldname = "s".$field['alias'];
-				$$fieldname = trim(GETPOST($fieldname));
+				$$fieldname = GETPOST($fieldname);
 			}
 		}
 

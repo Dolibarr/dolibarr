@@ -292,7 +292,7 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
-	$refdoc = trim(GETPOST('doc_ref', 'alpha'));
+	$refdoc = GETPOST('doc_ref', 'alpha');
 	$result = $object->updateByMvt($piece_num, 'doc_ref', $refdoc, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');

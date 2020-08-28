@@ -138,7 +138,7 @@ if (empty($reshook))
 	        if (substr($key, 0, 7) == 'amount_')
 	        {
 	            $cursorfacid = substr($key, 7);
-	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $amounts[$cursorfacid] = price2num(GETPOST($key));
 	            if (!empty($amounts[$cursorfacid])) {
 	            	$atleastonepaymentnotnull++;
 	            	if (is_numeric($amounts[$cursorfacid])) {
@@ -171,7 +171,7 @@ if (empty($reshook))
 	        } elseif (substr($key, 0, 21) == 'multicurrency_amount_')
 			{
 				$cursorfacid = substr($key, 21);
-	            $multicurrency_amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
 	            $multicurrency_totalpayment += $multicurrency_amounts[$cursorfacid];
 	            if (!empty($multicurrency_amounts[$cursorfacid])) $atleastonepaymentnotnull++;
 	            $result = $tmpinvoice->fetch($cursorfacid);

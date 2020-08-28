@@ -250,8 +250,8 @@ if (empty($reshook) && $action == 'add')
 		// Initialisation objet actioncomm
 		$object->priority = GETPOST("priority") ? GETPOST("priority") : 0;
 		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
-		$object->location = GETPOST("location");
-		$object->label = trim(GETPOST('label'));
+		$object->location = GETPOST("location", 'alphanohtml');
+		$object->label = GETPOST('label', 'alphanohtml');
 		$object->fk_element = GETPOST("fk_element", 'int');
 		$object->elementtype = GETPOST("elementtype", 'alpha');
 		if (!GETPOST('label'))

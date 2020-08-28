@@ -41,7 +41,7 @@ if ($actionsave)
 
     $db->begin();
 
-    $i += dolibarr_set_const($db, 'WEBSERVICES_KEY', trim(GETPOST("WEBSERVICES_KEY")), 'chaine', 0, '', $conf->entity);
+    $i += dolibarr_set_const($db, 'WEBSERVICES_KEY', GETPOST("WEBSERVICES_KEY"), 'chaine', 0, '', $conf->entity);
 
     if ($i >= 1)
     {

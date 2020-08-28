@@ -108,7 +108,7 @@ if (!$sortfield) $sortfield = "t.".key($object->fields); // Set here default sea
 if (!$sortorder) $sortorder = "ASC";
 
 // Initialize array of search criterias
-$search_all = GETPOST('search_all', 'alphanohtml') ? trim(GETPOST('search_all', 'alphanohtml')) : trim(GETPOST('sall', 'alphanohtml'));
+$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val)
 {

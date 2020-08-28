@@ -108,7 +108,7 @@ if ($actionsave)
     // Save colors
     while ($i <= 2)
     {
-        $color = trim(GETPOST('BANK_COLORIZE_MOVEMENT_COLOR'.$i, 'alpha'));
+        $color = GETPOST('BANK_COLORIZE_MOVEMENT_COLOR'.$i, 'alpha');
         if ($color == '-1') $color = '';
 
         $res = dolibarr_set_const($db, 'BANK_COLORIZE_MOVEMENT_COLOR'.$i, $color, 'chaine', 0, '', $conf->entity);
