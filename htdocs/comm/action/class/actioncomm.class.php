@@ -1994,65 +1994,72 @@ class ActionComm extends CommonObject
 
                 if(!$error)
                 {
-                    //Select email template
-                    $formmail = new FormMail($this->db);
-                    $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : 0, 1, '(SendingReminderActionComm)');
 
-                    $res = $this->fetch($actionCommReminder->fk_actioncomm);
-
-                    if ($res > 0)
+                    if ($actionCommReminder->dateremind <= dol_now())
                     {
-                        // PREPARE EMAIL
 
-                        // Make substitution in email content
-                        $substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+                        //Select email template
+                        $formmail = new FormMail($this->db);
+                        $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : 0, 1, '(SendingReminderActionComm)');
 
-                        complete_substitutions_array($substitutionarray, $langs, $this);
+                        $res = $this->fetch($actionCommReminder->fk_actioncomm);
 
-                        // Content
-                        $sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
-
-                        //Topic
-                        $sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic :  html_entity_decode($langs->trans('EventReminder'));
-
-                        // Recipient
-                        $recipient = new User($this->db);
-                        $res = $recipient->fetch($actionCommReminder->fk_user);
-                        if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
-                        else {
-                            $this->errors[] = "Failed to load recipient";
-                            $error++;
-                        }
-
-                        // Sender
-                        $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-
-                        // Errors Recipient
-                        $errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
-
-                        // Mail Creation
-                        $cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
-
-                        // Sending Mail
-                        if ($cMailFile->sendfile())
+                        if ($res > 0)
                         {
-                            $actionCommReminder->status=$actionCommReminder::STATUS_DONE;
-                            $res = $actionCommReminder->update($user);
-                            if($res<0) {
-                                $this->errors[] = "Failed to update status of ActionComm Reminder";
+                            // PREPARE EMAIL
+
+                            // Make substitution in email content
+                            $substitutionarray = getCommonSubstitutionArray($langs, 0, '', $this);
+
+                            complete_substitutions_array($substitutionarray, $langs, $this);
+
+                            // Content
+                            $sendContent = make_substitutions($langs->trans($arraymessage->content), $substitutionarray);
+
+                            //Topic
+                            $sendTopic = (!empty($arraymessage->topic)) ? $arraymessage->topic : html_entity_decode($langs->trans('EventReminder'));
+
+                            // Recipient
+                            $recipient = new User($this->db);
+                            $res = $recipient->fetch($actionCommReminder->fk_user);
+                            if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
+                            else
+                            {
+                                $this->errors[] = "Failed to load recipient";
                                 $error++;
                             }
-                            else $nbMailSend++;
+
+                            // Sender
+                            $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+
+                            // Errors Recipient
+                            $errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
+
+                            // Mail Creation
+                            $cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+
+                            // Sending Mail
+                            if ($cMailFile->sendfile())
+                            {
+                                $actionCommReminder->status = $actionCommReminder::STATUS_DONE;
+                                $res = $actionCommReminder->update($user);
+                                if ($res < 0)
+                                {
+                                    $this->errors[] = "Failed to update status of ActionComm Reminder";
+                                    $error++;
+                                }
+                                else $nbMailSend++;
+                            }
+                            else
+                            {
+                                $errorsMsg[] = $cMailFile->error.' : '.$to;
+                                $error++;
+                            }
                         }
                         else
                         {
-                            $errorsMsg[] = $cMailFile->error.' : '.$to;
                             $error++;
                         }
-                    }
-                    else
-                    {
-                        $error++;
                     }
                 }
             }
