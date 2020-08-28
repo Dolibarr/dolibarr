@@ -2746,7 +2746,7 @@ class Ticket extends CommonObject
 		$sendto = array();
 		if (is_array($external_contacts) && count($external_contacts) > 0) {
 			$subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . ' - ' . $langs->trans('Ticket') . ' ' . $this->ref . '] ' . $langs->transnoentities('TicketNewEmailSubjectCustomer');
-			$message = $langs->transnoentities('TicketNewEmailBodyCustomer', $this->track_id) . '<br /><br />';
+			$message = $langs->transnoentities('TicketNewEmailBodyCustomer', $this->track_id) . '<br><br>';
 			$message .= '<ul><li>' . $langs->trans('Title') . ' : ' . $this->subject . '</li>';
 			$message .= '<li>' . $langs->trans('Type') . ' : ' . $langs->getLabelFromKey($this->db, $this->type_code, 'c_ticket_type', 'code', 'label') . '</li>';
 			$message .= '<li>' . $langs->trans('TicketGroup') . ' : ' . $langs->getLabelFromKey($this->db, $this->category_code, 'c_ticket_category', 'code', 'label') . '</li>';
@@ -2760,7 +2760,7 @@ class Ticket extends CommonObject
 				}
 			}
 			$message .= '</ul>';
-			$message .= '<p>' . $langs->trans('Message') . ' : <br />' . $this->message . '</p>';
+			$message .= '<p>' . $langs->trans('Message') . ' : <br>' . $this->message . '</p>';
 
 			foreach ($external_contacts as $key => $info_sendto) {
 				if ($info_sendto['id'] == $user->contactid) {
@@ -2776,7 +2776,7 @@ class Ticket extends CommonObject
 			$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
 					(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) :
 					dol_buildpath('/ticket/card.php', 2)) . '?track_id=' . $this->track_id;
-			$message .= '<br />' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $this->track_id . '</a><br />';
+			$message .= '<br>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $this->track_id . '</a><br>';
 			$message .= '<p>' . $langs->trans('TicketEmailPleaseDoNotReplyToThisEmail') . '</p>';
 
 			if (!empty($this->origin_email)) {
