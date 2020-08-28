@@ -29,7 +29,7 @@ $langs->loadLangs(array('admin', 'users'));
 $canreaduser=($user->admin || $user->rights->multismtp->read);
 
 $action = GETPOST('action');
-$id = GETPOST('id','int');
+$id = GETPOST('id', 'int');
 
 $result = restrictedArea($user, 'user', $id, '&user', $feature2);
 if ($user->id <> $id && !$canreaduser) {
@@ -47,9 +47,7 @@ $multismtp = new Multismtp($db, $conf);
 $multismtp->fetch($fuser);
 
 if ($action == 'update' && empty($_POST["cancel"])) {
-
 	if (imapEnabled($conf)) {
-
 		$multismtp->imap_server = GETPOST('IMAP_SERVER');
 		$multismtp->imap_id = GETPOST('IMAP_ID');
 		$multismtp->imap_pw = GETPOST('IMAP_PW');
@@ -62,11 +60,9 @@ if ($action == 'update' && empty($_POST["cancel"])) {
 		}
 
 		if ($multismtp->checkImapConfig()) {
-
 			$multismtp->imap_tls = GETPOST('IMAP_TLS', 'int');
 
 			if (!$multismtp->checkImap()) {
-
 				$msg = $langs->trans('IMAPConnectionError');
 
 				if ($lasterror = imap_last_error()) {
@@ -79,7 +75,6 @@ if ($action == 'update' && empty($_POST["cancel"])) {
 	}
 
 	if ($conf->global->MULTISMTP_SMTP_ENABLED) {
-
 		$main_mail_smtps_id = GETPOST('MAIN_MAIL_SMTPS_ID');
 		$main_mail_smtps_pw = GETPOST('MAIN_MAIL_SMTPS_PW');
 		$mail_mail_smtps_tls = GETPOST('MAIN_MAIL_EMAIL_TLS', 'int');
@@ -109,14 +104,14 @@ if ($action == 'update' && empty($_POST["cancel"])) {
 		 * https://github.com/Dolibarr/dolibarr/issues/5750
 		 */
 
-//		$smtpcred_check = $multismtp->checkSmtp($fuser);
-//
-//		if (is_string($smtpcred_check) && $multismtp->checkSmtpConfig()) {
-//
-//			$msg = $langs->trans('SMTPConnectionError').'<br>'.$smtpcred_check;
-//
-//			setEventMessage($msg, 'warnings');
-//		}
+		//      $smtpcred_check = $multismtp->checkSmtp($fuser);
+		//
+		//      if (is_string($smtpcred_check) && $multismtp->checkSmtpConfig()) {
+		//
+		//          $msg = $langs->trans('SMTPConnectionError').'<br>'.$smtpcred_check;
+		//
+		//          setEventMessage($msg, 'warnings');
+		//      }
 	}
 
 	try {
@@ -142,7 +137,6 @@ $title = $langs->trans("User");
 dol_fiche_head($head, 'email', $title, 0, 'user');
 
 if ($action == 'edit') {
-
 	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?id='.$id.'">';
 	print '<input type="hidden" name="action" value="update">';
 }
@@ -153,7 +147,7 @@ if ($user->rights->multismtp->read || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
 
-dol_banner_tab($fuser,'id', $linkback, $user->rights->multismtp->read || $user->admin);
+dol_banner_tab($fuser, 'id', $linkback, $user->rights->multismtp->read || $user->admin);
 
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
@@ -169,7 +163,6 @@ $smtp_credentials = $multismtp->getSmtpCredentials();
 $imap_credentials = $multismtp->getImapCredentials();
 
 if ($action == 'edit') {
-
 	if ($conf->global->MULTISMTP_SMTP_ENABLED) {
 		print '<div class="titre">'.$langs->trans('SMTPConfiguration').'</div>';
 		print '<br><table class="border" width="100%">';
@@ -280,7 +273,6 @@ if ($action == 'edit') {
 
 	print '</form>';
 } else {
-
 	if ($conf->global->MULTISMTP_SMTP_ENABLED) {
 		print '<div class="titre">'.$langs->trans('SMTPConfiguration').'</div>';
 
@@ -351,7 +343,6 @@ if ($action == 'edit') {
 
 		//To avoid showing an error when no server is configured
 		if ($multismtp->checkImapConfig()) {
-
 			$imap_folders = $multismtp->getImapFolders();
 
 			if (!$imap_folders) {
@@ -402,7 +393,6 @@ if ($action == 'edit') {
 	}
 
 	if (!$atlestoneenabled) {
-
 		$url = dol_buildpath('/user/smtp', 2);
 
 		print '<p class="center">'.img_warning().' ';
@@ -424,7 +414,7 @@ if ($action == 'edit') {
 dol_fiche_end();
 
 if ($action != 'edit' && $atlestoneenabled) {
-// Boutons actions
+	// Boutons actions
 	print '<div class="tabsAction">';
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&action=edit">'.$langs->trans("Modify").'</a>';

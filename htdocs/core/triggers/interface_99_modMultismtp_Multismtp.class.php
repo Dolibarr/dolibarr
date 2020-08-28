@@ -132,7 +132,6 @@ class InterfaceMultismtp
 		}
 
 		if ($action != 'USER_UPDATE_SESSION') {
-
 			if (!imapEnabled($conf)) {
 				return 0;
 			}
@@ -148,7 +147,6 @@ class InterfaceMultismtp
                 }
             }
 		} else {
-
 			if (!$conf->global->MULTISMTP_SMTP_ENABLED) {
 				return 0;
 			}
@@ -174,5 +172,4 @@ class InterfaceMultismtp
 
 		return 0;
 	}
-
 }

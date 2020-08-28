@@ -184,7 +184,6 @@ class Multismtp
 		$imap_tls = null;
 
 		if ($this->conf->global->MULTISMTP_ALLOW_CHANGESERVER == 1) {
-
 			$smtp_server = $this->smtp_server;
 
 			if ($this->smtp_port !== null) {
@@ -230,7 +229,6 @@ class Multismtp
 			".(int) $this->fk_user.")";
 
 		if (!$this->db->query($sql)) {
-
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user_smtp SET
 		smtp_id = ".($this->smtp_id ? "'".$this->db->escape($this->smtp_id)."'" : "null").",
 		smtp_pw = ".($this->smtp_pw ? "'".$this->db->escape($this->smtp_pw)."'" : "null").",
@@ -344,7 +342,6 @@ class Multismtp
 		}
 
 		if ($list = imap_list($res, $this->getImapString(), '*')) {
-
 			$return = array();
 
 			foreach ($list as $mailbox) {
@@ -389,7 +386,7 @@ class Multismtp
 			$body = $mailfile->message;
 
 			//Adding missing headers
-			$header .= $mailfile->eol.'To: '.$mailfile->getValidAddress($mailfile->addr_to,0,1);
+			$header .= $mailfile->eol.'To: '.$mailfile->getValidAddress($mailfile->addr_to, 0, 1);
 			$header .= $mailfile->eol.'Subject: '.$mailfile->encodetorfc2822($mailfile->subject);
 
 			$string = $header.$mailfile->eol.$mailfile->eol.$body;
@@ -488,7 +485,6 @@ smtp_pw = NULL";
 		);
 
 		if ($this->conf->global->MULTISMTP_ALLOW_CHANGESERVER == 1) {
-
 			if ($this->smtp_port !== null) {
 				$array['port'] = $this->smtp_port;
 			}
@@ -565,5 +561,4 @@ smtp_pw = NULL";
 	{
 		return @imap_open($this->getImapString(), $this->imap_id, $this->imap_pw, 0, 1);
 	}
-
 }
