@@ -17,11 +17,16 @@
  */
 
 /**
- * Class interfaceMultismtp
+ * \file    core/triggers/interface_99_modMultismtp_Multismtp.class.php
+ * \ingroup multismtp
+ */
+
+/**
+ * Class InterfaceMultismtp
  *
  * Handles Dolibarr trigger events
  */
-class interfaceMultismtp
+class InterfaceMultismtp
 {
 	private $db;
 	private $version = '1.0';
@@ -97,7 +102,7 @@ class interfaceMultismtp
 	 *      @param  conf		$conf       Object conf
 	 *      @return int         			<0 if KO, 0 if no triggered ran, >0 if OK
 	 */
-	public function run_trigger($action, $object, User $user, Translate $langs, Conf $conf)
+	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
 		global $user, $db;
 
