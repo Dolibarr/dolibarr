@@ -492,7 +492,7 @@ class ActionComm extends CommonObject
         $sql .= ((isset($this->socid) && $this->socid > 0) ? $this->socid : "null").", ";
         $sql .= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : "null").", ";
         $sql .= " '".$this->db->escape($this->note_private)."', ";
-        $sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", ";
+        $sql .= ((isset($this->contact_id) && $this->contact_id > 0) ? $this->contact_id : "null").", ";	// deprecated, use ->socpeopleassigned
         $sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
         $sql .= ($userownerid > 0 ? $userownerid : "null").", ";
         $sql .= ($userdoneid > 0 ? $userdoneid : "null").", ";
@@ -666,12 +666,13 @@ class ActionComm extends CommonObject
     /**
      *  Load object from database
      *
-     *  @param  int		$id     	Id of action to get
-     *  @param  string	$ref    	Ref of action to get
-     *  @param  string	$ref_ext	Ref ext to get
-     *  @return	int					<0 if KO, >0 if OK
+     *  @param  int		$id     		Id of action to get
+     *  @param  string	$ref    		Ref of action to get
+     *  @param  string	$ref_ext		Ref ext to get
+	 *  @param	string	$email_msgid	Email msgid
+     *  @return	int						<0 if KO, >0 if OK
      */
-    public function fetch($id, $ref = '', $ref_ext = '')
+    public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
     {
         global $langs;
 
@@ -692,6 +693,7 @@ class ActionComm extends CommonObject
         $sql .= " a.fk_contact, a.percent as percentage,";
         $sql .= " a.fk_element as elementid, a.elementtype,";
         $sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
+        $sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
         $sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
         $sql .= " s.nom as socname,";
         $sql .= " u.firstname, u.lastname as lastname";
@@ -700,9 +702,10 @@ class ActionComm extends CommonObject
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
         $sql .= " WHERE ";
-        if ($ref) $sql .= " a.id=".$ref; // No field ref, we use id
-        elseif ($ref_ext) $sql .= " a.ref_ext='".$this->db->escape($ref_ext)."'";
-        else $sql .= " a.id=".$id;
+        if ($ref) $sql .= " a.id = ".((int) $ref); // No field ref, we use id
+        elseif ($ref_ext) $sql .= " a.ref_ext = '".$this->db->escape($ref_ext)."'";
+        elseif ($email_msgid) $sql .= " a.email_msgid = '".$this->db->escape($email_msgid)."'";
+        else $sql .= " a.id = ".((int) $id);
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -1141,8 +1144,17 @@ class ActionComm extends CommonObject
         if (!empty($socid)) $sql .= " AND a.fk_soc = ".$socid;
         if (!empty($elementtype))
         {
-            if ($elementtype == 'project') $sql .= ' AND a.fk_project = '.$fk_element;
-            else $sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
+        	if ($elementtype == 'project') {
+        		$sql .= ' AND a.fk_project = '.$fk_element;
+        	}
+            elseif ($elementtype == 'contact') {
+            	$sql .= ' AND a.id IN';
+            	$sql .= " (SELECT fk_actioncomm FROM ".MAIN_DB_PREFIX."actioncomm_resources WHERE";
+            	$sql .= " element_type = 'socpeople' AND fk_element = ".$fk_element.')';
+            }
+            else {
+            	$sql .= " AND a.fk_element = ".(int) $fk_element." AND a.elementtype = '".$elementtype."'";
+            }
         }
         if (!empty($filter)) $sql .= $filter;
 		if ($sortorder && $sortfield) $sql .= $db->order($sortfield, $sortorder);

@@ -199,12 +199,12 @@ class Form
 				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata))
 				{
 					$tmp = explode(':', $typeofdata);
-					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').'>';
+					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
 				} elseif (preg_match('/^(numeric|amount)/', $typeofdata))
 				{
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value);
-					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ?price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').'>';
+					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ?price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))	// if wysiwyg is enabled $typeofdata = 'ckeditor'
 				{
 					$tmp = explode(':', $typeofdata);
@@ -217,7 +217,7 @@ class Form
 					}
 
 					$valuetoshow = ($editvalue ? $editvalue : $value);
-					$ret .= '<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1] ? $tmp[1] : '20').'"'.($cols ? ' cols="'.$cols.'"' : 'class="quatrevingtpercent"').$morealt.'">';
+					$ret .= '<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1] ? $tmp[1] : '20').'"'.($cols ? ' cols="'.$cols.'"' : 'class="quatrevingtpercent"').$morealt.'" autofocus>';
 					// textarea convert automatically entities chars into simple chars.
 					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwig is off.
 					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
@@ -5772,7 +5772,7 @@ class Form
 	 * @param	int				$disabled			1=Html component is disabled
 	 * @param	string	        $selected_input_value	Value of preselected input text (for use with ajax)
 	 * @return	string								Return HTML string
-	 * @see selectForFormsList() select_thirdparty
+	 * @see selectForFormsList() select_thirdparty()
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{

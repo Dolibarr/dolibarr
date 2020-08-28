@@ -34,7 +34,7 @@ $action = GETPOST('action', 'alpha');
 
 // Other parameters HRM_*
 $list = array(
-		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
+//		'HRM_EMAIL_EXTERNAL_SERVICE'   // To prevent your public accountant for example
 );
 
 /*
@@ -82,7 +82,7 @@ dol_fiche_head($head, 'parameters', $langs->trans("HRM"), -1, "user");
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans('Journaux').'</td>';
+print '<td colspan="3">'.$langs->trans('Parameters').'</td>';
 print "</tr>\n";
 
 foreach ($list as $key) {

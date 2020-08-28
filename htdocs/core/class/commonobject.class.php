@@ -238,23 +238,29 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @see getFullAddress(), state
+	 * @see getFullAddress(), $state
 	 */
     public $state_code;
 
-    /**
-	 * @var string
-	 * @see getFullAddress(), region
+	/**
+	 * @var int
+	 * @see getFullAddress(), $region_code, $region
 	 */
-	public $region;
+	public $region_id;
 
 	/**
 	 * @var string
-	 * @see getFullAddress(), region
+	 * @see getFullAddress(), $region_id, $region
 	 */
     public $region_code;
 
-	/**
+    /**
+     * @var string
+     * @see getFullAddress(), $region_id, $region_code
+     */
+    public $region;
+
+    /**
 	 * @var int
 	 * @see fetch_barcode()
 	 */
@@ -7757,11 +7763,11 @@ abstract class CommonObject
 		$sql = 'SELECT '.$fieldlist;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
-		if (!empty($id))  $sql .= ' WHERE rowid = '.$id;
+		if (!empty($id)) $sql .= ' WHERE rowid = '.$id;
 		elseif (!empty($ref)) $sql .= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 		else $sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' AND entity IN ('.getEntity($this->table_element).')';
-		if ($morewhere)   $sql .= $morewhere;
+		if ($morewhere) $sql .= $morewhere;
 		$sql .= ' LIMIT 1'; // This is a fetch, to be sure to get only one record
 
 		$res = $this->db->query($sql);

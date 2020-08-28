@@ -242,7 +242,7 @@ class DoliStorage implements TokenStorageInterface
         $sql.= " WHERE service='".$this->db->escape($service)."'";
         $resql = $this->db->query($sql);
         $result = $this->db->fetch_array($resql);
-        $states[$service] = $result[state];
+        $states[$service] = $result['state'];
         $this->states[$service] = $states[$service];
 
         return is_array($states)

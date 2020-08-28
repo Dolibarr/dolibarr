@@ -157,7 +157,7 @@ if (empty($reshook))
 
 	if ($action == 'set_thirdparty' && $permissiontoadd)
 	{
-		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, 'MYOBJECT_MODIFY');
+		$object->setValueFrom('fk_soc', GETPOST('fk_soc', 'int'), '', '', 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd)
 	{
@@ -165,7 +165,7 @@ if (empty($reshook))
 	}
 
 	// Actions to send emails
-	$triggersendname = 'MYOBJECT_SENTBYMAIL';
+	$triggersendname = 'MYMODULE_MYOBJECT_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
 	$trackid = 'myobject'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';

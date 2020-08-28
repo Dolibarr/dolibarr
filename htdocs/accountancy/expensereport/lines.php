@@ -26,14 +26,13 @@
  */
 require '../../main.inc.php';
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "other", "accountancy", "trips", "productbatch", "hrm"));
@@ -168,7 +167,7 @@ $sql = "SELECT er.ref, er.rowid as erid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code_ventilation, erd.tva_tx, erd.vat_src_code, erd.date,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label,";
 $sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
-$sql .= " aa.label as label_account, aa.labelshort as labelshort_account, aa.account_number";
+$sql .= " aa.label, aa.labelshort, aa.account_number";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
@@ -278,7 +277,7 @@ if ($result) {
 	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
 	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
-    print '<td class="liste_titre right">';
+	print '<td class="liste_titre center">';
     $searchpicto = $form->showFilterButtons();
     print $searchpicto;
     print '</td>';
@@ -305,12 +304,9 @@ if ($result) {
 	$accountingaccountstatic = new AccountingAccount($db);
     $userstatic = new User($db);
 
+    $i = 0;
 	while ($i < min($num_lines, $limit)) {
 		$objp = $db->fetch_object($result);
-
-        $accountingaccountstatic->account_number = $objp->account_number;
-        $accountingaccountstatic->label = $objp->label_account;
-		$accountingaccountstatic->labelshort = $objp->labelshort_account;
 
 		$expensereportstatic->ref = $objp->ref;
 		$expensereportstatic->id = $objp->erid;
@@ -325,6 +321,11 @@ if ($result) {
         $userstatic->lastname = $objp->lastname;
         $userstatic->employee = $objp->employee;
         $userstatic->photo = $objp->photo;
+
+		$accountingaccountstatic->rowid = $objp->fk_compte;
+		$accountingaccountstatic->label = $objp->label;
+		$accountingaccountstatic->labelshort = $objp->labelshort;
+		$accountingaccountstatic->account_number = $objp->account_number;
 
 		print '<tr class="oddeven">';
 
@@ -368,7 +369,6 @@ if ($result) {
         print ' <a class="editfielda reposition marginleftonly marginrightonly" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
 		print img_edit();
 		print '</a></td>';
-
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
 
 		print "</tr>";

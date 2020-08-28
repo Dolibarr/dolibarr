@@ -9,6 +9,7 @@
  * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
  * Copyright (C) 2018      Thibault FOUCART		 <support@ptibogxiv.net>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +73,8 @@ class Paiement extends CommonObject
 	public $multicurrency_amount;          // Total amount of payment (in the currency of the bank account)
 	public $amounts = array();               // array: invoice ID => amount for that invoice (in the main currency)>
 	public $multicurrency_amounts = array(); // array: invoice ID => amount for that invoice (in the invoice's currency)>
+
+	public $pos_change = 0;	// Excess received in TakePOS cash payment
 
 	public $author;
 	public $paiementid; // Type of payment. Id saved into fields fk_paiement on llx_paiement
@@ -288,8 +291,9 @@ class Paiement extends CommonObject
 		$num_payment = ($this->num_payment ? $this->num_payment : $this->num_paiement);
 		$note = ($this->note_public ? $this->note_public : $this->note);
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat)";
-		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", '".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, ext_payment_id, ext_payment_site, fk_user_creat, pos_change)";
+		$sql .= " VALUES (".$conf->entity.", '".$this->db->escape($this->ref)."', '".$this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', ".$total.", ".$mtotal.", ".$this->paiementid.", ";
+		$sql .= "'".$this->db->escape($num_payment)."', '".$this->db->escape($note)."', ".($this->ext_payment_id ? "'".$this->db->escape($this->ext_payment_id)."'" : "null").", ".($this->ext_payment_site ? "'".$this->db->escape($this->ext_payment_site)."'" : "null").", ".$user->id.", ".((int) $this->pos_change).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
