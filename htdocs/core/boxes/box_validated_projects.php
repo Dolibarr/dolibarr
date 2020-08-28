@@ -147,16 +147,16 @@ class box_validated_projects extends ModeleBoxes
                         'asis' => 1
                     );
 
-                    $sql = 'SELECT nom FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->Client;
+                    $sql = 'SELECT rowid, nom FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->Client;
 					$resql = $this->db->query($sql);
 					if ($resql){
 						$socstatic = new Societe($this->db);
 						$obj = $this->db->fetch_object($resql);
-						$socstatic->nom = $obj->nom;
 						$this->info_box_contents[$i][] = array(
 							'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
-							'text' => $socstatic->getNomUrl(1),
-							'asis' => 1
+							'text' => $obj->nom,
+							'asis' => 1,
+							'url' => DOL_URL_ROOT.'/societe/card.php?socid='.$obj->rowid
 						);
 					}
 					else {
