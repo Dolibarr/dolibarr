@@ -1323,7 +1323,22 @@ class Products extends DolibarrApi
         }
 
         $objectval = new ProductAttributeValue($this->db);
-        return $objectval->fetchAllByProductAttribute((int) $id);
+		
+        $return = [];
+        foreach ($objectval->fetchAllByProductAttribute((int) $id) as $result) {
+            $tmp = new stdClass();
+            $tmp->fk_product_attribute = (int) $result->fk_product_attribute;
+            $tmp->id = (int) $result->id;
+            $tmp->ref = $result->ref;
+            $tmp->value = $result->value;
+            $return[] = $tmp;
+        }
+        
+        if (count($result) == 0) {
+            throw new RestException(404, 'Attribute values not found');
+        }
+        
+        return $return;
     }
 
     /**
