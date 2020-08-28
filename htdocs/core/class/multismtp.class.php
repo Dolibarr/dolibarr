@@ -16,6 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ *	Class to manage the configuration of an email account for each user
+ */
 class Multismtp
 {
 	/**

@@ -17,6 +17,10 @@
  * or see https://www.gnu.org/
  */
 
+/**
+ *  \file           htdocs/core/actions_multismtp.inc.php
+ *  \brief          Code for actions on user/smtp.php
+ */
 class ActionsMultismtp
 {
 

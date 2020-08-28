@@ -17,11 +17,11 @@
  */
 
 /**
- * Class InterfaceMultismtp
+ * Class interfaceMultismtp
  *
  * Handles Dolibarr trigger events
  */
-class InterfaceMultismtp
+class interfaceMultismtp
 {
 	private $db;
 	private $version = '1.0';
