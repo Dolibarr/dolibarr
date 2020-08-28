@@ -358,7 +358,7 @@ class pdf_standard extends ModeleExpenseReport
                 while ($i < $nblines) {
 					$pdf->SetFont('', '', $default_font_size - 2);   // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
-                    if (empty($showpricebeforepagebreak)) {
+                    if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
                         $pdf->setPageOrientation('', 1, $heightforfooter);  // The only function to edit the bottom margin of current page to set it.
                     } else {
                         $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
