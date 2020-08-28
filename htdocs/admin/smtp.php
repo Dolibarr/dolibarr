@@ -43,7 +43,6 @@ if (in_array($c, $allowed_constants)) {
 	if ($action == 'enable') {
 		dolibarr_set_const($db, $c, '1', 'int', 0, '', $conf->entity);
 	} elseif ($action == 'disable') {
-
 		if ($c == 'MULTISMTP_IMAP_ENABLED') {
 			Multismtp::removeAllImapCredentials();
 		} elseif ($c == 'MULTISMTP_SMTP_ENABLED') {
@@ -55,7 +54,6 @@ if (in_array($c, $allowed_constants)) {
 }
 
 if ($_POST) {
-
 	$imap_server = GETPOST('MULTISMTP_IMAP_CONF_SERVER');
 	$imap_port = GETPOST('MULTISMTP_IMAP_CONF_PORT');
 	$imap_tls = GETPOST('MULTISMTP_IMAP_CONF_TLS', 'int');
@@ -76,7 +74,7 @@ if ($_POST) {
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 
-llxHeader('',$langs->trans("Setup"));
+llxHeader('', $langs->trans("Setup"));
 print load_fiche_titre($langs->trans('ModuleSetup').' Multi SMTP', $linkback, 'title_setup');
 
 if (!isset($conf->global->MAIN_ACTIVATE_UPDATESESSIONTRIGGER)) {
@@ -99,7 +97,6 @@ if (empty($conf->global->MAIN_MAIL_SENDMODE) || $conf->global->MAIN_MAIL_SENDMOD
 	echo info_admin($langs->trans('WarningMailSendMode', $langs->transnoentities('MAIN_MAIL_SENDMODE'),
 		'<a href="'.dol_buildpath('/admin/mails.php', 2).'">', '</a>'));
 } else {
-
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
@@ -145,9 +142,8 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$lan
 // Enable/Disable
 print '<tr class="oddeven"><td>'.$langs->trans("MULTISMTP_IMAP_ENABLED").'</td><td>';
 if (imapEnabled($conf)) {
-	print '<a href="index.php?action=disable&c=MULTISMTP_IMAP_ENABLED">'.img_picto($langs->trans("Enabled"),'switch_on').'</a>';
+	print '<a href="index.php?action=disable&c=MULTISMTP_IMAP_ENABLED">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 } else {
-
 	if (function_exists('imap_open')) {
 		print '<a href="index.php?action=enable&c=MULTISMTP_IMAP_ENABLED">'.img_picto($langs->trans("Disabled"),
 				'switch_off').'</a>';
@@ -158,7 +154,6 @@ if (imapEnabled($conf)) {
 print '</td></tr>';
 
 if (function_exists('imap_open')) {
-
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans('ForceIMAPConfiguration').'</td></tr>';
 
 	// Allow self-signed certificates

@@ -56,5 +56,4 @@ class ActionsMultismtp
 
 		return 1;
 	}
-
 }

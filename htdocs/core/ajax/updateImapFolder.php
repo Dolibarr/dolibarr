@@ -17,11 +17,11 @@
  * or see https://www.gnu.org/
  */
 
-define('NOTOKENRENEWAL','1');
-define('NOREQUIREMENU','1');
-define('NOREQUIREHTML','1');
-define('NOREQUIREAJAX','1');
-define('NOREQUIRESOC','1');
+define('NOTOKENRENEWAL', '1');
+define('NOREQUIREMENU', '1');
+define('NOREQUIREHTML', '1');
+define('NOREQUIREAJAX', '1');
+define('NOREQUIRESOC', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/multismtp.class.php';
@@ -31,7 +31,7 @@ $langs->load('errors');
 try {
 	// Defini si peux lire/modifier permisssions
 	$canreaduser=($user->admin || $user->rights->user->user->lire);
-	$id = GETPOST('userid','int');
+	$id = GETPOST('userid', 'int');
 
 	$result = restrictedArea($user, 'user', $id, '&user', $feature2);
 	if ($user->id <> $id && !$canreaduser) {
@@ -66,7 +66,6 @@ try {
 	$res = array(
 		'status' => 'ok'
 	);
-
 } catch (Exception $e) {
 	$res = array(
 		'status' => 'error',
