@@ -749,7 +749,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     // If check ok and action add, add the line
     if ($ok && GETPOST('actionadd'))
     {
-        if ($tabrowid[$id])
+        if ($tabrowid[$id] && !in_array($tabrowid[$id], $listfieldinsert))
         {
             // Get free id for insert
             $newid = 0;
