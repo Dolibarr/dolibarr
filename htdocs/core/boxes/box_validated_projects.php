@@ -100,7 +100,7 @@ class box_validated_projects extends ModeleBoxes
             $sql = "SELECT p.rowid, p.ref as Ref, p.fk_soc as Client, p.dateo as startDate,";
             $sql.= " (SELECT COUNT(t.rowid) FROM ".MAIN_DB_PREFIX."projet_task AS t";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
-            $sql.= " WHERE t.fk_projet = p.rowid AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time)) AS 'taskNumber'";
+            $sql.= " WHERE t.fk_projet = p.rowid AND c.fk_c_type_contact != 160 AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time)) AS 'taskNumber'";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet AS p";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
@@ -109,12 +109,30 @@ class box_validated_projects extends ModeleBoxes
 			$sql.= " AND c.fk_socpeople = ".$user->id;
 			$sql.= " GROUP BY p.ref";
             $sql.= " ORDER BY p.dateo ASC";
-var_dump($user->id);
+
             $result = $this->db->query($sql);
             if ($result) {
                 $num = $this->db->num_rows($result);
                 $i = 0;
-                while ($i < min($num, $max)) {
+				$this->info_box_contents[$i][] = array(
+					'td' => 'class="nowraponall"',
+					'text' => "Reference projet",
+				);
+				$this->info_box_contents[$i][] = array(
+					'td' => 'class="center"',
+					'text' => 'Client',
+				);
+				$this->info_box_contents[$i][] = array(
+					'td' => 'class="center"',
+					'text' => 'Date debut de projet',
+				);
+				$this->info_box_contents[$i][] = array(
+					'td' => 'class="center"',
+					'text' => 'Nombre de mes tâches sans temps saisi',
+				);
+				$i++;
+
+                while ($i < min($num+1, $max+1)) {
                     $objp = $this->db->fetch_object($result);
 
                     $projectstatic->id = $objp->rowid;
@@ -122,30 +140,44 @@ var_dump($user->id);
                     $projectstatic->customer = $objp->Client;
                     $projectstatic->startDate = $objp->startDate;
                     $projectstatic->taskNumber = $objp->taskNumber;
-
+//var_dump($projectstatic->getNomUrl(1));
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="nowraponall"',
                         'text' => $projectstatic->getNomUrl(1),
                         'asis' => 1
                     );
 
-                    $this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
-                        'text' => $objp->Client,
-                    );
+                    $sql = 'SELECT nom FROM '.MAIN_DB_PREFIX.'societe WHERE rowid ='.$objp->Client;
+					$resql = $this->db->query($sql);
+					if ($resql){
+						$socstatic = new Societe($this->db);
+						$obj = $this->db->fetch_object($resql);
+						$socstatic->nom = $obj->nom;
+						$this->info_box_contents[$i][] = array(
+							'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
+							'text' => $socstatic->getNomUrl(1),
+							'asis' => 1
+						);
+					}
+					else {
+						dol_print_error($this->db);
+					}
 
                     $this->info_box_contents[$i][] = array(
-                        'td' => 'class="tdoverflowmax150 maxwidth200onsmartphone"',
+                        'td' => 'class="center"',
                         'text' => $objp->startDate,
                     );
 
                     $this->info_box_contents[$i][] = array(
-                        'td' => 'class="nowraponall"',
+                        'td' => 'class="center"',
                         'text' => $objp->taskNumber."&nbsp;".$langs->trans("Tasks"),
+						'asis' => 1
                     );
                     $i++;
                 }
-            }
+            }else {
+            	dol_print_error($this->db);
+			}
         }
 
 
