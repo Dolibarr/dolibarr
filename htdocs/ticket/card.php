@@ -1283,7 +1283,9 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 
 			// Tableau des parametres complementaires du post
 			$formticket->param['models'] = $modelmail;
-			$formticket->param['models_id'] = GETPOST('modelmailselected', 'int');
+			if (GETPOSTISSET('modelmailselected')) {
+				$formticket->param['models_id'] = GETPOST('modelmailselected', 'int');
+			}
 			//$formticket->param['socid']=$object->fk_soc;
 			$formticket->param['returnurl'] = $_SERVER["PHP_SELF"].'?track_id='.$object->track_id;
 

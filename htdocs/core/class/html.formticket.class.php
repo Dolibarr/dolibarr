@@ -45,6 +45,7 @@ class FormTicket
 	 */
 	public $db;
 
+	public $ref;
 	public $track_id;
 
 	/**
@@ -793,13 +794,10 @@ class FormTicket
 		$arraydefaultmessage = -1;
 		if ($this->param['models'] != 'none')
 		{
-			$model_id = 0;
-			if (array_key_exists('models_id', $this->param))
-			{
+			if (array_key_exists('models_id', $this->param)) {
 				$model_id = $this->param["models_id"];
+				$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
 			}
-
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
 		}
 
 		// Define list of attached files
@@ -866,13 +864,6 @@ class FormTicket
 		print '<input type="hidden" name="actionbis" value="add_message">';
 		foreach ($this->param as $key => $value) {
 			print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
-		}
-
-		// Get message template
-		$model_id = 0;
-		if (array_key_exists('models_id', $this->param)) {
-			$model_id = $this->param["models_id"];
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
 		}
 
 		$result = $formmail->fetchAllEMailTemplate($this->param["models"], $user, $outputlangs);
