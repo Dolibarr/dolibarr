@@ -25,25 +25,26 @@
 
 
 /**
- *	Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
- *  The HTML field must be an input text with id=search_$htmlname.
- *  This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
+ * Generic function that return javascript to add to a page to transform a common input field into an autocomplete field by calling an Ajax page (ex: /societe/ajaxcompanies.php).
+ * The HTML field must be an input text with id=search_$htmlname.
+ * This use the jQuery "autocomplete" function. If we want to use the select2, we must also convert the input into select on funcntions that call this method.
  *
- *  @param	string	$selected           Preselected value
- *	@param	string	$htmlname           HTML name of input field
- *	@param	string	$url                Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
- *  @param	string	$urloption			More parameters on URL request
- *  @param	int		$minLength			Minimum number of chars to trigger that Ajax search
- *  @param	int		$autoselect			Automatic selection if just one value
- *  @param	array   $ajaxoptions		Multiple options array
+ * @param string	$selected 			Preselected value
+ * @param string	$htmlname 			HTML name of input field
+ * @param string	$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
+ * @param string	$urloption			More parameters on URL request
+ * @param int		$minLength			Minimum number of chars to trigger that Ajax search
+ * @param int		$autoselect			Automatic selection if just one value
+ * @param array		$ajaxoptions		Multiple options array
  *                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                      - Ex: array('disabled'=> )
  *                                      - Ex: array('show'=> )
  *                                      - Ex: array('update_textarea'=> )
  *                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
- *	@return string              		Script
+ * @param string	$moreparams			More params provided to ajax call
+ * @return string   					Script
  */
-function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array())
+function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
     if (empty($minLength)) $minLength=1;
 
@@ -55,7 +56,7 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 
     // Input search_htmlname is original field
     // Input htmlname is a second input field used when using ajax autocomplete.
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" />';
+	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="'.$selected.'" '.($moreparams ? $moreparams : '').' />';
 
 	$script.= '<!-- Javascript code for autocomplete of field '.$htmlname.' -->'."\n";
 	$script.= '<script>'."\n";
@@ -478,16 +479,17 @@ function ajax_combobox($htmlname, $events = array(), $minLengthToAutocomplete = 
  * 	@param	array	$input			Array of type->list of CSS element to switch. Example: array('disabled'=>array(0=>'cssid'))
  * 	@param	int		$entity			Entity to set
  *  @param	int		$revertonoff	Revert on/off
- *  @param	bool	$strict			Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param	int		$strict			Use only "disabled" with delConstant and "enabled" with setConstant
+ *  @param	int		$forcenoajax	1=Force to use a ahref link instead of ajax code.
  * 	@return	string
  */
-function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0)
+function ajax_constantonoff($code, $input = array(), $entity = null, $revertonoff = 0, $strict = 0, $forcenoajax = 0)
 {
 	global $conf, $langs;
 
 	$entity = ((isset($entity) && is_numeric($entity) && $entity >= 0) ? $entity : $conf->entity);
 
-	if (empty($conf->use_javascript_ajax))
+	if (empty($conf->use_javascript_ajax) || $forcenoajax)
 	{
 		if (empty($conf->global->$code)) print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 		else print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_'.$code.'&entity='.$entity.'">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
