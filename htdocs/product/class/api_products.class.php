@@ -1334,7 +1334,7 @@ class Products extends DolibarrApi
             $return[] = $tmp;
         }
 
-        if (count($result) == 0) {
+        if (count($return) == 0) {
             throw new RestException(404, 'Attribute values not found');
         }
 
