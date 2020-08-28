@@ -140,7 +140,7 @@ class box_validated_projects extends ModeleBoxes
                     $projectstatic->customer = $objp->Client;
                     $projectstatic->startDate = $objp->startDate;
                     $projectstatic->taskNumber = $objp->taskNumber;
-//var_dump($projectstatic->getNomUrl(1));
+
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="nowraponall"',
                         'text' => $projectstatic->getNomUrl(1),
@@ -171,7 +171,8 @@ class box_validated_projects extends ModeleBoxes
                     $this->info_box_contents[$i][] = array(
                         'td' => 'class="center"',
                         'text' => $objp->taskNumber."&nbsp;".$langs->trans("Tasks"),
-						'asis' => 1
+						'asis' => 1,
+						'url' => DOL_URL_ROOT.'/custom/cligp/tasks/projettasks.php?id='.$objp->rowid.'&search_progresscalc=0%&search_user_id='.$user->id,
                     );
                     $i++;
                 }
