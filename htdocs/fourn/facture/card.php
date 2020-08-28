@@ -2013,9 +2013,12 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank Account
-	print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-	$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1);
-	print '</td></tr>';
+	if (!empty($conf->banque->enabled))
+	{
+		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
+		$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1);
+		print '</td></tr>';
+	}
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled))

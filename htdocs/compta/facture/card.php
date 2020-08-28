@@ -3397,13 +3397,16 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank Account
-	if (GETPOSTISSET('fk_account')) {
-		$fk_account = GETPOST('fk_account');
-	}
+	if (!empty($conf->banque->enabled))
+	{
+		if (GETPOSTISSET('fk_account')) {
+			$fk_account = GETPOST('fk_account');
+		}
 
-	print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
-	$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
-	print '</td></tr>';
+		print '<tr><td>'.$langs->trans('BankAccount').'</td><td colspan="2">';
+		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
+		print '</td></tr>';
+	}
 
 	// Project
 	if (!empty($conf->projet->enabled))
