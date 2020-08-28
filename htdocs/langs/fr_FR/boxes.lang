@@ -104,3 +104,4 @@ BoxTitleLastCustomerShipments=Les %s dernières expéditions clients
 NoRecordedShipments=Aucune expédition client
 # Pages
 AccountancyHome=Comptabilité
+ValidatedProjects = Projets ouverts dont les tâches me sont affectées et n'ont pas de temps saisi
