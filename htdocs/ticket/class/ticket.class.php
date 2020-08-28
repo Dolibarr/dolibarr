@@ -2776,7 +2776,7 @@ class Ticket extends CommonObject
 			$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
 					(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) :
 					dol_buildpath('/ticket/card.php', 2)) . '?track_id=' . $this->track_id;
-			$message .= '<br />' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $this->track_id . '</a>' . '<br />';
+			$message .= '<br />' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $this->track_id . '</a><br />';
 			$message .= '<p>' . $langs->trans('TicketEmailPleaseDoNotReplyToThisEmail') . '</p>';
 
 			if (!empty($this->origin_email)) {
