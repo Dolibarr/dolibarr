@@ -244,7 +244,9 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// File transfer
-				$object->copyFilesForTicket();
+				if ($object->notify_tiers_at_create) {
+					$object->sendNewTicketMessageByEMail();
+				}
 			}
 
 			if (!$error) {

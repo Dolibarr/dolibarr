@@ -2807,6 +2807,80 @@ class Ticket extends CommonObject
 		}
 	}
 
+	/**
+	 * Send new ticket message by email
+	 */
+	public function sendNewTicketMessageByEMail()
+	{
+		global $conf, $langs, $user;
+
+		// Copy attached files (saved into $_SESSION) as linked files to ticket. Return array with final name used.
+		$resarray = $this->copyFilesForTicket();
+
+		$listofpaths = $resarray['listofpaths'];
+		$listofnames = $resarray['listofnames'];
+		$listofmimes = $resarray['listofmimes'];
+
+		// Retrieve email of all contacts external
+		$external_contacts = $this->getInfosTicketExternalContact();
+
+		$sendto = array();
+		if (is_array($external_contacts) && count($external_contacts) > 0) {
+			$subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . ' - ' . $langs->trans('Ticket') . ' ' . $this->ref . '] ' . $langs->transnoentities('TicketNewEmailSubjectCustomer');
+			// Open-DSI -- FIX too much new lines in final message -- Begin
+			//$message = $langs->transnoentities('TicketNewEmailBodyCustomer', $this->track_id) . "\n\n";
+			$message = $langs->transnoentities('TicketNewEmailBodyCustomer', $this->track_id) . "<br /><br />";
+			// Open-DSI -- FIX too much new lines in final message -- End
+			$message .= '<ul><li>' . $langs->trans('Title') . ' : ' . $this->subject . '</li>';
+			$message .= '<li>' . $langs->trans('Type') . ' : ' . $langs->getLabelFromKey($this->db, $this->type_code, 'c_ticket_type', 'code', 'label') . '</li>';
+			$message .= '<li>' . $langs->trans('TicketGroup') . ' : ' . $langs->getLabelFromKey($this->db, $this->category_code, 'c_ticket_category', 'code', 'label') . '</li>';
+			$message .= '<li>' . $langs->trans('TicketSeverity') . ' : ' . $langs->getLabelFromKey($this->db, $this->severity_code, 'c_ticket_severity', 'code', 'label') . '</li>';
+			// Extrafields
+			if ($conf->global->TICKETS_EXTRAFIELDS_PUBLIC) {
+				if (is_array($this->array_options) && count($this->array_options) > 0) {
+					foreach ($this->array_options as $key => $value) {
+						$message .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
+					}
+				}
+			}
+			$message .= '</ul>';
+			$message .= '<p>' . $langs->trans('Message') . ' : <br />' . $this->message . '</p>';
+
+			foreach ($external_contacts as $key => $info_sendto) {
+				if ($info_sendto['id'] == $user->contactid) {
+					continue;
+				}
+
+				if ($info_sendto['email'] != '' && $info_sendto['email'] != $this->origin_email) {
+					if(!empty($info_sendto['email'])) $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
+				}
+			}
+
+			// If public interface is not enable, use link to internal page into mail
+			$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
+					(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) :
+					dol_buildpath('/ticket/card.php', 2)) . '?track_id=' . $this->track_id;
+			// Open-DSI -- FIX too much new lines in final message -- Begin
+			$message .= "<br />" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $this->track_id . '</a>' . "<br />";
+			// Open-DSI -- FIX too much new lines in final message -- End
+			$message .= '<p>' . $langs->trans('TicketEmailPleaseDoNotReplyToThisEmail') . '</p>';
+
+			if (!empty($this->origin_email)) {
+				$sendto[] = $this->origin_email;
+			}
+			if ($this->fk_soc > 0 && ! in_array($this->origin_email, $sendto)) {
+				$this->socid = $this->fk_soc;
+				$this->fetch_thirdparty();
+				if(!empty($this->thirdparty->email)) $sendto[] = $this->thirdparty->email;
+			}
+			if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+				if(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
+			}
+
+			$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
+		}
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
