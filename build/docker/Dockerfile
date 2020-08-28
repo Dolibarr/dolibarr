@@ -28,7 +28,7 @@ RUN apt-get update -y \
     && docker-php-ext-install -j$(nproc) calendar intl mysqli pdo_mysql gd soap zip \
     && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \
     && docker-php-ext-install -j$(nproc) ldap && \
-    mv ${PHP_INI_DIR}/php.ini-production ${PHP_INI_DIR}/php.ini
+    mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
 RUN chown www-data /var/documents
@@ -38,15 +38,15 @@ RUN chmod +x /usr/local/bin/docker-run.sh
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
 RUN echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20180731/xdebug.so"' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_autostart=0' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.remote_autostart=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_enable=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.default_enable=0' >> ${PHP_INI_DIR}/php.ini
-#RUN echo 'xdebug.remote_host=docker.host' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.default_enable=1' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.remote_host=docker.host' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_port=9000' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_connect_back=0' >> ${PHP_INI_DIR}/php.ini
+RUN echo 'xdebug.remote_connect_back=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.profiler_enable=0' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
-#RUN echo '172.17.0.1 docker.host' >> /etc/hosts
+RUN echo '172.17.0.1 docker.host' >> /etc/hosts
 
 EXPOSE 80
 

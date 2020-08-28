@@ -23,6 +23,8 @@ services:
             - mariadb
         ports:
             - "8080:80"
+        networks:
+            - internal-pod
 
     web:
         build:
@@ -33,6 +35,7 @@ services:
             - ../../htdocs:/var/www/html/
         ports:
             - "80:80"
+            - "9000:9001"
         depends_on:
             - mariadb
             - mail
