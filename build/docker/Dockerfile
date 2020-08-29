@@ -1,7 +1,5 @@
 FROM php:7.3-apache
 
-ENV WWW_USER_ID 33
-ENV WWW_GROUP_ID 33
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
 ENV PHP_INI_MEMORY_LIMIT 256M
 
@@ -41,12 +39,12 @@ RUN echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-2018073
 RUN echo 'xdebug.remote_autostart=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_enable=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.default_enable=1' >> ${PHP_INI_DIR}/php.ini
-RUN echo 'xdebug.remote_host=docker.host' >> ${PHP_INI_DIR}/php.ini
+#RUN echo 'xdebug.remote_host=docker.host' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_port=9000' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_connect_back=1' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.profiler_enable=0' >> ${PHP_INI_DIR}/php.ini
 RUN echo 'xdebug.remote_log="/tmp/xdebug.log"' >> ${PHP_INI_DIR}/php.ini
-RUN echo '172.17.0.1 docker.host' >> /etc/hosts
+#RUN echo '172.17.0.1 docker.host' >> /etc/hosts
 
 EXPOSE 80
 
