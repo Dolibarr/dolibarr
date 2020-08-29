@@ -5683,7 +5683,7 @@ class Form
 
         $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
 
-        foreach($TDurationTypes as $key=>$typeduration){
+        foreach ($TDurationTypes as $key=>$typeduration){
 
             $retstring .= '<option value="'.$key.'"';
             if($key == $selected)
@@ -7971,7 +7971,14 @@ class Form
 		return $ret;
 	}
 
-    public function select_model_mail($prefix, $modelType = ''){
+	/**
+	 * select_model_mail
+	 *
+	 * @param   string   $prefix     Prefix
+	 * @param   string   $modelType  Model type
+	 * @return  string               HTML select string
+	 */
+    public function select_model_mail($prefix, $modelType = '') {
 
         global $langs, $db, $user;
 
@@ -7983,24 +7990,21 @@ class Form
         $formmail = new FormMail($db);
         $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
-        if($result > 0){
-
-            foreach($formmail->lines_model as $model){
+        if ($result > 0) {
+            foreach ($formmail->lines_model as $model){
                 $TModels[$model->id] = $model->label;
             }
-
         }
 
         $retstring .= '<select class="flat" id="select_'.$prefix.'model_mail" name="'.$prefix.'model_mail">';
 
-        foreach($TModels as $id_model=>$label_model){
+        foreach ($TModels as $id_model=>$label_model){
             $retstring .= '<option value="'.$id_model.'"';
             $retstring .= ">".$label_model."</option>";
         }
 
         $retstring .= "</select>";
 
-        print $retstring;
-        return;
+        return $retstring;
     }
 }
