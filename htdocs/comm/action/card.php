@@ -257,7 +257,7 @@ if (empty($reshook) && $action == 'add')
 	if (!$error)
 	{
 		// Initialisation objet actioncomm
-		$object->priority = GETPOST("priority") ? GETPOST("priority") : 0;
+		$object->priority = GETPOSTISSET("priority") ? GETPOST("priority", "int") : 0;
 		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
 		$object->location = GETPOST("location", 'alphanohtml');
 		$object->label = GETPOST('label', 'alphanohtml');
@@ -487,7 +487,7 @@ if (empty($reshook) && $action == 'update')
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority", "alphanohtml");
+		$object->priority    = GETPOST("priority", "int");
         $object->fulldayevent = GETPOST("fullday") ? 1 : 0;
         $object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOST("socid", "int");
@@ -1145,14 +1145,16 @@ if ($action == 'create')
 	}
 
 	// Priority
-	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
-	print '<input type="text" name="priority" value="'.(GETPOST('priority') ?GETPOST('priority') : ($object->priority ? $object->priority : '')).'" size="5">';
-	print '</td></tr>';
+	if (! empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<input type="text" name="priority" value="'.(GETPOSTISSET('priority') ? GETPOST('priority', 'int') : ($object->priority ? $object->priority : '')).'" size="5">';
+		print '</td></tr>';
+	}
 
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 
