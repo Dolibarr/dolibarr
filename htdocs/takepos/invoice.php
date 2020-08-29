@@ -816,12 +816,10 @@ $( document ).ready(function() {
 		if ($result > 0)
 		{
 			$adh->ref = $adh->getFullName($langs);
+			if (empty($adh->statut)) { $s .= "<s>"; }
 			$s .= $adh->getFullName($langs);
 			$s .= ' - '.$adh->type;
-      		if (empty($adh->statut) && $adh->datefin) {
-				$s .= '<br>'.$langs->trans("MemberStatusResiliated");
-      		}
-			elseif ($adh->datefin)
+			if ($adh->datefin)
 			{
 				$s .= '<br>'.$langs->trans("SubscriptionEndDate").': '.dol_print_date($adh->datefin, 'day');
 				if ($adh->hasDelay()) {
@@ -831,6 +829,7 @@ $( document ).ready(function() {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
 				if ($adh->statut > 0) $s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
+      		if (empty($adh->statut)) { $s .= "</s>"; }
 		} else {
 			$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
 		}
