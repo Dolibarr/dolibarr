@@ -69,13 +69,13 @@ if ($action == 'getProducts') {
     	echo 'Failed to load category with id='.$category;
     }
 } elseif ($action == 'search' && $term != '') {
-  // Change thirdparty with barcode
+	// Change thirdparty with barcode
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-  $thirdparty = new Societe($db);
-  $result = $thirdparty->fetch('', '', '', $term);
-  
-  if( $result && $thirdparty->id > 0) {
+	$thirdparty = new Societe($db);
+	$result = $thirdparty->fetch('', '', '', $term);
+
+	if ( $result && $thirdparty->id > 0) {
 	    $rows = array();
 	    	$rows[] = array(
 	    		'rowid' => $thirdparty->id,
@@ -83,9 +83,9 @@ if ($action == 'getProducts') {
 	    		'barcode' => $thirdparty->barcode,
           'object' => 'thirdparty'
 	    	);
-	    echo json_encode($rows);
-      exit;
-  }
+			echo json_encode($rows);
+			exit;
+	}
 
 	// Define $filteroncategids, the filter on category ID if there is a Root category defined.
 	$filteroncategids = '';
@@ -121,7 +121,7 @@ if ($action == 'getProducts') {
 	    		'tobuy' => $obj->tobuy,
 	    		'barcode' => $obj->barcode,
 	    		'price' => $obj->price,
-          'object' => 'product'
+			'object' => 'product'
 	    		//'price_formated' => price(price2num($obj->price, 'MU'), 1, $langs, 1, -1, -1, $conf->currency)
 	    	);
 	    }
