@@ -77,14 +77,14 @@ class Members extends DolibarrApi
 
         return $this->_cleanObjectDatas($member);
     }
-    
+
     /**
      * Get properties of a member object by linked thirdparty
      *
      * Return an array with member informations
      *
      * @param     int     $thirdparty ID of third party
-     * 
+     *
      * @return array|mixed Data without useless information
      *
      * @url GET thirdparty/{thirdparty}
@@ -94,30 +94,30 @@ class Members extends DolibarrApi
      */
     function getByThirdparty($thirdparty)
     {
-        if(! DolibarrApiAccess::$user->rights->adherent->lire) {
+        if (! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
         }
 
         $member = new Adherent($this->db);
         $result = $member->fetch('', '', $thirdparty);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         return $this->_cleanObjectDatas($member);
     }
-    
+
     /**
      * Get properties of a member object by linked thirdparty email
      *
      * Return an array with member informations
      *
      * @param  string $email            Email of third party
-     * 
+     *
      * @return array|mixed Data without useless information
      *
      * @url GET thirdparty/email/{email}
@@ -127,36 +127,36 @@ class Members extends DolibarrApi
      */
     function getByThirdpartyEmail($email)
     {
-        if(! DolibarrApiAccess::$user->rights->adherent->lire) {
+        if (! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
         }
 
         $thirdparty = new Societe($this->db);
         $result = $thirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'thirdparty not found');
         }
-        
+
         $member = new Adherent($this->db);
         $result = $member->fetch('', '', $thirdparty->id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
         return $this->_cleanObjectDatas($member);
     }
-    
+
     /**
      * Get properties of a member object by linked thirdparty barcode
      *
      * Return an array with member informations
      *
      * @param  string $barcode            Barcode of third party
-     * 
+     *
      * @return array|mixed Data without useless information
      *
      * @url GET thirdparty/barcode/{barcode}
@@ -166,23 +166,23 @@ class Members extends DolibarrApi
      */
     function getByThirdpartyBarcode($barcode)
     {
-        if(! DolibarrApiAccess::$user->rights->adherent->lire) {
+        if (! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
         }
 
         $thirdparty = new Societe($this->db);
         $result = $thirdparty->fetch('', '', '', $barcode);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'thirdparty not found');
         }
-        
+
         $member = new Adherent($this->db);
         $result = $member->fetch('', '', $thirdparty->id);
-        if( ! $result ) {
+        if ( ! $result ) {
             throw new RestException(404, 'member not found');
         }
 
-        if( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
+        if ( ! DolibarrApi::_checkAccessToResource('adherent', $member->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
