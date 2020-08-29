@@ -168,6 +168,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)           $elementL
 if ($conf->projet->enabled)            $elementList['project'] = $langs->trans('MailToProject');
 if ($conf->ticket->enabled && $user->rights->ticket->read)            $elementList['ticket_send'] = $langs->trans('MailToTicket');
 if ($conf->recruitment->enabled && $user->rights->recruitment->recruitmentjobposition->read)            $elementList['recruitmentcandidature_send'] = $langs->trans('RecruitmentCandidatures');
+if ($conf->agenda->enabled)            $elementList['actioncomm_send'] = $langs->trans('MailToSendEventPush');
 $elementList['user'] = $langs->trans('MailToUser');
 
 $parameters = array('elementList'=>$elementList);

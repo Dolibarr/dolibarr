@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -63,6 +64,14 @@ $aphour = GETPOST('aphour');
 $apmin = GETPOST('apmin');
 $p2hour = GETPOST('p2hour');
 $p2min = GETPOST('p2min');
+
+$addreminder = GETPOST('addreminder');
+$offsetvalue = GETPOST('offsetvalue');
+$offsetunit = GETPOST('offsetunittype_duration');
+$remindertype = GETPOST('selectremindertype');
+$modelmail = GETPOST('actioncommsendmodel_mail');
+
+//var_dump($_POST); exit;
 
 $datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
 $datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
@@ -248,10 +257,10 @@ if (empty($reshook) && $action == 'add')
 	if (!$error)
 	{
 		// Initialisation objet actioncomm
-		$object->priority = GETPOST("priority") ? GETPOST("priority") : 0;
+		$object->priority = GETPOSTISSET("priority") ? GETPOST("priority", "int") : 0;
 		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
-		$object->location = GETPOST("location");
-		$object->label = trim(GETPOST('label'));
+		$object->location = GETPOST("location", 'alphanohtml');
+		$object->label = GETPOST('label', 'alphanohtml');
 		$object->fk_element = GETPOST("fk_element", 'int');
 		$object->elementtype = GETPOST("elementtype", 'alpha');
 		if (!GETPOST('label'))
@@ -378,6 +387,45 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
+                //Create eminder
+                if ($addreminder == 'on'){
+                    $actionCommReminder = new ActionCommReminder($db);
+
+                    if ($offsetunit == 'minute'){
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
+                    } elseif ($offsetunit == 'hour'){
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'h');
+                    } elseif ($offsetunit == 'day') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'd');
+                    } elseif ($offsetunit == 'week') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'w');
+                    } elseif ($offsetunit == 'month') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'm');
+                    } elseif ($offsetunit == 'year') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'y');
+                    }
+
+                    $actionCommReminder->dateremind = $db->idate($dateremind);
+                    $actionCommReminder->typeremind = $remindertype;
+                    $actionCommReminder->fk_user = $user;
+                    $actionCommReminder->offsetunit = $offsetunit;
+                    $actionCommReminder->offsetvalue = $offsetvalue;
+                    $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+                    $actionCommReminder->fk_actioncomm = $object->id;
+                    if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+
+                    $res = $actionCommReminder->create($user);
+
+                    if ($res <= 0){
+                        // If error
+                        $db->rollback();
+                        $langs->load("errors");
+                        $error = $langs->trans('ErrorReminderActionCommCreation');
+                        setEventMessages($error, null, 'errors');
+                        $action = 'create'; $donotclearsession = 1;
+                    }
+                }
+
 				$db->commit();
 				if (!empty($backtopage))
 				{
@@ -439,7 +487,7 @@ if (empty($reshook) && $action == 'update')
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority", "alphanohtml");
+		$object->priority    = GETPOST("priority", "int");
         $object->fulldayevent = GETPOST("fullday") ? 1 : 0;
         $object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOST("socid", "int");
@@ -791,7 +839,6 @@ if ($action == 'create')
 							$("#p2").removeAttr("disabled");
 	            		}
 	            	}
-                    setdatefields();
                     $("#fullday").change(function() {
 						console.log("setdatefields");
                         setdatefields();
@@ -805,11 +852,25 @@ if ($action == 'create')
                         {
                             $("#doneby").val(-1);
                         }
-                   });
-                   $("#actioncode").change(function() {
+                    });
+                    $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
-                   });
+                    });
+					$("#aphour,#apmin").change(function() {
+						if ($("#actioncode").val() == \'AC_RDV\') {
+							console.log("Start date was changed, we modify end date "+(parseInt($("#aphour").val()))+" "+$("#apmin").val()+" -> "+("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
+							$("#p2hour").val(("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
+							$("#p2min").val($("#apmin").val());
+							$("#p2day").val($("#apday").val());
+							$("#p2month").val($("#apmonth").val());
+							$("#p2year").val($("#apyear").val());
+							$("#p2").val($("#ap").val());
+						}
+					});
+                    if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
+                    else $("#dateend").removeClass("fieldrequired");
+                    setdatefields();
                })';
         print '</script>'."\n";
     }
@@ -832,8 +893,8 @@ if ($action == 'create')
 	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$default = (empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT) ? '' : $conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
-		$formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ?GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1);
+		$default = (empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT) ? 'AC_RDV' : $conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
+		$formactions->select_type_actions(GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 
@@ -1084,14 +1145,16 @@ if ($action == 'create')
 	}
 
 	// Priority
-	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
-	print '<input type="text" name="priority" value="'.(GETPOST('priority') ?GETPOST('priority') : ($object->priority ? $object->priority : '')).'" size="5">';
-	print '</td></tr>';
+	if (! empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<input type="text" name="priority" value="'.(GETPOSTISSET('priority') ? GETPOST('priority', 'int') : ($object->priority ? $object->priority : '')).'" size="5">';
+		print '</td></tr>';
+	}
 
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 
@@ -1106,7 +1169,70 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+
+    if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+    {
+        //checkbox create reminder
+        print '<br>';
+        print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder"></td></tr>';
+
+        print '<div class="reminderparameters" style="display: none;">';
+
+        print '<hr>';
+        print load_fiche_titre($langs->trans("AddReminder"), '', '');
+
+        print '<table class="border centpercent">';
+
+        //Reminder
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
+        print '<input type="number" name="offsetvalue" value="10" size="5">';
+        print '</td></tr>';
+
+        //Time Type
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
+        print $form->select_type_duration('offsetunit');
+        print '</td></tr>';
+
+        //Reminder Type
+        $TRemindTypes = array();
+        if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
+        if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+        print $form->selectarray('selectremindertype', $TRemindTypes);
+        print '</td></tr>';
+
+        //Mail Model
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
+        print $form->select_model_mail('actioncommsend', 'actioncomm_send');
+        print '</td></tr>';
+
+
+        print '</table>';
+        print '</div>';
+
+        print "\n".'<script type="text/javascript">';
+        print '$(document).ready(function () {
+	            		$("#addreminder").click(function(){
+	            		    if (this.checked) {
+	            		      $(".reminderparameters").show();
+                            } else {
+                            $(".reminderparameters").hide();
+                            }
+	            		 });
+
+	            		$("#selectremindertype").click(function(){
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
+	            		    };
+	            		});
+                   })';
+        print '</script>'."\n";
+    }
+
+    dol_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';

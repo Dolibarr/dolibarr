@@ -1753,43 +1753,39 @@ class Form
 					$out .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
 					// Complete name with more info
-					$moreinfo = 0;
+					$moreinfo = '';
 					if (!empty($conf->global->MAIN_SHOW_LOGIN))
 					{
-						$out .= ($moreinfo ? ' - ' : ' (').$obj->login;
-						$moreinfo++;
+						$moreinfo .= ($moreinfo ? ' - ' : ' (').$obj->login;
 					}
 					if ($showstatus >= 0)
 					{
 						if ($obj->statut == 1 && $showstatus == 1)
 						{
-							$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						}
 						if ($obj->statut == 0)
 						{
-							$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						}
 					}
 					if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
 					{
 						if (!$obj->entity)
 						{
-							$out .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
 						} else {
-							$out .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
 						}
 					}
-					$out .= ($moreinfo ? ')' : '');
+					$moreinfo .= ($moreinfo ? ')' : '');
 					if ($disableline && $disableline != '1')
 					{
-						$out .= ' - '.$disableline; // This is text from $enableonlytext parameter
+						$moreinfo .= ' - '.$disableline; // This is text from $enableonlytext parameter
 					}
+					$out .= $moreinfo;
 					$out .= '</option>';
-					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength).$moreinfo;
 
 					$i++;
 				}
@@ -5598,9 +5594,11 @@ class Form
                 if ($addnowlink == 1)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
                 } elseif ($addnowlink == 2)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(d.getHours().pad());';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
                 }
 
 				if ($fullday) $reset_scripts .= ' } ';
@@ -5613,9 +5611,11 @@ class Form
                 if ($addnowlink == 1)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
                 } elseif ($addnowlink == 2)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(d.getMinutes().pad());';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
                 }
 				if ($fullday) $reset_scripts .= ' } ';
 			}
@@ -5672,6 +5672,40 @@ class Form
 
 		return $retstring;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * select_type_duration
+	 *
+	 * @param   string   $prefix     Prefix
+	 * @param   string   $selected   Selected type
+	 * @return  string               HTML select string
+	 */
+	public function select_type_duration($prefix, $selected = 'minute')
+	{
+		// phpcs:enable
+		global $langs;
+
+        $retstring = '';
+
+        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
+
+        $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+
+        foreach ($TDurationTypes as $key=>$typeduration){
+
+            $retstring .= '<option value="'.$key.'"';
+            if($key == $selected)
+            {
+                $retstring .= " selected";
+            }
+            $retstring .= ">".$typeduration."</option>";
+        }
+
+        $retstring .= "</select>";
+
+        return $retstring;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
@@ -6378,7 +6412,7 @@ class Form
 	 *	@param	string	$htmlname		Name of select
 	 *	@param	array	$array			Array with key+value
 	 *	@param	array	$selected		Array with key+value preselected
-	 *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
+	 *	@param	int		$key_in_label   1 to show key like in "[key] value"
 	 *	@param	int		$value_as_key   1 to use value as key
 	 *	@param  string	$morecss        Add more css style
 	 *	@param  int		$translate		Translate and encode value
@@ -6404,7 +6438,7 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.' -->
 						<script>'."\n";
 			if ($addjscombo == 1)
 			{
@@ -6465,15 +6499,16 @@ class Form
 			{
 				foreach ($array as $key => $value)
 				{
+					$newval = ($translate ? $langs->trans($value) : $value);
+					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+
 					$out .= '<option value="'.$key.'"';
                     if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != ''))
 					{
 						$out .= ' selected';
 					}
+					$out .= ' data-html="'.$newval.'"';
 					$out .= '>';
-
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>'."\n";
 				}
@@ -7944,4 +7979,43 @@ class Form
 
 		return $ret;
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 * select_model_mail
+	 *
+	 * @param   string   $prefix     Prefix
+	 * @param   string   $modelType  Model type
+	 * @return  string               HTML select string
+	 */
+    public function select_model_mail($prefix, $modelType = '')
+    {
+    	// phpcs:enable
+        global $langs, $db, $user;
+
+        $retstring = '';
+
+        $TModels = array();
+
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+        $formmail = new FormMail($db);
+        $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
+
+        if ($result > 0) {
+            foreach ($formmail->lines_model as $model){
+                $TModels[$model->id] = $model->label;
+            }
+        }
+
+        $retstring .= '<select class="flat" id="select_'.$prefix.'model_mail" name="'.$prefix.'model_mail">';
+
+        foreach ($TModels as $id_model=>$label_model){
+            $retstring .= '<option value="'.$id_model.'"';
+            $retstring .= ">".$label_model."</option>";
+        }
+
+        $retstring .= "</select>";
+
+        return $retstring;
+    }
 }
