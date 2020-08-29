@@ -68,7 +68,8 @@ $sql .= "SELECT COUNT(DISTINCT d.rowid) as nb, MAX(d.datevalid) as lastdate, MAX
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."subscription as s ON s.fk_adherent = d.rowid";
 $sql .= " WHERE d.entity IN (".getEntity('adherent').")";
-$sql .= " AND CURDATE() BETWEEN s.dateadh AND s.datef";
+$sql .= " AND ( ( d.statut = 1 AND s.datef = NULL )";
+$sql .= " OR ( '".dol_print_date(dol_now(), '%Y%m%d%H%M%S')."' BETWEEN s.dateadh AND s.datef ) )";
 $sql .= " GROUP BY d.morphy";
 
 $foundphy = $foundmor = 0;
