@@ -93,7 +93,7 @@ class Thirdparties extends DolibarrApi
 	{
 	    return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
 	}
-  
+
 	/**
 	 * Get properties of a thirdparty object by barcode.
 	 *
