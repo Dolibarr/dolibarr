@@ -354,7 +354,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-                    if (empty($showpricebeforepagebreak)) {
+                    if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
                         $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
                     } else {
                         $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
