@@ -5594,9 +5594,11 @@ class Form
                 if ($addnowlink == 1)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
                 } elseif ($addnowlink == 2)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(d.getHours().pad());';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
                 }
 
 				if ($fullday) $reset_scripts .= ' } ';
@@ -5609,9 +5611,11 @@ class Form
                 if ($addnowlink == 1)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
                 } elseif ($addnowlink == 2)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(d.getMinutes().pad());';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
                 }
 				if ($fullday) $reset_scripts .= ' } ';
 			}
@@ -5676,7 +5680,7 @@ class Form
 	 * @param   string   $modelType  Model type
 	 * @return  string               HTML select string
 	 */
-	public function select_type_duration($prefix, $selected = 'minute') 
+	public function select_type_duration($prefix, $selected = 'minute')
 	{
         global $langs;
 
