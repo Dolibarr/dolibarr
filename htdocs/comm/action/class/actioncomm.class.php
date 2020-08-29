@@ -1393,6 +1393,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.$labeltype;
 		if (!empty($this->location))
 			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.$this->location;
+		if (isset($this->transparency))
+			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		if (!empty($this->note_private))
 		    $tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
 		$linkclose = '';
