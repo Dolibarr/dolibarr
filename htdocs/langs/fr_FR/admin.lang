@@ -2011,4 +2011,3 @@ RssNote=Remarque: Chaque définition de flux RSS fournit un widget que vous deve
 JumpToBoxes=Aller à la Configuration -> Widgets
 MeasuringUnitTypeDesc=Utilisez ici une valeur comme "taille", "surface", "volume", "poids", "temps"
 MeasuringScaleDesc=L'échelle est le nombre de positions où vous devez déplacer la partie décimale pour qu'elle corresponde à l'unité de référence par défaut. Pour le type d'unité "temps", c'est le nombre de secondes. Les valeurs comprises entre 80 et 99 sont des valeurs réservées.
-MailToSendEventPush=Notification événement
