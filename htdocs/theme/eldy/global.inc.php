@@ -3082,6 +3082,10 @@ table.paddingtopbottomonly tr td {
 .liste_titre_filter {
 	background: var(--colorbacktitle1) !important;
 }
+.liste_titre2 {
+    background: var(--colorbackhmenu1) !important;
+    color: #fff;
+}
 table:not(.listwithfilterbefore) tr.liste_titre_filter:first-of-type td.liste_titre {
     padding-top: 5px;
 }
