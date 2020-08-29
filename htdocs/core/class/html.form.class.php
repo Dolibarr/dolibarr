@@ -5673,8 +5673,15 @@ class Form
 		return $retstring;
 	}
 
-	public function select_type_duration($prefix, $selected = 'minute'){
-
+	/**
+	 * select_type_duration
+	 *
+	 * @param   string   $prefix     Prefix
+	 * @param   string   $modelType  Model type
+	 * @return  string               HTML select string
+	 */
+	public function select_type_duration($prefix, $selected = 'minute') 
+	{
         global $langs;
 
         $retstring = '';
@@ -5695,8 +5702,7 @@ class Form
 
         $retstring .= "</select>";
 
-        print $retstring;
-        return;
+        return $retstring;
     }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
