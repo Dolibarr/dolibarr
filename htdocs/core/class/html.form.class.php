@@ -5673,16 +5673,18 @@ class Form
 		return $retstring;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * select_type_duration
 	 *
 	 * @param   string   $prefix     Prefix
-	 * @param   string   $modelType  Model type
+	 * @param   string   $selected   Selected type
 	 * @return  string               HTML select string
 	 */
 	public function select_type_duration($prefix, $selected = 'minute')
 	{
-        global $langs;
+		// phpcs:enable
+		global $langs;
 
         $retstring = '';
 
@@ -7978,6 +7980,7 @@ class Form
 		return $ret;
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * select_model_mail
 	 *
@@ -7985,8 +7988,9 @@ class Form
 	 * @param   string   $modelType  Model type
 	 * @return  string               HTML select string
 	 */
-    public function select_model_mail($prefix, $modelType = '') {
-
+    public function select_model_mail($prefix, $modelType = '')
+    {
+    	// phpcs:enable
         global $langs, $db, $user;
 
         $retstring = '';
