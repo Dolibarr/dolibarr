@@ -92,7 +92,7 @@ class Members extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      */
-    function getByThirdparty($thirdparty)
+    public function getByThirdparty($thirdparty)
     {
         if (! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
@@ -125,7 +125,7 @@ class Members extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      */
-    function getByThirdpartyEmail($email)
+    public function getByThirdpartyEmail($email)
     {
         if (! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
@@ -164,7 +164,7 @@ class Members extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      */
-    function getByThirdpartyBarcode($barcode)
+    public function getByThirdpartyBarcode($barcode)
     {
         if (! DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
