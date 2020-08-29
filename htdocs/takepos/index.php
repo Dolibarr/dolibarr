@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2019	Josep Lluís Amador	<joseplluis@lliuretic.cat>
+ * Copyright (C) 2020	Thibault FOUCART	<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -399,6 +400,15 @@ function ClickProduct(position) {
 	ClearSearch();
 }
 
+function ChangeThirdparty(idcustomer) {
+	 console.log("ChangeThirdparty");
+		// Call page list.php to change customer
+		$("#poslines").load("../societe/list.php?action=change&contextpage=poslist&idcustomer="+idcustomer+"&place="+place+"", function() {
+		});
+
+	ClearSearch();
+}
+
 function deleteline() {
 	console.log("Delete line");
 	$("#poslines").load("invoice.php?action=deleteline&place="+place+"&idline="+selectedline, function() {
@@ -524,7 +534,11 @@ function Search2(keyCodeForEnter) {
 			// If there is only 1 answer
 			if ($('#search').val().length > 0 && data.length == 1) {
 				console.log($('#search').val()+' - '+data[0]['barcode']);
-				if ($('#search').val() == data[0]['barcode']) {
+				if ($('#search').val() == data[0]['barcode'] && 'thirdparty' == data[0]['object']) {
+					console.log("There is only 1 answer with barcode matching the search, so we change the thirdparty "+data[0]['rowid']);
+					ChangeThirdparty(data[0]['rowid']);
+				} 
+				else if ($('#search').val() == data[0]['barcode'] && 'product' == data[0]['object']) {
 					console.log("There is only 1 answer with barcode matching the search, so we add the product in basket");
 					ClickProduct(0);
 				}
