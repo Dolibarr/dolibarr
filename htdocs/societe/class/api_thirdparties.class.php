@@ -99,7 +99,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param string    $Barcode  Barcode of third party to load
+	 * @param string    $barcode  Barcode of third party to load
 	 * @return array|mixed data without useless information
 	 *
 	 * @url     GET barcode/{barcode}
