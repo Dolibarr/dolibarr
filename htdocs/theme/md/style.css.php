@@ -2778,7 +2778,7 @@ a.tabTitle {
     white-space: nowrap;
 }
 .tabTitleText {
-	display: hidden;
+	display: none;
 }
 .imgTabTitle {
 	max-height: 14px;
