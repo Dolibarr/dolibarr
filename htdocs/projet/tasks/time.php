@@ -910,7 +910,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		else print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-		print '<input type="hidden" name="page" value="'.$page.'">';
 
 		print '<input type="hidden" name="id" value="'.$id.'">';
 		print '<input type="hidden" name="projectid" value="'.$projectidforalltimes.'">';
@@ -998,7 +997,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 		$sql .= " WHERE t.fk_user = u.rowid AND t.fk_task = pt.rowid";
 		if (empty($projectidforalltimes)) $sql .= " AND t.fk_task =".$object->id;
 		else $sql .= " AND pt.fk_projet IN (".$projectidforalltimes.")";
-		if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
 		if ($search_note) $sql .= natural_search('t.note', $search_note);
 		if ($search_task_ref) $sql .= natural_search('pt.ref', $search_task_ref);
 		if ($search_task_label) $sql .= natural_search('pt.label', $search_task_label);
@@ -1045,13 +1043,13 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 
 				$title = $langs->trans("ListTaskTimeUserProject");
 
-				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit, 0, 0, 1);
 			} else {
 				print '<!-- List of time spent for project -->'."\n";
 
 				$title = $langs->trans("ListTaskTimeForTask");
 
-				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit);
+				print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $linktocreatetime, '', $limit, 0, 0, 1);
 			}
 
 			$i = 0;
