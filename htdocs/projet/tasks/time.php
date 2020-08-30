@@ -1203,7 +1203,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (!empty($arrayfields['t.task_label']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 		}
 		// Author
-		if (!empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200').'</td>';
+		if (!empty($arrayfields['author']['checked'])) print '<td class="liste_titre">'.$form->select_dolusers(($search_user > 0 ? $search_user : -1), 'search_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150').'</td>';
 		// Note
 		if (!empty($arrayfields['t.note']['checked'])) print '<td class="liste_titre"><input type="text" class="flat maxwidth100" name="search_note" value="'.dol_escape_htmltag($search_note).'"></td>';
 		// Duration
@@ -1390,7 +1390,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 			if (!empty($arrayfields['value']['checked']))
 			{
 				print '<td class="nowraponall right">';
-				$value = price2num($task_time->thm * $task_time->task_duration / 3600);
+				$value = price2num($task_time->thm * $task_time->task_duration / 3600, 'MT');
 				print price($value, 1, $langs, 1, -1, -1, $conf->currency);
 				print '</td>';
 				if (!$i) $totalarray['nbfield']++;
@@ -1524,7 +1524,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0)
 				{
 					if ((empty($id) && empty($ref)) || !empty($projectidforalltimes))	// Not a dedicated task
 					{
-						print '<td class="nowrap">';
+						print '<td>';
 						print $task_time->label;
 						print '</td>';
 					}

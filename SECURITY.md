@@ -32,7 +32,7 @@ If you try to find bug on Dolibarr, we recommend to append to your user-agent he
 
 ### Account access
 
-You can install the web application yourself on your on platform so you get full access. Download the zip of the files to put into your own web server virtual host from https://www.dolibarr.org/download
+You can install the web application yourself on your own platform/server so you get full access to application and sources. Download the zip of the files to put into your own web server virtual host from https://www.dolibarr.org/download
 
 
 ## Eligibility and Responsible Disclosure

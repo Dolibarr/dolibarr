@@ -2719,7 +2719,7 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 /* ============================================================================== */
 div.tabs {
     text-align: <?php print $left; ?>;
-    padding-top: 10px;
+    margin-top: 10px;
     padding-left: 6px;
     padding-right: 6px;
 	clear:both;
@@ -4074,7 +4074,7 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
-    text-transform: capitalize;
+    /* text-transform: capitalize; */
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
