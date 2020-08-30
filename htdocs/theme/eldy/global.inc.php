@@ -3360,9 +3360,6 @@ table.hidepaginationnext .paginationnext {
 }
 <?php } ?>
 
-.nohover:hover {
-	background: unset !important;
-}
 .nohoverborder:hover {
 	border: unset;
 	box-shadow: unset;
