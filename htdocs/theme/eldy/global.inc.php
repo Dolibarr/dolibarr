@@ -1415,11 +1415,22 @@ td.showDragHandle {
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
 }
-#id-left {
-/*	background-color: #fff;
-	border-right: 1px #888 solid;
-	height: calc(100% - 50px);*/
+
+/* For having horizontal scroll into array (like with smartphone) */
+/*
+#id-container {
+	width: 100%;
 }
+.side-nav {
+	display: block;
+	float: left;
+}
+#id-right {
+	width:calc(100% - 210px);
+	display: inline-block;
+}
+*/
+
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
