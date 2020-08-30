@@ -47,7 +47,7 @@ $setterminal = GETPOST('setterminal', 'int');
 if ($_SESSION["takeposterminal"] == "")
 {
 	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
-	else if (!empty($_COOKIE["takeposterminal"])) $_SESSION["takeposterminal"] = $_COOKIE["takeposterminal"]; // Restore takeposterminal from previous session
+	elseif (!empty($_COOKIE["takeposterminal"])) $_SESSION["takeposterminal"] = $_COOKIE["takeposterminal"]; // Restore takeposterminal from previous session
 }
 
 if ($setterminal > 0)
