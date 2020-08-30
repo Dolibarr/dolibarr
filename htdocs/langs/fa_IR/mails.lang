@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Outgoing email setup (for module %s)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=اطلاعات
 ContactsWithThirdpartyFilter=Contacts with third-party filter
+Unanswered=Unanswered
+Answered=پاسخ داده شده
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

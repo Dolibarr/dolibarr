@@ -69,6 +69,7 @@ SocialContribution=Pajak sosial atau fiskal
 SocialContributions=Pajak sosial atau fiskal
 SocialContributionsDeductibles=Pajak sosial atau fiskal yang dapat dikurangkan
 SocialContributionsNondeductibles=Pajak sosial atau fiskal yang tidak dapat dikurangi
+DateOfSocialContribution=Tanggal untuk pajak sosial atau fiskal
 LabelContrib=Kontribusi label
 TypeContrib=Ketik kontribusi
 MenuSpecialExpenses=Pengeluaran khusus

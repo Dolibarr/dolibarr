@@ -1,5 +1,6 @@
 Mrp=Đơn đặt hàng sản xuất
 MO=Đơn hàng sản xuất
+MOs=Manufacturing orders
 MRPDescription=Module to manage production and Manufacturing Orders (MO).
 MRPArea=Khu vực MRP
 MrpSetupPage=Thiết lập mô-đun MRP

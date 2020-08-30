@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Umožňuje spravovat různé počty nul na konci účetn�
 BANK_DISABLE_DIRECT_INPUT=Zakázat přímé nahrávání transakce v bankovním účtu
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Povolit návrh exportu v žurnálu
 ACCOUNTANCY_COMBO_FOR_AUX=Povolit seznam combo pro pomocný účet (může být pomalý, pokud máte spoustu třetích stran)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Prodejní deník
 ACCOUNTING_PURCHASE_JOURNAL=Nákupní deník
@@ -284,6 +285,7 @@ ShowTutorial=Zobrazit výuku
 NotReconciled=Nesladěno
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Aplikovat hmotnostní kategorie
 AddAccountFromBookKeepingWithNoCategories=Dostupný účet ještě není v personalizované skupině
 CategoryDeleted=Kategorie účetního účtu byla odstraněna

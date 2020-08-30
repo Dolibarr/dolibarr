@@ -1,5 +1,6 @@
 Mrp=Ražošanas pasūtījumi
 MO=Ražošanas pasūtījums
+MOs=Manufacturing orders
 MRPDescription=Ražošanas un ražošanas pasūtījumu (MO) pārvaldības modulis.
 MRPArea=MRP apgabals
 MrpSetupPage=MRP moduļa iestatīšana

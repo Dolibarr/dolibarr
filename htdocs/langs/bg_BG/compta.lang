@@ -69,6 +69,7 @@ SocialContribution=Социален или фискален данък
 SocialContributions=Социални или фискални данъци
 SocialContributionsDeductibles=Приспадащи се социални или фискални данъци
 SocialContributionsNondeductibles=Не приспадащи се социални или фискални данъци
+DateOfSocialContribution=Date of social or fiscal tax
 LabelContrib=Име на вноска
 TypeContrib=Тип вноска
 MenuSpecialExpenses=Специални разходи

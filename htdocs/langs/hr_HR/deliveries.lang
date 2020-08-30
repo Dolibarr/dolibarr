@@ -2,7 +2,7 @@
 Delivery=Dostava
 DeliveryRef=Ref. dostave
 DeliveryCard=Otpremnica
-DeliveryOrder=Delivery receipt
+DeliveryOrder=Otpremnica
 DeliveryDate=Datum dostave
 CreateDeliveryOrder=Izradi otpremnicu
 DeliveryStateSaved=Status dostave pohranjen

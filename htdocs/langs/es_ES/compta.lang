@@ -69,6 +69,7 @@ SocialContribution=Impuestos sociales o fiscales
 SocialContributions=Impuestos sociales o fiscales
 SocialContributionsDeductibles=Impuestos sociales o fiscales deducibles
 SocialContributionsNondeductibles=Impuestos sociales o fiscales no deducibles
+DateOfSocialContribution=Date of social or fiscal tax
 LabelContrib=Etiqueta
 TypeContrib=Tipo
 MenuSpecialExpenses=Pagos especiales

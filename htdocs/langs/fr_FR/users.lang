@@ -117,3 +117,4 @@ ForceUserHolidayValidator=Forcer le valideur des congés
 ValidatorIsSupervisorByDefault=Par défaut, le valideur est le responsable hiérarchique de l'utilisateur. Gardez vide pour conserver ce comportement.
 UserPersonalEmail=Email personnel
 UserPersonalMobile=Téléphone portable personnel
+WarningNotLangOfInterface=Attention, c'est la langue principale parlée par l'utilisateur, pas la langue de l'interface qu'il a choisi de voir. Pour changer la langue de l'interface visible par cet utilisateur, allez sur l'onglet %s

@@ -69,6 +69,7 @@ SocialContribution=Sozialabgabe oder Steuersatz
 SocialContributions= Steuern- oder Sozialabgaben
 SocialContributionsDeductibles=Abzugsberechtigte Sozialabgaben oder Steuern
 SocialContributionsNondeductibles=Nicht abzugsberechtigte Sozialabgaben oder Steuern
+DateOfSocialContribution=Datum der Sozial- oder Fiskalsteuer
 LabelContrib=Beitrag Bezeichnung
 TypeContrib=Beitrag Typ
 MenuSpecialExpenses=Sonstige Ausgaben
