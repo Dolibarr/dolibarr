@@ -15,6 +15,7 @@ This file contains some policies about the security reports on Dolibarr ERP CRM 
 To report a vulnerability, please send an email to security@dolibarr.org
 In most cases, after fixing the security, we make an answer by email to say the issue has been fixed.
 
+
 ## Hunting vulnerabilities on Dolibarr
 
 We believe that future of software is online SaaS. This means software are more and more critical and no technology is perfect. Working with skilled security researchers is crucial in identifying weaknesses in our technology.
@@ -24,6 +25,15 @@ If you believe you've found a security bug in our service, we are happy to work 
 Any type of denial of service attacks is strictly forbidden, as well as any interference with network equipment and Dolibarr infrastructure.
 
 We recommand to install Dolibarr ERP CRM on you own server (as most Open Source software, download and use is free: https://www.dolibarr.org/download) to get access on every side of application.
+
+### User Agent
+
+If you try to find bug on Dolibarr, we recommend to append to your user-agent header the following value: '-BugHunting-dolibarr'.
+
+### Account access
+
+You can install the web application yourself on your on platform so you get full access. Download the zip of the files to put into your own web server virtual host from https://www.dolibarr.org/download
+
 
 ## Eligibility and Responsible Disclosure
 
@@ -49,6 +59,7 @@ Our analysis is always based on worst case exploitation of the vulnerability, as
 
 No vulnerability disclosure, including partial is allowed for the moment.
 
+
 ## Scope for qualified vulnerabilities
 
 ONLY vulnerabilities discovered when the following setup is used are accepted:
@@ -59,4 +70,39 @@ ONLY vulnerabilities discovered when the following setup is used are accepted:
 * ONLY security reports on "stable" modules are allowed (troubles into experimental and developement modules are not accepted).
 
 Scope is the web application (back office) and the APIs.
+
+
+## Qualifying vulnerabilities for Bug bounty programs
+* Remote code execution (RCE)
+* Local files access and manipulation (LFI, RFI, XXE, SSRF, XSPA)
+* Code injections (HTML, JS, SQL, PHP, ...)
+* Cross-Site Scripting (XSS)
+* Cross-Site Requests Forgery (CSRF) with real security impact
+* Open redirect
+* Broken authentication & session management
+* Insecure direct object references
+* CORS with real security impact
+* Horizontal and vertical privilege escalation
+* "HTTP Host Header" XSS
+
+
+## Non-qualifying vulnerabilities for Bug bounty programs, but qualified for reporting
+* "Self" XSS
+* Missing cookie flags
+* SSL/TLS best practices
+* Mixed content warnings
+* Denial of Service attacks
+* Clickjacking/UI redressing
+* Software version disclosure
+* Stack traces or path disclosure
+* Physical or social engineering attempts
+* Recently disclosed 0-day vulnerabilities
+* Presence of autocomplete attribute on web forms
+* Vulnerabilities affecting outdated browsers or platforms
+* Issues that require physical access to a victim’s computer/device
+* Logout and other instances of low-severity Cross-Site Request Forgery
+* Missing security-related HTTP headers which do not lead directly to a vulnerability
+* Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
+* Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
+* Reports on features flagged as experimental
 
