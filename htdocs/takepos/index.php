@@ -44,9 +44,16 @@ $place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is
 $action = GETPOST('action', 'alpha');
 $setterminal = GETPOST('setterminal', 'int');
 
+if ($_SESSION["takeposterminal"] == "")
+{
+	if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1; // Use terminal 1 if there is only 1 terminal
+	else if (!empty($_COOKIE["takeposterminal"])) $_SESSION["takeposterminal"] = $_COOKIE["takeposterminal"]; // Restore takeposterminal from previous session
+}
+
 if ($setterminal > 0)
 {
 	$_SESSION["takeposterminal"] = $setterminal;
+	setcookie("takeposterminal", $setterminal, (time() + (86400 * 354)), '/', null, false, true); // Permanent takeposterminal var in a cookie
 }
 
 $_SESSION["urlfrom"] = '/takepos/index.php';
@@ -734,8 +741,7 @@ $( document ).ready(function() {
 	//IF NO TERMINAL SELECTED
 	if ($_SESSION["takeposterminal"] == "")
 	{
-		if ($conf->global->TAKEPOS_NUM_TERMINALS == "1") $_SESSION["takeposterminal"] = 1;
-		else print "TerminalsDialog();";
+		print "TerminalsDialog();";
 	}
 	if ($conf->global->TAKEPOS_CONTROL_CASH_OPENING)
 	{
