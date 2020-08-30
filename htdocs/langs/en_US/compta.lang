@@ -169,12 +169,15 @@ RulesResultBookkeepingPersonalized=It show record in your Ledger with accounting
 SeePageForSetup=See menu <a href="%s">%s</a> for setup
 DepositsAreNotIncluded=- Down payment invoices are not included
 DepositsAreIncluded=- Down payment invoices are included
+LT1ReportByMonth=Tax 2 report by month
+LT2ReportByMonth=Tax 3 report by month
 LT1ReportByCustomers=Report tax 2 by third party
 LT2ReportByCustomers=Report tax 3 by third party
 LT1ReportByCustomersES=Report by third party RE
 LT2ReportByCustomersES=Report by third party IRPF
 VATReport=Sale tax report
 VATReportByPeriods=Sale tax report by period
+VATReportByMonth=Sale tax report by month
 VATReportByRates=Sale tax report by rates
 VATReportByThirdParties=Sale tax report by third parties
 VATReportByCustomers=Sale tax report by customer

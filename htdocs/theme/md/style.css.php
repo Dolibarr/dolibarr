@@ -3933,10 +3933,14 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+    text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
-.secondary, div.titre {
+div.titre {
+	color: var(--colortexttitlenotab);
+}
+.secondary {
 	color: var(--colortexttitlenotab);
 }
 .tertiary {

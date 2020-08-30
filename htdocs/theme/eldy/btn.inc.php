@@ -112,18 +112,6 @@ span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list
 	padding-left: 0px;
 }
 
-/*a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover,
-span.butActionNew>span.fa-plus-circle, span.butActionNew>span.fa-plus-circle:hover,
-a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover,
-span.butActionNewRefused>span.fa-plus-circle, span.butActionNewRefused>span.fa-plus-circle:hover,
-a.butActionNew>span.fa-list-alt, a.butActionNew>span.fa-list-alt:hover,
-span.butActionNew>span.fa-list-alt, span.butActionNew>span.fa-list-alt:hover,
-a.butActionNewRefused>span.fa-list-alt, a.butActionNewRefused>span.fa-list-alt:hover,
-span.butActionNewRefused>span.fa-list-alt, span.butActionNewRefused>span.fa-list-alt:hover,
-a.butActionNew>span.fa-comment-dots, a.butActionNew>span.fa-comment-dots:hover,
-span.butActionNew>span.fa-comment-dots, span.butActionNew>span.fa-comment-dots:hover,
-a.butActionNewRefused>span.fa-comment-dots, a.butActionNewRefused>span.fa-comment-dots:hover,
-span.butActionNewRefused>span.fa-comment-dots, span.butActionNewRefused>span.fa-comment-dots:hover,*/
 a.butActionNew>span.fa, a.butActionNew>span.fa:hover,
 span.butActionNew>span.fa, span.butActionNew>span.fa:hover,
 a.butActionNewRefused>span.fa, a.butActionNewRefused>span.fa:hover,

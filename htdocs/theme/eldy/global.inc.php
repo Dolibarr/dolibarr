@@ -4074,6 +4074,7 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+    text-transform: capitalize;
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
@@ -4081,10 +4082,10 @@ div.fiche > table.table-fiche-title:first-of-type div {
     /* text-transform: uppercase; */
     /* font-weight: 600; */
 }
+
 div.titre {
     color: var(--colortexttitlenotab);
 }
-
 .secondary {
     color: var(--colortexttitlenotab);
 }
