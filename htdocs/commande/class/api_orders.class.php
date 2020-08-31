@@ -455,6 +455,40 @@ class Orders extends DolibarrApi
             throw new RestException(405, $this->commande->error);
         }
     }
+    
+    /**
+     * Get contacts of given order
+     *
+     * Return an array with contact informations
+     *
+     * @param int    $id   ID of order
+	 * @param string $type Type of the contact (BILLING, SHIPPING, CUSTOMER)
+     * 
+     * @url	GET {id}/contacts
+     * 
+     * @return 	array data without useless information
+     *
+     * @throws 	RestException
+     */
+    public function getContacts($id, $type = '')
+    {
+        if(! DolibarrApiAccess::$user->rights->commande->lire) {
+            throw new RestException(401);
+        }
+        
+        $result = $this->commande->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Order not found');
+        }
+        
+        if( ! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+        
+        $contacts = $this->commande->liste_contact(-1, 'external', 0, $type);
+        
+        return $this->_cleanObjectDatas($contacts);
+    }
 
     /**
 	 * Add a contact type of given order
