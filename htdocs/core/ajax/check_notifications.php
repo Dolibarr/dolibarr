@@ -82,7 +82,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     $sql .= ' WHERE';
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
     // This need to extend period to be sure to not miss and save in session what we notified to avoid duplicate (save is not done yet).
-    if(!empty($conf->global->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
+    if(!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
     {
         $sql .= ' (';
         $sql .= ' ( arm.typeremind = "browser" AND arm.dateremind < NOW() AND arm.status = 0  )';
