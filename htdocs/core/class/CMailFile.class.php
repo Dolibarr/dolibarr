@@ -527,7 +527,7 @@ class CMailFile
 
 			if (! empty($this->addr_cc)) $this->message->setCc($this->getArrayAddress($this->addr_cc));
 			if (! empty($this->addr_bcc)) $this->message->setBcc($this->getArrayAddress($this->addr_bcc));
-			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
+			//if (! empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
 		} else {
 			// Send mail method not correctly defined
