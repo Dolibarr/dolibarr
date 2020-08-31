@@ -132,7 +132,8 @@ if (empty($reshook))
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		}
-		if (! $error) {
+
+		if (! $error && ! empty($conf->productbatch->enabled)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
@@ -157,7 +158,11 @@ if (empty($reshook))
 
 			$result = $tmp->create($user);
 			if ($result < 0) {
-				dol_print_error($db, $tmp->error, $tmp->errors);
+				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					setEventMessages($langs->trans("DuplicateRecord"), null, 'errors');
+				} else {
+					dol_print_error($db, $tmp->error, $tmp->errors);
+				}
 			}
 		}
 	}
