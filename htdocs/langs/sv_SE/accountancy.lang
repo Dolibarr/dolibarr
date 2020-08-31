@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Tillåt att hantera olika antal nollor i slutet av ett bo
 BANK_DISABLE_DIRECT_INPUT=Inaktivera direktinspelning av transaktion i bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktivera utkastexport på loggbok
 ACCOUNTANCY_COMBO_FOR_AUX=Aktivera kombinationslista för dotterkonto (kan vara långsamt om du har många tredje parter)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Försäljningsloggbok
 ACCOUNTING_PURCHASE_JOURNAL=Inköpsloggbok
@@ -284,6 +285,7 @@ ShowTutorial=Show Tutorial
 NotReconciled=Inte avstämd
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Applicera masskategorier
 AddAccountFromBookKeepingWithNoCategories=Tillgängligt konto ännu inte i den personifierade gruppen
 CategoryDeleted=Kategori för bokföringskonto har tagits bort

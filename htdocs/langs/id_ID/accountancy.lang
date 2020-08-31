@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Izinkan untuk mengelola jumlah nol yang berbeda di akhir 
 BANK_DISABLE_DIRECT_INPUT=Nonaktifkan pencatatan langsung transaksi di rekening bank
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktifkan konsep ekspor di jurnal
 ACCOUNTANCY_COMBO_FOR_AUX=Aktifkan daftar kombo untuk akun anak perusahaan (mungkin lambat jika Anda memiliki banyak pihak ketiga)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Jurnal Penjualan
 ACCOUNTING_PURCHASE_JOURNAL=Jurnal Pembelian
@@ -284,6 +285,7 @@ ShowTutorial=Perlihatkan Tutorial
 NotReconciled=Tidak didamaikan
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Terapkan kategori secara massal
 AddAccountFromBookKeepingWithNoCategories=Akun yang tersedia belum dalam grup yang dipersonalisasi
 CategoryDeleted=Kategori untuk akun akuntansi telah dihapus

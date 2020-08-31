@@ -52,7 +52,7 @@ if ($action == 'update' && !$cancel)
 {
 	dolibarr_set_const($db, "MAIN_DISABLE_ALL_SMS", GETPOST("MAIN_DISABLE_ALL_SMS", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphahtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", GETPOST("MAIN_MAIL_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
@@ -300,12 +300,12 @@ if ($action == 'edit')
 		$formsms = new FormSms($db);
         $formsms->fromtype = 'user';
         $formsms->fromid = $user->id;
-        $formsms->fromsms = (isset($_POST['fromsms']) ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+        $formsms->fromsms = (GETPOSTISSET('fromsms') ? $_POST['fromsms'] : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;
-		$formsms->withto = (isset($_POST['sendto']) ? $_POST['sendto'] : $user->user_mobile ? $user->user_mobile : 1);
-		$formsms->withbody = (isset($_POST['message']) ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
+		$formsms->withto = (GETPOSTISSET('sendto') ? $_POST['sendto'] : ($user->user_mobile ? $user->user_mobile : 1));
+		$formsms->withbody = (GETPOSTISSET('message') ? (empty($_POST['message']) ? 1 : $_POST['message']) : $langs->trans("ThisIsATestMessage"));
 		$formsms->withbodyreadonly = 0;
 		$formsms->withcancel = 1;
 		// Tableau des substitutions

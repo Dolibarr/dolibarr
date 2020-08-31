@@ -102,3 +102,5 @@ SuspenseAccountNotDefined=Suspense account isn't defined
 BoxLastCustomerShipments=Last customer shipments
 BoxTitleLastCustomerShipments=Latest %s customer shipments
 NoRecordedShipments=No recorded customer shipment
+# Pages
+AccountancyHome=Accountancy

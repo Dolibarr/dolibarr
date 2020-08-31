@@ -69,6 +69,7 @@ SocialContribution=Sosyal ya da mali vergi
 SocialContributions=Sosyal ya da mali vergiler
 SocialContributionsDeductibles=İndirilecek sosyal ya da mali vergiler
 SocialContributionsNondeductibles=İndirilemeyen sosyal ya da mali vergiler
+DateOfSocialContribution=Date of social or fiscal tax
 LabelContrib=Katkı payı etiketi
 TypeContrib=Katkı payı türü
 MenuSpecialExpenses=Özel giderler

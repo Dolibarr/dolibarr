@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Configuración del correo electrónico saliente (p
 DefaultOutgoingEmailSetup=Configuración de correo saliente predeterminada
 Information=Información
 ContactsWithThirdpartyFilter=Contactos con filtro de terceros.
+Unanswered=Unanswered
+Answered=Contestado
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

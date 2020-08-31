@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=zuletzt bearbeitete Lieferantenbestellungen
 BoxTitleLastModifiedCustomerBills=Zuletzt bearbeitete Kundenrechnungen (maximal %s)
 BoxTitleLastModifiedCustomerOrders=Zuletzt bearbeitete Kundenaufträge (maximal %s)
 BoxTitleLastModifiedPropals=Zuletzt bearbeitete Angebote (maximal %s)
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Kundenrechnungen
 ForCustomersOrders=Kundenaufträge
 ForProposals=Angebote
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=Zwischenkonto ist nicht definiert
 BoxLastCustomerShipments=Letzte Kundenlieferungen
 BoxTitleLastCustomerShipments=Neueste %s Kundensendungen
 NoRecordedShipments=Keine erfasste Kundensendung
+# Pages
+AccountancyHome=Buchführung

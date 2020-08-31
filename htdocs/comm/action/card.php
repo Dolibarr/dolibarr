@@ -257,10 +257,10 @@ if (empty($reshook) && $action == 'add')
 	if (!$error)
 	{
 		// Initialisation objet actioncomm
-		$object->priority = GETPOST("priority") ? GETPOST("priority") : 0;
+		$object->priority = GETPOSTISSET("priority") ? GETPOST("priority", "int") : 0;
 		$object->fulldayevent = (!empty($fulldayevent) ? 1 : 0);
-		$object->location = GETPOST("location");
-		$object->label = trim(GETPOST('label'));
+		$object->location = GETPOST("location", 'alphanohtml');
+		$object->label = GETPOST('label', 'alphanohtml');
 		$object->fk_element = GETPOST("fk_element", 'int');
 		$object->elementtype = GETPOST("elementtype", 'alpha');
 		if (!GETPOST('label'))
@@ -487,7 +487,7 @@ if (empty($reshook) && $action == 'update')
 		$object->datep       = $datep;
 		$object->datef       = $datef;
 		$object->percentage  = $percentage;
-		$object->priority    = GETPOST("priority", "alphanohtml");
+		$object->priority    = GETPOST("priority", "int");
         $object->fulldayevent = GETPOST("fullday") ? 1 : 0;
         $object->location    = GETPOST('location', "alphanohtml");
 		$object->socid       = GETPOST("socid", "int");
@@ -839,7 +839,6 @@ if ($action == 'create')
 							$("#p2").removeAttr("disabled");
 	            		}
 	            	}
-                    setdatefields();
                     $("#fullday").change(function() {
 						console.log("setdatefields");
                         setdatefields();
@@ -853,11 +852,25 @@ if ($action == 'create')
                         {
                             $("#doneby").val(-1);
                         }
-                   });
-                   $("#actioncode").change(function() {
+                    });
+                    $("#actioncode").change(function() {
                         if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
                         else $("#dateend").removeClass("fieldrequired");
-                   });
+                    });
+					$("#aphour,#apmin").change(function() {
+						if ($("#actioncode").val() == \'AC_RDV\') {
+							console.log("Start date was changed, we modify end date "+(parseInt($("#aphour").val()))+" "+$("#apmin").val()+" -> "+("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
+							$("#p2hour").val(("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
+							$("#p2min").val($("#apmin").val());
+							$("#p2day").val($("#apday").val());
+							$("#p2month").val($("#apmonth").val());
+							$("#p2year").val($("#apyear").val());
+							$("#p2").val($("#ap").val());
+						}
+					});
+                    if ($("#actioncode").val() == \'AC_RDV\') $("#dateend").addClass("fieldrequired");
+                    else $("#dateend").removeClass("fieldrequired");
+                    setdatefields();
                })';
         print '</script>'."\n";
     }
@@ -880,8 +893,8 @@ if ($action == 'create')
 	if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	{
 		print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans("Type").'</span></b></td><td>';
-		$default = (empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT) ? '' : $conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
-		$formactions->select_type_actions(GETPOST("actioncode", 'aZ09') ?GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1);
+		$default = (empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT) ? 'AC_RDV' : $conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT);
+		$formactions->select_type_actions(GETPOSTISSET("actioncode") ? GETPOST("actioncode", 'aZ09') : ($object->type_code ? $object->type_code : $default), "actioncode", "systemauto", 0, -1);
 		print '</td></tr>';
 	}
 
@@ -1132,14 +1145,16 @@ if ($action == 'create')
 	}
 
 	// Priority
-	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
-	print '<input type="text" name="priority" value="'.(GETPOST('priority') ?GETPOST('priority') : ($object->priority ? $object->priority : '')).'" size="5">';
-	print '</td></tr>';
+	if (! empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td colspan="3">';
+		print '<input type="text" name="priority" value="'.(GETPOSTISSET('priority') ? GETPOST('priority', 'int') : ($object->priority ? $object->priority : '')).'" size="5">';
+		print '</td></tr>';
+	}
 
     // Description
     print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
     require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor = new DolEditor('note', (GETPOST('note', 'none') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
+    $doleditor = new DolEditor('note', (GETPOSTISSET('note') ? GETPOST('note', 'none') : $object->note_private), '', 180, 'dolibarr_notes', 'In', true, true, $conf->fckeditor->enabled, ROWS_4, '90%');
     $doleditor->Create();
     print '</td></tr>';
 
@@ -1175,7 +1190,7 @@ if ($action == 'create')
 
         //Time Type
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-        print $form->select_type_duration('offsetunit');
+        print $form->selectTypeDuration('offsetunit');
         print '</td></tr>';
 
         //Reminder Type
@@ -1188,7 +1203,7 @@ if ($action == 'create')
 
         //Mail Model
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-        print $form->select_model_mail('actioncommsend', 'actioncomm_send');
+        print $form->selectModelMail('actioncommsend', 'actioncomm_send');
         print '</td></tr>';
 
 
@@ -1204,15 +1219,15 @@ if ($action == 'create')
                             $(".reminderparameters").hide();
                             }
 	            		 });
-	            		 
-	            		$("#selectremindertype").click(function(){	         
+
+	            		$("#selectremindertype").click(function(){
 	            	        var selected_option = $("#selectremindertype option:selected").val();
 	            		    if(selected_option == "email") {
 	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
 	            		    } else {
 	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
 	            		    };
-	            		});	            		 	   	
+	            		});
                    })';
         print '</script>'."\n";
     }
@@ -1893,7 +1908,7 @@ if ($id > 0)
 		}
 
 		// Description
-		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3">';
+		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td colspan="3" class="wordbreak">';
 		print dol_string_onlythesehtmltags(dol_htmlentitiesbr($object->note_private));
 		print '</td></tr>';
 

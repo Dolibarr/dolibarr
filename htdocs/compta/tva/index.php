@@ -220,12 +220,12 @@ $fsearch .= '<input type="hidden" name="modetax" value="'.$modetax.'">';
 $description = $fsearch;
 
 // Show report header
-$name = $langs->trans("ReportByMonth");
+$name = $langs->trans("VATReportByMonth");
 $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 
 $description .= $langs->trans("VATSummary").'<br>';
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description .= $langs->trans("RulesVATDueProducts");

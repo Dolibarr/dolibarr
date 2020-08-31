@@ -1454,7 +1454,7 @@ class Societe extends CommonObject
 	 *    @param	int		$rowid			Id of third party to load
 	 *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
 	 *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-	 *    @param    string	$notused       	Not used
+	 *    @param    string	$barcode       	Barcode of third party to load
 	 *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
 	 *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
@@ -1465,12 +1465,12 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
 	 */
-	public function fetch($rowid, $ref = '', $ref_ext = '', $notused = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
 	{
 		global $langs;
 		global $conf;
 
-		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
+		if (empty($rowid) && empty($ref) && empty($ref_ext) && empty($barcode) && empty($idprof1) && empty($idprof2) && empty($idprof3) && empty($idprof4) && empty($idprof5) && empty($idprof6) && empty($email)) return -1;
 
 		$sql = 'SELECT s.rowid, s.nom as name, s.name_alias, s.entity, s.ref_ext, s.ref_int, s.address, s.datec as date_creation, s.prefix_comm';
 		$sql .= ', s.status';
@@ -1515,7 +1515,7 @@ class Societe extends CommonObject
 		if ($ref)       $sql .= " AND s.nom = '".$this->db->escape($ref)."'";
 		if ($ref_alias) $sql .= " AND s.name_alias = '".$this->db->escape($ref_alias)."'";
 		if ($ref_ext)   $sql .= " AND s.ref_ext = '".$this->db->escape($ref_ext)."'";
-		if ($notused)   $sql .= " AND s.ref_int = '".$this->db->escape($notused)."'";
+		if ($barcode)   $sql .= " AND s.barcode = '".$this->db->escape($barcode)."'";
 		if ($idprof1)   $sql .= " AND s.siren = '".$this->db->escape($idprof1)."'";
 		if ($idprof2)   $sql .= " AND s.siret = '".$this->db->escape($idprof2)."'";
 		if ($idprof3)   $sql .= " AND s.ape = '".$this->db->escape($idprof3)."'";
@@ -4278,9 +4278,10 @@ class Societe extends CommonObject
 	 * Sets sales representatives of the thirdparty
 	 *
 	 * @param 	int[]|int 	$salesrep	 	User ID or array of user IDs
+	 * @param   bool        $onlyAdd        Only add (no delete before)
 	 * @return	int							<0 if KO, >0 if OK
 	 */
-	public function setSalesRep($salesrep)
+	public function setSalesRep($salesrep, $onlyAdd = false)
 	{
 		global $user;
 
@@ -4289,16 +4290,18 @@ class Societe extends CommonObject
 			$salesrep = array($salesrep);
 		}
 
-		// Get current users
-		$existing = $this->getSalesRepresentatives($user, 1);
 
-		// Diff
-		if (is_array($existing)) {
-			$to_del = array_diff($existing, $salesrep);
-			$to_add = array_diff($salesrep, $existing);
-		} else {
-			$to_del = array(); // Nothing to delete
-			$to_add = $salesrep;
+		$to_del = array(); // Nothing to delete
+		$to_add = $salesrep;
+		if ($onlyAdd === false) {
+			// Get current users
+			$existing = $this->getSalesRepresentatives($user, 1);
+
+			// Diff
+			if (is_array($existing)) {
+				$to_del = array_diff($existing, $salesrep);
+				$to_add = array_diff($salesrep, $existing);
+			}
 		}
 
 		$error = 0;

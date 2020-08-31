@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Tillat å administrere forskjellig antall nuller på slut
 BANK_DISABLE_DIRECT_INPUT=Deaktiver direkteregistrering av transaksjoner på bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Aktiver eksportutkast i journal
 ACCOUNTANCY_COMBO_FOR_AUX=Aktiver kombinasjonsliste for datterkonto (kan være treg hvis du har mange tredjeparter)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Salgsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Innkjøpsjournal
@@ -284,6 +285,7 @@ ShowTutorial=Vis veiledning
 NotReconciled=Ikke sammenslått
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Masseinnlegging av kategorier
 AddAccountFromBookKeepingWithNoCategories=Tilgjengelig konto er ennå ikke i en personlig gruppe
 CategoryDeleted=Kategori for regnskapskontoen er blitt slettet

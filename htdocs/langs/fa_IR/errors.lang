@@ -136,7 +136,8 @@ ErrorNewValueCantMatchOldValue=مقدار جدید نمی‌تواند براب�
 ErrorFailedToValidatePasswordReset=بازسازی گذرواژه مقدور نبود. ممکن است این بازسازی قبلا انجام شده باشد (این پیوند فقط یک بار قابل استفاده است). در صورتی که چنین نیست، روند بازسازی را از سر بگیرید.
 ErrorToConnectToMysqlCheckInstance=اتصال به پایگاه‌داده مقدور نیست. مطمئن شوید سرور پایگاه داده فعال است. (برای مثال، Mysql/Mariadb شما می‌توانید از خط فرمان لینوکس دستور 'sudo service mysql start' را اجرا کنید).
 ErrorFailedToAddContact=اضافه کردن طرف‌تماس مقدور نبود
-ErrorDateMustBeBeforeToday=تاریخ نمی‌تواند بیشتر از امروز باشد
+ErrorDateMustBeBeforeToday=The date must be lower than today
+ErrorDateMustBeInFuture=The date must be greater than today
 ErrorPaymentModeDefinedToWithoutSetup=حالت پرداخت به %s تنظیم شده اما برپاسازی واحد صورت‌حساب کامل نیست تا اطلاعات مربوط به این حالت پرداخت را تعریف کرده و نمایش دهد.
 ErrorPHPNeedModule=خطا، برای استفاده از این قابلیت روی PHP شما باید واحد <b>%s</b> نصب شده باشد.
 ErrorOpenIDSetupNotComplete=شما تنظیمات Dolibarr را پیکربندی کرده‌اید تا تصدیق ورود OpenID  را مجاز کنید، اما نشانی خدمات openID در مقدارثابت %s تعریف نشده است
@@ -239,6 +240,9 @@ ErrorBatchNoFoundEnoughQuantityForProductInWarehouse=No enough quantity for this
 ErrorOnlyOneFieldForGroupByIsPossible=Only 1 field for the 'Group by' is possible (others are discarded)
 ErrorTooManyDifferentValueForSelectedGroupBy=Found too many different value (more than <b>%s</b>) for the field '<b>%s</b>', so we can't use it as a 'Group by' for graphics. The field 'Group By' has been removed. May be you wanted to use it as an X-Axis ?
 ErrorReplaceStringEmpty=Error, the string to replace into is empty
+ErrorProductNeedBatchNumber=Error, product '<b>%s</b>' need a lot/serial number
+ErrorProductDoesNotNeedBatchNumber=Error, product '<b>%s</b>' does not accept a lot/serial number
+ErrorFailedToReadObject=Error, failed to read object of type <b>%s</b>
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
 WarningPasswordSetWithNoAccount=یک گذرواژه برای این عضو تنظیم شده است. با این‌حال هیچ حساب کاربری‌ای ساخته نشده است. بنابراین این گذرواژه برای ورود به Dolibarr قابل استفاده نیست. ممکن است برای یک رابط/واحد بیرونی قابل استفاده باشد، اما اگر شما نخواهید هیچ نام کاربری ورود و گذرواژه‌ای برای یک عضو استفاده کنید، شما می‌توانید گزینۀ "ایجاد یک نام‌ورد برای هر عضو" را از برپاسازی واحد اعضاء غیرفعال کنید. در صورتی که نیاز دارید که نام‌ورود داشته باشید اما گذرواژه نداشته باشید، می‌توانید این بخش را خالی گذاشته تا از این هشدار بر حذر باشید. نکته: همچنین نشانی رایانامه می‌تواند در صورتی که عضو به یک‌کاربر متصل باشد، می‌‌تواند مورد استفاده قرار گیرد

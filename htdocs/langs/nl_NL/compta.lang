@@ -69,6 +69,7 @@ SocialContribution=Sociale of fiscale heffingen/belasting
 SocialContributions=Sociale of fiscale heffingen/belastingen
 SocialContributionsDeductibles=Aftrekbare sociale/fiscale lasten/belastingen
 SocialContributionsNondeductibles=Niet aftrekbare sociale/fiscale lasten/belastingen
+DateOfSocialContribution=Date of social or fiscal tax
 LabelContrib=Labelbijdrage
 TypeContrib=Type bijdrage
 MenuSpecialExpenses=Speciale uitgaven

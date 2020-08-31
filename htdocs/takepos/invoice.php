@@ -241,6 +241,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->datepaye = $now;
 		$payment->fk_account = $bankaccount;
 		$payment->amounts[$invoice->id] = $amountofpayment;
+		if ($pay == 'cash') $payment->pos_change = price2num(GETPOST('excess', 'alpha'));
 
 		// If user has not used change control, add total invoice payment
 		// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay

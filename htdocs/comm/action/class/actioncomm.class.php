@@ -672,12 +672,13 @@ class ActionComm extends CommonObject
     /**
      *  Load object from database
      *
-     *  @param  int		$id     	Id of action to get
-     *  @param  string	$ref    	Ref of action to get
-     *  @param  string	$ref_ext	Ref ext to get
-     *  @return	int					<0 if KO, >0 if OK
+     *  @param  int		$id     		Id of action to get
+     *  @param  string	$ref    		Ref of action to get
+     *  @param  string	$ref_ext		Ref ext to get
+	 *  @param	string	$email_msgid	Email msgid
+     *  @return	int						<0 if KO, >0 if OK
      */
-    public function fetch($id, $ref = '', $ref_ext = '')
+    public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
     {
         global $langs;
 
@@ -698,6 +699,7 @@ class ActionComm extends CommonObject
         $sql .= " a.fk_contact, a.percent as percentage,";
         $sql .= " a.fk_element as elementid, a.elementtype,";
         $sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
+        $sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
         $sql .= " c.id as type_id, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
         $sql .= " s.nom as socname,";
         $sql .= " u.firstname, u.lastname as lastname";
@@ -706,9 +708,10 @@ class ActionComm extends CommonObject
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on u.rowid = a.fk_user_author";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on s.rowid = a.fk_soc";
         $sql .= " WHERE ";
-        if ($ref) $sql .= " a.id=".$ref; // No field ref, we use id
-        elseif ($ref_ext) $sql .= " a.ref_ext='".$this->db->escape($ref_ext)."'";
-        else $sql .= " a.id=".$id;
+        if ($ref) $sql .= " a.id = ".((int) $ref); // No field ref, we use id
+        elseif ($ref_ext) $sql .= " a.ref_ext = '".$this->db->escape($ref_ext)."'";
+        elseif ($email_msgid) $sql .= " a.email_msgid = '".$this->db->escape($email_msgid)."'";
+        else $sql .= " a.id = ".((int) $id);
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -1396,6 +1399,8 @@ class ActionComm extends CommonObject
 			$tooltip .= '<br><b>'.$langs->trans('Type').':</b> '.$labeltype;
 		if (!empty($this->location))
 			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.$this->location;
+		if (isset($this->transparency))
+			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		if (!empty($this->note_private))
 		    $tooltip .= '<br><b>'.$langs->trans('Note').':</b> '.(dol_textishtml($this->note_private) ? str_replace(array("\r", "\n"), "", $this->note_private) : str_replace(array("\r", "\n"), '<br>', $this->note_private));
 		$linkclose = '';

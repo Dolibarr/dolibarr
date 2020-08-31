@@ -688,7 +688,35 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	echo '<table width="100%" class="noborder nocellnopadd cal_month">';
 
 	echo '<tr class="liste_titre">';
-	echo '<td></td>';
+	echo '<td class="nopaddingtopimp nopaddingbottomimp">';
+
+	if ($canedit && $action == 'show_peruser')
+	{
+		// Filter on hours
+		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
+		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleTimeRange").'">'.$langs->trans("Hours").'</span>';
+		print "\n".'<div class="ui-grid-a inline-block"><div class="ui-block-a">';
+		print '<input type="number" class="short" name="begin_h" value="'.$begin_h.'" min="0" max="23">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
+		else print '</div><div class="ui-block-b">';
+		print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
+		if (empty($conf->dol_use_jmobile)) print ' '.$langs->trans("H");
+		print '</div></div>';
+
+		print '<br>';
+
+		// Filter on days
+		print img_picto('', 'clock', 'class="fawidth30 inline-block paddingleft"');
+		print '<span class="hideonsmartphone" title="'.$langs->trans("VisibleDaysRange").'">'.$langs->trans("DaysOfWeek").'</span>';
+		print "\n".'<div class="ui-grid-a  inline-block"><div class="ui-block-a">';
+		print '<input type="number" class="short" name="begin_d" value="'.$begin_d.'" min="1" max="7">';
+		if (empty($conf->dol_use_jmobile)) print ' - ';
+		else print '</div><div class="ui-block-b">';
+		print '<input type="number" class="short" name="end_d" value="'.$end_d.'" min="1" max="7">';
+		print '</div></div>';
+	}
+
+	print '</td>';
 	$i = 0; // 0 = sunday,
 	while ($i < 7)
 	{
@@ -698,7 +726,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 			continue;
 		}
 		echo '<td align="center" colspan="'.($end_h - $begin_h).'">';
-		echo '<span class="opacitymedium spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
+		echo '<span class="bold spandayofweek">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7)).'</span>';
 		print "<br>";
 		if ($i) print dol_print_date(dol_time_plus_duree($currentdaytoshow, $i, 'd'), 'day');
 		else print dol_print_date($currentdaytoshow, 'day');
