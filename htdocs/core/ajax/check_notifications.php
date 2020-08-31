@@ -75,13 +75,25 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
     dol_syslog('NEW $_SESSION[auto_check_events_not_before]='.$_SESSION['auto_check_events_not_before']);
 
-    $sql = 'SELECT id';
-    $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm a, '.MAIN_DB_PREFIX.'actioncomm_resources ar';
-    $sql .= ' WHERE a.id = ar.fk_actioncomm';
+    $sql = 'SELECT id, arm.rowid as id_reminder';
+    $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_reminder arm ON (arm.fk_actioncomm = a.id AND arm.fk_user = '.$user->id.' ) ';
+    $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_resources ar ON ar.fk_actioncomm = a.id';
+    $sql .= ' WHERE';
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
     // This need to extend period to be sure to not miss and save in session what we notified to avoid duplicate (save is not done yet).
-    $sql .= " AND datep BETWEEN '".$db->idate($starttime)."' AND '".$db->idate($time + $time_update - 1)."'";
-    $sql .= ' AND a.code <> "AC_OTH_AUTO"';
+    if(!empty($conf->global->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
+    {
+        $sql .= ' (';
+        $sql .= ' ( arm.typeremind = "browser" AND arm.dateremind < NOW() AND arm.status = 0  )';
+        $sql .= ' OR ( datep BETWEEN "'.$db->idate($starttime).'" AND "'.$db->idate($time + $time_update - 1).'" )';
+        $sql .= ' AND a.code <> "AC_OTH_AUTO"';
+        $sql .= ' )';
+    }
+    else{
+        $sql .= " AND arm.typeremind = 'browser' AND arm.dateremind < NOW() AND arm.status = 0  ";
+    }
+
     $sql .= ' AND ar.element_type = "user"';
     $sql .= ' AND ar.fk_element = '.$user->id;
     $sql .= ' LIMIT 10'; // Avoid too many notification at once
@@ -106,6 +118,13 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
 
             $eventfound[] = $event;
+
+            //Update reminder to status "done"
+            $actioncommReminder = new ActionCommReminder($db);
+            $actioncommReminder->fetch($obj->id_reminder);
+            $actioncommReminder->status = $actioncommReminder::STATUS_DONE;
+            $res = $actioncommReminder->update($user);
+
         }
     } else {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);
