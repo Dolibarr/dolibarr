@@ -174,7 +174,7 @@ class Users extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
-  
+
 	/**
 	 * Get properties of an user object by login
 	 *
@@ -183,7 +183,7 @@ class Users extends DolibarrApi
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @url GET login/{login}
-	 * 
+	 *
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
@@ -210,7 +210,7 @@ class Users extends DolibarrApi
 
 		return $this->_cleanObjectDatas($this->useraccount);
 	}
-  
+
 	/**
 	 * Get properties of an user object by Email
 	 *
@@ -219,7 +219,7 @@ class Users extends DolibarrApi
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @url GET email/{email}
-	 * 
+	 *
 	 * @throws RestException 401     Insufficient rights
 	 * @throws RestException 404     User or group not found
 	 */
