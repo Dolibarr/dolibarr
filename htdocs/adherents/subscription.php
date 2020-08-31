@@ -629,7 +629,7 @@ if ($rowid > 0) {
                 $subscriptionstatic->id = $objp->crowid;
 
                 $typeid = $objp->cfk_type;
-                
+
                 print '<tr class="oddeven">';
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
                 print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'dayhour')."</td>\n";
