@@ -341,16 +341,16 @@ if ($object->id > 0)
     		{
     			if ($permissiontoadd)
     			{
-    				//print '<a href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&action=addline" class="butAction">'.$langs->trans("AddLine").'</a>';
-
+    				/*
     				if ($conf->barcode->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
     				}
     				if ($conf->productbatch->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
+    				}*/
+    				if ($conf->barcode->enabled || $conf->productbatch->enabled) {
+    					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
     				}
-
-    				//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=savecurrent">'.$langs->trans("Save").'</a>'."\n";
     			} else {
     				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
     			}
