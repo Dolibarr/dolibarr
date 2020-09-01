@@ -45,6 +45,7 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
+// Get parameters
 $action = GETPOST('action', 'aZ09');
 
 // Input are:
@@ -68,9 +69,6 @@ if (!$action)
     	exit;
     }
 }
-
-
-
 
 
 // Define $urlwithroot
@@ -132,7 +130,7 @@ $conf->dol_hide_leftmenu = 1;
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
-// Check link validity
+// Check link validity for param 'source'
 if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
 {
     $langs->load("errors");
@@ -158,7 +156,6 @@ print '<!-- Form to sign -->'."\n";
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
 // Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
-$width = 0;
 // Define logo and logosmall
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
@@ -173,12 +170,10 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-	$width = 150;
 } elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-	$width = 150;
 }
 // Output html code for logo
 if ($urllogo)
@@ -186,7 +181,6 @@ if ($urllogo)
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {

@@ -145,6 +145,7 @@ if ($action == 'create')
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" enctype="multipart/form-data">'."\n";
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print load_fiche_titre($langs->trans("NewBookmark"));
 
@@ -250,7 +251,7 @@ if ($id > 0 && !preg_match('/^add/i', $action))
 		print '</span>';
 	}
 	print '</td><td>';
-	if ($action == 'edit') print '<input class="flat" name="url" size="80" value="'.(isset($_POST["url"]) ? $_POST["url"] : $object->url).'">';
+	if ($action == 'edit') print '<input class="flat minwidth500" name="url" value="'.(isset($_POST["url"]) ? $_POST["url"] : $object->url).'">';
 	else print '<a href="'.(preg_match('/^http/i', $object->url) ? $object->url : DOL_URL_ROOT.$object->url).'"'.($object->target ? ' target="_blank"' : '').'>'.$object->url.'</a>';
 	print '</td></tr>';
 

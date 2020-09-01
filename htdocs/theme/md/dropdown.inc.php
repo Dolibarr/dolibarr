@@ -147,7 +147,7 @@ button.dropdown-item.global-search-item {
 * MENU Dropdown
 */
 .login_block.usedropdown .logout-btn{
-    display: none;
+    /* display: none; */
 }
 
 .tmenu .open.dropdown, .tmenu .open.dropdown {

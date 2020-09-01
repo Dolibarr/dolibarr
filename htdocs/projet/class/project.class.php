@@ -114,6 +114,8 @@ class Project extends CommonObject
 	public $opp_status; // opportunity status, into table llx_c_lead_status
 	public $opp_percent; // opportunity probability
 
+	public $email_msgid;
+
 	public $oldcopy;
 
 	public $weekWorkLoad; // Used to store workload details of a projet
@@ -187,6 +189,7 @@ class Project extends CommonObject
 		'date_close' =>array('type'=>'datetime', 'label'=>'Date close', 'enabled'=>1, 'visible'=>-1, 'position'=>105),
 		'fk_user_close' =>array('type'=>'integer', 'label'=>'Fk user close', 'enabled'=>1, 'visible'=>-1, 'position'=>110),
 		'opp_amount' =>array('type'=>'double(24,8)', 'label'=>'Opp amount', 'enabled'=>1, 'visible'=>-1, 'position'=>115),
+		'email_msgid' => array('type'=>'varchar(255)', 'label'=>'EmailMsgID', 'visible'=>-2, 'enabled'=>1, 'position'=>540, 'notnull'=>-1, 'help'=>'EmailMsgIDDesc'),
 		'import_key' =>array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'visible'=>-1, 'position'=>120),
 		'fk_user_modif' =>array('type'=>'integer', 'label'=>'Fk user modif', 'enabled'=>1, 'visible'=>-1, 'position'=>125),
 		'usage_bill_time' =>array('type'=>'integer', 'label'=>'Usage bill time', 'enabled'=>1, 'visible'=>-1, 'position'=>130),
@@ -265,6 +268,7 @@ class Project extends CommonObject
 		$sql .= ", usage_task";
 		$sql .= ", usage_bill_time";
 		$sql .= ", usage_organize_event";
+		$sql .= ", email_msgid";
 		$sql .= ", note_private";
 		$sql .= ", note_public";
 		$sql .= ", entity";
@@ -287,6 +291,7 @@ class Project extends CommonObject
 		$sql .= ", ".($this->usage_task ? 1 : 0);
 		$sql .= ", ".($this->usage_bill_time ? 1 : 0);
 		$sql .= ", ".($this->usage_organize_event ? 1 : 0);
+		$sql .= ", ".($this->email_msgid ? "'".$this->db->escape($this->email_msgid)."'" : 'null');
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : 'null');
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null');
 		$sql .= ", ".$conf->entity;
@@ -464,27 +469,34 @@ class Project extends CommonObject
 	/**
 	 * 	Get object from database
 	 *
-	 * 	@param      int		$id       	Id of object to load
-	 * 	@param		string	$ref		Ref of project
-	 * 	@return     int      		   	>0 if OK, 0 if not found, <0 if KO
+	 * 	@param      int		$id       		Id of object to load
+	 * 	@param		string	$ref			Ref of project
+	 * 	@param		string	$ref_ext		Ref ext of project
+	 *  @param		string	$email_msgid	Email msgid
+	 * 	@return     int      		   		>0 if OK, 0 if not found, <0 if KO
 	 */
-	public function fetch($id, $ref = '')
+	public function fetch($id, $ref = '', $ref_ext = '', $email_msgid = '')
 	{
 		global $conf;
 
 		if (empty($id) && empty($ref)) return -1;
 
-		$sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
+		$sql = "SELECT rowid, entity, ref, title, description, public, datec, opp_amount, budget_amount,";
 		$sql .= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut as status, fk_opp_status, opp_percent,";
-		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, entity";
+		$sql .= " note_private, note_public, model_pdf, usage_opportunity, usage_task, usage_bill_time, usage_organize_event, email_msgid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."projet";
 		if (!empty($id))
 		{
-			$sql .= " WHERE rowid=".$id;
-		} elseif (!empty($ref))
-		{
-			$sql .= " WHERE ref='".$this->db->escape($ref)."'";
-			$sql .= " AND entity IN (".getEntity('project').")";
+			$sql .= " WHERE rowid = ".$id;
+		} else {
+			$sql .= " WHERE entity IN (".getEntity('project').")";
+			if (! empty($ref)) {
+				$sql .= " AND ref = '".$this->db->escape($ref)."'";
+			} elseif (! empty($ref_ext)) {
+				$sql .= " AND ref_ext = '".$this->db->escape($ref_ext)."'";
+			} else {
+				$sql .= " AND email_msgid = '".$this->db->escape($email_msgid)."'";
+			}
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -498,6 +510,7 @@ class Project extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id = $obj->rowid;
+				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
 				$this->title = $obj->title;
 				$this->description = $obj->description;
@@ -521,12 +534,13 @@ class Project extends CommonObject
 				$this->opp_amount	= $obj->opp_amount;
 				$this->opp_percent = $obj->opp_percent;
 				$this->budget_amount = $obj->budget_amount;
+				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf;
 				$this->usage_opportunity = (int) $obj->usage_opportunity;
 				$this->usage_task = (int) $obj->usage_task;
 				$this->usage_bill_time = (int) $obj->usage_bill_time;
 				$this->usage_organize_event = (int) $obj->usage_organize_event;
-				$this->entity = $obj->entity;
+				$this->email_msgid = $obj->email_msgid;
 
 				$this->db->free($resql);
 

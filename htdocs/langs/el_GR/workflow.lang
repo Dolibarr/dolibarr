@@ -1,20 +1,23 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Ροής εργασίας ρύθμιση μονάδας
-WorkflowDesc=This module is designed to modify the behaviour of automatic actions into application. By default, workflow is open (you can do things in the order you want). You can activate the automatic actions you are interested in.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+WorkflowDesc=Αυτή η ενότητα παρέχει ορισμένες αυτόματες ενέργειες. Από προεπιλογή, η ροή εργασιών είναι ανοιχτή (μπορείτε να κάνετε πράγματα με τη σειρά που θέλετε), αλλά εδώ μπορείτε να ενεργοποιήσετε ορισμένες αυτόματες ενέργειες.
+ThereIsNoWorkflowToModify=Δεν υπάρχουν τροποποιήσεις ροής εργασίας με τις ενεργοποιημένες μονάδες.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Δημιουργήστε αυτόματα μια εντολή πώλησης μετά την υπογραφή μιας εμπορικής πρότασης (η νέα παραγγελία θα έχει το ίδιο ποσό με την πρόταση)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Αυτόματη δημιουργία τιμολογίου πελάτη μετά την υπογραφή εμπορικής πρότασης (το νέο τιμολόγιο θα έχει το ίδιο ποσό με την πρόταση)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Αυτόματη δημιουργία τιμολογίου πελάτη μετά την επικύρωση μιας σύμβασης
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Αυτόματη δημιουργία τιμολογίου πελάτη μετά την ολοκλήρωση της παραγγελίας πώλησης (το νέο τιμολόγιο θα έχει το ίδιο ποσό με την παραγγελία)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
-descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
-# Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Ταξινόμηση της πρότασης συνδεδεμένης πηγής ως χρεώνεται όταν η εντολή πώλησης έχει οριστεί σε τιμολόγια (και αν το ποσό της παραγγελίας είναι το ίδιο με το συνολικό ποσό της υπογεγραμμένης συνδεδεμένης πρότασης)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Ταξινόμηση της προτεινόμενης πρότασης πηγής ως χρεώνεται όταν επικυρώνεται το τιμολόγιο πελάτη (και αν το ποσό του τιμολογίου είναι το ίδιο με το συνολικό ποσό της υπογεγραμμένης συνδεδεμένης πρότασης)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Ταξινόμηση της εντολής πωλήσεων συνδεδεμένης πηγής ως χρεώνεται όταν έχει επικυρωθεί το τιμολόγιο πελάτη (και εάν το ποσό του τιμολογίου είναι το ίδιο με το συνολικό ποσό της συνδεδεμένης παραγγελίας)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Ταξινόμηση της εντολής πωλήσεων συνδεδεμένης πηγής ως χρεώνεται όταν το τιμολόγιο πελάτη έχει οριστεί για πληρωμή (και αν το ποσό του τιμολογίου είναι το ίδιο με το συνολικό ποσό της συνδεδεμένης παραγγελίας)
+descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Ταξινόμηση της εντολής πωλήσεων συνδεδεμένης πηγής ως αποστολής κατά την επικύρωση μιας αποστολής (και εάν η ποσότητα που αποστέλλεται από όλες τις αποστολές είναι η ίδια με τη σειρά για την ενημέρωση)
+# Autoclassify purchase order
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Ταξινόμηση της πρότασης προμηθευτή συνδεδεμένης πηγής ως τιμολογίου όταν επικυρωθεί το τιμολόγιο πωλητή (και εάν το ποσό του τιμολογίου είναι το ίδιο με το συνολικό ποσό της συνδεδεμένης πρότασης)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Ταξινόμηση της εντολής αγοράς συνδεδεμένης πηγής ως χρεώνεται όταν επικυρώνεται το τιμολόγιο πωλητή (και αν το ποσό του τιμολογίου είναι το ίδιο με το συνολικό ποσό της συνδεδεμένης παραγγελίας)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
+AutomaticCreation=Αυτόματη δημιουργία
+AutomaticClassification=Αυτόματη ταξινόμηση

@@ -463,11 +463,26 @@ if (empty($reshook))
 			if ($idprod > 0)
 			{
 				$label = $productsupplier->label;
-
+				// Define output language
+				if (!empty($conf->global->MAIN_MULTILANGS) && !empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE)) {
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09'))
+						$newlang = GETPOST('lang_id', 'aZ09');
+					if (empty($newlang))
+						$newlang = $object->thirdparty->default_lang;
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+					$desc = (!empty($productsupplier->multilangs [$outputlangs->defaultlang] ["description"])) ? $productsupplier->multilangs [$outputlangs->defaultlang] ["description"] : $productsupplier->description;
+				} else {
+					$desc = $productsupplier->description;
+				}
 				// if we use supplier description of the products
 				if (!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
 				    $desc = $productsupplier->desc_supplier;
-				} else $desc = $productsupplier->description;
+				}
 
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc, '', !empty($conf->global->MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION));
 
@@ -637,7 +652,9 @@ if (empty($reshook))
 	 */
 	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha'))
 	{
-		$vat_rate = (GETPOST('tva_tx') ?GETPOST('tva_tx') : 0);
+		$db->begin();
+
+		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
 
    		if ($lineid)
 		{
@@ -765,7 +782,11 @@ if (empty($reshook))
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				if ($result < 0) dol_print_error($db, $result);
 			}
+
+			$db->commit();
 		} else {
+			$db->rollback();
+
 			dol_print_error($db, $object->error);
 			exit;
 		}
@@ -774,6 +795,8 @@ if (empty($reshook))
 	// Remove a product line
 	if ($action == 'confirm_deleteline' && $confirm == 'yes' && $usercancreate)
 	{
+		$db->begin();
+
 		$result = $object->deleteline($lineid);
 		if ($result > 0)
 		{
@@ -792,19 +815,28 @@ if (empty($reshook))
 				$ret = $object->fetch($object->id); // Reload to get new records
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+			// Reset action to avoid asking again confirmation on failure
+			$action = '';
+		}
+
+		if (!$error) {
+			$db->commit();
 
 			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
 			exit;
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			/* Fix bug 1485 : Reset action to avoid asking again confirmation on failure */
-			$action = '';
+			$db->rollback();
 		}
 	}
 
 	// Validate
 	if ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate)
 	{
+		$db->begin();
+
 		$object->date_commande = dol_now();
 		$result = $object->valid($user);
 		if ($result >= 0)
@@ -824,21 +856,33 @@ if (empty($reshook))
 				$ret = $object->fetch($id); // Reload to get new records
 
 				$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-				if ($result < 0) dol_print_error($db, $result);
+				if ($result < 0) {
+					$error++;
+					dol_print_error($db, $result);
+				}
 			}
 		} else {
+			$error++;
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 
 		// If we have permission, and if we don't need to provide the idwarehouse, we go directly on approved step
-		if (empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $usercanapprove && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
+		if (!$error && empty($conf->global->SUPPLIER_ORDER_NO_DIRECT_APPROVE) && $usercanapprove && !(!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER) && $object->hasProductsOrServices(1)))
 		{
 			$action = 'confirm_approve'; // can make standard or first level approval also if permission is set
+		}
+
+		if (! $error) {
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
 	}
 
 	if (($action == 'confirm_approve' || $action == 'confirm_approve2') && $confirm == 'yes' && $usercanapprove)
 	{
+		$db->begin();
+
 		$idwarehouse = GETPOST('idwarehouse', 'int');
 
 		$qualified_for_stock_change = 0;
@@ -876,11 +920,19 @@ if (empty($reshook))
 					}
 					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
-				header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
-				exit;
 			} else {
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+		}
+
+		if (!$error) {
+			$db->commit();
+
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+			exit;
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -908,6 +960,8 @@ if (empty($reshook))
 
 	if ($action == 'confirm_commande' && $confirm == 'yes' && $usercanorder)
 	{
+		$db->begin();
+
 		$result = $object->commande($user, GETPOST("datecommande"), GETPOST("methode", 'int'), GETPOST('comment', 'alphanohtml'));
 		if ($result > 0)
 		{
@@ -924,10 +978,18 @@ if (empty($reshook))
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			$action = '';
+		} else {
+			$error++;
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+
+		if (!$error) {
+			$db->commit();
+
 			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
 			exit;
 		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
+			$db->rollback();
 		}
 	}
 
@@ -972,6 +1034,8 @@ if (empty($reshook))
 	// Set status of reception (complete, partial, ...)
 	if ($action == 'livraison' && $usercanreceived)
 	{
+		$db->begin();
+
 		if (GETPOST("type") != '')
 		{
 			$date_liv = dol_mktime(GETPOST('rehour'), GETPOST('remin'), GETPOST('resec'), GETPOST("remonth"), GETPOST("reday"), GETPOST("reyear"));
@@ -984,12 +1048,21 @@ if (empty($reshook))
 				$action = '';
 			} elseif ($result == -3)
 			{
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		} else {
+			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Delivery")), null, 'errors');
+		}
+
+		if (! $error) {
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
 	}
 
@@ -1892,7 +1965,7 @@ if ($action == 'create')
                 $morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
                 $morehtmlref .= '<input type="hidden" name="action" value="classin">';
                 $morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-                $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+                $morehtmlref .= $formproject->select_projects((empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) ? $object->socid : -1), $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1, 0, 'maxwidth500');
                 $morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
                 $morehtmlref .= '</form>';
             } else {
@@ -2315,7 +2388,7 @@ if ($action == 'create')
 			{
 				if ($usercanapprove)
 				{
-					if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && !empty($object->user_approve_id))
+					if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED && !empty($object->user_approve_id))
 					{
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("FirstApprovalAlreadyDone")).'">'.$langs->trans("ApproveOrder").'</a>';
 					} else {
@@ -2327,7 +2400,7 @@ if ($action == 'create')
 			}
 
 			// Second approval (if option SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED is set)
-			if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $conf->global->MAIN_FEATURES_LEVEL > 0 && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
+			if (!empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED) && $object->total_ht >= $conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
 			{
 				if ($object->statut == CommandeFournisseur::STATUS_VALIDATED)
 				{

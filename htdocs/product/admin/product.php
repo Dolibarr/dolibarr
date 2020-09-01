@@ -528,6 +528,7 @@ print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="other">';
+print '<input type="hidden" name="page_y" value="">';
 
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
@@ -742,7 +743,9 @@ if (!empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
 print '</table>';
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></div>';
+print '<div class="center">';
+print '<input type="submit" class="button reposition" value="'.$langs->trans("Modify").'">';
+print '</div>';
 
 print '</form>';
 

@@ -809,9 +809,10 @@ function getSocialNetworkSharingLinks()
  * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
  * @param	array		$otherfilters		Other filters
+ * @param	int			$status				0 or 1, or -1 for both
  * @return  string							HTML content
  */
-function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null')
+function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = 'null', $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running inluded containers.
 
@@ -852,7 +853,9 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';
 		}
 		$sql .= " WHERE wp.fk_website = ".$website->id;
-		$sql .= " AND wp.status = 1";
+		if ($status >= 0) {
+			$sql .= " AND wp.status = ".$status;
+		}
 		if ($langcode) {
 			$sql .= " AND wp.lang ='".$db->escape($langcode)."'";
 		}

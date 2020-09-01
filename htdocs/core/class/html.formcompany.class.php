@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,6 +170,58 @@ class FormCompany extends Form
 		} else dol_print_error($this->db);
 		if (!empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '</form>';
+	}
+
+	/**
+	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
+	 *
+	 *  @param	int		$page        	Page
+	 *  @param  int		$selected    	Id or code preselected
+	 *  @param  string	$htmlname   	Nom du formulaire select
+	 *	@param	int		$empty			Add empty value in list
+	 *	@return	void
+	 */
+	public function formProspectContactLevel($page, $selected = '', $htmlname = 'prospect_contact_level_id', $empty = 0)
+	{
+		global $user, $langs;
+
+		print '<form method="post" action="' . $page . '">';
+		print '<input type="hidden" name="action" value="setprospectcontactlevel">';
+		print '<input type="hidden" name="token" value="' . newToken() . '">';
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$sql = "SELECT code, label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectcontactlevel";
+		$sql .= " WHERE active > 0";
+		$sql .= " ORDER BY sortorder";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$options = array();
+
+			if ($empty)
+			{
+				$options[''] = '';
+			}
+
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$level = $langs->trans($obj->code);
+
+				if ($level == $obj->code)
+				{
+					$level = $langs->trans($obj->label);
+				}
+
+				$options[$obj->code] = $level;
+			}
+
+			print Form::selectarray($htmlname, $options, $selected);
+		}
+		else dol_print_error($this->db);
+		if (!empty($htmlname) && $user->admin) print ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 		print '</form>';
 	}
 
@@ -366,9 +419,10 @@ class FormCompany extends Form
 	 *  @param  string	$selected   	Civility/Title code preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
 	 *  @param  string  $morecss        Add more css on SELECT element
+	 *  @param	int		$addjscombo		Add js combo
 	 *  @return	string					String with HTML select
 	 */
-	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth100')
+	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 0)
 	{
         // phpcs:enable
 		global $conf, $langs, $user;
@@ -398,7 +452,7 @@ class FormCompany extends Form
 					} else {
 						$out .= '<option value="'.$obj->code.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// If translation exists, we use it, otherwise, we use tha had coded label
 					$out .= ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 					$out .= '</option>';
 					$i++;
@@ -406,6 +460,12 @@ class FormCompany extends Form
 			}
 			$out .= '</select>';
 			if ($user->admin) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+
+			if ($addjscombo) {
+				// Enhance with select2
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname);
+			}
 		} else {
 			dol_print_error($this->db);
 		}
@@ -926,11 +986,11 @@ class FormCompany extends Form
 	    	$out .= '<option value="0"'.((string) $selected == '0' ? ' selected' : '').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
     	} elseif ($typeinput == 'list') {
     		$out .= '<option value="-1"'.(($selected == '' || $selected == '-1') ? ' selected' : '').'>&nbsp;</option>';
-    		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-    			$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
-    		}
     		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
     			$out .= '<option value="2,3"'.($selected == '2,3' ? ' selected' : '').'>'.$langs->trans('Prospect').'</option>';
+    		}
+    		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+    			$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
     		}
     		$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
     		$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Other').'</option>';

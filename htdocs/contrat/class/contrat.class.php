@@ -726,6 +726,7 @@ class Contrat extends CommonObject
 
 					$this->note_private = $obj->note_private;
 					$this->note_public = $obj->note_public;
+					$this->model_pdf = $obj->model_pdf;
 					$this->modelpdf = $obj->model_pdf;
 
 					$this->fk_projet = $obj->fk_project; // deprecated
@@ -2309,6 +2310,8 @@ class Contrat extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
 		$sql .= " AND tosell = 1";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -2393,6 +2396,7 @@ class Contrat extends CommonObject
 		global $conf, $langs;
 
 		$langs->load("contracts");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'strato';
@@ -2776,18 +2780,16 @@ class ContratLigne extends CommonObjectLine
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         Id object
-	 *  @param	string	$ref		Ref of contract
+	 *  @param	string	$ref		Ref of contract line
 	 *  @return int         		<0 if KO, >0 if OK
 	 */
     public function fetch($id, $ref = '')
 	{
-
 		// Check parameters
 		if (empty($id) && empty($ref)) return -1;
 
 		$sql = "SELECT";
 		$sql .= " t.rowid,";
-
 		$sql .= " t.tms,";
 		$sql .= " t.fk_contrat,";
 		$sql .= " t.fk_product,";
@@ -2888,10 +2890,14 @@ class ContratLigne extends CommonObjectLine
 				$this->fk_user_cloture = $obj->fk_user_cloture;
 				$this->commentaire = $obj->commentaire;
 				$this->fk_fournprice = $obj->fk_fournprice;
+
 				$marginInfos = getMarginInfos($obj->subprice, $obj->remise_percent, $obj->tva_tx, $obj->localtax1_tx, $obj->localtax2_tx, $this->fk_fournprice, $obj->pa_ht);
 				$this->pa_ht = $marginInfos[0];
 				$this->fk_unit = $obj->fk_unit;
+
+				$this->fetch_optionals();
 			}
+
 			$this->db->free($resql);
 
 			return 1;

@@ -326,6 +326,12 @@ source_file = htdocs/langs/en_US/receptions.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.recruitment]
+file_filter = htdocs/langs/<lang>/recruitment.lang
+source_file = htdocs/langs/en_US/recruitment.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.resource]
 file_filter = htdocs/langs/<lang>/resource.lang
 source_file = htdocs/langs/en_US/resource.lang

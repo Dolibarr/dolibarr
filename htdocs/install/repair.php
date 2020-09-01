@@ -996,7 +996,7 @@ if ($ok && GETPOST('clean_product_stock_batch', 'alpha'))
                             $resql2 = $db->query($sql2);
                             if ($resql2)
                             {
-                                // We update product_stock, so we must field stock into product too.
+                                // We update product_stock, so we must fill p.stock into product too.
                                 $sql3 = 'UPDATE '.MAIN_DB_PREFIX.'product p SET p.stock= (SELECT SUM(ps.reel) FROM '.MAIN_DB_PREFIX.'product_stock ps WHERE ps.fk_product = p.rowid)';
                                 $resql3 = $db->query($sql3);
                                 if (!$resql3)

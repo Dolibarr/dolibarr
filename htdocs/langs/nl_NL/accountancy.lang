@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Sta toe om een verschillend aantal nullen aan het einde v
 BANK_DISABLE_DIRECT_INPUT=Rechtstreeks boeken van transactie in bankboek uitzetten
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Schakel concept export van het journaal in
 ACCOUNTANCY_COMBO_FOR_AUX=Combo-lijst inschakelen voor dochteronderneming-account (kan traag zijn als u veel externe partijen hebt)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Verkoopboek
 ACCOUNTING_PURCHASE_JOURNAL=Inkoopboek
@@ -188,7 +189,7 @@ Docref=Reference
 LabelAccount=Label account
 LabelOperation=Werking label
 Sens=D/C
-LetteringCode=Belettering code
+LetteringCode=Aflettercode
 Lettering=Afletteren
 Codejournal=Journaal
 JournalLabel=Journaal label
@@ -263,7 +264,7 @@ DescVentilDoneExpenseReport=Hier kunt u de lijst raadplegen van kostenregels met
 DescClosure=Raadpleeg hier het aantal bewegingen per maand die niet zijn gevalideerd en fiscale jaren die al open zijn
 OverviewOfMovementsNotValidated=Stap 1 / Overzicht van bewegingen niet gevalideerd. (Noodzakelijk om een boekjaar af te sluiten)
 ValidateMovements=Valideer wijzigingen
-DescValidateMovements=Elke wijziging of verwijdering van schrijven, belettering en verwijderingen is verboden. Alle inzendingen voor een oefening moeten worden gevalideerd, anders is afsluiten niet mogelijk
+DescValidateMovements=Elke wijziging of verwijdering van inboeken, afletteren en verwijderingen is verboden. Alle boekingen moeten worden gevalideerd, anders is afsluiten niet mogelijk
 SelectMonthAndValidate=Selecteer een maand en valideer bewerkingen
 
 ValidateHistory=Automatisch boeken
@@ -271,7 +272,7 @@ AutomaticBindingDone=Automatisch koppelen voltooid
 
 ErrorAccountancyCodeIsAlreadyUse=Error, you cannot delete this accounting account because it is used
 MvtNotCorrectlyBalanced=Boeking is niet in balans. Debet = %s | Credit = %s
-Balancing=Balancen
+Balancing=Balansen
 FicheVentilation=Koppelen card
 GeneralLedgerIsWritten=Grootboek transacties
 GeneralLedgerSomeRecordWasNotRecorded=Sommige transacties konden niet worden doorgeboekt. Als er geen andere foutmelding is, komt dit waarschijnlijk omdat ze reeds zijn doorgeboekt.
@@ -284,6 +285,7 @@ ShowTutorial=Handleiding weergeven
 NotReconciled=Niet afgestemd
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Categorieën  a-mass toepassen
 AddAccountFromBookKeepingWithNoCategories=Beschikbare rekening nog niet in de gepersonaliseerde groep
 CategoryDeleted=Categorie van deze grootboekrekening is verwijderd

@@ -218,6 +218,6 @@ ErrorFoundDuringMigration=Während des Migrationsprozesses wurden Fehler gemelde
 YouTryInstallDisabledByDirLock=Die Anwendung hat versucht, sich selbst zu aktualisieren, aber die Installations- / Aktualisierungsseiten wurden aus Sicherheitsgründen deaktiviert (Verzeichnis umbenannt mit .lock-Suffix). <br>
 YouTryInstallDisabledByFileLock=Die Anwendung hat versucht, sich selbst zu aktualisieren, aber die Installations-/Upgrade-Seiten wurden aus Sicherheitsgründen deaktiviert (durch die Existenz einer Sperrdatei <strong>install.lock</strong> im Dokumenten-Verzeichnis).<br>
 ClickHereToGoToApp=Hier klicken um zu Ihrer Anwendung zu kommen
-ClickOnLinkOrRemoveManualy=If an upgrade is in progress, please wait. If not, click on the following link. If you always see this same page, you must remove/rename the file install.lock in the documents directory.
+ClickOnLinkOrRemoveManualy=Wenn ein Upgrade durchgeführt wird, warten Sie bitte. Wenn nicht, klicken Sie auf den folgenden Link. Wenn Sie immer dieselbe Seite sehen, müssen Sie die Datei install.lock im Dokumentenverzeichnis entfernen / umbenennen.
 Loaded=Geladen
 FunctionTest=Funktionstest

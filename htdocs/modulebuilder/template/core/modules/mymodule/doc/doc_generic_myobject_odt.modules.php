@@ -47,10 +47,10 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	public $emetteur;
 
 	/**
-	 * @var array Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.5 = array(5, 5)
-	 */
-	public $phpmin = array(5, 5);
+     * @var array Minimum version of PHP required by module.
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
+     */
+	public $phpmin = array(5, 6);
 
 	/**
 	 * @var string Dolibarr version of the loaded document

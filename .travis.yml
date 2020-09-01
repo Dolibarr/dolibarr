@@ -5,6 +5,7 @@
 # We use dist: xenial to have php 5.6+ available
 os: linux
 dist: xenial
+#dist: bionic
 sudo: required
 
 language: php

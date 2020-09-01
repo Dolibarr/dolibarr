@@ -59,19 +59,19 @@ $colorbacktabcard1 = '255,255,255'; // card
 $colorbacktabactive = '234,234,234';
 $colorbacklineimpair1 = '255,255,255'; // line impair
 $colorbacklineimpair2 = '255,255,255'; // line impair
-$colorbacklinepair1 = '251,251,251'; // line pair
-$colorbacklinepair2 = '251,251,251'; // line pair
+$colorbacklinepair1 = '250,250,250'; // line pair
+$colorbacklinepair2 = '250,250,250'; // line pair
 $colorbacklinepairhover = '230,237,244'; // line hover
 $colorbacklinepairchecked = '230,237,244'; // line checked
 $colorbacklinebreak = '248,247,244'; // line break
 $colorbackbody = '255,255,255';
-$colortexttitlenotab = '0,123,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
+$colortexttitlenotab = '10,120,140'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitlenotab2 = '100,0,100'; // 150,90,121 140,80,10 or 10,140,80  #875a7b  green=0,123,140, violet: 0,50,120
 $colortexttitle = '0,0,0';
 $colortexttitlelink = '10, 20, 100';
 $colortext = '0,0,0';
 $colortextlink = '10, 20, 100';
-$fontsize = '0.86em';
+$fontsize = '0.90em';
 $fontsizesmaller = '0.75em';
 $topMenuFontSize = '1.1em';
 $toolTipBgColor = 'rgba(255, 255, 255, 0.96)';
@@ -87,11 +87,11 @@ $colorblind_deuteranopes_textWarning = $textWarning; // currently not tested wit
 
 // Badges colors
 $badgePrimary   = '#007bff';
-$badgeSecondary = '#cccccc';
+$badgeSecondary = '#aaaabb';
+$badgeInfo      = '#aaaabb';
 $badgeSuccess   = '#55a580';
 $badgeWarning   = '#bc9526'; // See $textWarning bc9526
 $badgeDanger    = '#9f4705'; // See $textDanger
-$badgeInfo      = '#aaaabb';
 $badgeDark      = '#343a40';
 $badgeLight     = '#f8f9fa';
 

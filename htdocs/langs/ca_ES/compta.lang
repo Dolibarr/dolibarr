@@ -69,6 +69,7 @@ SocialContribution=Impost varis
 SocialContributions=Impostos varis
 SocialContributionsDeductibles=Impostos varis deduïbles
 SocialContributionsNondeductibles=Impostos varis no deduïbles
+DateOfSocialContribution=Data de l’impost social o fiscal
 LabelContrib=Etiqueta de aportació
 TypeContrib=Tipus d'aportació
 MenuSpecialExpenses=Pagaments especials

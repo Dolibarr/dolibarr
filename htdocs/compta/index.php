@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2015-2020 Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
@@ -159,6 +159,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	// Add where from hooks
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerDraft', $parameters);
+	$sql .= $hookmanager->resPrint;
+
+	$sql.= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
+	$sql.= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
+
+	// Add Group from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListGroupByCustomerDraft', $parameters);
 	$sql .= $hookmanager->resPrint;
 
 	$resql = $db->query($sql);
@@ -458,7 +466,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.tms, ff.paye,";
-	$sql .= " s.nom, s.rowid, s.code_fournisseur, s.code_compta_fournisseur";
+	$sql .= " s.nom, s.rowid, s.code_fournisseur, s.code_compta_fournisseur, s.email";
 	$sql .= " ORDER BY ff.tms DESC ";
 	$sql .= $db->plimit($max, 0);
 

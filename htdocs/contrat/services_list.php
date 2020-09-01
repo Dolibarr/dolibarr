@@ -84,7 +84,7 @@ $hookmanager->initHooks(array('contractservicelist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('contratdet');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -199,7 +199,7 @@ $now = dol_now();
 
 $form = new Form($db);
 
-$sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
+$sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut, c.ref_customer, c.ref_supplier,";
 $sql .= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
 $sql .= " cd.rowid, cd.description, cd.statut,";
 $sql .= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity,";
@@ -564,6 +564,8 @@ while ($i < min($num, $limit))
 
 	$contractstatic->id = $obj->cid;
 	$contractstatic->ref = $obj->ref ? $obj->ref : $obj->cid;
+	$contractstatic->ref_customer = $obj->ref_customer;
+	$contractstatic->ref_supplier = $obj->ref_supplier;
 
 	$companystatic->id = $obj->socid;
 	$companystatic->name = $obj->name;
@@ -576,7 +578,7 @@ while ($i < min($num, $limit))
 	// Ref
 	if (!empty($arrayfields['c.ref']['checked']))
 	{
-		print '<td>';
+		print '<td class="nowraponall">';
 		print $contractstatic->getNomUrl(1, 16);
 		print '</td>';
         if (!$i) $totalarray['nbfield']++;

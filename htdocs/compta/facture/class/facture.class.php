@@ -423,7 +423,7 @@ class Facture extends CommonInvoice
 		$this->brouillon = 1;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $this->date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
@@ -1581,6 +1581,7 @@ class Facture extends CommonInvoice
 				$this->note_public			= $obj->note_public;
 				$this->user_author			= $obj->fk_user_author;
 				$this->user_valid = $obj->fk_user_valid;
+				$this->model_pdf = $obj->model_pdf;
 				$this->modelpdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
@@ -2415,7 +2416,7 @@ class Facture extends CommonInvoice
 	 * @param   string	$force_number	Reference to force on invoice
 	 * @param	int		$idwarehouse	Id of warehouse to use for stock decrease if option to decreasenon stock is on (0=no decrease)
 	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 * @param	int		$batch_rule		[=0] 0 not decrement batch, else batch rule to use
+	 * @param	int		$batch_rule		0=do not decrement batch, else batch rule to use
 	 *                                 	1=take in batches ordered by sellby and eatby dates
      * @return	int						<0 if KO, 0=Nothing done because invoice is not a draft, >0 if OK
 	 */
@@ -4089,6 +4090,8 @@ class Facture extends CommonInvoice
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product";
 		$sql .= " WHERE entity IN (".getEntity('product').")";
+		$sql .= $this->db->plimit(100);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -4296,6 +4299,7 @@ class Facture extends CommonInvoice
 		global $conf, $langs;
 
 		$langs->load("bills");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele))
 		{

@@ -134,8 +134,8 @@ $arrayfields = array(
 	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
 	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>1),
-	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>0, 'enabled'=>(!empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
+	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>0),
+	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>1, 'enabled'=>(!empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
 	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'a.datec'=>array('label'=>'DateCreation', 'checked'=>0),
 	'a.tms'=>array('label'=>'DateModification', 'checked'=>0)
@@ -152,6 +152,7 @@ if (is_array($extrafields->attributes[$object->table_element]['label']) && count
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
+//var_dump($_POST);exit;
 
 /*
  *	Actions
@@ -301,7 +302,7 @@ if ($user->rights->agenda->allactions->delete)
 {
 	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 }
-
+if (GETPOST('nomassaction', 'int') || in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 $sql = "SELECT";
@@ -428,7 +429,9 @@ if ($resql)
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	// Local calendar
-	$newtitle = '<div class="nowrap clear inline-block minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; </div>';
+	$newtitle = '<div class="nowrap clear inline-block minheight30">';
+	$newtitle .= '<input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> '.$langs->trans("LocalAgenda").' &nbsp; ';
+	$newtitle .= '</div>';
 	//$newtitle=$langs->trans($title);
 
 	$tabactive = 'cardlist';
@@ -439,7 +442,6 @@ if ($resql)
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
@@ -450,9 +452,9 @@ if ($resql)
 	if ($showbirthday)    $nav .= '<input type="hidden" name="search_showbirthday" value="1">';
 	print $nav;
 
-    dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
-    print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
-    dol_fiche_end();
+    //dol_fiche_head($head, $tabactive, $langs->trans('Agenda'), 0, 'action');
+    //print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+    //dol_fiche_end();
 
     // Add link to show birthdays
     $link = '';
@@ -484,6 +486,39 @@ if ($resql)
     	$s = $hookmanager->resPrint;
     }
 
+    $viewmode = '';
+    $viewmode .= '<a class="btnTitle btnTitleSelected reposition" href="'.DOL_URL_ROOT.'/comm/action/list.php?action=show_list&restore_lastsearch_values=1">';
+    //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+    $viewmode .= img_picto($langs->trans("List"), 'object_list-alt', 'class="pictoactionview block"');
+    //$viewmode .= '</span>';
+    $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewList").'</span></a>';
+
+    $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_month&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+    //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+    $viewmode .= img_picto($langs->trans("ViewCal"), 'object_calendar', 'class="pictoactionview block"');
+    //$viewmode .= '</span>';
+    $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewCal").'</span></a>';
+
+    $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_week&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+    //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+    $viewmode .= img_picto($langs->trans("ViewWeek"), 'object_calendarweek', 'class="pictoactionview block"');
+    //$viewmode .= '</span>';
+    $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewWeek").'</span></a>';
+
+    $viewmode .= '<a class="btnTitle reposition" href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+    //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+    $viewmode .= img_picto($langs->trans("ViewDay"), 'object_calendarday', 'class="pictoactionview block"');
+    //$viewmode .= '</span>';
+    $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewDay").'</span></a>';
+
+    $viewmode .= '<a class="btnTitle reposition marginrightonly" href="'.DOL_URL_ROOT.'/comm/action/peruser.php?action=show_peruser&year='.dol_print_date($object->datep, '%Y').'&month='.dol_print_date($object->datep, '%m').'&day='.dol_print_date($object->datep, '%d').'">';
+    //$viewmode .= '<span class="fa paddingleft imgforviewmode valignmiddle btnTitle-icon">';
+    $viewmode .= img_picto($langs->trans("ViewPerUser"), 'object_calendarperuser', 'class="pictoactionview block"');
+    //$viewmode .= '</span>';
+    $viewmode .= '<span class="valignmiddle text-plus-circle btnTitle-label hideonsmartphone">'.$langs->trans("ViewPerUser").'</span></a>';
+
+	$viewmode .= '<span class="marginrightonly"></span>';
+
     $newcardbutton = '';
     if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
     {
@@ -495,8 +530,12 @@ if ($resql)
         $hourminsec = '100000';
         $newcardbutton .= dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d", $tmpforcreatebutton['year'], $tmpforcreatebutton['mon'], $tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : '')));
     }
+	$param .= '&action='.$action;
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1);
+
+	print_barre_liste($langs->trans("Agenda"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, -1 * $nbtotalofrecords, 'object_action', 0, $nav.$newcardbutton, '', $limit, 0, 0, 1, $viewmode);
+
+	print $s;
 
     include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
@@ -506,6 +545,11 @@ if ($resql)
 	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 	if ($massactionbutton) $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
     $i = 0;
+
+    print '<div class="liste_titre liste_titre_bydiv centpercent">';
+    print_actions_filter($form, $canedit, $search_status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
+    print '</div>';
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -650,7 +694,7 @@ if ($resql)
 					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_EMAIL' || $actioncomm->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
 					elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
@@ -662,14 +706,17 @@ if ($resql)
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
 			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
 				$labeltype = $langs->trans("Message");
-			} elseif (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
+			} else {
+				if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
+				if ($obj->type_code == 'AC_OTH_AUTO' && ($obj->type_code != $obj->code) && $labeltype && !empty($arraylist[$obj->code])) $labeltype .= ' - '.$arraylist[$obj->code];		// Use code in priority on type_code
+			}
 			print dol_trunc($labeltype, 28);
 			print '</td>';
 		}
 
 		// Label
 		if (!empty($arrayfields['a.label']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actionstatic->label).'">';
 			print $actionstatic->label;
 			print '</td>';
 		}
@@ -683,6 +730,7 @@ if ($resql)
 		}
 
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
+
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
 			print '<td class="center nowraponall">';

@@ -869,7 +869,7 @@ class SupplierProposal extends CommonObject
         }
 
         // Multicurrency
-        if (!empty($this->multicurrency_code)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+        if (!empty($this->multicurrency_code)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $now);
         if (empty($this->fk_multicurrency))
         {
             $this->multicurrency_code = $conf->currency;
@@ -1244,6 +1244,7 @@ class SupplierProposal extends CommonObject
                 $this->total_ttc            = $obj->total;
                 $this->socid                = $obj->fk_soc;
                 $this->fk_project           = $obj->fk_project;
+                $this->model_pdf            = $obj->model_pdf;
                 $this->modelpdf             = $obj->model_pdf;
                 $this->note                 = $obj->note_private; // TODO deprecated
                 $this->note_private         = $obj->note_private;
@@ -1762,7 +1763,7 @@ class SupplierProposal extends CommonObject
             if (!empty($conf->multicurrency->enabled) && !empty($product->multicurrency_code)) list($fk_multicurrency, $multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $product->multicurrency_code);
             $productsupplier->id = $product->fk_product;
 
-            $productsupplier->update_buyprice($product->qty, $product->subprice, $user, 'HT', $this->thirdparty, '', $ref_fourn, $product->tva_tx, 0, 0, 0, $product->info_bits, '', '', array(), '', $product->multicurrency_subprice, 'HT', $multicurrency_tx, $product->multicurrency_code, '', '', '');
+            $productsupplier->update_buyprice($product->qty, $product->total_ht, $user, 'HT', $this->thirdparty, '', $ref_fourn, $product->tva_tx, 0, 0, 0, $product->info_bits, '', '', array(), '', $product->multicurrency_total_ht, 'HT', $multicurrency_tx, $product->multicurrency_code, '', '', '');
         }
 
         return 1;
@@ -2284,6 +2285,8 @@ class SupplierProposal extends CommonObject
         $sql = "SELECT rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."product";
         $sql .= " WHERE entity IN (".getEntity('product').")";
+        $sql .= $this->db->plimit(100);
+
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -2630,6 +2633,7 @@ class SupplierProposal extends CommonObject
         global $conf, $langs;
 
         $langs->load("supplier_proposal");
+		$outputlangs->load("products");
 
         if (!dol_strlen($modele)) {
             $modele = 'aurore';

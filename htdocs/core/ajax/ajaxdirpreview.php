@@ -180,41 +180,46 @@ if ($type == 'directory')
     $sorting = (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC);
 
     // Right area. If module is defined here, we are in automatic ecm.
-    $automodules = array('company', 'invoice', 'invoice_supplier', 'propal', 'supplier_proposal', 'order', 'order_supplier', 'contract', 'product', 'tax', 'project', 'fichinter', 'user', 'expensereport', 'holiday', 'banque');
+    $automodules = array(
+    	'company',
+    	'invoice',
+    	'invoice_supplier',
+    	'propal',
+    	'supplier_proposal',
+    	'order',
+    	'order_supplier',
+    	'contract',
+    	'product',
+    	'tax',
+    	'project',
+    	'fichinter',
+    	'user',
+    	'expensereport',
+    	'holiday',
+    	'recruitment-recruitmentcandidature',
+	    'banque',
+    	'mrp-mo'
+    );
 
     // TODO change for multicompany sharing
-    // Auto area for suppliers invoices
     if ($module == 'company') $upload_dir = $conf->societe->dir_output;
-    // Auto area for suppliers invoices
     elseif ($module == 'invoice') $upload_dir = $conf->facture->dir_output;
-    // Auto area for suppliers invoices
     elseif ($module == 'invoice_supplier') $upload_dir = $conf->fournisseur->facture->dir_output;
-    // Auto area for customers proposal
     elseif ($module == 'propal') $upload_dir = $conf->propal->dir_output;
-    // Auto area for suppliers proposal
     elseif ($module == 'supplier_proposal') $upload_dir = $conf->supplier_proposal->dir_output;
-    // Auto area for customers orders
     elseif ($module == 'order') $upload_dir = $conf->commande->dir_output;
-    // Auto area for suppliers orders
     elseif ($module == 'order_supplier') $upload_dir = $conf->fournisseur->commande->dir_output;
-    // Auto area for suppliers invoices
     elseif ($module == 'contract') $upload_dir = $conf->contrat->dir_output;
-    // Auto area for products
     elseif ($module == 'product') $upload_dir = $conf->product->dir_output;
-    // Auto area for suppliers invoices
     elseif ($module == 'tax') $upload_dir = $conf->tax->dir_output;
-    // Auto area for projects
     elseif ($module == 'project') $upload_dir = $conf->projet->dir_output;
-    // Auto area for interventions
     elseif ($module == 'fichinter') $upload_dir = $conf->ficheinter->dir_output;
-    // Auto area for users
     elseif ($module == 'user') $upload_dir = $conf->user->dir_output;
-    // Auto area for expense report
     elseif ($module == 'expensereport') $upload_dir = $conf->expensereport->dir_output;
-	// Auto area for holiday
     elseif ($module == 'holiday') $upload_dir = $conf->holiday->dir_output;
-    // Auto area for holiday
+    elseif ($module == 'recruitment-recruitmentcandidature') $upload_dir = $conf->recruitment->dir_output.'/recruitmentcandidature';
     elseif ($module == 'banque') $upload_dir = $conf->bank->dir_output;
+    elseif ($module == 'mrp-mo') $upload_dir = $conf->mrp->dir_output.'/mo';
 
     // Automatic list
     if (in_array($module, $automodules))

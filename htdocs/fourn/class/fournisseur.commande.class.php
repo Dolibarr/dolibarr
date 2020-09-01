@@ -332,9 +332,11 @@ class CommandeFournisseur extends CommonOrder
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON c.fk_mode_reglement = p.id";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_input_method as cm ON cm.rowid = c.fk_input_method";
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
-        $sql .= " WHERE c.entity = ".$conf->entity;
+
+        if (empty($id)) $sql .= " WHERE c.entity IN (".getEntity('supplier_order').")";
+        else $sql .= " WHERE c.rowid=".$id;
+
         if ($ref) $sql .= " AND c.ref='".$this->db->escape($ref)."'";
-        else $sql .= " AND c.rowid=".$id;
 
         dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
         $resql = $this->db->query($sql);
@@ -390,6 +392,7 @@ class CommandeFournisseur extends CommonOrder
             $this->note = $obj->note_private; // deprecated
             $this->note_private = $obj->note_private;
             $this->note_public = $obj->note_public;
+            $this->model_pdf = $obj->model_pdf;
             $this->modelpdf = $obj->model_pdf;
 
 			//Incoterms
@@ -765,7 +768,7 @@ class CommandeFournisseur extends CommonOrder
         global $langs, $conf, $user;
 
         $result = '';
-        $label = '<u>'.$langs->trans("ShowOrder").'</u>';
+        $label = '<u>'.$langs->trans("PurchaseOrder").'</u>';
         if (!empty($this->ref))
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->ref_supplier))
@@ -891,6 +894,7 @@ class CommandeFournisseur extends CommonOrder
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur SET billed = 1';
         $sql .= ' WHERE rowid = '.$this->id.' AND fk_statut > '.self::STATUS_DRAFT;
+
         if ($this->db->query($sql))
         {
         	if (!$error)
@@ -1243,11 +1247,15 @@ class CommandeFournisseur extends CommonOrder
 		$error = 0;
         $now = dol_now();
 
+		// $date_commande is deprecated
+		$date = ($this->date_commande ? $this->date_commande : $this->date); // in case of date is set
+		if (empty($date)) $date = $now;
+
         // Clean parameters
         if (empty($this->source)) $this->source = 0;
 
 		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
-		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
+		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency, $this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code, $date);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
 		{
@@ -2959,6 +2967,7 @@ class CommandeFournisseur extends CommonOrder
 		global $conf, $langs;
 
 		$langs->load("suppliers");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'muscadet';

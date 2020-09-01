@@ -72,7 +72,6 @@ Deleted=Slettede
 
 # Dict
 Type=Type
-Category=Analytisk kode
 Severity=Alvorlighetsgrad
 
 # Email templates
@@ -128,11 +127,10 @@ TicketsAutoAssignTicket=Tilordne automatisk brukeren som opprettet supportseddel
 TicketsAutoAssignTicketHelp=Når du lager en supportseddel, kan brukeren automatisk tildeles billetten.
 TicketNumberingModules=Supportseddel nummereringsmodul
 TicketNotifyTiersAtCreation=Varsle tredjepart ved opprettelse
-TicketGroup=Gruppe
 TicketsDisableCustomerEmail=Slå alltid av e-post når en billett er opprettet fra det offentlige grensesnittet
 TicketsPublicNotificationNewMessage=Send e-post(er) når en ny melding legges til
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
-TicketPublicNotificationNewMessageDefaultEmail=Notifications email to (update)
+TicketPublicNotificationNewMessageDefaultEmail=E-postvarsler til (oppdatere)
 TicketPublicNotificationNewMessageDefaultEmailHelp=Send email new message notifications to this address if the ticket don't have a user assigned or the user don't have a email.
 #
 # Index & list page
@@ -162,7 +160,7 @@ CreatedBy=Laget av
 NewTicket=Ny supportseddel
 SubjectAnswerToTicket=Supportseddel-svar
 TicketTypeRequest=Forespørselstype
-TicketCategory=Analytisk kode
+TicketCategory=Gruppe
 SeeTicket=Se supportseddel
 TicketMarkedAsRead=Supportseddel merket som lest
 TicketReadOn=Les videre

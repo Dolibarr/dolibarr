@@ -108,6 +108,13 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
     background: #bbb;
 }
 
+a.info-box-text.info-box-text-a {
+    display: table-cell;
+}
+a.info-box-text-a i.fa.fa-exclamation-triangle {
+    font-size: 0.9em;
+}
+
 .info-box {
 	display: block;
 	position: relative;
@@ -275,6 +282,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	text-transform: uppercase;
 	font-weight: bold;
 	margin-bottom: 6px;
+}
+.info-box-title {
+    width: calc(100% - 20px);
 }
 .info-box-text{
 	font-size: 0.92em;
@@ -455,6 +465,18 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) $conf->global->THEME_SATURATE_RATIO = 
 	min-width: 350px;
     max-width: 350px;
 }
+@media only screen and (max-width: 1740px) {
+	.info-box-module {
+	    min-width: 315px;
+	    max-width: 315px;
+	}
+}
+@media only screen and (max-width: 767px) {
+	.info-box-module {
+		min-width: 260px;
+	}
+}
+
 .info-box-module .info-box-content {
 	height: 6.3em;
 }

@@ -1042,6 +1042,7 @@ if ($action == 'create')
     	    while ($i < $numAsked)
     	    {
     	    	print 'jQuery("#qtyl'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
+                if (!empty($conf->productbatch->enabled)) print 'jQuery("#qtyl'.$i.'_'.$i.'").val(jQuery("#qtyasked'.$i.'").val() - jQuery("#qtydelivered'.$i.'").val());'."\n";
     	    	$i++;
     	    }
         	print '});
@@ -1050,6 +1051,7 @@ if ($action == 'create')
     	    while ($i < $numAsked)
     	    {
     	    	print 'jQuery("#qtyl'.$i.'").val(0);'."\n";
+                if (!empty($conf->productbatch->enabled)) print 'jQuery("#qtyl'.$i.'_'.$i.'").val(0);'."\n";
     	    	$i++;
     	    }
         	print '});
@@ -1072,9 +1074,12 @@ if ($action == 'create')
                 print '<td class="center">'.$langs->trans("QtyToShip");
 				if (empty($conf->productbatch->enabled))
 				{
-	                print ' <br>(<a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
-	                print ' / <a href="#" id="autoreset">'.$langs->trans("Reset").'</a>)';
+	                print '<br><a href="#" id="autofill">'.$langs->trans("Fill").'</a>';
+	                print ' / ';
+				} else {
+					print '<br>';
 				}
+				print '<a href="#" id="autoreset">'.$langs->trans("Reset").'</a>';
                 print '</td>';
                 if (!empty($conf->stock->enabled))
                 {
@@ -1471,14 +1476,20 @@ if ($action == 'create')
 						}
 						if ($subj == 0) // Line not shown yet, we show it
 						{
-						    print '<!-- line not shown yet, we show it -->';
-							print '<tr class="oddeven"><td colspan="3" ></td><td class="center">';
+							$warehouse_selected_id = GETPOST('entrepot_id', 'int');
+
+							print '<!-- line not shown yet, we show it -->';
+							print '<tr class="oddeven"><td colspan="3"></td><td class="center">';
+
 							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))
 							{
 							    $disabled = '';
 						        if (!empty($conf->productbatch->enabled) && $product->hasbatch())
 						        {
 	                                $disabled = 'disabled="disabled"';
+							    }
+							    if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
+							    	$disabled = 'disabled="disabled"';
 							    }
 	    						print '<input name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
 							} else {
@@ -1489,7 +1500,6 @@ if ($action == 'create')
 							print '<td class="left">';
 							if ($line->product_type == Product::TYPE_PRODUCT || !empty($conf->global->STOCK_SUPPORTS_SERVICES))
 							{
-								$warehouse_selected_id = GETPOST('entrepot_id', 'int');
 	    						if ($warehouse_selected_id > 0)
 	    						{
 	    							$warehouseObject = new Entrepot($db);
@@ -1860,7 +1870,7 @@ if ($action == 'create')
 		print '<div class="ficheaddleft">';
 		print '<div class="underbanner clearboth"></div>';
 
-		print '<table class="border centpercent">';
+		print '<table class="border centpercent tableforfield">';
 
 		// Sending method
 		print '<tr><td height="10">';

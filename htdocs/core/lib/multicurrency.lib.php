@@ -42,6 +42,8 @@ function multicurrencyAdminPrepareHead()
 
     complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency');
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'multicurrency', 'remove');
+
     return $head;
 }
 

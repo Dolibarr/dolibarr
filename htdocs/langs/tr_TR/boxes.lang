@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Tedarikçi Siparişleri: değiştirilen son
 BoxTitleLastModifiedCustomerBills=Müşteri Faturaları: değiştirilen son %s
 BoxTitleLastModifiedCustomerOrders=Müşteri Siparişleri: son değiştirilen %s
 BoxTitleLastModifiedPropals=Değiştirilen son %s teklif
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Müşteri faturaları
 ForCustomersOrders=Müşteri siparişleri
 ForProposals=Teklifler
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=Askı hesabı tanımlanmamış
 BoxLastCustomerShipments=Son müşteri gönderileri
 BoxTitleLastCustomerShipments=Son %s müşteri gönderileri
 NoRecordedShipments=Kayıtlı müşteri gönderimi yok
+# Pages
+AccountancyHome=Muhasebe

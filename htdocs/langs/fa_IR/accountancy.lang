@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=امکان تغییر تعداد دیگری از صفر �
 BANK_DISABLE_DIRECT_INPUT=غیرفعال کردن ثبت مستقیم تراکنش در حساب بانکی
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=فعال کردن خروجی پیش‌نویس از دفتر
 ACCOUNTANCY_COMBO_FOR_AUX=فعال کردن فهرست ترکیبی برای حساب وابسته(ممکن است در صورتی که شخص‌سوم‌های زیادی داشته باشید، کند باشد)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=دفتر فروش
 ACCOUNTING_PURCHASE_JOURNAL=دفتر خرید
@@ -284,6 +285,7 @@ ShowTutorial=Show Tutorial
 NotReconciled=وفق داده نشده
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=انتساب دست‌جمعی دسته‌بندی
 AddAccountFromBookKeepingWithNoCategories=حساب فعال هنوز در یک گروه‌ شخصی‌سازی‌شده نیست
 CategoryDeleted=دسته‌بندی حساب حساب‌داری حذف شد

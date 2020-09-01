@@ -14,7 +14,7 @@ EventsNb=Nombre d'événements
 ListOfActions=Liste des événements
 EventReports=Rapport des évènements
 Location=Lieu
-ToUserOfGroup=à tout utilisateur du groupe
+ToUserOfGroup=Assigné à tout utilisateur du groupe
 EventOnFullDay=Événement sur la(les) journée(s)
 MenuToDoActions=Événements incomplets
 MenuDoneActions=Événements terminés
@@ -86,6 +86,8 @@ ProposalDeleted=Proposition commerciale supprimée
 OrderDeleted=Commande supprimée
 InvoiceDeleted=Facture supprimée
 DraftInvoiceDeleted=Facture brouillon supprimée
+CONTACT_CREATEInDolibarr=Contact/Adresse %s créé
+CONTACT_DELETEInDolibarr=Contact/Adresse %s supprimé
 PRODUCT_CREATEInDolibarr=Produit %s créé
 PRODUCT_MODIFYInDolibarr=Produit %s modifié
 PRODUCT_DELETEInDolibarr=Produit%ssupprimé
@@ -121,13 +123,13 @@ MRP_MO_CANCELInDolibarr=OF annulé
 AgendaModelModule=Modèle de document pour les événements
 DateActionStart=Date de début
 DateActionEnd=Date de fin
-AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
+AgendaUrlOptions1=Vous pouvez aussi ajouter les paramètres suivants pour filtrer les réponses :
 AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'utilisateur <b>%s</b> est propriétaire.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions non assignées à l'utilisateur <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions n'appartenant pas à l'utilisateur <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> pour restreindre aux événements associés au projet <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure les événements automatiques.
-AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> pour inclure les événements de type congé.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> pour exclure les événements automatiques.
+AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> pour inclure les événements de type congé.
 AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
@@ -158,3 +160,9 @@ DateStartPlusOne=Date de début + 1 heure
 SetAllEventsToTodo=Réglez tous les événements à "A faire"
 SetAllEventsToInProgress=Définir tous les événements à "En cours"
 SetAllEventsToFinished=Définir tous les événements sur "Terminés"
+ReminderTime=Reminder period before the event
+TimeType=Duration type
+ReminderType=Callback type
+AddReminder=Create an automatic reminder notification for this event
+ErrorReminderActionCommCreation=Error creating the reminder notification for this event
+BrowserPush=Browser Notification

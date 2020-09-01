@@ -147,7 +147,6 @@ print '<div id="dolpaymentdiv" class="center">'."\n";
 
 
 // Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-$width = 0;
 // Define logo and logosmall
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
@@ -162,12 +161,10 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-	$width = 150;
 } elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-	$width = 150;
 }
 
 // Output html code for logo
@@ -176,7 +173,6 @@ if ($urllogo)
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
@@ -186,7 +182,7 @@ if ($urllogo)
 }
 
 
-print '<br><br>';
+print '<br><br><br>';
 
 
 if (!empty($conf->paypal->enabled))
@@ -593,8 +589,8 @@ if ($ispaymentok)
 	{
 		// Record payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$invoice = new Facture($db);
-		$result = $invoice->fetch($tmptag['INV']);
+		$object = new Facture($db);
+		$result = $object->fetch($tmptag['INV']);
 		if ($result)
 		{
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
@@ -623,9 +619,9 @@ if ($ispaymentok)
 				$paiement->datepaye = $now;
 				if ($currencyCodeType == $conf->currency)
 				{
-					$paiement->amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching with invoice id
+					$paiement->amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching with invoice id
 				} else {
-					$paiement->multicurrency_amounts = array($invoice->id => $FinalPaymentAmt); // Array with all payments dispatching
+					$paiement->multicurrency_amounts = array($object->id => $FinalPaymentAmt); // Array with all payments dispatching
 
 					$postactionmessages[] = 'Payment was done in a different currency that currency expected of company';
 					$ispostactionok = -1;
@@ -662,7 +658,7 @@ if ($ispaymentok)
 					if ($bankaccountid > 0)
 					{
 						$label = '(CustomerInvoicePayment)';
-						if ($invoice->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
+						if ($object->type == Facture::TYPE_CREDIT_NOTE) $label = '(CustomerInvoicePaymentBack)'; // Refund of a credit note
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, '', '');
 						if ($result < 0)
 						{
@@ -709,10 +705,12 @@ if ($ispaymentok)
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Call trigger
-    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
-    if ($result < 0) $error++;
-    // End call triggers
+    if (is_object($object) && method_exists($object, 'call_trigger')) {
+	    // Call trigger
+	    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
+	    if ($result < 0) $error++;
+	    // End call triggers
+    }
 
     print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
     if ($TRANSACTIONID) print $langs->trans("ThisIsTransactionId", $TRANSACTIONID)."<br><br>\n";
@@ -831,10 +829,12 @@ if ($ispaymentok)
     $currencyCodeType   = $_SESSION['currencyCodeType'];
     $FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 
-    // Call trigger
-    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
-    if ($result < 0) $error++;
-    // End call triggers
+    if (is_object($object) && method_exists($object, 'call_trigger')) {
+    	// Call trigger
+	    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
+	    if ($result < 0) $error++;
+	    // End call triggers
+    }
 
     print $langs->trans('DoExpressCheckoutPaymentAPICallFailed')."<br>\n";
     print $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";

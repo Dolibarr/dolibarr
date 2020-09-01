@@ -35,7 +35,8 @@ class Tasks extends DolibarrApi
      */
     static $FIELDS = array(
         'ref',
-        'label'
+        'label',
+		'fk_project'
     );
 
     /**

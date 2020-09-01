@@ -230,6 +230,7 @@ if (empty($reshook))
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
+			if ($ret > 0) $object->fetch_thirdparty();
 			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 
@@ -253,6 +254,9 @@ if (empty($reshook))
 				}
 				$model = $object->modelpdf;
 				$ret = $object->fetch($id); // Reload to get new records
+				if ($ret > 0) {
+					$object->fetch_thirdparty();
+				}
 
 				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
@@ -764,6 +768,7 @@ if (empty($reshook))
 				$outputlangs->setDefaultLang($newlang);
 			}
 			$ret = $object->fetch($id); // Reload to get new records
+			if ($ret > 0) $object->fetch_thirdparty();
 			$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
@@ -787,7 +792,7 @@ if (empty($reshook))
 	} elseif ($action == 'addline' && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOST('dp_desc') ?GETPOST('dp_desc') : '');
+		$product_desc = (GETPOST('dp_desc', 'none') ?GETPOST('dp_desc', 'none') : '');
 		$price_ht = GETPOST('price_ht');
 		$price_ht_devise = GETPOST('multicurrency_price_ht');
 		$prod_entry_mode = GETPOST('prod_entry_mode');
@@ -1237,6 +1242,7 @@ if (empty($reshook))
 						$outputlangs->setDefaultLang($newlang);
 					}
 					$ret = $object->fetch($id); // Reload to get new records
+					if ($ret > 0) $object->fetch_thirdparty();
 					$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 				}
 
@@ -1550,12 +1556,12 @@ if ($action == 'create')
 
 	// Terms of payment
 	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	$form->select_conditions_paiements($soc->cond_reglement_id, 'cond_reglement_id', -1, 1);
+	$form->select_conditions_paiements((GETPOSTISSET('cond_reglement_id') ? GETPOST('cond_reglement_id', 'int') : $soc->cond_reglement_id), 'cond_reglement_id', -1, 1);
 	print '</td></tr>';
 
 	// Mode of payment
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	$form->select_types_paiements($soc->mode_reglement_id, 'mode_reglement_id');
+	$form->select_types_paiements((GETPOSTISSET('mode_reglement_id') ? GETPOST('mode_reglement_id', 'int') : $soc->mode_reglement_id), 'mode_reglement_id');
 	print '</td></tr>';
 
 	// Bank Account
@@ -1571,7 +1577,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Delivery delay
-	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod').'</td><td>';
+	print '<tr class="fielddeliverydelay"><td>'.$langs->trans('AvailabilityPeriod');
+	if (!empty($conf->commande->enabled))
+		print ' ('.$langs->trans('AfterOrder').')';
+	print '</td><td>';
 	$form->selectAvailabilityDelay('', 'availability_id', '', 1);
 	print '</td></tr>';
 

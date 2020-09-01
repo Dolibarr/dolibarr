@@ -448,7 +448,8 @@ class Fichinter extends CommonObject
 				$this->fk_project   = $obj->fk_project;
 				$this->note_public  = $obj->note_public;
 				$this->note_private = $obj->note_private;
-				$this->modelpdf = $obj->model_pdf;
+				$this->model_pdf    = $obj->model_pdf;
+				$this->modelpdf     = $obj->model_pdf;
 				$this->fk_contrat = $obj->fk_contrat;
 
 				$this->user_creation = $obj->fk_user_author;

@@ -16,6 +16,5 @@ SubscriptionLate=Versätet
 NewMemberType=Neues Mitgliedsrt
 Physical=Physisch
 Moral=Rechtlich
-MorPhy=Physisch/Rechtlich
 Filehtpasswd=htpasswd-Datei
 HTPasswordExport=htpassword-Dateierstellung

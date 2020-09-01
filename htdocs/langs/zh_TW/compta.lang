@@ -69,6 +69,7 @@ SocialContribution=社會稅或財政稅
 SocialContributions=社會稅或財政稅
 SocialContributionsDeductibles=可抵扣的社會稅或財政稅
 SocialContributionsNondeductibles=不可抵扣的社會稅或財政稅
+DateOfSocialContribution=Date of social or fiscal tax
 LabelContrib=捐助標籤
 TypeContrib=捐助類型
 MenuSpecialExpenses=特別支出

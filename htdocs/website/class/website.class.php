@@ -290,6 +290,7 @@ class Website extends CommonObject
 		$sql .= ' t.rowid,';
 		$sql .= " t.entity,";
 		$sql .= " t.ref,";
+		$sql .= " t.position,";
 		$sql .= " t.description,";
 		$sql .= " t.lang,";
 		$sql .= " t.otherlang,";
@@ -319,6 +320,7 @@ class Website extends CommonObject
 
 				$this->entity = $obj->entity;
 				$this->ref = $obj->ref;
+				$this->position = $obj->position;
 				$this->description = $obj->description;
 				$this->lang = $obj->lang;
 				$this->otherlang = $obj->otherlang;
@@ -670,7 +672,8 @@ class Website extends CommonObject
 		$object->virtualhost = '';
 		$object->date_creation = $now;
 		$object->fk_user_creat = $user->id;
-		$object->position = $object->position + 1;
+		$object->position = ((int) $object->position) + 1;
+		$object->status = self::STATUS_DRAFT;
 		if (empty($object->lang)) $object->lang = substr($langs->defaultlang, 0, 2); // Should not happen. Protection for corrupted site with no languages
 
 		// Create clone

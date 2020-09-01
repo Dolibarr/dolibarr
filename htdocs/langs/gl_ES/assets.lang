@@ -16,44 +16,44 @@
 #
 # Generic
 #
-Assets = Assets
-NewAsset = New asset
-AccountancyCodeAsset = Accounting code (asset)
-AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
-NewAssetType=New asset type
-AssetsTypeSetup=Asset type setup
-AssetTypeModified=Asset type modified
-AssetType=Asset type
-AssetsLines=Assets
+Assets = Activos
+NewAsset = Novo activo
+AccountancyCodeAsset = Código contable (activo)
+AccountancyCodeDepreciationAsset = Código contable (conta depreciación activo)
+AccountancyCodeDepreciationExpense = Código contable (conta depreciación gastos)
+NewAssetType=Nuevo tipo de activo
+AssetsTypeSetup=Configuración tipos de activos
+AssetTypeModified=Tipo de activo modificado
+AssetType=Tipo de activo
+AssetsLines=Activos
 DeleteType=Eliminar
-DeleteAnAssetType=Delete an asset type
-ConfirmDeleteAssetType=Are you sure you want to delete this asset type?
-ShowTypeCard=Show type '%s'
+DeleteAnAssetType=Eliminar un tipo de activo
+ConfirmDeleteAssetType=¿Está certo de querer eliminar este tipo de activo?
+ShowTypeCard=Ver tipo '%s'
 
 # Module label 'ModuleAssetsName'
-ModuleAssetsName = Assets
+ModuleAssetsName = Activos
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc = Assets description
+ModuleAssetsDesc = Descrición ben
 
 #
 # Admin page
 #
-AssetsSetup = Assets setup
-Settings = Settings
-AssetsSetupPage = Assets setup page
-ExtraFieldsAssetsType = Complementary attributes (Asset type)
-AssetsType=Asset type
-AssetsTypeId=Asset type id
-AssetsTypeLabel=Asset type label
-AssetsTypes=Assets types
+AssetsSetup = Configuración activos
+Settings = Configuracións
+AssetsSetupPage = Configuración activos
+ExtraFieldsAssetsType = Campos adicionais (tipos de activos)
+AssetsType=Tipo de activo
+AssetsTypeId=Id tipo de activo
+AssetsTypeLabel=Etiqueta tipo de activo
+AssetsTypes=Tipos de activos
 
 #
 # Menu
 #
-MenuAssets = Assets
-MenuNewAsset = New asset
-MenuTypeAssets = Type assets
+MenuAssets = Activos
+MenuNewAsset = Novo ben
+MenuTypeAssets = Tipo de activos
 MenuListAssets = Listaxe
 MenuNewTypeAssets = Novo
 MenuListTypeAssets = Listaxe
@@ -61,5 +61,5 @@ MenuListTypeAssets = Listaxe
 #
 # Module
 #
-NewAssetType=New asset type
-NewAsset=New asset
+NewAssetType=Nuevo tipo de activo
+NewAsset=Novo activo

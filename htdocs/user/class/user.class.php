@@ -1549,6 +1549,7 @@ class User extends CommonObject
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse ? "'".$this->db->escape($this->fk_warehouse)."'" : "null");
+		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
 
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -2996,7 +2997,7 @@ class User extends CommonObject
     public function build_path_from_id_user($id_user, $protection = 0)
     {
         // phpcs:enable
-		dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
+		//dol_syslog(get_class($this)."::build_path_from_id_user id_user=".$id_user." protection=".$protection, LOG_DEBUG);
 
 		if (!empty($this->users[$id_user]['fullpath']))
 		{
@@ -3235,5 +3236,65 @@ class User extends CommonObject
             $this->errors[] = $this->db->lasterror();
             return -1;
         }
-    }
+	}
+
+	/**
+	 * Cache the SQL results of the function "findUserIdByEmail($email)"
+	 *
+	 * NOTE: findUserIdByEmailCache[...] === -1 means not found in database
+	 *
+	 * @var array
+	 */
+	private $findUserIdByEmailCache;
+
+	/**
+	 * Find a user by the given e-mail and return it's user id when found
+	 *
+	 * NOTE:
+	 * Use AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR
+	 * to disable exact e-mail search
+	 *
+	 * @param string	$email	The full e-mail (or a part of a e-mail)
+	 * @return int				<0 = user was not found, >0 = The id of the user
+	 */
+	public function findUserIdByEmail($email)
+	{
+		if ($this->findUserIdByEmailCache[$email])
+		{
+			return $this->findUserIdByEmailCache[$email];
+		}
+
+		$this->findUserIdByEmailCache[$email] = -1;
+
+		global $conf;
+
+		$sql = 'SELECT rowid';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'user';
+
+		if (!empty($conf->global->AGENDA_DISABLE_EXACT_USER_EMAIL_COMPARE_FOR_EXTERNAL_CALENDAR))
+		{
+			$sql .= ' WHERE email LIKE "%'.$email.'%"';
+		}
+		else {
+			$sql .= ' WHERE email = "'.$email.'"';
+		}
+
+		$sql .= ' LIMIT 1';
+
+		$resql = $this->db->query($sql);
+		if (!$resql)
+		{
+			return -1;
+		}
+
+		$obj = $this->db->fetch_object($resql);
+		if (!$obj)
+		{
+			return -1;
+		}
+
+		$this->findUserIdByEmailCache[$email] = (int) $obj->rowid;
+
+		return $this->findUserIdByEmailCache[$email];
+	}
 }

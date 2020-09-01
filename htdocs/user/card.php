@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -253,6 +254,8 @@ if (empty($reshook)) {
 
 			$object->fk_warehouse = GETPOST('fk_warehouse', 'int');
 
+			$object->lang = GETPOST('default_lang', 'aZ09');
+
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
@@ -414,6 +417,8 @@ if (empty($reshook)) {
                 {
 				    $object->fk_warehouse = GETPOST('fk_warehouse', 'int');
                 }
+
+                $object->lang = GETPOST('default_lang', 'aZ09');
 
 				if (!empty($conf->multicompany->enabled))
 				{
@@ -671,6 +676,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
+$formadmin = new FormAdmin($db);
 $formfile = new FormFile($db);
 if (!empty($conf->stock->enabled)) $formproduct = new FormProduct($db);
 
@@ -1085,73 +1091,6 @@ if ($action == 'create' || $action == 'adduserldap')
 			}
 		}
 	}
-	// // Skype
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Skype").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_skype))
-	// 	{
-	// 		print '<input type="hidden" name="skype" value="'.$ldap_skype.'">';
-	// 		print $ldap_skype;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="skype" value="'.GETPOST('skype', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-	// // Twitter
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Twitter").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_twitter))
-	// 	{
-	// 		print '<input type="hidden" name="twitter" value="'.$ldap_twitter.'">';
-	// 		print $ldap_twitter;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="twitter" value="'.GETPOST('twitter', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-	// // Facebook
-	// if (! empty($conf->socialnetworks->enabled))
-	// {
-	// 	print '<tr><td>'.$langs->trans("Facebook").'</td>';
-	// 	print '<td>';
-	// 	if (! empty($ldap_facebook))
-	// 	{
-	// 		print '<input type="hidden" name="facebook" value="'.$ldap_facebook.'">';
-	// 		print $ldap_facebook;
-	// 	}
-	// 	else
-	// 	{
-	// 		print '<input class="maxwidth200" type="text" name="facebook" value="'.GETPOST('facebook', 'alpha').'">';
-	// 	}
-	// 	print '</td></tr>';
-	// }
-
-    // // LinkedIn
-    // if (! empty($conf->socialnetworks->enabled))
-    // {
-    //     print '<tr><td>'.$langs->trans("LinkedIn").'</td>';
-    //     print '<td>';
-    //     if (! empty($ldap_linkedin))
-    //     {
-    //         print '<input type="hidden" name="linkedin" value="'.$ldap_linkedin.'">';
-    //         print $ldap_linkedin;
-    //     }
-    //     else
-    //     {
-    //         print '<input class="maxwidth200" type="text" name="linkedin" value="'.GETPOST('linkedin', 'alpha').'">';
-    //     }
-    //     print '</td></tr>';
-    // }
 
 	// Accountancy code
 	if ($conf->accounting->enabled)
@@ -1178,6 +1117,14 @@ if ($action == 'create' || $action == 'adduserldap')
 		$cate_arbo = $form->select_all_categories('user', null, 'parent', null, null, 1);
         print $form->multiselectarray('usercats', $cate_arbo, GETPOST('usercats', 'array'), null, null, null, null, '90%');
 		print "</td></tr>";
+	}
+
+	if (!empty($conf->global->MAIN_MULTILANGS))
+	{
+		print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3" class="maxwidthonsmartphone">'."\n";
+		print $formadmin->select_language(GETPOST('default_lang', 'alpha') ?GETPOST('default_lang', 'alpha') : ($object->lang ? $object->lang : ''), 'default_lang', 0, 0, 1, 0, 0, 'maxwidth200onsmartphone');
+		print '</td>';
+		print '</tr>';
 	}
 
 	// Multicompany
@@ -1661,16 +1608,22 @@ if ($action == 'create' || $action == 'adduserldap')
 			print "</tr>\n";
 
 			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
+			print '<tr><td>'.$langs->trans("DateOfEmployment").'</td>';
 			print '<td>';
-			print dol_print_date($object->dateemployment, 'day');
-			print '</td>';
-			print "</tr>\n";
+			if ($object->dateemployment) {
+				print '<span class="opacitymedium">'.$langs->trans("FromDate ").'</span>';
+				print dol_print_date($object->dateemployment, 'day');
+			}
+			//print '</td>';
+			//print "</tr>\n";
 
 			// Date employment
-			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
-			print '<td>';
-			print dol_print_date($object->dateemploymentend);
+			//print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			//print '<td>';
+			if ($object->dateemploymentend) {
+				print '<span class="opacitymedium"> - '.$langs->trans("To ").'</span>';
+				print dol_print_date($object->dateemploymentend, 'day');
+			}
 			print '</td>';
 			print "</tr>\n";
 
@@ -1712,6 +1665,19 @@ if ($action == 'create' || $action == 'adduserldap')
 				print '<tr><td>'.$langs->trans("Categories").'</td>';
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
+				print '</td></tr>';
+			}
+
+			// Default language
+			if (!empty($conf->global->MAIN_MULTILANGS))
+			{
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+				print '<tr><td>'.$langs->trans("DefaultLang").'</td><td>';
+				//$s=picto_from_langcode($object->default_lang);
+				//print ($s?$s.' ':'');
+				$langs->load("languages");
+				$labellang = ($object->lang ? $langs->trans('Language_'.$object->lang) : '');
+				print $form->textwithpicto($labellang, $langs->trans("WarningNotLangOfInterface", $langs->transnoentitiesnoconv("UserGUISetup")));
 				print '</td></tr>';
 			}
 
@@ -2505,6 +2471,15 @@ if ($action == 'create' || $action == 'adduserldap')
 					print $form->showCategories($object->id, Categorie::TYPE_USER, 1);
 				}
 				print "</td></tr>";
+			}
+
+			// Default language
+			if (!empty($conf->global->MAIN_MULTILANGS))
+			{
+				print '<tr><td>'.$form->editfieldkey('DefaultLang', 'default_lang', '', $object, 0).'</td><td colspan="3">'."\n";
+				print $formadmin->select_language($object->lang, 'default_lang', 0, 0, 1);
+				print '</td>';
+				print '</tr>';
 			}
 
 			// Status

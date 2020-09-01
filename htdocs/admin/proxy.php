@@ -94,7 +94,7 @@ print '<input type="hidden" name="action" value="set_proxy">';
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'proxy', $langs->trans("Security"), -1);
+dol_fiche_head($head, 'proxy', '', -1);
 
 
 if ($conf->use_javascript_ajax)

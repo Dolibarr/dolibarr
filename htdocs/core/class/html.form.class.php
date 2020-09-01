@@ -199,12 +199,12 @@ class Form
 				if (preg_match('/^(string|safehtmlstring|email)/', $typeofdata))
 				{
 					$tmp = explode(':', $typeofdata);
-					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').'>';
+					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($editvalue ? $editvalue : $value).'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
 				} elseif (preg_match('/^(numeric|amount)/', $typeofdata))
 				{
 					$tmp = explode(':', $typeofdata);
 					$valuetoshow = price2num($editvalue ? $editvalue : $value);
-					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ?price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').'>';
+					$ret .= '<input type="text" id="'.$htmlname.'" name="'.$htmlname.'" value="'.($valuetoshow != '' ?price($valuetoshow) : '').'"'.($tmp[1] ? ' size="'.$tmp[1].'"' : '').' autofocus>';
 				} elseif (preg_match('/^text/', $typeofdata) || preg_match('/^note/', $typeofdata))	// if wysiwyg is enabled $typeofdata = 'ckeditor'
 				{
 					$tmp = explode(':', $typeofdata);
@@ -217,7 +217,7 @@ class Form
 					}
 
 					$valuetoshow = ($editvalue ? $editvalue : $value);
-					$ret .= '<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1] ? $tmp[1] : '20').'"'.($cols ? ' cols="'.$cols.'"' : 'class="quatrevingtpercent"').$morealt.'">';
+					$ret .= '<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1] ? $tmp[1] : '20').'"'.($cols ? ' cols="'.$cols.'"' : 'class="quatrevingtpercent"').$morealt.'" autofocus>';
 					// textarea convert automatically entities chars into simple chars.
 					// So we convert & into &amp; so a string like 'a &lt; <b>b</b><br>é<br>&lt;script&gt;alert('X');&lt;script&gt;' stay a correct html and is not converted by textarea component when wysiwig is off.
 					$valuetoshow = str_replace('&', '&amp;', $valuetoshow);
@@ -1753,43 +1753,39 @@ class Form
 					$out .= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
 					// Complete name with more info
-					$moreinfo = 0;
+					$moreinfo = '';
 					if (!empty($conf->global->MAIN_SHOW_LOGIN))
 					{
-						$out .= ($moreinfo ? ' - ' : ' (').$obj->login;
-						$moreinfo++;
+						$moreinfo .= ($moreinfo ? ' - ' : ' (').$obj->login;
 					}
 					if ($showstatus >= 0)
 					{
 						if ($obj->statut == 1 && $showstatus == 1)
 						{
-							$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Enabled');
 						}
 						if ($obj->statut == 0)
 						{
-							$out .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans('Disabled');
 						}
 					}
 					if (!empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && !$user->entity)
 					{
 						if (!$obj->entity)
 						{
-							$out .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').$langs->trans("AllEntities");
 						} else {
-							$out .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
-							$moreinfo++;
+							$moreinfo .= ($moreinfo ? ' - ' : ' (').($obj->label ? $obj->label : $langs->trans("EntityNameNotDefined"));
 						}
 					}
-					$out .= ($moreinfo ? ')' : '');
+					$moreinfo .= ($moreinfo ? ')' : '');
 					if ($disableline && $disableline != '1')
 					{
-						$out .= ' - '.$disableline; // This is text from $enableonlytext parameter
+						$moreinfo .= ' - '.$disableline; // This is text from $enableonlytext parameter
 					}
+					$out .= $moreinfo;
 					$out .= '</option>';
-					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
+					$outarray[$userstatic->id] = $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength).$moreinfo;
 
 					$i++;
 				}
@@ -2641,9 +2637,9 @@ class Form
 
     			    $outval .= ' - '.$langs->transnoentities("VirtualStock").':';
     			    if ($virtualstock > 0) {
-    			        $outval .= ' - <span class="product_line_stock_ok">';
+    			        $outval .= '<span class="product_line_stock_ok">';
     			    } elseif ($virtualstock <= 0) {
-    			        $outval .= ' - <span class="product_line_stock_too_low">';
+    			        $outval .= '<span class="product_line_stock_too_low">';
     			    }
     			    $outval .= $virtualstock;
     			    $outval .= '</span>';
@@ -5280,7 +5276,7 @@ class Form
 	 *	@param	int			$d				1=Show days, month, years
 	 * 	@param	int			$addnowlink		Add a link "Now", 1 with server time, 2 with local computer time
 	 * 	@param 	int			$disabled		Disable input fields
-	 *  @param  int			$fullday        When a checkbox with id #fullday is cheked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
+	 *  @param  int			$fullday        When a checkbox with id #fullday is checked, hours are set with 00:00 (if value if 'fulldaystart') or 23:59 (if value is 'fulldayend')
 	 *  @param	string		$addplusone		Add a link "+1 hour". Value must be name of another selectDate field.
 	 *  @param  datetime    $adddateof      Add a link "Date of ..." using the following date. See also $labeladddateof for the label used.
      *  @param  string      $openinghours   Specify hour start and hour end for the select ex 8,20
@@ -5598,9 +5594,11 @@ class Form
                 if ($addnowlink == 1)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(\''.dol_print_date(dol_now(), '%H', 'tzuser').'\');';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
                 } elseif ($addnowlink == 2)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').val(d.getHours().pad());';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'hour\').change();';
                 }
 
 				if ($fullday) $reset_scripts .= ' } ';
@@ -5613,9 +5611,11 @@ class Form
                 if ($addnowlink == 1)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(\''.dol_print_date(dol_now(), '%M', 'tzuser').'\');';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
                 } elseif ($addnowlink == 2)
                 {
                     $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').val(d.getMinutes().pad());';
+                    $reset_scripts .= 'jQuery(\'#'.$prefix.'min\').change();';
                 }
 				if ($fullday) $reset_scripts .= ' } ';
 			}
@@ -5672,6 +5672,32 @@ class Form
 
 		return $retstring;
 	}
+
+	/**
+	 * selectTypeDuration
+	 *
+	 * @param   string   $prefix     Prefix
+	 * @param   string   $selected   Selected type
+	 * @return  string               HTML select string
+	 */
+	public function selectTypeDuration($prefix, $selected = 'minute')
+	{
+		global $langs;
+
+        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
+
+        $retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+        foreach ($TDurationTypes as $key=>$typeduration) {
+            $retstring .= '<option value="'.$key.'"';
+            if ($key == $selected) {
+                $retstring .= " selected";
+            }
+            $retstring .= ">".$typeduration."</option>";
+        }
+        $retstring .= "</select>";
+
+        return $retstring;
+    }
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
@@ -5772,7 +5798,7 @@ class Form
 	 * @param	int				$disabled			1=Html component is disabled
 	 * @param	string	        $selected_input_value	Value of preselected input text (for use with ajax)
 	 * @return	string								Return HTML string
-	 * @see selectForFormsList() select_thirdparty
+	 * @see selectForFormsList() select_thirdparty()
 	 */
 	public function selectForForms($objectdesc, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $disabled = 0, $selected_input_value = '')
 	{
@@ -5830,7 +5856,7 @@ class Form
 			$urlforajaxcall = DOL_URL_ROOT.'/core/ajax/selectobject.php';
 
 			// No immediate load of all database
-			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter).($moreparams ? $moreparams : '');
+			$urloption = 'htmlname='.$htmlname.'&outjson=1&objectdesc='.$objectdesc.'&filter='.urlencode($objecttmp->filter);
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter($preselectedvalue, $htmlname, $urlforajaxcall, $urloption, $conf->global->$confkeyforautocompletemode, 0, array());
 			$out .= '<style type="text/css">.ui-autocomplete { z-index: 250; }</style>';
@@ -6378,7 +6404,7 @@ class Form
 	 *	@param	string	$htmlname		Name of select
 	 *	@param	array	$array			Array with key+value
 	 *	@param	array	$selected		Array with key+value preselected
-	 *	@param	int		$key_in_label   1 pour afficher la key dans la valeur "[key] value"
+	 *	@param	int		$key_in_label   1 to show key like in "[key] value"
 	 *	@param	int		$value_as_key   1 to use value as key
 	 *	@param  string	$morecss        Add more css style
 	 *	@param  int		$translate		Translate and encode value
@@ -6404,7 +6430,7 @@ class Form
 		// Add code for jquery to use multiselect
 		if (!empty($conf->global->MAIN_USE_JQUERY_MULTISELECT) || defined('REQUIRE_JQUERY_MULTISELECT'))
 		{
-			$out .= "\n".'<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+			$out .= "\n".'<!-- JS CODE TO ENABLE select for id '.$htmlname.' -->
 						<script>'."\n";
 			if ($addjscombo == 1)
 			{
@@ -6465,15 +6491,16 @@ class Form
 			{
 				foreach ($array as $key => $value)
 				{
+					$newval = ($translate ? $langs->trans($value) : $value);
+					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
+
 					$out .= '<option value="'.$key.'"';
                     if (is_array($selected) && !empty($selected) && in_array((string) $key, $selected) && ((string) $key != ''))
 					{
 						$out .= ' selected';
 					}
+					$out .= ' data-html="'.$newval.'"';
 					$out .= '>';
-
-					$newval = ($translate ? $langs->trans($value) : $value);
-					$newval = ($key_in_label ? $key.' - '.$newval : $newval);
 					$out .= dol_htmlentitiesbr($newval);
 					$out .= '</option>'."\n";
 				}
@@ -6496,11 +6523,11 @@ class Form
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage)
 	{
-		global $conf, $langs, $user;
+		global $conf, $langs, $user, $extrafields;
 
 		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) return '';
 
-		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage;
+		$tmpvar = "MAIN_SELECTEDFIELDS_".$varpage;	// To get list of saved seleteced properties
 		if (!empty($user->conf->$tmpvar))
 		{
 			$tmparray = explode(',', $user->conf->$tmpvar);
@@ -6528,6 +6555,10 @@ class Form
 		    }
 		    if ($val['label'])
 		    {
+		    	if (! empty($val['langfile']) && is_object($langs)) {
+		    		$langs->load($val['langfile']);
+		    	}
+
 		        $lis .= '<li><input type="checkbox" id="checkbox'.$key.'" value="'.$key.'"'.(empty($val['checked']) ? '' : ' checked="checked"').'/><label for="checkbox'.$key.'">'.dol_escape_htmltag($langs->trans($val['label'])).'</label></li>';
 			    $listcheckedstring .= (empty($val['checked']) ? '' : $key.',');
 		    }
@@ -7940,4 +7971,41 @@ class Form
 
 		return $ret;
 	}
+
+	/**
+	 * selectModelMail
+	 *
+	 * @param   string   $prefix     Prefix
+	 * @param   string   $modelType  Model type
+	 * @return  string               HTML select string
+	 */
+    public function selectModelMail($prefix, $modelType = '')
+    {
+        global $langs, $db, $user;
+
+        $retstring = '';
+
+        $TModels = array();
+
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+        $formmail = new FormMail($db);
+        $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
+
+        if ($result > 0) {
+            foreach ($formmail->lines_model as $model){
+                $TModels[$model->id] = $model->label;
+            }
+        }
+
+        $retstring .= '<select class="flat" id="select_'.$prefix.'model_mail" name="'.$prefix.'model_mail">';
+
+        foreach ($TModels as $id_model=>$label_model){
+            $retstring .= '<option value="'.$id_model.'"';
+            $retstring .= ">".$label_model."</option>";
+        }
+
+        $retstring .= "</select>";
+
+        return $retstring;
+    }
 }

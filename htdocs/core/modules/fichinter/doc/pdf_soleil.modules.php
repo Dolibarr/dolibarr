@@ -61,9 +61,9 @@ class pdf_soleil extends ModelePDFFicheinter
 
     /**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -472,7 +472,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y
@@ -536,7 +536,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  Object		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -709,7 +709,7 @@ class pdf_soleil extends ModelePDFFicheinter
 	/**
 	 *   	Show footer of page. Need this->emetteur object
 	 *
-	 *   	@param	PDF			$pdf     			PDF
+	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text

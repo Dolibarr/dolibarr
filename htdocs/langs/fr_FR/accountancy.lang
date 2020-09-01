@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Permettre de gérer un nombre différent de zéro à la f
 BANK_DISABLE_DIRECT_INPUT=Désactiver la saisie directe de transactions en banque
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Activer l'export brouillon sur les journaux comptables
 ACCOUNTANCY_COMBO_FOR_AUX=Activer la liste déroulante pour le compte auxiliaire (peut être lent si vous avez beaucoup de tiers)
+ACCOUNTING_DATE_START_BINDING=Définissez une date pour commencer la liaison et le transfert en comptabilité. En dessous de cette date, les transactions ne seront jamais transférées à la comptabilité.
 
 ACCOUNTING_SELL_JOURNAL=Journal des ventes
 ACCOUNTING_PURCHASE_JOURNAL=Journal des achats
@@ -278,12 +279,13 @@ GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être j
 NoNewRecordSaved=Plus d'enregistrements à journaliser
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
-Accounted=Comptabilisé
-NotYetAccounted=Pas encore comptabilisé
+Accounted=En comptabilité
+NotYetAccounted=Pas encore en comptabilité
 ShowTutorial=Afficher le tutoriel
 NotReconciled=Non rapproché
 
 ## Admin
+BindingOptions=Options de liaisons avec les codes comptables
 ApplyMassCategories=Application en masse des catégories
 AddAccountFromBookKeepingWithNoCategories=Comptes disponibles pas encore dans le groupe personnalisé
 CategoryDeleted=Le groupe de comptes comptables a été supprimé

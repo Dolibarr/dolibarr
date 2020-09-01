@@ -264,7 +264,7 @@ if (count($typeleaves) == 0)
     print '<td class="liste_titre"></td>';
 
     // Action column
-    print '<td class="liste_titre maxwidthsearch">';
+    print '<td class="liste_titre maxwidthsearch center">';
     $searchpicto = $form->showFilterButtons();
     print $searchpicto;
     print '</td>';

@@ -127,10 +127,12 @@ if (!empty($_SESSION['ipaddress']))      // To avoid to make action twice
     $ipaddress          = $_SESSION['ipaddress'];
     $errormessage       = $_SESSION['errormessage'];
 
-    // Call trigger
-    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
-    if ($result < 0) $error++;
-    // End call triggers
+    if (is_object($object) && method_exists($object, 'call_trigger')) {
+    	// Call trigger
+	    $result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);
+	    if ($result < 0) $error++;
+	    // End call triggers
+    }
 
     // Send an email
     $sendemail = '';
@@ -205,7 +207,6 @@ print '<span id="dolpaymentspan"></span>'."\n";
 print '<div id="dolpaymentdiv" align="center">'."\n";
 
 // Show logo (search order: logo defined by PAYMENT_LOGO_suffix, then PAYMENT_LOGO, then small company logo, large company logo, theme logo, common logo)
-$width = 0;
 // Define logo and logosmall
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
@@ -220,12 +221,10 @@ if (!empty($logosmall) && is_readable($conf->mycompany->dir_output.'/logos/thumb
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$logosmall);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
-	$width = 150;
 } elseif (!empty($logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo))
 {
 	$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$logo);
 	$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
-	$width = 150;
 }
 
 // Output html code for logo
@@ -234,7 +233,6 @@ if ($urllogo)
 	print '<div class="backgreypublicpayment">';
 	print '<div class="logopublicpayment">';
 	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-	if ($width) print ' width="'.$width.'"';
 	print '>';
 	print '</div>';
 	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {

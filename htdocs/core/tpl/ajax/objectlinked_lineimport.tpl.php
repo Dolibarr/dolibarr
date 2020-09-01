@@ -31,7 +31,7 @@ if ($object->element == 'propal')
 ?>
 
 <!-- START TEMPLATE IMPORT OBJECT LINKED LINES -->
-<script type="text/javascript">
+<script>
 
 $(document).ready(function(){
 	$('.objectlinked_importbtn').click(function (e) {

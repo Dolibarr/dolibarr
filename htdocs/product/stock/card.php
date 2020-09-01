@@ -68,8 +68,6 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Load object
 if ($id > 0 || !empty($ref)) {
     $ret = $object->fetch($id, $ref);
-	//    if ($ret > 0)
-	//        $ret = $object->fetch_thirdparty();
     if ($ret <= 0) {
         setEventMessages($object->error, $object->errors, 'errors');
         $action = '';
@@ -291,10 +289,10 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Phone / Fax
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 	print img_picto('', 'object_phoning', 'class="paddingright"');
 	print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-	print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
+	print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td>';
 	print '<td>';
 	print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 	print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
@@ -454,12 +452,14 @@ if ($action == 'create')
 
             // Other attributes
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
 			// Categories
 			if ($conf->categorie->enabled) {
 				print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
 				print "</td></tr>";
 			}
+
 			print "</table>";
 
 			print '</div>';
@@ -719,10 +719,10 @@ if ($action == 'create')
 			print '</td></tr>';
 
 			// Phone / Fax
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Phone', 'phone', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning', 'class="paddingright"');
 			print '<input name="phone" size="20" value="'.$object->phone.'"></td></tr>';
-			print '<tr><td class="titlefieldcreate fieldrequired">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
+			print '<tr><td class="titlefieldcreate">'.$form->editfieldkey('Fax', 'fax', '', $object, 0).'</td><td>';
 			print img_picto('', 'object_phoning_fax', 'class="paddingright"');
 			print '<input name="fax" size="20" value="'.$object->fax.'"></td></tr>';
 
@@ -749,6 +749,7 @@ if ($action == 'create')
             {
                 print $object->showOptionals($extrafields, 'edit', $parameters);
             }
+
 			// Tags-Categories
 			if ($conf->categorie->enabled)
 			{
@@ -763,6 +764,7 @@ if ($action == 'create')
 				print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
 				print "</td></tr>";
 			}
+
 			print '</table>';
 
 			dol_fiche_end();
@@ -779,46 +781,43 @@ if ($action == 'create')
 }
 
 /*
- * Documents generes
+ * Documents generated
  */
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+$modulepart = 'stock';
+
+if ($action != 'create' && $action != 'edit' && $action != 'delete')
 {
-	$modulepart = 'stock';
+	print '<br>';
+    print '<div class="fichecenter"><div class="fichehalfleft">';
+    print '<a name="builddoc"></a>'; // ancre
 
-	if ($action != 'create' && $action != 'edit' && $action != 'delete')
-	{
-		print '<br/>';
-	    print '<div class="fichecenter"><div class="fichehalfleft">';
-	    print '<a name="builddoc"></a>'; // ancre
+    // Documents
+    $objectref = dol_sanitizeFileName($object->ref);
+    $relativepath = $object->ref.'/'.$objectref.'.pdf';
+    $filedir = $conf->stock->dir_output.'/'.$objectref;
+    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
+    $genallowed = $usercanread;
+    $delallowed = $usercancreate;
+    $modulepart = 'stock';
 
-	    // Documents
-	    $objectref = dol_sanitizeFileName($object->ref);
-	    $relativepath = $comref.'/'.$objectref.'.pdf';
-	    $filedir = $conf->stock->dir_output.'/'.$objectref;
-	    $urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
-	    $genallowed = $usercanread;
-	    $delallowed = $usercancreate;
-	    $modulepart = 'stock';
+    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+    $somethingshown = $formfile->numoffiles;
 
-	    print $formfile->showdocuments($modulepart, $object->ref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
-	    $somethingshown = $formfile->numoffiles;
+    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    $MAXEVENT = 10;
 
-	    $MAXEVENT = 10;
+    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
+    $morehtmlright .= $langs->trans("SeeAll");
+    $morehtmlright .= '</a>';
 
-	    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
-	    $morehtmlright .= $langs->trans("SeeAll");
-	    $morehtmlright .= '</a>';
+    // List of actions on element
+    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+    $formactions = new FormActions($db);
+    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
 
-	    // List of actions on element
-	    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	    $formactions = new FormActions($db);
-	    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright); // Show all action for product
-
-	    print '</div></div></div>';
-	}
+    print '</div></div></div>';
 }
 
 // End of page

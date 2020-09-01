@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2018	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2013-2020	Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>
@@ -59,9 +59,10 @@ if (GETPOSTISSET('dateday') && GETPOSTISSET('datemonth') && GETPOSTISSET('dateye
 	$dateendofday = dol_mktime(23, 59, 59, GETPOST('datemonth', 'int'), GETPOST('dateday', 'int'), GETPOST('dateyear', 'int'));
 }
 
+$now = dol_now();
+
 $productid = GETPOST('productid', 'int');
 $fk_warehouse = GETPOST('fk_warehouse', 'int');
-$texte = '';
 
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
@@ -79,6 +80,19 @@ if (!$sortorder) {
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+$dateIsValid= true;
+if ($mode == 'future') {
+	if ($date && $date < $now) {
+		setEventMessages($langs->trans("ErrorDateMustBeInFuture"), null, 'errors');
+		$dateIsValid= false;
+	}
+} else {
+	if ($date && $date > $now) {
+		setEventMessages($langs->trans("ErrorDateMustBeBeforeToday"), null, 'errors');
+		$dateIsValid= false;
+	}
+}
 
 
 /*
@@ -99,11 +113,10 @@ if ($conf->global->ENTREPOT_EXTRA_STATUS) {
 	$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
 }
 
-
 // Get array with current stock per product, warehouse
 $stock_prod_warehouse = array();
 $stock_prod = array();
-if ($date) {	// Avoid heavy sql if mandatory date is not defined
+if ($date && $dateIsValid) {	// Avoid heavy sql if mandatory date is not defined
 	$sql = "SELECT ps.fk_product, ps.fk_entrepot as fk_warehouse,";
 	$sql .= " SUM(ps.reel) AS stock";
 	$sql .= " FROM ".MAIN_DB_PREFIX."product_stock as ps";
@@ -146,13 +159,17 @@ if ($date) {	// Avoid heavy sql if mandatory date is not defined
 		dol_print_error($db);
 	}
 	//var_dump($stock_prod_warehouse);
+} elseif ($action == 'filter') {
+	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 }
 
 // Get array with list of stock movements between date and now (for product/warehouse=
 $movements_prod_warehouse = array();
 $movements_prod = array();
-if ($date) {
-	$sql = "SELECT sm.fk_product, sm.fk_entrepot, SUM(sm.value) AS stock";
+$movements_prod_warehouse_nb = array();
+$movements_prod_nb = array();
+if ($date && $dateIsValid) {
+	$sql = "SELECT sm.fk_product, sm.fk_entrepot, SUM(sm.value) AS stock, COUNT(sm.rowid) AS nbofmovement";
 	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as sm";
 	$sql .= ", ".MAIN_DB_PREFIX."entrepot as w";
 	$sql .= " WHERE w.entity IN (".getEntity('stock').")";
@@ -184,12 +201,15 @@ if ($date) {
 			$fk_product 	= $obj->fk_product;
 			$fk_entrepot 	= $obj->fk_entrepot;
 			$stock 			= $obj->stock;
+			$nbofmovement	= $obj->nbofmovement;
 
 			// Pour llx_product_stock.reel
 			$movements_prod_warehouse[$fk_product][$fk_entrepot] = $stock;
+			$movements_prod_warehouse_nb[$fk_product][$fk_entrepot] = $nbofmovement;
 
 			// Pour llx_product.stock
 			$movements_prod[$fk_product] += $stock;
+			$movements_prod_nb[$fk_product] += $nbofmovement;
 
 			$i++;
 		}
@@ -259,7 +279,7 @@ if ($sortfield == 'stock' && $fk_warehouse > 0) {
 }
 $sql .= $db->order($sortfield, $sortorder);
 
-if ($date) {	// We avoid a heavy sql if mandatory parameter date not yet defined
+if ($date && $dateIsValid) {	// We avoid a heavy sql if mandatory parameter date not yet defined
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
@@ -355,7 +375,7 @@ print '<div class="div-table-responsive">'; // You can use div-table-responsive-
 print '<table class="liste centpercent">';
 
 $stocklabel = $langs->trans('StockAtDate');
-if ($mode == 'future') $stocklabel = $langs->trans("VirtualStock");
+if ($mode == 'future') $stocklabel = $langs->trans("VirtualStockAtDate");
 
 //print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -371,6 +391,9 @@ print '<td class="liste_titre"><input class="flat" type="text" name="search_nom"
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
+if ($mode == 'future') {
+	print '<td class="liste_titre"></td>';
+}
 // Fields from hook
 $parameters = array('param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters); // Note that $action and $object may have been modified by hook
@@ -394,7 +417,8 @@ print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', $param, '', ''
 if ($mode == 'future') {
 	print_liste_field_titre('CurrentStock', $_SERVER["PHP_SELF"], $fieldtosortcurrentstock, $param, '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
-	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockAtDateDesc');
+	print_liste_field_titre('VirtualStock', $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ', 'VirtualStockDesc');
 } else {
 	print_liste_field_titre($stocklabel, $_SERVER["PHP_SELF"], '', $param, '', '', $sortfield, $sortorder, 'right ');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"]);
@@ -453,18 +477,21 @@ while ($i < ($limit ? min($num, $limit) : $num))
 		}
 
 		if ($mode == 'future') {
-			$prod->load_stock('warehouseopen, warehouseinternal', 0);
+			$prod->load_stock('warehouseopen, warehouseinternal', 0);	// This call also ->load_virtual_stock()
 
 			//$result = $prod->load_stats_reception(0, '4');
 			//print $prod->stats_commande_fournisseur['qty'].'<br>'."\n";
 			//print $prod->stats_reception['qty'];
 
-			$stock = 123;
+			$stock = '<span class="opacitymedium">'.$langs->trans("FeatureNotYetAvailable").'</span>';
+			$virtualstock = $prod->stock_theorique;
 		} else {
 			if ($fk_warehouse > 0) {
 				$stock = $currentstock - $movements_prod_warehouse[$objp->rowid][$fk_warehouse];
+				$nbofmovement = $movements_prod_warehouse_nb[$objp->rowid][$fk_warehouse];
 			} else {
 				$stock = $currentstock - $movements_prod[$objp->rowid];
+				$nbofmovement = $movements_prod_nb[$objp->rowid];
 			}
 		}
 
@@ -485,16 +512,24 @@ while ($i < ($limit ? min($num, $limit) : $num))
 
 			print '<td class="right"></td>';
 
-			// Stock at date
+			// Virtual stock at date
 			print '<td class="right">'.$stock.'</td>';
+
+			// Final virtual stock
+			print '<td class="right">'.$virtualstock.'</td>';
 		} else {
 			// Stock at date
-			print '<td class="right">'.$stock.'</td>';
+			print '<td class="right">'.($stock ? $stock : '<span class="opacitymedium">'.$stock.'</span>').'</td>';
 
-			print '<td class="right"><a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid.($fk_warehouse > 0 ? '&search_warehouse='.$fk_warehouse : '').'">'.$langs->trans("Movements").'</a></td>';
+			print '<td class="right">';
+			if ($nbofmovement > 0) {
+				print '<a href="'.DOL_URL_ROOT.'/product/stock/movement_list.php?idproduct='.$objp->rowid.($fk_warehouse > 0 ? '&search_warehouse='.$fk_warehouse : '').'">'.$langs->trans("Movements").'</a>';
+				print ' <span class="tabs"><span class="badge">'.$nbofmovement.'</span></span>';
+			}
+			print '</td>';
 
 			// Current stock
-			print '<td class="right">'.$currentstock.'</td>';
+			print '<td class="right">'.($currentstock ? $currentstock : '<span class="opacitymedium">0</span>').'</td>';
 		}
 
 		// Action

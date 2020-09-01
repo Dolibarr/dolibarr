@@ -144,7 +144,7 @@ if (empty($reshook))
 		    elseif ($endhalfday == 'morning') $halfday = 1;
 
 		    $valideur = GETPOST('valideur', 'int');
-		    $description = trim(GETPOST('description'));
+		    $description = trim(GETPOST('description', 'none'));
 
 	    	// If no type
 		    if ($type <= 0)
@@ -1299,7 +1299,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
 	                print '</tr>';
                 }
 
-                // Validator
+                // Approver
                 if (!$edit && $action != 'editvalidator') {
                     print '<tr>';
                     print '<td class="titlefield">';
@@ -1310,7 +1310,7 @@ if ((empty($id) && empty($ref)) || $action == 'add' || $action == 'request' || $
                     $include_users = $object->fetch_users_approver_holiday();
                     if (is_array($include_users) && in_array($user->id, $include_users) && $object->statut == Holiday::STATUS_VALIDATED)
                     {
-                        print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
+                        print '<a class="editfielda paddingleft" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editvalidator">'.img_edit($langs->trans("Edit")).'</a>';
                     }
                     print '</td>';
                     print '</tr>';

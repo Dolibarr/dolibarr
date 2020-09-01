@@ -262,7 +262,7 @@ print '<div class="centpercent">';
 
 $picto = 'object_'.$objMod->picto;
 
-print load_fiche_titre(($modulename ? $modulename : $moduledesc), $moreinfo, $picto);
+print load_fiche_titre(($modulename ? $modulename : $moduledesc), $moreinfo, $picto, 0, '', 'titlemodulehelp');
 print '<br>';
 
 dol_fiche_head($head, $mode, '', -1);
@@ -341,7 +341,7 @@ if ($mode == 'feature')
     $text .= '<br><br>';
 
     $text .= '<br><strong>'.$langs->trans("AddDataTables").':</strong> ';
-	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql'));
+	$sqlfiles = dol_dir_list(dol_buildpath($moduledir.'/sql/'), 'files', 0, 'llx.*\.sql', array('\.key\.sql', '\.sql\.back'));
     if (count($sqlfiles) > 0)
     {
     	$text .= $langs->trans("Yes").' (';

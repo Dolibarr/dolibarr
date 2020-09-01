@@ -69,7 +69,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	/**
 	 * write barcode to pdf
 	 *
-	 * @param PDF	  $pdf		  PDF reference
+	 * @param TCPDF	  $pdf		   PDF reference
 	 * @param string  $code		   code to print
 	 * @param string  $encoding	   type of barcode
 	 * @param boolean $is2d		   true if 2d barcode
@@ -91,7 +91,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	/**
 	 * Output a sticker on page at position _COUNTX, _COUNTY (_COUNTX and _COUNTY start from 0)
 	 *
-	 * @param	PDF			$pdf			PDF reference
+	 * @param	TCPDF		$pdf			PDF reference
 	 * @param	Translate	$outputlangs	Output langs
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void

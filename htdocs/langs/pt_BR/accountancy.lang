@@ -163,6 +163,7 @@ UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Conta de terceiro
 OpeningBalance=Saldo inicial
 ShowOpeningBalance=Mostrar saldo inicial
 HideOpeningBalance=Ocultar saldo inicial
+ShowSubtotalByGroup=Mostrar subtotal por grupo
 Pcgtype=Plano de Contas
 PcgtypeDesc=O grupo de contas é usado como critério predefinido de 'filtro' e 'agrupamento' para alguns relatórios contábeis. Por exemplo, 'RENDA' ou 'DESPESA' são usados ​​como grupos para contas contábeis de produtos para criar o relatório de despesas / receitas.
 Reconcilable=Reconciliável

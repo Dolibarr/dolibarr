@@ -168,3 +168,7 @@ OutGoingEmailSetupForEmailing=Einrichtung ausgehender E-Mails (für Modul %s)
 DefaultOutgoingEmailSetup=Standardeinstellungen für ausgehende E-Mails
 Information=Information
 ContactsWithThirdpartyFilter=Kontakte mit Drittanbieter-Filter
+Unanswered=Unanswered
+Answered=Beantwortet
+IsNotAnAnswer=Is not answer (initial email)
+IsAnAnswer=Is an answer of an initial email

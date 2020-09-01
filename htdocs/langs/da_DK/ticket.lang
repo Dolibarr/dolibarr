@@ -72,7 +72,6 @@ Deleted=Slettet
 
 # Dict
 Type=Type
-Category=Analytisk kode
 Severity=Alvorlighed
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Tildel automatisk brugeren, der oprettede opgaven
 TicketsAutoAssignTicketHelp=Når du opretter en opgave, kan brugeren automatisk tildeles opgaven.
 TicketNumberingModules=Opgave nummerering modul
 TicketNotifyTiersAtCreation=Underret tredjepart ved oprettelsen
-TicketGroup=Gruppe
 TicketsDisableCustomerEmail=Deaktiver altid Emails, når en opgave oprettes fra den offentlige grænseflade
 TicketsPublicNotificationNewMessage=Send e-mail (s), når en ny besked tilføjes
 TicketsPublicNotificationNewMessageHelp=Send e-mail (s), når en ny meddelelse tilføjes fra den offentlige grænseflade (til den tildelte bruger eller meddelelses-e-mailen til (opdatering) og / eller meddelelses-e-mailen til)
@@ -162,7 +160,7 @@ CreatedBy=Lavet af
 NewTicket=Ny opgave
 SubjectAnswerToTicket=Opgave svar
 TicketTypeRequest=Anmodningstype
-TicketCategory=Analytisk kode
+TicketCategory=Gruppe
 SeeTicket=Se opgave
 TicketMarkedAsRead=Opgaven er blevet markeret som læst
 TicketReadOn=Læs videre

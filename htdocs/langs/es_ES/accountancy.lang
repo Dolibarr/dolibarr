@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Gestiona el cero al final de una cuenta contable. Necesar
 BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
 ACCOUNTANCY_COMBO_FOR_AUX=Habilitar la lista combinada para la cuenta subsidiaria (puede ser lento si tiene muchos terceros)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Diario de ventas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
@@ -284,6 +285,7 @@ ShowTutorial=Ver Tutorial
 NotReconciled=No reconciliado
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Aplicar categorías en masa
 AddAccountFromBookKeepingWithNoCategories=Cuenta disponible sin grupo personalizado
 CategoryDeleted=La categoría para la cuenta contable ha sido eliminada

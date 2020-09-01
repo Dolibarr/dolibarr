@@ -60,9 +60,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
     /**
      * @var array Minimum version of PHP required by module.
-     * e.g.: PHP ≥ 5.5 = array(5, 5)
+     * e.g.: PHP ≥ 5.6 = array(5, 6)
      */
-	public $phpmin = array(5, 5);
+	public $phpmin = array(5, 6);
 
 	/**
      * Dolibarr version of the loaded document
@@ -508,7 +508,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	PDF				$pdf			Object PDF
+	 *	@param	TCPDF			$pdf			Object PDF
 	 *	@param  PaiementFourn	$object         Object PaiementFourn
 	 *	@param	int				$posy			Position depart
 	 *	@param	Translate		$outputlangs	Objet langs
@@ -552,7 +552,6 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->MultiCell(35, 4, str_pad(price($object->amount).' '.$currency, 18, '*', STR_PAD_LEFT), 0, 'R', 1);
 		$posy += 10;
 
-
 		// City
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - 30, $posy);
 		$pdf->MultiCell(150, 4, $mysoc->town, 0, 'L', 1);
@@ -567,7 +566,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		PDF			$pdf     		Object PDF
+	 *   @param		TCPDF		$pdf     		Object PDF
 	 *   @param		integer		$tab_top		Top position of table
 	 *   @param		integer		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -592,9 +591,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		$titre = strtoupper($mysoc->town).', le '.date("d").' '.$outputlangs->transnoentitiesnoconv(date("F")).' '.date("Y");
+		/*$titre = strtoupper($mysoc->town).' - '.dol_print_date(dol_now(), 'day', 'tzserver', $outputlangs);
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3) - 60, $tab_top - 6);
-		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+		$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);*/
 
 		$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
 		$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top);
@@ -612,7 +611,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *  Show top header of page.
 	 *
-	 *  @param	PDF			$pdf     		Object PDF
+	 *  @param	TCPDF		$pdf     		Object PDF
 	 *  @param  FactureFournisseur		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
@@ -754,7 +753,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 
 			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $mysoc, ((!empty($object->contact)) ? $object->contact : null), $usecontact, 'target', $object);
+			$usecontact = 0;
+
+			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ((!empty($object->contact)) ? $object->contact : null), $usecontact, 'target', $object);
 
 			// Show recipient
 			$widthrecbox = 90;
@@ -788,7 +789,7 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	/**
 	 *   	Show footer of page. Need this->emetteur object
      *
-	 *   	@param	PDF			$pdf     			PDF
+	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	FactureFournisseur		$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text

@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (!empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
     require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -134,6 +135,8 @@ $usercanread = $user->rights->stock->mouvement->lire;
 $usercancreate = $user->rights->stock->mouvement->creer;
 $usercandelete = $user->rights->stock->mouvement->creer;
 
+$error = 0;
+
 
 /*
  * Actions
@@ -175,6 +178,25 @@ if (empty($reshook))
 	$objectlabel = 'MouvementStock';
 	$uploaddir = $conf->stock->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+}
+
+if ($action == 'update_extras') {
+	$tmpwarehouse = new Entrepot($db);
+	$tmpwarehouse->fetch($id);
+
+	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse);
+
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'none'));
+	if ($ret < 0) $error++;
+	if (!$error) {
+		$result = $tmpwarehouse->insertExtraFields();
+		if ($result < 0) {
+			setEventMessages($tmpwarehouse->error, $tmpwarehouse->errors, 'errors');
+			$error++;
+		}
+	}
+	if ($error) $action = 'edit_extras';
 }
 
 // Correct stock
@@ -614,6 +636,16 @@ if ($resql)
             print $langs->trans("None");
         }
         print "</td></tr>";
+
+        // Other attributes
+        include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+
+        // Categories
+        if ($conf->categorie->enabled) {
+        	print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td colspan="3">';
+        	print $form->showCategories($object->id, Categorie::TYPE_WAREHOUSE, 1);
+        	print "</td></tr>";
+        }
 
         print "</table>";
 
