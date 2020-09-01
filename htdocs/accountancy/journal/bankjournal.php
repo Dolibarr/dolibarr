@@ -96,7 +96,7 @@ $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 // Period by default on transfer (0: previous month | 1: current month | 2: fiscal year)
 $periodbydefaultontransfer = $conf->global->ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER;
 isset($periodbydefaultontransfer)?$periodbydefaultontransfer:0;
-if($periodbydefaultontransfer == 2) {
+if ($periodbydefaultontransfer == 2) {
 	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
 	$sql .= $db->plimit(1);
