@@ -18,5 +18,5 @@ MulticurrencyReceived=Received, original currency
 MulticurrencyRemainderToTake=Remaining amout, original currency
 MulticurrencyPaymentAmount=Payment amount, original currency
 AmountToOthercurrency=Amount To (in currency of receiving account)
-CurrencyRateSyncSucceed=Currency rate synchronization done successfuly
-MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Use the currency of the document for online payments
+CurrencyRateSyncSucceed=Sincronizzazione del tasso di cambio eseguita correttamente
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Usa la valuta del documento per i pagamenti online

@@ -9,12 +9,15 @@ descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Opprett automatisk en kundefaktura når
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Opprett en kundefaktura automatisk etter at en kundeordre er stengt (ny faktura vil ha samme beløp som ordre)
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Klassifiser tilknyttede kildetilbud til fakturert(e) når kundeordren er satt til fakturert (og hvis beløpet av bestillingen er det samme som totalbeløpet av signerte koblede tilbud)
-descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassifiser koblede kilde-tilbud som fakturert(t) når faktura er validert (og hvis fakturabeløpet er det samme som totalbeløpet av signerte tilbud)
+descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Klassifiser koblede kilde-tilbud som fakturert(e) når faktura er validert (og hvis fakturabeløpet er det samme som totalbeløpet av signerte tilbud)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Klassifiser koblede kilde-kundeordre som fakturert(t) når faktura er validert (og hvis fakturabeløpet er det samme som totalbeløpet av koblede ordrer)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Klassifiser koblede kilde-kundeordre som fakturert(t) når faktura er satt til betalt (og hvis fakturabeløpet er det samme som totalbeløpet av koblede ordrer)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Klassifiser koblet kilde-kundeordre til sendt når en forsendelse er validert (og hvis kvantitet som sendes av alle forsendelser, er det samme som i bestillingen som skal oppdateres)
-# Autoclassify supplier order
+# Autoclassify purchase order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Klassifiser tilsluttede kildeleverandørtilbud som fakturert når leverandørfaktura er validert (og hvis fakturabeløp er det samme som totalbeløp på koblede tilbud)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Klassifiser kildekjøpsordre (kjøpsordre) som fakturert når leverandørfakturaen er validert (og hvis fakturabeløp er det samme som totalbeløp på koblede ordre)
+descWORKFLOW_BILL_ON_RECEPTION=Classify receptions to "billed" when a linked supplier order is validated
+# Autoclose intervention
+descWORKFLOW_TICKET_CLOSE_INTERVENTION=Close all interventions linked to the ticket when a ticket is closed
 AutomaticCreation=Automatisk opprettelse
 AutomaticClassification=Automatisk klassifisering

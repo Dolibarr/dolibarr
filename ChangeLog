@@ -345,10 +345,10 @@ Only people that installed Dolibarr using the all-in-one autoinstaller for Windo
  
 * DoliWAMP autoinstaller for Windows is not more available on 32bits systems. Use standard package if you need to use such architecture.
 * It is not possible to migrate from an installation done with the old DoliWAMP autoinstaller for Windows by using this new one. You must make a backup 
-  of your database, make a fresh installation using the new installer and reload.
-* Don't forget that DoliWAMP is a good solution to make a quick test of Dolibarr on your local computer but was never recommanded as a production
-  solution on a local desktop since a desktop computer has not a backup and security policy as good as on a server (when there is one). 
-  DoliWAMP remains a solution for fast test or demo purposes.
+  of your database, make a fresh installation using the new installer and reload your backup. Don't forget that DoliWAMP is a good solution to make a 
+  quick test of Dolibarr on your local computer but was never recommanded as a production solution on a local desktop since a desktop computer has not
+  a backup and security policy as good as on a server (when there is one). 
+  DoliWAMP remains a solution for fast test or demo purposes. Prefer using standard package for production.
 
 
 ***** ChangeLog for 11.0.5 compared to 11.0.4 *****

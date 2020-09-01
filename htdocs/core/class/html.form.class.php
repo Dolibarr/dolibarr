@@ -5673,35 +5673,27 @@ class Form
 		return $retstring;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * select_type_duration
+	 * selectTypeDuration
 	 *
 	 * @param   string   $prefix     Prefix
 	 * @param   string   $selected   Selected type
 	 * @return  string               HTML select string
 	 */
-	public function select_type_duration($prefix, $selected = 'minute')
+	public function selectTypeDuration($prefix, $selected = 'minute')
 	{
-		// phpcs:enable
 		global $langs;
-
-        $retstring = '';
 
         $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
 
-        $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
-
-        foreach ($TDurationTypes as $key=>$typeduration){
-
+        $retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+        foreach ($TDurationTypes as $key=>$typeduration) {
             $retstring .= '<option value="'.$key.'"';
-            if($key == $selected)
-            {
+            if ($key == $selected) {
                 $retstring .= " selected";
             }
             $retstring .= ">".$typeduration."</option>";
         }
-
         $retstring .= "</select>";
 
         return $retstring;
@@ -7980,17 +7972,15 @@ class Form
 		return $ret;
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * select_model_mail
+	 * selectModelMail
 	 *
 	 * @param   string   $prefix     Prefix
 	 * @param   string   $modelType  Model type
 	 * @return  string               HTML select string
 	 */
-    public function select_model_mail($prefix, $modelType = '')
+    public function selectModelMail($prefix, $modelType = '')
     {
-    	// phpcs:enable
         global $langs, $db, $user;
 
         $retstring = '';

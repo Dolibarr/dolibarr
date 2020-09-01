@@ -69,6 +69,7 @@ SocialContribution=Sociālais vai fiskālais nodoklis
 SocialContributions=Sociālie vai fiskālie nodokļi
 SocialContributionsDeductibles=Atskaitāmi sociālie vai fiskālie nodokļi
 SocialContributionsNondeductibles=Nekonkurējoši sociālie vai fiskālie nodokļi
+DateOfSocialContribution=Sociālā vai fiskālā nodokļa datums
 LabelContrib=Marķējuma ieguldījums
 TypeContrib=Veida iemaksa
 MenuSpecialExpenses=Īpašie izdevumi

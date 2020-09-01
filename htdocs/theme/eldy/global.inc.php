@@ -1415,11 +1415,22 @@ td.showDragHandle {
 	background: var(--colorbackbody);
 	padding-bottom: 20px;
 }
-#id-left {
-/*	background-color: #fff;
-	border-right: 1px #888 solid;
-	height: calc(100% - 50px);*/
+
+/* For having horizontal scroll into array (like with smartphone) */
+/*
+#id-container {
+	width: 100%;
 }
+.side-nav {
+	display: block;
+	float: left;
+}
+#id-right {
+	width:calc(100% - 210px);
+	display: inline-block;
+}
+*/
+
 
 <?php if (empty($conf->global->THEME_DISABLE_STICKY_TOPMENU)) {  ?>
 .side-nav-vert {
@@ -1430,8 +1441,9 @@ td.showDragHandle {
 <?php } ?>
 
 .side-nav {
-	display: block;
-	float: left;
+	/*display: block;
+	float: left; */
+	display: table-cell;
 	border-<?php echo $right; ?>: 1px solid #E0E0E0;
 	box-shadow: 3px 0 6px -2px #eee;
 	background: var(--colorbackvmenu1);
@@ -2718,7 +2730,7 @@ li.expanded > a.fmdirlia.jqft.ecmjqft {
 /* ============================================================================== */
 div.tabs {
     text-align: <?php print $left; ?>;
-    padding-top: 10px;
+    margin-top: 10px;
     padding-left: 6px;
     padding-right: 6px;
 	clear:both;
@@ -2946,6 +2958,12 @@ div.tabs.nopaddingleft {
 }
 .nopaddingright {
 	padding-<?php print $right; ?>: 0px;
+}
+.nopaddingtopimp {
+	padding-top: 0px !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0px !important;
 }
 .notopnoleft {
 	border-collapse: collapse;
@@ -3353,9 +3371,6 @@ table.hidepaginationnext .paginationnext {
 }
 <?php } ?>
 
-.nohover:hover {
-	background: unset !important;
-}
 .nohoverborder:hover {
 	border: unset;
 	box-shadow: unset;
@@ -4067,6 +4082,7 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+    /* text-transform: capitalize; */
 }
 div.fiche > table.table-fiche-title:first-of-type div {
     color: var(--colortexttitlenotab);
@@ -4074,10 +4090,10 @@ div.fiche > table.table-fiche-title:first-of-type div {
     /* text-transform: uppercase; */
     /* font-weight: 600; */
 }
+
 div.titre {
     color: var(--colortexttitlenotab);
 }
-
 .secondary {
     color: var(--colortexttitlenotab);
 }

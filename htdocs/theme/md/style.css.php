@@ -2778,7 +2778,7 @@ a.tabTitle {
     white-space: nowrap;
 }
 .tabTitleText {
-	display: hidden;
+	display: none;
 }
 .imgTabTitle {
 	max-height: 14px;
@@ -2893,6 +2893,12 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 .nopaddingright {
 	padding-<?php print $right; ?>: 0px;
+}
+.nopaddingtopimp {
+	padding-top: 0px !important;
+}
+.nopaddingbottomimp {
+	padding-bottom: 0px !important;
 }
 .notopnoleft {
 	border-collapse: collapse;
@@ -3927,10 +3933,14 @@ div.titre {
 	text-decoration: none;
 	padding-top: 5px;
     padding-bottom: 5px;
+    text-transform: uppercase;
 	/* text-shadow: 1px 1px 2px #FFFFFF; */
 	<?php print (empty($conf->dol_optimize_smallscreen) ? '' : 'margin-top: 4px;'); ?>
 }
-.secondary, div.titre {
+div.titre {
+	color: var(--colortexttitlenotab);
+}
+.secondary {
 	color: var(--colortexttitlenotab);
 }
 .tertiary {

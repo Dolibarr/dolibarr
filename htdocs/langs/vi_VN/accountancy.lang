@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Cho phép quản lý các số không khác nhau ở cu�
 BANK_DISABLE_DIRECT_INPUT=Vô hiệu hóa ghi trực tiếp giao dịch trong tài khoản ngân hàng
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Cho phép xuất dữ liệu bản nháp trong nhật ký
 ACCOUNTANCY_COMBO_FOR_AUX=Bật danh sách kết hợp cho tài khoản công ty con (có thể chậm nếu bạn có nhiều bên thứ ba)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Nhật ký bán hàng
 ACCOUNTING_PURCHASE_JOURNAL=Nhật ký mua hàng
@@ -284,6 +285,7 @@ ShowTutorial=Chương trình hướng dẫn
 NotReconciled=Chưa đối chiếu
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Áp dụng cho số một lớn các danh mục
 AddAccountFromBookKeepingWithNoCategories=Tài khoản khả dụng chưa có trong nhóm được cá nhân hóa
 CategoryDeleted=Danh mục cho tài khoản kế toán đã bị xóa

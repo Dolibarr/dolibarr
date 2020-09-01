@@ -26,3 +26,4 @@ ModuleZapierForDolibarrDesc = Par zapier Dolibarr moduli
 # Admin page
 #
 ZapierForDolibarrSetup = Zapier iestatīšana Dolibarr
+ZapierDescription=Interface with Zapier

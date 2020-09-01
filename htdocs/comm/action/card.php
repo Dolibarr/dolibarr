@@ -1190,7 +1190,7 @@ if ($action == 'create')
 
         //Time Type
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-        print $form->select_type_duration('offsetunit');
+        print $form->selectTypeDuration('offsetunit');
         print '</td></tr>';
 
         //Reminder Type
@@ -1203,7 +1203,7 @@ if ($action == 'create')
 
         //Mail Model
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-        print $form->select_model_mail('actioncommsend', 'actioncomm_send');
+        print $form->selectModelMail('actioncommsend', 'actioncomm_send');
         print '</td></tr>';
 
 
@@ -1579,9 +1579,11 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
-		print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
-		print '</td></tr>';
+		if (! empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
+			print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
+			print '</td></tr>';
+		}
 
 		// Object linked
 		if (!empty($object->fk_element) && !empty($object->elementtype))

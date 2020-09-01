@@ -32,7 +32,7 @@
 
 /**
  *	Class to send emails (with attachments or not)
- *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext);
+ *  Usage: $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc,$deliveryreceipt,$msgishtml,$errors_to,$css,$trackid,$moreinheader,$sendcontext,$replyto);
  *         $mailfile->sendfile();
  */
 class CMailFile
@@ -195,7 +195,7 @@ class CMailFile
 		// On defini alternative_boundary
 		$this->alternative_boundary = 'mul_'.dol_hash(uniqid("dolibarr3"), 3); // Force md5 hash (does not contains special chars)
 
-		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, trackid=$trackid sendcontext=$sendcontext", LOG_DEBUG);
+		dol_syslog("CMailFile::CMailfile: sendmode=".$this->sendmode." charset=".$conf->file->character_set_client." from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to, replyto=$replyto trackid=$trackid sendcontext=$sendcontext", LOG_DEBUG);
 		dol_syslog("CMailFile::CMailfile: subject=".$subject.", deliveryreceipt=".$deliveryreceipt.", msgishtml=".$msgishtml, LOG_DEBUG);
 
 		if (empty($subject))
@@ -358,7 +358,7 @@ class CMailFile
 			$smtps->setTO($this->getValidAddress($this->addr_to, 0, 1));
 			$smtps->setFrom($this->getValidAddress($this->addr_from, 0, 1));
 			$smtps->setTrackId($this->trackid);
-			$smtps->setReplyTo($this->getValidAddress($this->replyto, 0, 1));
+			$smtps->setReplyTo($this->getValidAddress($this->reply_to, 0, 1));
 
 			if (!empty($moreinheader)) $smtps->setMoreInHeader($moreinheader);
 
@@ -527,7 +527,7 @@ class CMailFile
 
 			if (! empty($this->addr_cc)) $this->message->setCc($this->getArrayAddress($this->addr_cc));
 			if (! empty($this->addr_bcc)) $this->message->setBcc($this->getArrayAddress($this->addr_bcc));
-			//if (! empty($errors_to)) $this->message->setErrorsTo($this->getArrayAddress($errors_to);
+			//if (! empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
 		} else {
 			// Send mail method not correctly defined
