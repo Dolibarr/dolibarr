@@ -1986,12 +1986,17 @@ class ActionComm extends CommonObject
         $this->db->begin();
 
         //Select all action comm reminder
-    	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE typeremind = 'email' AND status = 0";
+    	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		$sql .= " WHERE typeremind = 'email' AND status = 0";
+		$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+		$sql .= $this->db->order("dateremind", "ASC");
         $resql = $this->db->query($sql);
 
-        if ($resql){
-            while ($obj = $this->db->fetch_object($resql)){
-                $actionCommReminder = new ActionCommReminder($this->db);
+        if ($resql) {
+            $formmail = new FormMail($this->db);
+            $actionCommReminder = new ActionCommReminder($this->db);
+
+			while ($obj = $this->db->fetch_object($resql)){
                 $res = $actionCommReminder->fetch($obj->id);
                 if ($res < 0) {
                     $error++;
@@ -2000,14 +2005,11 @@ class ActionComm extends CommonObject
 
                 if (!$error)
                 {
-                    if ($actionCommReminder->dateremind <= dol_now())
-                    {
                         //Select email template
-                        $formmail = new FormMail($this->db);
                         $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
+						// Load event
                         $res = $this->fetch($actionCommReminder->fk_actioncomm);
-
                         if ($res > 0)
                         {
                             // PREPARE EMAIL
@@ -2065,7 +2067,6 @@ class ActionComm extends CommonObject
                         else {
                             $error++;
                         }
-                    }
                 }
             }
         } else {
@@ -2075,7 +2076,8 @@ class ActionComm extends CommonObject
         if (!$error)
         {
             // Delete also very old past events (we do not keep more than 1 month record in past)
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
             $resql = $this->db->query($sql);
 
             if (!$resql) {
