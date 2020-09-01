@@ -456,3 +456,6 @@ PaymentTermsSupplier=Payment Term - Vendor
 PaymentTypeBoth=Payment Type - Customer and Vendor
 MulticurrencyUsed=Use Multicurrency
 MulticurrencyCurrency=Currency
+InEEC=Europe (EEC)
+RestOfEurope=Rest of Europe (EEC)
+OutOfEurope=Out of Europe (EEC)
