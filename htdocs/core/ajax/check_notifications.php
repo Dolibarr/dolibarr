@@ -82,7 +82,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     $sql .= ' WHERE';
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when several tabs are opened.
     // This need to extend period to be sure to not miss and save in session what we notified to avoid duplicate (save is not done yet).
-    if(!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
+    if (!empty($user->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
     {
         $sql .= ' (';
         $sql .= ' ( arm.typeremind = "browser" AND arm.dateremind < NOW() AND arm.status = 0  )';
@@ -90,7 +90,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
         $sql .= ' AND a.code <> "AC_OTH_AUTO"';
         $sql .= ' )';
     }
-    else{
+    else {
         $sql .= " AND arm.typeremind = 'browser' AND arm.dateremind < NOW() AND arm.status = 0  ";
     }
 
@@ -117,7 +117,7 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             $event['id'] = $actionmod->id;
 
             //Message "reminder"
-            if($res > 0 && $actioncommReminder->status == 0 && $actioncommReminder->dateremind < dol_now()){
+            if ($res > 0 && $actioncommReminder->status == 0 && $actioncommReminder->dateremind < dol_now()){
                 $event['tipo'] = $langs->transnoentities('Event');
                 $event['titulo'] = $actionmod->label;
                 $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
@@ -134,7 +134,6 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
             }
 
             $eventfound[] = $event;
-
         }
     } else {
         dol_syslog("Error sql = ".$db->lasterror(), LOG_ERR);

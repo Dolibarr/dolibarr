@@ -522,7 +522,7 @@ if ($result > 0)
     print '</form>';
 
     //Reminder Agenda Event
-    if($conf->agenda->enabled && $conf->global->AGENDA_REMINDER_BROWSER)
+    if ($conf->agenda->enabled && $conf->global->AGENDA_REMINDER_BROWSER)
     {
         print load_fiche_titre($langs->trans("EventReminder"), '', '');
 
@@ -536,13 +536,11 @@ if ($result > 0)
             print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=set_MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
             print '</td></tr>'."\n";
         }
-        else
-        {
+        else {
             print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=del_MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
             print '</td></tr>'."\n";
         }
     }
-
 } else dol_print_error('', 'RecordNotFound');
 
 // End of page
