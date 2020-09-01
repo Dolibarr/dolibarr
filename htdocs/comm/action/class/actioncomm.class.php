@@ -2005,7 +2005,7 @@ class ActionComm extends CommonObject
 
                         //Select email template
                         $formmail = new FormMail($this->db);
-                        $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : 0, 1, '(SendingReminderActionComm)');
+                        $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
                         $res = $this->fetch($actionCommReminder->fk_actioncomm);
 
