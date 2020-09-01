@@ -29,7 +29,7 @@ RUN apt-get update -y \
     mv ${PHP_INI_DIR}/php.ini-development ${PHP_INI_DIR}/php.ini
 
 RUN mkdir /var/documents
-RUN chown www-data /var/documents
+RUN chown www-data:www-data /var/documents
 
 COPY docker-run.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-run.sh
