@@ -1297,7 +1297,7 @@ abstract class CommonObject
 		// phpcs:enable
 		global $langs, $conf;
 
-		$langs->loadLangs(array('bills', 'contracts', 'interventions', 'orders', 'projects', 'propal', 'ticket'));
+		$langs->loadLangs(array('bills', 'contracts', 'interventions', 'orders', 'projects', 'propal', 'ticket', 'agenda'));
 
 		$tab = array();
 
