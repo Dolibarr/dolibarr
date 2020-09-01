@@ -2084,7 +2084,10 @@ class ActionComm extends CommonObject
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
             $resql = $this->db->query($sql);
 
-            if(!$resql) $error ++;
+            if(!$resql) {
+                $errorsMsg[] = 'Failed to delete old reminders';
+                $error ++;
+            }
 
         }
 
@@ -2094,7 +2097,7 @@ class ActionComm extends CommonObject
         }
         else {
             $this->db->rollback();
-            return end($errorsMsg);
+            return (!empty($errorsMsg)) ? end($errorsMsg) : $error;
         }
 
     }
