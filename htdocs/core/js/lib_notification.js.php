@@ -84,8 +84,12 @@ if (!($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root.'/' || $_SERVER['HTTP
                             var url="notdefined";
                             var title="Not defined";
                             var body = value['tipo'] + ': ' + value['titulo'];
-                            if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
+                            if (value['type'] == 'agenda' && (value['location'] != null || value['location'] != '')) {
                                 body += '\n' + value['location'];
+                            }
+
+                            if(value['type'] == 'agenda' && (value['date'] != null || value['date'] != '')) {
+                                body += '\n' + value['date'];
                             }
 
                             if (value['type'] == 'agenda')

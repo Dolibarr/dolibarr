@@ -109,21 +109,31 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
             $actionmod->fetch($obj->id);
 
-            // Message must be formated and translated to be used with javascript directly
+            $actioncommReminder = new ActionCommReminder($db);
+            $res = $actioncommReminder->fetch($obj->id_reminder);
+
             $event = array();
             $event['type'] = 'agenda';
             $event['id'] = $actionmod->id;
-            $event['tipo'] = $langs->transnoentities('Action'.$actionmod->code);
-            $event['titulo'] = $actionmod->label;
-            $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
+
+            //Message "reminder"
+            if($res > 0 && $actioncommReminder->status == 0 && $actioncommReminder->dateremind < dol_now()){
+                $event['tipo'] = $langs->transnoentities('Event');
+                $event['titulo'] = $actionmod->label;
+                $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
+                $event['date'] = $langs->transnoentities('Date').': '. date('Y-m-d H:i:s', $actionmod->datep);
+
+                //Update reminder to status "done"
+                $actioncommReminder->status = $actioncommReminder::STATUS_DONE;
+                $res = $actioncommReminder->update($user);
+            } else {
+                // Message must be formated and translated to be used with javascript directly
+                $event['tipo'] = $langs->transnoentities('Action'.$actionmod->code);
+                $event['titulo'] = $actionmod->label;
+                $event['location'] = $langs->transnoentities('Location').': '.$actionmod->location;
+            }
 
             $eventfound[] = $event;
-
-            //Update reminder to status "done"
-            $actioncommReminder = new ActionCommReminder($db);
-            $actioncommReminder->fetch($obj->id_reminder);
-            $actioncommReminder->status = $actioncommReminder::STATUS_DONE;
-            $res = $actioncommReminder->update($user);
 
         }
     } else {
