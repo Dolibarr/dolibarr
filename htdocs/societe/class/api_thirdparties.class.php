@@ -85,7 +85,7 @@ class Thirdparties extends DolibarrApi
 	 * @param string    $email  Email of third party to load
 	 * @return array|mixed data without useless information
 	 *
-	 * @url     GET byEmail/{email}
+	 * @url     GET email/{email}
 	 *
 	 * @throws RestException
 	 */

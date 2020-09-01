@@ -466,6 +466,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<input type="hidden" name="id" value="'.$object->id.'">';
 
 	// Filters
+	print '<div class="div-table-responsive">';
 	print '<table class="border centpercent tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Filters").'</td><td></td><td></td>';
@@ -499,7 +500,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		'isnotanswer'=>array('label'=>'IsNotAnAnswer', 'data-noparam'=>1),
 		'isanswer'=>array('label'=>'IsAnAnswer', 'data-noparam'=>1)
 	);
-	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', '', 0, '', 2);
+	print $form->selectarray('filtertype', $arrayoftypes, '', 1, 0, 0, '', 1, 0, 0, '', 'maxwidth500', 0, '', 2);
 
 	print "\n";
 	print '<script>';
@@ -544,10 +545,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</tr>';
 	print '</table>';
+	print '</div>';
 
 	print '<div class="clearboth"></div><br>';
 
 	// Operations
+	print '<div class="div-table-responsive">';
 	print '<table id="tablelines" class="noborder noshadow tableforfield">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("EmailcollectorOperations").'</td><td></td><td></td><td></td>';
@@ -635,6 +638,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</tr>';
 	print '</table>';
+	print '</div>';
 
 	if (!empty($conf->use_javascript_ajax)) {
 	    $urltorefreshaftermove = DOL_URL_ROOT.'/admin/emailcollector_card.php?id='.$id;

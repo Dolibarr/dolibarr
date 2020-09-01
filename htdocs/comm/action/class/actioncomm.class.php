@@ -1983,32 +1983,33 @@ class ActionComm extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
-    	//Select all action comm reminder
-    	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE typeremind = 'email' AND status = 0";
+        $this->db->begin();
+
+        //Select all action comm reminder
+    	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+		$sql .= " WHERE typeremind = 'email' AND status = 0";
+		$sql .= " AND dateremind <= '".$this->db->idate(dol_now())."'";
+		$sql .= $this->db->order("dateremind", "ASC");
         $resql = $this->db->query($sql);
 
-        if($resql){
-            while($obj = $this->db->fetch_object($resql)){
+        if ($resql) {
+            $formmail = new FormMail($this->db);
+            $actionCommReminder = new ActionCommReminder($this->db);
 
-                $actionCommReminder = new ActionCommReminder($this->db);
+			while ($obj = $this->db->fetch_object($resql)){
                 $res = $actionCommReminder->fetch($obj->id);
-                if($res < 0) {
+                if ($res < 0) {
                     $error++;
-                    $this->errors[] = "Failed to load invoice ActionComm Reminder";
+                    $errorsMsg[] = "Failed to load invoice ActionComm Reminder";
                 }
 
-                if(!$error)
+                if (!$error)
                 {
-
-                    if ($actionCommReminder->dateremind <= dol_now())
-                    {
-
                         //Select email template
-                        $formmail = new FormMail($this->db);
-                        $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : 0, 1, '(SendingReminderActionComm)');
+                        $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
 
+						// Load event
                         $res = $this->fetch($actionCommReminder->fk_actioncomm);
-
                         if ($res > 0)
                         {
                             // PREPARE EMAIL
@@ -2028,14 +2029,17 @@ class ActionComm extends CommonObject
                             $recipient = new User($this->db);
                             $res = $recipient->fetch($actionCommReminder->fk_user);
                             if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
-                            else
-                            {
-                                $this->errors[] = "Failed to load recipient";
+                            else {
+                                $errorsMsg[] = "Failed to load recipient";
                                 $error++;
                             }
 
                             // Sender
                             $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+                            if (empty($from)) {
+                                $errorsMsg[] = "Failed to load recipient";
+                                $error++;
+                            }
 
                             // Errors Recipient
                             $errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -2050,42 +2054,47 @@ class ActionComm extends CommonObject
                                 $res = $actionCommReminder->update($user);
                                 if ($res < 0)
                                 {
-                                    $this->errors[] = "Failed to update status of ActionComm Reminder";
+                                    $errorsMsg[] = "Failed to update status of ActionComm Reminder";
                                     $error++;
                                 }
                                 else $nbMailSend++;
                             }
-                            else
-                            {
+                            else {
                                 $errorsMsg[] = $cMailFile->error.' : '.$to;
                                 $error++;
                             }
                         }
-                        else
-                        {
+                        else {
                             $error++;
                         }
-                    }
                 }
             }
         } else {
             $error++;
         }
 
-        if(!$error)
+        if (!$error)
         {
-            $this->db->begin();
-
             // Delete also very old past events (we do not keep more than 1 month record in past)
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder";
+			$sql .= " WHERE dateremind < '".$this->db->idate($now - (3600 * 24 * 32))."'";
             $resql = $this->db->query($sql);
 
-            if($resql) $this->db->commit();
-            else $this->db->rollback();
-
+            if (!$resql) {
+                $errorsMsg[] = 'Failed to delete old reminders';
+                $error ++;
+            }
         }
 
-        return $error;
+        if (!$error) {
+            $this->db->commit();
+            return 0;
+        }
+        else {
+            $this->db->rollback();
+            return (!empty($errorsMsg)) ? end($errorsMsg) : $error;
+        }
+
     }
 
 	/**
