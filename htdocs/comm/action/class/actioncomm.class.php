@@ -1989,22 +1989,19 @@ class ActionComm extends CommonObject
     	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE typeremind = 'email' AND status = 0";
         $resql = $this->db->query($sql);
 
-        if($resql){
-            while($obj = $this->db->fetch_object($resql)){
-
+        if ($resql){
+            while ($obj = $this->db->fetch_object($resql)){
                 $actionCommReminder = new ActionCommReminder($this->db);
                 $res = $actionCommReminder->fetch($obj->id);
-                if($res < 0) {
+                if ($res < 0) {
                     $error++;
                     $errorsMsg[] = "Failed to load invoice ActionComm Reminder";
                 }
 
-                if(!$error)
+                if (!$error)
                 {
-
                     if ($actionCommReminder->dateremind <= dol_now())
                     {
-
                         //Select email template
                         $formmail = new FormMail($this->db);
                         $arraymessage = $formmail->getEMailTemplate($this->db, 'actioncomm_send', $user, $langs, (!empty($actionCommReminder->fk_email_template)) ? $actionCommReminder->fk_email_template : -1, 1);
@@ -2030,15 +2027,14 @@ class ActionComm extends CommonObject
                             $recipient = new User($this->db);
                             $res = $recipient->fetch($actionCommReminder->fk_user);
                             if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
-                            else
-                            {
+                            else {
                                 $errorsMsg[] = "Failed to load recipient";
                                 $error++;
                             }
 
                             // Sender
                             $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-                            if(empty($from)) {
+                            if (empty($from)) {
                                 $errorsMsg[] = "Failed to load recipient";
                                 $error++;
                             }
@@ -2061,14 +2057,12 @@ class ActionComm extends CommonObject
                                 }
                                 else $nbMailSend++;
                             }
-                            else
-                            {
+                            else {
                                 $errorsMsg[] = $cMailFile->error.' : '.$to;
                                 $error++;
                             }
                         }
-                        else
-                        {
+                        else {
                             $error++;
                         }
                     }
@@ -2078,20 +2072,19 @@ class ActionComm extends CommonObject
             $error++;
         }
 
-        if(!$error)
+        if (!$error)
         {
             // Delete also very old past events (we do not keep more than 1 month record in past)
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
             $resql = $this->db->query($sql);
 
-            if(!$resql) {
+            if (!$resql) {
                 $errorsMsg[] = 'Failed to delete old reminders';
                 $error ++;
             }
-
         }
 
-        if(!$error) {
+        if (!$error) {
             $this->db->commit();
             return 0;
         }
