@@ -1983,7 +1983,9 @@ class ActionComm extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
-    	//Select all action comm reminder
+        $this->db->begin();
+
+        //Select all action comm reminder
     	$sql = "SELECT rowid as id FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE typeremind = 'email' AND status = 0";
         $resql = $this->db->query($sql);
 
@@ -1994,7 +1996,7 @@ class ActionComm extends CommonObject
                 $res = $actionCommReminder->fetch($obj->id);
                 if($res < 0) {
                     $error++;
-                    $this->errors[] = "Failed to load invoice ActionComm Reminder";
+                    $errorsMsg[] = "Failed to load invoice ActionComm Reminder";
                 }
 
                 if(!$error)
@@ -2030,12 +2032,16 @@ class ActionComm extends CommonObject
                             if ($res > 0 && !empty($recipient->email)) $to = $recipient->email;
                             else
                             {
-                                $this->errors[] = "Failed to load recipient";
+                                $errorsMsg[] = "Failed to load recipient";
                                 $error++;
                             }
 
                             // Sender
                             $from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+                            if(empty($from)) {
+                                $errorsMsg[] = "Failed to load recipient";
+                                $error++;
+                            }
 
                             // Errors Recipient
                             $errors_to = $conf->global->MAIN_MAIL_ERRORS_TO;
@@ -2050,7 +2056,7 @@ class ActionComm extends CommonObject
                                 $res = $actionCommReminder->update($user);
                                 if ($res < 0)
                                 {
-                                    $this->errors[] = "Failed to update status of ActionComm Reminder";
+                                    $errorsMsg[] = "Failed to update status of ActionComm Reminder";
                                     $error++;
                                 }
                                 else $nbMailSend++;
@@ -2074,18 +2080,23 @@ class ActionComm extends CommonObject
 
         if(!$error)
         {
-            $this->db->begin();
-
             // Delete also very old past events (we do not keep more than 1 month record in past)
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
             $resql = $this->db->query($sql);
 
-            if($resql) $this->db->commit();
-            else $this->db->rollback();
+            if(!$resql) $error ++;
 
         }
 
-        return $error;
+        if(!$error) {
+            $this->db->commit();
+            return 0;
+        }
+        else {
+            $this->db->rollback();
+            return end($errorsMsg);
+        }
+
     }
 
 	/**
