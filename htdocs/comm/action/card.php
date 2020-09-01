@@ -1175,13 +1175,14 @@ if ($action == 'create')
     if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
     {
         //checkbox create reminder
-        print '<br>';
-        print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder"></td></tr>';
+        print '<hr>';
+    	print '<br>';
+        print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
 
         print '<div class="reminderparameters" style="display: none;">';
 
-        print '<hr>';
-        print load_fiche_titre($langs->trans("AddReminder"), '', '');
+        //print '<hr>';
+        //print load_fiche_titre($langs->trans("AddReminder"), '', '');
 
         print '<table class="border centpercent">';
 
