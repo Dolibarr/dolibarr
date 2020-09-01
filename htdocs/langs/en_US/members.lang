@@ -117,6 +117,7 @@ SendingEmailOnMemberValidation=Sending email on new member validation
 SendingEmailOnNewSubscription=Sending email on new subscription
 SendingReminderForExpiredSubscription=Sending reminder for expired subscriptions
 SendingEmailOnCancelation=Sending email on cancelation
+SendingReminderActionComm=Sending reminder for agenda event
 # Topic of email templates
 YourMembershipRequestWasReceived=Your membership was received.
 YourMembershipWasValidated=Your membership was validated

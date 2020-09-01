@@ -142,7 +142,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
 
 
 /*
- * Draft proposals
+ * Draft customer proposals
  */
 if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
@@ -256,7 +256,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
         print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
-        print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
+        print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
 
         if ($num > 0)
         {
@@ -309,7 +309,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
 
 
 /*
- * Draft orders
+ * Draft customer orders
  */
 if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 {
@@ -338,7 +338,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftOrders").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num > 0)
 		{
@@ -425,7 +425,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
         print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder centpercent">';
         print '<tr class="liste_titre">';
-        print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").' <a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
 
         if ($num > 0)
         {

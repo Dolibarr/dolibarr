@@ -1253,6 +1253,8 @@ class FormMail extends Form
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping");
 				} elseif ($type_template == 'fichinter_send') {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter");
+				} elseif ($type_template == 'actioncomm_send') {
+					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm");
 				} elseif (!empty($type_template)) {
 					$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentGeneric");
 				}
