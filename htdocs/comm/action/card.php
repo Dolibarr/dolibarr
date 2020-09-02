@@ -411,7 +411,7 @@ if (empty($reshook) && $action == 'add')
                         $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'y');
                     }
 
-                    $actionCommReminder->dateremind = $db->idate($dateremind);
+                    $actionCommReminder->dateremind = $dateremind;
                     $actionCommReminder->typeremind = $remindertype;
                     $actionCommReminder->fk_user = $user;
                     $actionCommReminder->offsetunit = $offsetunit;
