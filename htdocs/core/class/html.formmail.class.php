@@ -1246,6 +1246,7 @@ class FormMail extends Form
 				elseif ($type_template == 'invoice_supplier_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendSupplierInvoice"); }
 				elseif ($type_template == 'shipping_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendShipping"); }
 				elseif ($type_template == 'fichinter_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
+                elseif ($type_template == 'actioncomm_send') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendActionComm"); }
 				elseif ($type_template == 'thirdparty') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 				elseif ($type_template == 'user') { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContentUser"); }
 				elseif (!empty($type_template)) { $defaultmessage = $outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template)); }

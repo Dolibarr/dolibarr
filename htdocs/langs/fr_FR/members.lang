@@ -202,3 +202,6 @@ SendReminderForExpiredSubscription=Envoyer un rappel par e-mail aux membres lors
 MembershipPaid=Adhésion payée pour la période en cours (jusqu'au %s)
 YouMayFindYourInvoiceInThisEmail=Vous pouvez trouver votre facture jointe à cet email
 XMembersClosed=%s adhérent(s) résilié(s)
+/***** START BACKPORT V13.0 *****/
+SendingReminderActionComm=Envoie de rappel pour événement agenda
+/***** END BACKPORT V13.0 *****/

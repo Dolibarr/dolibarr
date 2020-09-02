@@ -158,4 +158,5 @@ ReminderType=Type de rappel
 AddReminder=Créer une notification de rappel automatique pour cet évènement
 ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel de cet événement
 BrowserPush=Notification navigateur
+EventReminder=Rappel événement
 /***** END BACKPORT V13.0 *****/
