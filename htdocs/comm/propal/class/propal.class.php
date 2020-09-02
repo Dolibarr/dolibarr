@@ -2547,7 +2547,7 @@ class Propal extends CommonObject
 					return -2;
 				}
 			}
-			if ($status == self::STATUS_BILLED)	// Why this ?
+			if ($status == self::STATUS_BILLED)	// ->cloture() can also be called when we set it to billed, after setting it to signed
 			{
 				$triggerName = 'PROPAL_CLASSIFY_BILLED';
 			}
