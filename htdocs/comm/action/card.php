@@ -1253,9 +1253,13 @@ if ($action == 'create')
     dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	if (empty($backtopage)) {
+		print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	} else {
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	}
 	print '</div>';
 
 	print "</form>";
