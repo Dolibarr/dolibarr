@@ -384,12 +384,12 @@ class SupplierInvoices extends DolibarrApi
      *
      * @param int     $id                               Id of invoice
      * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
-     * @param int     $paiementid         {@from body}  Payment mode Id {@min 1}
+     * @param int     $payment_mode_id    {@from body}  Payment mode ID (look it up via REST GET to /setup/dictionary/payment_types) {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
-     * @param int     $accountid          {@from body}  Account Id {@min 1}
-     * @param string  $num_payment       {@from body}  Payment number (optional)
+     * @param int     $accountid          {@from body}  Bank account ID (look it up via REST GET to /bankaccounts) {@min 1}
+     * @param string  $num_payment        {@from body}  Payment number (optional)
      * @param string  $comment            {@from body}  Note (optional)
-     * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
+     * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if payment_mode_id corresponds to 'CHQ'-payment type)
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
      *
      * @url     POST {id}/payments
@@ -399,7 +399,7 @@ class SupplierInvoices extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      */
-    public function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
+    public function addPayment($id, $datepaye, $payment_mode_id, $closepaidinvoices, $accountid, $num_payment = '', $comment = '', $chqemetteur = '', $chqbank = '')
     {
         global $conf;
 
@@ -416,12 +416,12 @@ class SupplierInvoices extends DolibarrApi
 
         if (!empty($conf->banque->enabled)) {
             if (empty($accountid)) {
-                throw new RestException(400, 'Account ID is mandatory');
+                throw new RestException(400, 'Bank account ID is mandatory');
             }
         }
 
-        if (empty($paiementid)) {
-            throw new RestException(400, 'Paiement ID or Paiement Code is mandatory');
+        if (empty($payment_mode_id)) {
+            throw new RestException(400, 'Payment mode ID is mandatory');
         }
 
 
@@ -452,8 +452,8 @@ class SupplierInvoices extends DolibarrApi
         $paiement->datepaye     = $datepaye;
         $paiement->amounts      = $amounts; // Array with all payments dispatching with invoice id
         $paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
-        $paiement->paiementid = $paiementid;
-        $paiement->paiementcode = dol_getIdFromCode($this->db, $paiementid, 'c_paiement', 'id', 'code', 1);
+        $paiement->paiementid = $payment_mode_id;
+        $paiement->paiementcode = dol_getIdFromCode($this->db, $payment_mode_id, 'c_paiement', 'id', 'code', 1);
         $paiement->oper = $paiement->paiementcode;	// For backward compatibility
         $paiement->num_payment = $num_payment;
         $paiement->note_public = $comment;
