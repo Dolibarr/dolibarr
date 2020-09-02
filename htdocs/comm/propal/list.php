@@ -441,7 +441,9 @@ if ($resql)
 	$arrayofmassactions = array(
 		'generate_doc'=>$langs->trans("ReGeneratePDF"),
 		'builddoc'=>$langs->trans("PDFMerge"),
-	    'presend'=>$langs->trans("SendByMail"),
+		'presend'=>$langs->trans("SendByMail"),
+		'prevalidate'=>$langs->trans("Validate"),
+		'presign'=>$langs->trans("Sign"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
 	if ($user->rights->propal->cloturer) $arrayofmassactions['closed'] = $langs->trans("Close");
@@ -472,6 +474,45 @@ if ($resql)
 	$objecttmp = new Propal($db);
 	$trackid = 'pro'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+	if ($massaction == 'prevalidate')
+	{
+		$cpt = 0;
+		$refs = array();
+		$ids = array();
+		foreach ($toselect as $checked){
+			$sqlp = "SELECT ref, rowid FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " .$checked." AND rowid NOT IN";
+			$sqlp .= " (SELECT fk_propal FROM " . MAIN_DB_PREFIX . "propaldet)";
+			$resqlp = $db->query($sqlp);
+			if ($resqlp){
+				$objp = $db->fetch_object($resqlp);
+				if ($db->num_rows($resqlp)){
+					$cpt++;
+					$refs[] = $objp->ref;
+					$ids[] = $objp->rowid;
+				}
+			} else {
+				dol_print_error($db);
+			}
+		}
+		if ($cpt > 0)
+		{
+			if($cpt==1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropNoProductOrService'), 'warnings');
+			if ($cpt>1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropsNoProductOrService'), 'warnings');
+			$cpt2 = 0;
+			foreach ($ids as $r)
+			{
+				setEventMessage("<a href='".DOL_URL_ROOT."/comm/propal/card.php?id=".$r."'>".$refs[$cpt2]."</a>", 'warnings');
+				$cpt2++;
+			}
+		}
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassValidation"), $langs->trans("ConfirmMassValidationQuestion"), "validate", null, '', 0, 200, 500, 1);
+	}
+
+	if ($massaction == 'presign')
+	{
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassSignature"), $langs->trans("ConfirmMassSignatureQuestion"), "sign", null, '', 0, 200, 500, 1);
+	}
 
 	if ($sall)
 	{
@@ -1140,9 +1181,66 @@ if ($resql)
 	$delallowed = $user->rights->propal->creer;
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+
+	if ($action == 'validate'){
+		if (GETPOST('confirm') == 'yes'){
+			foreach ($toselect as $checked){
+				$sql = "SELECT ref, fk_statut AS statut FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$checked;
+				$resql = $db->query($sql);
+				if ($resql){
+					$obj = $db->fetch_object($resql);
+					$ref = substr($obj->ref, 1, 4);
+					if ($ref == 'PROV') {
+						$numref = $object->getNextNumRef($soc);
+						if (empty($numref)) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} else {
+						$numref = $obj->ref;
+					}
+					if ($obj->statut == 0){
+						$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 1, ref ='".$numref."' WHERE rowid = ".$checked;
+						$resql = $db->query($sql);
+						if ($resql){
+							setEventMessage($numref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						} else {
+							dol_print_error($db);
+						}
+					}else {
+						setEventMessage($numref." ".$langs->trans('IsNotADraft'), 'errors');
+					}
+				} else {
+					dol_print_error($db);
+				}
+			}
+		}
+	}
+
+	if ($action == "sign") {
+		if (GETPOST('confirm') == 'yes'){
+			foreach ($toselect as $checked) {
+				$sqlp = "SELECT ref, fk_statut AS statut FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " . $checked;
+				$resqlp = $db->query($sqlp);
+				if ($resqlp) {
+					$objp = $db->fetch_object($resqlp);
+					if ($objp->statut == 1) {
+						$sqlp = "UPDATE " . MAIN_DB_PREFIX . "propal SET fk_statut = 2 WHERE rowid = " . $checked;
+						$resqlp = $db->query($sqlp);
+						if ($resqlp) {
+							setEventMessage($objp->ref . " " . $langs->trans('Signed'), 'mesgs');
+						} else {
+							dol_print_error($db);
+						}
+					} else {
+						setEventMessage($objp->ref . " " . $langs->trans('CantBeSign'), 'errors');
+					}
+				} else {
+					dol_print_error($db);
+				}
+			}
+		}
+	}
+} else {
 	dol_print_error($db);
 }
 
