@@ -172,7 +172,6 @@ class box_validated_projects extends ModeleBoxes
                         'td' => 'class="center"',
                         'text' => $objp->taskNumber."&nbsp;".$langs->trans("Tasks"),
 						'asis' => 1,
-						'url' => DOL_URL_ROOT.'/custom/cligp/tasks/projettasks.php?id='.$objp->rowid.'&search_timespend==0&search_user_id='.$user->id,
                     );
                     $i++;
                 }
