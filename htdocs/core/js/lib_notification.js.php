@@ -99,9 +99,17 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
                             var url="notdefined";
                             var title="Not defined";
                             var body = value['tipo'] + ': ' + value['titulo'];
-                            if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
+                            if (value['type'] == 'agenda' && (value['location'] != null || value['location'] != '')) {
                                 body += '\n' + value['location'];
                             }
+
+                            /***** START BACKPORT V13.0 *****/
+
+                            if(value['type'] == 'agenda' && (value['date'] != null || value['date'] != '')) {
+                                body += '\n' + value['date'];
+                            }
+
+                            /***** END BACKPORT V13.0 *****/
 
                             if (value['type'] == 'agenda')
                             {
