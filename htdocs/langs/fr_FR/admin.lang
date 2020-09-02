@@ -1995,3 +1995,4 @@ PDF_USE_ALSO_LANGUAGE_CODE=Si vous souhaitez que certains textes de votre PDF so
 FafaIconSocialNetworksDesc=Entrez ici le code d'une icône FontAwesome. Si vous ne savez pas ce qu'est FontAwesome, vous pouvez utiliser la valeur générique fa-address-book.
 RssNote=Note: Each RSS feed definition provides a widget that you must enable to have it available in dashboard
 JumpToBoxes=Jump to Setup -> Widgets
+MailToSendEventPush=Modèle pour rappel agenda
