@@ -103,9 +103,6 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
     if ($resql) {
         $actionmod = new ActionComm($db);
 
-        $actioncommReminder = new ActionCommReminder($db);
-        $res = $actioncommReminder->fetch($obj->id_reminder);
-
         while ($obj = $db->fetch_object($resql))
         {
             // Load translation files required by the page
@@ -113,12 +110,14 @@ if ($time >= $_SESSION['auto_check_events_not_before'])
 
             $actionmod->fetch($obj->id);
 
-            // Message must be formated and translated to be used with javascript directly
+            /***** START BACKPORT V13.0 *****/
+
+            $actioncommReminder = new ActionCommReminder($db);
+            $res = $actioncommReminder->fetch($obj->id_reminder);
+
             $event = array();
             $event['type'] = 'agenda';
             $event['id'] = $actionmod->id;
-
-            /***** START BACKPORT V13.0 *****/
 
             //Message "reminder"
             if ($res > 0 && $actioncommReminder->status == 0 && $actioncommReminder->dateremind < dol_now()){
