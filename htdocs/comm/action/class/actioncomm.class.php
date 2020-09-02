@@ -2084,18 +2084,18 @@ class ActionComm extends CommonObject
 
             if (!$resql) {
                 $errorsMsg[] = 'Failed to delete old reminders';
-                $error ++;
+                //$error++;		// If this fails, we must not rollback other SQL requests already done. Never mind.
             }
         }
 
         if (!$error) {
         	$this->output = 'Nb of emails sent : '.$nbMailSend;
-            $this->db->commit();
+        	$this->db->commit();
             return 0;
         }
         else {
             $this->db->rollback();
-            $this->error = (!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
+            $this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
             return $error;
         }
 
