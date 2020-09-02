@@ -30,8 +30,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-
 
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'mails', 'admin', 'other'));
@@ -107,36 +105,6 @@ if ($action == 'delete')
 {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".GETPOST("actid", "int");
     $db->query($sql);
-}
-
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
-{
-    $usertosetup = new User($db);
-    $result = $usertosetup->fetch($id, '', '', 1);
-    $code = $reg[1];
-    $value = (GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
-    $tab = array($code => $value);
-    if (dol_set_user_param($db, $conf, $usertosetup, $tab) > 0)
-    {
-        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    } else {
-        dol_print_error($db);
-    }
-}
-
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
-{
-    $usertosetup = new User($db);
-    $result = $usertosetup->fetch($id, '', '', 1);
-    $code = $reg[1];
-    $tab = array($code => '');
-    if (dol_set_user_param($db, $conf, $usertosetup, $tab) > 0)
-    {
-        Header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-        exit;
-    } else {
-        dol_print_error($db);
-    }
 }
 
 
@@ -520,28 +488,6 @@ if ($result > 0)
     print '</table>';
 
     print '</form>';
-
-    //Reminder Agenda Event
-    if($conf->agenda->enabled && $conf->global->AGENDA_REMINDER_BROWSER)
-    {
-        print load_fiche_titre($langs->trans("EventReminder"), '', '');
-
-        print '<tr class="oddeven">'."\n";
-        print '<td>'.$langs->trans('EventReminderActiveNotification', $langs->transnoentities("Module2300Name")).'</td>'."\n";
-        print '<td class="center">&nbsp;</td>'."\n";
-        print '<td class="right">'."\n";
-
-        if (empty($object->conf->MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS))
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=set_MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS">'.img_picto($langs->trans('Disabled'), 'switch_off').'</a>';
-            print '</td></tr>'."\n";
-        }
-        else
-        {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=del_MAIN_USER_WANT_ALL_EVENTS_NOTIFICATIONS">'.img_picto($langs->trans('Enabled'), 'switch_on').'</a>';
-            print '</td></tr>'."\n";
-        }
-    }
 
 } else dol_print_error('', 'RecordNotFound');
 
