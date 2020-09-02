@@ -2057,7 +2057,7 @@ class ActionComm extends CommonObject
                 			if ($res < 0)
                 			{
                 				$errorsMsg[] = "Failed to update status of ActionComm Reminder";
-                				//$error++; Do not add error here.
+                				$error++;
                 				break;	// This is to avoid to have this error on all the selected email. If we fails here for one record, it may fails for others. We must solve first.
                 			} else {
                 				$nbMailSend++;
