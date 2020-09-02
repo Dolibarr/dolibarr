@@ -448,9 +448,10 @@ class AccountingAccount extends CommonObject
 	 * @param	int  	$notooltip					1=Disable tooltip
      * @param	int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 * @param	int     $withcompletelabel		    0=Short label (field short label), 1=Complete label (field label)
+	 * @param	int		$targeturl					0=bookkeeping, 1=bookkeeping listbyaccount, 2=account card
 	 * @return  string	String with URL
 	 */
-    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0)
+    public function getNomUrl($withpicto = 0, $withlabel = 0, $nourl = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1, $withcompletelabel = 0, $targeturl = 0)
 	{
 		global $langs, $conf, $user;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -459,7 +460,13 @@ class AccountingAccount extends CommonObject
 
 		$result = '';
 
-		$url = DOL_URL_ROOT.'/accountancy/admin/card.php?id='.$this->id;
+		if (empty($targeturl)) {
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/list.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+		} elseif ($targeturl == 1) {
+			$url = DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?search_accountancy_code_start=' . $this->account_number . '&search_accountancy_code_end=' . $this->account_number;
+		} elseif ($targeturl == 2) {
+			$url = DOL_URL_ROOT . '/accountancy/admin/card.php?id=' . $this->id;
+		}
 
 		// Add param to save lastsearch_values or not
 		$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
