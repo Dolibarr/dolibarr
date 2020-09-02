@@ -155,6 +155,7 @@ RemoveLink=Remove link
 AddToDraft=Add to draft
 Update=Update
 Close=Close
+CloseAs=Set status to
 CloseBox=Remove widget from your dashboard
 Confirm=Confirm
 ConfirmSendCardByMail=Do you really want to send the content of this card by mail to <b>%s</b>?

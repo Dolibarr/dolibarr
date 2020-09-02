@@ -7645,6 +7645,12 @@ abstract class CommonObject
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
 
+			// If value is null and there is a default value for field
+			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($this->fields[$key]['default']))
+			{
+				$values[$key] = $this->fields[$key]['default'];
+			}
+
 			// If field is an implicit foreign key field
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
 				if (isset($this->fields[$key]['default'])) $values[$key] = $this->fields[$key]['default'];

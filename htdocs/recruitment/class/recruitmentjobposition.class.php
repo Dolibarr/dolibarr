@@ -122,7 +122,7 @@ class RecruitmentJobPosition extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>900, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>5, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '3'=>'Recruited', '9'=>'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
@@ -658,6 +658,99 @@ class RecruitmentJobPosition extends CommonObject
 		 }*/
 
 		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'RECRUITMENTJOBPOSITION_CLOSE');
+	}
+
+	/**
+	 *	Close the commercial proposal
+	 *
+	 *	@param      User	$user		Object user that close
+	 *	@param      int		$status		Statut
+	 *	@param      string	$note		Complete private note with this note
+	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int         		<0 if KO, >0 if OK
+	 */
+	public function cloture($user, $status, $note = "", $notrigger = 0)
+	{
+		global $langs, $conf;
+
+		$error = 0;
+		$now = dol_now();
+
+		$this->db->begin();
+
+		$newprivatenote = dol_concatdesc($this->note_private, $note);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " SET status = ".$status.", note_private = '".$this->db->escape($newprivatenote)."'";
+		//$sql .= ", date_cloture='".$this->db->idate($now)."', fk_user_cloture=".$user->id;
+		$sql .= " WHERE rowid = ".$this->id;
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$modelpdf = $this->modelpdf;
+			$triggerName = 'PROPAL_CLOSE_REFUSED';
+
+			if ($status == self::STATUS_RECRUITED)
+			{
+				$triggerName = 'RECRUITMENTJOB_CLOSE_RECRUITED';
+				$modelpdf = $this->modelpdf;
+
+				if ($result < 0)
+				{
+					$this->error = $this->db->lasterror();
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				// Define output language
+				$outputlangs = $langs;
+				if (!empty($conf->global->MAIN_MULTILANGS))
+				{
+					$outputlangs = new Translate("", $conf);
+					$newlang = (GETPOST('lang_id', 'aZ09') ? GETPOST('lang_id', 'aZ09') : $this->thirdparty->default_lang);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				//$ret=$object->fetch($id);    // Reload to get new records
+				$this->generateDocument($modelpdf, $outputlangs);
+			}
+
+			if (!$error)
+			{
+				$this->oldcopy = clone $this;
+				$this->status = $status;
+				$this->date_cloture = $now;
+				$this->note_private = $newprivatenote;
+			}
+
+			if (!$notrigger && empty($error))
+			{
+				// Call trigger
+				$result = $this->call_trigger($triggerName, $user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+
+			if (!$error)
+			{
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->status = $this->oldcopy->status;
+				$this->date_cloture = $this->oldcopy->date_cloture;
+				$this->note_private = $this->oldcopy->note_private;
+
+				$this->db->rollback();
+				return -1;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
 	/**
