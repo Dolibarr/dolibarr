@@ -100,12 +100,12 @@ class box_validated_projects extends ModeleBoxes
             $sql = "SELECT p.rowid, p.ref as Ref, p.fk_soc as Client, p.dateo as startDate,";
             $sql.= " (SELECT COUNT(t.rowid) FROM ".MAIN_DB_PREFIX."projet_task AS t";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
-            $sql.= " WHERE t.fk_projet = p.rowid AND c.fk_c_type_contact != 160 AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time)) AS 'taskNumber'";
+            $sql.= " WHERE t.fk_projet = p.rowid AND c.fk_c_type_contact != 160 AND c.fk_socpeople = ".$user->id." AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")) AS 'taskNumber'";
             $sql.= " FROM ".MAIN_DB_PREFIX."projet AS p";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task AS t ON p.rowid = t.fk_projet";
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_contact AS c ON t.rowid = c.element_id";
             $sql.= " WHERE p.fk_statut = 1"; // Only open projects
-			$sql.= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time)";
+			$sql.= " AND t.rowid NOT IN (SELECT fk_task FROM ".MAIN_DB_PREFIX."projet_task_time WHERE fk_user =".$user->id.")";
 			$sql.= " AND c.fk_socpeople = ".$user->id;
 			$sql.= " GROUP BY p.ref";
             $sql.= " ORDER BY p.dateo ASC";
