@@ -489,7 +489,6 @@ if ($result > 0)
     print '</table>';
 
     print '</form>';
-
 } else dol_print_error('', 'RecordNotFound');
 
 // End of page
