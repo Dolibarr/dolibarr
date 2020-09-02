@@ -7977,6 +7977,7 @@ class Form
 	 *
 	 * @param   string   $prefix     Prefix
 	 * @param   string   $modelType  Model type
+	 * @param	int		 $default	 1=Show also Default mail template
 	 * @return  string               HTML select string
 	 */
     public function selectModelMail($prefix, $modelType = '', $default = 0)
