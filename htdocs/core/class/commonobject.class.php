@@ -1303,6 +1303,8 @@ abstract class CommonObject
 		// phpcs:enable
 		global $langs, $conf;
 
+		$langs->loadLangs(array('bills', 'contracts', 'interventions', 'orders', 'projects', 'propal', 'ticket', 'agenda'));
+
 		$tab = array();
 
 		$sql = "SELECT DISTINCT tc.rowid, tc.code, tc.libelle, tc.position, tc.element";
