@@ -1311,10 +1311,10 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 
-	if ($action == 'validate'){
-		if (GETPOST('confirm') == 'yes'){
-			foreach ($toselect as $checked){
-				$sql = "SELECT ref, fk_statut AS statut FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$checked;
+	if ($action == 'validate') {
+		if (GETPOST('confirm') == 'yes') {
+			foreach ($toselect as $checked) {
+				$sql = "SELECT ref, fk_statut AS status FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$checked;
 				$resql = $db->query($sql);
 				if ($resql){
 					$obj = $db->fetch_object($resql);
@@ -1327,7 +1327,7 @@ if ($resql)
 					} else {
 						$numref = $obj->ref;
 					}
-					if ($obj->statut == 0){
+					if ($obj->status == 0){
 						$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 1, ref ='".$numref."' WHERE rowid = ".$checked;
 						$resql = $db->query($sql);
 						if ($resql){
@@ -1346,13 +1346,13 @@ if ($resql)
 	}
 
 	if ($action == "sign") {
-		if (GETPOST('confirm') == 'yes'){
+		if (GETPOST('confirm') == 'yes') {
 			foreach ($toselect as $checked) {
-				$sqlp = "SELECT ref, fk_statut AS statut FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " . $checked;
+				$sqlp = "SELECT ref, fk_statut AS status FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " . $checked;
 				$resqlp = $db->query($sqlp);
 				if ($resqlp) {
 					$objp = $db->fetch_object($resqlp);
-					if ($objp->statut == 1) {
+					if ($objp->status == 1) {
 						$sqlp = "UPDATE " . MAIN_DB_PREFIX . "propal SET fk_statut = 2 WHERE rowid = " . $checked;
 						$resqlp = $db->query($sqlp);
 						if ($resqlp) {
