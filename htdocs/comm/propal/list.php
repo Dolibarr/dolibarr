@@ -510,12 +510,11 @@ if ($resql)
 		$refs = array();
 		$ids = array();
 		foreach ($toselect as $checked){
-			$sqlp = "SELECT ref, rowid FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " .$checked." AND rowid NOT IN";
-			$sqlp .= " (SELECT fk_propal FROM " . MAIN_DB_PREFIX . "propaldet)";
+			$sqlp = "SELECT ref, rowid FROM ".MAIN_DB_PREFIX."propal WHERE rowid = " .$checked;
 			$resqlp = $db->query($sqlp);
 			if ($resqlp){
 				$objp = $db->fetch_object($resqlp);
-				if ($db->num_rows($resqlp)){
+				if ($objp) {
 					$cpt++;
 					$refs[] = $objp->ref;
 					$ids[] = $objp->rowid;
