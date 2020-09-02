@@ -7992,7 +7992,7 @@ class Form
         $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
         if ($result > 0) {
-            if($default)  $TModels[0] = $langs->trans('DefaultMailModel');
+            if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
             foreach ($formmail->lines_model as $model){
                 $TModels[$model->id] = $model->label;
             }
