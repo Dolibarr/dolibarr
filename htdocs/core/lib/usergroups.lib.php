@@ -186,10 +186,13 @@ function user_prepare_head($object)
 		$h++;
 	}
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/param_agendaReminder.php?id='.$object->id;
-    $head[$h][1] = $langs->trans("Reminders");
-    $head[$h][2] = 'agendareminder';
-    $h++;
+	if($conf->agenda->enabled && $conf->global->AGENDA_REMINDER_BROWSER)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/user/param_agendaReminder.php?id='.$object->id;
+        $head[$h][1] = $langs->trans("Reminders");
+        $head[$h][2] = 'agendareminder';
+        $h++;
+    }
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'user', 'remove');
 
