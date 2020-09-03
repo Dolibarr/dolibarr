@@ -47,6 +47,7 @@ $categ_id = GETPOST('categ_id', 'categ_id');
 
 $userid = GETPOST('userid', 'int');
 $socid = GETPOST('socid', 'int');
+$ls_categories = GETPOST('ls_categories', 'alpha');
 // Security check
 if ($user->socid > 0)
 {
@@ -285,6 +286,11 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	arsort($arrayyears);
 	print $form->selectarray('year', $arrayyears, $year, 0);
 	print '</td></tr>';
+
+	print '<tr><td class="left">'.$langs->trans("Commercial").'</td><td class="left">';
+	$formpropal->selectProposalCommercial();
+	print '</td></tr>';
+
 	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
 	print '</table>';
 	print '</form>';
