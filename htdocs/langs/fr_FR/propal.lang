@@ -90,6 +90,7 @@ CantBeSign = ne peut pas être signée
 Sign = Signer
 Signed = signé
 CantBeSign = ne peut pas être signé
+CantBeValidated = Ne peut pas être validé
 ConfirmMassValidation = Confirmer la validation ?
 ConfirmMassSignature = Confirmer la signature ?
 ConfirmMassValidationQuestion = Voulez-vous confirmer la validation des devis brouillons selectionnés ?

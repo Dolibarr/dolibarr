@@ -1185,49 +1185,54 @@ if ($resql)
 	if ($action == 'validate') {
 		if (GETPOST('confirm') == 'yes') {
 			$tmpproposal = new Propal($db);
+			$db->begin();
 			foreach ($toselect as $checked) {
-				$tmpproposal->fetch($checked);
 				if ($tmpproposal->fetch($checked)) {
 					if ($tmpproposal->statut == 0) {
-						$tmpproposal->valid($user);
-						setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+						if($tmpproposal->valid($user)){
+							setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+						} else {
+							setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						}
 					} else {
 						setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
 					}
-				} else {
-					dol_print_error($db);
 				}
 			}
+			$db->commit();
 		}
 	}
 
-	if ($action == "sign") {
-		if (GETPOST('confirm') == 'yes') {
-			$tmpproposal = new Propal($db);
-			foreach ($toselect as $checked) {
-				$tmpproposal->fetch($checked);
-				if ($tmpproposal->fetch($checked)) {
-					if ($tmpproposal->statut == 1) {
-						$sqlp = "UPDATE " . MAIN_DB_PREFIX . "propal SET fk_statut = 2 WHERE rowid = " . $checked;
-						$resqlp = $db->query($sqlp);
-						if ($resqlp) {
-							setEventMessage($tmpproposal->ref . " " . $langs->trans('Signed'), 'mesgs');
+		if ($action == "sign") {
+			if (GETPOST('confirm') == 'yes') {
+				$tmpproposal = new Propal($db);
+				$db->begin();
+				foreach ($toselect as $checked) {
+					$tmpproposal->fetch($checked);
+					if ($tmpproposal->fetch($checked)) {
+						if ($tmpproposal->statut == 1) {
+							$sqlp = "UPDATE " . MAIN_DB_PREFIX . "propal SET fk_statut = 2 WHERE rowid = " . $checked;
+							$resqlp = $db->query($sqlp);
+							if ($resqlp) {
+								setEventMessage($tmpproposal->ref . " " . $langs->trans('Signed'), 'mesgs');
+							} else {
+								dol_print_error($db);
+							}
 						} else {
-							dol_print_error($db);
+							setEventMessage($tmpproposal->ref . " " . $langs->trans('CantBeSign'), 'errors');
 						}
 					} else {
-						setEventMessage($tmpproposal->ref . " " . $langs->trans('CantBeSign'), 'errors');
+						dol_print_error($db);
 					}
-				} else {
-					dol_print_error($db);
 				}
+				$db->commit();
 			}
 		}
-	}
+
 } else {
-	dol_print_error($db);
+		dol_print_error($db);
 }
 
-// End of page
-llxFooter();
-$db->close();
+	// End of page
+	llxFooter();
+	$db->close();
