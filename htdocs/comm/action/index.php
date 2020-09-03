@@ -1250,8 +1250,8 @@ if (empty($action) || $action == 'show_month')      // View by month
 		// Get week number for the targeted date '$currdate0'
 		$numweek0 = date("W", strtotime(date($currdate0)));
 		// Show the week number, and define column width
-		echo ' <td align="center" width="2.0%">'.$numweek0.'</td>';
-		
+		echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+
         for ($iter_day = 0; $iter_day < 7; $iter_day++) {
             if ($tmpday <= 0) {
                 /* Show days before the beginning of the current month (previous month)  */
