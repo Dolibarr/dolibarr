@@ -524,7 +524,7 @@ class Orders extends DolibarrApi
         if ($result < 0) {
             throw new RestException(500, 'Error when added the contact');
         }
-        
+
         if ($result == 0) {
             throw new RestException(304, 'contact already added');
         }
