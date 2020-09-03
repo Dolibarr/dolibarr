@@ -169,6 +169,7 @@ if ($conf->adherent->enabled)          $elementList['member'] = $langs->trans('M
 if ($conf->contrat->enabled)           $elementList['contract'] = $langs->trans('MailToSendContract');
 if ($conf->projet->enabled)            $elementList['project'] = $langs->trans('MailToProject');
 if ($conf->ticket->enabled)            $elementList['ticket_send'] = $langs->trans('MailToTicket');
+if ($conf->agenda->enabled)            $elementList['actioncomm_send'] = $langs->trans('MailToSendEventPush');
 $elementList['user'] = $langs->trans('MailToUser');
 
 $parameters = array('elementList'=>$elementList);

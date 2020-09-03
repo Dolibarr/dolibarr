@@ -202,3 +202,6 @@ SendReminderForExpiredSubscription=Send reminder by email to members when subscr
 MembershipPaid=Membership paid for current period (until %s)
 YouMayFindYourInvoiceInThisEmail=You may find your invoice attached to this email
 XMembersClosed=%s member(s) closed
+/***** START BACKPORT V13.0 *****/
+SendingReminderActionComm=Sending reminder for agenda event
+/***** END BACKPORT V13.0 *****/

@@ -5793,6 +5793,81 @@ class Form
 		return $retstring;
 	}
 
+	/***** START BACKPORT V13.0 *****/
+
+    /**
+     *  * select_type_duration
+     *
+     * @param   string   $prefix     Prefix
+     * @param   string   $modelType  Model type
+     * @return  string               HTML select string
+     */
+    public function select_type_duration($prefix, $selected = 'minute')
+    {
+        global $langs;
+
+        $retstring = '';
+
+        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
+
+        $retstring .= '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
+
+        foreach ($TDurationTypes as $key=>$typeduration){
+
+            $retstring .= '<option value="'.$key.'"';
+            if($key == $selected)
+            {
+                $retstring .= " selected";
+            }
+            $retstring .= ">".$typeduration."</option>";
+        }
+
+        $retstring .= "</select>";
+
+
+        return $retstring;
+    }
+
+    /**
+     * select_model_mail
+     *
+     * @param   string   $prefix     Prefix
+     * @param   string   $modelType  Model type
+     * @return  string               HTML select string
+     */
+    public function select_model_mail($prefix, $modelType = '', $default = 0) {
+
+        global $langs, $db, $user;
+
+        $retstring = '';
+
+        $TModels = array();
+
+        include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+        $formmail = new FormMail($db);
+        $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
+
+        if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
+        if ($result > 0) {
+            foreach ($formmail->lines_model as $model){
+                $TModels[$model->id] = $model->label;
+            }
+        }
+
+        $retstring .= '<select class="flat" id="select_'.$prefix.'model_mail" name="'.$prefix.'model_mail">';
+
+        foreach ($TModels as $id_model=>$label_model){
+            $retstring .= '<option value="'.$id_model.'"';
+            $retstring .= ">".$label_model."</option>";
+        }
+
+        $retstring .= "</select>";
+
+        return $retstring;
+    }
+
+    /***** END BACKPORT V13.0 *****/
+
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
      *  Function to show a form to select a duration on a page

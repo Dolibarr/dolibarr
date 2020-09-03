@@ -1980,3 +1980,6 @@ EmailTemplate=Template for email
 EMailsWillHaveMessageID=Emails will have a tag 'References' matching this syntax
 FafaIconSocialNetworksDesc=Enter here the code of a FontAwesome icon. If you don't know what is FontAwesome, you can use the generic value fa-address-book.
 FeatureNotAvailableWithReceptionModule=Feature not available when module Reception is enabled
+/***** START BACKPORT V13.0 *****/
+MailToSendEventPush=Template for event reminder emails
+/***** END BACKPORT V13.0 *****/

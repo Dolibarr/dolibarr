@@ -151,3 +151,13 @@ EveryMonth=Chaque mois
 DayOfMonth=Jour du mois
 DayOfWeek=Jour de la semaine
 DateStartPlusOne=Date de début + 1 heure
+/***** START BACKPORT V13.0 *****/
+ReminderTime=Délai de rappel avant l'événement
+TimeType=Type de durée
+ReminderType=Type de rappel
+AddReminder=Créer une notification de rappel automatique pour cet évènement
+ErrorReminderActionCommCreation=Erreur lors de la création de la notification de rappel de cet événement
+BrowserPush=Notification navigateur
+EventReminder=Rappel événement
+EventReminderActiveNotification=Activer les notifications navigateur de type "Rappel événement"
+/***** END BACKPORT V13.0 *****/

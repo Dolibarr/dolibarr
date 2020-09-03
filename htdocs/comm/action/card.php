@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
@@ -62,6 +63,19 @@ $aphour = GETPOST('aphour');
 $apmin = GETPOST('apmin');
 $p2hour = GETPOST('p2hour');
 $p2min = GETPOST('p2min');
+
+/***** START BACKPORT V13.0 *****/
+
+$addreminder = GETPOST('addreminder');
+$offsetvalue = GETPOST('offsetvalue');
+$offsetunit = GETPOST('offsetunittype_duration');
+$remindertype = GETPOST('selectremindertype');
+$modelmail = GETPOST('actioncommsendmodel_mail');
+
+/***** END BACKPORT V13.0 *****/
+
+//var_dump($_POST); exit;
+
 
 $datep=dol_mktime($fulldayevent?'00':$aphour, $fulldayevent?'00':$apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
 $datef=dol_mktime($fulldayevent?'23':$p2hour, $fulldayevent?'59':$p2min, $fulldayevent?'59':'0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
@@ -379,7 +393,46 @@ if (empty($reshook) && $action == 'add')
 				$moreparam = '';
 				if ($user->id != $object->userownerid) $moreparam = "filtert=-1"; // We force to remove filter so created record is visible when going back to per user view.
 
-				$db->commit();
+                //Create eminder
+                if ($addreminder == 'on'){
+                    $actionCommReminder = new ActionCommReminder($db);
+
+                    if ($offsetunit == 'minute'){
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
+                    } elseif ($offsetunit == 'hour'){
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'h');
+                    } elseif ($offsetunit == 'day') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'd');
+                    } elseif ($offsetunit == 'week') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'w');
+                    } elseif ($offsetunit == 'month') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'm');
+                    } elseif ($offsetunit == 'year') {
+                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'y');
+                    }
+
+                    $actionCommReminder->dateremind = $dateremind;
+                    $actionCommReminder->typeremind = $remindertype;
+                    $actionCommReminder->fk_user = $user;
+                    $actionCommReminder->offsetunit = $offsetunit;
+                    $actionCommReminder->offsetvalue = $offsetvalue;
+                    $actionCommReminder->status = $actionCommReminder::STATUS_TODO;
+                    $actionCommReminder->fk_actioncomm = $object->id;
+                    if ($remindertype == 'email') $actionCommReminder->fk_email_template = $modelmail;
+
+                    $res = $actionCommReminder->create($user);
+
+                    if ($res <= 0){
+                        // If error
+                        $db->rollback();
+                        $langs->load("errors");
+                        $error = $langs->trans('ErrorReminderActionCommCreation');
+                        setEventMessages($error, null, 'errors');
+                        $action = 'create'; $donotclearsession = 1;
+                    }
+                }
+
+                $db->commit();
 				if (!empty($backtopage))
 				{
 					dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
@@ -1120,7 +1173,72 @@ if ($action == 'create')
 
 	print '</table>';
 
-	dol_fiche_end();
+    /***** START BACKPORT V13.0 *****/
+
+    if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
+    {
+        //checkbox create reminder
+        print '<br>';
+        print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder"></td></tr>';
+
+        print '<div class="reminderparameters" style="display: none;">';
+
+        print '<hr>';
+        print load_fiche_titre($langs->trans("AddReminder"), '', '');
+
+        print '<table class="border centpercent">';
+
+        //Reminder
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderTime").'</td><td colspan="3">';
+        print '<input type="number" name="offsetvalue" value="10" size="5">';
+        print '</td></tr>';
+
+        //Time Type
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
+        print $form->select_type_duration('offsetunit');
+        print '</td></tr>';
+
+        //Reminder Type
+        $TRemindTypes = array();
+        if (!empty($conf->global->AGENDA_REMINDER_EMAIL)) $TRemindTypes['email'] = $langs->trans('EMail');
+        if (!empty($conf->global->AGENDA_REMINDER_BROWSER)) $TRemindTypes['browser'] = $langs->trans('BrowserPush');
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ReminderType").'</td><td colspan="3">';
+        print $form->selectarray('selectremindertype', $TRemindTypes);
+        print '</td></tr>';
+
+        //Mail Model
+        print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
+        print $form->select_model_mail('actioncommsend', 'actioncomm_send', 1);
+        print '</td></tr>';
+
+        print '</table>';
+        print '</div>';
+
+        print "\n".'<script type="text/javascript">';
+        print '$(document).ready(function () {
+	            		$("#addreminder").click(function(){
+	            		    if (this.checked) {
+	            		      $(".reminderparameters").show();
+                            } else {
+                            $(".reminderparameters").hide();
+                            }
+	            		 });
+	            		 
+	            		$("#selectremindertype").click(function(){	         
+	            	        var selected_option = $("#selectremindertype option:selected").val();
+	            		    if(selected_option == "email") {
+	            		        $("#select_actioncommsendmodel_mail").closest("tr").show();
+	            		    } else {
+	            			    $("#select_actioncommsendmodel_mail").closest("tr").hide();
+	            		    };
+	            		});	            		 	   	
+                   })';
+        print '</script>'."\n";
+    }
+
+    /***** END BACKPORT V13.0 *****/
+
+    dol_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';

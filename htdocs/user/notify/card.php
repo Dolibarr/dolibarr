@@ -111,8 +111,6 @@ if ($action == 'delete')
     $db->query($sql);
 }
 
-
-
 /*
  *	View
  */

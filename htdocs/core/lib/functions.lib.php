@@ -6283,7 +6283,19 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				}
 				else $substitutionarray['__DIRECTDOWNLOAD_URL_INVOICE__'] = '';
 			}
-		}
+
+            /***** START BACKPORT V13.0 *****/
+
+            if (is_object($object) && $object->element == 'action')
+            {
+                $substitutionarray['__EVENT_LABEL__'] = $object->label;
+                $substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, '%A %d %b %Y');
+                $substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, '%H:%M:%S');
+            }
+
+            /***** END BACKPORT V13.0 *****/
+
+        }
 	}
 	if (empty($exclude) || !in_array('objectamount', $exclude))
 	{
