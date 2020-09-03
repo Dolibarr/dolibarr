@@ -7992,8 +7992,8 @@ class Form
         $formmail = new FormMail($db);
         $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
+        if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
         if ($result > 0) {
-            if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
             foreach ($formmail->lines_model as $model){
                 $TModels[$model->id] = $model->label;
             }
