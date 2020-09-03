@@ -7,6 +7,7 @@
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +149,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 
@@ -175,10 +176,18 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
+
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">';
+		print $langs->trans("CustomersDraftInvoices").' ';
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status='.Facture::STATUS_DRAFT.'">';
+		print '<span class="badge marginleftonlyshort">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+		print '</tr>';
+
 		if ($num)
 		{
 			$companystatic = new Societe($db);
@@ -244,7 +253,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
     $sql .= ", cc.rowid as country_id, cc.code as country_code";
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".FactureFournisseur::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid)	$sql .= " AND f.fk_soc = ".$socid;
@@ -258,10 +267,18 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	{
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
+
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">';
+		print $langs->trans("SuppliersDraftInvoices").' ';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_DRAFT.'">';
+		print '<span class="badge marginleftonlyshort">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+		print '</tr>';
+
 		if ($num)
 		{
 			$companystatic = new Societe($db);
@@ -709,7 +726,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$sql .= " AND c.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid)	$sql .= " AND c.fk_soc = ".$socid;
-	$sql .= " AND c.fk_statut = 3";
+	$sql .= " AND c.fk_statut = ".Commande::STATUS_CLOSED;
 	$sql .= " AND c.facture = 0";
 	// Add where from hooks
 	$parameters = array();
@@ -729,8 +746,15 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 
             print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
+
 			print "<tr class=\"liste_titre\">";
-			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
+			print '<th colspan="2">';
+			print $langs->trans("OrdersDeliveredToBill").' ';
+			print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_CLOSED.'&amp;billed=0">';
+			print '<span class="badge">'.$num.'</span>';
+			print '</a>';
+			print '</th>';
+
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("ToBill").'</th>';
@@ -822,7 +846,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays,".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
@@ -843,7 +867,15 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsCustomersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th>';
+
+		print '<tr class="liste_titre">';
+		print '<th colspan="2">';
+		print $langs->trans("BillsCustomersUnpaid", $num).' ';
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status='.Facture::STATUS_VALIDATED.'">';
+		print '<span class="badge">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+
 		print '<th class="right">'.$langs->trans("DateDue").'</th>';
 		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -954,7 +986,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity = ".$conf->entity;
 	$sql .= " AND ff.paye = 0";
-	$sql .= " AND ff.fk_statut = 1";
+	$sql .= " AND ff.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND ff.fk_soc = ".$socid;
 	// Add where from hooks
@@ -973,7 +1005,17 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsSuppliersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></th>';
+
+		print '<tr class="liste_titre">';
+		print '<th colspan="2">';
+		print $langs->trans("BillsSuppliersUnpaid", $num).' ';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_VALIDATED.'">';
+		// TODO: "impayees.php" looks very outdatetd and should be set to deprecated or directly remove in the next version 
+		// <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">
+		print '<span class="badge">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+
 		print '<th class="right">'.$langs->trans("DateDue").'</th>';
 		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
