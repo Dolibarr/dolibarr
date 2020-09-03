@@ -42,6 +42,7 @@ if ($mode == 'customer' && !$user->rights->propale->lire) accessforbidden();
 if ($mode == 'supplier' && !$user->rights->supplier_proposal->lire) accessforbidden();
 
 $object_status = GETPOST('object_status');
+$propal_commercial=GETPOST('propal_commercial');
 $typent_id = GETPOST('typent_id', 'int');
 $categ_id = GETPOST('categ_id', 'categ_id');
 
@@ -102,6 +103,7 @@ dol_mkdir($dir);
 
 $stats = new PropaleStats($db, $socid, ($userid > 0 ? $userid : 0), $mode, ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
+if ($propal_commercial != '' && $propal_commercial >= 0) $stats->where .= ' AND p.rowid IN (SELECT fk_object FROM '.MAIN_DB_PREFIX.'propal_extrafields WHERE commercial='.$propal_commercial.')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
@@ -287,7 +289,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 
 	print '<tr><td class="left">'.$langs->trans("Commercial").'</td><td class="left">';
-	$formpropal->selectProposalCommercial();
+	$formpropal->selectProposalCommercial('', 'propal_commercial');
 	print '</td></tr>';
 
 	print '<tr><td align="center" colspan="2"><input type="submit" name="submit" class="button" value="'.$langs->trans("Refresh").'"></td></tr>';
