@@ -144,8 +144,7 @@ class FormPropal
     }
 
 	/**
-	 *    Return combo list of differents status of a proposal
-	 *    Values are id of table c_propalst
+	 *    Return combo list of all commercial of proposals
 	 *
 	 *    @param	string	$selected   	Preselected value
 	 *    @param	int		$short			Use short labels
@@ -156,7 +155,7 @@ class FormPropal
 	 *    @return	void
 	 */
 
-	public function selectProposalCommercial($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_commercial')
+	public function selectProposalCommercial($selected = '', $htmlname = 'propal_commercial', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer')
 	{
 		global $langs;
 
@@ -165,7 +164,7 @@ class FormPropal
 
 		$sql = "SELECT rowid, lastname, firstname FROM " . MAIN_DB_PREFIX . "user";
 		$sql .= " WHERE rowid IN";
-		$sql .= " (SELECT commercial FROM ".MAIN_DB_PREFIX."propal_extrafields)";
+		$sql .= " (SELECT commercial FROM ".MAIN_DB_PREFIX."propal_extrafields) ORDER BY firstname ASC";
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -173,7 +172,7 @@ class FormPropal
 			if ($num) {
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
-					$listofcommercial[$i] = array('id' => $obj->rowid, 'lastname' => $obj->lastname, 'firstname' => $obj->firstname);
+					$listofcommercial[$i] = array('id' => $obj->rowid, 'firstname' => $obj->firstname, 'lastname' => $obj->lastname);
 					$i++;
 				}
 			}
@@ -186,14 +185,13 @@ class FormPropal
 
 		foreach($listofcommercial as $key => $obj)
 		{
-
 			if ($selected != '' && $selected == $obj['id'])
 			{
 //				TODO
 			}
 			else
 			{
-				print '<option value='.$obj['id'].'>'.$obj['lastname'].'&nbsp;'.$obj['firstname'];
+				print '<option value='.$obj['id'].'>'.$obj['firstname'].'&nbsp;'.$obj['lastname'];
 			}
 			print '</option>';
 		}

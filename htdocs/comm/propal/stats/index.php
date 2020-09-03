@@ -38,7 +38,7 @@ if ($mode == 'customer' && ! $user->rights->propale->lire) accessforbidden();
 if ($mode == 'supplier' && ! $user->rights->supplier_proposal->lire) accessforbidden();
 
 $object_status=GETPOST('object_status');
-
+$categ_id = GETPOST('categ_id', 'categ_id');
 $userid=GETPOST('userid', 'int');
 $socid=GETPOST('socid', 'int');
 // Security check
@@ -88,6 +88,7 @@ dol_mkdir($dir);
 
 $stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
 if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
+if ($propal_commercial != '' && $propal_commercial >= 0) $stats->where .= ' AND p.rowid IN (SELECT fk_object FROM '.MAIN_DB_PREFIX.'propal_extrafields WHERE commercial='.$propal_commercial.')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
@@ -258,7 +259,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '</td></tr>';
 	// Status
 	print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
-    $formpropal->selectProposalStatus(($object_status!=''?$object_status:-1), 0, 0, 1, $mode, 'object_status');
+    $formpropal->selectProposalStatus(($object_status != '' ? $object_status : -1), 0, 0, 1, $mode, 'object_status');
 	print '</td></tr>';
 	// Year
 	print '<tr><td class="left">'.$langs->trans("Year").'</td><td class="left">';
