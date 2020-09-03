@@ -510,12 +510,11 @@ if ($resql)
 		$refs = array();
 		$ids = array();
 		foreach ($toselect as $checked){
-			$sqlp = "SELECT ref, rowid FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " .$checked." AND rowid NOT IN";
-			$sqlp .= " (SELECT fk_propal FROM " . MAIN_DB_PREFIX . "propaldet)";
+			$sqlp = "SELECT ref, rowid FROM ".MAIN_DB_PREFIX."propal WHERE rowid = " .$checked;
 			$resqlp = $db->query($sqlp);
 			if ($resqlp){
 				$objp = $db->fetch_object($resqlp);
-				if ($db->num_rows($resqlp)){
+				if ($objp) {
 					$cpt++;
 					$refs[] = $objp->ref;
 					$ids[] = $objp->rowid;
@@ -526,7 +525,7 @@ if ($resql)
 		}
 		if ($cpt > 0)
 		{
-			if($cpt==1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropNoProductOrService'), 'warnings');
+			if ($cpt==1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropNoProductOrService'), 'warnings');
 			if ($cpt>1) setEventMessage($langs->trans('Warning').',&nbsp;'.$cpt.'&nbsp;'.$langs->trans('PropsNoProductOrService'), 'warnings');
 			$cpt2 = 0;
 			foreach ($ids as $r)
@@ -1314,6 +1313,7 @@ if ($resql)
 
 	if ($action == 'validate') {
 		if (GETPOST('confirm') == 'yes') {
+<<<<<<< HEAD
 			$tmpproposal = new Propal($db);
 			foreach ($toselect as $checked) {
 				$tmpproposal->fetch($checked);
@@ -1323,6 +1323,32 @@ if ($resql)
 						setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
 					} else {
 						setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
+=======
+			foreach ($toselect as $checked) {
+				$sql = "SELECT ref, fk_statut AS status FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$checked;
+				$resql = $db->query($sql);
+				if ($resql){
+					$obj = $db->fetch_object($resql);
+					$ref = substr($obj->ref, 1, 4);
+					if ($ref == 'PROV') {
+						$numref = $object->getNextNumRef($soc);
+						if (empty($numref)) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} else {
+						$numref = $obj->ref;
+					}
+					if ($obj->status == 0){
+						$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 1, ref ='".$numref."' WHERE rowid = ".$checked;
+						$resql = $db->query($sql);
+						if ($resql){
+							setEventMessage($numref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
+						} else {
+							dol_print_error($db);
+						}
+					}else {
+						setEventMessage($numref." ".$langs->trans('IsNotADraft'), 'errors');
+>>>>>>> d913736bd1a6850d32bfe81bd958e3e17984100e
 					}
 				} else {
 					dol_print_error($db);
@@ -1333,11 +1359,20 @@ if ($resql)
 
 	if ($action == "sign") {
 		if (GETPOST('confirm') == 'yes') {
+<<<<<<< HEAD
 			$tmpproposal = new Propal($db);
 			foreach ($toselect as $checked) {
 				$tmpproposal->fetch($checked);
 				if ($tmpproposal->fetch($checked)) {
 					if ($tmpproposal->statut == 1) {
+=======
+			foreach ($toselect as $checked) {
+				$sqlp = "SELECT ref, fk_statut AS status FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " . $checked;
+				$resqlp = $db->query($sqlp);
+				if ($resqlp) {
+					$objp = $db->fetch_object($resqlp);
+					if ($objp->status == 1) {
+>>>>>>> d913736bd1a6850d32bfe81bd958e3e17984100e
 						$sqlp = "UPDATE " . MAIN_DB_PREFIX . "propal SET fk_statut = 2 WHERE rowid = " . $checked;
 						$resqlp = $db->query($sqlp);
 						if ($resqlp) {
