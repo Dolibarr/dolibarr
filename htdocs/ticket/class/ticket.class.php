@@ -2539,7 +2539,11 @@ class Ticket extends CommonObject
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
 							$message .= '<br><br>';
-							$message .= GETPOST('message', 'none');
+							$messagePost = GETPOST('message', 'restricthtml');
+							if (!dol_textishtml($messagePost)) {
+								$messagePost = dol_nl2br($messagePost);
+							}
+							$message .= $messagePost;
 
 							// Customer company infos
 							$message .= '<br><br>';
@@ -2588,7 +2592,11 @@ class Ticket extends CommonObject
 
 							$message = $langs->trans('TicketMessageMailIntroText');
 							$message .= '<br><br>';
-							$message .= GETPOST('message', 'restricthtml');
+							$messagePost = GETPOST('message', 'restricthtml');
+							if (!dol_textishtml($messagePost)) {
+								$messagePost = dol_nl2br($messagePost);
+							}
+							$message .= $messagePost;
 
 							//  Coordonnées client
 							$message .= '<br><br>';
@@ -2657,9 +2665,19 @@ class Ticket extends CommonObject
 
 								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
 								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+								if (!dol_textishtml($message_intro)) {
+									$message_intro = dol_nl2br($message_intro);
+								}
+								if (!dol_textishtml($message_signature)) {
+									$message_signature = dol_nl2br($message_signature);
+								}
 
 								// We put intro after
-								$message = GETPOST('message', 'restricthtml');
+								$messagePost = GETPOST('message', 'restricthtml');
+								if (!dol_textishtml($messagePost)) {
+									$messagePost = dol_nl2br($messagePost);
+								}
+								$message = $messagePost;
 								$message .= '<br><br>';
 
 								foreach ($external_contacts as $key => $info_sendto) {
