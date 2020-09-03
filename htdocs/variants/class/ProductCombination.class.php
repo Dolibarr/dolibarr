@@ -1210,10 +1210,9 @@ class ProductCombinationLevel
 	/**
 	 * Create new Product Combination Price level from Parent
 	 *
-	 * @param DoliDB $db								Database handler
-	 * @param ProductCombination $productCombination	Product combination
-	 * @param int $fkPriceLevel							Price level
-	 *
+	 * @param DoliDB 				$db						Database handler
+	 * @param ProductCombination 	$productCombination		Product combination
+	 * @param int					$fkPriceLevel			Price level
 	 * @return ProductCombinationLevel
 	 */
 	public static function createFromParent(DoliDB $db, ProductCombination $productCombination, $fkPriceLevel)
