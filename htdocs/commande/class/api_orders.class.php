@@ -521,11 +521,20 @@ class Orders extends DolibarrApi
 
         $result = $this->commande->add_contact($contactid, $type, 'external');
 
-        if (!$result) {
+        if ($result < 0) {
             throw new RestException(500, 'Error when added the contact');
         }
+        
+        if ($result == 0) {
+            throw new RestException(304, 'contact already added');
+        }
 
-        return $this->commande;
+        return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Contact linked to the order'
+            )
+        );
     }
 
     /**
