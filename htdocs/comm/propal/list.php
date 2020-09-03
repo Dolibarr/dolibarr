@@ -1312,23 +1312,30 @@ if ($resql)
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 
 	if ($action == 'validate') {
-	if (GETPOST('confirm') == 'yes') {
-		$tmpproposal = new Propal($db);
-		foreach ($toselect as $checked) {
-			$tmpproposal->fetch($checked);
-			if ($tmpproposal->fetch($checked)) {
-				if ($tmpproposal->statut == 0) {
-					$tmpproposal->valid($user);
-					setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
-				} else {
-					setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
+		if (GETPOST('confirm') == 'yes') {
+			$tmpproposal = new Propal($db);
+			$db->begin();
+			foreach ($toselect as $checked) {
+				if ($tmpproposal->fetch($checked)) {
+					if ($tmpproposal->statut == 0) {
+						if($tmpproposal->valid($user)){
+							setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
+						} else {
+							setEventMessage($langs->trans('CantBeValidated'), 'errors');
+						}
+					} else {
+						setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
+					}
 				}
 			}
+			$db->commit();
 		}
+	}
 
 		if ($action == "sign") {
 			if (GETPOST('confirm') == 'yes') {
 				$tmpproposal = new Propal($db);
+				$db->begin();
 				foreach ($toselect as $checked) {
 					$tmpproposal->fetch($checked);
 					if ($tmpproposal->fetch($checked)) {
@@ -1347,11 +1354,13 @@ if ($resql)
 						dol_print_error($db);
 					}
 				}
+				$db->commit();
 			}
 		}
-	} else {
+
+} else {
 		dol_print_error($db);
-	}
+}
 
 	// End of page
 	llxFooter();
