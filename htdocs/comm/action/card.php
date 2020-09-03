@@ -1208,7 +1208,7 @@ if ($action == 'create')
 
         //Mail Model
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-        print $form->select_model_mail('actioncommsend', 'actioncomm_send');
+        print $form->select_model_mail('actioncommsend', 'actioncomm_send', 1);
         print '</td></tr>';
 
         print '</table>';

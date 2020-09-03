@@ -1019,3 +1019,7 @@ ContactAddedAutomatically=Contact added from contact thirdparty roles
 More=More
 ShowDetails=Show details
 CustomReports=Custom reports
+/***** START BACKPORT V13.0 *****/
+DefaultMailModel=Default Mail Model
+/***** END BACKPORT V13.0 *****/
+

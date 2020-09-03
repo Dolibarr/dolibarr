@@ -5835,7 +5835,7 @@ class Form
      * @param   string   $modelType  Model type
      * @return  string               HTML select string
      */
-    public function select_model_mail($prefix, $modelType = '') {
+    public function select_model_mail($prefix, $modelType = '', $default = 0) {
 
         global $langs, $db, $user;
 
@@ -5847,6 +5847,7 @@ class Form
         $formmail = new FormMail($db);
         $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
+        if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
         if ($result > 0) {
             foreach ($formmail->lines_model as $model){
                 $TModels[$model->id] = $model->label;

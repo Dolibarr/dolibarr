@@ -1030,4 +1030,5 @@ DeleteFileHeader=Confirm file delete
 DeleteFileText=Do you really want delete this file?
 /***** START BACKPORT V13.0 *****/
 Reminders=Rappels événement
+DefaultMailModel=Modèle mail par défaut
 /***** END BACKPORT V13.0 *****/
