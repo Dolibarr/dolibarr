@@ -122,7 +122,7 @@ class FormFile
     			$out .= '<input type="hidden" name="sortorder" value="'.GETPOST('sortorder', 'aZ09').'">';
 			}
 
-			$out .= '<table class="nobordernopadding cenpercent">';
+			$out .= '<table class="nobordernopadding centpercent">';
 			$out .= '<tr>';
 
 			if (!empty($options)) $out .= '<td>'.$options.'</td>';
