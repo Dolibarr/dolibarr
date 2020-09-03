@@ -177,7 +177,7 @@ class PaiementFourn extends Paiement
 
 		foreach ($amounts as $key => $value)
 		{
-			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way, 'facture_fourn');
+			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value? $value : 0, $way, 'facture_fourn');
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
 
