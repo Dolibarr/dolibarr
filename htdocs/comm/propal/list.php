@@ -1312,32 +1312,17 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_proposals', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 
-	if ($action == 'validate'){
-		if (GETPOST('confirm') == 'yes'){
-			foreach ($toselect as $checked){
-				$sql = "SELECT ref, fk_statut AS statut FROM ".MAIN_DB_PREFIX."propal WHERE rowid = ".$checked;
-				$resql = $db->query($sql);
-				if ($resql){
-					$obj = $db->fetch_object($resql);
-					$ref = substr($obj->ref, 1, 4);
-					if ($ref == 'PROV') {
-						$numref = $object->getNextNumRef($soc);
-						if (empty($numref)) {
-							setEventMessages($object->error, $object->errors, 'errors');
-						}
+	if ($action == 'validate') {
+		if (GETPOST('confirm') == 'yes') {
+			$tmpproposal = new Propal($db);
+			foreach ($toselect as $checked) {
+				$tmpproposal->fetch($checked);
+				if ($tmpproposal->fetch($checked)) {
+					if ($tmpproposal->statut == 0) {
+						$tmpproposal->valid($user);
+						setEventMessage($tmpproposal->ref . " " . $langs->trans('PassedInOpenStatus'), 'mesgs');
 					} else {
-						$numref = $obj->ref;
-					}
-					if ($obj->statut == 0){
-						$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 1, ref ='".$numref."' WHERE rowid = ".$checked;
-						$resql = $db->query($sql);
-						if ($resql){
-							setEventMessage($numref." ".$langs->trans('PassedInOpenStatus'), 'mesgs');
-						} else {
-							dol_print_error($db);
-						}
-					}else {
-						setEventMessage($numref." ".$langs->trans('IsNotADraft'), 'errors');
+						setEventMessage($tmpproposal->ref . " " . $langs->trans('IsNotADraft'), 'errors');
 					}
 				} else {
 					dol_print_error($db);
@@ -1347,22 +1332,21 @@ if ($resql)
 	}
 
 	if ($action == "sign") {
-		if (GETPOST('confirm') == 'yes'){
+		if (GETPOST('confirm') == 'yes') {
+			$tmpproposal = new Propal($db);
 			foreach ($toselect as $checked) {
-				$sqlp = "SELECT ref, fk_statut AS statut FROM " . MAIN_DB_PREFIX . "propal WHERE rowid = " . $checked;
-				$resqlp = $db->query($sqlp);
-				if ($resqlp) {
-					$objp = $db->fetch_object($resqlp);
-					if ($objp->statut == 1) {
+				$tmpproposal->fetch($checked);
+				if ($tmpproposal->fetch($checked)) {
+					if ($tmpproposal->statut == 1) {
 						$sqlp = "UPDATE " . MAIN_DB_PREFIX . "propal SET fk_statut = 2 WHERE rowid = " . $checked;
 						$resqlp = $db->query($sqlp);
 						if ($resqlp) {
-							setEventMessage($objp->ref . " " . $langs->trans('Signed'), 'mesgs');
+							setEventMessage($tmpproposal->ref . " " . $langs->trans('Signed'), 'mesgs');
 						} else {
 							dol_print_error($db);
 						}
 					} else {
-						setEventMessage($objp->ref . " " . $langs->trans('CantBeSign'), 'errors');
+						setEventMessage($tmpproposal->ref . " " . $langs->trans('CantBeSign'), 'errors');
 					}
 				} else {
 					dol_print_error($db);
