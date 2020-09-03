@@ -2098,7 +2098,6 @@ class ActionComm extends CommonObject
             $this->error = 'Nb of emails sent : '.$nbMailSend.', '.(!empty($errorsMsg)) ? join(', ', $errorsMsg) : $error;
             return $error;
         }
-
     }
 
 	/**
