@@ -1700,24 +1700,27 @@ class Ticket extends CommonObject
 				$error = 0;
 
 				// Valid and close fichinter linked
-				$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
-				if ($this->linkedObjectsIds)
-				{
-					foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
-						$fichinter = new Fichinter($this->db);
-						$fichinter->fetch($fichinter_id);
-						if ($fichinter->statut == 0) {
-							$result = $fichinter->setValid($user);
-							if (!$result) {
-								$this->errors[] = $fichinter->error;
-								$error++;
+				if (!empty($conf->ficheinter->enabled) && ! empty($conf->global->WORKFLOW_TICKET_CLOSE_INTERVENTION)) {
+					dol_syslog("We have closed the ticket, so we close all linked interventions");
+					$this->fetchObjectLinked($this->id, $this->element, null, 'fichinter');
+					if ($this->linkedObjectsIds)
+					{
+						foreach ($this->linkedObjectsIds['fichinter'] as $fichinter_id) {
+							$fichinter = new Fichinter($this->db);
+							$fichinter->fetch($fichinter_id);
+							if ($fichinter->statut == 0) {
+								$result = $fichinter->setValid($user);
+								if (!$result) {
+									$this->errors[] = $fichinter->error;
+									$error++;
+								}
 							}
-						}
-						if ($fichinter->statut < 3) {
-							$result = $fichinter->setStatut(3);
-							if (!$result) {
-								$this->errors[] = $fichinter->error;
-								$error++;
+							if ($fichinter->statut < 3) {
+								$result = $fichinter->setStatut(3);
+								if (!$result) {
+									$this->errors[] = $fichinter->error;
+									$error++;
+								}
 							}
 						}
 					}
@@ -2535,28 +2538,28 @@ class Ticket extends CommonObject
 
 							// Message send
 							$message = $langs->trans('TicketMessageMailIntroText');
-							$message .= "\n\n";
-							$message .= GETPOST('message', 'restricthtml');
+							$message .= '<br><br>';
+							$message .= GETPOST('message', 'none');
 
 							// Customer company infos
-							$message .= "\n\n";
+							$message .= '<br><br>';
 							$message .= "==============================================";
-							$message .= !empty($object->thirdparty->name) ? "\n" . $langs->trans('Thirdparty') . " : " . $object->thirdparty->name : '';
-							$message .= !empty($object->thirdparty->town) ? "\n" . $langs->trans('Town') . " : " . $object->thirdparty->town : '';
-							$message .= !empty($object->thirdparty->phone) ? "\n" . $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
+							$message .= !empty($object->thirdparty->name) ? '<br>' . $langs->trans('Thirdparty') . " : " . $object->thirdparty->name : '';
+							$message .= !empty($object->thirdparty->town) ? '<br>' . $langs->trans('Town') . " : " . $object->thirdparty->town : '';
+							$message .= !empty($object->thirdparty->phone) ? '<br>' . $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
 
 							// Email send to
-							$message .= "\n\n";
+							$message .= '<br><br>';
 							if (!empty($assigned_user_dont_have_email)) {
-								$message .= "\n" . $langs->trans('NoEMail') . ' : ' . $assigned_user_dont_have_email;
+								$message .= '<br>' . $langs->trans('NoEMail') . ' : ' . $assigned_user_dont_have_email;
 							}
 							foreach ($sendto as $val) {
-								$message .= "\n" . $langs->trans('TicketNotificationRecipient') . ' : ' . $val;
+								$message .= '<br>' . $langs->trans('TicketNotificationRecipient') . ' : ' . $val;
 							}
 
 							// URL ticket
 							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id;
-							$message .= "\n\n";
+							$message .= '<br><br>';
 							$message .= $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : <a href="' . $url_internal_ticket . '">' . $object->track_id . '</a>';
 
 							$this->sendTicketMessageByEmail($subject, $message, '', $sendto, $listofpaths, $listofmimes, $listofnames);
@@ -2584,15 +2587,15 @@ class Ticket extends CommonObject
 							$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
 							$message = $langs->trans('TicketMessageMailIntroText');
-							$message .= "\n\n";
+							$message .= '<br><br>';
 							$message .= GETPOST('message', 'restricthtml');
 
 							//  Coordonnées client
-							$message .= "\n\n";
-							$message .= "==============================================\n";
+							$message .= '<br><br>';
+							$message .= "==============================================<br>";
 							$message .= !empty($object->thirdparty->name) ? $langs->trans('Thirdparty') . " : " . $object->thirdparty->name : '';
-							$message .= !empty($object->thirdparty->town) ? "\n" . $langs->trans('Town') . " : " . $object->thirdparty->town : '';
-							$message .= !empty($object->thirdparty->phone) ? "\n" . $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
+							$message .= !empty($object->thirdparty->town) ? '<br>' . $langs->trans('Town') . " : " . $object->thirdparty->town : '';
+							$message .= !empty($object->thirdparty->phone) ? '<br>' . $langs->trans('Phone') . " : " . $object->thirdparty->phone : '';
 
 							// Build array to display recipient list
 							foreach ($internal_contacts as $key => $info_sendto) {
@@ -2606,15 +2609,15 @@ class Ticket extends CommonObject
 
 									//Contact type
 									$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
+									$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . '<br>' : '');
 								}
 							}
-							$message .= "\n";
+							$message .= '<br>';
 							// URL ticket
 							$url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id;
 
 							// altairis: make html link on url
-							$message .= "\n" . $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : <a href="' . $url_internal_ticket . '">' . $object->track_id . '</a>' . "\n";
+							$message .= '<br>' . $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : <a href="' . $url_internal_ticket . '">' . $object->track_id . '</a><br>';
 
 							// Add global email address recipient
 							if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
@@ -2652,12 +2655,12 @@ class Ticket extends CommonObject
 								$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
 								$subject = GETPOST('subject') ? GETPOST('subject') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
 
-								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
-								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
+								$message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
+								$message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature', 'restricthtml') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
 								// We put intro after
-								$message = GETPOST('message');
-								$message .= "\n\n";
+								$message = GETPOST('message', 'restricthtml');
+								$message .= '<br><br>';
 
 								foreach ($external_contacts as $key => $info_sendto) {
 									// altairis: avoid duplicate emails to external contacts
@@ -2669,17 +2672,17 @@ class Ticket extends CommonObject
 										if (!empty($info_sendto['email'])) $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
 
 										$recipient = dolGetFirstLastname($info_sendto['firstname'], $info_sendto['lastname'], '-1') . ' (' . strtolower($info_sendto['libelle']) . ')';
-										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
+										$message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . '<br>' : '');
 									}
 								}
 
 								// If public interface is not enable, use link to internal page into mail
 								$url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
 										(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)) . '?track_id=' . $object->track_id;
-								$message .= "\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $object->track_id . '</a>' . "\n";
+								$message .= '<br>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $object->track_id . '</a><br>';
 
 								// Build final message
-								$message = $message_intro . $message;
+								$message = $message_intro . '<br><br>' . $message;
 
 								// Add signature
 								$message .= '<br>' . $message_signature;
@@ -2771,8 +2774,6 @@ class Ticket extends CommonObject
 				$filename = $mimefilename_list;
 				$mimetype = $mimetype_list;
 
-				$message_to_send = dol_nl2br($message);
-
 				// Envoi du mail
 				if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 					$old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
@@ -2780,7 +2781,7 @@ class Ticket extends CommonObject
 				}
 				include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$trackid = "tic".$this->id;
-				$mailfile = new CMailFile($subject, $receiver, $from, $message_to_send, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid);
+				$mailfile = new CMailFile($subject, $receiver, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', $trackid, '', 'ticket');
 				if ($mailfile->error) {
 					setEventMessages($mailfile->error, null, 'errors');
 				} else {

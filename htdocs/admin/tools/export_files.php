@@ -33,7 +33,7 @@ $langs->load("admin");
 $action = GETPOST('action', 'alpha');
 $what = GETPOST('what', 'alpha');
 $export_type = GETPOST('export_type', 'alpha');
-$file = trim(GETPOST('zipfilename_template', 'alpha'));
+$file = GETPOST('zipfilename_template', 'alpha');
 $compression = GETPOST('compression');
 
 $file = dol_sanitizeFileName($file);

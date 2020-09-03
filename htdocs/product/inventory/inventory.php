@@ -64,7 +64,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -132,7 +132,8 @@ if (empty($reshook))
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		}
-		if (! $error) {
+
+		if (! $error && ! empty($conf->productbatch->enabled)) {
 			$tmpproduct = new Product($db);
 			$result = $tmpproduct->fetch($fk_product);
 
@@ -157,7 +158,11 @@ if (empty($reshook))
 
 			$result = $tmp->create($user);
 			if ($result < 0) {
-				dol_print_error($db, $tmp->error, $tmp->errors);
+				if ($db->lasterrno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+					setEventMessages($langs->trans("DuplicateRecord"), null, 'errors');
+				} else {
+					dol_print_error($db, $tmp->error, $tmp->errors);
+				}
 			}
 		}
 	}
@@ -336,16 +341,16 @@ if ($object->id > 0)
     		{
     			if ($permissiontoadd)
     			{
-    				//print '<a href="'.DOL_URL_ROOT.'/product/inventory/inventory.php?id='.$object->id.'&action=addline" class="butAction">'.$langs->trans("AddLine").'</a>';
-
+    				/*
     				if ($conf->barcode->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaningProductBarcode").'</a>';
     				}
     				if ($conf->productbatch->enabled) {
     					print '<a href="#" class="butAction">'.$langs->trans('UpdateByScaningLot').'</a>';
+    				}*/
+    				if ($conf->barcode->enabled || $conf->productbatch->enabled) {
+    					print '<a href="#" class="butAction">'.$langs->trans("UpdateByScaning").'</a>';
     				}
-
-    				//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=savecurrent">'.$langs->trans("Save").'</a>'."\n";
     			} else {
     				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Save').'</a>'."\n";
     			}

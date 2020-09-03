@@ -716,7 +716,7 @@ if ($resql)
 
 		// Label
 		if (!empty($arrayfields['a.label']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actionstatic->label).'">';
 			print $actionstatic->label;
 			print '</td>';
 		}

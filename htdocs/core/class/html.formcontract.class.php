@@ -58,9 +58,10 @@ class FormContract
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line
+	 *	@param	int		$showRef	Show customer and supplier reference on each contract (when found)
 	 *	@return int         		Nbr of project if OK, <0 if KO
 	 */
-    public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
+    public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0)
     {
         // phpcs:enable
 		global $db, $user, $conf, $langs;
@@ -69,7 +70,8 @@ class FormContract
 		if (!empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		// Search all contacts
-		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
+		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut,';
+		$sql .= ' c.ref_customer, c.ref_supplier';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'contrat as c';
 		$sql .= " WHERE c.entity = ".$conf->entity;
 		//if ($contratListId) $sql.= " AND c.rowid IN (".$contratListId.")";
@@ -105,6 +107,13 @@ class FormContract
 						// Do nothing
 					} else {
 						$labeltoshow = dol_trunc($obj->ref, 18);
+
+						if ($showRef)
+						{
+							if ($obj->ref_customer) $labeltoshow = $labeltoshow." - ".$obj->ref_customer;
+							if ($obj->ref_supplier) $labeltoshow = $labeltoshow." - ".$obj->ref_supplier;
+						}
+
 						//if ($obj->public) $labeltoshow.=' ('.$langs->trans("SharedProject").')';
 						//else $labeltoshow.=' ('.$langs->trans("Private").')';
 						if (!empty($selected) && $selected == $obj->rowid && $obj->statut > 0)
@@ -166,9 +175,10 @@ class FormContract
      *  @param  string  $htmlname   Nom de la zone html
      *  @param  int     $maxlength	Maximum length of label
      *  @param  int     $showempty	Show empty line
+     *  @param  int     $showRef    Show customer and supplier reference on each contract (when found)
      *  @return int                 Nbr of project if OK, <0 if KO
      */
-    public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1)
+    public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0)
     {
         global $langs;
 
@@ -176,7 +186,7 @@ class FormContract
         print '<form method="post" action="'.$page.'">';
         print '<input type="hidden" name="action" value="setcontract">';
         print '<input type="hidden" name="token" value="'.newToken().'">';
-        $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty);
+        $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty, $showRef);
         print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
         print '</form>';
     }

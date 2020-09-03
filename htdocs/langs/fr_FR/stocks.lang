@@ -237,3 +237,6 @@ AlwaysShowFullArbo=Afficher l'arborescence complète de l'entrepôt sur la popup
 StockAtDatePastDesc=Vous pouvez voir ici le stock (stock réel) à une date donnée dans le passé
 StockAtDateFutureDesc=Vous pouvez voir ici le stock (stock virtuel) à une date donnée dans le futur
 CurrentStock=Stock actuel
+InventoryRealQtyHelp=Définissez la valeur sur 0 pour réinitialiser la quantité <br> Gardez le champ vide ou supprimez la ligne pour qu'il reste inchangé
+UpdateByScaningProductBarcode=Mettre à jour par scan (code-barres produit)
+UpdateByScaningLot=Mettre à jour par scan (code-barres lot/série)

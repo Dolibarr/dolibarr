@@ -35,9 +35,23 @@ ALTER TABLE llx_prelevement_bons ADD COLUMN type varchar(16) DEFAULT 'debit-orde
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture (fk_facture);
 ALTER TABLE llx_prelevement_facture_demande ADD INDEX idx_prelevement_facture_demande_fk_facture_fourn (fk_facture_fourn);
 
+ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
+
 ALTER TABLE llx_bom_bom MODIFY COLUMN duration double(24,8);
 
-ALTER TABLE llx_document_model MODIFY COLUMN type varchar(64);
+ALTER TABLE llx_bom_bom_extrafields ADD INDEX idx_bom_bom_extrafields_fk_object (fk_object);
+
+create table llx_mrp_mo_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                                 -- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_mrp_mo_extrafields DROP INDEX idx_fk_object;
+
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
 
 
 -- For v13
@@ -138,7 +152,7 @@ create table llx_recruitment_recruitmentjobposition_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_recruitment_recruitmentjobposition_extrafields ADD INDEX idx_recruitmentjobposition_fk_object(fk_object);
 
 
 
@@ -186,9 +200,10 @@ create table llx_recruitment_recruitmentcandidature_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_recruitmentcandidature_fk_object(fk_object);
 
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitmentcandidature_email_msgid(email_msgid);
+
 
 
 
@@ -261,6 +276,8 @@ ALTER TABLE llx_projet ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_ticket ADD COLUMN email_msgid varchar(255);
 ALTER TABLE llx_actioncomm ADD COLUMN reply_to varchar(255);
 
+ALTER TABLE llx_paiement ADD pos_change DOUBLE(24,8) DEFAULT 0 AFTER fk_export_compta;
+
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_CREATE','Contact address created','Executed when a contact is created','contact',50);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_SENTBYMAIL','Mails sent from third party card','Executed when you send email from contact adress card','contact',51);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('CONTACT_DELETE','Contact address deleted','Executed when a contact is deleted','contact',52);
@@ -286,3 +303,17 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_MODIFY','Candidature modified','Executed when a candidature is modified','recruitment',7512);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_SENTBYMAIL','Mails sent from candidature record','Executed when you send email from candidature record','recruitment',7514);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('RECRUITMENTCANDIDATURE_DELETE','Candidature deleted','Executed when a candidature is deleted','recruitment',7516);
+
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN entity integer NOT NULL DEFAULT 1;
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_actioncomm integer NOT NULL;
+ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_email_template integer;
+
+ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk_user, typeremind, offsetvalue, offsetunit, fk_actioncomm);
+
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
+
+
+ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
+
+

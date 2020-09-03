@@ -45,7 +45,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "mails", "languages"));
 
-$action = GETPOST('action', 'alpha') ?GETPOST('action', 'alpha') : 'view';
+$action = GETPOST('action', 'aZ09') ?GETPOST('action', 'aZ09') : 'view';
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
 
 $id = GETPOST('id', 'int');
@@ -168,6 +168,7 @@ if ($conf->contrat->enabled && $user->rights->contrat->lire)           $elementL
 if ($conf->projet->enabled)            $elementList['project'] = $langs->trans('MailToProject');
 if ($conf->ticket->enabled && $user->rights->ticket->read)            $elementList['ticket_send'] = $langs->trans('MailToTicket');
 if ($conf->recruitment->enabled && $user->rights->recruitment->recruitmentjobposition->read)            $elementList['recruitmentcandidature_send'] = $langs->trans('RecruitmentCandidatures');
+if ($conf->agenda->enabled)            $elementList['actioncomm_send'] = $langs->trans('MailToSendEventPush');
 $elementList['user'] = $langs->trans('MailToUser');
 
 $parameters = array('elementList'=>$elementList);
@@ -410,13 +411,15 @@ if (empty($reshook))
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
 
-llxHeader();
+$help_url = '';
+$title = $langs->trans("EMailsSetup");
 
-$titre = $langs->trans("EMailsSetup");
+llxHeader('', $title);
+
 $linkback = '';
 $titlepicto = 'title_setup';
 
-print load_fiche_titre($titre, $linkback, $titlepicto);
+print load_fiche_titre($title, $linkback, $titlepicto);
 
 $head = email_admin_prepare_head();
 

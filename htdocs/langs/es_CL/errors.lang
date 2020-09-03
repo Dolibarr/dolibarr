@@ -115,7 +115,6 @@ ErrorNewValueCantMatchOldValue=El nuevo valor no puede ser igual al anterior
 ErrorFailedToValidatePasswordReset=Error al reiniciar la contraseña Puede ser que el reinicio ya haya sido hecho (este enlace puede usarse solo una vez). Si no, intente reiniciar el proceso de reinicio.
 ErrorToConnectToMysqlCheckInstance=La conexión a la base de datos falla. Comprobar el servidor de la base de datos se está ejecutando (por ejemplo, con mysql / mariadb, puede ejecutarlo desde la línea de comandos con 'sudo service mysql start').
 ErrorFailedToAddContact=Error al agregar contacto
-ErrorDateMustBeBeforeToday=La fecha no puede ser mayor que hoy
 ErrorPaymentModeDefinedToWithoutSetup=Se configuró un modo de pago para que escriba %s pero la configuración de la Factura del módulo no se completó para definir la información que se mostrará para este modo de pago.
 ErrorPHPNeedModule=Error, su PHP debe tener el módulo <b>%s</b> instalado para usar esta característica.
 ErrorOpenIDSetupNotComplete=Configura el archivo de configuración de Dolibarr para permitir la autenticación de OpenID, pero la URL del servicio OpenID no está definida en la constante %s

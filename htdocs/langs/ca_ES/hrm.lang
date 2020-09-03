@@ -11,7 +11,7 @@ CloseEtablishment=Tanca l'establiment
 # Dictionary
 DictionaryPublicHolidays=HRM - Festius
 DictionaryDepartment=HRM - Llistat de departament
-DictionaryFunction=HRM - Job positions
+DictionaryFunction=HRM: llocs de treball
 # Module
 Employees=Empleats
 Employee=Empleat

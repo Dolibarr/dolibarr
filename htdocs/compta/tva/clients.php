@@ -124,6 +124,7 @@ $product_static = new Product($db);
 $payment_static = new Paiement($db);
 $paymentfourn_static = new PaiementFourn($db);
 $paymentexpensereport_static = new PaymentExpenseReport($db);
+$user_static = new User($db);
 
 $morequerystring = '';
 $listofparams = array('date_startmonth', 'date_startyear', 'date_startday', 'date_endmonth', 'date_endyear', 'date_endday');
@@ -151,7 +152,7 @@ $calcmode = '';
 if ($modetax == 0) $calcmode = $langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode = $langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode = $langs->trans('OptionPaymentForProductAndServices');
-$calcmode .= '<br>('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')';
+$calcmode .= ' <span class="opacitymedium">('.$langs->trans("TaxModuleSetupToModifyRules", DOL_URL_ROOT.'/admin/taxes.php').')</span>';
 // Set period
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $prevyear = $year_start;
@@ -216,7 +217,7 @@ $vatsup = $langs->trans("VATPaid");
 
 
 // VAT Received
-
+print '<div class="div-table-responsive">';
 print "<table class=\"noborder\" width=\"100%\">";
 
 $y = $year_current;
@@ -743,14 +744,12 @@ if (!is_array($x_coll) || !is_array($x_paye))
         print '</tr>';
     }
 
-    print '</table>';
-
     // Total to pay
-    print '<br><br>';
-    print '<table class="noborder centpercent">';
+    print '<tr><td colspan="'.($span+2).'"></td></tr>';
+
     $diff = $x_coll_sum - $x_paye_sum;
     print '<tr class="liste_total">';
-    print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
+    print '<td class="liste_total" colspan="'.($span+1).'">'.$langs->trans("TotalToPay").($q ? ', '.$langs->trans("Quadri").' '.$q : '').'</td>';
     print '<td class="liste_total nowrap right"><b>'.price(price2num($diff, 'MT'))."</b></td>\n";
     print "</tr>\n";
 
@@ -758,7 +757,7 @@ if (!is_array($x_coll) || !is_array($x_paye))
 }
 
 print '</table>';
-
+print '</div>';
 
 llxFooter();
 

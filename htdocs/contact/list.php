@@ -62,7 +62,7 @@ $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all',
 $search_cti = preg_replace('/^0+/', '', preg_replace('/[^0-9]/', '', GETPOST('search_cti', 'alphanohtml'))); // Phone number without any special chars
 $search_phone = GETPOST("search_phone", 'alpha');
 
-$search_id = trim(GETPOST("search_id", "int"));
+$search_id = GETPOST("search_id", "int");
 $search_firstlast_only = GETPOST("search_firstlast_only", 'alpha');
 $search_lastname = GETPOST("search_lastname", 'alpha');
 $search_firstname = GETPOST("search_firstname", 'alpha');
@@ -77,7 +77,7 @@ $search_no_email = GETPOST("search_no_email", 'int');
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
 		if ($value['active']) {
-			$search_{$key} = GETPOST("search_".$key, 'alpha');
+			$search_[$key] = GETPOST("search_".$key, 'alpha');
 		}
 	}
 }
@@ -265,7 +265,7 @@ if (empty($reshook))
 		if (!empty($conf->socialnetworks->enabled)) {
 			foreach ($socialnetworks as $key => $value) {
 				if ($value['active']) {
-					$search_{$key} = "";
+					$search_[$key] = "";
 				}
 			}
 		}
@@ -407,8 +407,8 @@ if (strlen($search_phone_mobile))   $sql .= natural_search('p.phone_mobile', $se
 if (strlen($search_fax))            $sql .= natural_search('p.fax', $search_fax);
 if (!empty($conf->socialnetworks->enabled)) {
 	foreach ($socialnetworks as $key => $value) {
-		if ($value['active'] && strlen($search_{$key})) {
-			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_{$key}.'%\'';
+		if ($value['active'] && strlen($search_[$key])) {
+			$sql .= ' AND p.socialnetworks LIKE \'%"'.$key.'":"'.$search_[$key].'%\'';
 		}
 	}
 }
@@ -719,7 +719,7 @@ if (!empty($conf->socialnetworks->enabled)) {
 			if (!empty($arrayfields['p.'.$key]['checked']))
 			{
 				print '<td class="liste_titre">';
-				print '<input class="flat" type="text" name="search_'.$key.'" size="6" value="'.dol_escape_htmltag($search_{$key}).'">';
+				print '<input class="flat" type="text" name="search_'.$key.'" size="6" value="'.dol_escape_htmltag($search_[$key]).'">';
 				print '</td>';
 			}
 		}

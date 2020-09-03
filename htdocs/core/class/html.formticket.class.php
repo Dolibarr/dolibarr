@@ -903,7 +903,7 @@ class FormTicket
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 				print ' &nbsp; ';
-				print '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
+				print '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
 
@@ -919,8 +919,7 @@ class FormTicket
 
 			// Subject
 			print '<tr class="email_line"><td class="titlefieldcreate">'.$langs->trans('Subject').'</td>';
-			$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-			print '<td><input type="text" class="text" size="80" name="subject" value="['.$label_title.' - '.$langs->trans("Ticket").' #'.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="[' . $conf->global->MAIN_INFO_SOCIETE_NOM . ' - ' . $langs->trans("Ticket") . ' ' . $this->ref . '] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires

@@ -81,7 +81,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {

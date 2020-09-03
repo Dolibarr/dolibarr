@@ -78,7 +78,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -471,7 +471,7 @@ if (empty($reshook)) {
 	if ($action == 'setsubject') {
 		if ($object->fetch(GETPOST('id', 'int'))) {
 			if ($action == 'setsubject') {
-				$object->subject = trim(GETPOST('subject', 'alphanohtml'));
+				$object->subject = GETPOST('subject', 'alphanohtml');
 			}
 
 			if ($action == 'setsubject' && empty($object->subject)) {

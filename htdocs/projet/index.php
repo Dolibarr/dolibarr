@@ -337,11 +337,13 @@ if ($resql)
 
 		print '<tr class="oddeven">';
 		print '<td class="nowraponall tdoverflowmax100">';
-		if ($obj->socid)
+		if ($obj->socid > 0)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->email = $obj->email;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
 			$companystatic->status = $obj->status;
 
 			print $companystatic->getNomUrl(1);

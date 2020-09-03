@@ -129,7 +129,7 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action = "create"; // Go back to create page
 			} else {
-				$object->name	= trim(GETPOST("nom", 'nohtml'));
+				$object->name	= GETPOST("nom", 'nohtml');
 				//$object->nom = $object->name; // For backward compatibility
 				$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 
@@ -204,7 +204,7 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= trim(GETPOST("nom", 'nohtml'));
+			$object->name	= GETPOST("nom", 'nohtml');
 			//$object->nom = $object->name; // For backward compatibility
 			$object->note	= dol_htmlcleanlastbr(trim(GETPOST("note", 'none')));
 

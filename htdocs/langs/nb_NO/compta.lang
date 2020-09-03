@@ -69,6 +69,7 @@ SocialContribution=Skatt eller avgift
 SocialContributions=Skatter eller avgifter
 SocialContributionsDeductibles=Fradragsberettigede avgifter
 SocialContributionsNondeductibles=Ikke fradragsberettigede avgifter
+DateOfSocialContribution=Date of social or fiscal tax
 LabelContrib=Etikett bidrag
 TypeContrib=Type bidrag
 MenuSpecialExpenses=Spesielle utgifter

@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=允許在會計帳戶末尾管理不同數量的零。一
 BANK_DISABLE_DIRECT_INPUT=停用銀行帳戶中直接記錄交易
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=在日記帳上啟用草稿匯出
 ACCOUNTANCY_COMBO_FOR_AUX=為子公司帳戶啟用組合列表（如果您有很多合作方，可能會很慢）
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=銷售日記帳
 ACCOUNTING_PURCHASE_JOURNAL=採購日記帳
@@ -284,6 +285,7 @@ ShowTutorial=顯示教程
 NotReconciled=未對帳
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=套用大量分類
 AddAccountFromBookKeepingWithNoCategories=個性化組中尚未有可用帳戶
 CategoryDeleted=會計項目的類別已移除

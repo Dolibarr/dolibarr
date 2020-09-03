@@ -100,21 +100,17 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
     print '<body id="mainbody" class="publicnewmemberform">';
 
     // Define urllogo
-    $width = 0;
     $urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
 
     if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-        $width = 150;
     } elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo))
     {
         $urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-        $width = 150;
     } elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg'))
     {
         $urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-        $width = 150;
     }
 
 	print '<div class="center">';
@@ -124,7 +120,6 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
     	print '<div class="backgreypublicpayment">';
     	print '<div class="logopublicpayment">';
     	print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-    	if ($width) print ' width="'.$width.'"';
     	print '>';
     	print '</div>';
     	if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {

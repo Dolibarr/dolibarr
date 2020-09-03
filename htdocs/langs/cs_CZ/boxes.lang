@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Objednávky dodavatele: poslední %s změn�
 BoxTitleLastModifiedCustomerBills=Zákaznické faktury: poslední změna %s
 BoxTitleLastModifiedCustomerOrders=Prodejní objednávky: poslední %s změny
 BoxTitleLastModifiedPropals=Poslední modifikované návrhy %s
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Zákaznické faktury
 ForCustomersOrders=Zákaznické objednávky
 ForProposals=Nabídky
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=Účet pozastavení není definován
 BoxLastCustomerShipments=Poslední zásilky zákazníků
 BoxTitleLastCustomerShipments=Nejnovější %s zásilky zákazníků
 NoRecordedShipments=Žádná zaznamenaná zásilka zákazníka
+# Pages
+AccountancyHome=Účetnictví

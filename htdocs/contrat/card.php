@@ -1897,7 +1897,7 @@ if ($action == 'create')
 				print '</tr>';
 
 				print '<tr class="oddeven">';
-				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td>';
+				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled ? 4 : 3).'"><input type="text" class="minwidth300" name="comment" value="'.GETPOST("comment", 'alphanohtml').'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
 				print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';

@@ -72,7 +72,6 @@ Deleted=Διαγράφηκε
 
 # Dict
 Type=Τύπος
-Category=Αναλυτικός κώδικας
 Severity=Δριμύτητα
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Ορίστε αυτόματα τον χρήστη που
 TicketsAutoAssignTicketHelp=Κατά τη δημιουργία ενός εισιτηρίου, ο χρήστης μπορεί να αντιστοιχιστεί αυτόματα στο εισιτήριο.
 TicketNumberingModules=Μονάδα αρίθμησης εισιτηρίων
 TicketNotifyTiersAtCreation=Ειδοποιήστε τρίτο μέρος στη δημιουργία
-TicketGroup=Ομάδα
 TicketsDisableCustomerEmail=Πάντα να απενεργοποιείτε τα μηνύματα ηλεκτρονικού ταχυδρομείου όταν δημιουργείται ένα εισιτήριο από τη δημόσια διασύνδεση
 TicketsPublicNotificationNewMessage=Send email(s) when a new message is added
 TicketsPublicNotificationNewMessageHelp=Send email(s) when a new message is added from public interface (to assigned user or the notifications email to (update) and/or the notifications email to)
@@ -162,7 +160,7 @@ CreatedBy=Δημιουργήθηκε από
 NewTicket=Νέο εισιτήριο
 SubjectAnswerToTicket=Απάντηση εισιτηρίου
 TicketTypeRequest=Τύπος αιτήματος
-TicketCategory=Αναλυτικός κώδικας
+TicketCategory=Ομάδα
 SeeTicket=Δείτε εισιτήριο
 TicketMarkedAsRead=Το εισιτήριο έχει επισημανθεί ως αναγνωσμένο
 TicketReadOn=Συνέχισε να διαβάζεις

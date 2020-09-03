@@ -246,7 +246,36 @@ class EmailCollector extends CommonObject
      */
     public function create(User $user, $notrigger = false)
     {
-        return $this->createCommon($user, $notrigger);
+        $id = $this->createCommon($user, $notrigger);
+
+        if (is_array($this->filters) && count($this->filters)) {
+        	$emailcollectorfilter = new EmailCollectorFilter($this->db);
+
+        	foreach ($this->filters as $filter) {
+        		$emailcollectorfilter->type = $filter['type'];
+        		$emailcollectorfilter->rulevalue = $filter['rulevalue'];
+        		$emailcollectorfilter->fk_emailcollector = $this->id;
+        		$emailcollectorfilter->status = $filter['status'];
+
+        		$emailcollectorfilter->create($user);
+	        }
+        }
+
+        if (is_array($this->filters) && count($this->filters)) {
+        	$emailcollectoroperation = new EmailCollectorAction($this->db);
+
+        	foreach ($this->actions as $operation) {
+        		$emailcollectoroperation->type = $operation['type'];
+        		$emailcollectoroperation->actionparam = $operation['actionparam'];
+        		$emailcollectoroperation->fk_emailcollector = $this->id;
+        		$emailcollectoroperation->status = $operation['status'];
+        		$emailcollectoroperation->position = $operation['position'];
+
+        		$emailcollectoroperation->create($user);
+        	}
+        }
+
+        return $id;
     }
 
     /**
@@ -269,6 +298,10 @@ class EmailCollector extends CommonObject
 
         // Load source object
         $object->fetchCommon($fromid);
+
+        $object->fetchFilters();	// Rules
+        $object->fetchActions();	// Operations
+
         // Reset some properties
         unset($object->id);
         unset($object->fk_user_creat);
@@ -295,7 +328,7 @@ class EmailCollector extends CommonObject
 
         // Create clone
         $object->context['createfromclone'] = 'createfromclone';
-        $result = $object->createCommon($user);
+        $result = $object->create($user);
         if ($result < 0) {
             $error++;
             $this->error = $object->error;
@@ -605,6 +638,7 @@ class EmailCollector extends CommonObject
      * Fetch filters
      *
      * @return 	int		<0 if KO, >0 if OK
+     * @see fetchActions()
      */
     public function fetchFilters()
     {
@@ -636,6 +670,7 @@ class EmailCollector extends CommonObject
      * Fetch actions
      *
      * @return 	int		<0 if KO, >0 if OK
+     * @see fetchFilters()
      */
     public function fetchActions()
     {
@@ -1085,7 +1120,7 @@ class EmailCollector extends CommonObject
 
             dol_syslog("Start of loop on email", LOG_INFO, 1);
 
-            $i = 0;
+            $iforemailloop = 0;
             foreach ($arrayofemail as $imapemail)
             {
                 if ($nbemailprocessed > 1000)
@@ -1093,7 +1128,7 @@ class EmailCollector extends CommonObject
                     break; // Do not process more than 1000 email per launch (this is a different protection than maxnbcollectedpercollect
                 }
 
-                $i++;
+                $iforemailloop++;
 
                 $header = imap_fetchheader($connection, $imapemail, 0);
                 $header = preg_replace('/\r\n\s+/m', ' ', $header); // When a header line is on several lines, merge lines
@@ -1107,9 +1142,12 @@ class EmailCollector extends CommonObject
                 if (!empty($headers['in-reply-to']) && empty($headers['In-Reply-To'])) { $headers['In-Reply-To'] = $headers['in-reply-to']; }
                 if (!empty($headers['references']) && empty($headers['References'])) { $headers['References'] = $headers['references']; }
                 if (!empty($headers['message-id']) && empty($headers['Message-ID'])) { $headers['Message-ID'] = $headers['message-id']; }
+
                 $headers['Subject'] = $this->decodeSMTPSubject($headers['Subject']);
 
-                dol_syslog("** Process email ".$i." References: ".$headers['References']);
+
+                dol_syslog("** Process email ".$iforemailloop." References: ".$headers['References']);
+                //print "Process mail ".$iforemailloop." Subject: ".dol_escape_htmltag($headers['Subject'])." References: ".dol_escape_htmltag($headers['References'])." In-Reply-To: ".dol_escape_htmltag($headers['In-Reply-To'])."<br>\n";
 
                 // If there is a filter on trackid
                 if ($searchfilterdoltrackid > 0)
@@ -1135,6 +1173,17 @@ class EmailCollector extends CommonObject
                 		$nbemailprocessed++;
                 		continue;	// Exclude email
                 	}
+                	// Note: we can have
+                	// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewriten)
+                	$isanswer = 0;
+                	if (preg_match('/Re\s*:\s+/i', $headers['Subject'])) $isanswer = 1;
+                	//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
+                	//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
+
+                	if (!$isanswer) {
+                		$nbemailprocessed++;
+                		continue;	// Exclude email
+                	}
                 }
                 if ($searchfilterisnotanswer > 0) {
                 	if (!empty($headers['In-Reply-To']))
@@ -1142,7 +1191,7 @@ class EmailCollector extends CommonObject
                 		// Note: we can have
                 		// Message-ID=A, In-Reply-To=B, References=B and message can BE an answer or NOT (a transfer rewriten)
                 		$isanswer = 0;
-                		if (preg_match('/Re:\s+/i', $headers['Subject'])) $isanswer = 1;
+                		if (preg_match('/Re\s*:\s+/i', $headers['Subject'])) $isanswer = 1;
                 		//if ($headers['In-Reply-To'] != $headers['Message-ID'] && empty($headers['References'])) $isanswer = 1;	// If in-reply-to differs of message-id, this is a reply
                 		//if ($headers['In-Reply-To'] != $headers['Message-ID'] && !empty($headers['References']) && strpos($headers['References'], $headers['Message-ID']) !== false) $isanswer = 1;
                 		if ($isanswer) {
@@ -1152,6 +1201,7 @@ class EmailCollector extends CommonObject
                 	}
                 }
 
+                //print "Process mail ".$iforemailloop." Subject: ".dol_escape_htmltag($headers['Subject'])." selected<br>\n";
 
                 $thirdpartystatic = new Societe($this->db);
                 $contactstatic = new Contact($this->db);
@@ -1175,6 +1225,7 @@ class EmailCollector extends CommonObject
                 dol_syslog("msgid=".$overview[0]->message_id." date=".dol_print_date($overview[0]->udate, 'dayrfc', 'gmt')." from=".$overview[0]->from." to=".$overview[0]->to." subject=".$overview[0]->subject);
 
                 $overview[0]->subject = $this->decodeSMTPSubject($overview[0]->subject);
+
                 $overview[0]->from = $this->decodeSMTPSubject($overview[0]->from);
 
                 // Removed emojis
@@ -1264,6 +1315,7 @@ class EmailCollector extends CommonObject
                 }
                 $fk_element_id = 0; $fk_element_type = '';
 
+
                 $contactid = 0; $thirdpartyid = 0; $projectid = 0; $ticketid = 0;
 
                 // Analyze TrackId in field References. For example:
@@ -1277,10 +1329,12 @@ class EmailCollector extends CommonObject
                 $reg = array();
                 if (!empty($headers['References']))
                 {
-                	$arrayofreferences = preg_split('/\s+/', $headers['References']);
+                	$arrayofreferences = preg_split('/(,|\s+)/', $headers['References']);
+                	//var_dump($headers['References']);
+                	//var_dump($arrayofreferences);
 
                 	foreach ($arrayofreferences as $reference) {
-                		//print "Process reference ".dol_escape_htmltag($reference)."<br>\n";
+                		//print "Process mail ".$iforemailloop." email_msgid ".$msgid.", date ".dol_print_date($date, 'dayhour').", subject ".$subject.", reference ".dol_escape_htmltag($reference)."<br>\n";
                 		if (preg_match('/dolibarr-([a-z]+)([0-9]+)@'.preg_quote($host, '/').'/', $reference, $reg)) {
                 			// This is a Dolibarr reference
 		                    $trackid = $reg[1].$reg[2];
@@ -1459,6 +1513,7 @@ class EmailCollector extends CommonObject
 
                     // Make Operation
                     dol_syslog("Execute action ".$operation['type']." actionparam=".$operation['actionparam'].' thirdpartystatic->id='.$thirdpartystatic->id.' contactstatic->id='.$contactstatic->id.' projectstatic->id='.$projectstatic->id);
+                    dol_syslog("Execute action fk_element_id=".$fk_element_id." fk_element_type=".$fk_element_type);
 
                     $actioncode = 'EMAIL_IN';
                     // If we scan the Sent box, we use the code for out email
@@ -1590,10 +1645,10 @@ class EmailCollector extends CommonObject
                     // Create event
                     elseif ($operation['type'] == 'recordevent')
                     {
-                    	$alreadycreated = 0;
-                    	// TODO Check if $msgid already in database for $conf->entity
+                    	$actioncomm = new ActionComm($this->db);
 
-                    	if (!$alreadycreated)
+                    	$alreadycreated = $actioncomm->fetch(0, '', '', $msgid);
+                    	if ($alreadycreated == 0)
                     	{
 	                        if ($projectstatic->id > 0)
 	                        {
@@ -1619,7 +1674,6 @@ class EmailCollector extends CommonObject
 	                        $descriptionfull = dol_concatdesc($descriptionfull, $header);
 
 	                        // Insert record of emails sent
-	                        $actioncomm = new ActionComm($this->db);
 	                        $actioncomm->type_code   = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 	                        $actioncomm->code        = 'AC_'.$actioncode;
 	                        $actioncomm->label       = $langs->trans("ActionAC_".$actioncode).' - '.$langs->trans("MailFrom").' '.$from;
@@ -1646,13 +1700,24 @@ class EmailCollector extends CommonObject
 	                        if (!in_array($fk_element_type, array('societe', 'contact', 'project', 'user')))
 	                        {
 	                            $actioncomm->fk_element  = $fk_element_id;
+	                            $actioncomm->elementid  = $fk_element_id;
 	                            $actioncomm->elementtype = $fk_element_type;
+	                            if (is_object($objectemail) && $objectemail->module) {
+	                            	$actioncomm->elementtype .= '@'.$objectemail->module;
+	                            }
 	                        }
 
 	                        //$actioncomm->extraparams = $extraparams;
 
 	                        // Overwrite values with values extracted from source email
 	                        $errorforthisaction = $this->overwritePropertiesOfObject($actioncomm, $operation['actionparam'], $messagetext, $subject, $header);
+
+	                        /*var_dump($fk_element_id);
+	                        var_dump($fk_element_type);
+	                        var_dump($alreadycreated);
+	                        var_dump($operation['type']);
+	                        var_dump($actioncomm);
+	                        exit;*/
 
 	                        if ($errorforthisaction)
 	                        {
@@ -1672,7 +1737,7 @@ class EmailCollector extends CommonObject
                     {
                     	$projecttocreate = new Project($this->db);
 
-                    	$alreadycreated = $projecttocreate->fetch(0, '', $msgid);
+                    	$alreadycreated = $projecttocreate->fetch(0, '', '', $msgid);
                     	if ($alreadycreated == 0)
                     	{
 	                        if ($thirdpartystatic->id > 0)
@@ -2276,10 +2341,14 @@ class EmailCollector extends CommonObject
   	}
 
   	/**
-  	 * Decode a subject string
+  	 * Decode a subject string according to RFC2047
+  	 * Example: '=?Windows-1252?Q?RE=A0:_ABC?=' => 'RE : ABC...'
+  	 * Example: '=?UTF-8?Q?A=C3=A9B?=' => 'AéB'
+  	 * Example: '=?UTF-8?B?2KLYstmF2KfbjNi0?=' =>
+  	 * Example: '=?utf-8?B?UkU6IG1vZHVsZSBkb2xpYmFyciBnZXN0aW9ubmFpcmUgZGUgZmljaGllcnMg?= =?utf-8?B?UsOpZsOpcmVuY2UgZGUgbGEgY29tbWFuZGUgVFVHRURJSklSIOKAkyBwYXNz?= =?utf-8?B?w6llIGxlIDIyLzA0LzIwMjA=?='
   	 *
   	 * @param 	string	$subject		Subject
-  	 * @return 	string					Decoded subject
+  	 * @return 	string					Decoded subject (in UTF-8)
   	 */
   	protected function decodeSMTPSubject($subject)
   	{
@@ -2287,20 +2356,21 @@ class EmailCollector extends CommonObject
   		// Can use also imap_mime_header_decode($str)
   		// Can use also mb_decode_mimeheader($str)
   		// Can use also iconv_mime_decode($str, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8')
-  		if (function_exists('iconv_mime_decode')) {
-  			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
-  		} elseif (function_exists('imap_mime_header_decode')) {
+		if (function_exists('imap_mime_header_decode') && function_exists('iconv_mime_decode')) {
   			$elements = imap_mime_header_decode($subject);
   			$newstring = '';
   			if (!empty($elements)) {
   				$num = count($elements);
   				for ($i = 0; $i < $num; $i++) {
-  					$newstring .= ($newstring ? ' ' : '').$elements[$i]->text;
+  					$stringinutf8 = (in_array(strtoupper($elements[$i]->charset), array('DEFAULT', 'UTF-8')) ? $elements[$i]->text : iconv_mime_decode($elements[$i]->text, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, $elements[$i]->charset));
+  					$newstring .= $stringinutf8;
   				}
   				$subject = $newstring;
   			}
-  		} elseif (function_exists('mb_decode_mimeheader')) {
-  			$subject = mb_decode_mimeheader($subject);
+		} elseif (!function_exists('mb_decode_mimeheader')) {
+			$subject = mb_decode_mimeheader($subject);
+		} elseif (function_exists('iconv_mime_decode')) {
+  			$subject = iconv_mime_decode($subject, ICONV_MIME_DECODE_CONTINUE_ON_ERROR, 'UTF-8');
   		}
 
   		return $subject;

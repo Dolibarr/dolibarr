@@ -392,7 +392,7 @@ class modEmailCollector extends DolibarrModules
 				$sqlforexampleFilterC3 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'to', 'jobs@example.com', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
 
 				$sqlforexampleC4 = "INSERT INTO ".MAIN_DB_PREFIX."emailcollector_emailcollectoraction (fk_emailcollector, type, actionparam, date_creation, fk_user_creat, status)";
-				$sqlforexampleC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'candidature', 'tmp_from=EXTRACT:HEADER:^From:(.*)<.*>;fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*);description=EXTRACT:BODY:(.*);lastname=SET:__tmp_from__', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
+				$sqlforexampleC4 .= " VALUES ((SELECT rowid FROM ".MAIN_DB_PREFIX."emailcollector_emailcollector WHERE ref = 'Collect_Candidatures' and entity = ".$conf->entity."), 'candidature', 'tmp_from=EXTRACT:HEADER:^From:(.*)(<.*>)?;fk_recruitmentjobposition=EXTRACT:HEADER:^To:[^\n]*\+([^\n]*);description=EXTRACT:BODY:(.*);lastname=SET:__tmp_from__', '".$this->db->idate(dol_now())."', ".$user->id.", 1)";
 
 				$sql[] = $sqlforexampleC1;
 				$sql[] = $sqlforexampleFilterC1;

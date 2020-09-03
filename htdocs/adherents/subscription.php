@@ -854,7 +854,7 @@ if ($rowid > 0) {
             print '"></td></tr>';
 
             // Complementary action
-            if (!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) {
+            if ((!empty($conf->banque->enabled) || !empty($conf->facture->enabled)) && empty($conf->global->ADHERENT_SUBSCRIPTION_HIDECOMPLEMENTARYACTIONS)) {
                 $company = new Societe($db);
                 if ($object->fk_soc) {
                     $result = $company->fetch($object->fk_soc);

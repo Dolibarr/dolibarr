@@ -2068,7 +2068,7 @@ function pdf_getTotalQty($object, $type, $outputlangs)
  */
 function pdf_getLinkedObjects($object, $outputlangs)
 {
-	global $hookmanager;
+	global $db, $hookmanager;
 
 	$linkedobjects = array();
 
@@ -2130,8 +2130,13 @@ function pdf_getLinkedObjects($object, $outputlangs)
 			    // We concat this record info into fields xxx_value. title is overwrote.
 			    if (empty($object->linkedObjects['commande']) && $object->element != 'commande')	// There is not already a link to order and object is not the order, so we show also info with order
 			    {
-			        $elementobject->fetchObjectLinked();
-			        if (!empty($elementobject->linkedObjects['commande'])) $order = reset($elementobject->linkedObjects['commande']);
+			        $elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
+			        if (! empty($elementobject->linkedObjectsIds['commande'])){
+						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+						$order = new Commande($db);
+						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
+						if ($ret < 1) { $order=null; }
+					}
 			    }
 			    if (!is_object($order))
 			    {
