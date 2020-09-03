@@ -142,4 +142,61 @@ class FormPropal
         }
         print '</select>';
     }
+
+	/**
+	 *    Return combo list of differents status of a proposal
+	 *    Values are id of table c_propalst
+	 *
+	 *    @param	string	$selected   	Preselected value
+	 *    @param	int		$short			Use short labels
+	 *    @param	int		$excludedraft	0=All status, 1=Exclude draft status
+	 *    @param	int 	$showempty		1=Add empty line
+	 *    @param    string  $mode           'customer', 'supplier'
+	 *    @param    string  $htmlname       Name of select field
+	 *    @return	void
+	 */
+
+	public function selectProposalCommercial($selected = '', $short = 0, $excludedraft = 0, $showempty = 1, $mode = 'customer', $htmlname = 'propal_commercial')
+	{
+		global $langs;
+
+		$prefix = '';
+		$prefix = "PropalStatus";
+
+		$sql = "SELECT rowid, lastname, firstname FROM " . MAIN_DB_PREFIX . "user";
+		$sql .= " WHERE rowid IN";
+		$sql .= " (SELECT commercial FROM ".MAIN_DB_PREFIX."propal_extrafields)";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+					$listofcommercial[$i] = array('id' => $obj->rowid, 'lastname' => $obj->lastname, 'firstname' => $obj->firstname);
+					$i++;
+				}
+			}
+		} else {
+			dol_print_error($this->db);
+		}
+
+		print '<select class="flat" name="'.$htmlname.'">';
+		if ($showempty) print '<option value="-1">&nbsp;</option>';
+
+		foreach($listofcommercial as $key => $obj)
+		{
+
+			if ($selected != '' && $selected == $obj['id'])
+			{
+//				TODO
+			}
+			else
+			{
+				print '<option value='.$obj['id'].'>'.$obj['lastname'].'&nbsp;'.$obj['firstname'];
+			}
+			print '</option>';
+		}
+		print '</select>';
+	}
 }
