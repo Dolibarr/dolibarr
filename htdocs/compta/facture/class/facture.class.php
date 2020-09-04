@@ -1819,6 +1819,7 @@ class Facture extends CommonInvoice
 		// Clean parameters
 		if (empty($this->type)) $this->type = self::TYPE_STANDARD;
 		if (isset($this->ref)) $this->ref = trim($this->ref);
+		if (isset($this->ref_ext)) $this->ref_ext = trim($this->ref_ext);
 		if (isset($this->ref_client)) $this->ref_client = trim($this->ref_client);
 		if (isset($this->increment)) $this->increment = trim($this->increment);
 		if (isset($this->close_code)) $this->close_code = trim($this->close_code);
@@ -1837,6 +1838,7 @@ class Facture extends CommonInvoice
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET";
 		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
+		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
 		$sql .= " type=".(isset($this->type) ? $this->db->escape($this->type) : "null").",";
 		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
 		$sql .= " increment=".(isset($this->increment) ? "'".$this->db->escape($this->increment)."'" : "null").",";
