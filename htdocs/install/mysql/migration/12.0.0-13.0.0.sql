@@ -312,4 +312,4 @@ ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (st
 
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 
-
+ALTER TABLE llx_commandedet ADD COLUMN ref_ext varchar(255) AFTER label;
