@@ -91,16 +91,17 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 
 if ($action == 'setwarehouse')
 {
-	if (GETPOST('default_warehouse', 'int') > 0)
-	{
-		$default_warehouse = GETPOST('default_warehouse', 'int');
+	$default_warehouse = GETPOST('default_warehouse', 'int');
+	if ($default_warehouse > 0) {
 		$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $default_warehouse, 'chaine', 0, '', $conf->entity);
-		if ($res > 0) {
-		    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	    } else {
-			$error++;
-		    setEventMessages($langs->trans("Error"), null, 'errors');
-		}
+	} else {
+		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity)
+	}
+	if ($res > 0) {
+	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+    } else {
+		$error++;
+	    setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
