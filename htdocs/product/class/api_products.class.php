@@ -897,7 +897,7 @@ class Products extends DolibarrApi
 
         $sql = "SELECT t.rowid, t.ref, t.ref_ext, t.label, t.rang, t.entity";
         $sql .= " FROM ".MAIN_DB_PREFIX."product_attribute as t";
-        $sql .= ' WHERE t.entity IN ('.getEntity('product_attribute').')';
+        $sql .= ' WHERE t.entity IN ('.getEntity('product').')';
 
         // Add sql filters
         if ($sqlfilters) {
@@ -966,10 +966,10 @@ class Products extends DolibarrApi
         $result = $prodattr->fetch((int) $id);
 
         if ($result < 0) {
-            throw new RestException(404, "Attribute not found");
+            throw new RestException(404, "Product attribute not found");
         }
 
-        $fields = ["id", "ref", "ref_ext", "label", "rang"];
+        $fields = ["id", "ref", "ref_ext", "label", "rang", "entity"];
 
         foreach ($prodattr as $field => $value) {
             if (!in_array($field, $fields)) {
@@ -977,13 +977,13 @@ class Products extends DolibarrApi
             }
         }
 
-        $sql = "SELECT COUNT(*) count FROM ".MAIN_DB_PREFIX."product_attribute_combination2val pac2v";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination pac ON pac2v.fk_prod_combination = pac.rowid";
-        $sql .= " WHERE pac2v.fk_prod_attr = ".(int) $prodattr->id." AND pac.entity IN (".getEntity('product').")";
-        $query = $this->db->query($sql);
-        $result = $this->db->fetch_object($query);
-
-        $prodattr->is_used_by_products = (bool) $result->count;
+        $sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
+        $sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
+        $sql .= " WHERE pac2v.fk_prod_attr = ".((int) $prodattr->id)." AND pac.entity IN (".getEntity('product').")";
+        
+		$resql = $this->db->query($sql);
+        $obj = $this->db->fetch_object($resql);
+        $prodattr->is_used_by_products = (int) $obj->nb;
 
         return $prodattr;
     }
