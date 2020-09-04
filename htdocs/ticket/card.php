@@ -1027,15 +1027,15 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 		} else {
 			// Type
 			print '<tr><td class="titlefield">'.$langs->trans("Type").'</td><td>';
-			print $langs->getLabelFromKey($db, $object->type_code, 'c_ticket_type', 'code', 'label');
+			print $langs->getLabelFromKey($db, 'TicketTypeShort' . $object->type_code, 'c_ticket_type', 'code', 'label', $object->type_code);
 			print '</td></tr>';
 			// Group
 			print '<tr><td>'.$langs->trans("TicketCategory").'</td><td>';
-			print $langs->getLabelFromKey($db, $object->category_code, 'c_ticket_category', 'code', 'label');
+			print $langs->getLabelFromKey($db, 'TicketCategoryShort' . $object->category_code, 'c_ticket_category', 'code', 'label', $object->category_code);
 			print '</td></tr>';
 			// Severity
 			print '<tr><td>'.$langs->trans("TicketSeverity").'</td><td>';
-			print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticket_severity', 'code', 'label');
+			print $langs->getLabelFromKey($db, 'TicketSeverityShort' . $object->severity_code, 'c_ticket_severity', 'code', 'label', $object->severity_code);
 			print '</td></tr>';
 		}
 		print '</table>'; // End table actions
