@@ -1207,7 +1207,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     print '</div>';
 
-    print '<div class="div-table-responsive-no-min">';
+    print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
     print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
     print ' <tr class="liste_titre">';
 	// Column title of weeks numbers
@@ -1215,7 +1215,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     $i = 0;
     while ($i < 7)
     {
-        print '  <td class="center bold uppercase">';
+        print '  <td class="center bold uppercase tdfordaytitle">';
         $numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
         if (!empty($conf->dol_optimize_smallscreen))
         {
@@ -1308,12 +1308,12 @@ if (empty($action) || $action == 'show_month')      // View by month
     print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     print '</div></div>';
 
-    print '<div class="div-table-responsive-no-min">';
+    print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
     print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
     print ' <tr class="liste_titre">';
     $i = 0;
     while ($i < 7) {
-        echo '  <td class="center bold uppercase">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
+        echo '  <td class="center bold uppercase tdfordaytitle">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
         $i++;
     }
     echo " </tr>\n";
@@ -1368,11 +1368,10 @@ if (empty($action) || $action == 'show_month')      // View by month
     print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     print '</div></div>';
 
-    print '<div class="div-table-responsive-no-min">';
+    print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
     echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month noborderbottom" style="margin-bottom: 5px !important;">';
 
     echo ' <tr class="tagtr liste_titre">';
-    echo '  <td class="tagtd width100"></td>';
     echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
     echo " </td>\n";
 

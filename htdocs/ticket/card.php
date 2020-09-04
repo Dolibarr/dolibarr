@@ -179,7 +179,7 @@ if (empty($reshook)) {
 			$id = $object->create($user);
 			if ($id <= 0) {
 				$error++;
-				setEventMessage($object->error, $object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'create';
 			}
 
@@ -305,7 +305,7 @@ if (empty($reshook)) {
 			$ret = $object->update($user);
 			if ($ret <= 0) {
 				$error++;
-				setEventMessage($object->error, $object->errors, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$action = 'edit';
 			}
 
