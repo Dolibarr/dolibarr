@@ -344,8 +344,8 @@ if ($resql)
 	if (!empty($arrayfields['t.entity']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_entity" value="'.$search_entity.'" size="8"></td>';
 	if (!empty($arrayfields['t.batch']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_batch" value="'.$search_batch.'" size="8"></td>';
 	if (!empty($arrayfields['t.fk_product']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_product" value="'.$search_product.'" size="8"></td>';
-	if (!empty($arrayfields['t.sellby']['checked']) && empty($conf->global->PRODUCT_DISABLE_SELLBY)) print '<td class="liste_titre"></td>';
-	if (!empty($arrayfields['t.eatby']['checked']) && empty($conf->global->PRODUCT_DISABLE_EATBY)) print '<td class="liste_titre"></td>';
+	if (!empty($arrayfields['t.sellby']['checked'])) print '<td class="liste_titre"></td>';
+	if (!empty($arrayfields['t.eatby']['checked'])) print '<td class="liste_titre"></td>';
 	if (!empty($arrayfields['t.fk_user_creat']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_creat" value="'.$search_fk_user_creat.'" size="10"></td>';
 	if (!empty($arrayfields['t.fk_user_modif']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_fk_user_modif" value="'.$search_fk_user_modif.'" size="10"></td>';
 	if (!empty($arrayfields['t.import_key']['checked'])) print '<td class="liste_titre"><input type="text" class="flat" name="search_import_key" value="'.$search_import_key.'" size="10"></td>';
@@ -387,8 +387,8 @@ if ($resql)
 	if (!empty($arrayfields['t.entity']['checked']))        print_liste_field_titre($arrayfields['t.entity']['label'], $_SERVER['PHP_SELF'], 't.entity', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['t.batch']['checked']))         print_liste_field_titre($arrayfields['t.batch']['label'], $_SERVER['PHP_SELF'], 't.batch', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['t.fk_product']['checked']))    print_liste_field_titre($arrayfields['t.fk_product']['label'], $_SERVER['PHP_SELF'], 't.fk_product', '', $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['t.sellby']['checked']) && empty($conf->global->PRODUCT_DISABLE_SELLBY))        print_liste_field_titre($arrayfields['t.sellby']['label'], $_SERVER['PHP_SELF'], 't.sellby', '', $param, '', $sortfield, $sortorder);
-	if (!empty($arrayfields['t.eatby']['checked']) && empty($conf->global->PRODUCT_DISABLE_EATBY))         print_liste_field_titre($arrayfields['t.eatby']['label'], $_SERVER['PHP_SELF'], 't.eatby', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['t.sellby']['checked']))        print_liste_field_titre($arrayfields['t.sellby']['label'], $_SERVER['PHP_SELF'], 't.sellby', '', $param, '', $sortfield, $sortorder);
+	if (!empty($arrayfields['t.eatby']['checked']))         print_liste_field_titre($arrayfields['t.eatby']['label'], $_SERVER['PHP_SELF'], 't.eatby', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['t.fk_user_creat']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_creat']['label'], $_SERVER['PHP_SELF'], 't.fk_user_creat', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['t.fk_user_modif']['checked'])) print_liste_field_titre($arrayfields['t.fk_user_modif']['label'], $_SERVER['PHP_SELF'], 't.fk_user_modif', '', $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['t.import_key']['checked']))    print_liste_field_titre($arrayfields['t.import_key']['label'], $_SERVER['PHP_SELF'], 't.import_key', '', $param, '', $sortfield, $sortorder);
@@ -448,12 +448,12 @@ if ($resql)
 				print '<td>'.$productstatic->getNomUrl(1).'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
-			if (!empty($arrayfields['t.sellby']['checked']) && empty($conf->global->PRODUCT_DISABLE_SELLBY))
+			if (!empty($arrayfields['t.sellby']['checked']))
 			{
 				print '<td>'.dol_print_date($db->jdate($obj->sellby), 'day').'</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
-			if (!empty($arrayfields['t.eatby']['checked']) && empty($conf->global->PRODUCT_DISABLE_EATBY))
+			if (!empty($arrayfields['t.eatby']['checked']))
 			{
 				print '<td>'.dol_print_date($db->jdate($obj->eatby), 'day').'</td>';
 				if (!$i) $totalarray['nbfield']++;
