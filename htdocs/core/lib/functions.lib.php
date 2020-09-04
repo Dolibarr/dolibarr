@@ -8670,3 +8670,65 @@ function currentToken()
 {
 	return $_SESSION['token'];
 }
+
+/**
+ * Start a table with headers and a optinal clickable number
+ * (don't forget to close the table with a HTML TABLE and a HTML DIV element)
+ *
+ * @param string|array	$headers		The header(s) of the table (headers inside a array are automatic translated)
+ * @param integer		$emptyRows		(optional) The count of empty rows after the first header (use this instead of empty headers)
+ * @param integer		$number			(optional) The number that is shown right after the first header
+ * @param string		$internalLink	(optional) The link to a internal dolibarr page, when click on the number (without the first "/")
+ * @param string		$arguments		(optional) Additional arguments for the link (e.g. "search_status=0")
+ * @return void
+ */
+function StartSimpleTableHeader($headers, $emptyRows = 0, $number = -1, $internalLink = "", $arguments = "")
+{
+	global $langs;
+
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	
+	print $emptyRows < 1 ? '<th>' : '<th colspan="'.($emptyRows + 1).'">';
+
+	print is_array($headers) ? $langs->trans($headers[0]) : $headers;
+
+	if($number > -1)
+	{
+		// extra space between the first header and the number
+		print ' ';
+	}
+
+	if(!empty($internalLink))
+	{
+		print '<a href="'.DOL_URL_ROOT.'/'.$internalLink.'?'.$arguments.'">';
+	}
+
+	if($number > -1)
+	{
+		print '<span class="badge">'.$number.'</span>';
+	}
+
+	if(!empty($internalLink))
+	{
+		print '</a>';
+	}
+
+	print '</th>';
+
+	if(!is_array($headers) || count($headers) < 2)
+	{
+		print '</tr>';
+		return;
+	}
+
+	foreach(array_slice($headers, 1) as $header)
+	{
+		print '<th>';
+		print print $langs->trans($header);
+		print '</th>';
+	}
+
+	print '</tr>';
+}

@@ -168,10 +168,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("ProposalsDraft").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
+		StartSimpleTableHeader(["ProposalsDraft"], 2, $num, "comm/propal/list.php","search_status=0");
 
 		if ($num > 0)
 		{
@@ -253,10 +250,7 @@ if (!empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposa
         $total = 0;
         $num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder centpercent">';
-        print '<tr class="liste_titre">';
-        print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
+		StartSimpleTableHeader(["SupplierProposalsDraft"], 2, $num, "supplier_proposal/list.php","search_status=0");
 
         if ($num > 0)
         {
@@ -335,10 +329,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$total = 0;
 		$num = $db->num_rows($resql);
 
-		print '<div class="div-table-responsive-no-min">';
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
+		StartSimpleTableHeader(["DraftOrders"], 2, $num, "commande/list.php","search_status=0");
 
 		if ($num > 0)
 		{
@@ -422,10 +413,7 @@ if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SU
         $total = 0;
         $num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
-        print '<table class="noborder centpercent">';
-        print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").' <a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?search_status=0"><span class="badge">'.$num.'</span></a></th></tr>';
+		StartSimpleTableHeader(["DraftSuppliersOrders"], 2, $num, "fourn/commande/list.php","search_status=0");
 
         if ($num > 0)
         {
@@ -727,9 +715,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propal->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=1"><span class="badge">'.$num.'</span></th></tr>';
+			StartSimpleTableHeader(["ProposalsOpened"], 4, $num, "comm/propal/list.php","search_status=1");
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -831,9 +817,7 @@ if (!empty($conf->commande->enabled) && $user->rights->commande->lire)
 		$i = 0;
 		if ($num > 0)
 		{
-			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><th class="liste_titre" colspan="5">'.$langs->trans("OrdersOpened").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=1"><span class="badge">'.$num.'</span></th></tr>';
+			StartSimpleTableHeader(["OrdersOpened"], 4, $num, "commande/list.php","search_status=1");
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
