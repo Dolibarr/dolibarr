@@ -817,7 +817,7 @@ class Facture extends CommonInvoice
 							$originid = $line->id;
 							$origintype = $this->element;
 						}
-						
+
 						// init ref_ext
 						if (empty($line->ref_ext)) {
 							$line->ref_ext = '';
@@ -1197,7 +1197,7 @@ class Facture extends CommonInvoice
 					$object->lines[$i]->date_end = $newLast;
 				}
 			}
-			
+
 			$object->lines[$i]->ref_ext = ''; // Do not clone ref_ext
 		}
 
