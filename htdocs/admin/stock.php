@@ -95,7 +95,7 @@ if ($action == 'setwarehouse')
 	if ($default_warehouse > 0) {
 		$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $default_warehouse, 'chaine', 0, '', $conf->entity);
 	} else {
-		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity)
+		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
 	}
 	if ($res > 0) {
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
