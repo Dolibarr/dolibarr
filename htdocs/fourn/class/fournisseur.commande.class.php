@@ -1980,7 +1980,7 @@ class CommandeFournisseur extends CommonOrder
         if (! $error)
         {
 			// On delete ecm_files database info
-			if (!$this->delete_ecmfiles()) {
+			if (!$this->deleteEcmFiles()) {
 				$this->db->rollback();
 				return 0;
 			}

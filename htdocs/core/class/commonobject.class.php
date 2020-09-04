@@ -7740,7 +7740,8 @@ abstract class CommonObject
 	 *
 	 * @return bool
 	 */
-	public function delete_ecmfiles(){
+	public function deleteEcmFiles()
+	{
 		global $conf;
 		$this->db->begin();
 
