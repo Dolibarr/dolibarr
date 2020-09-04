@@ -1035,6 +1035,7 @@ class Commande extends CommonOrder
 						$line->fk_unit,
 	                    $origintype,
 	                    $originid,
+						0,
 	                    $line->ref_ext
 					);
 					if ($result < 0)
