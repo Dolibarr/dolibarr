@@ -310,4 +310,8 @@ ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (st
 
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 
+ALTER TABLE llx_product_attribute ADD COLUMN ref_ext varchar(255) AFTER ref;
+ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
 
+ALTER TABLE llx_product_attribute ADD COLUMN ref_ext varchar(255) AFTER ref;
+ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
