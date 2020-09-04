@@ -67,7 +67,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param 	int 	$id ID of thirdparty
+	 * @param 	int 	$id Id of third party to load
 	 * @return 	array|mixed data without useless information
 	 *
 	 * @throws 	RestException
@@ -82,16 +82,33 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty informations
 	 *
-	 * @param string    $email  Sort field
+	 * @param string    $email  Email of third party to load
 	 * @return array|mixed data without useless information
 	 *
-	 * @url     GET byEmail/{email}
+	 * @url     GET email/{email}
 	 *
 	 * @throws RestException
 	 */
 	public function getByEmail($email)
 	{
 	    return $this->_fetch('', '', '', '', '', '', '', '', '', '', $email);
+	}
+
+	/**
+	 * Get properties of a thirdparty object by barcode.
+	 *
+	 * Return an array with thirdparty informations
+	 *
+	 * @param string    $barcode  Barcode of third party to load
+	 * @return array|mixed data without useless information
+	 *
+	 * @url     GET barcode/{barcode}
+	 *
+	 * @throws RestException
+	 */
+	public function getByBarcode($barcode)
+	{
+	    return $this->_fetch('', '', '', $barcode);
 	}
 
 	/**
@@ -1810,7 +1827,7 @@ class Thirdparties extends DolibarrApi
      * @param    int	$rowid      Id of third party to load
 	 * @param    string	$ref        Reference of third party, name (Warning, this can return several records)
 	 * @param    string	$ref_ext    External reference of third party (Warning, this information is a free field not provided by Dolibarr)
-	 * @param    string	$ref_int    Internal reference of third party (not used by dolibarr)
+	 * @param    string	$barcode    Barcode of third party to load
 	 * @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
 	 * @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
 	 * @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
@@ -1823,14 +1840,14 @@ class Thirdparties extends DolibarrApi
      *
      * @throws RestException
     */
-    private function _fetch($rowid, $ref = '', $ref_ext = '', $ref_int = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
+    private function _fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '')
     {
         global $conf;
         if (!DolibarrApiAccess::$user->rights->societe->lire) {
             throw new RestException(401);
         }
 
-        $result = $this->company->fetch($rowid, $ref, $ref_ext, $ref_int, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
+        $result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
         if (!$result) {
             throw new RestException(404, 'Thirdparty not found');
         }

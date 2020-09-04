@@ -209,7 +209,7 @@ class FormTicket
 		print '</td></tr>';
 
 		// Group
-		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketGroup").'</span></label></td><td>';
+		print '<tr><td><span class="fieldrequired"><label for="selectcategory_code">'.$langs->trans("TicketCategory").'</span></label></td><td>';
 		$this->selectGroupTickets((GETPOST('category_code') ? GETPOST('category_code') : $this->category_code), 'category_code', '', '2');
 		print '</td></tr>';
 
@@ -884,12 +884,12 @@ class FormTicket
 			$modelmail_array[$line->id] = $line->label;
 		}
 
-		print '<table class="border"  width="'.$width.'">';
+		print '<table class="border" width="'.$width.'">';
 
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid)
 		{
-			print '<tr><td width="30%"></td><td colspan="2">';
+			print '<tr><td></td><td>';
 			$checkbox_selected = (GETPOST('send_email') == "1" ? ' checked' : '');
 			print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
 			print '<label for="send_msg_email">'.$langs->trans('SendMessageByEmail').'</label>';
@@ -903,29 +903,27 @@ class FormTicket
 					print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 				}
 				print ' &nbsp; ';
-				print '<input class="button" type="submit" value="'.$langs->trans('Use').'" name="modelselected" id="modelselected">';
-				print ' &nbsp; ';
+				print '<input class="button" type="submit" value="'.$langs->trans('Apply').'" name="modelselected" id="modelselected">';
 				print '</div></td>';
 			}
 
 			// Private message (not visible by customer/external user)
 			if (!$user->socid) {
-				print '<tr><td width="30%"></td><td>';
+				print '<tr><td></td><td>';
 				$checkbox_selected = (GETPOST('private_message', 'alpha') == "1" ? ' checked' : '');
 				print '<input type="checkbox" name="private_message" value="1" id="private_message" '.$checkbox_selected.'/> ';
 				print '<label for="private_message">'.$langs->trans('MarkMessageAsPrivate').'</label>';
-				print '</td><td class="center">';
-				print $form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
+				print ' '.$form->textwithpicto('', $langs->trans("TicketMessagePrivateHelp"), 1, 'help');
 				print '</td></tr>';
 			}
 
+			// Subject
 			print '<tr class="email_line"><td class="titlefieldcreate">'.$langs->trans('Subject').'</td>';
-			$label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
-			print '<td colspan="2"><input type="text" class="text" size="80" name="subject" value="['.$label_title.' - '.$langs->trans("Ticket").' #'.$this->ref.'] '.$langs->trans('TicketNewMessage').'" />';
+			print '<td><input type="text" class="text minwidth500" name="subject" value="[' . $conf->global->MAIN_INFO_SOCIETE_NOM . ' - ' . $langs->trans("Ticket") . ' ' . $this->ref . '] '.$langs->trans('TicketNewMessage').'" />';
 			print '</td></tr>';
 
 			// Destinataires
-			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td colspan="2">';
+			print '<tr class="email_line"><td>'.$langs->trans('MailRecipients').'</td><td>';
 			$ticketstat = new Ticket($this->db);
 			$res = $ticketstat->fetch('', '', $this->track_id);
 			if ($res) {
@@ -973,7 +971,9 @@ class FormTicket
 		// External users can't send message email
 		if ($user->rights->ticket->write && !$user->socid) {
 			$mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
-			print '<tr class="email_line"><td><label for="mail_intro">'.$langs->trans("TicketMessageMailIntro").'</label>';
+			print '<tr class="email_line"><td><label for="mail_intro">';
+			print $form->textwithpicto($langs->trans("TicketMessageMailIntro"), $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
+			print '</label>';
 
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
@@ -982,8 +982,6 @@ class FormTicket
 			$doleditor = new DolEditor('mail_intro', $mail_intro, '100%', 90, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 
 			$doleditor->Create();
-			print '</td><td class="center">';
-			print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelp"), 1, 'help');
 			print '</td></tr>';
 		}
 
@@ -1009,17 +1007,16 @@ class FormTicket
 			$defaultmessage = preg_replace("/^\n+/", "", $defaultmessage);
 		}
 
-		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span></label></td><td>';
+		print '<tr><td class="tdtop"><label for="message"><span class="fieldrequired">'.$langs->trans("Message").'</span>';
+		if ($user->rights->ticket->write && !$user->socid) {
+			print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
+		}
+		print '</label></td><td>';
 		//$toolbarname = 'dolibarr_details';
 		$toolbarname = 'dolibarr_notes';
 		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor('message', $defaultmessage, '100%', 200, $toolbarname, '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_5, 70);
 		$doleditor->Create();
-		print '</td><td class="center">';
-		if ($user->rights->ticket->write && !$user->socid) {
-			print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
-		}
-
 		print '</td></tr>';
 
 		// Signature
@@ -1027,13 +1024,11 @@ class FormTicket
 		if ($user->rights->ticket->write && !$user->socid) {
 			$mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 			print '<tr class="email_line"><td><label for="mail_intro">'.$langs->trans("TicketMessageMailSignature").'</label>';
-
+			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td><td>';
 			include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 			$doleditor = new DolEditor('mail_signature', $mail_signature, '100%', 150, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
 			$doleditor->Create();
-			print '</td><td class="center">';
-			print $form->textwithpicto('', $langs->trans("TicketMessageMailSignatureHelp"), 1, 'help');
 			print '</td></tr>';
 		}
 
@@ -1041,7 +1036,7 @@ class FormTicket
 		if (!empty($this->withfile)) {
 			$out = '<tr>';
 			$out .= '<td width="180">'.$langs->trans("MailFile").'</td>';
-			$out .= '<td colspan="2">';
+			$out .= '<td>';
 			// TODO Trick to have param removedfile containing nb of image to delete. But this does not works without javascript
 			$out .= '<input type="hidden" class="removedfilehidden" name="removedfile" value="">'."\n";
 			$out .= '<script type="text/javascript" language="javascript">';

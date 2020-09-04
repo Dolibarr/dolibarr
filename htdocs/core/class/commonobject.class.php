@@ -238,23 +238,29 @@ abstract class CommonObject
 
 	/**
 	 * @var string
-	 * @see getFullAddress(), state
+	 * @see getFullAddress(), $state
 	 */
     public $state_code;
 
-    /**
-	 * @var string
-	 * @see getFullAddress(), region
+	/**
+	 * @var int
+	 * @see getFullAddress(), $region_code, $region
 	 */
-	public $region;
+	public $region_id;
 
 	/**
 	 * @var string
-	 * @see getFullAddress(), region
+	 * @see getFullAddress(), $region_id, $region
 	 */
     public $region_code;
 
-	/**
+    /**
+     * @var string
+     * @see getFullAddress(), $region_id, $region_code
+     */
+    public $region;
+
+    /**
 	 * @var int
 	 * @see fetch_barcode()
 	 */
@@ -1296,6 +1302,8 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $langs, $conf;
+
+		$langs->loadLangs(array('bills', 'contracts', 'interventions', 'orders', 'projects', 'propal', 'ticket', 'agenda'));
 
 		$tab = array();
 
@@ -7639,6 +7647,12 @@ abstract class CommonObject
 				$this->errors[] = $langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
 			}
 
+			// If value is null and there is a default value for field
+			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && (!isset($values[$key]) || $values[$key] === 'NULL') && !is_null($this->fields[$key]['default']))
+			{
+				$values[$key] = $this->fields[$key]['default'];
+			}
+
 			// If field is an implicit foreign key field
 			if (preg_match('/^integer:/i', $this->fields[$key]['type']) && empty($values[$key])) {
 				if (isset($this->fields[$key]['default'])) $values[$key] = $this->fields[$key]['default'];
@@ -7757,11 +7771,11 @@ abstract class CommonObject
 		$sql = 'SELECT '.$fieldlist;
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
-		if (!empty($id))  $sql .= ' WHERE rowid = '.$id;
+		if (!empty($id)) $sql .= ' WHERE rowid = '.$id;
 		elseif (!empty($ref)) $sql .= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
 		else $sql .= ' WHERE 1 = 1'; // usage with empty id and empty ref is very rare
 		if (empty($id) && isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' AND entity IN ('.getEntity($this->table_element).')';
-		if ($morewhere)   $sql .= $morewhere;
+		if ($morewhere) $sql .= $morewhere;
 		$sql .= ' LIMIT 1'; // This is a fetch, to be sure to get only one record
 
 		$res = $this->db->query($sql);

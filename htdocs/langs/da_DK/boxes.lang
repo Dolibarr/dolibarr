@@ -83,6 +83,8 @@ BoxTitleLatestModifiedSupplierOrders=Leverandør Ordrer: senest %s ændret
 BoxTitleLastModifiedCustomerBills=Kundefakturaer: sidst %s ændret
 BoxTitleLastModifiedCustomerOrders=Salgsordrer: sidst %s ændret
 BoxTitleLastModifiedPropals=Seneste %s tilrettede tilbud
+BoxTitleLatestModifiedJobPositions=Latest %s modified jobs
+BoxTitleLatestModifiedCandidatures=Latest %s modified candidatures
 ForCustomersInvoices=Kundernes fakturaer
 ForCustomersOrders=Customers orders
 ForProposals=Tilbud
@@ -100,3 +102,5 @@ SuspenseAccountNotDefined=Midlertidig konto er ikke defineret
 BoxLastCustomerShipments=Sidste kunde forsendelser
 BoxTitleLastCustomerShipments=Nyeste %s forsendelser kunde
 NoRecordedShipments=Ingen registreret kundeforsendelse
+# Pages
+AccountancyHome=Bogføring

@@ -217,7 +217,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
     $error = 0;
 
     // Definition, nettoyage parametres
-    $num_releve = trim(GETPOST("num_releve", "alpha"));
+    $num_releve = GETPOST("num_releve", "alpha");
 
     if ($num_releve)
     {

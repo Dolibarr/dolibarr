@@ -321,7 +321,7 @@ class EcmDirectory // extends CommonObject
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.date_c as date_c,";
-		$sql .= " t.date_m as date_m";
+		$sql .= " t.tms as date_m";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ecm_directories as t";
 		$sql .= " WHERE t.rowid = ".$id;
 

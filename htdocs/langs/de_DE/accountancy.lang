@@ -149,6 +149,7 @@ ACCOUNTING_MANAGE_ZERO=Verwalten der Null am Ende eines Buchhaltungskontos. \nIn
 BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkte Aufzeichnung von Transaktion auf dem Bankkonto
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Entwurfexport für Journal aktivieren
 ACCOUNTANCY_COMBO_FOR_AUX=Kombinationsliste für Nebenkonto aktivieren \n(kann langsam sein, wenn Sie viele Geschäftspartner haben)
+ACCOUNTING_DATE_START_BINDING=Define a date to start binding & transfer in accountancy. Below this date, the transactions will not be transferred to accounting.
 
 ACCOUNTING_SELL_JOURNAL=Verkaufsjournal
 ACCOUNTING_PURCHASE_JOURNAL=Einkaufsjournal
@@ -284,6 +285,7 @@ ShowTutorial=Tutorial anzeigen
 NotReconciled=nicht ausgeglichen
 
 ## Admin
+BindingOptions=Binding options
 ApplyMassCategories=Massenaktualisierung der Kategorien
 AddAccountFromBookKeepingWithNoCategories=Verfügbares Konto noch nicht in der personalisierten Gruppe
 CategoryDeleted=Die Gruppe für das Buchhaltungskonto wurde entfernt

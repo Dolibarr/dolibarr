@@ -157,7 +157,7 @@ class FormActions
      *  Show list of actions for element
      *
      *  @param	Object	$object					Object
-     *  @param  string	$typeelement			'invoice','propal','order','invoice_supplier','order_supplier','fichinter'
+     *  @param  string	$typeelement			'invoice', 'propal', 'order', 'invoice_supplier', 'order_supplier', 'fichinter'
      *	@param	int		$socid					Socid of user
      *  @param	int		$forceshowtitle			Show title even if there is no actions to show
      *  @param  string  $morecss        		More css on table

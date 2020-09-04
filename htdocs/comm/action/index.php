@@ -467,7 +467,7 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
-	$s .= 'jQuery("#check_birthday").click(function() { console.log("Toggle birthday"); jQuery(".family_birthday").toggle(); });'."\n";
+	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle birthday"); jQuery(".family_birthday").toggle(); });'."\n";
 	$s .= 'jQuery(".family_birthday").toggle();'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action))
 	{
@@ -510,7 +510,7 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span> &nbsp; </div>';
 
 	// Calendars from hooks
     $parameters = array(); $object = null;
@@ -1061,16 +1061,47 @@ if (count($listofextcals))
                     $event->id = $icalevent['UID'];
                     $event->ref = $event->id;
 
+                    $userId = $userstatic->findUserIdByEmail($namecal);
+                    if (!empty($userId) && $userId > 0)
+                    {
+                        $event->userassigned[$userId] = $userId;
+                        $event->percentage = -1;
+                    }
+                    else {
+                        $event->type_code = "ICALEVENT";
+                    }
+
                     $event->icalname = $namecal;
                     $event->icalcolor = $colorcal;
                     $usertime = 0; // We dont modify date because we want to have date into memory datep and datef stored as GMT date. Compensation will be done during output.
                     $event->datep = $datestart + $usertime;
                     $event->datef = $dateend + $usertime;
-                    $event->type_code = "ICALEVENT";
 
                     if ($icalevent['SUMMARY']) $event->label = $icalevent['SUMMARY'];
                     elseif ($icalevent['DESCRIPTION']) $event->label = dol_nl2br($icalevent['DESCRIPTION'], 1);
                     else $event->label = $langs->trans("ExtSiteNoLabel");
+
+                    // Priority (see https://www.kanzaki.com/docs/ical/priority.html)
+                    // LOW      = 0 to 4
+                    // MEDIUM   = 5
+                    // HIGH     = 6 to 9
+                    if ($icalevent['PRIORITY']) $event->priority = $icalevent['PRIORITY'];
+
+                    // Transparency (see https://www.kanzaki.com/docs/ical/transp.html)
+                    if ($icalevent['TRANSP'])
+                    {
+                        if ($icalevent['TRANSP'] == "TRANSPARENT") $event->transparency = 0;     // 0 = available / free
+                        if ($icalevent['TRANSP'] == "OPAQUE") $event->transparency = 1;          // 1 = busy
+
+                        // TODO: MS outlook states
+                        // X-MICROSOFT-CDO-BUSYSTATUS:FREE      + TRANSP:TRANSPARENT => Available / Free
+                        // X-MICROSOFT-CDO-BUSYSTATUS:FREE      + TRANSP:OPAQUE      => Work another place
+                        // X-MICROSOFT-CDO-BUSYSTATUS:TENTATIVE + TRANSP:OPAQUE      => With reservations
+                        // X-MICROSOFT-CDO-BUSYSTATUS:BUSY      + TRANSP:OPAQUE      => Busy
+                        // X-MICROSOFT-CDO-BUSYSTATUS:OOF       + TRANSP:OPAQUE      => Away from the office / off-site
+                    }
+
+                    if ($icalevent['LOCATION']) $event->location = $icalevent['LOCATION'];
 
                     $event->date_start_in_calendar = $event->datep;
 
@@ -1179,10 +1210,12 @@ if (empty($action) || $action == 'show_month')      // View by month
     print '<div class="div-table-responsive-no-min">';
     print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
     print ' <tr class="liste_titre">';
+	// Column title of weeks numbers
+	echo '  <td align="center">#</td>';
     $i = 0;
     while ($i < 7)
     {
-        print '  <td align="center">';
+        print '  <td class="center bold uppercase">';
         $numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
         if (!empty($conf->dol_optimize_smallscreen))
         {
@@ -1201,6 +1234,24 @@ if (empty($action) || $action == 'show_month')      // View by month
     //var_dump($eventarray);
     for ($iter_week = 0; $iter_week < 6; $iter_week++) {
         echo " <tr>\n";
+		// Get date of the current day, format 'yyyy-mm-dd'
+		if ($tmpday <= 0) // If number of the current day is in previous month
+		{
+			$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
+		}
+		elseif ($tmpday <= $max_day_in_month) // If number of the current day is in current month
+		{
+			$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
+		}
+		else // If number of the current day is in next month
+		{
+			$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
+		}
+		// Get week number for the targeted date '$currdate0'
+		$numweek0 = date("W", strtotime(date($currdate0)));
+		// Show the week number, and define column width
+		echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+
         for ($iter_day = 0; $iter_day < 7; $iter_day++) {
             if ($tmpday <= 0) {
                 /* Show days before the beginning of the current month (previous month)  */
@@ -1262,7 +1313,7 @@ if (empty($action) || $action == 'show_month')      // View by month
     print ' <tr class="liste_titre">';
     $i = 0;
     while ($i < 7) {
-        echo '  <td align="center">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
+        echo '  <td class="center bold uppercase">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
         $i++;
     }
     echo " </tr>\n";
@@ -1322,7 +1373,7 @@ if (empty($action) || $action == 'show_month')      // View by month
 
     echo ' <tr class="tagtr liste_titre">';
     echo '  <td class="tagtd width100"></td>';
-    echo '  <td class="tagtd center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
+    echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
     echo " </td>\n";
 
     /*
@@ -1426,7 +1477,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     if ($nonew <= 0)
     {
 	    print '<div class="tagtr"><div class="nowrap float">';
-	    print '<a style="color: #666" href="'.DOL_URL_ROOT.'/comm/action/index.php?';
+	    print '<a class="dayevent-aday" style="color: #666" href="'.DOL_URL_ROOT.'/comm/action/index.php?';
 	    print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 	    print $newparam;
 	    print '">';
@@ -1593,10 +1644,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     // If colortouse is similar than background, we force to change it.
                     if (empty($event->transparency) && empty($conf->global->AGENDA_NO_TRANSPARENT_ON_NOT_BUSY))
                     {
-                    	print 'border: 2px solid #'.$colortouse.';';
+                    	print 'background: #f0f0f0;';
+                    	print 'border-left: 5px solid #'.$colortouse.';';
                     } else {
-                    	print 'background: #'.$colortouse.';';
-                    	print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($colortouse, -3).'), to(#'.dol_color_minus($colortouse, -1).'));';
+                    	print 'background: #f0f0f0;';
+                    	print 'border-left: 5px solid #'.dol_color_minus($colortouse, -3).';';
+                    	//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($colortouse, -3).'), to(#'.dol_color_minus($colortouse, -1).'));';
                     }
                    	//print 'background: #'.$colortouse.';';
                    	//print 'background: -webkit-gradient(linear, left top, left bottom, from(#'.dol_color_minus($color, -3).'), to(#'.dol_color_minus($color, -1).'));';
@@ -1675,7 +1728,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         	$event->label = $titletoshow;
                         	$event->libelle = $titletoshow;
                         	// Note: List of users are inside $event->userassigned. Link may be clickable depending on permissions of user.
-                        	$titletoshow = $event->getNomUrl(0, $maxnbofchar, 'cal_event', '', 0, 0);
+                        	$titletoshow = $event->getNomUrl(0, $maxnbofchar, 'cal_event cal_event_title', '', 0, 0);
                         	$event->label = $savlabel;
                         	$event->libelle = $savlabel;
                         }

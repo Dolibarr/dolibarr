@@ -58,6 +58,7 @@ function expedition_prepare_head(Expedition $object)
 		$h++;
 	}
 
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'order');
 
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
 
@@ -132,7 +133,7 @@ function expedition_admin_prepare_head()
 		$h++;
 	}
 
-
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'expedition_admin');
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'expedition_admin', 'remove');
 

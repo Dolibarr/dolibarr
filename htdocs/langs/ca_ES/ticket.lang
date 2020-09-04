@@ -72,7 +72,6 @@ Deleted=Esborrat
 
 # Dict
 Type=Tipus
-Category=Codi analític
 Severity=Gravetat
 
 # Email templates
@@ -128,7 +127,6 @@ TicketsAutoAssignTicket=Assigna automàticament l'usuari que va crear el tiquet
 TicketsAutoAssignTicketHelp=Quan es crea un tiquet, l'usuari pot assignar-se automàticament al tiquet.
 TicketNumberingModules=Mòdul de numeració de tiquets
 TicketNotifyTiersAtCreation=Notifica la creació de tercers
-TicketGroup=Grup
 TicketsDisableCustomerEmail=Desactiveu sempre els correus electrònics quan es crea un tiquet des de la interfície pública
 TicketsPublicNotificationNewMessage=Enviar correu(s) electonic(s) quan s'afegeix un nou missatge
 TicketsPublicNotificationNewMessageHelp=Enviar correu(s) electrònic(s) quan un nou missatge s'afegeix des d'una interfície pública (cap a l'usuari assignat o la notificació del correu electrònic cap a (actualitzar) i/o les notificacions del correu electrònic cap a)
@@ -162,7 +160,7 @@ CreatedBy=Creat per
 NewTicket=Nou tiquet
 SubjectAnswerToTicket=Resposta de tiquet
 TicketTypeRequest=Tipus de sol·licitud
-TicketCategory=Codi analític
+TicketCategory=Grup
 SeeTicket=Consultar tiquet
 TicketMarkedAsRead=Tiquet ha estat marcat com llegit
 TicketReadOn=Segueix llegint

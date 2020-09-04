@@ -185,7 +185,7 @@ function member_admin_prepare_head()
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
     // $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'member_admin');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'member_admin');
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/admin/adherent_extrafields.php';
     $head[$h][1] = $langs->trans("ExtraFieldsMember");
@@ -202,7 +202,7 @@ function member_admin_prepare_head()
     $head[$h][2] = 'website';
     $h++;
 
-    complete_head_from_modules($conf, $langs, '', $head, $h, 'member_admin', 'remove');
+    complete_head_from_modules($conf, $langs, null, $head, $h, 'member_admin', 'remove');
 
     return $head;
 }

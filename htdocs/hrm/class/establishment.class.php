@@ -75,7 +75,7 @@ class Establishment extends CommonObject
 	 */
 	public $rowid;
 
-	public $name;
+	public $label;
 
 	/**
 	 * @var string Address
@@ -97,11 +97,31 @@ class Establishment extends CommonObject
 
 	public $country_id;
 
-	public $statuts = array();
-	public $statuts_short = array();
 
-	const STATUS_OPEN = 0;
-	const STATUS_CLOSED = 1;
+	const STATUS_OPEN = 1;
+	const STATUS_CLOSED = 0;
+
+
+	public $fields=array(
+		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
+		'entity' =>array('type'=>'integer', 'label'=>'Entity', 'default'=>1, 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'position'=>15, 'index'=>1),
+		'ref' =>array('type'=>'varchar(30)', 'label'=>'Ref', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'showoncombobox'=>1, 'position'=>20),
+		'label' =>array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>1, 'visible'=>-1, 'showoncombobox'=>1, 'position'=>22),
+		'address' =>array('type'=>'varchar(255)', 'label'=>'Address', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
+		'zip' =>array('type'=>'varchar(25)', 'label'=>'Zip', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
+		'town' =>array('type'=>'varchar(50)', 'label'=>'Town', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
+		'fk_state' =>array('type'=>'integer', 'label'=>'Fkstate', 'enabled'=>1, 'visible'=>-1, 'position'=>40),
+		'fk_country' =>array('type'=>'integer', 'label'=>'Fkcountry', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
+		'profid1' =>array('type'=>'varchar(20)', 'label'=>'Profid1', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
+		'profid2' =>array('type'=>'varchar(20)', 'label'=>'Profid2', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
+		'profid3' =>array('type'=>'varchar(20)', 'label'=>'Profid3', 'enabled'=>1, 'visible'=>-1, 'position'=>60),
+		'phone' =>array('type'=>'varchar(20)', 'label'=>'Phone', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'fk_user_author' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkuserauthor', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>70),
+		'fk_user_mod' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Fkusermod', 'enabled'=>1, 'visible'=>-1, 'position'=>75),
+		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>80),
+		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>85),
+		'status' =>array('type'=>'integer', 'label'=>'Status', 'enabled'=>1, 'visible'=>-1, 'position'=>500),
+	);
 
 
 	/**
@@ -112,9 +132,6 @@ class Establishment extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-
-		$this->statuts_short = array(0 => 'Closed', 1 => 'Open');
-        $this->statuts = array(0 => 'Closed', 1 => 'Open');
 	}
 
 	/**
@@ -128,7 +145,6 @@ class Establishment extends CommonObject
 		global $conf, $langs;
 
 		$error = 0;
-		$ret = 0;
 		$now = dol_now();
 
         // Clean parameters
@@ -137,11 +153,13 @@ class Establishment extends CommonObject
         $this->town = ($this->town > 0 ? $this->town : $this->town);
         $this->country_id = ($this->country_id > 0 ? $this->country_id : $this->country_id);
 
+        if (empty($this->ref)) $this->ref = '(PROV)';
+
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."establishment (";
 		$sql .= "ref";
-		$sql .= ", name";
+		$sql .= ", label";
 		$sql .= ", address";
 		$sql .= ", zip";
 		$sql .= ", town";
@@ -152,7 +170,8 @@ class Establishment extends CommonObject
 		$sql .= ", fk_user_author";
 		$sql .= ", fk_user_mod";
 		$sql .= ") VALUES (";
-		$sql .= " '".$this->db->escape($this->name)."'";
+		$sql .= "'".$this->db->escape($this->ref)."'";
+		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->address)."'";
         $sql .= ", '".$this->db->escape($this->zip)."'";
         $sql .= ", '".$this->db->escape($this->town)."'";
@@ -184,6 +203,12 @@ class Establishment extends CommonObject
 			$this->db->rollback();
 			return -1 * $error;
 		} else {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'establishment');
+
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."establishment SET ref = '".$this->db->escape($this->id)."'";
+			$sql .= " WHERE rowid = ".$this->id;
+			$this->db->query($sql);
+
 			$this->db->commit();
 			return $this->id;
 		}
@@ -200,7 +225,7 @@ class Establishment extends CommonObject
 		global $langs;
 
         // Check parameters
-        if (empty($this->name))
+        if (empty($this->label))
         {
             $this->error = 'ErrorBadParameter';
             return -1;
@@ -209,7 +234,8 @@ class Establishment extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."establishment";
-		$sql .= " SET ref = '".$this->db->escape($this->ref)."', name = '".$this->db->escape($this->name)."'";
+		$sql .= " SET ref = '".$this->db->escape($this->ref)."'";
+		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
@@ -239,7 +265,7 @@ class Establishment extends CommonObject
 	*/
 	public function fetch($id)
 	{
-		$sql = "SELECT e.rowid, e.ref, e.name, e.address, e.zip, e.town, e.status, e.fk_country as country_id, e.entity,";
+		$sql = "SELECT e.rowid, e.ref, e.label, e.address, e.zip, e.town, e.status, e.fk_country as country_id, e.entity,";
 		$sql .= ' c.code as country_code, c.label as country';
 		$sql .= " FROM ".MAIN_DB_PREFIX."establishment as e";
         $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON e.fk_country = c.rowid';
@@ -253,7 +279,7 @@ class Establishment extends CommonObject
 
 			$this->id = $obj->rowid;
 			$this->ref			= $obj->ref;
-			$this->name			= $obj->name;
+			$this->label		= $obj->label;
 			$this->address = $obj->address;
 			$this->zip			= $obj->zip;
 			$this->town			= $obj->town;
@@ -329,7 +355,7 @@ class Establishment extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_OPEN) $statusType = 'status4';
 		if ($status == self::STATUS_CLOSED) $statusType = 'status6';
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
@@ -397,11 +423,12 @@ class Establishment extends CommonObject
 
         $picto = 'building';
 
-        $label = $langs->trans("Show").': '.$this->name;
+        $label = '<u>'.$langs->trans("Establishment").'</u>';
+        $label .= '<br>'.$langs->trans("Label").': '.$this->label;
 
         if ($withpicto) $result .= ($link.img_object($label, $picto).$linkend);
         if ($withpicto && $withpicto != 2) $result .= ' ';
-        if ($withpicto != 2) $result .= $link.$this->name.$linkend;
+        if ($withpicto != 2) $result .= $link.$this->label.$linkend;
         return $result;
     }
 
@@ -432,6 +459,7 @@ class Establishment extends CommonObject
     public function initAsSpecimen()
     {
         $this->id = 0;
-        $this->ref = 'DEP-AAA';
+        $this->ref = '0';
+        $this->label = 'Department AAA';
     }
 }

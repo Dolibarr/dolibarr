@@ -283,6 +283,9 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-weight: bold;
 	margin-bottom: 6px;
 }
+.info-box-title {
+    width: calc(100% - 20px);
+}
 .info-box-text{
 	font-size: 0.92em;
 }

@@ -37,7 +37,7 @@ function resource_prepare_head($object)
 
 	$head[$h][0] = dol_buildpath('/resource/card.php', 1).'?id='.$object->id;
 	$head[$h][1] = $langs->trans("ResourceCard");
-    	$head[$h][2] = 'resource';
+    $head[$h][2] = 'resource';
 	$h++;
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && (empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_USER) || empty($conf->global->RESOURCE_HIDE_ADD_CONTACT_THIPARTY)))

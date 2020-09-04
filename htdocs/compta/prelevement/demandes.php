@@ -47,7 +47,7 @@ $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '
 $type = GETPOST('type', 'aZ09');
 
 $search_facture = GETPOST('search_facture', 'alpha');
-$search_societe = trim(GETPOST('search_societe', 'alpha'));
+$search_societe = GETPOST('search_societe', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;

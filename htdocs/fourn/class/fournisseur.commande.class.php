@@ -768,7 +768,7 @@ class CommandeFournisseur extends CommonOrder
         global $langs, $conf, $user;
 
         $result = '';
-        $label = '<u>'.$langs->trans("ShowOrder").'</u>';
+        $label = '<u>'.$langs->trans("PurchaseOrder").'</u>';
         if (!empty($this->ref))
             $label .= '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
         if (!empty($this->ref_supplier))

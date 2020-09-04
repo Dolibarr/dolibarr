@@ -241,6 +241,7 @@ if ($action == 'valid' && $user->rights->facture->creer)
 		$payment->datepaye = $now;
 		$payment->fk_account = $bankaccount;
 		$payment->amounts[$invoice->id] = $amountofpayment;
+		if ($pay == 'cash') $payment->pos_change = price2num(GETPOST('excess', 'alpha'));
 
 		// If user has not used change control, add total invoice payment
 		// Or if user has used change control and the amount of payment is higher than remain to pay, add the remain to pay
@@ -816,6 +817,7 @@ $( document ).ready(function() {
 		if ($result > 0)
 		{
 			$adh->ref = $adh->getFullName($langs);
+			if (empty($adh->statut)) { $s .= "<s>"; }
 			$s .= $adh->getFullName($langs);
 			$s .= ' - '.$adh->type;
 			if ($adh->datefin)
@@ -828,6 +830,7 @@ $( document ).ready(function() {
 				$s .= '<br>'.$langs->trans("SubscriptionNotReceived");
 				if ($adh->statut > 0) $s .= " ".img_warning($langs->trans("Late")); // displays delay Pictogram only if not a draft and not terminated
 			}
+      		if (empty($adh->statut)) { $s .= "</s>"; }
 		} else {
 			$s .= '<br>'.$langs->trans("ThirdpartyNotLinkedToMember");
 		}

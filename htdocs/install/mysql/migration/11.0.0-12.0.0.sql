@@ -74,7 +74,11 @@ create table llx_mrp_mo_extrafields
   import_key                varchar(14)                                 -- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_fk_object(fk_object);
+ALTER TABLE llx_mrp_mo_extrafields DROP INDEX idx_fk_object;
+
+ALTER TABLE llx_mrp_mo_extrafields ADD INDEX idx_mrp_mo_fk_object(fk_object);
+
+
 
 -- This var is per entity now, so we remove const if global if exists
 delete from llx_const where name in ('PROJECT_HIDE_TASKS', 'MAIN_BUGTRACK_ENABLELINK', 'MAIN_HELP_DISABLELINK') and entity = 0;

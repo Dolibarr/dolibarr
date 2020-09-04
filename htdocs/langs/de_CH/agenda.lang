@@ -1,9 +1,10 @@
 # Dolibarr language file - Source file is en_US - agenda
+IdAgenda=ID Veranstaltung
 Agenda=Terminplanung
 EventReports=Ereignisberichte
-ToUserOfGroup=Für alle Benutzer in der Gruppe
 MenuDoneActions=Alle abgeschl. Termine
 MenuDoneMyActions=Meine abgeschl. Termine
+ActionsAskedBy=Termine eingetragen von
 ViewCal=Kalenderansicht
 ViewPerUser=Benutzeransicht
 ViewPerType=Ansicht pro Typ
@@ -12,6 +13,8 @@ AgendaSetupOtherDesc=Hier gibst Du die Exportoptionen zu externen Kalendern, wie
 EventRemindersByEmailNotEnabled=Benachrichtigungen sind in den Moduleinstellungen deaktiviert (%s).
 NewCompanyToDolibarr=Partner %s erzeugt
 COMPANY_DELETEInDolibarr=Partner %s gelöscht.
+PropalValidatedInDolibarr=Angebot freigegeben
+InvoiceValidatedInDolibarr=Rechnung freigegeben
 MemberModifiedInDolibarr=Mitglied %s bearbeitet
 MemberResiliatedInDolibarr=Mitlglied %s geschlossen.
 MemberSubscriptionAddedInDolibarr=Abonnement %s für Mitlglied %s hinzugefügt
@@ -21,7 +24,12 @@ ShipmentClassifyClosedInDolibarr=Lieferung %s auf verrechnet gesetzt
 ShipmentUnClassifyCloseddInDolibarr=Lieferung %s auf wiedereröffnet gesetzt
 ShipmentBackToDraftInDolibarr=Lieferung %s ist wieder im Entwurfsstatus.
 OrderCreatedInDolibarr=Bestellung %s erzeugt
+OrderDeliveredInDolibarr=Bestellung %s als geliefert markieren
 OrderCanceledInDolibarr=Auftrag storniert %s
+OrderBilledInDolibarr=Bestellung %s als bezahlt markieren
+OrderApprovedInDolibarr=Bestellen %s genehmigt
+OrderRefusedInDolibarr=Bestellung %s abgelehnt
+OrderBackToDraftInDolibarr=Bestellen %s zurück nach Draft-Status
 ProposalSentByEMail=Offerte %s per E-Mail versandt
 ContractSentByEMail=Contract %s per E-Mail versandt
 OrderSentByEMail=Bestellung %sper E-Mail versandt
@@ -30,6 +38,7 @@ SupplierOrderSentByEMail=Lieferantenbestellung %sper E-Mail versandt
 ORDER_SUPPLIER_DELETEInDolibarr=Lieferantenbestellung %s  gelöscht
 SupplierInvoiceSentByEMail=Lieferantenrechnung %sper E-Mail versandt
 ShippingSentByEMail=Lieferung %s per E-Mail versandt
+OrderDeleted=Bestellung gelöscht
 PRODUCT_CREATEInDolibarr=Produkt %s erzeugt
 PRODUCT_MODIFYInDolibarr=Produkt %s bearbeitet
 HOLIDAY_CREATEInDolibarr=Ferienantrag %s erzeugt
@@ -55,12 +64,16 @@ MRP_MO_VALIDATEInDolibarr=Arbeitsauftrag (MO) genehmigt
 MRP_MO_PRODUCEDInDolibarr=Arbeitsauftrag (MO) fertig gestellt.
 MRP_MO_DELETEInDolibarr=Arbeitsauftrag (MO) gelöscht
 AgendaModelModule=Vorlagen zum Ereignis
+DateActionEnd=Endet
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ,zum Aktionen, die nicht vom Benutzer <b>%s</b> sind, anzuzeigen.
 AgendaUrlOptions4=<b>logint=%s</b> ,um Einträge für dem Benutzer <b>%s</b> zugewiesene Aktionen anzuzeigen.
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> um Aktionen vom Projekt <b>__PROJECT_ID__</b> anzuzeigen.
 AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, um automatische Einträge auszublenden.
 AgendaUrlOptionsIncludeHolidays=Setze <b>includeholidays=1</b> um Ferien im Kalender anzuzeigen.
 AgendaHideBirthdayEvents=Geburtstage von Kontakten verstecken
+Busy=Besetzt
+DefaultWorkingHours=Reguläre Arbeitszeit pro Tag (z.B. 9-18)
+ExportCal=Export Kalender
 ExtSitesEnableThisTool=Externe Kalender gemäss systemweiten Einstellungen anzeigen. Externe Kalender, die Benutzer definiert haben, sind davon nicht betroffen.
 DateActionBegin=Beginnzeit des Ereignis
 ConfirmCloneEvent=Willst du das Ereignis <b>%s</b> wirklich duplizieren?

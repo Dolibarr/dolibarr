@@ -354,7 +354,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-                    if (empty($showpricebeforepagebreak)) {
+                    if (empty($showpricebeforepagebreak) && ($i !== ($nblines - 1))) {
                         $pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
                     } else {
                         $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
@@ -796,7 +796,7 @@ class pdf_standard extends ModeleExpenseReport
 			$pdf->MultiCell(80, 5, $outputlangs->transnoentities("TripNDF")." :", 0, 'L');
 			$pdf->rect($posx, $posy, $this->page_largeur - $this->marge_gauche - $posx, $hautcadre);
 
-			// Informations for trip (dates and users workflow)
+			// Informations for expense report (dates and users workflow)
 			if ($object->fk_user_author > 0) {
 				$userfee = new User($this->db);
 				$userfee->fetch($object->fk_user_author);
@@ -804,7 +804,7 @@ class pdf_standard extends ModeleExpenseReport
 				$pdf->SetXY($posx + 2, $posy);
 				$pdf->SetFont('', '', 10);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("AUTHOR")." : ".dolGetFirstLastname($userfee->firstname, $userfee->lastname), 0, 'L');
-				$posy += 5;
+				$posy = $pdf->GetY() + 1;
 				$pdf->SetXY($posx + 2, $posy);
 				$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DateCreation")." : ".dol_print_date($object->date_create, "day", false, $outputlangs), 0, 'L');
 			}
@@ -822,8 +822,7 @@ class pdf_standard extends ModeleExpenseReport
 					$pdf->SetXY($posx + 2, $posy);
 					$pdf->MultiCell(96, 4, $outputlangs->transnoentities("DATE_REFUS")." : ".dol_print_date($object->date_refuse, "day", false, $outputlangs), 0, 'L');
 				}
-			} elseif ($object->fk_statut == 4)
-			{
+			} elseif ($object->fk_statut == 4) {
 				if ($object->fk_user_cancel > 0) {
 					$userfee = new User($this->db);
 					$userfee->fetch($object->fk_user_cancel); $posy += 6;

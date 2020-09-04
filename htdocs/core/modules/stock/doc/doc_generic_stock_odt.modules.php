@@ -163,7 +163,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 			//$texte.=$nbofiles?'</a>':'';
 			$texte .= '</b>';
 		}
-		
+
 		if ($nbofiles)
 		{
 			$texte .= '<div id="div_'.get_class($this).'" class="hidden">';

@@ -114,12 +114,11 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		$result = $object->fetch($id);
 
 		$sendtosocid = 0; // Id of related thirdparty
-		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('societe', 'member', 'user', 'expensereport', 'contact')))
+		if (method_exists($object, "fetch_thirdparty") && !in_array($object->element, array('member', 'user', 'expensereport', 'societe', 'contact')))
 		{
-			$result = $object->fetch_thirdparty();
-			if ($object->element == 'user' && $result == 0) $result = 1; // Even if not found, we consider ok
+			$resultthirdparty = $object->fetch_thirdparty();
 			$thirdparty = $object->thirdparty;
-			$sendtosocid = $thirdparty->id;
+			if (is_object($thirdparty)) $sendtosocid = $thirdparty->id;
 		} elseif ($object->element == 'member' || $object->element == 'user')
 		{
 			$thirdparty = $object;
@@ -133,11 +132,15 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 		} elseif ($object->element == 'societe')
 		{
 			$thirdparty = $object;
-			if ($thirdparty->id > 0) $sendtosocid = $thirdparty->id;
+			if (is_object($thirdparty) && $thirdparty->id > 0) $sendtosocid = $thirdparty->id;
 		} elseif ($object->element == 'contact')
 		{
 			$contact = $object;
-			if ($contact->id > 0) $sendtosocid = $contact->fetch_thirdparty()->id;
+			if ($contact->id > 0) {
+				$contact->fetch_thirdparty();
+				$thirdparty = $contact->thirdparty;
+				if (is_object($thirdparty) && $thirdparty->id > 0) $sendtosocid = $thirdparty->id;
+			}
 		} else dol_print_error('', "Use actions_sendmails.in.php for an element/object '".$object->element."' that is not supported");
 
 		if (is_object($hookmanager))
@@ -145,7 +148,9 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$parameters = array();
 			$reshook = $hookmanager->executeHooks('initSendToSocid', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		}
-	} else $thirdparty = $mysoc;
+	} else {
+		$thirdparty = $mysoc;
+	}
 
 	if ($result > 0)
 	{
@@ -170,23 +175,24 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			// Recipients are provided into free text
 			$tmparray[] = trim($_POST['sendto']);
 		}
+
 		if (count($receiver) > 0)
 		{
+			// Recipient was provided from combo list
 			foreach ($receiver as $key=>$val)
 			{
-				// Recipient was provided from combo list
-				if ($val == 'thirdparty') // Key selected means currentthird party (may be usd for current member or current user too)
+				if ($val == 'thirdparty') // Key selected means current third party ('thirdparty' may be used for current member or current user too)
 				{
 					$tmparray[] = dol_string_nospecial($thirdparty->getFullName($langs), ' ', array(",")).' <'.$thirdparty->email.'>';
 				}
-				// Recipient was provided from combo list
 				elseif ($val == 'contact') // Key selected means current contact
 				{
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
+					$sendtoid[] = $contact->id;
 				} elseif ($val)	// $val is the Id of a contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
-					$sendtoid[] = $val;
+					$sendtoid[] = ((int) $val);
 				}
 			}
 		}
@@ -232,10 +238,11 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 				elseif ($val == 'contact')	// Key selected means current contact
 				{
 					$tmparray[] = dol_string_nospecial($contact->name, ' ', array(",")).' <'.$contact->email.'>';
+					//$sendtoid[] = $contact->id;  TODO Add also id of contact in CC ?
 				} elseif ($val)				// $val is the Id of a contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
-					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
+					//$sendtoid[] = ((int) $val);  TODO Add also id of contact in CC ?
 				}
 			}
 		}
@@ -415,7 +422,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 					    if (empty($actiontypecode)) $actiontypecode = 'AC_OTH_AUTO'; // Event insert into agenda automatically
 
 						$object->socid = $sendtosocid; // To link to a company
-						$object->sendtoid = $sendtoid; // To link to contact addresses. This is an array.
+						$object->sendtoid = $sendtoid; // To link to contact-addresses. This is an array.
 						$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 						$object->actionmsg = $actionmsg; // Long text (@todo Replace this with $message, we already have details of email in dedicated properties)
 						$object->actionmsg2		= $actionmsg2; // Short text ($langs->transnoentities('MailSentBy')...);
@@ -486,7 +493,7 @@ if (($action == 'send' || $action == 'relance') && !$_POST['addfile'] && !$_POST
 			$action = 'presend';
 		}
 	} else {
-		$langs->load("other");
+		$langs->load("errors");
 		setEventMessages($langs->trans('ErrorFailedToReadObject', $object->element), null, 'errors');
 		dol_syslog('Failed to read data of object id='.$object->id.' element='.$object->element);
 		$action = 'presend';

@@ -44,7 +44,7 @@ if (!empty($actionsave))
 
 	$db->begin();
 
-	$i += dolibarr_set_const($db, 'CRON_KEY', trim(GETPOST("CRON_KEY")), 'chaine', 0, '', 0);
+	$i += dolibarr_set_const($db, 'CRON_KEY', GETPOST("CRON_KEY"), 'chaine', 0, '', 0);
 
 	if ($i >= 1)
 	{

@@ -223,8 +223,8 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 {
 	global $conf, $db;
 
-	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m,";
-	$sql .= " acl, position, share";
+	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
+	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) $sql .= ", description";
 	$sql .= " FROM ".MAIN_DB_PREFIX."ecm_files";
 	$sql .= " WHERE filepath = '".$db->escape($path)."'";
@@ -2764,9 +2764,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	// If modulepart=module_temp		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/temp
 	// If modulepart=module_user		Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart/iduser
 	// If modulepart=module				Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
+	// If modulepart=module-abc			Allows any module to open a file if file is in directory called DOL_DATA_ROOT/modulepart
 	else {
+		//var_dump($modulepart);
+		//var_dump($original_file);
 		if (preg_match('/^specimen/i', $original_file))	$accessallowed = 1; // If link to a file called specimen. Test must be done before changing $original_file int full path.
 		if ($fuser->admin) $accessallowed = 1; // If user is admin
+		$tmpmodulepart = explode('-', $modulepart);
+		if (! empty($tmpmodulepart[1])) {
+				$modulepart = $tmpmodulepart[0];
+				$original_file = $tmpmodulepart[1].'/'.$original_file;
+		}
 
 		// Define $accessallowed
 		$reg = array();
@@ -2822,6 +2830,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			if ($partofdirinoriginalfile && ($fuser->rights->$modulepart->$partofdirinoriginalfile->{$lire} || $fuser->rights->$modulepart->$partofdirinoriginalfile->{$read})) $accessallowed = 1;
 			if ($fuser->rights->$modulepart->{$lire} || $fuser->rights->$modulepart->{$read}) $accessallowed = 1;
 			$original_file = $conf->$modulepart->dir_output.'/'.$original_file;
+			//var_dump($original_file);
 		}
 
 		// For modules who wants to manage different levels of permissions for documents

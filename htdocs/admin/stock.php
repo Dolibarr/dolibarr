@@ -498,6 +498,12 @@ if ($virtualdiffersfromphysical)
 	print '<br>';
 }
 
+print '<form>';
+
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="warehouse">';
 
 
 /*
@@ -648,8 +654,14 @@ foreach ($dirmodels as $reldir)
 
 print '</table>';
 
+print '</form>';
+
 
 // Other
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="action" value="warehouse">';
 
 print load_fiche_titre($langs->trans("Other"), '', '');
 

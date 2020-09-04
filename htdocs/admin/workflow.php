@@ -28,7 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposals", "receptions"));
+$langs->loadLangs(array("admin", "workflow", "propal", "workflow", "orders", "supplier_proposal", "receptions"));
 
 if (!$user->admin) accessforbidden();
 
@@ -80,16 +80,22 @@ $workflowcodes = array(
 	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'propal', 'warning'=>''),
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>31, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'propal', 'warning'=>''),
+	'separator2'=>array('family'=>'separator', 'position'=>35),
 	// Automatic classification of order
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array('family'=>'classify_order', 'position'=>40, 'enabled'=>'! empty($conf->expedition->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>41, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order', 'warning'=>''), // For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
-    'separator2'=>array('family'=>'separator', 'position'=>50),
+    'separator3'=>array('family'=>'separator', 'position'=>50),
 	// Automatic classification supplier proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))', 'picto'=>'propal', 'warning'=>''),
+	'separator4'=>array('family'=>'separator', 'position'=>61),
 	// Automatic classification supplier order
 	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)', 'picto'=>'order', 'warning'=>''),
-	//Automatic classification reception
+	'separator5'=>array('family'=>'separator', 'position'=>63),
+	// Automatic classification reception
 	'WORKFLOW_BILL_ON_RECEPTION'=>array('family'=>'classify_reception', 'position'=>64, 'enabled'=>'! empty($conf->reception->enabled) && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled))', 'picto'=>'bill'),
+	'separator6'=>array('family'=>'separator', 'position'=>90),
+	// Automatic classification of intervention
+	'WORKFLOW_TICKET_CLOSE_INTERVENTION'=>array('family'=>'classify_intervention', 'position'=>100, 'enabled'=>'! empty($conf->ticket->enabled) && !empty($conf->ficheinter->enabled)', 'picto'=>'intervention'),
 );
 
 if (!empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
@@ -131,8 +137,8 @@ foreach ($workflowcodes as $key => $params)
    	{
 	   	print '<tr class="liste_titre">'."\n";
 		print '  <td>';
-		if ($family == 'create')
-		{
+		$reg = array();
+		if ($family == 'create') {
 			print $langs->trans("AutomaticCreation");
 		} elseif (preg_match('/classify_(.*)/', $family, $reg))
 		{
@@ -142,17 +148,18 @@ foreach ($workflowcodes as $key => $params)
 			if ($reg[1] == 'supplier_proposal') print ' - '.$langs->trans('SupplierProposal');
 			if ($reg[1] == 'supplier_order') print ' - '.$langs->trans('SupplierOrder');
 			if ($reg[1] == 'reception') print ' - '.$langs->trans('Reception');
+			if ($reg[1] == 'intervention') print ' - '.$langs->trans('Intervention');
 		} else {
 			print $langs->trans("Description");
 		}
 		print '</td>';
-		print '  <td align="center">'.$langs->trans("Status").'</td>';
+		print '  <td class="center" width="90px">'.$langs->trans("Status").'</td>';
 		print "</tr>\n";
 		$oldfamily = $family;
    	}
 
    	print "<tr class=\"oddeven\">\n";
-   	print "<td>".img_object('', $picto).$langs->trans('desc'.$key);
+   	print "<td>".img_object('', $picto, 'class="paddingright"').$langs->trans('desc'.$key);
    	if (!empty($params['warning']))
    	{
    		$langs->load("errors");

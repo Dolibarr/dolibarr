@@ -81,7 +81,7 @@ if ($user->socid > 0)	// Protection if external user
 //$result = restrictedArea($user, 'bom', $id, '');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {

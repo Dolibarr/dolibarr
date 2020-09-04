@@ -134,8 +134,8 @@ $arrayfields = array(
 	'a.datep'=>array('label'=>"DateStart", 'checked'=>1),
 	'a.datep2'=>array('label'=>"DateEnd", 'checked'=>1),
 	's.nom'=>array('label'=>"ThirdParty", 'checked'=>1),
-	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>1),
-	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>0, 'enabled'=>(!empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
+	'a.fk_contact'=>array('label'=>"Contact", 'checked'=>0),
+	'a.fk_element'=>array('label'=>"LinkedObject", 'checked'=>1, 'enabled'=>(!empty($conf->global->AGENDA_SHOW_LINKED_OBJECT))),
 	'a.percent'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 	'a.datec'=>array('label'=>'DateCreation', 'checked'=>0),
 	'a.tms'=>array('label'=>'DateModification', 'checked'=>0)
@@ -694,7 +694,7 @@ if ($resql)
 					if ($actioncomm->type_code == 'AC_RDV')         $imgpicto = img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_TEL')     $imgpicto = img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_FAX')     $imgpicto = img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
-					elseif ($actioncomm->type_code == 'AC_EMAIL')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+					elseif ($actioncomm->type_code == 'AC_EMAIL' || $actioncomm->type_code == 'AC_EMAIL_IN')   $imgpicto = img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_INT')     $imgpicto = img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
 					elseif ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') $imgpicto = img_picto('', 'object_conversation', '', false, 0, 0, '', 'paddingright').' ';
 					elseif (!preg_match('/_AUTO/', $actioncomm->type_code)) $imgpicto = img_picto('', 'object_other', '', false, 0, 0, '', 'paddingright').' ';
@@ -706,14 +706,17 @@ if ($resql)
 			if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype = 'AC_OTH';
 			if ($actioncomm->type_code == 'AC_OTH' && $actioncomm->code == 'TICKET_MSG') {
 				$labeltype = $langs->trans("Message");
-			} elseif (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
+			} else {
+				if (!empty($arraylist[$labeltype])) $labeltype = $arraylist[$labeltype];
+				if ($obj->type_code == 'AC_OTH_AUTO' && ($obj->type_code != $obj->code) && $labeltype && !empty($arraylist[$obj->code])) $labeltype .= ' - '.$arraylist[$obj->code];		// Use code in priority on type_code
+			}
 			print dol_trunc($labeltype, 28);
 			print '</td>';
 		}
 
 		// Label
 		if (!empty($arrayfields['a.label']['checked'])) {
-			print '<td class="tdoverflowmax200">';
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($actionstatic->label).'">';
 			print $actionstatic->label;
 			print '</td>';
 		}
@@ -727,6 +730,7 @@ if ($resql)
 		}
 
 		$formatToUse = $obj->fulldayevent ? 'day' : 'dayhour';
+
 		// Start date
 		if (!empty($arrayfields['a.datep']['checked'])) {
 			print '<td class="center nowraponall">';

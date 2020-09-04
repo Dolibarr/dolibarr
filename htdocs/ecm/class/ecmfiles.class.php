@@ -235,7 +235,7 @@ class EcmFiles extends CommonObject
 		$sql .= 'gen_or_uploaded,';
 		$sql .= 'extraparams,';
 		$sql .= 'date_c,';
-		$sql .= 'date_m,';
+		$sql .= 'tms,';
 		$sql .= 'fk_user_c,';
 		$sql .= 'fk_user_m,';
 		$sql .= 'acl,';
@@ -333,7 +333,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
 		$sql .= " t.date_c,";
-		$sql .= " t.date_m,";
+		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
@@ -455,7 +455,7 @@ class EcmFiles extends CommonObject
 		$sql .= " t.gen_or_uploaded,";
 		$sql .= " t.extraparams,";
 		$sql .= " t.date_c,";
-		$sql .= " t.date_m,";
+		$sql .= " t.tms as date_m,";
 		$sql .= " t.fk_user_c,";
 		$sql .= " t.fk_user_m,";
 		$sql .= " t.acl,";
@@ -612,7 +612,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
 		$sql .= ' extraparams = '.(isset($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
-		//$sql .= ' date_m = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
+		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen($this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
