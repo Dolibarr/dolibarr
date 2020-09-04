@@ -107,7 +107,7 @@ function product_prepare_head($object)
 
 		$prodcomb = new ProductCombination($db);
 
-		if ($prodcomb->fetchByFkProductChild($object->id) == -1)
+		if ($prodcomb->getFkProductParentByFkProductChild($object->id) == -1)
 		{
 			$head[$h][0] = DOL_URL_ROOT."/variants/combinations.php?id=".$object->id;
 			$head[$h][1] = $langs->trans('ProductCombinations');
