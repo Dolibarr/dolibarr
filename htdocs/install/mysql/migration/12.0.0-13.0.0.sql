@@ -312,6 +312,3 @@ ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehou
 
 ALTER TABLE llx_product_attribute ADD COLUMN ref_ext varchar(255) AFTER ref;
 ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
-
-ALTER TABLE llx_product_attribute ADD COLUMN ref_ext varchar(255) AFTER ref;
-ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
