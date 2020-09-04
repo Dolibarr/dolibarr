@@ -1327,18 +1327,14 @@ class Products extends DolibarrApi
 
         $objectval = new ProductAttributeValue($this->db);
 
-        $return = [];
-        foreach ($objectval->fetchAllByProductAttribute((int) $id) as $result) {
-            $tmp = new stdClass();
-            $tmp->fk_product_attribute = (int) $result->fk_product_attribute;
-            $tmp->id = (int) $result->id;
-            $tmp->ref = $result->ref;
-            $tmp->value = $result->value;
-            $return[] = $tmp;
-        }
-
+        $return = $objectval->fetchAllByProductAttribute((int) $id);
+ 
         if (count($return) == 0) {
             throw new RestException(404, 'Attribute values not found');
+        }
+
+		foreach ($return as $key => $val) {
+			$return[$key] = $this->_cleanObjectDatas($return[$key]);
         }
 
         return $return;
@@ -1363,8 +1359,8 @@ class Products extends DolibarrApi
         $return = array();
 
         $sql = 'SELECT ';
-        $sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value v ';
-        $sql .= "WHERE v.fk_product_attribute = ( SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".strtoupper(trim($ref))."' LIMIT 1)";
+        $sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value as v';
+        $sql .= " WHERE v.fk_product_attribute = (SELECT rowid FROM ".MAIN_DB_PREFIX."product_attribute WHERE ref LIKE '".strtoupper(trim($ref))."' LIMIT 1)";
 
         $query = $this->db->query($sql);
 
@@ -1375,7 +1371,7 @@ class Products extends DolibarrApi
             $tmp->ref = $result->ref;
             $tmp->value = $result->value;
 
-            $return[] = $tmp;
+            $return[] = $this->_cleanObjectDatas($tmp);
         }
 
         return $return;
