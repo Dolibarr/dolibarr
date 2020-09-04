@@ -228,16 +228,18 @@ class ProductCombination
 
 
 	/**
-	 * Retrieves a product combination by a child product row id
+	 * Retrieves information of a variant product and ID of its parent product.
 	 *
-	 * @param int $fk_child Product row id
-	 * @return int <0 KO, >0 OK
+	 * @param 	int 	$productid 				Product ID of variant
+	 * @param	int		$donotloadpricelevel	Avoid loading price impact for each level. If PRODUIT_MULTIPRICES is not set, this has no effect.
+	 * @return 	int 							<0 if KO, 0 if product ID is not ID of a variant product (so parent not found), >0 if OK (ID of parent)
 	 */
-	public function fetchByFkProductChild($fk_child)
+	public function fetchByFkProductChild($productid, $donotloadpricelevel = 0)
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_child = ".(int) $fk_child." AND entity IN (".getEntity('product').")";
+		$sql = "SELECT rowid, fk_product_parent, fk_product_child, variation_price, variation_price_percentage, variation_weight";
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination WHERE fk_product_child = ".((int) $productid)." AND entity IN (".getEntity('product').")";
 
 		$query = $this->db->query($sql);
 
@@ -246,7 +248,7 @@ class ProductCombination
 		}
 
 		if (!$this->db->num_rows($query)) {
-			return -1;
+			return 0;
 		}
 
 		$result = $this->db->fetch_object($query);
@@ -258,11 +260,11 @@ class ProductCombination
 		$this->variation_price_percentage = $result->variation_price_percentage;
 		$this->variation_weight = $result->variation_weight;
 
-		if (!empty($conf->global->PRODUIT_MULTIPRICES)) {
+		if (empty($donotloadpricelevel) && !empty($conf->global->PRODUIT_MULTIPRICES)) {
 			$this->fetchCombinationPriceLevels();
 		}
 
-		return 1;
+		return $this->fk_product_parent;
 	}
 
 	/**
