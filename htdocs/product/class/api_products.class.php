@@ -1786,8 +1786,8 @@ class Products extends DolibarrApi
      * @param  string $ref_ext            Ref ext of element
      * @param  string $barcode            Barcode of element
      * @param  int    $includestockdata   Load also information about stock (slower)
-     * @param  bool   $includesubproducts Load information about subproducts
-	 * @param  bool   $includeparentid    Load also ID of parent product if product is a variant
+     * @param  bool   $includesubproducts Load information about subproducts (if product is a virtual product)
+	 * @param  bool   $includeparentid    Load also ID of parent product (if product is a variant of a parent product)
      * @return array|mixed                Data without useless information
      *
      * @throws RestException 401
