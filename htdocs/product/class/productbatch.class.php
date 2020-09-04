@@ -119,9 +119,7 @@ class Productbatch extends CommonObject
 		{
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -178,9 +176,7 @@ class Productbatch extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -208,19 +204,19 @@ class Productbatch extends CommonObject
 
         // Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.self::$_table_element." SET";
-		$sql.= " fk_product_stock=".(isset($this->fk_product_stock)?$this->fk_product_stock:"null").",";
-		$sql.= " sellby=".(dol_strlen($this->sellby)!=0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
-		$sql.= " eatby=".(dol_strlen($this->eatby)!=0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
-		$sql.= " batch=".(isset($this->batch)?"'".$this->db->escape($this->batch)."'":"null").",";
-		$sql.= " qty=".(isset($this->qty)?$this->qty:"null").",";
-		$sql.= " import_key=".(isset($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null")."";
-        $sql.= " WHERE rowid=".$this->id;
+		$sql .= " fk_product_stock=".(isset($this->fk_product_stock) ? $this->fk_product_stock : "null").",";
+		$sql .= " sellby=".(dol_strlen($this->sellby) != 0 ? "'".$this->db->idate($this->sellby)."'" : 'null').",";
+		$sql .= " eatby=".(dol_strlen($this->eatby) != 0 ? "'".$this->db->idate($this->eatby)."'" : 'null').",";
+		$sql .= " batch=".(isset($this->batch) ? "'".$this->db->escape($this->batch)."'" : "null").",";
+		$sql .= " qty=".(isset($this->qty) ? $this->qty : "null").",";
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null")."";
+        $sql .= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // Commit or rollback
 		if ($error)
@@ -232,9 +228,7 @@ class Productbatch extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -274,9 +268,7 @@ class Productbatch extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -293,33 +285,33 @@ class Productbatch extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		$error=0;
+		$error = 0;
 
-		$object=new Productbatch($this->db);
+		$object = new Productbatch($this->db);
 
  		$this->db->begin();
 
 		// Load source object
 		$object->fetch($fromid);
-		$object->id=0;
-		$object->statut=0;
+		$object->id = 0;
+		$object->statut = 0;
 
 		// Clear fields
 		// ...
 
 		// Create clone
-		$object->context['createfromclone']='createfromclone';
-		$result=$object->create($user);
+		$object->context['createfromclone'] = 'createfromclone';
+		$result = $object->create($user);
 
 		// Other options
 		if ($result < 0)
 		{
-			$this->error=$object->error;
-			$this->errors=array_merge($this->errors, $object->errors);
+			$this->error = $object->error;
+			$this->errors = array_merge($this->errors, $object->errors);
 			$error++;
 		}
 
-		if (! $error)
+		if (!$error)
 		{
 		}
 
@@ -330,9 +322,7 @@ class Productbatch extends CommonObject
 		{
 			$this->db->commit();
 			return $object->id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -424,9 +414,7 @@ class Productbatch extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -494,9 +482,7 @@ class Productbatch extends CommonObject
             $db->free($resql);
 
             return $ret;
-        }
-        else
-        {
+        } else {
             $error = "Error ".$db->lasterror();
             return -1;
         }
@@ -519,7 +505,7 @@ class Productbatch extends CommonObject
 	{
 		$productBatchList = array();
 
-		dol_syslog(__METHOD__ . ' fk_product=' . $fk_product . ', fk_warehouse=' . $fk_warehouse . ', qty_min=' . $qty_min . ', sortfield=' . $sortfield . ', sortorder=' . $sortorder, LOG_DEBUG);
+		dol_syslog(__METHOD__.' fk_product='.$fk_product.', fk_warehouse='.$fk_warehouse.', qty_min='.$qty_min.', sortfield='.$sortfield.', sortorder='.$sortorder, LOG_DEBUG);
 
 		$sql  = "SELECT";
 		$sql .= " pl.rowid";
@@ -528,17 +514,17 @@ class Productbatch extends CommonObject
 		$sql .= ", pl.sellby";
 		$sql .= ", pl.eatby";
 		$sql .= ", pb.qty";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "product_lot as pl";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = pl.fk_product";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_batch AS pb ON pl.batch = pb.batch";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product_stock AS ps ON ps.rowid = pb.fk_product_stock";
-		$sql .= " WHERE p.entity IN (" . getEntity('product') . ")";
-		$sql .= " AND pl.fk_product = " . $fk_product;
+		$sql .= " FROM ".MAIN_DB_PREFIX."product_lot as pl";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = pl.fk_product";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_batch AS pb ON pl.batch = pb.batch";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock AS ps ON ps.rowid = pb.fk_product_stock";
+		$sql .= " WHERE p.entity IN (".getEntity('product').")";
+		$sql .= " AND pl.fk_product = ".$fk_product;
 		if ($fk_warehouse > 0) {
-			$sql .= " AND ps.fk_entrepot = " . $fk_warehouse;
+			$sql .= " AND ps.fk_entrepot = ".$fk_warehouse;
 		}
 		if ($qty_min !== null) {
-			$sql .= " AND pb.qty > " . $qty_min;
+			$sql .= " AND pb.qty > ".$qty_min;
 		}
 		$sql .= $db->order($sortfield, $sortorder);
 
@@ -558,7 +544,7 @@ class Productbatch extends CommonObject
 
 			return $productBatchList;
 		} else {
-			dol_syslog(__METHOD__ . ' Error: ' . $db->lasterror(), LOG_ERR);
+			dol_syslog(__METHOD__.' Error: '.$db->lasterror(), LOG_ERR);
 			return -1;
 		}
 	}

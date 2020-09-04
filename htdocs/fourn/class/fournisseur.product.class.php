@@ -149,9 +149,7 @@ class ProductFournisseur extends Product
         {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -287,8 +285,7 @@ class ProductFournisseur extends Product
 			$localtax1 = $localtaxes_array['1'];
 			$localtaxtype2 = $localtaxes_array['2'];
 			$localtax2 = $localtaxes_array['3'];
-		}
-		else     // old method. deprecated because ot can't retreive type
+		} else // old method. deprecated because ot can't retreive type
 		{
 			$localtaxtype1 = '0';
 			$localtax1 = get_localtax($newvat, 1);
@@ -384,22 +381,16 @@ class ProductFournisseur extends Product
 				{
 					$this->db->commit();
 					return $this->product_fourn_price_id;
-				}
-				else
-				{
+				} else {
 					$this->db->rollback();
 					return -1;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->error()." sql=".$sql;
 				$this->db->rollback();
 				return -2;
 			}
-        }
-        else
-        {
+        } else {
             dol_syslog(get_class($this).'::update_buyprice without knowing id of line, so we delete from company, quantity and supplier_ref and insert again', LOG_DEBUG);
 
             // Delete price for this quantity
@@ -435,7 +426,7 @@ class ProductFournisseur extends Product
                 $sql .= " ".($newdefaultvatcode ? "'".$this->db->escape($newdefaultvatcode)."'" : "null").",";
                 $sql .= " ".$newnpr.",";
                 $sql .= $conf->entity.",";
-                $sql .= ($delivery_time_days != '' ? $delivery_time_days : 'null') . ",";
+                $sql .= ($delivery_time_days != '' ? $delivery_time_days : 'null').",";
                 $sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
                 $sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
                 $sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
@@ -447,8 +438,7 @@ class ProductFournisseur extends Product
                 $resql = $this->db->query($sql);
                 if ($resql) {
                     $this->product_fourn_price_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur_price");
-                }
-                else {
+                } else {
                     $error++;
                 }
 
@@ -566,23 +556,17 @@ class ProductFournisseur extends Product
 	                    if ($this->fourn_qty != 0)
 	                    {
 	                        $this->fourn_unitprice = price2num($this->fourn_price / $this->fourn_qty, 'MU');
-	                    }
-	                    else
-	                    {
+	                    } else {
 	                        $this->fourn_unitprice = "";
 	                    }
                     }
                 }
 
             	return 1;
-            }
-            else
-            {
+            } else {
                 return 0;
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -685,9 +669,7 @@ class ProductFournisseur extends Product
                     if ($prodfourn->fourn_qty != 0)
                     {
                         $prodfourn->fourn_unitprice = price2num($prodfourn->fourn_price / $prodfourn->fourn_qty, 'MU');
-                    }
-                    else
-                    {
+                    } else {
                         $prodfourn->fourn_unitprice = "";
                     }
                 }
@@ -697,9 +679,7 @@ class ProductFournisseur extends Product
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -775,9 +755,7 @@ class ProductFournisseur extends Product
             {
                 $this->db->free($resql);
                 return 0;
-            }
-            else
-            {
+            } else {
                 $min = -1;
                 foreach ($record_array as $record)
                 {
@@ -798,9 +776,7 @@ class ProductFournisseur extends Product
                             if ($record["quantity"] != 0)
                             {
                                 $fourn_unitprice = price2num($fourn_price / $record["quantity"], 'MU');
-                            }
-                            else
-                            {
+                            } else {
                                 $fourn_unitprice = $fourn_price;
                             }
                         }
@@ -835,9 +811,7 @@ class ProductFournisseur extends Product
 
             $this->db->free($resql);
             return 1;
-        }
-        else
-		{
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -868,9 +842,7 @@ class ProductFournisseur extends Product
         {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error()." sql=".$sql;
             $this->db->rollback();
             return -1;
@@ -997,9 +969,7 @@ class ProductFournisseur extends Product
 
             $this->db->free($resql);
             return $retarray;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->error();
             return -1;
         }
@@ -1025,7 +995,7 @@ class ProductFournisseur extends Product
             //$out .= '<td class="liste_titre right">'.$langs->trans("QtyMin").'</td>';
             $out .= '<td class="liste_titre">'.$langs->trans("User").'</td></tr>';
             foreach ($productFournLogList as $productFournLog) {
-                $out .= '<tr><td class="right">'.dol_print_date($this->db->jdate($productFournLog['datec']), 'dayhour', 'tzuser').'</td>';
+                $out .= '<tr><td class="right">'.dol_print_date($productFournLog['datec'], 'dayhour', 'tzuser').'</td>';
                 $out .= '<td class="right">'.price($productFournLog['price']).'</td>';
                 //$out.= '<td class="right">'.$productFournLog['quantity'].'</td>';
                 $out .= '<td>'.$productFournLog['lastname'].'</td></tr>';
@@ -1057,7 +1027,8 @@ class ProductFournisseur extends Product
 
         $label = '<u>'.$langs->trans("SupplierRef").'</u>';
         $label .= '<br>';
-        $label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref_supplier;
+        $label .= '<b>'.$langs->trans('Product').':</b> '.$this->ref;
+        $label .= '<br><b>'.$langs->trans('RefSupplier').':</b> '.$this->ref_supplier;
 
         $logPrices = $this->listProductFournisseurPriceLog($this->product_fourn_price_id, 'pfpl.datec', 'DESC'); // set sort order here
         if (is_array($logPrices) && count($logPrices) > 0) {
@@ -1086,8 +1057,7 @@ class ProductFournisseur extends Product
             }
             $linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.'"';
         $linkstart .= $linkclose.'>';
@@ -1095,7 +1065,7 @@ class ProductFournisseur extends Product
 
         $result .= $linkstart;
         if ($withpicto) $result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
-        if ($withpicto != 2) $result .= $this->fourn_ref;
+        if ($withpicto != 2) $result .= $this->ref.($this->ref_supplier ? ' ('.$this->ref_supplier.')' : '');
         $result .= $linkend;
         //if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 

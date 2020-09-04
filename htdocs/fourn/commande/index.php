@@ -54,7 +54,7 @@ $commandestatic = new CommandeFournisseur($db);
 $userstatic = new User($db);
 $formfile = new FormFile($db);
 
-print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("SuppliersOrdersArea"), '', 'supplier_order');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -117,7 +117,7 @@ if ($resql)
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("SuppliersOrders").'</th></tr>';
 	print "</tr>\n";
-	$listofstatus=array(0, 1, 2, 3, 4, 5, 6, 9);
+	$listofstatus = array(0, 1, 2, 3, 4, 5, 6, 9);
 	foreach ($listofstatus as $status)
 	{
 		$dataseries[] = array($commandestatic->LibStatut($status, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
@@ -160,9 +160,7 @@ if ($resql)
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
 
 	print "</table></div><br>";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -226,9 +224,7 @@ if (!empty($conf->multicompany->enabled) && !empty($conf->global->MULTICOMPANY_T
 	$sql .= " WHERE ((ug.fk_user = u.rowid";
 	$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
 	$sql .= " OR u.entity = 0)"; // Show always superadmin
-}
-else
-{
+} else {
 	$sql .= " WHERE (u.entity IN (".getEntity('user')."))";
 }
 $sql .= " AND u.fk_soc IS NULL"; // An external user can not approved
@@ -269,9 +265,7 @@ if ($resql)
 	}
 	print "</table></div><br>";
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -344,8 +338,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -371,7 +364,7 @@ $num = $db->num_rows($resql);
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1">('.$num.')</a></th></tr>';
+print '<th colspan="3">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=1">('.$num.')</a></th></tr>';
 
 if ($num)
 {

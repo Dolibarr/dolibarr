@@ -18,7 +18,7 @@
 /**
  *       \file       htdocs/public/ticket/list.php
  *       \ingroup    ticket
- *       \brief      Public file to add and manage ticket
+ *       \brief      Public file to list tickets
  */
 
 if (!defined('NOCSRFCHECK')) {
@@ -170,7 +170,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
-print '<div style="margin: 0 auto; width:60%" class="ticketpublicarea">';
+print '<div class="ticketpublicarealist">';
 
 if ($action == "view_ticketlist")
 {
@@ -201,7 +201,7 @@ if ($action == "view_ticketlist")
 
         // fetch optionals attributes and labels
         $extrafields = new ExtraFields($db);
-        $extrafields->fetch_name_optionals_label('ticket');
+        $extrafields->fetch_name_optionals_label($object->table_element);
 
         $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -215,7 +215,7 @@ if ($action == "view_ticketlist")
             't.date_close' => array('label' => $langs->trans("TicketCloseOn"), 'checked' => 0),
             't.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1),
         	//'t.track_id' => array('label' => $langs->trans("IDTracking"), 'checked' => 0),
-        	't.fk_statut' => array('label' => $langs->trans("Statut"), 'checked' => 1),
+        	't.fk_statut' => array('label' => $langs->trans("Status"), 'checked' => 1),
             't.subject' => array('label' => $langs->trans("Subject"), 'checked' => 1),
             'type.code' => array('label' => $langs->trans("Type"), 'checked' => 1),
             'category.code' => array('label' => $langs->trans("Category"), 'checked' => 1),
@@ -235,7 +235,7 @@ if ($action == "view_ticketlist")
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
         	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
         		if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
-        			$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
+        			$arrayfields["ef.".$key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => ($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1, 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' =>(abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) && $extrafields->attributes[$object->table_element]['perms'][$key]);
                 }
             }
         }

@@ -57,11 +57,12 @@ if ($user->socid > 0)
 $fichinterstatic = new Fichinter($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
+
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
 llxHeader("", $langs->trans("Interventions"), $help_url);
 
-print load_fiche_titre($langs->trans("InterventionsArea"));
+print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -165,7 +166,7 @@ if ($resql)
         {
             print '<tr class="oddeven">';
             print '<td>'.$fichinterstatic->LibStatut($status, $bool, 0).'</td>';
-            print '<td class="right"><a href="list.php?viewstatut='.$status.'">'.(isset($vals[$status.$bool]) ? $vals[$status.$bool] : 0).' ';
+            print '<td class="right"><a href="list.php?search_status='.$status.'">'.(isset($vals[$status.$bool]) ? $vals[$status.$bool] : 0).' ';
             print $fichinterstatic->LibStatut($status, $bool, 3);
             print '</a>';
             print '</td>';
@@ -178,9 +179,7 @@ if ($resql)
     //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -297,8 +296,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -326,7 +324,7 @@ if (!empty($conf->ficheinter->enabled))
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="3">'.$langs->trans("FichinterToProcess").' <a href="'.DOL_URL_ROOT.'/fichinter/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num)
 		{
@@ -368,8 +366,7 @@ if (!empty($conf->ficheinter->enabled))
 		}
 
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 print '</div></div></div>';

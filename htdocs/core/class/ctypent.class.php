@@ -35,7 +35,7 @@ class Ctypent // extends CommonObject
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -79,15 +79,15 @@ class Ctypent // extends CommonObject
     public function create($user, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
 
-		if (isset($this->id)) $this->id=trim($this->id);
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
-		if (isset($this->active)) $this->active=trim($this->active);
-		if (isset($this->module)) $this->module=trim($this->module);
+		if (isset($this->id)) $this->id = trim($this->id);
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
+		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->module)) $this->module = trim($this->module);
 
 
 
@@ -97,31 +97,31 @@ class Ctypent // extends CommonObject
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."c_typent(";
 
-		$sql.= "id,";
-		$sql.= "code,";
-		$sql.= "libelle,";
-		$sql.= "active,";
-		$sql.= "module";
+		$sql .= "id,";
+		$sql .= "code,";
+		$sql .= "libelle,";
+		$sql .= "active,";
+		$sql .= "module";
 
 
-        $sql.= ") VALUES (";
+        $sql .= ") VALUES (";
 
-		$sql.= " ".(! isset($this->id)?'NULL':"'".$this->db->escape($this->id)."'").",";
-		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
-		$sql.= " ".(! isset($this->libelle)?'NULL':"'".$this->db->escape($this->libelle)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'").",";
-		$sql.= " ".(! isset($this->module)?'NULL':"'".$this->db->escape($this->module)."'")."";
+		$sql .= " ".(!isset($this->id) ? 'NULL' : "'".$this->db->escape($this->id)."'").",";
+		$sql .= " ".(!isset($this->code) ? 'NULL' : "'".$this->db->escape($this->code)."'").",";
+		$sql .= " ".(!isset($this->libelle) ? 'NULL' : "'".$this->db->escape($this->libelle)."'").",";
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'").",";
+		$sql .= " ".(!isset($this->module) ? 'NULL' : "'".$this->db->escape($this->module)."'")."";
 
 
-		$sql.= ")";
+		$sql .= ")";
 
 		$this->db->begin();
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        $resql=$this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        $resql = $this->db->query($sql);
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
-		if (! $error)
+		if (!$error)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."c_typent");
         }
@@ -129,16 +129,14 @@ class Ctypent // extends CommonObject
         // Commit or rollback
         if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::create ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
+			return -1 * $error;
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -157,25 +155,25 @@ class Ctypent // extends CommonObject
     {
     	global $langs;
         $sql = "SELECT";
-		$sql.= " t.id,";
-		$sql.= " t.code,";
-		$sql.= " t.libelle as label,";
-		$sql.= " t.fk_country as country_id,";
-		$sql.= " t.active,";
-		$sql.= " t.module";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_typent as t";
-        if ($id)   $sql.= " WHERE t.id = ".$id;
-        elseif ($code) $sql.= " WHERE t.code = '".$this->db->escape($code)."'";
-        elseif ($label) $sql.= " WHERE t.libelle = '".$this->db->escape($label)."'";
+		$sql .= " t.id,";
+		$sql .= " t.code,";
+		$sql .= " t.libelle as label,";
+		$sql .= " t.fk_country as country_id,";
+		$sql .= " t.active,";
+		$sql .= " t.module";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_typent as t";
+        if ($id)   $sql .= " WHERE t.id = ".$id;
+        elseif ($code) $sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+        elseif ($label) $sql .= " WHERE t.libelle = '".$this->db->escape($label)."'";
 
-        $resql=$this->db->query($sql);
+        $resql = $this->db->query($sql);
         if ($resql)
         {
             if ($this->db->num_rows($resql))
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id    = $obj->id;
+                $this->id = $obj->id;
 				$this->code = $obj->code;
 				$this->libelle = $obj->label;
 				$this->country_id = $obj->country_id;
@@ -185,10 +183,8 @@ class Ctypent // extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
-      	    $this->error="Error ".$this->db->lasterror();
+        } else {
+      	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
     }
@@ -204,13 +200,13 @@ class Ctypent // extends CommonObject
     public function update($user = null, $notrigger = 0)
     {
     	global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		// Clean parameters
-		if (isset($this->code)) $this->code=trim($this->code);
-		if (isset($this->libelle)) $this->libelle=trim($this->libelle);
-		if (isset($this->active)) $this->active=trim($this->active);
-		if (isset($this->module)) $this->module=trim($this->module);
+		if (isset($this->code)) $this->code = trim($this->code);
+		if (isset($this->libelle)) $this->libelle = trim($this->libelle);
+		if (isset($this->active)) $this->active = trim($this->active);
+		if (isset($this->module)) $this->module = trim($this->module);
 
 
 		// Check parameters
@@ -218,31 +214,29 @@ class Ctypent // extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."c_typent SET";
-		$sql.= " code=".(isset($this->code)?"'".$this->db->escape($this->code)."'":"null").",";
-		$sql.= " libelle=".(isset($this->libelle)?"'".$this->db->escape($this->libelle)."'":"null").",";
-		$sql.= " active=".(isset($this->active)?$this->active:"null").",";
-		$sql.= " module=".(isset($this->module)?"'".$this->db->escape($this->module)."'":"null")."";
-        $sql.= " WHERE id=".$this->id;
+		$sql .= " code=".(isset($this->code) ? "'".$this->db->escape($this->code)."'" : "null").",";
+		$sql .= " libelle=".(isset($this->libelle) ? "'".$this->db->escape($this->libelle)."'" : "null").",";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null").",";
+		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null")."";
+        $sql .= " WHERE id=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
         $resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // Commit or rollback
 		if ($error)
 		{
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
-		}
-		else
-		{
+			return -1 * $error;
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -259,30 +253,28 @@ class Ctypent // extends CommonObject
 	public function delete($user, $notrigger = 0)
 	{
 		global $conf, $langs;
-		$error=0;
+		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."c_typent";
-		$sql.= " WHERE id=".$this->id;
+		$sql .= " WHERE id=".$this->id;
 
 		$this->db->begin();
 
 		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-    	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+    	if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
 
         // Commit or rollback
         if ($error)
         {
-			foreach($this->errors as $errmsg)
+			foreach ($this->errors as $errmsg)
 			{
 	            dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
-	            $this->error.=($this->error?', '.$errmsg:$errmsg);
+	            $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 			}
 			$this->db->rollback();
-			return -1*$error;
-        }
-        else
-        {
+			return -1 * $error;
+        } else {
             $this->db->commit();
             return 1;
         }

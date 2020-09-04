@@ -141,9 +141,7 @@ class Export
 	    									if (!empty($perm[2]))
 	    									{
 	    										$bool = $user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
-	    									}
-	    									else
-	    									{
+	    									} else {
 	    										$bool = $user->rights->{$perm[0]}->{$perm[1]};
 	    									}
 	    									if ($perm[0] == 'user' && $user->admin) $bool = true;
@@ -295,8 +293,7 @@ class Export
 			case 'Text':
 				if (!(strpos($ValueField, '%') === false))
 					$szFilterQuery .= " ".$NameField." LIKE '".$ValueField."'";
-				else
-					$szFilterQuery .= " ".$NameField." = '".$ValueField."'";
+				else $szFilterQuery .= " ".$NameField." = '".$ValueField."'";
 				break;
 			case 'Date':
 				if (strpos($ValueField, "+") > 0)
@@ -305,13 +302,10 @@ class Export
 					$ValueArray = explode("+", $ValueField);
 					$szFilterQuery = "(".$this->conditionDate($NameField, trim($ValueArray[0]), ">=");
 					$szFilterQuery .= " AND ".$this->conditionDate($NameField, trim($ValueArray[1]), "<=").")";
-				}
-				else
-				{
+				} else {
 					if (is_numeric(substr($ValueField, 0, 1)))
 						$szFilterQuery = $this->conditionDate($NameField, trim($ValueField), "=");
-					else
-						$szFilterQuery = $this->conditionDate($NameField, trim(substr($ValueField, 1)), substr($ValueField, 0, 1));
+					else $szFilterQuery = $this->conditionDate($NameField, trim(substr($ValueField, 1)), substr($ValueField, 0, 1));
 				}
 				break;
 			case 'Duree':
@@ -324,13 +318,10 @@ class Export
 					$ValueArray = explode("+", $ValueField);
 					$szFilterQuery = "(".$NameField.">=".$ValueArray[0];
 					$szFilterQuery .= " AND ".$NameField."<=".$ValueArray[1].")";
-				}
-				else
-				{
+				} else {
 					if (is_numeric(substr($ValueField, 0, 1)))
 						$szFilterQuery = " ".$NameField."=".$ValueField;
-					else
-						$szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).substr($ValueField, 1);
+					else $szFilterQuery = " ".$NameField.substr($ValueField, 0, 1).substr($ValueField, 1);
 				}
 				break;
 			case 'Boolean':
@@ -343,8 +334,7 @@ class Export
 				else {
                     if (!(strpos($ValueField, '%') === false))
                         $szFilterQuery = " ".$NameField." LIKE '".$ValueField."'";
-                    else
-                        $szFilterQuery = " ".$NameField." = '".$ValueField."'";
+                    else $szFilterQuery = " ".$NameField." = '".$ValueField."'";
 				}
 				break;
 			default:
@@ -367,7 +357,7 @@ class Export
 		// TODO date_format is forbidden, not performant and not portable. Use instead BETWEEN
 		if (strlen($Value) == 4) $Condition = " date_format(".$Field.",'%Y') ".$Sens." '".$Value."'";
 		elseif (strlen($Value) == 6) $Condition = " date_format(".$Field.",'%Y%m') ".$Sens." '".$Value."'";
-		else  $Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
+		else $Condition = " date_format(".$Field.",'%Y%m%d') ".$Sens." ".$Value;
 		return $Condition;
     }
 
@@ -428,8 +418,7 @@ class Export
 
 				if (!empty($InfoFieldList[3]))
 					$keyList = $InfoFieldList[3];
-				else
-					$keyList = 'rowid';
+				else $keyList = 'rowid';
 				$sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
 				if ($InfoFieldList[1] == 'c_stcomm') $sql = 'SELECT id as id, '.$keyList.' as rowid, '.$InfoFieldList[2].' as label'.(empty($InfoFieldList[3]) ? '' : ', '.$InfoFieldList[3].' as code');
 				if ($InfoFieldList[1] == 'c_country') $sql = 'SELECT '.$keyList.' as rowid, '.$InfoFieldList[2].' as label, code as code';
@@ -473,9 +462,7 @@ class Export
 							if (!empty($ValueField) && $ValueField == $obj->rowid)
 							{
 								$szFilterField .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
-							}
-							else
-							{
+							} else {
 								$szFilterField .= '<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
 							}
 							$i++;
@@ -484,8 +471,7 @@ class Export
 					$szFilterField .= "</select>";
 
 					$this->db->free($resql);
-				}
-				else dol_print_error($this->db);
+				} else dol_print_error($this->db);
 				break;
 		}
 
@@ -564,8 +550,7 @@ class Export
 		$objmodel = new $classname($this->db);
 
 		if (!empty($sqlquery)) $sql = $sqlquery;
-        else
-		{
+        else {
 			// Define value for indice from $datatoexport
 			$foundindice = 0;
 			foreach ($this->array_export_code as $key => $dataset)
@@ -595,8 +580,7 @@ class Export
 			//$this->array_export_label[$indice]
 			if ($conf->global->EXPORT_PREFIX_SPEC)
 				$filename = $conf->global->EXPORT_PREFIX_SPEC."_".$datatoexport;
-			else
-				$filename = "export_".$datatoexport;
+			else $filename = "export_".$datatoexport;
 			$filename .= '.'.$objmodel->getDriverExtension();
 			$dirname = $conf->export->dir_temp.'/'.$user->id;
 
@@ -664,9 +648,7 @@ class Export
 								    $remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;
-							}
-							else
-							{
+							} else {
 							    // TODO FIXME Export of compute field does not work. $obj containt $obj->alias_field and formulat will contains $obj->field
 							    $computestring = $this->array_export_special[$indice][$key];
 							    $tmp = dol_eval($computestring, 1, 0);
@@ -688,16 +670,12 @@ class Export
 				$objmodel->close_file();
 
         		return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = $objmodel->error;
 				dol_syslog("Export::build_file Error: ".$this->error, LOG_ERR);
 				return -1;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error()." - sql=".$sql;
 			return -1;
 		}
@@ -739,9 +717,7 @@ class Export
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->errno = $this->db->lasterrno();
 			$this->db->rollback();
@@ -776,15 +752,11 @@ class Export
 				$this->hexafiltervalue = $obj->filter;
 
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->error = "ModelNotFound";
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return -3;
 		}
@@ -822,9 +794,7 @@ class Export
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}

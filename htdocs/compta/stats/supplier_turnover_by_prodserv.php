@@ -100,9 +100,7 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			else $year_end++;
 		}
 		$date_start = dol_get_first_day($year_start, $month_start, false); $date_end = dol_get_last_day($year_end, $month_end, false);
-	}
-	else
-	{
+	} else {
 		if ($q == 1) { $date_start = dol_get_first_day($year_start, 1, false); $date_end = dol_get_last_day($year_start, 3, false); }
 		if ($q == 2) { $date_start = dol_get_first_day($year_start, 4, false); $date_end = dol_get_last_day($year_start, 6, false); }
 		if ($q == 3) { $date_start = dol_get_first_day($year_start, 7, false); $date_end = dol_get_last_day($year_start, 9, false); }
@@ -172,8 +170,7 @@ if ($modecompta == "CREANCES-DETTES") {
 
 	$description = $langs->trans("RulesPurchaseTurnoverDue");
 	$builddate = dol_now();
-}
-elseif ($modecompta == "RECETTES-DEPENSES")
+} elseif ($modecompta == "RECETTES-DEPENSES")
 {
 	$name = $langs->trans("PurchaseTurnoverCollected").', '.$langs->trans("ByProductsAndServices");
 	$calcmode = $langs->trans("CalcModeEngagement");
@@ -181,11 +178,9 @@ elseif ($modecompta == "RECETTES-DEPENSES")
 	$description = $langs->trans("RulesPurchaseTurnoverIn");
 
 	$builddate = dol_now();
-}
-elseif ($modecompta == "BOOKKEEPING")
+} elseif ($modecompta == "BOOKKEEPING")
 {
-}
-elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
+} elseif ($modecompta == "BOOKKEEPINGCOLLECTED")
 {
 }
 
@@ -221,8 +216,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	if ($selected_cat === -2)	// Without any category
 	{
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-	}
-	elseif ($selected_cat) 	// Into a specific category
+	} elseif ($selected_cat) 	// Into a specific category
 	{
 		$sql .= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
@@ -240,8 +234,7 @@ if ($modecompta == 'CREANCES-DETTES')
 	if ($selected_cat === -2)	// Without any category
 	{
 		$sql .= " AND cp.fk_product is null";
-	}
-	elseif ($selected_cat) {	// Into a specific category
+	} elseif ($selected_cat) {	// Into a specific category
 		$sql .= " AND (c.rowid = ".$selected_cat;
 		if ($subcat) $sql .= " OR c.fk_parent = ".$selected_cat;
 		$sql .= ")";

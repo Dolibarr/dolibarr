@@ -85,7 +85,7 @@ function inventoryPrepareHead(&$inventory, $title = 'Inventory', $get = '')
  */
 function inventorySelectProducts(&$inventory)
 {
-	global $conf,$db,$langs;
+	global $conf, $db, $langs;
 
 	$except_product_id = array();
 
@@ -101,14 +101,14 @@ function inventorySelectProducts(&$inventory)
 	$TChildWarehouses = array($inventory->fk_warehouse);
 	$e = new Entrepot($db);
 	$e->fetch($inventory->fk_warehouse);
-	if(method_exists($e, 'get_children_warehouses')) $e->get_children_warehouses($e->id, $TChildWarehouses);
+	if (method_exists($e, 'get_children_warehouses')) $e->get_children_warehouses($e->id, $TChildWarehouses);
 
 	$Tab = array();
 	$sql = 'SELECT rowid, label
 			FROM '.MAIN_DB_PREFIX.'entrepot WHERE rowid IN('.implode(', ', $TChildWarehouses).')';
-	if(method_exists($e, 'get_children_warehouses')) $sql.= ' ORDER BY fk_parent';
+	if (method_exists($e, 'get_children_warehouses')) $sql .= ' ORDER BY fk_parent';
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) {
+	while ($res = $db->fetch_object($resql)) {
 		$Tab[$res->rowid] = $res->label;
 	}
 	print '&nbsp;&nbsp;&nbsp;';

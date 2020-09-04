@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Customer invoice contact
 TypeContact_propal_external_CUSTOMER=Customer contact following-up proposal
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Default model creation
 DefaultModelPropalToBill=Default template when closing a business proposal (to be invoiced)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Default template when closing a business proposal (unbi
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

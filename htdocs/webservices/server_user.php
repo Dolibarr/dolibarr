@@ -372,14 +372,12 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
                     )
                 );
             }
-            else
-            {
+            else {
                 $error++;
                 $errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
             }
         }
-        else
-        {
+        else {
             $error++;
             $errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
         }
@@ -426,8 +424,7 @@ function getListOfGroups($authentication)
 		{
 			$sql .= " WHERE g.entity IS NOT NULL";
 		}
-		else
-		{
+		else {
 			$sql .= " WHERE g.entity IN (0,".$conf->entity.")";
 		}
 		$sql .= " GROUP BY g.rowid, g.nom, g.entity, g.datec";
@@ -444,8 +441,7 @@ function getListOfGroups($authentication)
 				$i++;
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = $db->lasterrno();
 			$errorlabel = $db->lasterror();
@@ -459,8 +455,7 @@ function getListOfGroups($authentication)
 		'groups'=>$arraygroups
 		);
 	}
-	else
-	{
+	else {
 		$objectresp = array(
 		'result'=>array('result_code' => 'OK', 'result_label' => ''),
 		'groups'=>$arraygroups
@@ -526,8 +521,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$error++;
 					$errorcode = 'ALREADY_EXIST'; $errorlabel = 'Object not create : company or contact exists '.$thirdpartywithuser['email'];
 				}
-				else
-				{
+				else {
 					$db->begin();
 					/*
 					 * Company creation
@@ -633,14 +627,12 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								if ($thirdpartywithuser['group_id'] > 0)
 									$edituser->SetInGroup($thirdpartywithuser['group_id'], $conf->entity);
 							}
-							else
-							{
+							else {
 								$error++;
 								$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$edituser->error;
 							}
 						}
-						else
-						{
+						else {
 							$error++;
 							$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create : '.$contact->error;
 						}
@@ -650,23 +642,17 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 							$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>'SUCCESS'), 'id'=>$socid_return);
 							$error = 0;
 						}
-					}
-					else
-					{
+					} else {
 						$error++;
 						$errors = ($thirdparty->error ? array($thirdparty->error) : $thirdparty->errors);
 					}
 				}
-			}
-			else
-			{
+			} else {
 				// retour creation KO
 				$error++;
 				$errorcode = 'NOT_CREATE'; $errorlabel = 'Object not create';
 			}
-		}
-		else
-		{
+		} else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}
@@ -732,20 +718,17 @@ function setUserPassword($authentication, $shortuser)
 						'groups'=>$arraygroups
 					);
 				}
-				else
-				{
+				else {
 					$error++;
 					$errorcode = 'NOT_MODIFIED'; $errorlabel = 'Error when changing password';
 				}
 			}
-			else
-			{
+			else {
 				$error++;
 				$errorcode = 'NOT_FOUND'; $errorlabel = 'User not found';
 			}
 		}
-		else
-		{
+		else {
 			$error++;
 			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
 		}

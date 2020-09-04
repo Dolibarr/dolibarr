@@ -43,15 +43,15 @@ function blockedlogadmin_prepare_head()
 	$head[$h][1] = $langs->trans("BrowseBlockedLog");
 
 	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-	$b=new BlockedLog($db);
+	$b = new BlockedLog($db);
 	if ($b->alreadyUsed())
 	{
-		$head[$h][1].='<span class="badge marginleftonlyshort">...</span>';
+		$head[$h][1] .= (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? '<span class="badge marginleftonlyshort">...</span>' : '');
 	}
 	$head[$h][2] = 'fingerprints';
 	$h++;
 
-	$object=new stdClass();
+	$object = new stdClass();
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

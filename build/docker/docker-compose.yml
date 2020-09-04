@@ -21,5 +21,12 @@ web:
         - ../../htdocs:/var/www/html
     links:
         - mariadb
+        - mail
     ports:
         - "80:80"
+
+mail:
+    image: maildev/maildev
+    ports:
+        - "8081:80"
+        - "25:25"

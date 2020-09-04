@@ -3,13 +3,15 @@
 ![Downloads per day](https://img.shields.io/sourceforge/dw/dolibarr.svg)
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg)
 
-Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
+Dolibarr ERP & CRM is a modern software package that helps manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
-It's an Open Source Software (written in PHP language) designed for small, medium or large companies, foundations and freelances.
+It's an Open Source Software suite (written in PHP with optional JavaScript enhancements) designed for small, medium or large companies, foundations and freelancers.
 
-You can freely use, study, modify or distribute it according to its Free Software licence.
+You can freely use, study, modify or distribute it according to its licence.
 
-You can use it as a standalone application or as a web application to be able to access it from the Internet or a LAN.
+You can use it as a standalone application or as a web application to access it from the Internet or a LAN.
+
+Dolibarr has a large community ready to help you, free forums and [oficially preferred partners ready to offer commercial support should you need it](https://partners.dolibarr.org)
 
 ![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_1920x1080.jpg)
 
@@ -27,19 +29,23 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 
 If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
-- DoliWamp for Windows
-- DoliDeb for Debian or Ubuntu
+- [DoliWamp for Windows](https://wiki.dolibarr.org/index.php/Dolibarr_for_Windows_(DoliWamp)
+- [DoliDeb for Debian](https://wiki.dolibarr.org/index.php/Dolibarr_for_Ubuntu_or_Debian
 - DoliRpm for Redhat, Fedora, OpenSuse, Mandriva or Mageia
 
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
 ### Advanced setup
 
-You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
+You can use a web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
+
+On GNU/Linux, first check if your distribution has already packaged Dolibarr.
+
+#### Generic install steps:
 
 - Check that your installed PHP version is supported [see PHP support](https://wiki.dolibarr.org/index.php/Versions).
 
-- Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you known git):
+- Uncompress the downloaded .zip archive to copy the "dolibarr/htdocs" directory and all its files inside your web server root or get the files directly from GitHub (recommanded if you know git as it makes it easier if you want to upgrade later):
 
   `git clone https://github.com/dolibarr/dolibarr -b x.y`     (where x.y is main version like 3.6, 9.0, ...)
 
@@ -67,15 +73,16 @@ You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL)
 
 If you don't have time to install it yourself, you can try some commercial 'ready to use' Cloud offers (See https://saas.dolibarr.org). However, this third solution is not free.
 
+
 ## UPGRADING
+
+Dolibarr supports upgrading usually wihtout the need for any (commercial) support (depending on if you use any commercial extensions) and supports upgrading all the way from any version after 2.8 without breakage. This is unique in the ERP ecosystem and a benefit our users highly appreciate!
 
 - At first make a backup of your Dolibarr files & than see https://wiki.dolibarr.org/index.php/Installation_-_Upgrade#Upgrade_Dolibarr
 - Check that your installed PHP version is supported by the new version [see PHP support](./doc/phpmatrix.md).
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
-- At first next access, Dolibarr will redirect your to the "install/" page to follow the upgrade process.
-  If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file into the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
-
-*Note: migration process can be safely done multiple times by calling the `/install/index.php` page*
+- At first next access, Dolibarr will redirect you to the "install/" page to follow the upgrade process.
+  If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file in the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
 
 ## WHAT'S NEW
 
@@ -85,28 +92,28 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 
 ### Main application/modules (all optional)
 
-- Customers, Prospects (Leads) and/or Suppliers directory
+- Customers, Prospects (Leads) and/or Suppliers directory + Contacts
+- Members management 
 - Products and/or Services catalog
 - Commercial proposals management
-- Customer and Supplier Orders management
+- Customer & Supplier Orders management
 - Invoices and payment management
-- Standing orders management (European SEPA)
+- Shipping management
+- Warehouse/Stock management
+- Manufacturing Orders
 - Bank accounts management
+- Direct debit orders management (European SEPA)
 - Accounting management
 - Shared calendar/agenda (with ical and vcal export for third party tools integration)
-- Opportunities and/or project management
-- Projects management
+- Opportunities or Leads management
+- Projects & Tasks management
 - Contracts management
-- Warehouse/Stock management
-- Shipping management
 - Interventions management
 - Employee's leave requests management
 - Expense reports
 - Timesheets
 - Electronic Document Management (EDM)
 - Foundations members management
-- Mass emailing
-- Surveys
 - Point of Sale (POS)
 - …
 
@@ -115,11 +122,13 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Bookmarks management
 - Donations management
 - Reporting
+- Surveys
 - Data export/import
 - Barcodes support
 - Margin calculations
 - LDAP connectivity
 - ClickToDial integration
+- Mass emailing
 - RSS integration
 - Skype integration
 - Payment platforms integration (PayPal, Stripe, Paybox...)
@@ -136,7 +145,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Highly customizable: enable only the modules you need, add user personalized fields, choose your skin, several menu managers (can be used by internal users as a back-office with a particular menu, or by external users as a front-office with another one)
 
 - APIs
-- An easy to understand, maintain and develop code (PHP with no heavy framework; trigger and hook architecture)
+- Code that is easy to understand, maintain and develop (PHP with no heavy framework; trigger and hook architecture)
 - Support a lot of country specific features:
   - Spanish Tax RE and ISPF
   - French NPR VAT rate (VAT called "Non Perçue Récupérable" for DOM-TOM)
@@ -146,7 +155,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
   - Compatible with [European directives](http://europa.eu/legislation_summaries/taxation/l31057_en.htm) (2006/112/CE ... 2010/45/UE)
   - Compatible with European GDPR rules
   - ...
-- PDF or ODT generation for invoice, proposals, orders...
+- Flexible PDF & ODT generation for invoices, proposals, orders...
 - …
 
 ### System Environment / Requirements
@@ -164,12 +173,12 @@ These are features that Dolibarr does **not** yet fully support:
 
 - Tasks dependencies in projects
 - Payroll module
-- No native embedded Webmail
+- No native embedded Webmail, but you can send email to contacts in Dolibarr with e.g. offers, invoices, etc.
 - Dolibarr can't do coffee (yet)
 
 ## DOCUMENTATION
 
-Administrator, user, developer and translator's documentations are available along with other community resources on the [Wiki](https://wiki.dolibarr.org).
+Administrator, user, developer and translator's documentations are available along with other community resources in the [Wiki](https://wiki.dolibarr.org).
 
 ## CONTRIBUTING
 
@@ -179,7 +188,7 @@ This project exists thanks to all the people who contribute. [[Contribute](https
 
 ## CREDITS
 
-Dolibarr is the work of many contributors over the years and uses some fine libraries.
+Dolibarr is the work of many contributors over the years and uses some fine PHP libraries.
 
 See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) file.
 

@@ -32,6 +32,7 @@ VendorName=供应商名称
 CSSUrlForPaymentForm=付款方式的CSS样式表的URL
 NewStripePaymentReceived=收到新Stripe付款
 NewStripePaymentFailed=新Stripe付款尝试但失败了
+FailedToChargeCard=Failed to charge card
 STRIPE_TEST_SECRET_KEY=秘密测试密钥
 STRIPE_TEST_PUBLISHABLE_KEY=可发布的测试密钥
 STRIPE_TEST_WEBHOOK_KEY=Webhook测试密钥
@@ -68,4 +69,4 @@ ToOfferALinkForTestWebhook=Link to setup Stripe WebHook to call the IPN (test mo
 ToOfferALinkForLiveWebhook=Link to setup Stripe WebHook to call the IPN (live mode)
 PaymentWillBeRecordedForNextPeriod=Payment will be recorded for the next period.
 ClickHereToTryAgain=<a href="%s">Click here to try again...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authenticatin rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s

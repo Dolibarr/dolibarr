@@ -351,18 +351,14 @@ if ($action == 'delbookkeepingyearconfirm' && $user->rights->accounting->mouveme
 		$result = $object->deleteByYearAndJournal($delyear, $deljournal, '', ($delmonth > 0 ? $delmonth : 0));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages("RecordDeleted", null, 'mesgs');
 		}
 
 		// Make a redirect to avoid to launch the delete later after a back button
 		header("Location: list.php".($param ? '?'.$param : ''));
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages("NoRecordDeleted", null, 'warnings');
 	}
 }
@@ -373,9 +369,7 @@ if ($action == 'delmouvconfirm' && $user->rights->accounting->mouvements->suppri
 		$result = $object->deleteMvtNum($mvt_num);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		}
 
@@ -418,7 +412,7 @@ $sql .= " t.label_operation,";
 $sql .= " t.debit,";
 $sql .= " t.credit,";
 $sql .= " t.lettering_code,";
-$sql .= " t.montant,";
+$sql .= " t.montant as amount,";
 $sql .= " t.sens,";
 $sql .= " t.fk_user_author,";
 $sql .= " t.import_key,";
@@ -480,9 +474,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
 	if ($result < 0)
 	{
 		setEventMessages($object->error, $object->errors, 'errors');
-	}
-	else
-	{
+	} else {
 	    // Export files
 		$accountancyexport = new AccountancyExport($db);
 		$accountancyexport->export($object->lines, $formatexportset);
@@ -490,9 +482,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
         if (!empty($accountancyexport->errors))
         {
             setEventMessages('', $accountancyexport->errors, 'errors');
-        }
-        else
-        {
+        } else {
             // Specify as export : update field date_export
             $error = 0;
             $db->begin();
@@ -521,9 +511,7 @@ if ($action == 'export_file' && $user->rights->accounting->mouvements->export) {
             {
             	$db->commit();
             	// setEventMessages($langs->trans("AllExportedMovementsWereRecordedAsExported"), null, 'mesgs');
-            }
-            else
-            {
+            } else {
             	$error++;
             	$db->rollback();
             	setEventMessages($langs->trans("NotAllExportedMovementsCouldBeRecordedAsExported"), null, 'errors');
@@ -559,9 +547,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -721,9 +707,7 @@ if (!empty($arrayfields['t.subledger_account']['checked']))
 	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 	{
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_start, 'search_accountancy_aux_code_start', 1);
-	}
-	else
-	{
+	} else {
 		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_start" value="'.$search_accountancy_aux_code_start.'">';
 	}
 	print '</div>';
@@ -734,9 +718,7 @@ if (!empty($arrayfields['t.subledger_account']['checked']))
 	if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX))
 	{
 		print $formaccounting->select_auxaccount($search_accountancy_aux_code_end, 'search_accountancy_aux_code_end', 1);
-	}
-	else
-	{
+	} else {
 		print '<input type="text" class="maxwidth100" name="search_accountancy_aux_code_end" value="'.$search_accountancy_aux_code_end.'">';
 	}
 	print '</div>';
@@ -878,7 +860,8 @@ while ($i < min($num, $limit))
 	$line->label_operation = $obj->label_operation;
 	$line->debit = $obj->debit;
 	$line->credit = $obj->credit;
-	$line->montant = $obj->montant;
+	$line->montant = $obj->amount;	// deprecated
+	$line->amount = $obj->amount;
 	$line->sens = $obj->sens;
 	$line->lettering_code = $obj->lettering_code;
 	$line->fk_user_author = $obj->fk_user_author;
@@ -929,8 +912,7 @@ while ($i < min($num, $limit))
             $filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
             $urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
             $documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-        }
-        elseif ($line->doc_type == 'supplier_invoice')
+        } elseif ($line->doc_type == 'supplier_invoice')
         {
             $langs->loadLangs(array('bills'));
 
@@ -943,8 +925,7 @@ while ($i < min($num, $limit))
             $filedir = $conf->fournisseur->facture->dir_output.'/'.get_exdir($line->fk_doc, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
             $subdir = get_exdir($objectstatic->id, 2, 0, 0, $objectstatic, $modulepart).dol_sanitizeFileName($line->doc_ref);
             $documentlink = $formfile->getDocumentsLink($objectstatic->element, $subdir, $filedir);
-        }
-        elseif ($line->doc_type == 'expense_report')
+        } elseif ($line->doc_type == 'expense_report')
         {
             $langs->loadLangs(array('trips'));
 
@@ -957,9 +938,7 @@ while ($i < min($num, $limit))
             $filedir = $conf->expensereport->dir_output.'/'.dol_sanitizeFileName($line->doc_ref);
             $urlsource = $_SERVER['PHP_SELF'].'?id='.$objectstatic->id;
             $documentlink = $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
-        }
-        else
-        {
+        } else {
             // Other type
         }
 
@@ -1006,7 +985,7 @@ while ($i < min($num, $limit))
 	// Amount debit
 	if (!empty($arrayfields['t.debit']['checked']))
 	{
-		print '<td class="nowrap right">'.($line->debit ? price($line->debit) : '').'</td>';
+		print '<td class="nowrap right">'.($line->debit != 0 ? price($line->debit) : '').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totaldebit';
 		$totalarray['val']['totaldebit'] += $line->debit;
@@ -1015,7 +994,7 @@ while ($i < min($num, $limit))
 	// Amount credit
 	if (!empty($arrayfields['t.credit']['checked']))
 	{
-		print '<td class="nowrap right">'.($line->credit ? price($line->credit) : '').'</td>';
+		print '<td class="nowrap right">'.($line->credit != 0 ? price($line->credit) : '').'</td>';
 		if (!$i) $totalarray['nbfield']++;
 		if (!$i) $totalarray['pos'][$totalarray['nbfield']] = 'totalcredit';
 		$totalarray['val']['totalcredit'] += $line->credit;
@@ -1039,7 +1018,7 @@ while ($i < min($num, $limit))
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

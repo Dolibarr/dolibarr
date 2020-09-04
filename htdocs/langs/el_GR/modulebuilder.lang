@@ -27,7 +27,7 @@ DangerZone=Επικίνδυνη ζώνη
 BuildPackage=Δημιουργία πακέτου
 BuildPackageDesc=Μπορείτε να δημιουργήσετε ένα πακέτο zip της αίτησής σας έτσι ώστε να είστε έτοιμοι να το διανείμετε σε οποιοδήποτε Dolibarr. Μπορείτε επίσης να το διανείμετε ή να το πουλήσετε στην αγορά όπως το <a href="https://www.dolistore.com">DoliStore.com</a> .
 BuildDocumentation=Δημιουργία εγγράφων
-ModuleIsNotActive=Αυτή η ενότητα δεν έχει ενεργοποιηθεί ακόμα. Μεταβείτε στο %s για να το κάνετε ζωντανό ή κάντε κλικ εδώ:
+ModuleIsNotActive=This module is not activated yet. Go to %s to make it live or click here
 ModuleIsLive=Αυτή η ενότητα έχει ενεργοποιηθεί. Οποιαδήποτε αλλαγή μπορεί να σπάσει ένα τρέχον ζωντανό χαρακτηριστικό.
 DescriptionLong=Μεγάλη περιγραφή
 EditorName=Όνομα του συντάκτη
@@ -83,9 +83,9 @@ ListOfDictionariesEntries=Λίστα καταχωρήσεων λεξικών
 ListOfPermissionsDefined=Λίστα καθορισμένων δικαιωμάτων
 SeeExamples=Δείτε παραδείγματα εδώ
 EnabledDesc=Προϋπόθεση να είναι ενεργό αυτό το πεδίο (Παραδείγματα: 1 ή $ conf-&gt; global-&gt; MYMODULE_MYOPTION)
-VisibleDesc=Είναι το πεδίο ορατό; (Παραδείγματα: 0 = Ποτέ δεν είναι ορατό, 1 = Ορατή στη λίστα και δημιουργία / ενημέρωση / προβολή φορμών, 2 = Ορατή μόνο στη λίστα, 3 = Ορατή στη δημιουργία / ενημέρωση / προβολή της φόρμας(όχι λίστα), 4=Ορατή στη λίστα και ενημέρωση/προβολή φόρμας μόνο (όχι δημιουργία), 5=Ορατή στη λίστα τέλους φόρμας μόνο. (όχι δημιουργία, όχι ενημέρωση). Χρησιμοποιώντας μία αρνητική τιμή σημαίνει ότι το πεδίο δεν εμφανίζεται από προεπιλογή στη λίστα αλλά μπορεί να επιλεγεί για προβολή). Μπορεί να είναι μια έκφραση, για παράδειγμα: <br> preg_match ('/ public /', $ _SERVER ['PHP_SELF']); 0: 1 <br> ($ user-> rights-> holiday-> define_holiday; ? 1 : 0) 
-DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br/>Currently, known compatibles PDF models are : eratostene 
-DisplayOnPdf=Display on PDF
+VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create), 5=Visible on list end view form only (not create, not update).<br><br>Using a negative value means field is not shown by default on list but can be selected for viewing).<br><br>It can be an expression, for example:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>($user->rights->holiday->define_holiday ? 1 : 0)
+DisplayOnPdfDesc=Εμφανίστε αυτό το πεδίο σε συμβατά έγγραφα PDF, μπορείτε να διαχειριστείτε τη θέση με το πεδίο "Θέση". <br/> Επί του παρόντος, γνωστά μοντέλα συμβατούς PDF είναι: Ερατοσθένης ο Κυρηναίος (σειρά), espadon (πλοίο), σφουγγάρι (τιμολόγια), κυανό (propal / εισαγωγικά), cornas (αύξων προμηθευτή) <br/> <br/> <strong> Για εγγράφου: </strong> <br/> 0 = δεν εμφανίζονται <br/> 1 = οθόνη <br/> 2 = εμφανιστεί μόνο αν δεν αδειάσει <br/> <br/> <strong> Για τις γραμμές εγγράφου: </strong> <br/> 0 = δεν εμφανίζονται <br/> 1 = εμφανίζονται σε μια στήλη <br/> 3 = οθόνη στη στήλη περιγραφή γραμμή μετά την περιγραφή <br/> 4 = οθόνη στη στήλη περιγραφή μετά την περιγραφή μόνο αν δεν είναι άδεια
+DisplayOnPdf=Εμφάνιση σε PDF
 IsAMeasureDesc=Μπορεί η τιμή του πεδίου να συσσωρευτεί για να πάρει ένα σύνολο σε λίστα; (Παραδείγματα: 1 ή 0)
 SearchAllDesc=Χρησιμοποιείται το πεδίο για την αναζήτηση από το εργαλείο γρήγορης αναζήτησης; (Παραδείγματα: 1 ή 0)
 SpecDefDesc=Εισαγάγετε εδώ όλη την τεκμηρίωση που θέλετε να παράσχετε με τη λειτουργική σας μονάδα, η οποία δεν έχει ήδη καθοριστεί από άλλες καρτέλες. Μπορείτε να χρησιμοποιήσετε το .md ή καλύτερα, την πλούσια σύνταξη .asciidoc.
@@ -139,3 +139,4 @@ ForeignKey=Ξένο κλειδί
 TypeOfFieldsHelp=Τύπος πεδίων: <br> varchar (99), διπλό (24,8), πραγματικό, κείμενο, html, datetime, timestamp, ακέραιος, ακέραιος: ClassName: relativepath / to / classfile.class.php [: 1 [: filter] προσθέτουμε ένα κουμπί + μετά το σύνθετο για να δημιουργήσουμε την εγγραφή, το &#39;φίλτρο&#39; μπορεί να είναι &#39;status = 1 AND fk_user = __USER_ID ΚΑΙ η οντότητα IN (__SHARED_ENTITIES__)&#39; για παράδειγμα)
 AsciiToHtmlConverter=Μεταροπέας από Ascii σε HTML
 AsciiToPdfConverter=Μεταροπέας από Ascii σε PDF
+TableNotEmptyDropCanceled=Table not empty. Drop has been canceled.

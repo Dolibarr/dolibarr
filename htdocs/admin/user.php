@@ -55,9 +55,7 @@ if ($action == 'set_default')
 {
 	$ret = addDocumentModel($value, $type, $label, $scandir);
 	$res = true;
-}
-
-elseif ($action == 'del_default')
+} elseif ($action == 'del_default')
 {
 	$ret = delDocumentModel($value, $type);
 	if ($ret > 0)
@@ -84,31 +82,24 @@ elseif ($action == 'setdoc')
 		$ret = addDocumentModel($value, $type, $label, $scandir);
 	}
 	$res = true;
-}
-elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
+} elseif (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code = $reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
-}
-
-elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
+} elseif (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 {
     $code = $reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
         exit;
-    }
-    else
-    {
+    } else {
         dol_print_error($db);
     }
 }
@@ -121,9 +112,7 @@ elseif ($action == 'sethideinactiveuser')
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -163,16 +152,32 @@ print '<td align="center" width="100">';
 if ($conf->use_javascript_ajax)
 {
 	print ajax_constantonoff('USER_MAIL_REQUIRED');
-}
-else
-{
+} else {
 	if (empty($conf->global->USER_MAIL_REQUIRED))
 	{
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
-	}
-	else
-	{
+	} else {
 		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_MAIL_REQUIRED">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
+	}
+}
+print '</td></tr>';
+
+// user hide inactive
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UserHideInactive").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+
+print '<td align="center" width="100">';
+if ($conf->use_javascript_ajax)
+{
+	print ajax_constantonoff('USER_HIDE_INACTIVE_IN_COMBOBOX');
+} else {
+	if (empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX))
+	{
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
+	} else {
+		print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_USER_HIDE_INACTIVE_IN_COMBOBOX">'.img_picto($langs->trans("Enabled"), 'on').'</a>';
 	}
 }
 print '</td></tr>';
@@ -200,9 +205,7 @@ if ($resql)
 		array_push($def, $array[0]);
 		$i++;
 	}
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 
@@ -270,9 +273,7 @@ foreach ($dirmodels as $reldir)
 	                            	print img_picto($langs->trans("Enabled"), 'switch_on');
 	                            	print '</a>';
 	                            	print '</td>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print '<td class="center">'."\n";
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=set_default&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 	                                print "</td>";
@@ -283,9 +284,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($conf->global->USER_ADDON_PDF == $name)
 	                            {
 	                                print img_picto($langs->trans("Default"), 'on');
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&value='.$name.'&amp;scandir='.$module->scandir.'&amp;label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
 	                            }
 	                            print '</td>';
@@ -311,9 +310,7 @@ foreach ($dirmodels as $reldir)
 	                            if ($module->type == 'pdf')
 	                            {
 	                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
-	                            }
-	                            else
-	                            {
+	                            } else {
 	                                print img_object($langs->trans("PreviewNotAvailable"), 'generic');
 	                            }
 	                            print '</td>';

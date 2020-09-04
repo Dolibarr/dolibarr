@@ -2,11 +2,12 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2016 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2015-2020 Juanjo Menent	<jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +33,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-if (!empty($conf->commande->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (!empty($conf->commande->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (!empty($conf->tax->enabled))
-	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
+require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
 // L'espace compta/treso doit toujours etre actif car c'est un espace partage
 // par de nombreux modules (banque, facture, commande a facturer, etc...) independamment
@@ -87,7 +85,7 @@ $thirdpartystatic = new Societe($db);
 
 llxHeader("", $langs->trans("AccountancyTreasuryArea"));
 
-print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'invoicing');
+print load_fiche_titre($langs->trans("AccountancyTreasuryArea"), '', 'bill');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -101,7 +99,7 @@ if (!empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useles
     	$listofsearchfields['search_invoice'] = array('text'=>'CustomerInvoice');
     }
     // Search supplier invoices
-    if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_order->enabled) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->lire)
     {
     	$listofsearchfields['search_supplier_invoice'] = array('text'=>'SupplierInvoice');
     }
@@ -148,7 +146,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".Facture::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').")";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 
@@ -161,16 +159,32 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook = $hookmanager->executeHooks('printFieldListWhereCustomerDraft', $parameters);
 	$sql .= $hookmanager->resPrint;
 
+	$sql.= " GROUP BY f.rowid, f.ref, f.datef, f.total, f.tva, f.total_ttc, f.ref_client, f.type, ";
+	$sql.= "s.email, s.nom, s.rowid, s.code_client, s.code_compta, s.code_fournisseur, s.code_compta_fournisseur";
+
+	// Add Group from hooks
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('printFieldListGroupByCustomerDraft', $parameters);
+	$sql .= $hookmanager->resPrint;
+
 	$resql = $db->query($sql);
 
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
+
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("CustomersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">';
+		print $langs->trans("CustomersDraftInvoices").' ';
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status='.Facture::STATUS_DRAFT.'">';
+		print '<span class="badge marginleftonlyshort">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+		print '</tr>';
+
 		if ($num)
 		{
 			$companystatic = new Societe($db);
@@ -214,16 +228,12 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -231,7 +241,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 /**
  * Draft suppliers invoices
  */
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$sql = "SELECT f.ref, f.rowid, f.total_ht, f.total_tva, f.total_ttc, f.type, f.ref_supplier";
 	$sql .= ", s.nom as name";
@@ -240,7 +250,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
     $sql .= ", cc.rowid as country_id, cc.code as country_code";
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = ".FactureFournisseur::STATUS_DRAFT;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid)	$sql .= " AND f.fk_soc = ".$socid;
@@ -254,10 +264,18 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 	{
 		$num = $db->num_rows($resql);
 
-        print '<div class="div-table-responsive-no-min">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
+
 		print '<tr class="liste_titre">';
-		print '<th colspan="3">'.$langs->trans("SuppliersDraftInvoices").($num ? '<span class="badge marginleftonlyshort">'.$num.'</span>' : '').'</th></tr>';
+		print '<th colspan="3">';
+		print $langs->trans("SuppliersDraftInvoices").' ';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_DRAFT.'">';
+		print '<span class="badge marginleftonlyshort">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+		print '</tr>';
+
 		if ($num)
 		{
 			$companystatic = new Societe($db);
@@ -302,16 +320,12 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 			print '<tr class="liste_total"><td class="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" class="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print "</table></div><br>";
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -428,18 +442,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			$colspan = 5;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -447,7 +457,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 
 // Last modified supplier invoices
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$langs->load("boxes");
 	$facstatic = new FactureFournisseur($db);
@@ -470,7 +480,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 	$sql .= $hookmanager->resPrint;
 
 	$sql .= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.tms, ff.paye,";
-	$sql .= " s.nom, s.rowid, s.code_fournisseur, s.code_compta_fournisseur";
+	$sql .= " s.nom, s.rowid, s.code_fournisseur, s.code_compta_fournisseur, s.email";
 	$sql .= " ORDER BY ff.tms DESC ";
 	$sql .= $db->plimit($max, 0);
 
@@ -529,25 +539,21 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 				$totalam += $obj->am;
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			$colspan = 5;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
 
 
 
-// Last donations
-if (!empty($conf->don->enabled) && $user->rights->societe->lire)
+// Latest donations
+if (!empty($conf->don->enabled) && $user->rights->don->lire)
 {
 	include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
@@ -608,14 +614,11 @@ if (!empty($conf->don->enabled) && $user->rights->societe->lire)
 
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="4" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table></div><br>';
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 /**
@@ -686,16 +689,12 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 				print '<td class="right"></td>';
 				print '<td class="right">&nbsp;</td>';
 				print '</tr>';
-			}
-			else
-			{
+			} else {
 				print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 			}
 			print "</table></div><br>";
 			$db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -724,7 +723,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 	$sql .= " AND c.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid)	$sql .= " AND c.fk_soc = ".$socid;
-	$sql .= " AND c.fk_statut = 3";
+	$sql .= " AND c.fk_statut = ".Commande::STATUS_CLOSED;
 	$sql .= " AND c.facture = 0";
 	// Add where from hooks
 	$parameters = array();
@@ -744,8 +743,15 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 
             print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
+
 			print "<tr class=\"liste_titre\">";
-			print '<th colspan="2">'.$langs->trans("OrdersDeliveredToBill").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=3&amp;billed=0"><span class="badge">'.$num.'</span></a></th>';
+			print '<th colspan="2">';
+			print $langs->trans("OrdersDeliveredToBill").' ';
+			print '<a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_CLOSED.'&amp;billed=0">';
+			print '<span class="badge">'.$num.'</span>';
+			print '</a>';
+			print '</th>';
+
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 			print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
 			print '<th class="right">'.$langs->trans("ToBill").'</th>';
@@ -815,9 +821,7 @@ if (!empty($conf->facture->enabled) && !empty($conf->commande->enabled) && $user
 			print '</table></div><br>';
 		}
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -839,7 +843,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s LEFT JOIN ".MAIN_DB_PREFIX."c_country as cc ON cc.rowid = s.fk_pays,".MAIN_DB_PREFIX."facture as f";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 	$sql .= " AND f.entity IN (".getEntity('invoice').')';
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
@@ -860,7 +864,15 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsCustomersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status=1"><span class="badge">'.$num.'</span></a></th>';
+
+		print '<tr class="liste_titre">';
+		print '<th colspan="2">';
+		print $langs->trans("BillsCustomersUnpaid", $num).' ';
+		print '<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?search_status='.Facture::STATUS_VALIDATED.'">';
+		print '<span class="badge">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+
 		print '<th class="right">'.$langs->trans("DateDue").'</th>';
 		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -939,18 +951,14 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			$colspan = 6;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
 		$db->free($resql);
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -958,7 +966,7 @@ if (!empty($conf->facture->enabled) && $user->rights->facture->lire)
 /*
  * Unpayed supplier invoices
  */
-if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->lire)
+if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->fournisseur->facture->lire)
 {
 	$facstatic = new FactureFournisseur($db);
 
@@ -975,7 +983,7 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 	$sql .= " WHERE s.rowid = ff.fk_soc";
 	$sql .= " AND ff.entity = ".$conf->entity;
 	$sql .= " AND ff.paye = 0";
-	$sql .= " AND ff.fk_statut = 1";
+	$sql .= " AND ff.fk_statut = ".FactureFournisseur::STATUS_VALIDATED;
 	if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql .= " AND ff.fk_soc = ".$socid;
 	// Add where from hooks
@@ -994,7 +1002,17 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("BillsSuppliersUnpaid", $num).' <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php"><span class="badge">'.$num.'</span></a></th>';
+
+		print '<tr class="liste_titre">';
+		print '<th colspan="2">';
+		print $langs->trans("BillsSuppliersUnpaid", $num).' ';
+		print '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?search_status='.FactureFournisseur::STATUS_VALIDATED.'">';
+		// TODO: "impayees.php" looks very outdatetd and should be set to deprecated or directly remove in the next version
+		// <a href="'.DOL_URL_ROOT.'/fourn/facture/impayees.php">
+		print '<span class="badge">'.$num.'</span>';
+		print '</a>';
+		print '</th>';
+
 		print '<th class="right">'.$langs->trans("DateDue").'</th>';
 		if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) print '<th class="right">'.$langs->trans("AmountHT").'</th>';
 		print '<th class="right">'.$langs->trans("AmountTTC").'</th>';
@@ -1049,17 +1067,13 @@ if (!empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture->
 			print '<td class="nowrap right">'.price($totalam).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
-		}
-		else
-		{
+		} else {
 			$colspan = 6;
 			if (!empty($conf->global->MAIN_SHOW_HT_ON_SUMMARY)) $colspan++;
 			print '<tr class="oddeven"><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoInvoice").'</td></tr>';
 		}
 		print '</table></div><br>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }

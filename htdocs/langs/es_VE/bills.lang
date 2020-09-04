@@ -8,5 +8,4 @@ PaymentConditionShortPT_ORDER=Pedido
 PaymentTypeShortTRA=A validar
 VATIsNotUsedForInvoice=-
 LawApplicationPart1=-
-PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 situationInvoiceShortcode_S=D

@@ -72,9 +72,7 @@ if ($action == 'delete')
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -115,9 +113,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -155,13 +151,12 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create', '', !empty($user->rights->bookmark->creer));
+$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/bookmarks/card.php?action=create&backtopage='.urlencode(DOL_URL_ROOT.'/bookmarks/list.php'), '', !empty($user->rights->bookmark->creer));
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bookmark', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bookmark', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -177,6 +172,8 @@ print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "b.dateb", "", $param, 'al
 print_liste_field_titre("Position", $_SERVER["PHP_SELF"], "b.position", "", $param, 'class="right"', $sortfield, $sortorder);
 print_liste_field_titre('');
 print "</tr>\n";
+
+$cacheOfUsers = array();
 
 $i = 0;
 while ($i < min($num, $limit))
@@ -222,12 +219,14 @@ while ($i < min($num, $limit))
 	print '<td class="center">';
 	if ($obj->fk_user)
 	{
-		$userstatic->id = $obj->fk_user;
-		$userstatic->lastname = $obj->login;
-		print $userstatic->getNomUrl(1);
-	}
-	else
-	{
+		if (empty($cacheOfUsers[$obj->fk_user])) {
+			$tmpuser = new User($db);
+			$tmpuser->fetch($obj->fk_user);
+			$cacheOfUsers[$obj->fk_user] = $tmpuser;
+		}
+		$tmpuser = $cacheOfUsers[$obj->fk_user];
+		print $tmpuser->getNomUrl(1);
+	} else {
 		print $langs->trans("Public");
 	}
 	print "</td>\n";
@@ -242,14 +241,12 @@ while ($i < min($num, $limit))
 	print '<td class="nowrap right">';
 	if ($user->rights->bookmark->creer)
 	{
-		print '<a href="'.DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
+		print '<a class="editfielda" href="'.DOL_URL_ROOT."/bookmarks/card.php?action=edit&id=".$obj->rowid."&backtopage=".urlencode($_SERVER["PHP_SELF"]).'">'.img_edit()."</a>";
 	}
 	if ($user->rights->bookmark->supprimer)
 	{
-		print "<a href=\"".$_SERVER["PHP_SELF"]."?action=delete&id=$obj->rowid\">".img_delete()."</a>";
-	}
-	else
-	{
+		print '<a class="marginleftonly" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$obj->rowid.'">'.img_delete().'</a>';
+	} else {
 		print "&nbsp;";
 	}
 	print "</td>";

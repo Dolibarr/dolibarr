@@ -8,3 +8,4 @@ LinkRemoved=L'enllaç %s s'ha eliminat
 ErrorFailedToDeleteLink= Error en eliminar l'enllaç '<b>%s</b>'
 ErrorFailedToUpdateLink= Error en actualitzar l'enllaç '<b>%s</b>'
 URLToLink=URL a enllaçar
+OverwriteIfExists=Sobreescriu el fitxer si existeix

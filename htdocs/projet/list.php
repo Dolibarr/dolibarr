@@ -7,6 +7,7 @@
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
  * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  * Copyright (C) 2019 	   Juanjo Menent	    <jmenent@2byte.es>
+ * Copyright (C) 2020		Tobias Sean			<tobias.sekan@startmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+
+if (!empty($conf->categorie->enabled))
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
@@ -72,7 +79,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
-$search_categ = GETPOST("search_categ", 'alpha');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
@@ -100,6 +106,11 @@ $search_emonth	= GETPOST('search_emonth', 'int');
 $search_eyear	= GETPOST('search_eyear', 'int');
 
 if ($search_status == '') $search_status = -1; // -1 or 1
+
+if (!empty($conf->categorie->enabled))
+{
+	$search_category_array = GETPOST("search_category_".Categorie::TYPE_PROJECT."_array", "array");
+}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Project($db);
@@ -174,7 +185,6 @@ if (empty($reshook))
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
 	{
 		$search_all = '';
-		$search_categ = '';
 		$search_ref = "";
 		$search_label = "";
 		$search_societe = "";
@@ -197,6 +207,7 @@ if (empty($reshook))
 		$search_usage_bill_time = '';
 		$toselect = '';
 		$search_array_options = array();
+		$search_category_array = array();
 	}
 
 
@@ -233,9 +244,7 @@ if (empty($reshook))
                 } else {
                     setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
                 }
-            }
-            else
-            {
+            } else {
                 setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
                 $error++;
                 break;
@@ -247,9 +256,7 @@ if (empty($reshook))
             if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
             else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
             $db->commit();
-        }
-        else
-        {
+        } else {
             $db->rollback();
         }
     }
@@ -284,17 +291,14 @@ if ($resql)
 	{
 		$listofprojectcontacttype[$obj->rowid] = $obj->code;
 	}
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 if (count($listofprojectcontacttype) == 0) $listofprojectcontacttype[0] = '0'; // To avoid sql syntax error if not found
 
 $distinct = 'DISTINCT'; // We add distinct until we are added a protection to be sure a contact of a project and task is only once.
-$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut, p.fk_opp_status, p.public, p.fk_user_creat";
+$sql = "SELECT ".$distinct." p.rowid as id, p.ref, p.title, p.fk_statut as status, p.fk_opp_status, p.public, p.fk_user_creat";
 $sql .= ", p.datec as date_creation, p.dateo as date_start, p.datee as date_end, p.opp_amount, p.opp_percent, (p.opp_amount*p.opp_percent/100) as opp_weighted_amount, p.tms as date_update, p.budget_amount, p.usage_opportunity, p.usage_task, p.usage_bill_time";
 $sql .= ", s.rowid as socid, s.nom as name, s.email";
 $sql .= ", cls.code as opp_status_code";
-// We'll need these fields in order to filter by categ
-if ($search_categ) $sql .= ", cs.fk_categorie, cs.fk_project";
 // Add fields from extrafields
 if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
@@ -304,11 +308,13 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::getFilterJoinQuery(Categorie::TYPE_PROJECT, "p.rowid");
+}
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (p.rowid = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls on p.fk_opp_status = cls.rowid";
-// We'll need this table joined to the select in order to filter by categ
-if (!empty($search_categ)) $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_project as cs ON p.rowid = cs.fk_project"; // We'll need this table joined to the select in order to filter by categ
 // We'll need this table joined to the select in order to filter by sale
 // No check is done on company permission because readability is managed by public status of project and assignement.
 //if ($search_sale > 0 || (! $user->rights->societe->client->voir && ! $socid)) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
@@ -318,11 +324,13 @@ if ($search_project_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ecp";
 }
 $sql .= " WHERE p.entity IN (".getEntity('project').')';
+if (!empty($conf->categorie->enabled))
+{
+	$sql .= Categorie::getFilterSelectQuery(Categorie::TYPE_PROJECT, "p.rowid", $search_category_array);
+}
 if (!$user->rights->projet->all->lire) $sql .= " AND p.rowid IN (".$projectsListId.")"; // public and assigned to, or restricted to company for external users
 // No need to check if company is external user, as filtering of projects must be done by getProjectsAuthorizedForUser
 if ($socid > 0) $sql .= " AND (p.fk_soc = ".$socid.")"; // This filter if when we use a hard coded filter on company on url (not related to filter for external users)
-if ($search_categ > 0)    $sql .= " AND cs.fk_categorie = ".$db->escape($search_categ);
-if ($search_categ == -2)  $sql .= " AND cs.fk_categorie IS NULL";
 if ($search_ref) $sql .= natural_search('p.ref', $search_ref);
 if ($search_label) $sql .= natural_search('p.title', $search_label);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
@@ -453,20 +461,18 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 // Show description of content
 $texthelp = '';
 if ($search_project_user == $user->id) $texthelp .= $langs->trans("MyProjectsDesc");
-else
-{
+else {
     if ($user->rights->projet->all->lire && !$socid) $texthelp .= $langs->trans("ProjectsDesc");
     else $texthelp .= $langs->trans("ProjectsPublicDesc");
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit);
+print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'project', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 
 $topicmail = "Information";
@@ -486,11 +492,8 @@ $moreforfilter = '';
 // Filter on categories
 if (!empty($conf->categorie->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('ProjectCategories').': ';
-	$moreforfilter .= $formother->select_categories('project', $search_categ, 'search_categ', 1, 1, 'maxwidth300');
-	$moreforfilter .= '</div>';
+	$formcategory = new FormCategory($db);
+	$moreforfilter .= $formcategory->getFilterBox(Categorie::TYPE_PROJECT, $search_category_array);
 }
 
 // If the user can view user other than himself
@@ -714,7 +717,9 @@ while ($i < min($num, $limit))
 	$object->public = $obj->public;
 	$object->ref = $obj->ref;
 	$object->datee = $db->jdate($obj->date_end);
-	$object->statut = $obj->fk_statut;
+	$object->statut = $obj->status; // deprecated
+	$object->status = $obj->status;
+	$object->public = $obj->public;
 	$object->opp_status = $obj->fk_opp_status;
 	$object->title = $obj->title;
 
@@ -751,9 +756,7 @@ while ($i < min($num, $limit))
 			if ($obj->socid)
 			{
 				print $socstatic->getNomUrl(1);
-			}
-			else
-			{
+			} else {
 				print '&nbsp;';
 			}
 			print '</td>';
@@ -772,8 +775,7 @@ while ($i < min($num, $limit))
 				if ($nbofsalesrepresentative > 3)   // We print only number
 				{
 					print $nbofsalesrepresentative;
-				}
-				elseif ($nbofsalesrepresentative > 0)
+				} elseif ($nbofsalesrepresentative > 0)
 				{
 					$userstatic = new User($db);
 					$j = 0;
@@ -793,9 +795,7 @@ while ($i < min($num, $limit))
 					}
 				}
 				//else print $langs->trans("NoSalesRepresentativeAffected");
-			}
-			else
-			{
+			} else {
 				print '&nbsp';
 			}
 			print '</td>';
@@ -918,7 +918,7 @@ while ($i < min($num, $limit))
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation

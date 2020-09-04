@@ -44,6 +44,11 @@ class FichinterRec extends Fichinter
     public $fk_element = 'fk_fichinter';
 
     /**
+	 * {@inheritdoc}
+	 */
+	protected $table_ref_field = 'titre';
+
+    /**
      * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
      */
     public $picto = 'intervention';
@@ -192,8 +197,6 @@ class FichinterRec extends Fichinter
                  */
                 $num = count($fichintsrc->lines);
                 for ($i = 0; $i < $num; $i++) {
-                    //$result=$fichintlignesrc->fetch($fichintsrc->lines[$i]->id);
-
                     //var_dump($fichintsrc->lines[$i]);
                     $result_insert = $this->addline(
                         $fichintsrc->lines[$i]->desc,
@@ -238,7 +241,7 @@ class FichinterRec extends Fichinter
 
 
     /**
-     *	Recupere l'objet facture et ses lignes de factures
+     *	Get the template of intervention object and lines
      *
      *	@param	  int		$rowid	   	Id of object to load
      * 	@param		string	$ref			Reference of fichinter
@@ -277,6 +280,7 @@ class FichinterRec extends Fichinter
                 $this->note_private = $obj->note_private;
                 $this->note_public			= $obj->note_public;
                 $this->user_author			= $obj->fk_user_author;
+                $this->model_pdf			= $obj->model_pdf;
                 $this->modelpdf				= $obj->model_pdf;
                 $this->rang = $obj->rang;
                 $this->special_code = $obj->special_code;
@@ -290,9 +294,7 @@ class FichinterRec extends Fichinter
 
                 $this->brouillon = 1;
 
-                /*
-                 * Lines
-                 */
+                // Lines
                 $result = $this->fetch_lines();
                 if ($result < 0) {
                     $this->error = $this->db->error();
@@ -313,9 +315,9 @@ class FichinterRec extends Fichinter
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     /**
-     *  Recupere les lignes de factures predefinies dans this->lines
-     *  @param   int	$sall   sall
+     *  Load all lines of template of intervention into this->lines
      *
+     *  @param   int	$sall   sall
      *  @return	 int            1 if OK, < 0 if KO
      */
     public function fetch_lines($sall = 0)
@@ -341,13 +343,13 @@ class FichinterRec extends Fichinter
                 $line = new FichinterLigne($this->db);
 
                 $line->id = $objp->rowid;
-                $line->label = $objp->custom_label;		// Label line
-                $line->desc = $objp->description;		// Description line
-                $line->product_type = $objp->product_type;		// Type of line
-                $line->product_ref = $objp->product_ref;		// Ref product
-                $line->product_label = $objp->product_label;		// Label product
-                $line->product_desc = $objp->product_desc;		// Description product
-                $line->fk_product_type = $objp->fk_product_type;	// Type of product
+                $line->label = $objp->custom_label; // Label line
+                $line->desc = $objp->description; // Description line
+                $line->product_type = $objp->product_type; // Type of line
+                $line->product_ref = $objp->product_ref; // Ref product
+                $line->product_label = $objp->product_label; // Label product
+                $line->product_desc = $objp->product_desc; // Description product
+                $line->fk_product_type = $objp->fk_product_type; // Type of product
                 $line->qty = $objp->qty;
                 $line->duree = $objp->duree;
                 $line->duration = $objp->duree;
@@ -436,15 +438,15 @@ class FichinterRec extends Fichinter
     *  @param		integer		$duration           Durée
     *  @param		string	    $datei				Date
     *  @param	    int			$rang			    Position of line
-    *  @param		double		$pu_ht			    Prix unitaire HT (> 0 even for credit note)
-    *  @param		double		$qty			 	Quantite
-    *  @param		double		$txtva		   	    Taux de tva force, sinon -1
-    *  @param		int			$fk_product	  	    Id du produit/service predefini
-    *  @param		double		$remise_percent  	Pourcentage de remise de la ligne
+    *  @param		double		$pu_ht			    Unit price without tax (> 0 even for credit note)
+    *  @param		double		$qty			 	Quantity
+    *  @param		double		$txtva		   	    Forced VAT rate, otherwise -1
+    *  @param		int			$fk_product	  	    Id of predefined product/service
+    *  @param		double		$remise_percent  	Percentage of discount on line
     *  @param		string		$price_base_type	HT or TTC
-    *  @param		int			$info_bits			Bits de type de lignes
-    *  @param		int			$fk_remise_except   Id remise
-    *  @param		double		$pu_ttc			    Prix unitaire TTC (> 0 even for credit note)
+    *  @param		int			$info_bits			Bits for type of lines
+    *  @param		int			$fk_remise_except   Id discount
+    *  @param		double		$pu_ttc			    Unit price with tax (> 0 even for credit note)
     *  @param		int			$type				Type of line (0=product, 1=service)
     *  @param		int			$special_code		Special code
     *  @param		string		$label				Label of the line

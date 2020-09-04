@@ -65,7 +65,7 @@ if ($socid > 0)
 	dol_banner_tab($societe, 'socid', '', ($user->socid ? 0 : 1), 'rowid', 'nom');
 	dol_fiche_end();
 
-    if (!empty($conf->fournisseur->enabled) && $user->rights->facture->lire)
+    if ((!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled)) && $user->rights->facture->lire)
     {
         // Invoice list
         print load_fiche_titre($langs->trans("SupplierPreview"));
@@ -77,7 +77,7 @@ if ($socid > 0)
         $sql .= " u.login, u.rowid as userid";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
-        $sql .= " AND f.entity IN (".getEntity("facture_fourn").")"; // Reconaissance de l'entité attribuée à cette facture pour Multicompany
+        $sql .= " AND f.entity IN (".getEntity("facture_fourn").")"; // Recognition of the entity attributed to this invoice for Multicompany
         $sql .= " AND f.fk_user_valid = u.rowid";
         $sql .= " ORDER BY f.datef DESC";
 
@@ -173,23 +173,17 @@ if ($socid > 0)
                     }
 
                     $db->free($resqlp);
-                }
-                else
-                {
+                } else {
                     dol_print_error($db);
                 }
             }
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
 
         print "</table>";
     }
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

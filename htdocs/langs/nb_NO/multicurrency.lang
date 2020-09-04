@@ -18,3 +18,5 @@ MulticurrencyReceived=Mottatt, originalvaluta
 MulticurrencyRemainderToTake=Resterende beløp, opprinnelig valuta
 MulticurrencyPaymentAmount=Beløp, original valuta
 AmountToOthercurrency=Beløp til (i valuta for mottakskonto)
+CurrencyRateSyncSucceed=Valutakurssynkronisering vellykket
+MULTICURRENCY_USE_CURRENCY_ON_DOCUMENT=Bruk dokumentets valuta for online betalinger

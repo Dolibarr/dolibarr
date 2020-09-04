@@ -80,9 +80,7 @@ if (!GETPOSTISSET('search_typeid'))
 		$part = explode(':', $val);
 		if ($part[0] == 'cs.fk_type') $search_typeid = $part[1];
 	}
-}
-else
-{
+} else {
 	$search_typeid = GETPOST('search_typeid', 'int');
 }
 
@@ -152,6 +150,7 @@ if ($search_typeid) {
     $sql .= " AND cs.fk_type=".$db->escape($search_typeid);
 }
 $sql .= " GROUP BY cs.rowid, cs.fk_type, cs.amount, cs.date_ech, cs.libelle, cs.paye, cs.periode, c.libelle";
+if (!empty($conf->projet->enabled)) $sql .= ", p.rowid, p.ref, p.title";
 $sql .= $db->order($sortfield, $sortorder);
 
 $totalnboflines = 0;
@@ -191,18 +190,15 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 
+	$center = '';
 	if ($year)
 	{
 	    $center = ($year ? "<a href='list.php?year=".($year - 1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='list.php?year=".($year + 1)."'>".img_next()."</a>" : "");
-	    print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
 	}
-	else
-	{
-		print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'invoicing', 0, $newcardbutton, '', $limit);
-	}
+
+	print_barre_liste($langs->trans("SocialContributions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'bill', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	if (empty($mysoc->country_id) && empty($mysoc->country_code))
 	{
@@ -211,9 +207,7 @@ if ($resql)
 		$countrynotdefined = $langs->trans("ErrorSetACountryFirst");
 		print $countrynotdefined;
 		print '</div>';
-	}
-	else
-	{
+	} else {
 	    print '<div class="div-table-responsive">';
 	    print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -316,9 +310,7 @@ if ($resql)
 			if ($obj->periode)
 			{
 				print '<a href="list.php?year='.strftime("%Y", $db->jdate($obj->periode)).'">'.dol_print_date($db->jdate($obj->periode), 'day').'</a>';
-			}
-			else
-			{
+			} else {
 				print '&nbsp;';
 			}
 			print "</td>\n";
@@ -348,9 +340,7 @@ if ($resql)
 		print '</div>';
 	}
 	print '</form>';
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

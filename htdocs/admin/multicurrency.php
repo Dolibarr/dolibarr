@@ -53,9 +53,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg))
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
         setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -66,9 +64,7 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
 	if (dolibarr_del_const($db, $code, 0) > 0)
 	{
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
         setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
@@ -96,11 +92,9 @@ if ($action == 'add_currency')
 		{
 			if ($currency->addRate($rate)) setEventMessages($langs->trans('RecordSaved'), array());
 			else setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
-		}
-		else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
+		} else setEventMessages($langs->trans('ErrorAddCurrencyFail'), $currency->errors, 'errors');
 	}
-}
-elseif ($action == 'update_currency')
+} elseif ($action == 'update_currency')
 {
 	$error = 0;
 
@@ -125,8 +119,7 @@ elseif ($action == 'update_currency')
 				}
 			}
 		}
-	}
-	elseif (GETPOST('deletecurrency', 'alpha'))
+	} elseif (GETPOST('deletecurrency', 'alpha'))
 	{
 		$fk_multicurrency = GETPOST('fk_multicurrency', 'int');
 		$currency = new MultiCurrency($db);
@@ -137,17 +130,14 @@ elseif ($action == 'update_currency')
 			else setEventMessages($langs->trans('ErrorDeleteCurrencyFail'), array(), 'errors');
 		}
 	}
-}
-elseif ($action == 'setapilayer')
+} elseif ($action == 'setapilayer')
 {
     if (GETPOSTISSET('modify_apilayer'))
     {
         dolibarr_set_const($db, 'MULTICURRENCY_APP_ID', GETPOST('MULTICURRENCY_APP_ID', 'alpha'));
         dolibarr_set_const($db, 'MULTICURRENCY_APP_SOURCE', GETPOST('MULTICURRENCY_APP_SOURCE', 'alpha'));
         //dolibarr_set_const($db, 'MULTICURRENCY_ALTERNATE_SOURCE', GETPOST('MULTICURRENCY_ALTERNATE_SOURCE', 'alpha'));
-    }
-    else
-    {
+    } else {
         $result = MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
         if ($result > 0) {
         	setEventMessages($langs->trans("CurrencyRateSyncSucceed"), null, "mesgs");
@@ -281,8 +271,8 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '<td>'.$form->textwithpicto($langs->trans("CurrencyLayerAccount"), $langs->trans("CurrencyLayerAccount_help_to_synchronize", $urlforapilayer)).'</td>'."\n";
 	print '<td class="right">';
 	print '<textarea id="response" class="hideobject" name="response"></textarea>';
-	print '<input type="submit" name="modify_apilayer" class="button" value="'.$langs->trans("Modify").'">';
-	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button" value="'.$langs->trans('Synchronize').'" />';
+	print '<input type="submit" name="modify_apilayer" class="button buttongen" value="'.$langs->trans("Modify").'">';
+	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button buttongen" value="'.$langs->trans('Synchronize').'" />';
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';

@@ -109,8 +109,7 @@ class AccountingJournal extends CommonObject
 			$sql .= " WHERE";
 			if ($rowid) {
 				$sql .= " rowid = ".(int) $rowid;
-			}
-			elseif ($journal_code)
+			} elseif ($journal_code)
 			{
 				$sql .= " code = '".$this->db->escape($journal_code)."'";
 				$sql .= " AND entity  = ".$conf->entity;
@@ -136,9 +135,7 @@ class AccountingJournal extends CommonObject
 				} else {
 					return 0;
 				}
-			}
-			else
-			{
+			} else {
 				$this->error = "Error ".$this->db->lasterror();
 				$this->errors[] = "Error ".$this->db->lasterror();
 			}
@@ -311,8 +308,7 @@ class AccountingJournal extends CommonObject
 			elseif ($nature == 3) return $langs->trans('AccountingJournalType3');
 			elseif ($nature == 2) return $langs->trans('AccountingJournalType2');
 			elseif ($nature == 1) return $langs->trans('AccountingJournalType1');
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			if ($nature == 9) return $langs->trans('AccountingJournalType9');
 			elseif ($nature == 5) return $langs->trans('AccountingJournalType5');

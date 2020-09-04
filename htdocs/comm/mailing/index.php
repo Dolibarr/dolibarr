@@ -129,9 +129,7 @@ if (is_resource($handle))
                             }
 
                             $db->free($result);
-                        }
-                        else
-                        {
+                        } else {
                             dol_print_error($db);
                         }
                         print '</tr>';
@@ -157,6 +155,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 $limit = 10;
 $sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut, m.date_creat";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
+$sql .= " WHERE m.entity = ".$conf->entity;
 $sql .= " ORDER BY m.date_creat DESC";
 $sql .= " LIMIT ".$limit;
 $result = $db->query($sql);
@@ -190,16 +189,12 @@ if ($result) {
             print '</tr>';
 	        $i++;
 	    }
-    }
-    else
-    {
+    } else {
         print '<tr><td class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print "</table></div><br>";
     $db->free($result);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

@@ -77,7 +77,7 @@ class FormOther
         $sql .= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql .= " WHERE type = '".$this->db->escape($type)."'";
 		if (!empty($fk_user)) $sql .= " AND fk_user IN (0, ".$fk_user.")"; // An export model
-        $sql .= " ORDER BY rowid";
+        $sql .= " ORDER BY label";
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -96,8 +96,7 @@ class FormOther
                 $label = $obj->label;
                 if ($obj->fk_user == 0) {
                 	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-                }
-                elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                } elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
                 	$tmpuser = new User($this->db);
                 	$tmpuser->fetch($obj->fk_user);
                 	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
@@ -106,9 +105,7 @@ class FormOther
                 if ($selected == $obj->rowid)
                 {
                     print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
                 }
                 print $label;
@@ -117,8 +114,7 @@ class FormOther
             }
             print "</select>";
             print ajax_combobox($htmlname);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -163,8 +159,7 @@ class FormOther
                 $label = $obj->label;
                 if ($obj->fk_user == 0) {
                 	$label .= ' <span class="opacitymedium">('.$langs->trans("Everybody").')</span>';
-                }
-                elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
+                } elseif (!empty($conf->global->EXPORTS_SHARE_MODELS) && empty($fk_user) && is_object($user) && $user->id != $obj->fk_user) {
                 	$tmpuser = new User($this->db);
                 	$tmpuser->fetch($obj->fk_user);
                 	$label .= ' <span class="opacitymedium">('.$tmpuser->getFullName($langs).')</span>';
@@ -173,9 +168,7 @@ class FormOther
                 if ($selected == $obj->rowid)
                 {
                     print '<option value="'.$obj->rowid.'" selected data-html="'.dol_escape_htmltag($label).'">';
-                }
-                else
-                {
+                } else {
                     print '<option value="'.$obj->rowid.'" data-html="'.dol_escape_htmltag($label).'">';
                 }
                 print $label;
@@ -184,8 +177,7 @@ class FormOther
             }
             print "</select>";
             print ajax_combobox($htmlname);
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -226,9 +218,7 @@ class FormOther
                     if ($selected && $selected == $obj->rowid)
                     {
                         print '<option value="'.$obj->rowid.'" selected>';
-                    }
-                    else
-                    {
+                    } else {
                         print '<option value="'.$obj->rowid.'">';
                         //print '<option onmouseover="showtip(\''.$obj->label.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
                     }
@@ -240,9 +230,7 @@ class FormOther
             }
             print '</select>';
             return 0;
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
             return 1;
         }
@@ -286,9 +274,7 @@ class FormOther
     				if (($selected && $selected == $obj->taux) || $num == 1)
     				{
     					$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').' selected>';
-    				}
-    				else
-    				{
+    				} else {
     					$out .= '<option value="'.$obj->taux.($obj->revenuestamp_type == 'percent' ? '%' : '').'"'.($obj->revenuestamp_type == 'percent' ? ' data-type="percent"' : '').'>';
     					//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
     				}
@@ -299,9 +285,7 @@ class FormOther
     		}
     		$out .= '</select>';
     		return $out;
-    	}
-    	else
-    	{
+    	} else {
     		dol_print_error($this->db);
     		return '';
     	}
@@ -332,9 +316,7 @@ class FormOther
             if ($selected != '' && (int) $selected == $i)
             {
                 $return .= '<option value="'.$i.'" selected>';
-            }
-            else
-            {
+            } else {
                 $return .= '<option value="'.$i.'">';
             }
             $return .= $i.' % ';
@@ -459,9 +441,7 @@ class FormOther
         		$sql_usr .= " WHERE EXISTS (SELECT ug.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug WHERE u.rowid = ug.fk_user AND ug.entity IN (".getEntity('usergroup')."))";
         		$sql_usr .= " OR u.entity = 0"; // Show always superadmin
         	}
-        }
-        else
-        {
+        } else {
         	$sql_usr .= " WHERE u.entity IN (".getEntity('user').")";
         }
 
@@ -485,9 +465,7 @@ class FormOther
             	} else {
             		$sql_usr .= " WHERE EXISTS (SELECT ug2.fk_user FROM ".MAIN_DB_PREFIX."usergroup_user as ug2 WHERE u2.rowid = ug2.fk_user AND ug2.entity IN (".getEntity('usergroup')."))";
             	}
-            }
-            else
-            {
+            } else {
             	$sql_usr .= " WHERE u2.entity IN (".getEntity('user').")";
             }
 
@@ -534,9 +512,7 @@ class FormOther
                 $out .= '</option>';
             }
             $this->db->free($resql_usr);
-        }
-        else
-        {
+        } else {
             dol_print_error($this->db);
         }
 
@@ -585,9 +561,7 @@ class FormOther
             print '</select>';
 
             print ajax_combobox($htmlname);
-        }
-        else
-        {
+        } else {
             print '<div class="warning">'.$langs->trans("NoProject").'</div>';
         }
     }
@@ -613,8 +587,6 @@ class FormOther
         $numlines = count($lines);
         for ($i = 0; $i < $numlines; $i++) {
             if ($lines[$i]->fk_parent == $parent) {
-                $var = !$var;
-
                 //var_dump($selectedproject."--".$selectedtask."--".$lines[$i]->fk_project."_".$lines[$i]->id);		// $lines[$i]->id may be empty if project has no lines
 
                 // Break on a new project
@@ -630,9 +602,7 @@ class FormOther
                         if (empty($lines[$i]->public))
                         {
                             print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
-                        }
-                        else
-                        {
+                        } else {
                             print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
                         }
                         //print '-'.$parent.'-'.$lines[$i]->fk_project.'-'.$lastprojectid;
@@ -665,9 +635,7 @@ class FormOther
                     if (empty($lines[$i]->public))
                     {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
-                    }
-                    else
-                    {
+                    } else {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("SharedProject").')';
                     }
                     if ($lines[$i]->id) print ' > ';
@@ -795,8 +763,7 @@ class FormOther
 	             </script>';
             }
             $out .= '<input id="colorpicker'.$prefix.'" name="'.$prefix.'" size="6" maxlength="7" class="flat'.($morecss ? ' '.$morecss : '').'" type="text" value="'.dol_escape_htmltag($set_color).'" />';
-        }
-        else  // In most cases, this is not used. We used instead function with no specific list of colors
+        } else // In most cases, this is not used. We used instead function with no specific list of colors
         {
         	if (empty($conf->dol_use_jmobile) && !empty($conf->use_javascript_ajax))
             {
@@ -901,9 +868,7 @@ class FormOther
             if ($selected == $key)
             {
                 $select_week .= '<option value="'.$key.'" selected>';
-            }
-            else
-            {
+            } else {
                 $select_week .= '<option value="'.$key.'">';
             }
             $select_week .= $val;
@@ -944,9 +909,7 @@ class FormOther
             if ($selected == $key)
             {
                 $select_month .= '<option value="'.$key.'" selected>';
-            }
-            else
-            {
+            } else {
                 $select_month .= '<option value="'.$key.'">';
             }
             $select_month .= $val;
@@ -1015,9 +978,7 @@ class FormOther
                 if ($selected > 0 && $y == $selected) $selected_html = ' selected';
                 $out .= '<option value="'.$y.'"'.$selected_html.' >'.$y.'</option>';
             }
-        }
-        else
-        {
+        } else {
             for ($y = $min_year; $y <= $max_year; $y++)
             {
                 $selected_html = '';
@@ -1290,9 +1251,7 @@ class FormOther
                     if ($selected == $obj->rowid || $selected == $obj->$keyfield)
                     {
                         print '<option value="'.$obj->$keyfield.'" selected>';
-                    }
-                    else
-                    {
+                    } else {
                         print '<option value="'.$obj->$keyfield.'">';
                     }
                     print $obj->$labelfield;
@@ -1303,8 +1262,7 @@ class FormOther
             } else {
                 print $langs->trans("DictionaryEmpty");
             }
-        }
-        else {
+        } else {
             dol_print_error($this->db);
         }
     }
@@ -1338,9 +1296,7 @@ class FormOther
 		{
 			$resultautomanual .= '<option value="'.$automatic.'" selected>'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'">'.$langs->trans("Manual").'</option>'."\n";
-		}
-		else
-	    {
+		} else {
 	   		$selected = (($useempty && $value != '0' && $value != 'manual') ? '' : ' selected');
 			$resultautomanual .= '<option value="'.$automatic.'">'.$langs->trans("Automatic").'</option>'."\n";
 			$resultautomanual .= '<option value="'.$manual.'"'.$selected.'>'.$langs->trans("Manual").'</option>'."\n";

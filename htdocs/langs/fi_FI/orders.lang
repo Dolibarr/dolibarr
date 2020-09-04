@@ -141,7 +141,7 @@ OrderByEMail=Sähköposti
 OrderByWWW=Online
 OrderByPhone=Puhelin
 # Documents models
-PDFEinsteinDescription=A complete order model (old implementation of Eratosthene template)
+PDFEinsteinDescription=A complete order model 
 PDFEratostheneDescription=A complete order model
 PDFEdisonDescription=Yksinkertainen tilausmalli
 PDFProformaDescription=A complete Proforma invoice template

@@ -49,8 +49,8 @@ if (!function_exists('xdebug_is_enabled'))
 
 if (function_exists('socket_create'))
 {
-	$address = ini_get('xdebug.remote_host')?ini_get('xdebug.remote_host'):'127.0.0.1';
-	$port = ini_get('xdebug.remote_port')?ini_get('xdebug.remote_port'):9000;
+	$address = ini_get('xdebug.remote_host') ?ini_get('xdebug.remote_host') : '127.0.0.1';
+	$port = ini_get('xdebug.remote_port') ?ini_get('xdebug.remote_port') : 9000;
 
 	print "<strong>Current xdebug setup:</strong><br>\n";
 	print "* Remote debug setup:<br>\n";
@@ -58,7 +58,7 @@ if (function_exists('socket_create'))
 	print 'xdebug.remote_host = '.$address."<br>\n";
 	print 'xdebug.remote_port = '.$port."<br>\n";
 	print "* Profiler setup ";
-	if (function_exists('xdebug_get_profiler_filename')) print xdebug_get_profiler_filename()?"(currently on into file ".xdebug_get_profiler_filename().")":"(currently off)";
+	if (function_exists('xdebug_get_profiler_filename')) print xdebug_get_profiler_filename() ? "(currently on into file ".xdebug_get_profiler_filename().")" : "(currently off)";
 	else print "(currenlty not available)";
 	print ":<br>\n";
 	print 'xdebug.profiler_enable = '.ini_get('xdebug.profiler_enable')."<br>\n";
@@ -80,7 +80,7 @@ if (function_exists('socket_create'))
 	//socket_bind($sock, $address, $port) or die('Unable to bind on address='.$address.' port='.$port);
 	//socket_listen($sock);
 	//$client = socket_accept($sock);
-	$client=socket_connect($socket, $address, $port);
+	$client = socket_connect($socket, $address, $port);
 	if ($client)
 	{
 		echo "Connection established: ".$client." - address=".$address." port=".$port."<br>\n";
@@ -108,17 +108,13 @@ xdebug.auto_trace=0
 	         XDebug with same port than in php.ini<br>
 	         Allow Remote debug=yes or prompt<br>'."\n";
 		print "<br>\n";
-	}
-	else
-	{
+	} else {
 		print socket_strerror(socket_last_error());
 		echo "Failed to connect to address=".$address." port=".$port."<br>\n";
 		echo "There is no Remote debug server at this address.\n";
 	}
 	socket_close($socket);
-}
-else
-{
+} else {
 	print "Can't test if PHPDebug is OK as PHP socket functions are not enabled.";
 }
 

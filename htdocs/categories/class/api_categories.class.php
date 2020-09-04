@@ -20,10 +20,12 @@ use Luracast\Restler\RestException;
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 
+
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/api_members.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/api_products.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_contacts.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparties.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
 
 /**
  * API class for categories
@@ -48,7 +50,7 @@ class Categories extends DolibarrApi
         3 => 'member',
         4 => 'contact',
         5 => 'account',
-        //6 => 'project',
+        6 => 'project',
         //7 => 'user',
         //8 => 'bank_line',
         //9 => 'warehouse',
@@ -240,12 +242,9 @@ class Categories extends DolibarrApi
             $this->category->$field = $value;
         }
 
-        if ($this->category->update(DolibarrApiAccess::$user) > 0)
-        {
+        if ($this->category->update(DolibarrApiAccess::$user) > 0) {
             return $this->get($id);
-        }
-        else
-        {
+		} else {
             throw new RestException(500, $this->category->error);
         }
     }
@@ -288,7 +287,7 @@ class Categories extends DolibarrApi
      * Get the list of categories linked to an object
      *
      * @param int       $id         Object ID
-     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param string	$type		Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project')
      * @param string	$sortfield	Sort field
      * @param string	$sortorder	Sort order
      * @param int		$limit		Limit for list
@@ -306,7 +305,8 @@ class Categories extends DolibarrApi
             Categorie::TYPE_CONTACT,
             Categorie::TYPE_CUSTOMER,
             Categorie::TYPE_SUPPLIER,
-            Categorie::TYPE_MEMBER
+            Categorie::TYPE_MEMBER,
+            Categorie::TYPE_PROJECT
         ])) {
             throw new RestException(401);
         }
@@ -321,6 +321,8 @@ class Categories extends DolibarrApi
             throw new RestException(401);
         } elseif ($type == Categorie::TYPE_MEMBER && !DolibarrApiAccess::$user->rights->adherent->lire) {
             throw new RestException(401);
+        } elseif ($type == Categorie::TYPE_PROJECT && !DolibarrApiAccess::$user->rights->projet->lire) {
+            throw new RestException(401);
         }
 
         $categories = $this->category->getListForItem($id, $type, $sortfield, $sortorder, $limit, $page);
@@ -329,7 +331,7 @@ class Categories extends DolibarrApi
             if ($categories == 0) {
                 throw new RestException(404, 'No category found for this object');
             }
-            throw new RestException(500, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
+            throw new RestException(600, 'Error when fetching object categories', array_merge(array($this->category->error), $this->category->errors));
         }
         return $categories;
     }
@@ -730,7 +732,7 @@ class Categories extends DolibarrApi
      * Get the list of objects in a category.
      *
      * @param int        $id         ID of category
-     * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+     * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project')
      * @param int        $onlyids    Return only ids of objects (consume less memory)
      *
      * @return mixed
@@ -775,9 +777,10 @@ class Categories extends DolibarrApi
 			$objects_api = new Products();
 		} elseif ($type == 'contact') {
 			$objects_api = new Contacts();
+		} elseif ($type == 'project') {
+			$objects_api = new Projects();
 		}
-		if (is_object($objects_api))
-		{
+		if (is_object($objects_api)) {
     		foreach ($objects as $obj) {
     			$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
     		}

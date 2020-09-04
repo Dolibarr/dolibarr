@@ -23,7 +23,7 @@
  *  \ingroup    dav
  *  \brief      Description and activation file for module dav
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -38,7 +38,7 @@ class modDav extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs,$conf;
+		global $langs, $conf;
 
 		$this->db = $db;
 
@@ -70,7 +70,7 @@ class modDav extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
-		$this->picto='generic';
+		$this->picto = 'generic';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
 		// for default path (eg: /dav/core/xxxxx) (0=disable, 1=enable)
@@ -80,21 +80,21 @@ class modDav extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/dav/temp","/dav/subdir");
-		$this->dirs = array("/dav/temp","/dav/public","/dav/private");
+		$this->dirs = array("/dav/temp", "/dav/public", "/dav/private");
 
 		// Config pages. Put here list of php page, stored into dav/admin directory, to use to setup module.
 		$this->config_page_url = array("dav.php");
 
 		// Dependencies
-		$this->hidden = false;			// A condition to hide module
-		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
-		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->hidden = false; // A condition to hide module
+		$this->depends = array(); // List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of module ids to disable if this one is disabled
+		$this->conflictwith = array(); // List of module class names as string this module is in conflict with
 		$this->langfiles = array("admin");
-		$this->phpmin = array(5,6);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(7,0);	// Minimum version of Dolibarr required by module
-		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
-		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(7, 0); // Minimum version of Dolibarr required by module
+		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
+		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		//$this->automatic_activation = array('FR'=>'davWasAutomaticallyActivatedBecauseOfYourCountryChoice');
 		//$this->always_enabled = true;								// If true, can't be disabled
 
@@ -108,10 +108,10 @@ class modDav extends DolibarrModules
 		);
 
 
-		if (! isset($conf->dav) || ! isset($conf->dav->enabled))
+		if (!isset($conf->dav) || !isset($conf->dav->enabled))
 		{
-			$conf->dav=new stdClass();
-			$conf->dav->enabled=0;
+			$conf->dav = new stdClass();
+			$conf->dav->enabled = 0;
 		}
 
 
@@ -145,7 +145,7 @@ class modDav extends DolibarrModules
 
 
 		// Dictionaries
-		$this->dictionaries=array();
+		$this->dictionaries = array();
 		/* Example:
         $this->dictionaries=array(
             'langs'=>'mylangfile@dav',
@@ -182,7 +182,7 @@ class modDav extends DolibarrModules
 
 
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
+		$this->rights = array(); // Permission array used by this module
 
 		/*
 		$r=0;
@@ -208,8 +208,8 @@ class modDav extends DolibarrModules
 		*/
 
 		// Main menu entries
-		$this->menu = array();			// List of menus to add
-		$r=0;
+		$this->menu = array(); // List of menus to add
+		$r = 0;
 
 		// Add here entries to declare new menus
 

@@ -35,9 +35,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
 						$datenotinstring = $db->jdate($datenotinstring);
 					}
 					$value = $datenotinstring;
-				}
-				else
-				{
+				} else {
 					$value = $obj->$tmpkey;
 				}
 				// If field is a computed field, we make computation to get value
@@ -60,7 +58,7 @@ if (!empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_e
                         // we keep position for the first line
                         $totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
                     }
-                    $totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
+	                if (is_numeric($obj->$tmpkey)) $totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
                 }
 				if (!empty($val['isameasure']))
 				{

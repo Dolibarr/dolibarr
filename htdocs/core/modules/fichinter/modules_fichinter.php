@@ -37,7 +37,7 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -53,11 +53,11 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type='ficheinter';
-		$list=array();
+		$type = 'ficheinter';
+		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		$list=getListOfModels($db, $type, $maxfilenamelength);
+		$list = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $list;
 	}
@@ -72,7 +72,7 @@ abstract class ModeleNumRefFicheinter
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 	/**
 	 * 	Return if a module can be used or not
@@ -165,50 +165,48 @@ abstract class ModeleNumRefFicheinter
 function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 {
 	// phpcs:enable
-	global $conf,$langs,$user;
+	global $conf, $langs, $user;
 	$langs->load("ficheinter");
 
-	$error=0;
+	$error = 0;
 
-	$srctemplatepath='';
+	$srctemplatepath = '';
 
 	// Positionne modele sur le nom du modele de fichinter a utiliser
-	if (! dol_strlen($modele))
+	if (!dol_strlen($modele))
 	{
-		if (! empty($conf->global->FICHEINTER_ADDON_PDF))
+		if (!empty($conf->global->FICHEINTER_ADDON_PDF))
 		{
 			$modele = $conf->global->FICHEINTER_ADDON_PDF;
-		}
-		else
-		{
+		} else {
 			$modele = 'soleil';
 		}
 	}
 
 	// If selected modele is a filename template (then $modele="modelname:filename")
-	$tmp=explode(':', $modele, 2);
-	if (! empty($tmp[1]))
+	$tmp = explode(':', $modele, 2);
+	if (!empty($tmp[1]))
 	{
-		$modele=$tmp[0];
-		$srctemplatepath=$tmp[1];
+		$modele = $tmp[0];
+		$srctemplatepath = $tmp[1];
 	}
 
 	// Search template files
-	$file=''; $classname=''; $filefound=0;
-	$dirmodels=array('/');
-	if (is_array($conf->modules_parts['models'])) $dirmodels=array_merge($dirmodels, $conf->modules_parts['models']);
-	foreach($dirmodels as $reldir)
+	$file = ''; $classname = ''; $filefound = 0;
+	$dirmodels = array('/');
+	if (is_array($conf->modules_parts['models'])) $dirmodels = array_merge($dirmodels, $conf->modules_parts['models']);
+	foreach ($dirmodels as $reldir)
 	{
-		foreach(array('doc','pdf') as $prefix)
+		foreach (array('doc', 'pdf') as $prefix)
 		{
 			$file = $prefix."_".$modele.".modules.php";
 
 			// On verifie l'emplacement du modele
-			$file=dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
+			$file = dol_buildpath($reldir."core/modules/fichinter/doc/".$file, 0);
 			if (file_exists($file))
 			{
-				$filefound=1;
-				$classname=$prefix.'_'.$modele;
+				$filefound = 1;
+				$classname = $prefix.'_'.$modele;
 				break;
 			}
 		}
@@ -224,26 +222,22 @@ function fichinter_create($db, $object, $modele, $outputlangs, $hidedetails = 0,
 
 		// We save charset_output to restore it because write_file can change it if needed for
 		// output format that does not support UTF8.
-		$sav_charset_output=$outputlangs->charset_output;
+		$sav_charset_output = $outputlangs->charset_output;
 		if ($obj->write_file($object, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref) > 0)
 		{
-			$outputlangs->charset_output=$sav_charset_output;
+			$outputlangs->charset_output = $sav_charset_output;
 
 			// We delete old preview
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_delete_preview($object);
 
 			return 1;
-		}
-		else
-		{
-			$outputlangs->charset_output=$sav_charset_output;
+		} else {
+			$outputlangs->charset_output = $sav_charset_output;
 			dol_print_error($db, "fichinter_pdf_create Error: ".$obj->error);
 			return 0;
 		}
-	}
-	else
-	{
+	} else {
 		print $langs->trans("Error")." ".$langs->trans("ErrorFileDoesNotExists", $file);
 		return 0;
 	}

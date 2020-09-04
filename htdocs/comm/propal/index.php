@@ -58,7 +58,7 @@ $help_url = "EN:Module_Commercial_Proposals|FR:Module_Propositions_commerciales|
 
 llxHeader("", $langs->trans("ProspectionArea"), $help_url);
 
-print load_fiche_titre($langs->trans("ProspectionArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("ProspectionArea"), '', 'propal');
 
 //print '<table width="100%" class="notopnoleftnoright">';
 //print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -163,9 +163,7 @@ if ($resql)
     //print '<tr class="liste_total"><td>'.$langs->trans("Total").' ('.$langs->trans("CustomersOrdersRunning").')</td><td class="right">'.$totalinprocess.'</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -195,7 +193,7 @@ if (!empty($conf->propal->enabled))
 			print '<table class="noborder centpercent">';
 			print '<tr class="liste_titre">';
 			$langs->load("propal");
-			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=0"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<td colspan="2">'.$langs->trans("DraftPropals").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=0"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$i = 0;
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
@@ -220,8 +218,7 @@ if (!empty($conf->propal->enabled))
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="2" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td class="right">'.$langs->trans("Total").'</td><td class="right">'.price($total)."</td></tr>";
 			}
@@ -310,8 +307,7 @@ if ($resql)
 	}
 	print "</table>";
 	print "</div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 /*
@@ -345,7 +341,7 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 		{
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("ProposalsOpened").' <a href="'.DOL_URL_ROOT.'/comm/propal/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 			$nbofloop = min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD) ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
@@ -394,17 +390,14 @@ if (!empty($conf->propal->enabled) && $user->rights->propale->lire)
 			if ($num > $nbofloop)
 			{
 				print '<tr class="liste_total"><td colspan="5" class="right">'.$langs->trans("XMoreLines", ($num - $nbofloop))."</td></tr>";
-			}
-			elseif ($total > 0)
+			} elseif ($total > 0)
 			{
 				print '<tr class="liste_total"><td colspan="3" class="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
 			}
 			print "</table>";
 			print "</div><br>";
 		}
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -434,7 +427,7 @@ if (! empty($conf->propal->enabled))
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("ProposalsToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=1"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{
@@ -507,7 +500,7 @@ if (! empty($conf->propal->enabled))
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut=2"><span class="badge">'.$num.'</span></a></td></tr>';
+		print '<td colspan="3">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status=2"><span class="badge">'.$num.'</span></a></td></tr>';
 
 		if ($num)
 		{

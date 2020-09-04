@@ -220,8 +220,7 @@ class Proposals extends DolibarrApi
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve propal list : '.$db->lasterror());
 		}
 		if (!count($obj_ret)) {
@@ -456,9 +455,7 @@ class Proposals extends DolibarrApi
 		$updateRes = $this->propal->deleteline($lineid);
 		if ($updateRes > 0) {
 			return $this->get($id);
-		}
-		else
-		{
+		} else {
 			throw new RestException(405, $this->propal->error);
 		}
 	}
@@ -588,9 +585,7 @@ class Proposals extends DolibarrApi
 		if ($this->propal->update(DolibarrApiAccess::$user) > 0)
 		{
 			return $this->get($id);
-		}
-		else
-		{
+		} else {
 			throw new RestException(500, $this->propal->error);
 		}
 	}

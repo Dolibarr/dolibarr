@@ -66,7 +66,7 @@ $search_refsupp = GETPOST('search_refsupp', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state", 'alpha'));
+$search_state = GETPOST("search_state", 'alpha');
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -92,7 +92,7 @@ $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 
 $status = GETPOST('statut', 'alpha');
-$viewstatut = GETPOST('viewstatut');
+$search_status = GETPOST('search_status');
 
 // Security check
 $orderid = GETPOST('orderid', 'int');
@@ -120,7 +120,7 @@ $hookmanager->initHooks(array('supplierorderlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('commande_fournisseur');
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
@@ -335,16 +335,12 @@ if (empty($reshook))
 							{
 								$result = $object->insert_discount($discountid);
 								//$result=$discount->link_to_invoice($lineid,$id);
-							}
-							else
-							{
+							} else {
 								setEventMessages($discount->error, $discount->errors, 'errors');
 								$error++;
 								break;
 							}
-						}
-						else
-						{
+						} else {
 							// Positive line
 							$product_type = ($lines[$i]->product_type ? $lines[$i]->product_type : 0);
 							// Date start
@@ -391,9 +387,7 @@ if (empty($reshook))
 							if ($result > 0)
 							{
 								$lineid = $result;
-							}
-							else
-							{
+							} else {
 								$lineid = 0;
 								$error++;
 								break;
@@ -447,9 +441,7 @@ if (empty($reshook))
 		{
 			$db->commit();
 			setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
-		}
-		else
-		{
+		} else {
 			$db->rollback();
 			$action = 'create';
 			$_GET["origin"] = $_POST["origin"];
@@ -596,9 +588,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierOrders').' - '.$soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfSupplierOrders');
 	}
 
@@ -639,12 +629,12 @@ if ($resql)
 	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
 	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
 	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
-	if ($search_refsupp) 		$param .= "&search_refsupp=".$search_refsupp;
-	if ($search_status >= 0)  	$param .= "&search_status=".$search_status;
-	if ($search_project_ref >= 0) $param .= "&search_project_ref=".$search_project_ref;
-	if ($search_billed != '')   $param .= "&search_billed=".$search_billed;
-	if ($show_files)            $param .= '&show_files='.$show_files;
-	if ($optioncss != '')       $param .= '&optioncss='.$optioncss;
+	if ($search_refsupp) 		$param .= "&search_refsupp=".urlencode($search_refsupp);
+	if ($search_status >= 0)  	$param .= "&search_status=".urlencode($search_status);
+	if ($search_project_ref >= 0) $param .= "&search_project_ref=".urlencode($search_project_ref);
+	if ($search_billed != '')   $param .= "&search_billed=".urlencode($search_billed);
+	if ($show_files)            $param .= '&show_files='.urlencode($show_files);
+	if ($optioncss != '')       $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -671,12 +661,11 @@ if ($resql)
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_supplier_send";
@@ -1262,9 +1251,7 @@ if ($resql)
 	$delallowed = $user->rights->fournisseur->commande->creer;
 
 	print $formfile->showdocuments('massfilesarea_supplier_order', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

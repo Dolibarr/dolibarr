@@ -39,8 +39,13 @@ function prelevement_prepare_head(BonPrelevement $object)
 	$h = 0;
 	$head = array();
 
+	$titleoftab = "WithdrawalsReceipts";
+	if ($object->type == 'bank-transfer') {
+		$titleoftab = "BankTransferReceipts";
+	}
+
 	$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$object->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans($titleoftab);
 	$head[$h][2] = 'prelevement';
 	$h++;
 
@@ -78,8 +83,8 @@ function prelevement_prepare_head(BonPrelevement $object)
 function prelevement_check_config()
 {
 	global $conf;
-	if(empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
-	if(empty($conf->global->PRELEVEMENT_ICS)) return -1;
-	if(empty($conf->global->PRELEVEMENT_USER)) return -1;
+	if (empty($conf->global->PRELEVEMENT_ID_BANKACCOUNT)) return -1;
+	if (empty($conf->global->PRELEVEMENT_ICS)) return -1;
+	if (empty($conf->global->PRELEVEMENT_USER)) return -1;
 	return 0;
 }

@@ -26,6 +26,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 /**
@@ -61,7 +62,7 @@ class Task extends CommonObject
 	/**
      * @var int ID parent task
      */
-    public $fk_task_parent;
+    public $fk_task_parent = 0;
 
     /**
      * @var string Label of task
@@ -144,6 +145,9 @@ class Task extends CommonObject
 	{
 		global $conf, $langs;
 
+		//For the date
+		$now = dol_now();
+
 		$error = 0;
 
 		// Clean parameters
@@ -174,7 +178,7 @@ class Task extends CommonObject
 		$sql .= ", ".$this->fk_task_parent;
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->description)."'";
-		$sql .= ", '".$this->db->idate($this->date_c)."'";
+		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", ".$user->id;
 		$sql .= ", ".($this->date_start != '' ? "'".$this->db->idate($this->date_start)."'" : 'null');
 		$sql .= ", ".($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
@@ -204,7 +208,7 @@ class Task extends CommonObject
 		// Update extrafield
 		if (!$error)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -224,9 +228,7 @@ class Task extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return $this->id;
 		}
@@ -327,9 +329,7 @@ class Task extends CommonObject
 			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -383,7 +383,7 @@ class Task extends CommonObject
 
 		// Update extrafield
 		if (!$error) {
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -438,9 +438,7 @@ class Task extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -542,9 +540,7 @@ class Task extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			//Delete associated link file
 			if ($conf->projet->dir_output)
 			{
@@ -588,9 +584,7 @@ class Task extends CommonObject
 
 		dol_syslog(get_class($this)."::hasChildren", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-		else
-		{
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); } else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) $ret = $obj->nb;
 			$this->db->free($resql);
@@ -599,9 +593,7 @@ class Task extends CommonObject
 		if (!$error)
 		{
 			return $ret;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -622,9 +614,7 @@ class Task extends CommonObject
 
 		dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); }
-		else
-		{
+		if (!$resql) { $error++; $this->errors[] = "Error ".$this->db->lasterror(); } else {
 			$obj = $this->db->fetch_object($resql);
 			if ($obj) $ret = $obj->nb;
 			$this->db->free($resql);
@@ -633,9 +623,7 @@ class Task extends CommonObject
 		if (!$error)
 		{
 			return $ret;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -798,8 +786,7 @@ class Task extends CommonObject
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
             $sql .= " WHERE p.entity IN (".getEntity('project').")";
 			$sql .= " AND t.fk_projet = p.rowid";
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			if ($filteronprojuser > 0)
 			{
@@ -815,9 +802,7 @@ class Task extends CommonObject
 				}
 				$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec2";
 				$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
-			}
-			else
-			{
+			} else {
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
 				if ($includebilltime)
 				{
@@ -826,8 +811,7 @@ class Task extends CommonObject
 			}
             $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_extrafields as efpt ON (t.rowid = efpt.fk_object)";
             $sql .= " WHERE p.entity IN (".getEntity('project').")";
-		}
-		else return 'BadValueForParameterMode';
+		} else return 'BadValueForParameterMode';
 
 		if ($filteronprojuser > 0)
 		{
@@ -854,8 +838,8 @@ class Task extends CommonObject
 		if ($filteronprojstatus && $filteronprojstatus != '-1') $sql .= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql .= $morewherefilter;
 		// Add where from extra fields
-		$extrafieldsobjectkey='projet_task';
-		$extrafieldsobjectprefix='efpt.';
+		$extrafieldsobjectkey = 'projet_task';
+		$extrafieldsobjectprefix = 'efpt.';
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 		// Add where from hooks
 		$parameters = array();
@@ -973,9 +957,7 @@ class Task extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -1053,9 +1035,7 @@ class Task extends CommonObject
 				$i++;
 			}
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -1079,7 +1059,7 @@ class Task extends CommonObject
 		while ($i < $num)
 		{
 			if ($source == 'thirdparty') $contactAlreadySelected[$i] = $tab[$i]['socid'];
-			else  $contactAlreadySelected[$i] = $tab[$i]['id'];
+			else $contactAlreadySelected[$i] = $tab[$i]['id'];
 			$i++;
 		}
 		return $contactAlreadySelected;
@@ -1146,9 +1126,7 @@ class Task extends CommonObject
 				if ($result < 0) { $ret = -1; }
 				// End call triggers
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$ret = -1;
 		}
@@ -1183,9 +1161,7 @@ class Task extends CommonObject
 		if ($ret > 0)
 		{
 			$this->db->commit();
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 		}
 		return $ret;
@@ -1245,9 +1221,7 @@ class Task extends CommonObject
 			$this->timespent_nblines = ($obj->nblines ? $obj->nblines : 0);
 
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 		return $result;
@@ -1302,9 +1276,7 @@ class Task extends CommonObject
 
 			$this->db->free($resql);
 			return $result;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			return $result;
 		}
@@ -1355,9 +1327,7 @@ class Task extends CommonObject
 			$this->db->free($resql);
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -1442,9 +1412,7 @@ class Task extends CommonObject
 			}
 
 			$this->db->free($resql);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = "Error ".$this->db->lasterror();
 			return -1;
@@ -1504,14 +1472,10 @@ class Task extends CommonObject
 				{
 					$this->db->rollback();
 					$ret = -1;
-				}
-				else $ret = 1;
+				} else $ret = 1;
 				// End call triggers
-			}
-			else $ret = 1;
-		}
-		else
-		{
+			} else $ret = 1;
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			$ret = -1;
@@ -1581,9 +1545,7 @@ class Task extends CommonObject
 			if ($this->db->query($sql))
 			{
 				$result = 0;
-			}
-			else
-			{
+			} else {
 				$this->error = $this->db->lasterror();
 				$result = -2;
 			}
@@ -1599,9 +1561,7 @@ class Task extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -1713,9 +1673,7 @@ class Task extends CommonObject
 	   		{
 				$clone_task->note_private = '';
 				$clone_task->note_public = '';
-			}
-			else
-			{
+			} else {
 				$this->db->begin();
 				$res = $clone_task->update_note(dol_html_entity_decode($clone_task->note_public, ENT_QUOTES), '_public');
 				if ($res < 0)
@@ -1723,9 +1681,7 @@ class Task extends CommonObject
 					$this->error .= $clone_task->error;
 					$error++;
 					$this->db->rollback();
-				}
-				else
-				{
+				} else {
 					$this->db->commit();
 				}
 
@@ -1736,9 +1692,7 @@ class Task extends CommonObject
 					$this->error .= $clone_task->error;
 					$error++;
 					$this->db->rollback();
-				}
-				else
-				{
+				} else {
 					$this->db->commit();
 				}
 			}
@@ -1757,9 +1711,7 @@ class Task extends CommonObject
 				{
 					$projectstatic->fetch($project_id);
 					$clone_project_ref = $projectstatic->ref;
-				}
-				else
-				{
+				} else {
 					$clone_project_ref = $ori_project_ref;
 				}
 
@@ -1806,9 +1758,7 @@ class Task extends CommonObject
 							$langs->load("errors");
 							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
 							$error++;
-						}
-						else
-						{
+						} else {
 							if ($clone_task->error != '')
 							{
 								$this->error .= $clone_task->error;
@@ -1832,9 +1782,7 @@ class Task extends CommonObject
 		{
 			$this->db->commit();
 			return $clone_task_id;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			dol_syslog(get_class($this)."::createFromClone nbError: ".$error." error : ".$this->error, LOG_ERR);
 			return -1;
@@ -1881,12 +1829,10 @@ class Task extends CommonObject
 		if ($mode == 0)
 		{
 			return $langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 1)
+		} elseif ($mode == 1)
 		{
 			return $langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts_short[$status]);
@@ -1894,8 +1840,7 @@ class Task extends CommonObject
 			elseif ($status == 3) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 4) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts_short[$status]);
 			elseif ($status == 5) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts_short[$status]);
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0');
 			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut1');
@@ -1903,8 +1848,7 @@ class Task extends CommonObject
 			elseif ($status == 3) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
 			elseif ($status == 4) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6');
 			elseif ($status == 5) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			if ($status == 0) return img_picto($langs->trans($this->statuts_short[$status]), 'statut0').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 1) return img_picto($langs->trans($this->statuts_short[$status]), 'statut1').' '.$langs->trans($this->statuts[$status]);
@@ -1912,8 +1856,7 @@ class Task extends CommonObject
 			elseif ($status == 3) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 4) return img_picto($langs->trans($this->statuts_short[$status]), 'statut6').' '.$langs->trans($this->statuts[$status]);
 			elseif ($status == 5) return img_picto($langs->trans($this->statuts_short[$status]), 'statut5').' '.$langs->trans($this->statuts[$status]);
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			/*if ($status==0) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
 			elseif ($status==1) return $langs->trans($this->statuts_short[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
@@ -1924,8 +1867,7 @@ class Task extends CommonObject
 			*/
 			//else return $this->progress.' %';
 			return '&nbsp;';
-		}
-		elseif ($mode == 6)
+		} elseif ($mode == 6)
 		{
 			/*if ($status==0) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut0');
 			elseif ($status==1) return $langs->trans($this->statuts[$status]).' '.img_picto($langs->trans($this->statuts_short[$status]),'statut1');
@@ -2037,9 +1979,7 @@ class Task extends CommonObject
 			}
 
 			return $response;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->error();
 			return -1;
 		}
@@ -2086,9 +2026,7 @@ class Task extends CommonObject
 			}
 			$this->db->free($resql);
 			return 1;
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;

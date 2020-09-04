@@ -19,7 +19,7 @@
  */
 
 
-if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', '1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
@@ -31,15 +31,16 @@ if (!$user->rights->opensurvey->write) accessforbidden();
 
 $langs->load("opensurvey");
 
+
 /*
  * View
  */
 
-$arrayofjs=array();
-$arrayofcss=array('/opensurvey/css/style.css');
+$arrayofjs = array();
+$arrayofcss = array('/opensurvey/css/style.css');
 llxHeader('', $langs->trans("Survey"), '', "", 0, 0, $arrayofjs, $arrayofcss);
 
-print load_fiche_titre($langs->trans("CreatePoll"));
+print load_fiche_titre($langs->trans("CreatePoll"), '', 'poll');
 
 print '<form name="formulaire" action="create_survey.php" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';

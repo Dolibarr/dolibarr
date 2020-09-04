@@ -89,6 +89,8 @@ if ($mode == 'sconly') $param = '&mode=sconly';
 if ($sortfield) $param .= '&sortfield='.$sortfield;
 if ($sortorder) $param .= '&sortorder='.$sortorder;
 
+$totalnboflines = 0;
+$num = 0;
 
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -99,14 +101,13 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
+$nav = '';
 if ($mode != 'sconly')
 {
-    $center = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit, 1);
-}
-else
-{
-    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $center, $num, $totalnboflines, 'title_accountancy', 0, '', '', $limit);
+    $nav = ($year ? '<a href="index.php?year='.($year - 1).$param.'">'.img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a> ".$langs->trans("Year").' '.$year.' <a href="index.php?year='.($year + 1).$param.'">'.img_next($langs->trans("Next"), 'class="valignbottom"')."</a>" : "");
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 1);
+} else {
+    print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'object_payment', 0, $nav, '', $limit, 0);
 }
 
 if ($year) $param .= '&year='.$year;
@@ -217,8 +218,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		            $accountstatic->accountancy_journal = $obj->accountancy_journal;
 		            $accountstatic->label = $obj->blabel;
 		            print $accountstatic->getNomUrl(1);
-		        }
-		        else print '&nbsp;';
+		        } else print '&nbsp;';
 		        print '</td>';
 		    }
 			// Paid
@@ -240,9 +240,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
         if (!empty($conf->banque->enabled)) print '<td></td>';
 	    print '<td class="liste_total right">'.price($totalpaye)."</td>";
 		print "</tr>";
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 	print '</table>';
@@ -334,8 +332,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 			            $accountstatic->accountancy_journal = $obj->accountancy_journal;
 			            $accountstatic->label = $obj->blabel;
 			            print $accountstatic->getNomUrl(1);
-			        }
-			        else print '&nbsp;';
+			        } else print '&nbsp;';
 			        print '</td>';
 			    }
 
@@ -356,9 +353,7 @@ if (!empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 
 		    print "</table>";
 		    $db->free($result);
-		}
-		else
-		{
+		} else {
 		    dol_print_error($db);
 		}
 	}
@@ -369,19 +364,15 @@ if ($mysoc->localtax1_assuj == "1" && $mysoc->localtax2_assuj == "1")
 {
 	$j = 1;
 	$numlt = 3;
-}
-elseif ($mysoc->localtax1_assuj == "1")
+} elseif ($mysoc->localtax1_assuj == "1")
 {
 	$j = 1;
 	$numlt = 2;
-}
-elseif ($mysoc->localtax2_assuj == "1")
+} elseif ($mysoc->localtax2_assuj == "1")
 {
 	$j = 2;
 	$numlt = 3;
-}
-else
-{
+} else {
 	$j = 0;
 	$numlt = 0;
 }
@@ -451,9 +442,7 @@ while ($j < $numlt)
 
 			print "</table>";
 			$db->free($result);
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -462,6 +451,7 @@ while ($j < $numlt)
 
 
 // Payment Salary
+/*
 if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 {
     if (!$mode || $mode != 'sconly')
@@ -546,8 +536,7 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
 			            $accountstatic->accountancy_journal = $obj->accountancy_journal;
 			            $accountstatic->label = $obj->blabel;
 			            print $accountstatic->getNomUrl(1);
-			        }
-			        else print '&nbsp;';
+			        } else print '&nbsp;';
 			        print '</td>';
 			    }
 
@@ -565,13 +554,12 @@ if (!empty($conf->salaries->enabled) && !empty($user->rights->salaries->read))
             $db->free($result);
 
             print "<br>";
-        }
-        else
-        {
+        } else {
             dol_print_error($db);
         }
     }
 }
+*/
 
 print '</form>';
 

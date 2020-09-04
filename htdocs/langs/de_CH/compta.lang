@@ -18,7 +18,6 @@ LastCheckReceiptShort=Letzte %s Scheckeinnahmen
 NoWaitingChecks=Keine Schecks warten auf Einlösung.
 CalcModeVATDebt=Modus <b>%s Mwst. auf Engagement Rechnungslegung %s</b>.
 CalcModeLT2Rec=Modus <b>%sIRPF aufLieferantenrechnungen%s</b>
-RulesResultDue=- Dies beinhaltet ausstehende Rechnungen, Aufwendungen, Mehrwertsteuern, Abgaben, ob sie bezahlt wurden oder nicht. Auch die gezahlten Gehälter. <br> - Es gilt das Freigabedatum von den Rechnungen und MwSt., sowie das Fälligkeitsdatum für Aufwendungen. Für Gehälter definiert mit dem Modul Löhne, wird das Valutadatum der Zahlung verwendet.
 LT2ReportByCustomersES=Bericht von Geschäftspartner EKSt.
 VATReportByCustomersInInputOutputMode=Bericht zur vereinnahmten und bezahlten MwSt. nach Kunden
 SeeVATReportInInputOutputMode=Siehe <b>%sMwSt.-Einnahmen%s</b>-Bericht für eine standardmässige Berechnung

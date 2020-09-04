@@ -23,7 +23,7 @@
  *		\brief      Fichier contenant la classe du modele de numerotation de reference de commande fournisseur Muguet
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/modules/supplier_order/modules_commandefournisseur.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
 
 
 /**
@@ -35,7 +35,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 * Dolibarr version of the loaded document
 	 * @var string
 	 */
-	public $version = 'dolibarr';		// 'development', 'experimental', 'dolibarr'
+	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
 	/**
 	 * @var string Error code (or message)
@@ -47,14 +47,14 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Muguet';
+	public $nom = 'Muguet';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Muguet';
+	public $name = 'Muguet';
 
-	public $prefix='CF';
+	public $prefix = 'CF';
 
 
 	/**
@@ -64,7 +64,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	{
 		global $conf;
 
-		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO';   // We use correct standard code "PO = Purchase Order"
+		if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO'; // We use correct standard code "PO = Purchase Order"
 	}
 
 	/**
@@ -98,29 +98,27 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public function canBeActivated()
 	{
-		global $conf,$langs,$db;
+		global $conf, $langs, $db;
 
-		$coyymm=''; $max='';
+		$coyymm = ''; $max = '';
 
-		$posindice=8;
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
-		$resql=$db->query($sql);
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql .= " AND entity = ".$conf->entity;
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			if ($row) { $coyymm = substr($row[0], 0, 6); $max=$row[0]; }
+			if ($row) { $coyymm = substr($row[0], 0, 6); $max = $row[0]; }
 		}
-		if (! $coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
+		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm))
 		{
 			return true;
-		}
-		else
-		{
+		} else {
 			$langs->load("errors");
-			$this->error=$langs->trans('ErrorNumRefModel', $max);
+			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
 		}
 	}
@@ -134,30 +132,30 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 */
 	public function getNextValue($objsoc = 0, $object = '')
 	{
-		global $db,$conf;
+		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice=8;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
-		$sql.= " AND entity = ".$conf->entity;
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
+		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+		$sql .= " AND entity = ".$conf->entity;
 
-		$resql=$db->query($sql);
+		$resql = $db->query($sql);
 		if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
-			else $max=0;
+			else $max = 0;
 		}
 
 		//$date=time();
-		$date=$object->date_commande;   // Not always defined
-		if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
+		$date = $object->date_commande; // Not always defined
+		if (empty($date)) $date = $object->date; // Creation date is order date for suppliers orders
 		$yymm = strftime("%y%m", $date);
 
-		if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-		else $num = sprintf("%04s", $max+1);
+		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+		else $num = sprintf("%04s", $max + 1);
 
 		return $this->prefix.$yymm."-".$num;
 	}

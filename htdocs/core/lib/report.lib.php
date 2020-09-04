@@ -44,11 +44,11 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	print "\n\n<!-- start banner of report -->\n";
 
-	if(! empty($varlink)) $varlink = '?'.$varlink;
+	if (!empty($varlink)) $varlink = '?'.$varlink;
 
 	$head = array();
 
-	$h=0;
+	$h = 0;
 	$head[$h][0] = $_SERVER["PHP_SELF"].$varlink;
 	$head[$h][1] = $langs->trans("Report");
 	$head[$h][2] = 'report';
@@ -58,7 +58,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	dol_fiche_head($head, 'report');
 
-	foreach($moreparam as $key => $value)
+	foreach ($moreparam as $key => $value)
 	{
 		 print '<input type="hidden" name="'.$key.'" value="'.$value.'">'."\n";
 	}
@@ -69,7 +69,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 
 	// Ligne de titre
 	print '<tr>';
-	print '<td width="110">'.$langs->trans("ReportName").'</td>';
+	print '<td width="150">'.$langs->trans("ReportName").'</td>';
 	print '<td>';
 	print $reportname;
 	print '</td>';
@@ -80,7 +80,7 @@ function report_header($reportname, $notused, $period, $periodlink, $description
 	if ($calcmode)
 	{
 		print '<tr>';
-		print '<td width="110">'.$langs->trans("CalculationMode").'</td>';
+		print '<td width="150">'.$langs->trans("CalculationMode").'</td>';
 		print '<td>';
 		print $calcmode;
 		if ($variante) print '<td></td>';

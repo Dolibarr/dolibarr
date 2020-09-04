@@ -21,13 +21,13 @@
  * \brief      File that include javascript functions for timepicker
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 session_cache_limiter('public');
 
@@ -55,7 +55,7 @@ jQuery(function($){
 		timeFormat: 'HH:mm',
 		amNames: ['AM', 'A'],
 		pmNames: ['PM', 'P'],
-		isRTL: <?php echo ($langs->trans("DIRECTION")=='rtl'?'true':'false'); ?>
+		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>
 	};
 	$.timepicker.setDefaults($.timepicker.regional['<?php echo $langs->defaultlang ?>']);
 });

@@ -39,23 +39,23 @@ $hookmanager->initHooks(array('homesetup'));
 
 $form = new Form($db);
 
-$wikihelp='EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
+$wikihelp = 'EN:First_setup|FR:Premiers_paramétrages|ES:Primeras_configuraciones';
 llxHeader('', $langs->trans("Setup"), $wikihelp);
 
 
 print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
-if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
+if (!empty($conf->global->MAIN_MOTD_SETUPPAGE))
 {
-    $conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
-    if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
+    $conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
+    if (!empty($conf->global->MAIN_MOTD_SETUPPAGE))
     {
-    	$i=0;
+    	$i = 0;
     	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100)
     	{
-    		$tmp=explode('|', $reg[1]);
-    		if (! empty($tmp[1])) $langs->load($tmp[1]);
-    		$conf->global->MAIN_MOTD_SETUPPAGE=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
+    		$tmp = explode('|', $reg[1]);
+    		if (!empty($tmp[1])) $langs->load($tmp[1]);
+    		$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
     		$i++;
     	}
 
@@ -67,12 +67,12 @@ if (! empty($conf->global->MAIN_MOTD_SETUPPAGE))
     }
 }
 
-print '<span class="opacitymedium">';
-print $langs->trans("SetupDescription1");
+print '<span class="opacitymedium hideonsmartphone">';
+print $langs->trans("SetupDescription1").' ';
 print $langs->trans("AreaForAdminOnly").' ';
 print $langs->trans("SetupDescription2", $langs->transnoentities("MenuCompanySetup"), $langs->transnoentities("Modules"));
-print '</span>';
 print "<br><br>";
+print '</span>';
 
 print '<br>';
 

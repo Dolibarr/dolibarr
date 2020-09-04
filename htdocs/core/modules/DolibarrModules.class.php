@@ -130,7 +130,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
     public $rights_class;
 
     /**
-     * @var array Module menu entries
+     * @var array|int 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
      */
     public $menu = array();
 
@@ -437,9 +437,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     if (!$ignoreerror) {
                          $this->error = $this->db->lasterror();
                          $err++;
-                    }
-                    else
-                    {
+                    } else {
                          dol_syslog(get_class($this)."::_init Warning ".$this->db->lasterror(), LOG_WARNING);
                     }
                 }
@@ -450,9 +448,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if (!$err) {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             return 0;
         }
@@ -537,9 +533,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if (!$err) {
             $this->db->commit();
             return 1;
-        }
-        else
-        {
+        } else {
             $this->db->rollback();
             return 0;
         }
@@ -560,9 +554,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if ($langs->transnoentitiesnoconv("Module".$this->numero."Name") != ("Module".$this->numero."Name")) {
             // If module name translation exists
             return $langs->transnoentitiesnoconv("Module".$this->numero."Name");
-        }
-        else
-        {
+        } else {
             // If module name translation using it's unique id does not exist, we try to use its name to find translation
             if (is_array($this->langfiles)) {
                 foreach ($this->langfiles as $val)
@@ -596,9 +588,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if ($langs->transnoentitiesnoconv("Module".$this->numero."Desc") != ("Module".$this->numero."Desc")) {
             // If module description translation exists
             return $langs->transnoentitiesnoconv("Module".$this->numero."Desc");
-        }
-        else
-        {
+        } else {
             // If module description translation does not exist using its unique id, we can use its name to find translation
             if (is_array($this->langfiles)) {
                 foreach ($this->langfiles as $val)
@@ -650,14 +640,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                         'images/' => dol_buildpath(strtolower($this->name).'/images/', 1),
                     )
                 );
-            }
-            else
-            {
+            } else {
                 $content = nl2br($content);
             }
-        }
-        else
-        {
+        } else {
             // Mostly for internal modules
             if (!empty($this->descriptionlong)) {
                 if (is_array($this->langfiles)) {
@@ -745,9 +731,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
             if ((float) DOL_VERSION >= 6.0) {
                 @include_once DOL_DOCUMENT_ROOT.'/core/lib/parsemd.lib.php';
                 $content = dolMd2Html($content, 'parsedown', array('doc/'=>dol_buildpath(strtolower($this->name).'/doc/', 1)));
-            }
-            else
-            {
+            } else {
                 $content = nl2br($content);
             }
         }
@@ -858,9 +842,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if ($langs->trans($langstring) == $langstring) {
             // Translation not found
             return $langs->trans($this->export_label[$r]);
-        }
-        else
-        {
+        } else {
             // Translation found
             return $langs->trans($langstring);
         }
@@ -883,9 +865,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if ($langs->trans($langstring) == $langstring) {
             // Translation not found
             return $langs->transnoentitiesnoconv($this->import_label[$r]);
-        }
-        else
-        {
+        } else {
             // Translation found
             return $langs->transnoentitiesnoconv($langstring);
         }
@@ -912,9 +892,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if (!$resql)
         {
             $err++;
-        }
-        else
-        {
+        } else {
             $obj = $this->db->fetch_object($resql);
             if ($obj) {
                 return $this->db->jdate($obj->tms);
@@ -945,9 +923,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
         if (!$resql)
         {
             $err++;
-        }
-        else
-        {
+        } else {
             $obj = $this->db->fetch_object($resql);
             $tmp = array();
             if ($obj->note) {
@@ -1232,17 +1208,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
                         if (!$err) {
                             $this->db->commit();
-                        }
-                        else
-                        {
+                        } else {
                                   $this->error = $this->db->lasterror();
                                   $this->db->rollback();
                         }
                     }
                     // else box already registered into database
-                }
-                else
-                {
+                } else {
                     $this->error = $this->db->lasterror();
                     $err++;
                 }
@@ -1427,17 +1399,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
                         if (!$err) {
                             $this->db->commit();
-                        }
-                        else
-                        {
+                        } else {
                             $this->error = $this->db->lasterror();
                             $this->db->rollback();
                         }
                     }
                     // else box already registered into database
-                }
-                else
-                {
+                } else {
                     $this->error = $this->db->lasterror();
                     $err++;
                 }
@@ -1628,14 +1596,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     if (!$this->db->query($sql)) {
                         $err++;
                     }
-                }
-                else
-                {
+                } else {
                     dol_syslog(get_class($this)."::insert_const constant '".$name."' already exists", LOG_WARNING);
                 }
-            }
-            else
-            {
+            } else {
                 $err++;
             }
         }
@@ -1737,17 +1701,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                                     $sql .= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
                                     $sql .= " VALUES ";
                                     $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
-                                }
-                                else
-                                   {
+                                } else {
                                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
                                     $sql .= " (id, entity, libelle, module, type, bydefault, perms)";
                                     $sql .= " VALUES ";
                                     $sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                  $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                                  $sql .= " (id, entity, libelle, module, type, bydefault)";
                                  $sql .= " VALUES ";
@@ -1761,8 +1721,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                                     $this->error = $this->db->lasterror();
                                     $err++;
                                     break;
-                                }
-                                else { dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+                                } else { dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
                                 }
                             }
 
@@ -1792,16 +1751,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                                   $result = $tmpuser->fetch($obj2->rowid);
                                 if ($result > 0) {
                                     $tmpuser->addrights($r_id, '', '', 0, 1);
-                                }
-                                else
-                                 {
+                                } else {
                                     dol_syslog(get_class($this)."::insert_permissions Failed to add the permission to user because fetch return an error", LOG_ERR);
                                 }
                                  $i++;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             dol_print_error($this->db);
                         }
                     }
@@ -1815,9 +1770,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 }
             }
             $this->db->free($resql);
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             $err++;
         }
@@ -1884,9 +1837,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
             if (!$this->menu[$key]['fk_menu']) {
                 $menu->fk_menu = 0;
-            }
-            else
-            {
+            } else {
                 $foundparent = 0;
                 $fk_parent = $this->menu[$key]['fk_menu'];
                 if (preg_match('/^r=/', $fk_parent))    // old deprecated method
@@ -1896,14 +1847,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                         $menu->fk_menu = $this->menu[$fk_parent]['rowid'];
                         $foundparent = 1;
                     }
-                }
-                elseif (preg_match('/^fk_mainmenu=([a-zA-Z0-9_]+),fk_leftmenu=([a-zA-Z0-9_]+)$/', $fk_parent, $reg)) {
+                } elseif (preg_match('/^fk_mainmenu=([a-zA-Z0-9_]+),fk_leftmenu=([a-zA-Z0-9_]+)$/', $fk_parent, $reg)) {
                     $menu->fk_menu = -1;
                     $menu->fk_mainmenu = $reg[1];
                     $menu->fk_leftmenu = $reg[2];
                     $foundparent = 1;
-                }
-                elseif (preg_match('/^fk_mainmenu=([a-zA-Z0-9_]+)$/', $fk_parent, $reg)) {
+                } elseif (preg_match('/^fk_mainmenu=([a-zA-Z0-9_]+)$/', $fk_parent, $reg)) {
                     $menu->fk_menu = -1;
                     $menu->fk_mainmenu = $reg[1];
                     $menu->fk_leftmenu = '';
@@ -1933,9 +1882,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 $result = $menu->create($user); // Save menu entry into table llx_menu
                 if ($result > 0) {
                     $this->menu[$key]['rowid'] = $result;
-                }
-                else
-                {
+                } else {
                     $this->error = $menu->error;
                     dol_syslog(get_class($this).'::insert_menus result='.$result." ".$this->error, LOG_ERR);
                     $err++;
@@ -1946,9 +1893,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
         if (!$err) {
             $this->db->commit();
-        }
-        else
-        {
+        } else {
             dol_syslog(get_class($this)."::insert_menus ".$this->error, LOG_ERR);
             $this->db->rollback();
         }
@@ -2080,9 +2025,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                 dol_syslog(get_class($this)."::insert_dirs", LOG_DEBUG);
                 $this->db->query($sql);
             }
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             $err++;
         }
@@ -2147,13 +2090,11 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                         $newvalue = json_encode($value['data']);
                         if (isset($value['entity'])) { $entity = $value['entity'];
                         }
-                    }
-                    elseif (isset($value['data']) && !is_array($value['data'])) {
+                    } elseif (isset($value['data']) && !is_array($value['data'])) {
                         $newvalue = $value['data'];
                         if (isset($value['entity'])) { $entity = $value['entity'];
                         }
-                    }
-                    else    // when hook is declared with syntax 'hook'=>array('hookcontext1','hookcontext2',...)
+                    } else // when hook is declared with syntax 'hook'=>array('hookcontext1','hookcontext2',...)
                     {
                         $newvalue = json_encode($value);
                     }
@@ -2183,9 +2124,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
                     if ($this->db->lasterrno() != 'DB_ERROR_RECORD_ALREADY_EXISTS') {
                          $error++;
                          $this->error = $this->db->lasterror();
-                    }
-                    else
-                    {
+                    } else {
                          dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
                     }
                 }
@@ -2278,10 +2217,16 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
     	$const_name = 'MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i', '', get_class($this)));
 
+    	$version = $this->getVersion(0);
+    	$versiontrans = '';
+    	if (preg_match('/development/i', $version))  $versiontrans .= 'warning';
+    	if (preg_match('/experimental/i', $version)) $versiontrans .= 'warning';
+    	if (preg_match('/deprecated/i', $version))   $versiontrans .= 'warning';
+
 		print '
-    	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : ' ').'">
+    	<div class="box-flex-item info-box-module'.(empty($conf->global->$const_name) ? ' info-box-module-disabled' : '').($this->isCoreOrExternalModule() == 'external' ? ' info-box-module-external' : '').'">
 	    <div class="info-box info-box-sm info-box-module">
-	    <div class="info-box-icon">';
+	    <div class="info-box-icon'.(empty($conf->global->$const_name) ? '' : ' info-box-icon-module-enabled'.($versiontrans ? ' info-box-icon-module-warning' : '')).'">';
 
 		$alttext = '';
 		//if (is_array($objMod->need_dolibarr_version)) $alttext.=($alttext?' - ':'').'Dolibarr >= '.join('.',$objMod->need_dolibarr_version);
@@ -2290,46 +2235,32 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		{
 			if (preg_match('/^\//i', $this->picto)) print img_picto($alttext, $this->picto, 'class="inline-block valignmiddle"', 1);
 			else print img_object($alttext, $this->picto, 'class="inline-block valignmiddle"');
-		}
-		else
-		{
+		} else {
 			print img_object($alttext, 'generic', 'class="inline-block valignmiddle"');
 		}
-		print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
-		print $this->getVersion(1);
-		print '</span>';
 
-		/*print '<span class="info-box-icon-action">';
-		print '<div class="valignmiddle inline-block">';
-		print '<div class="valignmiddle inline-block">';
-		print $codeenabledisable;
-		print '</div>';
-		print '<div class="valignmiddle inline-block marginleftonly">';
-		print $codetoconfig;
-		print '</div>';
-		print '</div>';
-		print '</span>';
-		*/
+		if ($this->isCoreOrExternalModule() == 'external' || preg_match('/development|experimental|deprecated/i', $version)) {
+			print '<span class="info-box-icon-version'.($versiontrans ? ' '.$versiontrans : '').'" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
+			print $this->getVersion(1);
+			print '</span>';
+		}
 
 		print '</div>
-	    <div class="info-box-content info-box-text-module">
+	    <div class="info-box-content info-box-text-module'.(empty($conf->global->$const_name) ? '' : ' info-box-module-enabled'.($versiontrans ? ' info-box-content-warning' : '')).'">
 	    <span class="info-box-title">'.$this->getName().'</span>
-	    <span class="info-box-desc twolinesmax" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
+	    <span class="info-box-desc twolinesmax opacitymedium" title="'.dol_escape_htmltag($this->getDesc()).'">'.nl2br($this->getDesc()).'</span>';
 
-		/*print '<span class="info-box-icon-version" title="'.$langs->trans("Version").' '.$this->getVersion(1).'">';
-		print $this->getVersion(1);
-		print '</span>'; */
-
-		print '<div class="valignmiddle inline-block">';
-		print '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
+		print '<div class="valignmiddle inline-block info-box-more">';
+		//if ($versiontrans) print img_warning($langs->trans("Version").' '.$this->getVersion(1)).' ';
+		print '<a class="valignmiddle inline-block" href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$this->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto(($this->isCoreOrExternalModule() == 'external' ? $langs->trans("ExternalModule").' - ' : '').$langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 		print '</div><br>';
 
 		print '<div class="valignmiddle inline-block info-box-actions">';
-		print '<div class="valignmiddle inline-block">';
-		print $codeenabledisable;
-		print '</div>';
-		print '<div class="valignmiddle inline-block marginleftonly">';
+		print '<div class="valignmiddle inline-block info-box-setup">';
 		print $codetoconfig;
+		print '</div>';
+		print '<div class="valignmiddle inline-block marginleftonly marginrightonly">';
+		print $codeenabledisable;
 		print '</div>';
 		print '</div>';
 

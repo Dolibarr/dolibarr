@@ -78,7 +78,11 @@ class ExportTest extends PHPUnit\Framework\TestCase
 		print "\n";
 	}
 
-	// Static methods
+	/**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
     	global $conf,$user,$langs,$db;
@@ -87,7 +91,11 @@ class ExportTest extends PHPUnit\Framework\TestCase
     	print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -334,7 +342,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
         $result=$objexport->load_arrays($user, $filterdatatoexport);	// This load ->array_export_xxx properties for datatoexport
 
         // Loop on each dataset
-        foreach($objexport->array_export_code as $key => $datatoexport)
+        foreach ($objexport->array_export_code as $key => $datatoexport)
         {
         	$exportfile=$conf->export->dir_temp.'/'.$user->id.'/export_'.$datatoexport.'.csv';
 	        print "Process export for dataset ".$datatoexport." into ".$exportfile."\n";
@@ -343,7 +351,7 @@ class ExportTest extends PHPUnit\Framework\TestCase
 	        // Generate $array_selected
 	        $i=0;
 	        $array_selected=array();
-			foreach($objexport->array_export_fields[$key] as $key => $val)
+			foreach ($objexport->array_export_fields[$key] as $key => $val)
 			{
 				$array_selected[$key]=$i++;
 			}

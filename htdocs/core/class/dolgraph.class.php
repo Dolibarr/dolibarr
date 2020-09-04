@@ -472,14 +472,10 @@ class DolGraph
 			{
 				//print 'ee'.join(',',$theme_bgcoloronglet);
 				$this->bgcolor = $theme_bgcoloronglet;
-			}
-			else
-			{
+			} else {
 				$this->bgcolor = $theme_bgcolor;
 			}
-		}
-		else
-		{
+		} else {
 			$this->bgcolor = $bg_color;
 		}
 	}
@@ -502,14 +498,10 @@ class DolGraph
 			{
 				//print 'ee'.join(',',$theme_bgcoloronglet);
 				$this->bgcolorgrid = $theme_bgcoloronglet;
-			}
-			else
-			{
+			} else {
 				$this->bgcolorgrid = $theme_bgcolor;
 			}
-		}
-		else
-		{
+		} else {
 			$this->bgcolorgrid = $bg_colorgrid;
 		}
 	}
@@ -725,9 +717,7 @@ class DolGraph
 				foreach ($values as $x => $y) {
 					if (isset($y)) $serie[$i] .= 'd'.$i.'.push({"label":"'.dol_escape_js($legends[$x]).'", "data":'.$y.'});'."\n";
 				}
-			}
-			else
-			{
+			} else {
 				foreach ($values as $x => $y) {
 					if (isset($y)) $serie[$i] .= 'd'.$i.'.push(['.$x.', '.$y.']);'."\n";
 				}
@@ -758,9 +748,7 @@ class DolGraph
 		if ($nblot < 0)
 		{
 			$this->stringtoshow .= '<!-- No series of data -->'."\n";
-		}
-		else
-		{
+		} else {
 			while ($i < $nblot)
 			{
 				$this->stringtoshow .= '<!-- Serie '.$i.' -->'."\n";
@@ -835,8 +823,7 @@ class DolGraph
 		}'."\n";
 		}
 		// Other cases, graph of type 'bars', 'lines'
-		else
-		{
+		else {
 			// Add code to support tooltips
 		    // TODO: remove js css and use graph-tooltip-inner class instead by adding css in each themes
 			$this->stringtoshow .= '
@@ -894,7 +881,14 @@ class DolGraph
 				if ($i > $firstlot) $this->stringtoshow .= ', '."\n";
 				$color = sprintf("%02x%02x%02x", $this->datacolor[$i][0], $this->datacolor[$i][1], $this->datacolor[$i][2]);
 				$this->stringtoshow .= '{ ';
-				if (!isset($this->type[$i]) || $this->type[$i] == 'bars') $this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.($i == $firstlot ? 'center' : 'left').'", barWidth: 0.5 }, ';
+				if (! isset($this->type[$i]) || $this->type[$i] == 'bars') {
+                    if ($nblot == 3) {
+                        if ($i == $firstlot) $align = 'right';
+                        elseif ($i == $firstlot + 1) $align = 'center';
+                        else $align = 'left';
+                        $this->stringtoshow .= 'bars: { lineWidth: 1, show: true, align: "'.$align.'", barWidth: 0.45 }, ';
+                    } else $this->stringtoshow.='bars: { lineWidth: 1, show: true, align: "'.($i==$firstlot?'center':'left').'", barWidth: 0.5 }, ';
+                }
 				if (isset($this->type[$i]) && ($this->type[$i] == 'lines' || $this->type[$i] == 'linesnopoint')) $this->stringtoshow .= 'lines: { show: true, fill: false }, points: { show: '.($this->type[$i] == 'linesnopoint' ? 'false' : 'true').' }, ';
 				$this->stringtoshow .= 'color: "#'.$color.'", label: "'.(isset($this->Legend[$i]) ? dol_escape_js($this->Legend[$i]) : '').'", data: d'.$i.' }';
 				$i++;
@@ -1032,27 +1026,25 @@ class DolGraph
 		if (!empty($this->title)) $this->stringtoshow .= '<div class="center dolgraphtitle'.(empty($this->cssprefix) ? '' : ' dolgraphtitle'.$this->cssprefix).'">'.$this->title.'</div>';
 		if (!empty($this->shownographyet))
 		{
-			$this->stringtoshow .= '<div style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').'; height:'.$this->height.'px;" class="nographyet"></div>';
+			$this->stringtoshow .= '<div style="width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').'; height:'.$this->height.'px;" class="nographyet"></div>';
 			$this->stringtoshow .= '<div class="nographyettext margintoponly">'.$langs->trans("NotEnoughDataYet").'...</div>';
 			return;
 		}
 
 		// Start the div that will contains all the graph
-		$dolxaxisvertical='';
-		if (count($this->data) > 20) $dolxaxisvertical='dol-xaxis-vertical';
+		$dolxaxisvertical = '';
+		if (count($this->data) > 20) $dolxaxisvertical = 'dol-xaxis-vertical';
 		// No height for the pie grah
 		$cssfordiv = 'dolgraphchart';
 		if (isset($this->type[$firstlot])) $cssfordiv .= ' dolgraphchar'.$this->type[$firstlot];
-		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '': 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '': 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical)?'':' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
+		$this->stringtoshow .= '<div id="placeholder_'.$tag.'" style="min-height: '.$this->height.(strpos($this->height, '%') > 0 ? '' : 'px').'; width:'.$this->width.(strpos($this->width, '%') > 0 ? '' : 'px').';" class="'.$cssfordiv.' dolgraph'.(empty($dolxaxisvertical) ? '' : ' '.$dolxaxisvertical).(empty($this->cssprefix) ? '' : ' dolgraph'.$this->cssprefix).' center"><canvas id="canvas_'.$tag.'"></canvas></div>'."\n";
 
 		$this->stringtoshow .= '<script id="'.$tag.'">'."\n";
 		$i = $firstlot;
 		if ($nblot < 0)
 		{
 			$this->stringtoshow .= '<!-- No series of data -->';
-		}
-		else
-		{
+		} else {
 			while ($i < $nblot)
 			{
 				//$this->stringtoshow .= '<!-- Series '.$i.' -->'."\n";
@@ -1095,8 +1087,7 @@ class DolGraph
 					if (strpos($tmp, '-') !== false) {
 						$foundnegativecolor++;
 						$color = '#FFFFFF'; // If $val is '-123'
-					}
-					else $color = "#".$tmp; // If $val is '123' or '#123'
+					} else $color = "#".$tmp; // If $val is '123' or '#123'
 				}
 				$this->stringtoshow .= "'".$color."'";
 				$i++;
@@ -1136,7 +1127,7 @@ class DolGraph
 			foreach ($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', ';
-				$this->stringtoshow .= "'".$val."'";
+				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
 				$i++;
 			}
 
@@ -1162,8 +1153,7 @@ class DolGraph
 			$this->stringtoshow .= '});'."\n";
 		}
 		// Other cases, graph of type 'bars', 'lines', 'linesnopoint'
-		else
-		{
+		else {
 			$type = 'bar';
 			if (!isset($this->type[$firstlot]) || $this->type[$firstlot] == 'bars') $type = 'bar';
 			if (isset($this->type[$firstlot]) && ($this->type[$firstlot] == 'lines' || $this->type[$firstlot] == 'linesnopoint')) $type = 'line';
@@ -1199,7 +1189,7 @@ class DolGraph
 			foreach ($legends as $val)	// Loop on each serie
 			{
 				if ($i > 0) $this->stringtoshow .= ', ';
-				$this->stringtoshow .= "'".$val."'";
+				$this->stringtoshow .= "'".dol_escape_js(dol_trunc($val, 32))."'";
 				$i++;
 			}
 

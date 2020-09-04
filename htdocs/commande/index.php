@@ -64,7 +64,7 @@ $help_url = "EN:Module_Customers_Orders|FR:Module_Commandes_Clients|ES:Módulo_P
 llxHeader("", $langs->trans("Orders"), $help_url);
 
 
-print load_fiche_titre($langs->trans("OrdersArea"), '', 'commercial');
+print load_fiche_titre($langs->trans("OrdersArea"), '', 'order');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -106,6 +106,7 @@ if ($resql)
     $total = 0;
     $totalinprocess = 0;
     $dataseries = array();
+    $colorseries = array();
     $vals = array();
     // -1=Canceled, 0=Draft, 1=Validated, 2=Accepted/On process, 3=Closed (Sent/Received, billed or not)
     while ($i < $num)
@@ -115,11 +116,11 @@ if ($resql)
         {
             //if ($row[1]!=-1 && ($row[1]!=3 || $row[2]!=1))
             {
-                if (! isset($vals[$row[1]])) $vals[$row[1]]=0;
-                $vals[$row[1]]+=$row[0];
-                $totalinprocess+=$row[0];
+                if (!isset($vals[$row[1]])) $vals[$row[1]] = 0;
+                $vals[$row[1]] += $row[0];
+                $totalinprocess += $row[0];
             }
-            $total+=$row[0];
+            $total += $row[0];
         }
         $i++;
     }
@@ -130,7 +131,7 @@ if ($resql)
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder nohover centpercent">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CustomersOrders").'</th></tr>'."\n";
-    $listofstatus=array(0,1,2,3,-1);
+    $listofstatus = array(0, 1, 2, 3, -1);
     foreach ($listofstatus as $status)
     {
     	$dataseries[] = array($commandestatic->LibStatut($status, 0, 1, 1), (isset($vals[$status]) ? (int) $vals[$status] : 0));
@@ -168,12 +169,11 @@ if ($resql)
 
         print '</td></tr>';
     }
+
     //if ($totalinprocess != $total)
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$total.'</td></tr>';
     print "</table></div><br>";
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 
@@ -230,9 +230,7 @@ if (!empty($conf->commande->enabled))
                 print '</td></tr>';
 				$i++;
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3">'.$langs->trans("NoOrder").'</td></tr>';
 		}
 		print "</table></div><br>";
@@ -321,8 +319,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 $max = 10;
 
@@ -353,7 +350,7 @@ if (!empty($conf->commande->enabled))
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="4">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut='.Commande::STATUS_VALIDATED.'"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="4">'.$langs->trans("OrdersToProcess").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_VALIDATED.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num)
 		{
@@ -408,8 +405,7 @@ if (!empty($conf->commande->enabled))
 		}
 
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 /*
@@ -439,7 +435,7 @@ if (!empty($conf->commande->enabled))
         print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
-		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?viewstatut='.Commande::STATUS_ACCEPTED.'"><span class="badge">'.$num.'</span></a></th></tr>';
+		print '<th colspan="4">'.$langs->trans("OnProcessOrders").' <a href="'.DOL_URL_ROOT.'/commande/list.php?search_status='.Commande::STATUS_ACCEPTED.'"><span class="badge">'.$num.'</span></a></th></tr>';
 
 		if ($num)
 		{
@@ -493,8 +489,7 @@ if (!empty($conf->commande->enabled))
 			}
 		}
 		print "</table></div><br>";
-	}
-	else dol_print_error($db);
+	} else dol_print_error($db);
 }
 
 

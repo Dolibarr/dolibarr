@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2019		Thibault Foucart		<support@ptibogxiv.net>
+ * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ if (!$sortfield) {  $sortfield = "d.lastname"; }
 
 $label = GETPOST("label", "alpha");
 $morphy = GETPOST("morphy", "alpha");
-$statut = GETPOST("statut", "int");
+$status = GETPOST("status", "int");
 $subscription = GETPOST("subscription", "int");
 $duration_value = GETPOST('duration_value', 'int');
 $duration_unit = GETPOST('duration_unit', 'alpha');
@@ -78,9 +79,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All tests are required to be compatible with all browsers
-{
-    $search_lastname = "";
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+	$search_lastname = "";
     $search_login = "";
     $search_email = "";
     $type = "";
@@ -108,7 +108,7 @@ if ($cancel) {
 if ($action == 'add' && $user->rights->adherent->configurer) {
 	$object->label = trim($label);
 	$object->morphy         = trim($morphy);
-	$object->statut         = (int) $statut;
+	$object->status         = (int) $status;
 	$object->subscription   = (int) $subscription;
 	$object->duration_value     	 = $duration_value;
 	$object->duration_unit      	 = $duration_unit;
@@ -123,8 +123,7 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 	if (empty($object->label)) {
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
-	}
-	else {
+	} else {
 		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
@@ -137,35 +136,28 @@ if ($action == 'add' && $user->rights->adherent->configurer) {
 		}
 	}
 
-	if (!$error)
-	{
+	if (!$error) {
 		$id = $object->create($user);
-		if ($id > 0)
-		{
+		if ($id > 0) {
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'create';
 		}
-	}
-	else
-	{
+	} else {
 		$action = 'create';
 	}
 }
 
-if ($action == 'update' && $user->rights->adherent->configurer)
-{
+if ($action == 'update' && $user->rights->adherent->configurer) {
 	$object->fetch($rowid);
 
 	$object->oldcopy = clone $object;
 
 	$object->label			= trim($label);
 	$object->morphy = trim($morphy);
-	$object->statut = (int) $statut;
+	$object->status = (int) $status;
 	$object->subscription = (int) $subscription;
 	$object->duration_value     	 = $duration_value;
 	$object->duration_unit      	 = $duration_unit;
@@ -179,12 +171,9 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 
 	$ret = $object->update($user);
 
-	if ($ret >= 0 && !count($object->errors))
-	{
+	if ($ret >= 0 && !count($object->errors)) {
 		setEventMessages($langs->trans("MemberTypeModified"), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
@@ -192,19 +181,15 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	exit;
 }
 
-if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
-{
+if ($action == 'confirm_delete' && $user->rights->adherent->configurer) {
 	$object->fetch($rowid);
 	$res = $object->delete();
 
-	if ($res > 0)
-	{
+	if ($res > 0) {
 		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($langs->trans("MemberTypeCanNotBeDeleted"), null, 'errors');
 		$action = '';
 	}
@@ -220,10 +205,8 @@ $formproduct = new FormProduct($db);
 
 llxHeader('', $langs->trans("MembersTypeSetup"), 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-
 // List of members type
-if (!$rowid && $action != 'create' && $action != 'edit')
-{
+if (!$rowid && $action != 'create' && $action != 'edit') {
 	//dol_fiche_head('');
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote, d.statut as status, d.morphy";
@@ -231,18 +214,18 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 	$sql .= " WHERE d.entity IN (".getEntity('member_type').")";
 
 	$result = $db->query($sql);
-	if ($result)
-	{
+	if ($result) {
 		$num = $db->num_rows($result);
 		$nbtotalofrecords = $num;
 
 		$i = 0;
 
 		$param = '';
+		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
+		if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 
 		$newcardbutton = '';
-		if ($user->rights->adherent->configurer)
-		{
+		if ($user->rights->adherent->configurer) {
             $newcardbutton .= dolGetButtonTitle($langs->trans('NewMemberType'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/adherents/type.php?action=create');
         }
 
@@ -252,10 +235,9 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 		print '<input type="hidden" name="action" value="list">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-		print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'members', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 		$moreforfilter = '';
 
@@ -289,17 +271,16 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
             print '<td class="center">';
-			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); }
-			elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); }
-			else print $langs->trans("MorPhy");
+			if ($objp->morphy == 'phy') { print $langs->trans("Physical"); } elseif ($objp->morphy == 'mor') { print $langs->trans("Moral"); } else print $langs->trans("MorPhy");
             print '</td>';
 			print '<td class="center">'.yn($objp->subscription).'</td>';
 			print '<td class="center">'.yn($objp->vote).'</td>';
 			print '<td class="center">'.$membertype->getLibStatut(5).'</td>';
 			if ($user->rights->adherent->configurer)
 				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
-			else
+			else {
 				print '<td class="right">&nbsp;</td>';
+			}
 			print "</tr>";
 			$i++;
 		}
@@ -307,9 +288,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 		print '</div>';
 
 		print '</form>';
-	}
-	else
-	{
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -320,8 +299,7 @@ if (!$rowid && $action != 'create' && $action != 'edit')
 /* Creation mode                                                              */
 /*                                                                            */
 /* ************************************************************************** */
-if ($action == 'create')
-{
+if ($action == 'create') {
 	$object = new AdherentType($db);
 
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
@@ -338,7 +316,7 @@ if ($action == 'create')
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" class="minwidth200" name="label" autofocus="autofocus"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Status").'</td><td>';
-  	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
+  	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), 1);
   	print '</td></tr>';
 
     // Morphy
@@ -375,13 +353,8 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Other attributes
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
-	if (empty($reshook))
-	{
-		print $object->showOptionals($extrafields, 'edit', $parameters);
-	}
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
+
 	print '<tbody>';
 	print "</table>\n";
 
@@ -401,10 +374,8 @@ if ($action == 'create')
 /* View mode                                                                  */
 /*                                                                            */
 /* ************************************************************************** */
-if ($rowid > 0)
-{
-	if ($action != 'edit')
-	{
+if ($rowid > 0) {
+	if ($action != 'edit') {
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
 		$object->fetch_optionals();
@@ -412,8 +383,7 @@ if ($rowid > 0)
 		/*
 		 * Confirmation deletion
 		 */
-		if ($action == 'delete')
-		{
+		if ($action == 'delete') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id, $langs->trans("DeleteAMemberType"), $langs->trans("ConfirmDeleteMemberType", $object->label), "confirm_delete", '', 0, 1);
 		}
 
@@ -443,12 +413,9 @@ if ($rowid > 0)
 		print '</tr>';
 
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
-		if ($object->duration_value > 1)
-		{
+		if ($object->duration_value > 1) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
-		}
-		elseif ($object->duration_value > 0)
-		{
+		} elseif ($object->duration_value > 0) {
 			$dur = array("i"=>$langs->trans("Minute"), "h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
 		}
 		print (!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
@@ -475,22 +442,19 @@ if ($rowid > 0)
 		print '<div class="tabsAction">';
 
 		// Edit
-		if ($user->rights->adherent->configurer)
-		{
+		if ($user->rights->adherent->configurer) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
 
 		// Add
-        if ($user->rights->adherent->configurer && !empty($object->statut))
-		{
+        if ($user->rights->adherent->configurer && !empty($object->status)) {
             print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
         } else {
 		    print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NoAddMember")).'">'.$langs->trans("AddMember").'</a></div>';
         }
 
 		// Delete
-		if ($user->rights->adherent->configurer)
-		{
+		if ($user->rights->adherent->configurer) {
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
 
@@ -505,45 +469,36 @@ if ($rowid > 0)
 
 		$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe as company,";
 		$sql .= " d.datefin,";
-		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
+		$sql .= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut as status,";
 		$sql .= " t.libelle as type, t.subscription";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 		$sql .= " WHERE d.fk_adherent_type = t.rowid ";
 		$sql .= " AND d.entity IN (".getEntity('adherent').")";
 		$sql .= " AND t.rowid = ".$object->id;
-		if ($sall)
-		{
+		if ($sall) {
 			$sql .= natural_search(array("f.firstname", "d.lastname", "d.societe", "d.email", "d.login", "d.address", "d.town", "d.note_public", "d.note_private"), $sall);
 		}
-		if ($status != '')
-		{
+		if ($status != '') {
 		    $sql .= natural_search('d.statut', $status, 2);
 		}
-		if ($action == 'search')
-		{
-			if (GETPOST('search', 'alpha'))
-			{
+		if ($action == 'search') {
+			if (GETPOST('search', 'alpha')) {
 		  		$sql .= natural_search(array("d.firstname", "d.lastname"), GETPOST('search', 'alpha'));
 		  	}
 		}
-		if (!empty($search_lastname))
-		{
+		if (!empty($search_lastname)) {
 			$sql .= natural_search(array("d.firstname", "d.lastname"), $search_lastname);
 		}
-		if (!empty($search_login))
-		{
+		if (!empty($search_login)) {
 			$sql .= natural_search("d.login", $search_login);
 		}
-		if (!empty($search_email))
-		{
+		if (!empty($search_email)) {
 			$sql .= natural_search("d.email", $search_email);
 		}
-        if ($filter == 'uptodate')
-        {
+        if ($filter == 'uptodate') {
             $sql .= " AND (datefin >= '".$db->idate($now)."') OR t.subscription = 0)";
         }
-        if ($filter == 'outofdate')
-        {
+        if ($filter == 'outofdate') {
             $sql .= " AND (datefin < '".$db->idate($now)."' AND t.subscription = 1)";
         }
 
@@ -551,14 +506,12 @@ if ($rowid > 0)
 
 		// Count total nb of records
 		$nbtotalofrecords = '';
-		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-		{
+		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 			$resql = $db->query($sql);
 		    if ($resql) $nbtotalofrecords = $db->num_rows($result);
 		    else dol_print_error($db);
-		    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-		    {
-		    	$page = 0;
+		    if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller then paging size (filtering), goto and load page 0
+				$page = 0;
 		    	$offset = 0;
 		    }
 		}
@@ -566,28 +519,30 @@ if ($rowid > 0)
 		$sql .= " ".$db->plimit($conf->liste_limit + 1, $offset);
 
 		$resql = $db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 		    $num = $db->num_rows($resql);
 		    $i = 0;
 
 		    $titre = $langs->trans("MembersList");
-		    if ($status != '')
-		    {
-		        if ($status == '-1,1') { $titre = $langs->trans("MembersListQualified"); }
-		        elseif ($status == '-1') { $titre = $langs->trans("MembersListToValid"); }
-		        elseif ($status == '1' && !$filter) { $titre = $langs->trans("MembersListValid"); }
-		        elseif ($status == '1' && $filter == 'uptodate') { $titre = $langs->trans("MembersListUpToDate"); }
-		        elseif ($status == '1' && $filter == 'outofdate') { $titre = $langs->trans("MembersListNotUpToDate"); }
-		        elseif ($status == '0') { $titre = $langs->trans("MembersListResiliated"); }
-		    }
-		    elseif ($action == 'search')
-		    {
+            if ($status != '') {
+                if ($status == '-1,1') {
+                    $titre = $langs->trans("MembersListQualified");
+                } elseif ($status == '-1') {
+                    $titre = $langs->trans("MembersListToValid");
+                } elseif ($status == '1' && !$filter) {
+                    $titre = $langs->trans("MembersListValid");
+                } elseif ($status == '1' && $filter == 'uptodate') {
+                    $titre = $langs->trans("MembersListUpToDate");
+                } elseif ($status == '1' && $filter == 'outofdate') {
+                    $titre = $langs->trans("MembersListNotUpToDate");
+                } elseif ($status == '0') {
+                    $titre = $langs->trans("MembersListResiliated");
+                }
+		    } elseif ($action == 'search') {
 		        $titre = $langs->trans("MembersListQualified");
 		    }
 
-		    if ($type > 0)
-		    {
+		    if ($type > 0) {
 				$membertype = new AdherentType($db);
 		        $result = $membertype->fetch($type);
 				$titre .= " (".$membertype->label.")";
@@ -601,8 +556,7 @@ if ($rowid > 0)
 		    if (!empty($search_email))		$param .= "&search_email=".$search_email;
 		    if (!empty($filter))			$param .= "&filter=".$filter;
 
-		    if ($sall)
-		    {
+		    if ($sall) {
 		        print $langs->trans("Filter")." (".$langs->trans("Lastname").", ".$langs->trans("Firstname").", ".$langs->trans("EMail").", ".$langs->trans("Address")." ".$langs->trans("or")." ".$langs->trans("Town")."): ".$sall;
 		    }
 
@@ -652,8 +606,7 @@ if ($rowid > 0)
 		    print_liste_field_titre("Action", $_SERVER["PHP_SELF"], "", $param, "", 'width="60" align="center"', $sortfield, $sortorder);
 		    print "</tr>\n";
 
-		    while ($i < $num && $i < $conf->liste_limit)
-		    {
+		    while ($i < $num && $i < $conf->liste_limit) {
 		        $objp = $db->fetch_object($resql);
 
 		        $datefin = $db->jdate($objp->datefin);
@@ -664,12 +617,9 @@ if ($rowid > 0)
 
 		        // Lastname
 		        print '<tr class="oddeven">';
-		        if ($objp->company != '')
-		        {
+		        if ($objp->company != '') {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 20).' / '.dol_trunc($objp->societe, 12).'</a></td>'."\n";
-		        }
-		        else
-		        {
+		        } else {
 		            print '<td><a href="card.php?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowMember"), "user").' '.$adh->getFullName($langs, 0, -1, 32).'</a></td>'."\n";
 		        }
 
@@ -692,33 +642,24 @@ if ($rowid > 0)
 
 		        // Statut
 		        print '<td class="nowrap">';
-		        print $adh->LibStatut($objp->statut, $objp->subscription, $datefin, 2);
+		        print $adh->LibStatut($objp->status, $objp->subscription, $datefin, 2);
 		        print "</td>";
 
 		        // Date end subscription
-		        if ($datefin)
-		        {
+		        if ($datefin) {
 			        print '<td class="nowrap center">';
-		            if ($datefin < dol_now() && $objp->statut > 0)
-		            {
+		            if ($datefin < dol_now() && $objp->status > 0) {
 		                print dol_print_date($datefin, 'day')." ".img_warning($langs->trans("SubscriptionLate"));
-		            }
-		            else
-		            {
+		            } else {
 		                print dol_print_date($datefin, 'day');
 		            }
 		            print '</td>';
-		        }
-		        else
-		        {
+		        } else {
 			        print '<td class="nowrap left">';
-			        if ($objp->subscription == 'yes')
-			        {
+			        if ($objp->subscription == 'yes') {
 		                print $langs->trans("SubscriptionNotReceived");
-		                if ($objp->statut > 0) print " ".img_warning();
-			        }
-			        else
-			        {
+		                if ($objp->status > 0) print " ".img_warning();
+			        } else {
 			            print '&nbsp;';
 			        }
 		            print '</td>';
@@ -726,13 +667,11 @@ if ($rowid > 0)
 
 		        // Actions
 		        print '<td class="center">';
-				if ($user->rights->adherent->creer)
-				{
+				if ($user->rights->adherent->creer) {
 					print '<a class="editfielda" href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
-				if ($user->rights->adherent->supprimer)
-				{
+				if ($user->rights->adherent->supprimer) {
 					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"), 'disable.png').'</a>';
 		        }
 				print "</td>";
@@ -745,13 +684,10 @@ if ($rowid > 0)
             print '</div>';
             print '</form>';
 
-			if ($num > $conf->liste_limit)
-			{
+			if ($num > $conf->liste_limit) {
 			    print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 			}
-		}
-		else
-		{
+		} else {
 		    dol_print_error($db);
 		}
 	}
@@ -762,8 +698,7 @@ if ($rowid > 0)
 	/*                                                                            */
 	/* ************************************************************************** */
 
-	if ($action == 'edit')
-	{
+	if ($action == 'edit') {
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
 		$object->fetch_optionals();
@@ -784,7 +719,7 @@ if ($rowid > 0)
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
-    	print $form->selectarray('statut', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->statut);
+    	print $form->selectarray('status', array('0'=>$langs->trans('ActivityCeased'), '1'=>$langs->trans('InActivity')), $object->status);
     	print '</td></tr>';
 
         // Morphy
@@ -805,7 +740,7 @@ if ($rowid > 0)
 
 		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
 		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
-		print $formproduct->selectMeasuringUnits("duration_unit", "time", $object->duration_unit, 0, 1);
+		print $formproduct->selectMeasuringUnits("duration_unit", "time", ($object->duration_unit === '' ? 'y' : $object->duration_unit), 0, 1);
 		print '</td></tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
@@ -821,15 +756,6 @@ if ($rowid > 0)
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_edit.tpl.php';
-
-		// Other attributes
-		$parameters = array();
-		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        	print $hookmanager->resPrint;
-		if (empty($reshook))
-		{
-		    print $object->showOptionals($extrafields, 'edit', $parameters);
-		}
 
 		print '</table>';
 

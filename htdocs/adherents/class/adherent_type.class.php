@@ -112,7 +112,7 @@ class AdherentType extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
-		$this->statut = 1;
+		$this->status = 1;
 	}
 
     /**
@@ -132,12 +132,10 @@ class AdherentType extends CommonObject
 
         $result = $this->db->query($sql);
         if ($result) {
-            while ($obj = $this->db->fetch_object($result))
-            {
+            while ($obj = $this->db->fetch_object($result)) {
                 //print 'lang='.$obj->lang.' current='.$current_lang.'<br>';
-                if ($obj->lang == $current_lang)  // si on a les traduct. dans la langue courante on les charge en infos principales.
-                {
-                    $this->label        = $obj->label;
+                if ($obj->lang == $current_lang) {  // si on a les traduct. dans la langue courante on les charge en infos principales.
+					$this->label        = $obj->label;
                     $this->description = $obj->description;
                     $this->email        = $obj->email;
                 }
@@ -146,9 +144,7 @@ class AdherentType extends CommonObject
                 $this->multilangs["$obj->lang"]["email"] = $obj->email;
             }
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = "Error: ".$this->db->lasterror()." - ".$sql;
             return -1;
         }
@@ -167,8 +163,7 @@ class AdherentType extends CommonObject
         $langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 0, 2);
         $current_lang = $langs->getDefaultLang();
 
-        foreach ($langs_available as $key => $value)
-        {
+        foreach ($langs_available as $key => $value) {
             if ($key == $current_lang) {
                 $sql = "SELECT rowid";
                 $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
@@ -177,26 +172,17 @@ class AdherentType extends CommonObject
 
                 $result = $this->db->query($sql);
 
-                if ($this->db->num_rows($result)) // if there is already a description line for this language
-                {
-                    $sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
+                if ($this->db->num_rows($result)) { // if there is already a description line for this language
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
                     $sql2 .= " SET ";
                     $sql2 .= " label='".$this->db->escape($this->label)."',";
                     $sql2 .= " description='".$this->db->escape($this->description)."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email='".$this->db->escape($this->other)."'";
-                    }
                     $sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
-                }
-                else
-                {
+                } else {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email";
-                    }
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->label)."',";
                     $sql2 .= " '".$this->db->escape($this->description)."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", '".$this->db->escape($this->other)."'";
-                    }
                     $sql2 .= ")";
                 }
                 dol_syslog(get_class($this).'::setMultiLangs key = current_lang = '.$key);
@@ -204,8 +190,7 @@ class AdherentType extends CommonObject
                     $this->error = $this->db->lasterror();
                     return -1;
                 }
-            }
-            elseif (isset($this->multilangs[$key])) {
+            } elseif (isset($this->multilangs[$key])) {
                 $sql = "SELECT rowid";
                 $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type_lang";
                 $sql .= " WHERE fk_type=".$this->id;
@@ -213,26 +198,17 @@ class AdherentType extends CommonObject
 
                 $result = $this->db->query($sql);
 
-                if ($this->db->num_rows($result)) // if there is already a description line for this language
-                {
-                    $sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
+                if ($this->db->num_rows($result)) { // if there is already a description line for this language
+					$sql2 = "UPDATE ".MAIN_DB_PREFIX."adherent_type_lang";
                     $sql2 .= " SET ";
                     $sql2 .= " label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
                     $sql2 .= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email='".$this->db->escape($this->multilangs["$key"]["other"])."'";
-                    }
                     $sql2 .= " WHERE fk_type=".$this->id." AND lang='".$this->db->escape($key)."'";
-                }
-                else
-                {
+                } else {
                     $sql2 = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type_lang (fk_type, lang, label, description";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", email";
-                    }
                     $sql2 .= ")";
                     $sql2 .= " VALUES(".$this->id.",'".$this->db->escape($key)."','".$this->db->escape($this->multilangs["$key"]["label"])."',";
                     $sql2 .= " '".$this->db->escape($this->multilangs["$key"]["description"])."'";
-                    if (!empty($conf->global->PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION)) { $sql2 .= ", '".$this->db->escape($this->multilangs["$key"]["other"])."'";
-                    }
                     $sql2 .= ")";
                 }
 
@@ -243,9 +219,7 @@ class AdherentType extends CommonObject
                         return -1;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 // language is not current language and we didn't provide a multilang description for this language
             }
         }
@@ -286,9 +260,7 @@ class AdherentType extends CommonObject
             }
             // End call triggers
             return 1;
-        }
-        else
-        {
+        } else {
             $this->error = $this->db->lasterror();
             dol_syslog(get_class($this).'::delMultiLangs error='.$this->error, LOG_ERR);
             return -1;
@@ -308,7 +280,7 @@ class AdherentType extends CommonObject
 
 		$error = 0;
 
-		$this->statut = (int) $this->statut;
+		$this->status = (int) $this->status;
 		$this->label = trim($this->label);
 
 		$this->db->begin();
@@ -325,39 +297,31 @@ class AdherentType extends CommonObject
 
 		dol_syslog("Adherent_type::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
 
 			$result = $this->update($user, 1);
-			if ($result < 0)
-			{
+			if ($result < 0) {
 				$this->db->rollback();
 				return -3;
 			}
 
-			if (!$notrigger)
-			{
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('MEMBER_TYPE_CREATE', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return $this->id;
-			}
-			else
-			{
+			} else {
 				dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -383,7 +347,7 @@ class AdherentType extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
 		$sql .= "SET ";
-		$sql .= "statut = ".$this->statut.",";
+		$sql .= "statut = ".$this->status.",";
 		$sql .= "libelle = '".$this->db->escape($this->label)."',";
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
 		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
@@ -394,8 +358,7 @@ class AdherentType extends CommonObject
 		$sql .= " WHERE rowid =".$this->id;
 
 		$result = $this->db->query($sql);
-		if ($result)
-		{
+		if ($result) {
             $this->description = $this->db->escape($this->note);
 
             // Multilangs
@@ -409,37 +372,29 @@ class AdherentType extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
+			if (!$error) {
 				$result = $this->insertExtraFields();
-				if ($result < 0)
-				{
+				if ($result < 0) {
 					$error++;
 				}
 			}
 
-			if (!$error && !$notrigger)
-			{
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('MEMBER_TYPE_MODIFY', $user);
 				if ($result < 0) { $error++; }
 				// End call triggers
 			}
 
-			if (!$error)
-			{
+			if (!$error) {
 				$this->db->commit();
 				return 1;
-			}
-			else
-			{
+			} else {
 				$this->db->rollback();
 				dol_syslog(get_class($this)."::update ".$this->error, LOG_ERR);
 				return -$error;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
@@ -461,8 +416,7 @@ class AdherentType extends CommonObject
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			// Call trigger
 			$result = $this->call_trigger('MEMBER_TYPE_DELETE', $user);
 			if ($result < 0) { $error++; $this->db->rollback(); return -2; }
@@ -470,9 +424,7 @@ class AdherentType extends CommonObject
 
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			$this->error = $this->db->lasterror();
 			return -1;
@@ -496,17 +448,14 @@ class AdherentType extends CommonObject
 		dol_syslog("Adherent_type::fetch", LOG_DEBUG);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			if ($this->db->num_rows($resql))
-			{
+		if ($resql) {
+			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 				$this->label          = $obj->label;
 				$this->morphy         = $obj->morphy;
-				$this->statut         = $obj->status; // deprecated
 				$this->status         = $obj->status;
 				$this->duration       = $obj->duration;
 				$this->duration_value = substr($obj->duration, 0, dol_strlen($obj->duration) - 1);
@@ -523,9 +472,7 @@ class AdherentType extends CommonObject
 			}
 
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -535,9 +482,10 @@ class AdherentType extends CommonObject
 	/**
 	 *  Return list of members' type
 	 *
-	 *  @return 	array	List of types of members
+	 *  @param	int		$status			Filter on status of type
+	 *  @return array					List of types of members
 	 */
-	public function liste_array()
+	public function liste_array($status = -1)
 	{
         // phpcs:enable
 		global $conf, $langs;
@@ -547,26 +495,22 @@ class AdherentType extends CommonObject
 		$sql = "SELECT rowid, libelle as label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type";
 		$sql .= " WHERE entity IN (".getEntity('member_type').")";
+		if ($status >= 0) $sql .= " AND statut = ".((int) $status);
 
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		if ($resql) {
 			$nump = $this->db->num_rows($resql);
 
-			if ($nump)
-			{
+			if ($nump) {
 				$i = 0;
-				while ($i < $nump)
-				{
+				while ($i < $nump) {
 					$obj = $this->db->fetch_object($resql);
 
 					$adherenttypes[$obj->rowid] = $langs->trans($obj->label);
 					$i++;
 				}
 			}
-		}
-		else
-		{
+		} else {
 			print $this->db->error();
 		}
 		return $adherenttypes;
@@ -595,14 +539,10 @@ class AdherentType extends CommonObject
 
 		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			while ($obj = $this->db->fetch_object($resql))
-			{
-				if (!array_key_exists($obj->rowid, $ret))
-				{
-					if ($mode < 2)
-					{
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				if (!array_key_exists($obj->rowid, $ret)) {
+					if ($mode < 2) {
 						$memberstatic = new Adherent($this->db);
 						if ($mode == 1) {
 							$memberstatic->fetch($obj->rowid, '', '', '', false, false);
@@ -610,8 +550,7 @@ class AdherentType extends CommonObject
 							$memberstatic->fetch($obj->rowid);
 						}
 						$ret[$obj->rowid] = $memberstatic;
-					}
-					else $ret[$obj->rowid] = $obj->rowid;
+					} else $ret[$obj->rowid] = $obj->rowid;
 				}
 			}
 
@@ -620,9 +559,7 @@ class AdherentType extends CommonObject
 			$this->members = $ret;
 
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			return -1;
 		}
@@ -637,9 +574,7 @@ class AdherentType extends CommonObject
 	public function getmorphylib($morphy = '')
 	{
 		global $langs;
-		if ($morphy == 'phy') { return $langs->trans("Physical"); }
-		elseif ($morphy == 'mor') { return $langs->trans("Moral"); }
-        else return $langs->trans("MorPhy");
+		if ($morphy == 'phy') { return $langs->trans("Physical"); } elseif ($morphy == 'mor') { return $langs->trans("Moral"); } else return $langs->trans("MorPhy");
 		//return $morphy;
 	}
 
@@ -697,8 +632,7 @@ class AdherentType extends CommonObject
 		$statusType = 'status4';
 		if ($status == 0) $statusType = 'status5';
 
-		if (empty($this->labelStatus) || empty($this->labelStatusShort))
-		{
+		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			$this->labelStatus[0] = $langs->trans("ActivityCeased");
 			$this->labelStatus[1] = $langs->trans("InActivity");
 			$this->labelStatusShort[0] = $langs->trans("ActivityCeased");
@@ -751,11 +685,9 @@ class AdherentType extends CommonObject
 		// Champs
 		if ($this->label && !empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME] = $this->label;
 		if ($this->note && !empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 0, 'UTF-8', 1);
-		if (!empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS))
-		{
+		if (!empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS)) {
 			$valueofldapfield = array();
-			foreach ($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
-			{
+			foreach ($this->members as $key=>$val) {    // This is array of users for group into dolibarr database.
 				$member = new Adherent($this->db);
 				$member->fetch($val->id, '', '', '', false, false);
 				$info2 = $member->_load_ldap_info();
@@ -788,7 +720,7 @@ class AdherentType extends CommonObject
 		$this->subscription = 1;
 		$this->vote = 0;
 
-		$this->statut = 1;
+		$this->status = 1;
 
 		// Members of this member type is just me
 		$this->members = array(
@@ -805,8 +737,7 @@ class AdherentType extends CommonObject
 	{
 		global $conf;
 
-		if (!empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid)))
-		{
+		if (!empty($this->mail_valid) && trim(dol_htmlentitiesbr_decode($this->mail_valid))) {
 			return $this->mail_valid;
 		}
 
@@ -823,8 +754,7 @@ class AdherentType extends CommonObject
 		global $conf;
 
 		// mail_subscription not  defined so never used
-		if (!empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription)))  // Property not yet defined
-		{
+		if (!empty($this->mail_subscription) && trim(dol_htmlentitiesbr_decode($this->mail_subscription))) {  // Property not yet defined
 			return $this->mail_subscription;
 		}
 
@@ -841,9 +771,8 @@ class AdherentType extends CommonObject
         global $conf;
 
         // NOTE mail_resiliate not defined so never used
-        if (!empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate)))  // Property not yet defined
-        {
-            return $this->mail_resiliate;
+        if (!empty($this->mail_resiliate) && trim(dol_htmlentitiesbr_decode($this->mail_resiliate))) {  // Property not yet defined
+			return $this->mail_resiliate;
         }
 
         return '';

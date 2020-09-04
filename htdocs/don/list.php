@@ -32,10 +32,12 @@ if (!empty($conf->projet->enabled)) require_once DOL_DOCUMENT_ROOT.'/projet/clas
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "donations"));
 
+$contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sclist';
+
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
@@ -75,16 +77,16 @@ $fieldstosearchall = array(
     'd.firstname'=>'Firstname',
 );
 
+
 /*
  * View
  */
 
+$donationstatic = new Don($db);
 $form = new Form($db);
 if (!empty($conf->projet->enabled)) $projectstatic = new Project($db);
 
 llxHeader('', $langs->trans("Donations"), 'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
-
-$donationstatic = new Don($db);
 
 // Genere requete de liste des dons
 $sql = "SELECT d.rowid, d.datedon, d.fk_soc as socid, d.firstname, d.lastname, d.societe,";
@@ -137,6 +139,8 @@ if ($resql)
 	$i = 0;
 
 	$param = '';
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 	if ($search_status && $search_status != -1) $param .= '&search_status='.urlencode($search_status);
 	if ($search_ref) $param .= '&search_ref='.urlencode($search_ref);
@@ -159,7 +163,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
 
-	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton);
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'object_donation', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	if ($search_all)
     {
@@ -265,8 +269,7 @@ if ($resql)
 				$projectstatic->public = $objp->public;
 				$projectstatic->title = $objp->title;
 				print $projectstatic->getNomUrl(1);
-			}
-			else print '&nbsp;';
+			} else print '&nbsp;';
 			print "</td>\n";
 		}
 		print '<td class="right">'.price($objp->amount).'</td>';
@@ -279,9 +282,7 @@ if ($resql)
     print '</div>';
     print "</form>\n";
     $db->free($resql);
-}
-else
-{
+} else {
     dol_print_error($db);
 }
 

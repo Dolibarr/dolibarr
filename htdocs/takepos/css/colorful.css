@@ -31,3 +31,7 @@ tr.selected, tr.selected td {
 .topnav{
 	background: rgb(0,0,0) !important;
 }
+
+.fa-trash {
+	color: #fff !important;
+}

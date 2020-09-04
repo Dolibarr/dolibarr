@@ -137,9 +137,7 @@ if ($action == 'add_payment')
                 $loc = DOL_URL_ROOT.'/don/card.php?rowid='.$chid;
                 header('Location: '.$loc);
                 exit;
-            }
-            else
-            {
+            } else {
                 $db->rollback();
             }
         }
@@ -260,9 +258,7 @@ if ($action == 'create')
 		{
 			$namef = "amount_".$objp->id;
 			print '<input type="text" size="8" name="'.$namef.'">';
-		}
-		else
-		{
+		} else {
 			print '-';
 		}
 		print "</td>";

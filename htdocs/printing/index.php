@@ -42,7 +42,7 @@ $langs->load("printing");
 
 llxHeader("", $langs->trans("Printing"));
 
-print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="' . $_SERVER["PHP_SELF"] . '">' . $langs->trans("Refresh") . '</a>', 0, 0, 'title_setup.png');
+print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0, 0, 'title_setup.png');
 
 print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 

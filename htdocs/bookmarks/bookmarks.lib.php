@@ -41,9 +41,7 @@ function printDropdownBookmarksList()
     if (!empty($_SERVER["QUERY_STRING"]))
     {
         $url .= (dol_escape_htmltag($_SERVER["QUERY_STRING"]) ? '?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]) : '');
-    }
-    else
-    {
+    } else {
         global $sortfield, $sortorder;
         $tmpurl = '';
         // No urlencode, all param $url will be urlencoded later
@@ -60,7 +58,7 @@ function printDropdownBookmarksList()
     }
 
     $searchForm = '<!-- form with POST method by default, will be replaced with GET for external link by js -->'."\n";
-    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)?'onsubmit="return false"':'').'>';
+    $searchForm .= '<form id="top-menu-action-bookmark" name="actionbookmark" method="POST" action=""'.(empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) ? ' onsubmit="return false"' : '').'>';
     $searchForm .= '<input type="hidden" name="token" value="'.newToken().'">';
 
 
@@ -90,7 +88,7 @@ function printDropdownBookmarksList()
 	    	$i = 0;
 	    	while ((empty($conf->global->BOOKMARKS_SHOW_IN_MENU) || $i < $conf->global->BOOKMARKS_SHOW_IN_MENU) && $obj = $db->fetch_object($resql))
 	    	{
-	    		$bookmarkList .= '<a class="dropdown-item bookmark-item" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
+	    		$bookmarkList .= '<a class="dropdown-item bookmark-item'.(strpos($obj->url, 'http') === 0 ? ' bookmark-item-external' : '').'" id="bookmark-item-'.$obj->rowid.'" data-id="'.$obj->rowid.'" '.($obj->target == 1 ? ' target="_blank"' : '').' href="'.dol_escape_htmltag($obj->url).'" >';
 	    		$bookmarkList .= dol_escape_htmltag($obj->title);
 	    		$bookmarkList .= '</a>';
 	    		$i++;
@@ -106,9 +104,9 @@ function printDropdownBookmarksList()
     		$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...').'">';
     		$searchForm .= dol_escape_htmltag($user->rights->bookmark->creer ? $langs->trans('EditBookmarks') : $langs->trans('ListOfBookmarks')).'...</option>';
     		// Url to go on create new bookmark page
-    		if (! empty($user->rights->bookmark->creer))
+    		if (!empty($user->rights->bookmark->creer))
     		{
-    			$urltoadd=DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
+    			$urltoadd = DOL_URL_ROOT.'/bookmarks/card.php?action=create&amp;url='.urlencode($url);
     			$searchForm .= '<option value="newbookmark" class="optionblue" rel="'.dol_escape_htmltag($urltoadd).'"';
     			$searchForm .= ' data-html="'.dol_escape_htmltag(img_picto('', 'bookmark').' '.$langs->trans('AddThisPageToBookmarks').'...').'">'.dol_escape_htmltag($langs->trans('AddThisPageToBookmarks').'...').'</option>';
     		}
@@ -122,19 +120,17 @@ function printDropdownBookmarksList()
     		}
     		$searchForm .= '</select>';
     	}
-    }
-    else
-    {
+    } else {
     	dol_print_error($db);
     }
 
     $searchForm .= '</form>';
 
     // Generate the return string
-    if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+    if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
     	$html = $searchForm;
 
-    	$html.='<!-- script to open selected choice -->
+    	$html .= '<!-- script to open selected choice -->
 				<script>
 	        	$(document).ready(function () {
     			    jQuery("#boxbookmark").change(function() {

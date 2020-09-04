@@ -1,5 +1,6 @@
 <?php
-if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet');
+?>
 /* Badge style is based on boostrap framework */
 
 .badge {
@@ -22,6 +23,18 @@ if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 .badge-status {
     font-size: 0.95em;
     padding: .19em .35em;			/* more than 0.19 generate a change into heigth of lines */
+}
+.tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
+    font-size: 1.1em;
+    padding: .4em .4em;
+}
+/* Force values for small screen 767 */
+@media only screen and (max-width: 767px)
+{
+	.tabBar .arearef .statusref .badge-status, .tabBar .arearefnobottom .statusref .badge-status {
+	    font-size: 0.95em;
+	    padding: .3em .2em;
+	}
 }
 
 .badge-pill, .tabs .badge {

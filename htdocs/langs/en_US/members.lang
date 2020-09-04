@@ -81,7 +81,7 @@ DeleteType=Delete
 VoteAllowed=Vote allowed
 Physical=Physical
 Moral=Moral
-MorPhy=Moral/Physical
+MorPhy=Nature
 Reenable=Reenable
 ResiliateMember=Terminate a member
 ConfirmResiliateMember=Are you sure you want to terminate this member?
@@ -117,6 +117,7 @@ SendingEmailOnMemberValidation=Sending email on new member validation
 SendingEmailOnNewSubscription=Sending email on new subscription
 SendingReminderForExpiredSubscription=Sending reminder for expired subscriptions
 SendingEmailOnCancelation=Sending email on cancelation
+SendingReminderActionComm=Sending reminder for agenda event
 # Topic of email templates
 YourMembershipRequestWasReceived=Your membership was received.
 YourMembershipWasValidated=Your membership was validated

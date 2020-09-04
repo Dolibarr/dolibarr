@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","trips","errors","other","dict"));
+$langs->loadLangs(array("admin", "trips", "errors", "other", "dict"));
 
 if (!$user->admin) accessforbidden();
 
@@ -63,8 +63,7 @@ if ($action == 'updateik')
 
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit;
-}
-elseif ($action == 'delete') // TODO add confirm
+} elseif ($action == 'delete') // TODO add confirm
 {
 	$expIk = new ExpenseReportIk($db);
 	if ($id > 0)
@@ -88,12 +87,12 @@ $rangesbycateg = ExpenseReportIk::getAllRanges();
 
 llxHeader('', $langs->trans("ExpenseReportsSetup"));
 
-$form=new Form($db);
+$form = new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExpenseReportsIkSetup"), $linkback, 'title_setup');
 
-$head=expensereport_admin_prepare_head();
+$head = expensereport_admin_prepare_head();
 dol_fiche_head($head, 'expenseik', $langs->trans("ExpenseReportsIk"), -1, 'trip');
 
 echo $langs->trans('ExpenseReportIkDesc');
@@ -125,11 +124,11 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 
 	if ($Tab['active'] == 0) continue;
 
-	$tranche=1;
+	$tranche = 1;
 
 	foreach ($Tab['ranges'] as $k => $range)
 	{
-		if (isset($Tab['ranges'][$k+1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k+1]->range_ik-1));
+		if (isset($Tab['ranges'][$k + 1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k + 1]->range_ik - 1));
 		else $label = $langs->trans('expenseReportRangeMoreThan', $range->range_ik);
 
 		if ($range->range_active == 0) $label = $form->textwithpicto($label, $langs->trans('expenseReportRangeDisabled'), 1, 'help', '', 0, 3);
@@ -161,9 +160,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 			{
 				echo '<input id="" class="button" name="save" value="'.$langs->trans('Save').'" type="submit" />';
 				echo '<input class="button" value="'.$langs->trans('Cancel').'" onclick="javascript:history.go(-1)" type="button" />';
-			}
-			else
-			{
+			} else {
 				echo '<a href="'.$_SERVER['PHP_SELF'].'?action=edit&id='.$range->ik->id.'&fk_c_exp_tax_cat='.$range->fk_c_exp_tax_cat.'&fk_range='.$range->rowid.'">'.img_edit().'</a>';
 				if (!empty($range->ik->id)) echo '<a href="'.$_SERVER['PHP_SELF'].'?action=delete&id='.$range->ik->id.'">'.img_delete().'</a>';
 				// TODO add delete link

@@ -1,10 +1,10 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum / Wiki støtte
 EMailSupport=Emails støtte
-RemoteControlSupport=Online realtid / fjernsupport
+RemoteControlSupport=Online realtids / fjernsupport
 OtherSupport=Anden support
 ToSeeListOfAvailableRessources=Til at kontakte / se tilgængelige ressourcer:
-HelpCenter=Hjælp
+HelpCenter=Hjælpecenter
 DolibarrHelpCenter=Dolibarr Hjælp og supportcenter
 ToGoBackToDolibarr=Ellers <a href="%s"> Klik her for at fortsætte med at bruge Dolibarr </a>.
 TypeOfSupport=Type af støtte

@@ -29,7 +29,7 @@
  * @param	string	$type		Type of category
  * @return  array				Array of tabs to show
  */
-function categories_prepare_head($object, $type)
+function categories_prepare_head(Categorie $object, $type)
 {
 	global $langs, $conf, $user;
 
@@ -40,7 +40,7 @@ function categories_prepare_head($object, $type)
 	$head = array();
 
 	$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$object->id.'&amp;type='.$type;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("Category");
 	$head[$h][2] = 'card';
 	$h++;
 
@@ -49,13 +49,18 @@ function categories_prepare_head($object, $type)
 	$head[$h][2] = 'photos';
 	$h++;
 
-	if (! empty($conf->global->MAIN_MULTILANGS))
+	if (!empty($conf->global->MAIN_MULTILANGS))
 	{
 		$head[$h][0] = DOL_URL_ROOT.'/categories/traduction.php?id='.$object->id.'&amp;type='.$type;
 		$head[$h][1] = $langs->trans("Translation");
 		$head[$h][2] = 'translation';
 		$h++;
 	}
+
+	$head[$h][0] = DOL_URL_ROOT.'/categories/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

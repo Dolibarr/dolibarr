@@ -24,5 +24,5 @@ CREATE TABLE llx_propal_merge_pdf_product (
   datec datetime NOT NULL,
   tms timestamp NOT NULL,
   import_key varchar(14) DEFAULT NULL
-) ENGINE=InnoDB;
+) ENGINE=innodb;
 

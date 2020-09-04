@@ -37,12 +37,14 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 
 $error = 0;
 
-$mode = empty($argv[1])?'':$argv[1];
-$websiteref = empty($argv[2])?'':$argv[2];
-$joomlaserverinfo = empty($argv[3])?'':$argv[3];
+$mode = empty($argv[1]) ? '' : $argv[1];
+$websiteref = empty($argv[2]) ? '' : $argv[2];
+$joomlaserverinfo = empty($argv[3]) ? '' : $argv[3];
 $image = 'image/__WEBSITE_KEY__/images/stories/dolibarr.png';
 
-$max = (!isset($argv[4]) || (empty($argv[4]) && $argv[4] !== '0'))?'10':$argv[4];
+$max = (!isset($argv[4]) || (empty($argv[4]) && $argv[4] !== '0')) ? '10' : $argv[4];
+$excludeid = (empty($argv[5]) ? '' : $argv[5]);
+$forcelang = (empty($argv[6]) ? '' : $argv[6]);
 
 if (empty($argv[3]) || !in_array($argv[1], array('test', 'confirm')) || empty($websiteref)) {
 	print '***** '.$script_file.' *****'."\n";
@@ -77,7 +79,7 @@ if ($result <= 0) {
 $websiteid = $website->id;
 $importid = dol_print_date(dol_now(), 'dayhourlog');
 
-$dbjoomla=getDoliDBInstance('mysqli', $joomlahost, $joomlalogin, $joomlapass, $joomladatabase, $joomlaport);
+$dbjoomla = getDoliDBInstance('mysqli', $joomlahost, $joomlalogin, $joomlapass, $joomladatabase, $joomlaport);
 if ($dbjoomla->error)
 {
 	dol_print_error($dbjoomla, "host=".$joomlahost.", port=".$joomlaport.", user=".$joomlalogin.", databasename=".$joomladatabase.", ".$dbjoomla->error);
@@ -85,12 +87,13 @@ if ($dbjoomla->error)
 }
 
 $sql = 'SELECT c.id, c.title, c.alias, c.created, c.introtext, `fulltext`, c.metadesc, c.metakey, c.language, c.created, c.publish_up, u.username FROM '.$joomlaprefix.'_content as c';
-$sql.= ' LEFT JOIN '.$joomlaprefix.'_users as u ON u.id = c.created_by';
-$sql.= ' WHERE featured = 1';
-$sql.= ' ORDER BY publish_up ASC';
+$sql .= ' LEFT JOIN '.$joomlaprefix.'_users as u ON u.id = c.created_by';
+$sql .= ' WHERE featured = 1';
+$sql .= ' AND c.id NOT IN ('.$excludeid.')';
+$sql .= ' ORDER BY publish_up ASC';
 $resql = $dbjoomla->query($sql);
 
-if (! $resql) {
+if (!$resql) {
 	dol_print_error($dbjoomla);
 	exit;
 }
@@ -134,7 +137,7 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 		}
 		if ($blogpostfooter) $htmltext .= "\n".$blogpostfooter;
 
-		$language = ($obj->language && $obj->language != '*' ? $obj->language : 'en');
+		$language = ($forcelang ? $forcelang : ($obj->language && $obj->language != '*' ? $obj->language : 'en'));
 		$keywords = $obj->metakey;
 		$author_alias = $obj->username;
 
@@ -178,7 +181,7 @@ while ($obj = $dbjoomla->fetch_object($resql)) {
 	}
 }
 
-if ($mode == 'confirm' && ! $error) {
+if ($mode == 'confirm' && !$error) {
 	print "Commit\n";
 	print $nbalreadyexists." page(s) already exists.\n";
 	print $nbimported." page(s) imported with importid=".$importid."\n";

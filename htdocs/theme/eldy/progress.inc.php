@@ -1,5 +1,5 @@
 <?php
-if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
+if (!defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
 /* <style type="text/css" > */
 /*
  progress style is based on boostrap and admin lte framework
@@ -123,7 +123,7 @@ if (! defined('ISLOADEDBYSTEELSHEET')) die('Must be call by steelsheet'); ?>
     width: 3px;
 }
 .progress-group .progress-text {
-    font-weight: 600;
+    /* font-weight: 600; */
 }
 .progress-group .progress-number {
     float: right;

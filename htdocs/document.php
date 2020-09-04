@@ -133,20 +133,14 @@ if (!empty($hashp))
 				// We remove first level of directory
 				$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 				//var_dump($original_file); exit;
-			}
-			else
-			{
+			} else {
 				accessforbidden('Bad link. File is from another module part.', 0, 0, 1);
 			}
-		}
-		else
-		{
+		} else {
 			$modulepart = $moduleparttocheck;
 			$original_file = (($tmp[1] ? $tmp[1].'/' : '').$ecmfile->filename); // this is relative to module dir
 		}
-	}
-	else
-	{
+	} else {
 		$langs->load("errors");
 		accessforbidden($langs->trans("ErrorFileNotFoundWithSharedLink"), 0, 0, 1);
 	}
@@ -179,14 +173,13 @@ $check_access = dol_check_secure_access_document($modulepart, $original_file, $e
 $accessallowed              = $check_access['accessallowed'];
 $sqlprotectagainstexternals = $check_access['sqlprotectagainstexternals'];
 $fullpath_original_file     = $check_access['original_file']; // $fullpath_original_file is now a full path name
+//var_dump($fullpath_original_file);exit;
 
 if (!empty($hashp))
 {
 	$accessallowed = 1; // When using hashp, link is public so we force $accessallowed
 	$sqlprotectagainstexternals = '';
-}
-else
-{
+} else {
 	// Basic protection (against external users only)
 	if ($user->socid > 0)
 	{

@@ -48,14 +48,15 @@ $hookmanager->initHooks(array('monote', 'globalcard')); // Note that conf->hooks
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Security check - Protection if external user
-//if ($user->socid > 0) accessforbidden();
-//if ($user->socid > 0) $socid = $user->socid;
-//$result = restrictedArea($user, 'mrp', $id);
-
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) $upload_dir = $conf->mrp->multidir_output[$object->entity]."/".$object->id;
+
+// Security check - Protection if external user
+//if ($user->socid > 0) accessforbidden();
+//if ($user->socid > 0) $socid = $user->socid;
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'mrp', $object->id, 'mrp_mo', '', 'fk_soc', 'rowid', $isdraft);
 
 $permissionnote = 1;
 //$permissionnote=$user->rights->mrp->creer;	// Used by the include of actions_setnotes.inc.php
@@ -122,7 +123,7 @@ if ($id > 0 || !empty($ref))
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
 				$proj->fetch($object->fk_project);
-				$morehtmlref .= $proj->getNomUrl();
+				$morehtmlref .= ' : '.$proj->getNomUrl();
 			} else {
 				$morehtmlref .= '';
 			}

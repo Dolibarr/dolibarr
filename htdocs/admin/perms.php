@@ -35,7 +35,7 @@ $action = GETPOST('action', 'aZ09');
 
 if (!$user->admin) accessforbidden();
 
-$entity=$conf->entity;
+$entity = $conf->entity;
 
 
 /*
@@ -116,7 +116,7 @@ $db->commit();
 
 $head = security_prepare_head();
 
-dol_fiche_head($head, 'default', $langs->trans("Security"), -1);
+dol_fiche_head($head, 'default', '', -1);
 
 
 // Show warning about external users
@@ -168,8 +168,8 @@ if ($result)
         		$family = $modules[$obj->module]->family_position;
         		$familyposition = 0;
         		$sqlupdate = 'UPDATE '.MAIN_DB_PREFIX."rights_def SET module_position = ".$modules[$obj->module]->module_position.",";
-        		$sqlupdate.= " family_position = ".$familyposition;
-        		$sqlupdate.= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
+        		$sqlupdate .= " family_position = ".$familyposition;
+        		$sqlupdate .= " WHERE module_position = 0 AND module = '".$db->escape($obj->module)."'";
         		$db->query($sqlupdate);
         	}
         }
@@ -203,7 +203,7 @@ if ($result)
             // Show break line
             print '<tr class="oddeven trforbreak">';
             print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-            print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
+            print img_object('', $picto, 'class="pictoobjectwidth paddingright"').' '.$objMod->getName();
             print '<a name="'.$objMod->getName().'"></a>';
             print '</td>';
            	print '<td>&nbsp;</td>';
@@ -218,8 +218,6 @@ if ($result)
 
         // Picto and label of module
         print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">';
-		//print img_object('', $picto, 'class="pictoobjectwidth"').' '.$objMod->getName();
-        //print '<a name="'.$objMod->getName().'">&nbsp;</a>';
 		print '</td>';
 
 		// Tick
@@ -231,9 +229,7 @@ if ($result)
 			print '<td class="center">';
 			print img_picto($langs->trans("Active"), 'tick');
 			print '</td>';
-		}
-		else
-		{
+		} else {
 			print '<td>';
 			print '<a class="reposition" href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
 			print '</td>';
@@ -249,8 +245,7 @@ if ($result)
 
         $i++;
     }
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 print '</table>';
 print '</div>';
 

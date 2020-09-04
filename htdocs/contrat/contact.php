@@ -29,27 +29,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/contract.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'companies'));
 
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $socid = GETPOST('socid', 'int');
 $id = GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
-$result=restrictedArea($user, 'contrat', $id);
+if ($user->socid) $socid = $user->socid;
+$result = restrictedArea($user, 'contrat', $id);
 
 $object = new Contrat($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contractcard','globalcard'));
+$hookmanager->initHooks(array('contractcard', 'globalcard'));
 
 
 /*
@@ -70,9 +70,7 @@ if ($action == 'addcontact' && $user->rights->contrat->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			$msg = $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
@@ -90,9 +88,7 @@ if ($action == 'swapstatut' && $user->rights->contrat->creer)
 	if ($object->fetch($id))
 	{
 	    $result = $object->swapContactStatus(GETPOST('ligne'));
-	}
-	else
-	{
+	} else {
 		dol_print_error($db, $object->error);
 	}
 }

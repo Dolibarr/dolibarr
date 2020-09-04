@@ -47,8 +47,6 @@ function reception_prepare_head(Reception $object)
 	$head[$h][2] = 'reception';
 	$h++;
 
-
-
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
 	    $objectsrc = $object;
@@ -60,26 +58,27 @@ function reception_prepare_head(Reception $object)
 	    $nbContact = count($objectsrc->liste_contact(-1, 'internal')) + count($objectsrc->liste_contact(-1, 'external'));
 	    $head[$h][0] = DOL_URL_ROOT."/reception/contact.php?id=".$object->id;
     	$head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		if ($nbContact > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
     	$head[$h][2] = 'contact';
     	$h++;
 	}
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception');
 
     $nbNote = 0;
     if (!empty($object->note_private)) $nbNote++;
     if (!empty($object->note_public)) $nbNote++;
 	$head[$h][0] = DOL_URL_ROOT."/reception/note.php?id=".$object->id;
 	$head[$h][1] = $langs->trans("Notes");
-	if ($nbNote > 0) $head[$h][1].= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
+	if ($nbNote > 0) $head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
 
-
-
-
-
-
-    complete_head_from_modules($conf, $langs, $object, $head, $h, 'order', 'remove');
+    complete_head_from_modules($conf, $langs, $object, $head, $h, 'reception', 'remove');
 
     return $head;
 }
@@ -102,8 +101,9 @@ function reception_admin_prepare_head()
 	$head[$h][2] = 'reception';
 	$h++;
 
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'reception_admin');
 
-	if (! empty($conf->global->MAIN_SUBMODULE_RECEPTION))
+	if (!empty($conf->global->MAIN_SUBMODULE_RECEPTION))
 	{
 	    $head[$h][0] = DOL_URL_ROOT.'/admin/reception_extrafields.php';
 	    $head[$h][1] = $langs->trans("ExtraFields");
@@ -111,15 +111,13 @@ function reception_admin_prepare_head()
 	    $h++;
 	}
 
-	if (! empty($conf->global->MAIN_SUBMODULE_RECEPTION))
+	if (!empty($conf->global->MAIN_SUBMODULE_RECEPTION))
 	{
 	    $head[$h][0] = DOL_URL_ROOT.'/admin/commande_fournisseur_dispatch_extrafields.php';
 	    $head[$h][1] = $langs->trans("ExtraFieldsLines");
 	    $head[$h][2] = 'attributeslines_reception';
 	    $h++;
 	}
-
-
 
 	complete_head_from_modules($conf, $langs, null, $head, $h, 'reception_admin', 'remove');
 

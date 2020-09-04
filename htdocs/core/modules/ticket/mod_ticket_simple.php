@@ -48,12 +48,12 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	 * @deprecated
 	 * @see $name
 	 */
-	public $nom='Simple';
+	public $nom = 'Simple';
 
 	/**
 	 * @var string model name
 	 */
-	public $name='Simple';
+	public $name = 'Simple';
 
 	/**
 	 *  Return description of numbering module
@@ -73,7 +73,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	 */
 	public function getExample()
 	{
-		return $this->prefix . "0501-0001";
+		return $this->prefix."0501-0001";
 	}
 
 	/**
@@ -89,12 +89,12 @@ class mod_ticket_simple extends ModeleNumRefTicket
 		$coyymm = '';
 		$max = '';
 
-		$posindice = 8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "ticket";
-		$search = $this->prefix . "____-%";
-		$sql .= " WHERE ref LIKE '" . $search ."'";
-		$sql .= " AND entity = " . $conf->entity;
+		$posindice = strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
+		$search = $this->prefix."____-%";
+		$sql .= " WHERE ref LIKE '".$search."'";
+		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
 		if ($resql) {
 			$row = $db->fetch_row($resql);
@@ -103,7 +103,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 				$max = $row[0];
 			}
 		}
-		if (!$coyymm || preg_match('/' . $this->prefix . '[0-9][0-9][0-9][0-9]/i', $coyymm)) {
+		if (!$coyymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $coyymm)) {
 			return true;
 		} else {
 			$langs->load("errors");
@@ -123,13 +123,13 @@ class mod_ticket_simple extends ModeleNumRefTicket
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
-		$posindice = 8;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "ticket";
-		$search = $this->prefix . "____-%";
-		$sql .= " WHERE ref LIKE '" . $search ."'";
-		$sql .= " AND entity = " . $conf->entity;
+		// First, we get the max value
+		$posindice = strlen($this->prefix) + 6;
+		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+		$sql .= " FROM ".MAIN_DB_PREFIX."ticket";
+		$search = $this->prefix."____-%";
+		$sql .= " WHERE ref LIKE '".$search."'";
+		$sql .= " AND entity = ".$conf->entity;
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -156,7 +156,7 @@ class mod_ticket_simple extends ModeleNumRefTicket
 			$num = sprintf("%04s", $max + 1);
 		}
 
-		dol_syslog("mod_ticket_simple::getNextValue return " . $this->prefix . $yymm . "-" . $num);
-		return $this->prefix . $yymm . "-" . $num;
+		dol_syslog("mod_ticket_simple::getNextValue return ".$this->prefix.$yymm."-".$num);
+		return $this->prefix.$yymm."-".$num;
 	}
 }

@@ -136,7 +136,7 @@ class Dolresource extends CommonObject
     		$action = 'create';
 
     		// Actions on extra fields
-   			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+   			if (!$error)
    			{
    				$result = $this->insertExtraFields();
    				if ($result < 0)
@@ -164,9 +164,7 @@ class Dolresource extends CommonObject
     		}
     		$this->db->rollback();
     		return -1 * $error;
-    	}
-    	else
-    	{
+    	} else {
     		$this->db->commit();
     		return $this->id;
     	}
@@ -223,9 +221,7 @@ class Dolresource extends CommonObject
     		$this->db->free($resql);
 
     		return $this->id;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		dol_syslog(get_class($this)."::fetch ".$this->error, LOG_ERR);
     		return -1;
@@ -309,7 +305,7 @@ class Dolresource extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (!$error)
 			{
 				$result = $this->insertExtraFields();
 				if ($result < 0)
@@ -329,9 +325,7 @@ class Dolresource extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -388,9 +382,7 @@ class Dolresource extends CommonObject
     		$this->db->free($resql);
 
     		return $this->id;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = "Error ".$this->db->lasterror();
     		return -1;
     	}
@@ -427,9 +419,7 @@ class Dolresource extends CommonObject
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
-		}
-		else
-		{
+		} else {
 			$this->error = $this->db->lasterror();
 			$error++;
 		}
@@ -475,9 +465,7 @@ class Dolresource extends CommonObject
 		{
 			$this->db->commit();
 			return 1;
-		}
-		else
-		{
+		} else {
 			$this->db->rollback();
 			return -1;
 		}
@@ -522,11 +510,9 @@ class Dolresource extends CommonObject
     		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			elseif (strpos($key, 'ef.') !== false) {
+    			} elseif (strpos($key, 'ef.') !== false) {
     				$sql .= $value;
-    			}
-    			else {
+    			} else {
     				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
@@ -567,9 +553,7 @@ class Dolresource extends CommonObject
     			$this->db->free($resql);
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -608,8 +592,7 @@ class Dolresource extends CommonObject
    			foreach ($filter as $key => $value) {
    				if (strpos($key, 'date')) {
    					$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-   				}
-   				else {
+   				} else {
    					$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
    				}
    			}
@@ -645,9 +628,7 @@ class Dolresource extends CommonObject
    				$this->db->free($resql);
    			}
    			return $num;
-   		}
-   		else
-   		{
+   		} else {
    			$this->error = $this->db->lasterror();
    			return -1;
    		}
@@ -690,8 +671,7 @@ class Dolresource extends CommonObject
     		foreach ($filter as $key => $value) {
     			if (strpos($key, 'date')) {
     				$sql .= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
-    			}
-    			else {
+    			} else {
     				$sql .= ' AND '.$key.' LIKE \'%'.$this->db->escape($value).'%\'';
     			}
     		}
@@ -724,9 +704,7 @@ class Dolresource extends CommonObject
     			$this->db->free($resql);
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		$this->error = $this->db->lasterror();
     		return -1;
     	}
@@ -816,9 +794,7 @@ class Dolresource extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}
@@ -871,10 +847,12 @@ class Dolresource extends CommonObject
 	    return $resources;
     }
 
-    /*
+    /**
      *  Return an int number of resources linked to the element
      *
-     *  @return     int
+     *  @param		string	$element		Element type
+     *  @param		int		$element_id		Element id
+     *  @return     int						Nb of resources loaded
      */
     public function fetchElementResources($element, $element_id)
     {
@@ -922,9 +900,7 @@ class Dolresource extends CommonObject
     			$i++;
     		}
     		return $num;
-    	}
-    	else
-    	{
+    	} else {
     		dol_print_error($this->db);
     		return -1;
     	}
@@ -976,8 +952,7 @@ class Dolresource extends CommonObject
         	}
         	$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
         	$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
-        }
-        else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
+        } else $linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
 
         $linkstart = '<a href="'.$url.$get_params.'"';
         $linkstart .= $linkclose.'>';

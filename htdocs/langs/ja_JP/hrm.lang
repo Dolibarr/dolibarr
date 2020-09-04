@@ -5,12 +5,13 @@ Establishments=事業所
 Establishment=事業所
 NewEstablishment=新しい事業所
 DeleteEstablishment=事業所を削除
-ConfirmDeleteEstablishment=この事業所を削除してもよろしいですか？
+ConfirmDeleteEstablishment=Are you sure you wish to delete this establishment?
 OpenEtablishment=事業所を開く
 CloseEtablishment=事業所を閉じる
 # Dictionary
+DictionaryPublicHolidays=HRM - Public holidays
 DictionaryDepartment=HRM - 部門リスト
-DictionaryFunction=HRM - 職能リスト
+DictionaryFunction=HRM - Job positions
 # Module
 Employees=従業員
 Employee=従業員

@@ -43,10 +43,10 @@ $object->fetch($id);
 $object->info($id);
 
 
-$h=0;
+$h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/line.php?rowid='.$id;
-$head[$h][1] = $langs->trans("Card");
+$head[$h][1] = $langs->trans("BankTransaction");
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;

@@ -41,7 +41,7 @@ if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY'.$terminal.'_id']))
 // Security check
 if (!$user->admin) accessforbidden();
 
-$langs->loadLangs(array("admin", "cashdesk"));
+$langs->loadLangs(array("admin", "cashdesk", "printing"));
 
 global $db;
 
@@ -85,12 +85,18 @@ if (GETPOST('action', 'alpha') == 'set')
     $res = dolibarr_set_const($db, "CASHDESK_ID_WAREHOUSE".$terminaltouse, (GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') > 0 ? GETPOST('CASHDESK_ID_WAREHOUSE'.$terminaltouse, 'alpha') : ''), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminaltouse, GETPOST('CASHDESK_NO_DECREASE_STOCK'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_PRINTER_TO_USE".$terminaltouse, GETPOST('TAKEPOS_PRINTER_TO_USE'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTER1_TO_USE".$terminaltouse, GETPOST('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+    $res = dolibarr_set_const($db, "TAKEPOS_ORDER_PRINTER2_TO_USE".$terminaltouse, GETPOST('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_INVOICES'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS".$terminaltouse, GETPOST('TAKEPOS_TEMPLATE_TO_USE_FOR_ORDERS'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, 'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, (GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') > 0 ? GETPOST('CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse, 'int') : ''), 'chaine', 0, '', $conf->entity);
 
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON".$terminaltouse, GETPOST('TAKEPOS_ADDON'.$terminaltouse, 'alpha'), 'chaine', 0, '', $conf->entity);
+
+	// add free text on each terminal of cash desk
+	$res = dolibarr_set_const($db, 'TAKEPOS_HEADER'.$terminaltouse, GETPOST('TAKEPOS_HEADER'.$terminaltouse, 'restricthtml'), 'chaine', 0, '', $conf->entity);
+	$res = dolibarr_set_const($db, 'TAKEPOS_FOOTER'.$terminaltouse, GETPOST('TAKEPOS_FOOTER'.$terminaltouse, 'restricthtml'), 'chaine', 0, '', $conf->entity);
 
 	dol_syslog("admin/cashdesk: level ".GETPOST('level', 'alpha'));
 
@@ -100,9 +106,7 @@ if (GETPOST('action', 'alpha') == 'set')
     {
         $db->commit();
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
+    } else {
         $db->rollback();
 	    setEventMessages($langs->trans("Error"), null, 'errors');
     }
@@ -120,8 +124,8 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
-$head = takepos_prepare_head();
-dol_fiche_head($head, 'terminal'.$terminal, 'TakePOS', -1);
+$head = takepos_admin_prepare_head();
+dol_fiche_head($head, 'terminal'.$terminal, 'TakePOS', -1, 'cash-register');
 print '<br>';
 
 
@@ -185,9 +189,7 @@ if (!empty($conf->stock->enabled))
 	print '<td>';
 	if (empty($conf->productbatch->enabled) || !empty($conf->global->CASHDESK_FORCE_DECREASE_STOCK)) {
 	    print $form->selectyesno('CASHDESK_NO_DECREASE_STOCK'.$terminal, $conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}, 1);
-	}
-	else
-	{
+	} else {
 	    if (!$conf->global->{'CASHDESK_NO_DECREASE_STOCK'.$terminal}) {
 	        $res = dolibarr_set_const($db, "CASHDESK_NO_DECREASE_STOCK".$terminal, 1, 'chaine', 0, '', $conf->entity);
 	    }
@@ -205,9 +207,7 @@ if (!empty($conf->stock->enabled))
 	{
 		print $formproduct->selectWarehouses($conf->global->{'CASHDESK_ID_WAREHOUSE'.$terminal}, 'CASHDESK_ID_WAREHOUSE'.$terminal, '', 1, $disabled);
 		print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"]).'"><span class="fa fa-plus-circle valignmiddle"></span></a>';
-	}
-	else
-	{
+	} else {
 		print '<span class="opacitymedium">'.$langs->trans("StockDecreaseForPointOfSaleDisabled").'</span>';
 	}
 	print '</td></tr>';
@@ -234,9 +234,13 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 	print $form->selectarray('TAKEPOS_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_PRINTER_TO_USE'.$terminal}), 1);
 	print '</td></tr>';
 	if ($conf->global->TAKEPOS_ORDER_PRINTERS) {
-		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").'</td>';
+	    print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 1</td>';
 		print '<td>';
-		print $form->selectarray('TAKEPOS_ORDER_PRINTER_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER_TO_USE'.$terminal}), 1);
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER1_TO_USE'.$terminal}), 1);
+		print '</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("OrderPrinterToUse").' - '.$langs->trans("Printer").' 2</td>';
+		print '<td>';
+		print $form->selectarray('TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal, $printers, (empty($conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}) ? '0' : $conf->global->{'TAKEPOS_ORDER_PRINTER2_TO_USE'.$terminal}), 1);
 		print '</td></tr>';
 	}
 	$printer->listPrintersTemplates();
@@ -258,7 +262,7 @@ if ($conf->global->TAKEPOS_PRINT_METHOD == "receiptprinter") {
 
 print '<tr class="oddeven"><td>'.$langs->trans('CashDeskReaderKeyCodeForEnter').'</td>';
 print '<td>';
-print '<input type="text" name="'.'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse}.'" />';
+print '<input type="text" name="CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse.'" value="'.$conf->global->{'CASHDESK_READER_KEYCODE_FOR_ENTER'.$terminaltouse}.'" />';
 print '</td></tr>';
 
 // Numbering module
@@ -320,6 +324,57 @@ if ($conf->global->TAKEPOS_ADDON == "terminal") {
 	print '</table>';
 	print '</div>';
 }
+
+print '</table>';
+print '</div>';
+
+// add free text on each terminal of cash desk
+$substitutionarray = pdf_getSubstitutionArray($langs, null, null, 2);
+$substitutionarray['__(AnyTranslationKey)__'] = $langs->trans('Translation');
+$htmltext = '<i>' . $langs->trans('AvailableVariables') . ':<br>';
+foreach ($substitutionarray as $key => $val)	$htmltext .= $key . '<br>';
+$htmltext .= '</i>';
+
+print '<br>';
+print load_fiche_titre($langs->trans('FreeLegalTextOnInvoices'), '', '');
+
+print '<div class="div-table-responsive">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans("Parameters") . '</td><td>' . $langs->trans('Value') . '</td>';
+print '</tr>';
+
+// free text on header
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans('Header'), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+print '</td>';
+print '<td>';
+$variablename = 'TAKEPOS_HEADER' . $terminaltouse;
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	print '<textarea name="' . $variablename . '" class="flat" cols="120">' . $conf->global->{$variablename} . '</textarea>';
+} else {
+	include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+	$doleditor = new DolEditor($variablename, $conf->global->{$variablename}, '', 80, 'dolibarr_notes');
+	print $doleditor->Create();
+}
+print '</td></tr>';
+
+// free text on footer
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans('Footer'), $htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
+print '</td>';
+print '<td>';
+$variablename = 'TAKEPOS_FOOTER' . $terminaltouse;
+if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) {
+	print '<textarea name="' . $variablename . '" class="flat" cols="120">' . $conf->global->{$variablename} . '</textarea>';
+} else {
+	include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+	$doleditor = new DolEditor($variablename, $conf->global->{$variablename}, '', 80, 'dolibarr_notes');
+	print $doleditor->Create();
+}
+print '</td></tr>';
 
 print '</table>';
 print '</div>';

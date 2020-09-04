@@ -75,7 +75,6 @@ if ($action == 'set')
 	$res = dolibarr_set_const($db, "TAKEPOS_SUPPLEMENTS_CATEGORY", GETPOST('TAKEPOS_SUPPLEMENTS_CATEGORY', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUMPAD", GETPOST('TAKEPOS_NUMPAD', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_SORTPRODUCTFIELD", GETPOST('TAKEPOS_SORTPRODUCTFIELD', 'alpha'), 'chaine', 0, '', $conf->entity);
-	$res = dolibarr_set_const($db, "TAKEPOS_COLOR_THEME", GETPOST('TAKEPOS_COLOR_THEME', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_NUM_TERMINALS", GETPOST('TAKEPOS_NUM_TERMINALS', 'alpha'), 'chaine', 0, '', $conf->entity);
 	$res = dolibarr_set_const($db, "TAKEPOS_ADDON", GETPOST('TAKEPOS_ADDON', 'alpha'), 'int', 0, '', $conf->entity);
     $res = dolibarr_set_const($db, "TAKEPOS_EMAIL_TEMPLATE_INVOICE", GETPOST('TAKEPOS_EMAIL_TEMPLATE_INVOICE', 'alpha'), 'chaine', 0, '', $conf->entity);
@@ -96,9 +95,7 @@ if ($action == 'set')
  	if (!$error)
     {
         $db->commit();
-    }
-    else
-    {
+    } else {
         $db->rollback();
     }
 } elseif ($action == 'updateMask') {
@@ -121,6 +118,7 @@ if ($action != '') {
 	}
 }
 
+
 /*
  * View
  */
@@ -132,8 +130,8 @@ llxHeader('', $langs->trans("CashDeskSetup"));
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
-$head = takepos_prepare_head();
-dol_fiche_head($head, 'setup', 'TakePOS', -1);
+$head = takepos_admin_prepare_head();
+dol_fiche_head($head, 'setup', 'TakePOS', -1, 'cash-register');
 
 // Numbering modules
 $now = dol_now();
@@ -161,20 +159,20 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
+			$var = true;
 
-			while (($file = readdir($handle))!==false)
+			while (($file = readdir($handle)) !== false)
 			{
-				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file)-3, 3) == 'php')
+				if (substr($file, 0, 16) == 'mod_takepos_ref_' && substr($file, dol_strlen($file) - 3, 3) == 'php')
 				{
-					$file = substr($file, 0, dol_strlen($file)-4);
+					$file = substr($file, 0, dol_strlen($file) - 4);
 
 					require_once $dir.$file.'.php';
 
 					$module = new $file;
 
 					// Show modules according to features level
-					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
 					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
@@ -185,9 +183,9 @@ foreach ($dirmodels as $reldir)
 
 						// Show example of numbering module
 						print '<td class="nowrap">';
-						$tmp=$module->getExample();
+						$tmp = $module->getExample();
 						if (preg_match('/^Error/', $tmp)) print '<div class="error">'.$langs->trans($tmp).'</div>';
-						elseif ($tmp=='NotConfigured') print $langs->trans($tmp);
+						elseif ($tmp == 'NotConfigured') print $langs->trans($tmp);
 						else print $tmp;
 						print '</td>'."\n";
 
@@ -195,9 +193,7 @@ foreach ($dirmodels as $reldir)
 						if ($conf->global->TAKEPOS_REF_ADDON == "$file")
 						{
 							print img_picto($langs->trans("Activated"), 'switch_on');
-						}
-						else
-						{
+						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&amp;value='.$file.'">';
 							print img_picto($langs->trans("Disabled"), 'switch_off');
 							print '</a>';
@@ -211,17 +207,17 @@ foreach ($dirmodels as $reldir)
 						$invoice->pos_source = 1;
 
 						// Info
-						$htmltooltip='';
-						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc, $invoice);
+						$htmltooltip = '';
+						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+						$nextval = $module->getNextValue($mysoc, $invoice);
 						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
-							$htmltooltip.=''.$langs->trans("NextValue").': ';
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
 							if ($nextval) {
-								if (preg_match('/^Error/', $nextval) || $nextval=='NotConfigured')
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured')
 									$nextval = $langs->trans($nextval);
-								$htmltooltip.=$nextval.'<br>';
+								$htmltooltip .= $nextval.'<br>';
 							} else {
-								$htmltooltip.=$langs->trans($module->error).'<br>';
+								$htmltooltip .= $langs->trans($module->error).'<br>';
 							}
 						}
 
@@ -274,16 +270,8 @@ if (!empty($conf->service->enabled))
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $langs->trans("RootCategoryForProductsToSellDesc"));
 print '<td colspan="2">';
-print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0);
+print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_ROOT_CATEGORY_ID, 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0);
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
-print "</td></tr>\n";
-
-// VAT Grouped on ticket
-print '<tr class="oddeven"><td>';
-print $langs->trans('TicketVatGrouped');
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_TICKET_VAT_GROUPPED", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("TAKEPOS_TICKET_VAT_GROUPPED", $conf->global->TAKEPOS_TICKET_VAT_GROUPPED, 1);
 print "</td></tr>\n";
 
 // Sort product
@@ -306,14 +294,6 @@ $substitutionarray['__(AnyTranslationKey)__'] = $langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach ($substitutionarray as $key => $val)	$htmltext .= $key.'<br>';
 $htmltext .= '</i>';
-
-// Color theme
-print '<tr class="oddeven"><td>';
-print $langs->trans("ColorTheme");
-print '<td colspan="2">';
-$array = array(0=>"Eldy", 1=>$langs->trans("Colorful"));
-print $form->selectarray('TAKEPOS_COLOR_THEME', $array, (empty($conf->global->TAKEPOS_COLOR_THEME) ? '0' : $conf->global->TAKEPOS_COLOR_THEME), 0);
-print "</td></tr>\n";
 
 // Payment numpad
 print '<tr class="oddeven"><td>';
@@ -362,7 +342,7 @@ if (is_array($formmail->lines_model)) {
         if (!empty($arrayofmessagename[$modelmail->label])) {
             $moreonlabel = ' <span class="opacitymedium">('.$langs->trans("SeveralLangugeVariatFound").')</span>';
         }
-        $arrayofmessagename[$modelmail->label] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->label)).$moreonlabel;
+        $arrayofmessagename[$modelmail->id] = $langs->trans(preg_replace('/\(|\)/', '', $modelmail->topic)).$moreonlabel;
     }
 }
 //var_dump($arraydefaultmessage);
@@ -375,6 +355,20 @@ print '<tr class="oddeven"><td>';
 print $langs->trans('ControlCashOpening');
 print '<td colspan="2">';
 print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Gift receipt
+print '<tr class="oddeven"><td>';
+print $langs->trans('GiftReceiptButton');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Delayed Pay Button
+print '<tr class="oddeven"><td>';
+print $langs->trans('AllowDelayedPayment');
+print '<td colspan="2">';
+print ajax_constantonoff("TAKEPOS_DELAYED_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Numbering module
@@ -434,69 +428,6 @@ print "</td></tr>\n";
 //print $form->selectarray('TAKEPOS_ADDON', $array, (empty($conf->global->TAKEPOS_ADDON) ? '0' : $conf->global->TAKEPOS_ADDON), 0);
 //print "</td></tr>\n";
 
-print '</table>';
-print '</div>';
-
-print '<br>';
-
-// Bar Restaurant mode
-print '<div class="div-table-responsive-no-min">';
-print '<table class="noborder centpercent">';
-
-print '<tr class="liste_titre">';
-print '<td class="titlefield">'.$langs->trans("Other").'</td><td>'.$langs->trans("Value").'</td>';
-print "</tr>\n";
-
-print '<tr class="oddeven"><td>';
-print $langs->trans("EnableBarOrRestaurantFeatures");
-print '</td>';
-print '<td colspan="2">';
-print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
-//print $form->selectyesno("TAKEPOS_BAR_RESTAURANT", $conf->global->TAKEPOS_BAR_RESTAURANT, 1);
-print "</td></tr>\n";
-
-if ($conf->global->TAKEPOS_BAR_RESTAURANT && $conf->global->TAKEPOS_PRINT_METHOD != "browser") {
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderPrinters").' (<a href="'.DOL_URL_ROOT.'/takepos/admin/orderprinters.php?leftmenu=setup">'.$langs->trans("Setup").'</a>)';
-	print '<td colspan="2">';
-	print ajax_constantonoff("TAKEPOS_ORDER_PRINTERS", array(), $conf->entity, 0, 0, 1, 0);
-	//print $form->selectyesno("TAKEPOS_ORDER_PRINTERS", $conf->global->TAKEPOS_ORDER_PRINTERS, 1);
-	print '</td></tr>';
-
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("OrderNotes");
-	print '<td colspan="2">';
-	print ajax_constantonoff("TAKEPOS_ORDER_NOTES", array(), $conf->entity, 0, 0, 1, 0);
-	//print $form->selectyesno("TAKEPOS_ORDER_NOTES", $conf->global->TAKEPOS_ORDER_NOTES, 1);
-	print '</td></tr>';
-}
-
-if ($conf->global->TAKEPOS_BAR_RESTAURANT)
-{
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("BasicPhoneLayout");
-	print '<td colspan="2">';
-	//print $form->selectyesno("TAKEPOS_PHONE_BASIC_LAYOUT", $conf->global->TAKEPOS_PHONE_BASIC_LAYOUT, 1);
-	print ajax_constantonoff("TAKEPOS_PHONE_BASIC_LAYOUT", array(), $conf->entity, 0, 0, 1, 0);
-	print '</td></tr>';
-
-	print '<tr class="oddeven value"><td>';
-	print $langs->trans("ProductSupplements");
-	print '<td colspan="2">';
-	//print $form->selectyesno("TAKEPOS_SUPPLEMENTS", $conf->global->TAKEPOS_SUPPLEMENTS, 1);
-	print ajax_constantonoff("TAKEPOS_SUPPLEMENTS", array(), $conf->entity, 0, 0, 1, 0);
-	print '</td></tr>';
-
-	if ($conf->global->TAKEPOS_SUPPLEMENTS)
-	{
-		print '<tr class="oddeven"><td>';
-		print $langs->trans("SupplementCategory");
-		print '<td colspan="2">';
-		print $form->select_all_categories(Categorie::TYPE_PRODUCT, $conf->global->TAKEPOS_SUPPLEMENTS_CATEGORY, 'TAKEPOS_SUPPLEMENTS_CATEGORY', 64, 0, 0);
-		print ajax_combobox('TAKEPOS_SUPPLEMENTS_CATEGORY');
-		print "</td></tr>\n";
-	}
-}
 print '</table>';
 print '</div>';
 

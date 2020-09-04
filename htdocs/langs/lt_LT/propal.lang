@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=Kliento sąskaitos-faktūros kontaktai
 TypeContact_propal_external_CUSTOMER=Kliento kontaktas tęstiniame pasiūlyme
 TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=Modelio sukūrimas pagal nutylėjimą
 DefaultModelPropalToBill=Šablonas pagal nutylėjimą, kai uždaromas verslo pasiūlymas (turi būti išrašyta sąskaita-faktūra)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=Šablonas pagal nutylėjimą, kai uždaromas verslo pas
 ProposalCustomerSignature=Written acceptance, company stamp, date and signature
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

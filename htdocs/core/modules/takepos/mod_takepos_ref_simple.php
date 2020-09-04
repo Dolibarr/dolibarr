@@ -41,7 +41,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 	 * Prefix
 	 * @var string
 	 */
-	public $prefix = 'TK';
+	public $prefix = 'TC';
 
 	/**
 	 * @var string Error code (or message)
@@ -63,7 +63,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
     {
         global $langs;
 
-        return $langs->trans('SimpleNumRefModelDesc', $this->prefix . '0-');
+        return $langs->trans('SimpleNumRefModelDesc', $this->prefix.'0-');
     }
 
     /**
@@ -73,7 +73,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
      */
 	public function getExample()
     {
-        return $this->prefix . '0-0501-0001';
+        return $this->prefix.'0-0501-0001';
     }
 
     /**
@@ -89,11 +89,15 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
         $pryymm = '';
         $max = '';
 
-        $posindice = 8;
-        $sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";
-        $sql .= " FROM " . MAIN_DB_PREFIX . "facture";
-        $sql .= " WHERE ref LIKE '" . $db->escape($this->prefix) . "____-%'";
-        $sql .= " AND entity = " . $conf->entity;
+        $pos_source = 0;
+
+        // First, we get the max value
+        $posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
+
+        $sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
+        $sql .= " FROM ".MAIN_DB_PREFIX."facture";
+        $sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
+        $sql .= " AND entity = ".$conf->entity;
 
         $resql = $db->query($sql);
         if ($resql) {
@@ -104,7 +108,7 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
             }
         }
 
-        if (!$pryymm || preg_match('/' . $this->prefix . '[0-9][0-9][0-9][0-9]/i', $pryymm)) {
+        if (!$pryymm || preg_match('/'.$this->prefix.'[0-9][0-9][0-9][0-9]/i', $pryymm)) {
             return true;
         } else {
             $langs->load("errors");
@@ -127,11 +131,11 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
 
         $pos_source = is_object($invoice) && $invoice->pos_source > 0 ? $invoice->pos_source : 0;
 
-        // D'abord on recupere la valeur max
-        $posindice = strlen($this->prefix . $pos_source . '-____-') + 1;
-        $sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM " . $posindice . ") AS SIGNED)) as max";    // This is standard SQL
-        $sql .= " FROM " . MAIN_DB_PREFIX . "facture";
-        $sql .= " WHERE ref LIKE '" . $db->escape($this->prefix . $pos_source) . "-____-%'";
+        // First, we get the max value
+        $posindice = strlen($this->prefix.$pos_source.'-____-') + 1;
+        $sql  = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max"; // This is standard SQL
+        $sql .= " FROM ".MAIN_DB_PREFIX."facture";
+        $sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-%'";
         $sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
 
         $resql = $db->query($sql);
@@ -140,19 +144,19 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
             if ($obj) $max = intval($obj->max);
             else $max = 0;
         } else {
-            dol_syslog(get_class($this) . "::getNextValue", LOG_DEBUG);
+            dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             return -1;
         }
 
         if ($mode == 'last')
         {
-            if ($max >= (pow(10, 4) - 1)) $num=$max;	// If counter > 9999, we do not format on 4 chars, we take number as it is
+            if ($max >= (pow(10, 4) - 1)) $num = $max; // If counter > 9999, we do not format on 4 chars, we take number as it is
             else $num = sprintf("%04s", $max);
 
             $ref = '';
             $sql  = "SELECT ref as ref";
-            $sql .= " FROM ". MAIN_DB_PREFIX . "facture";
-            $sql .= " WHERE ref LIKE '" . $db->escape($this->prefix . $pos_source) . "-____-" . $num . "'";
+            $sql .= " FROM ".MAIN_DB_PREFIX."facture";
+            $sql .= " WHERE ref LIKE '".$db->escape($this->prefix.$pos_source)."-____-".$num."'";
             $sql .= " AND entity IN (".getEntity('invoicenumber', 1, $invoice).")";
             $sql .= " ORDER BY ref DESC";
 
@@ -160,23 +164,20 @@ class mod_takepos_ref_simple extends ModeleNumRefTakepos
             if ($resql) {
                 $obj = $db->fetch_object($resql);
                 if ($obj) $ref = $obj->ref;
-            }
-            else dol_print_error($db);
+            } else dol_print_error($db);
 
             return $ref;
-        }
-        elseif ($mode == 'next')
+        } elseif ($mode == 'next')
         {
-            $date = $invoice->date;	// This is invoice date (not creation date)
+            $date = $invoice->date; // This is invoice date (not creation date)
             $yymm = strftime("%y%m", $date);
 
-            if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
-            else $num = sprintf("%04s", $max+1);
+            if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
+            else $num = sprintf("%04s", $max + 1);
 
-            dol_syslog(get_class($this)."::getNextValue return " . $this->prefix . $pos_source . '-' . $yymm . '-' . $num);
-            return $this->prefix . $pos_source . '-' . $yymm . '-' . $num;
-        }
-        else dol_print_error('', 'Bad parameter for getNextValue');
+            dol_syslog(get_class($this)."::getNextValue return ".$this->prefix.$pos_source.'-'.$yymm.'-'.$num);
+            return $this->prefix.$pos_source.'-'.$yymm.'-'.$num;
+        } else dol_print_error('', 'Bad parameter for getNextValue');
     }
 
     /**

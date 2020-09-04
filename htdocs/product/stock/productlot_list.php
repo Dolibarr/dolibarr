@@ -38,9 +38,8 @@ $langs->loadLangs(array('stocks', 'productbatch', 'other', 'users'));
 $id = GETPOST('id', 'int');
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
-$myparam = GETPOST('myparam', 'alpha');
 $toselect = GETPOST('toselect', 'array');
-
+$optioncss = GETPOST('optioncss', 'alpha');
 
 $search_entity = GETPOST('search_entity', 'int');
 $search_product = GETPOST('search_product', 'alpha');
@@ -48,10 +47,6 @@ $search_batch = GETPOST('search_batch', 'alpha');
 $search_fk_user_creat = GETPOST('search_fk_user_creat', 'int');
 $search_fk_user_modif = GETPOST('search_fk_user_modif', 'int');
 $search_import_key = GETPOST('search_import_key', 'int');
-
-
-$search_myfield = GETPOST('search_myfield');
-$optioncss = GETPOST('optioncss', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -104,6 +99,12 @@ $arrayfields = array(
 	't.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	//'t.statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
 );
+if (!empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+	unset($arrayfields['t.sellby']);
+}
+if (!empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+	unset($arrayfields['t.eatby']);
+}
 // Extra fields
 if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
@@ -300,9 +301,8 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'barcode', 0, '', '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'lot', 0, '', '', $limit, 0, 0, 1);
 
 	$topicmail = "Information";
 	$modelmail = "productlot";
@@ -476,7 +476,7 @@ if ($resql)
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
@@ -547,9 +547,7 @@ if ($resql)
 
 	print $formfile->showdocuments('massfilesarea_orders','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 	*/
-}
-else
-{
+} else {
 	$error++;
 	dol_print_error($db);
 }

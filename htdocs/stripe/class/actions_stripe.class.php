@@ -75,9 +75,7 @@ class ActionsStripeconnect
 		{
 			$service = 'StripeTest';
 			dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-		}
-		else
-		{
+		} else {
 			$service = 'StripeLive';
 		}
 
@@ -104,13 +102,11 @@ class ActionsStripeconnect
 			if ($stripe->getStripeAccount($service) && $object->client != 0) {
 				$customer = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				$this->resprints .= $customer->id;
-			}
-			else {
+			} else {
 				$this->resprints .= $langs->trans("NoStripe");
 			}
 			$this->resprints .= '</td></tr>';
-		}
-		elseif (is_object($object) && $object->element == 'member') {
+		} elseif (is_object($object) && $object->element == 'member') {
 			$this->resprints .= '<tr><td>';
 			$this->resprints .= '<table width="100%" class="nobordernopadding"><tr><td>';
 			$this->resprints .= $langs->trans('StripeCustomer');
@@ -208,25 +204,19 @@ class ActionsStripeconnect
 					{
 						$langs->load("withdrawals");
 						print '<a class="butActionDelete" href="'.dol_buildpath('/stripeconnect/payment.php?facid='.$object->id.'&action=create', 1).'" title="'.dol_escape_htmltag($langs->trans("StripeConnectPay")).'">'.$langs->trans("StripeConnectPay").'</a>';
-					}
-					else
-					{
+					} else {
 						print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("StripeConnectPay").'</a>';
 					}
-				}
-				elseif ($resteapayer == 0)
+				} elseif ($resteapayer == 0)
 				{
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("StripeConnectPay").'</a>';
 				}
-			}
-			else {
+			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans("StripeConnectPay").'</a>';
 			}
-		}
-		elseif (is_object($object) && $object->element == 'invoice_supplier') {
+		} elseif (is_object($object) && $object->element == 'invoice_supplier') {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("StripeConnectPay")).'">'.$langs->trans("StripeConnectPay").'</a>';
-		}
-		elseif (is_object($object) && $object->element == 'member') {
+		} elseif (is_object($object) && $object->element == 'member') {
 			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("StripeAutoSubscription")).'">'.$langs->trans("StripeAutoSubscription").'</a>';
 		}
 		return 0;

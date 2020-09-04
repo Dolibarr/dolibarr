@@ -3,6 +3,7 @@
  * Copyright (c) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (c) 2011      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,23 +47,27 @@ class PropaleStats extends Stats
     public $from;
     public $field;
     public $where;
+    public $join;
 
 
 	/**
 	 * Constructor
 	 *
-	 * @param 	DoliDB	$db		   Database handler
-	 * @param 	int		$socid	   Id third party for filter. This value must be forced during the new to external user company if user is an external user.
-     * @param   int		$userid    Id user for filter (creation user)
-	 * @param 	string	$mode	   Option ('customer', 'supplier')
+	 * @param 	DoliDB	$db		    Database handler
+	 * @param 	int		$socid	    Id third party for filter. This value must be forced during the new to external user company if user is an external user.
+     * @param   int		$userid     Id user for filter (creation user)
+	 * @param 	string	$mode	    Option ('customer', 'supplier')
+     * @param	int		$typentid   Id typent of thirdpary for filter
+     * @param	int		$categid    Id category of thirdpary for filter
 	 */
-    public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer')
+    public function __construct($db, $socid = 0, $userid = 0, $mode = 'customer', $typentid = 0, $categid = 0)
 	{
 		global $user, $conf;
 
 		$this->db = $db;
         $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
+        $this->join = '';
 
         if ($mode == 'customer')
         {
@@ -96,6 +101,19 @@ class PropaleStats extends Stats
 			$this->where .= " AND p.fk_soc = ".$this->socid;
 		}
         if ($this->userid > 0) $this->where .= ' AND fk_user_author = '.$this->userid;
+
+        if ($typentid)
+        {
+            $this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON s.rowid = p.fk_soc';
+            $this->where .= ' AND s.fk_typent = '.$typentid;
+        }
+
+        if ($categid)
+        {
+            $this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie_societe as cs ON cs.fk_soc = p.fk_soc';
+            $this->join .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as c ON c.rowid = cs.fk_categorie';
+            $this->where .= ' AND c.rowid = '.$categid;
+        }
 	}
 
 
@@ -113,6 +131,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -135,6 +154,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY dm";
         $sql .= $this->db->order('dm', 'DESC');
@@ -156,6 +176,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, SUM(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -178,6 +199,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%m') as dm, AVG(p.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
@@ -198,6 +220,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT date_format(".$this->field_date.",'%Y') as year, COUNT(*) as nb, SUM(".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		if (!$user->rights->societe->client->voir && !$this->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " GROUP BY year";
         $sql .= $this->db->order('year', 'DESC');
@@ -221,6 +244,7 @@ class PropaleStats extends Stats
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql .= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+        $sql .= $this->join;
 		$sql .= " WHERE ".$this->where;
 		$sql .= " AND p.rowid = tl.fk_propal AND tl.fk_product = product.rowid";
     	$sql .= " AND ".$this->field_date." BETWEEN '".$this->db->idate(dol_get_first_day($year, 1, false))."' AND '".$this->db->idate(dol_get_last_day($year, 12, false))."'";

@@ -141,7 +141,7 @@ OrderByEMail=E-mail
 OrderByWWW=Online
 OrderByPhone=Telefon
 # Documents models
-PDFEinsteinDescription=Teljes megrendelési modell (az Eratosthene sablon régi megvalósítása)
+PDFEinsteinDescription=Teljes megrendelési modell 
 PDFEratostheneDescription=Teljes megrendelési modell
 PDFEdisonDescription=Egyszerű megrendelési sablon
 PDFProformaDescription=Teljes Proforma számlasablon

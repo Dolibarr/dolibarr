@@ -315,15 +315,12 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-
 $morehtmlright .= dolGetButtonTitle($langs->trans("HierarchicView"), '', 'fa fa-sitemap paddingleft', DOL_URL_ROOT.'/user/hierarchy.php'.(($search_statut != '' && $search_statut >= 0) ? '?search_statut='.$search_statut : ''));
 
-
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'generic', 0, $morehtmlright.' '.$newcardbutton, '', $limit);
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'user', 0, $morehtmlright.' '.$newcardbutton, '', $limit, 0, 0, 1);
 
 if (!empty($catid))
 {
@@ -524,8 +521,7 @@ while ($i < min($num, $limit))
 		if (!empty($conf->multicompany->enabled) && $obj->admin && !$obj->entity)
 		{
 		  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
-		}
-		elseif ($obj->admin)
+		} elseif ($obj->admin)
 		{
 			print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 		}
@@ -578,13 +574,10 @@ while ($i < min($num, $limit))
 			$companystatic->name = $obj->name;
 			$companystatic->canvas = $obj->canvas;
 			print $companystatic->getNomUrl(1);
-		}
-		elseif ($obj->ldap_sid)
+		} elseif ($obj->ldap_sid)
 		{
 			print $langs->trans("DomainUser");
-		}
-		else
-	    {
+		} else {
 			print $langs->trans("InternalUser");
 		}
 		print '</td>';
@@ -599,9 +592,7 @@ while ($i < min($num, $limit))
 			if (!$obj->entity)
 			{
 				print $langs->trans("AllEntities");
-			}
-			else
-			{
+			} else {
 				$mc->getInfo($obj->entity);
 				print $mc->label;
 			}
@@ -630,8 +621,7 @@ while ($i < min($num, $limit))
 			if (!empty($conf->multicompany->enabled) && $obj->admin2 && !$obj->entity2)
 			{
 			  	print img_picto($langs->trans("SuperAdministrator"), 'redstar', 'class="valignmiddle paddingleft"');
-			}
-			elseif ($obj->admin2)
+			} elseif ($obj->admin2)
 			{
 				print img_picto($langs->trans("Administrator"), 'star', 'class="valignmiddle paddingleft"');
 			}
@@ -656,7 +646,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation

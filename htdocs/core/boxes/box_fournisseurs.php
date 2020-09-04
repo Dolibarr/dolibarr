@@ -136,7 +136,7 @@ class box_fournisseurs extends ModeleBoxes
                 }
 
                 if ($num == 0) $this->info_box_contents[$line][0] = array(
-                    'td' => 'class="center"',
+                    'td' => 'class="center opacitymedium"',
                     'text'=>$langs->trans("NoRecordedSuppliers"),
                 );
 

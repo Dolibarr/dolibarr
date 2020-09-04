@@ -39,58 +39,78 @@ $hookmanager->initHooks(array('projectsindex'));
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
+$action = GETPOST('action', 'alpha');
 $search_project_user = GETPOST('search_project_user', 'int');
-$mine = GETPOST('mode', 'aZ09')=='mine' ? 1 : 0;
+$mine = GETPOST('mode', 'aZ09') == 'mine' ? 1 : 0;
+if ($mine == 0 && $search_project_user === '') $search_project_user = $user->conf->MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX;
 if ($search_project_user == $user->id) $mine = 1;
 
 // Security check
-$socid=0;
+$socid = 0;
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 
-$max=3;
+$max = 3;
+
+
+/*
+ * Actions
+ */
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+if (empty($reshook)) {
+	if ($action == 'refresh_search_project_user') {
+		$search_project_user = GETPOST('search_project_user', 'int');
+		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
+
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
+		$result = dol_set_user_param($db, $conf, $user, $tabparam);
+	}
+}
 
 
 /*
  * View
  */
 
-$companystatic=new Societe($db);
-$projectstatic=new Project($db);
-$form=new Form($db);
-$formfile=new FormFile($db);
+$companystatic = new Societe($db);
+$projectstatic = new Project($db);
+$form = new Form($db);
+$formfile = new FormFile($db);
 
-$projectset = ($mine?$mine:(empty($user->rights->projet->all->lire)?0:2));
+$projectset = ($mine ? $mine : (empty($user->rights->projet->all->lire) ? 0 : 2));
 $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, $projectset, 1);
 //var_dump($projectsListId);
 
 llxHeader("", $langs->trans("Projects"), "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos");
 
-$title=$langs->trans("ProjectsArea");
+$title = $langs->trans("ProjectsArea");
 //if ($mine) $title=$langs->trans("MyProjectsArea");
 
 
 // Title for combo list see all projects
-$titleall=$langs->trans("AllAllowedProjects");
-if (! empty($user->rights->projet->all->lire) && ! $socid) $titleall=$langs->trans("AllProjects");
-else $titleall=$langs->trans("AllAllowedProjects").'<br><br>';
+$titleall = $langs->trans("AllAllowedProjects");
+if (!empty($user->rights->projet->all->lire) && !$socid) $titleall = $langs->trans("AllProjects");
+else $titleall = $langs->trans("AllAllowedProjects").'<br><br>';
 
-$morehtml='';
-$morehtml.='<form name="projectform" method="POST">';
-$morehtml.='<input type="hidden" name="token" value="'.newToken().'">';
-$morehtml.='<SELECT name="search_project_user">';
-$morehtml.='<option name="all" value="0"'.($mine?'':' selected').'>'.$titleall.'</option>';
-$morehtml.='<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id)?' selected':'').'>'.$langs->trans("ProjectsImContactFor").'</option>';
-$morehtml.='</SELECT>';
-$morehtml.='<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
-$morehtml.='</form>';
+$morehtml = '';
+$morehtml .= '<form name="projectform" method="POST">';
+$morehtml .= '<input type="hidden" name="token" value="'.newToken().'">';
+$morehtml .= '<input type="hidden" name="action" value="refresh_search_project_user">';
+$morehtml .= '<SELECT name="search_project_user">';
+$morehtml .= '<option name="all" value="0"'.($mine ? '' : ' selected').'>'.$titleall.'</option>';
+$morehtml .= '<option name="mine" value="'.$user->id.'"'.(($search_project_user == $user->id) ? ' selected' : '').'>'.$langs->trans("ProjectsImContactFor").'</option>';
+$morehtml .= '</SELECT>';
+$morehtml .= '<input type="submit" class="button" name="refresh" value="'.$langs->trans("Refresh").'">';
+$morehtml .= '</form>';
 
 if ($mine) $tooltiphelp = $langs->trans("MyProjectsDesc");
-else
-{
+else {
 	if (!empty($user->rights->projet->all->lire) && !$socid) $tooltiphelp = $langs->trans("ProjectsDesc");
 	else $tooltiphelp = $langs->trans("ProjectsPublicDesc");
 }
@@ -98,8 +118,9 @@ else
 print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'project', 0, $morehtml);
 
 
-// Get list of ponderated percent for each status
-$listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array();
+// Get list of ponderated percent and colors for each status
+include_once DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+$listofoppstatus = array(); $listofopplabel = array(); $listofoppcode = array(); $colorseries = array();
 $sql = "SELECT cls.rowid, cls.code, cls.percent, cls.label";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_lead_status as cls";
 $sql .= " WHERE active=1";
@@ -115,11 +136,33 @@ if ($resql)
 		$listofoppstatus[$objp->rowid] = $objp->percent;
 		$listofopplabel[$objp->rowid] = $objp->label;
 		$listofoppcode[$objp->rowid] = $objp->code;
+		switch ($objp->code) {
+			case 'PROSP':
+				$colorseries[$objp->rowid] = "-".$badgeStatus0;
+				break;
+			case 'QUAL':
+				$colorseries[$objp->rowid] = "-".$badgeStatus1;
+				break;
+			case 'PROPO':
+				$colorseries[$objp->rowid] = $badgeStatus1;
+				break;
+			case 'NEGO':
+				$colorseries[$objp->rowid] = $badgeStatus4;
+				break;
+			case 'LOST':
+				$colorseries[$objp->rowid] = $badgeStatus9;
+				break;
+			case 'WON':
+				$colorseries[$objp->rowid] = $badgeStatus6;
+				break;
+			default:
+				$colorseries[$objp->rowid] = $badgeStatus2;
+				break;
+		}
 		$i++;
 	}
-}
-else dol_print_error($db);
-
+} else dol_print_error($db);
+//var_dump($listofoppcode);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -249,8 +292,7 @@ if ($resql)
 		}
 	}
 	print "</table></div><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 $companystatic = new Societe($db); // We need a clean new object for next loop because current one has some properties set.
@@ -260,8 +302,8 @@ $companystatic = new Societe($db); // We need a clean new object for next loop b
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "s.nom", "", "", '', $sortfield, $sortorder);
-print_liste_field_titre("NbOfProjects", "", "", "", "", '', $sortfield, $sortorder, 'right ');
+print_liste_field_titre("OpenedProjectsByThirdparties", $_SERVER["PHP_SELF"], "", "", "", '', $sortfield, $sortorder);
+print_liste_field_titre("NbOfProjects", $_SERVER["PHP_SELF"], "nb", "", "", '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
 
 $sql = "SELECT COUNT(p.rowid) as nb, SUM(p.opp_amount)";
@@ -294,18 +336,18 @@ if ($resql)
 		}
 
 		print '<tr class="oddeven">';
-		print '<td class="nowrap">';
-		if ($obj->socid)
+		print '<td class="nowraponall tdoverflowmax100">';
+		if ($obj->socid > 0)
 		{
 			$companystatic->id = $obj->socid;
 			$companystatic->name = $obj->name;
 			$companystatic->email = $obj->email;
+			$companystatic->client = $obj->client;
+			$companystatic->fournisseur = $obj->fournisseur;
 			$companystatic->status = $obj->status;
 
 			print $companystatic->getNomUrl(1);
-		}
-		else
-		{
+		} else {
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
@@ -329,9 +371,7 @@ if ($resql)
 	}
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 print "</table>";
@@ -340,7 +380,7 @@ print '</div>';
 if (empty($conf->global->PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA))
 {
     // This list can be very long, so we allow to hide it to prefer to use the list page.
-    // Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to show this list
+    // Add constant PROJECT_HIDE_PROJECT_LIST_ON_PROJECT_AREA to hide this list
 
     print '<br>';
 

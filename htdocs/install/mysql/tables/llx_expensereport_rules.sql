@@ -31,4 +31,4 @@ CREATE TABLE llx_expensereport_rules (
   code_expense_rules_type	varchar(50) NOT NULL,
   is_for_all				tinyint DEFAULT 0,
   entity					integer DEFAULT 1
-) ENGINE=InnoDB;
+) ENGINE=innodb;

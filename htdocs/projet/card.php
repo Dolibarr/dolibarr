@@ -102,11 +102,9 @@ if (empty($reshook))
 			{
 				header("Location: index.php");
 				exit;
-			}
-			else
-			{
+			} else {
 				dol_syslog($object->error, LOG_DEBUG);
-				setEventMessages($langs->trans("CantRemoveProject"), null, 'errors');
+				setEventMessages($langs->trans("CantRemoveProject", $langs->transnoentitiesnoconv("ProjectOverview")), null, 'errors');
 			}
 		}
 		if ($backtopage)
@@ -180,14 +178,12 @@ if (empty($reshook))
 				if ($result < 0)
 				{
 					$langs->load("errors");
-					setEventMessages($langs->trans($object->error), null, 'errors');
+					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
 				}
-			}
-			else
-			{
+			} else {
 				$langs->load("errors");
-				setEventMessages($langs->trans($object->error), null, 'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 			if (!$error && !empty($object->id) > 0)
@@ -212,22 +208,16 @@ if (empty($reshook))
 					$backtopage = $backtopage.'&projectid='.$object->id; // Old method
 					header("Location: ".$backtopage);
 					exit;
-				}
-				else
-				{
+				} else {
 					header("Location:card.php?id=".$object->id);
 					exit;
 				}
-			}
-			else
-			{
+			} else {
 				$db->rollback();
 
 				$action = 'create';
 			}
-		}
-		else
-		{
+		} else {
 			$action = 'create';
 		}
 	}
@@ -334,9 +324,7 @@ if (empty($reshook))
 		{
 			$db->rollback();
 			$action = 'edit';
-		}
-		else
-		{
+		} else {
 			$db->commit();
 
 			if (GETPOST('socid', 'int') > 0) $object->fetch_thirdparty(GETPOST('socid', 'int'));
@@ -377,8 +365,7 @@ if (empty($reshook))
 			$ret = dol_delete_file($file, 0, 0, 0, $object);
 			if ($ret)
 				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
-			else
-				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
+			else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
 			$action = '';
 		}
 	}
@@ -420,9 +407,7 @@ if (empty($reshook))
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 			header("Location: list.php?restore_lastsearch_values=1");
 			exit;
-		}
-		else
-		{
+		} else {
 			dol_syslog($object->error, LOG_DEBUG);
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -442,9 +427,7 @@ if (empty($reshook))
 		if ($result <= 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
-		}
-		else
-		{
+		} else {
 			// Load new object
 			$newobject = new Project($db);
 			$newobject->fetch($result);
@@ -558,6 +541,19 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ' checked="checked"').'"> ';
 		$htmltext = $langs->trans("ProjectFollowOpportunity");
 		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+		print '<script>';
+		print '$( document ).ready(function() {
+				jQuery("#usage_opportunity").change(function() {
+					if (jQuery("#usage_opportunity").prop("checked")) {
+						console.log("Show opportunities fields");
+						jQuery(".classuseopportunity").show();
+					} else {
+						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+						jQuery(".classuseopportunity").hide();
+					}
+				});
+			});';
+		print '</script>';
 		print '<br>';
 	}
 	if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -567,7 +563,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 		print '<br>';
 	}
-	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
 	{
 		print '<input type="checkbox" id="usage_bill_time" name="usage_bill_time"'.(GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '').'"> ';
 		$htmltext = $langs->trans("ProjectBillTimeDescription");
@@ -591,13 +587,12 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '</td><td class="maxwidthonsmartphone">';
 		$filteronlist = '';
 		if (!empty($conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST)) $filteronlist = $conf->global->PROJECT_FILTER_FOR_THIRDPARTY_LIST;
-	   	$text = $form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300');
+	   	$text = img_picto('', 'company').$form->select_company(GETPOST('socid', 'int'), 'socid', $filteronlist, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth300 widthcentpercentminusx');
 		if (empty($conf->global->PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS) && empty($conf->dol_use_jmobile))
 		{
 			$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 			print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1);
-		}
-		else print $text;
+		} else print $text;
 		if (!GETPOSTISSET('backtopage')) print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddThirdParty").'"></span></a>';
 		print '</td></tr>';
 	}
@@ -632,27 +627,27 @@ if ($action == 'create' && $user->rights->projet->creer)
 	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	{
 		// Opportunity status
-		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityStatus").'</td>';
 		print '<td class="maxwidthonsmartphone">';
 		print $formproject->selectOpportunityStatus('opp_status', GETPOST('opp_status') ?GETPOST('opp_status') : $object->opp_status);
 		print '</tr>';
 
 		// Opportunity probability
-		print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOST('opp_percent') != '' ?GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
-		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOST('opp_percent') != '' ? '0' : '1').'">';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityProbability").'</td>';
+		print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : '').'"><span class="hideonsmartphone"> %</span>';
+		print '<input type="hidden" name="opp_percent_not_set" id="opp_percent_not_set" value="'.dol_escape_htmltag(GETPOSTISSET('opp_percent') ? '0' : '1').'">';
 		print '</td>';
 		print '</tr>';
 
 		// Opportunity amount
-		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOST('opp_amount') != '' ?GETPOST('opp_amount') : '').'"></td>';
+		print '<tr class="classuseopportunity"><td>'.$langs->trans("OpportunityAmount").'</td>';
+		print '<td><input size="5" type="text" name="opp_amount" value="'.dol_escape_htmltag(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : '').'"></td>';
 		print '</tr>';
 	}
 
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td>';
-	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOST('budget_amount') != '' ?GETPOST('budget_amount') : '').'"></td>';
+	print '<td><input size="5" type="text" name="budget_amount" value="'.dol_escape_htmltag(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : '').'"></td>';
 	print '</tr>';
 
 	// Description
@@ -667,7 +662,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 		print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 		$arrayselected = GETPOST('categories', 'array');
-		print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
 		print "</td></tr>";
 	}
 
@@ -690,9 +685,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	{
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-	}
-	else
-	{
+	} else {
 		print ' &nbsp; &nbsp; ';
 		print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
 	}
@@ -730,8 +723,7 @@ if ($action == 'create' && $user->rights->projet->creer)
         	});
         });
         </script>';
-}
-elseif ($object->id > 0)
+} elseif ($object->id > 0)
 {
 	/*
      * Show or edit
@@ -833,9 +825,22 @@ elseif ($object->id > 0)
 		print '<td>';
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
-			print '<input type="checkbox" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
+			print '<input type="checkbox" id="usage_opportunity" name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectFollowOpportunity");
 			print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
+			print '<script>';
+			print '$( document ).ready(function() {
+				jQuery("#usage_opportunity").change(function() {
+					if (jQuery("#usage_opportunity").prop("checked")) {
+						console.log("Show opportunities fields");
+						jQuery(".classuseopportunity").show();
+					} else {
+						console.log("Hide opportunities fields "+jQuery("#usage_opportunity").prop("checked"));
+						jQuery(".classuseopportunity").hide();
+					}
+				});
+			});';
+			print '</script>';
 			print '<br>';
 		}
 		if (empty($conf->global->PROJECT_HIDE_TASKS))
@@ -845,7 +850,7 @@ elseif ($object->id > 0)
 			print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
 			print '<br>';
 		}
-		if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		if (empty($conf->global->PROJECT_HIDE_TASKS) && !empty($conf->global->PROJECT_BILL_TIME_SPENT))
 		{
 			print '<input type="checkbox" name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
 			$htmltext = $langs->trans("ProjectBillTimeDescription");
@@ -869,8 +874,7 @@ elseif ($object->id > 0)
 			{
 				$texthelp = $langs->trans("IfNeedToUseOtherObjectKeepEmpty");
 				print $form->textwithtooltip($text.' '.img_help(), $texthelp, 1, 0, '', '', 2);
-			}
-			else print $text;
+			} else print $text;
 			print '</td></tr>';
 		}
 
@@ -884,8 +888,9 @@ elseif ($object->id > 0)
 
 		if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
+			$classfortr = ($object->usage_opportunity ? '' : ' hideobject');
 			// Opportunity status
-			print '<tr><td>'.$langs->trans("OpportunityStatus").'</td>';
+			print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityStatus").'</td>';
 			print '<td>';
 			print $formproject->selectOpportunityStatus('opp_status', $object->opp_status, 1, 0, 0, 0, 'inline-block valignmiddle');
 			print '<div id="divtocloseproject" class="inline-block valign" style="display: none;"> &nbsp; &nbsp; ';
@@ -896,15 +901,15 @@ elseif ($object->id > 0)
 			print '</tr>';
 
 		    // Opportunity probability
-		    print '<tr><td>'.$langs->trans("OpportunityProbability").'</td>';
-		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(isset($_POST['opp_percent']) ?GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
+		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityProbability").'</td>';
+		    print '<td><input size="5" type="text" id="opp_percent" name="opp_percent" value="'.(GETPOSTISSET('opp_percent') ? GETPOST('opp_percent') : (strcmp($object->opp_percent, '') ?vatrate($object->opp_percent) : '')).'"> %';
             print '<span id="oldopppercent"></span>';
 		    print '</td>';
 		    print '</tr>';
 
 		    // Opportunity amount
-		    print '<tr><td>'.$langs->trans("OpportunityAmount").'</td>';
-		    print '<td><input size="5" type="text" name="opp_amount" value="'.(isset($_POST['opp_amount']) ?GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ?price2num($object->opp_amount) : '')).'"></td>';
+		    print '<tr class="classuseopportunity'.$classfortr.'"><td>'.$langs->trans("OpportunityAmount").'</td>';
+		    print '<td><input size="5" type="text" name="opp_amount" value="'.(GETPOSTISSET('opp_amount') ? GETPOST('opp_amount') : (strcmp($object->opp_amount, '') ? price2num($object->opp_amount) : '')).'"></td>';
 		    print '</tr>';
 	    }
 
@@ -923,7 +928,7 @@ elseif ($object->id > 0)
 
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td>';
-		print '<td><input size="5" type="text" name="budget_amount" value="'.(isset($_POST['budget_amount']) ?GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ?price($object->budget_amount, 0, $langs, 1, 0) : '')).'"></td>';
+		print '<td><input size="5" type="text" name="budget_amount" value="'.(GETPOSTISSET('budget_amount') ? GETPOST('budget_amount') : (strcmp($object->budget_amount, '') ? price2num($object->budget_amount) : '')).'"></td>';
 		print '</tr>';
 
 		// Description
@@ -936,14 +941,14 @@ elseif ($object->id > 0)
 		// Tags-Categories
 		if ($conf->categorie->enabled)
 		{
-			print '<tr><td class="tdtop">'.$langs->trans("Categories").'</td><td>';
+			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
 			$cate_arbo = $form->select_all_categories(Categorie::TYPE_PROJECT, '', 'parent', 64, 0, 1);
 			$c = new Categorie($db);
 			$cats = $c->containing($object->id, Categorie::TYPE_PROJECT);
 			foreach ($cats as $cat) {
 				$arrayselected[] = $cat->id;
 			}
-			print $form->multiselectarray('categories', $cate_arbo, $arrayselected, '', 0, '', 0, '100%');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
 			print "</td></tr>";
 		}
 
@@ -957,9 +962,7 @@ elseif ($object->id > 0)
 		}
 
 		print '</table>';
-	}
-	else
-	{
+	} else {
 		dol_fiche_head($head, 'project', $langs->trans("Project"), -1, ($object->public ? 'projectpub' : 'project'));
 
 		// Project card
@@ -1085,7 +1088,7 @@ elseif ($object->id > 0)
 
 		// Description
 		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print nl2br($object->description);
+		print dol_htmlentitiesbr($object->description);
 		print '</td></tr>';
 
 		// Categories
@@ -1199,9 +1202,11 @@ elseif ($object->id > 0)
 			}*/
 
 			// Send
-			if ($object->statut != 2)
-			{
-				print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+			if (empty($user->socid)) {
+				if ($object->statut != 2)
+				{
+					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
+				}
 			}
 
 			// Modify
@@ -1210,9 +1215,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Modify').'</a>';
 				}
 			}
@@ -1223,9 +1226,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Validate').'</a>';
 				}
 			}
@@ -1236,9 +1237,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=close">'.$langs->trans("Close").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Close').'</a>';
 				}
 			}
@@ -1249,9 +1248,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ReOpen').'</a>';
 				}
 			}
@@ -1317,9 +1314,7 @@ elseif ($object->id > 0)
 				if ($userWrite > 0)
 				{
 					print '<a class="butAction" href="card.php?id='.$object->id.'&action=clone">'.$langs->trans('ToClone').'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('ToClone').'</a>';
 				}
 			}
@@ -1330,9 +1325,7 @@ elseif ($object->id > 0)
 				if ($userDelete > 0 || ($object->statut == 0 && $user->rights->projet->creer))
 				{
 					print '<a class="butActionDelete" href="card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-				}
-				else
-				{
+				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('Delete').'</a>';
 				}
 			}
@@ -1389,9 +1382,7 @@ elseif ($object->id > 0)
 	// Hook to add more things on page
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('mainCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-}
-else
-{
+} else {
 	print $langs->trans("RecordNotFound");
 }
 

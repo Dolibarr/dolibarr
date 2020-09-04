@@ -58,7 +58,7 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -189,9 +189,7 @@ if (empty($reshook))
     		{
     			setEventMessages($bomline->error, $bomline->errors, 'errors');
     			$action = '';
-    		}
-    		else
-    		{
+    		} else {
     			unset($_POST['idprod']);
     			unset($_POST['qty']);
     			unset($_POST['qty_frozen']);
@@ -207,10 +205,10 @@ if (empty($reshook))
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-		$qty = GETPOST('qty', 'int');
+		$qty = price2num(GETPOST('qty', 'int'));
 		$qty_frozen = GETPOST('qty_frozen', 'int');
 		$disable_stock_change = GETPOST('disable_stock_change', 'int');
-		$efficiency = GETPOST('efficiency', 'int');
+		$efficiency = price2num(GETPOST('efficiency', 'int'));
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -229,13 +227,13 @@ if (empty($reshook))
 		{
 			setEventMessages($bomline->error, $bomline->errors, 'errors');
 			$action = '';
-		}
-		else
-		{
+		} else {
 			unset($_POST['idprod']);
 			unset($_POST['qty']);
 			unset($_POST['qty_frozen']);
 		    unset($_POST['disable_stock_change']);
+
+		    $object->fetchLines();
 		}
 	}
 }
@@ -269,7 +267,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	print load_fiche_titre($langs->trans("NewBOM"), '', 'cubes');
+	print load_fiche_titre($langs->trans("NewBOM"), '', 'bom');
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -536,7 +534,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
-	print '<tr><td>'.$langs->trans("TotalCost").'</td><td>'.price($object->total_cost).'</td></tr>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td>'.price($object->total_cost).'</td></tr>';
 	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
 
 	// Other attributes
@@ -558,7 +556,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (!empty($object->table_element_line))
 	{
-	    print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+	    print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '').'" method="POST">
     	<input type="hidden" name="token" value="' . newToken().'">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
     	<input type="hidden" name="mode" value="">
@@ -614,7 +612,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	if (empty($reshook))
     	{
     	    // Send
-            //print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+    		//if (empty($user->socid)) {
+    		//	print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
+    		//}
 
     		// Back to draft
     		if ($object->status == $object::STATUS_VALIDATED)
@@ -631,9 +631,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    		if ($permissiontoadd)
 	    		{
 	    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
-	    		}
-	    		else
-	    		{
+	    		} else {
 	    			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 	    		}
     		}
@@ -646,9 +644,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    			if (is_array($object->lines) && count($object->lines) > 0)
 	    			{
 	    				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=validate">'.$langs->trans("Validate").'</a>';
-	    			}
-	    			else
-	    			{
+	    			} else {
 	    				$langs->load("errors");
 	    				print '<a class="butActionRefused" href="" title="'.$langs->trans("ErrorAddAtLeastOneLineFirst").'">'.$langs->trans("Validate").'</a>';
 	    			}
@@ -699,9 +695,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     		if ($permissiontodelete)
     		{
     			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
-    		}
-    		else
-    		{
+    		} else {
     			print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Delete').'</a>'."\n";
     		}
     	}

@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2010-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2019      Markus Welters       <markus@welters.de>
+ * Copyright (C) 2019       Markus Welters          <markus@welters.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 /**
  *	\file       htdocs/compta/prelevement/create.php
  *  \ingroup    prelevement
- *	\brief      Prelevement creation page
+ *	\brief      Page to create a direct debit order or a credit transfer order
  */
 
 require '../../main.inc.php';
@@ -42,6 +42,8 @@ $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies', 'bill
 // Security check
 if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'prelevement', '', '', 'bons');
+
+$type = GETPOST('type', 'aZ09');
 
 // Get supervariables
 $action = GETPOST('action', 'alpha');
@@ -75,17 +77,20 @@ if (empty($reshook))
 	}
 	if ($action == 'create')
 	{
-		// $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty
-		$bprev = new BonPrelevement($db);
-	    $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth'), (GETPOST('reday') + $conf->global->PRELEVEMENT_ADDDAYS), GETPOST('reyear'));
-
-	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate);
-		if ($result < 0)
-		{
-			setEventMessages($bprev->error, $bprev->errors, 'errors');
+		$delayindays = 0;
+		if ($type != 'bank-transfer') {
+			$conf->global->PRELEVEMENT_ADDDAYS;
+		} else {
+			$conf->global->PAYMENTBYBANKTRANSFER_ADDDAYS;
 		}
-		elseif ($result == 0)
-		{
+		$bprev = new BonPrelevement($db);
+	    $executiondate = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), (GETPOST('reday', 'int') + $delayindays), GETPOST('reyear', 'int'));
+
+	    // $conf->global->PRELEVEMENT_CODE_BANQUE and $conf->global->PRELEVEMENT_CODE_GUICHET should be empty (we don't use them anymore)
+	    $result = $bprev->create($conf->global->PRELEVEMENT_CODE_BANQUE, $conf->global->PRELEVEMENT_CODE_GUICHET, $mode, $format, $executiondate, 0, $type);
+		if ($result < 0) {
+			setEventMessages($bprev->error, $bprev->errors, 'errors');
+		} elseif ($result == 0) {
 			$mesg = $langs->trans("NoInvoiceCouldBeWithdrawed", $format);
 			setEventMessages($mesg, null, 'errors');
 			$mesg .= '<br>'."\n";
@@ -93,10 +98,15 @@ if (empty($reshook))
 			{
 				$mesg .= '<span class="warning">'.$val."</span><br>\n";
 			}
-		}
-		else
-		{
-			setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+		} else {
+			if ($type != 'bank-transfer') {
+				setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
+			} else {
+				setEventMessages($langs->trans("CreditTransferOrderCreated", $bprev->getNomUrl(1)), null);
+			}
+
+			header("Location: ".DOL_URL_ROOT.'/compta/prelevement/card.php?id='.$bprev->id);
+			exit;
 		}
 	}
 }
@@ -109,7 +119,11 @@ if (empty($reshook))
 $form = new Form($db);
 
 $thirdpartystatic = new Societe($db);
-$invoicestatic = new Facture($db);
+if ($type != 'bank-transfer') {
+	$invoicestatic = new Facture($db);
+} else {
+	$invoicestatic = new FactureFournisseur($db);
+}
 $bprev = new BonPrelevement($db);
 
 llxHeader('', $langs->trans("NewStandingOrder"));
@@ -130,26 +144,34 @@ $h++;
 dol_fiche_head($head, $hselected, $langs->trans("StandingOrders"), 0, 'payment');
 */
 
-print load_fiche_titre($langs->trans("NewStandingOrder"));
+$title = $langs->trans("NewStandingOrder");
+if ($type == 'bank-transfer') {
+	$title = $langs->trans("NewPaymentByBankTransfer");
+}
+
+print load_fiche_titre($title);
 
 dol_fiche_head();
 
-$nb = $bprev->NbFactureAPrelever();
-$nb1 = $bprev->NbFactureAPrelever(1);
-$nb11 = $bprev->NbFactureAPrelever(1, 1);
-$pricetowithdraw = $bprev->SommeAPrelever();
-if ($nb < 0 || $nb1 < 0 || $nb11 < 0)
+$nb = $bprev->nbOfInvoiceToPay($type);
+$pricetowithdraw = $bprev->SommeAPrelever($type);
+if ($nb < 0)
 {
 	dol_print_error($bprev->error);
 }
 print '<table class="border centpercent tableforfield">';
 
-print '<tr><td class="titlefield">'.$langs->trans("NbOfInvoiceToWithdraw").'</td>';
+$title = $langs->trans("NbOfInvoiceToWithdraw");
+if ($type == 'bank-transfer') {
+	$title = $langs->trans("NbOfInvoiceToPayByBankTransfer");
+}
+
+print '<tr><td class="titlefieldcreate">'.$title.'</td>';
 print '<td>';
 print $nb;
 print '</td></tr>';
 
-print '<tr><td>'.$langs->trans("AmountToWithdraw").'</td>';
+print '<tr><td>'.$langs->trans("AmountTotal").'</td>';
 print '<td>';
 print price($pricetowithdraw);
 print '</td>';
@@ -160,37 +182,66 @@ print '</div>';
 
 if ($mesg) print $mesg;
 
-print "<div class=\"tabsAction\">\n";
+print '<div class="tabsAction">'."\n";
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?action=create" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 if ($nb) {
     if ($pricetowithdraw) {
         print $langs->trans('ExecutionDate').' ';
-        print $form->selectDate();
+        $datere = dol_mktime(0, 0, 0, GETPOST('remonth', 'int'), GETPOST('reday', 'int'), GETPOST('reyear', 'int'));
+        print $form->selectDate($datere, 're');
+
         if ($mysoc->isInEEC()) {
-            print '<select name="format"><option value="FRST">'.$langs->trans('SEPAFRST').'</option><option value="RCUR">'.$langs->trans('SEPARCUR').'</option></select>';
-            print '<input class="butAction" type="submit" value="'.$langs->trans("CreateForSepa").'"/>';
+        	$title = $langs->trans("CreateForSepa");
+        	if ($type == 'bank-transfer') {
+        		$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
+        	}
+
+        	if ($type != 'bank-transfer') {
+            	print '<select name="format">';
+            	print '<option value="FRST"'.(GETPOST('format', 'aZ09') == 'FRST' ? ' selected="selected"' : '').'>'.$langs->trans('SEPAFRST').'</option>';
+            	print '<option value="RCUR"'.(GETPOST('format', 'aZ09') == 'RCUR' ? ' selected="selected"' : '').'>'.$langs->trans('SEPARCUR').'</option>';
+            	print '</select>';
+        	}
+            print '<input class="butAction" type="submit" value="'.$title.'"/>';
         } else {
-            print '<a class="butAction"  type="submit" href="create.php?action=create&format=ALL">'.$langs->trans("CreateAll")."</a>\n";
+        	$title = $langs->trans("CreateAll");
+        	if ($type == 'bank-transfer') {
+        		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+        	}
+        	print '<a class="butAction" type="submit" href="create.php?action=create&format=ALL&type='.$type.'">'.$title."</a>\n";
 		}
-	}
-	else
-	{
+	} else {
 		if ($mysoc->isInEEC())
 		{
-			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaFRST")."</a>\n";
-			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateForSepaRCUR")."</a>\n";
-		}
-		else
-		{
-			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("CreateAll")."</a>\n";
+			$title = $langs->trans("CreateForSepaFRST");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateSepaFileForPaymentByBankTransfer");
+			}
+			print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+
+			if ($type != 'bank-transfer') {
+				$title = $langs->trans("CreateForSepaRCUR");
+				print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("AmountMustBePositive").'">'.$title."</a>\n";
+			}
+		} else {
+			$title = $langs->trans("CreateAll");
+			if ($type == 'bank-transfer') {
+				$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+			}
+			print '<a class="butActionRefused classfortooltip" href="#">'.$title."</a>\n";
 		}
 	}
-}
-else
-{
-    print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
+} else {
+	$titlefortab = $langs->transnoentitiesnoconv("StandingOrders");
+	$title = $langs->trans("CreateAll");
+	if ($type == 'bank-transfer') {
+		$titlefortab = $langs->transnoentitiesnoconv("PaymentByBankTransfers");
+		$title = $langs->trans("CreateFileForPaymentByBankTransfer");
+	}
+	print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $titlefortab, $titlefortab)).'">'.$title."</a>\n";
 }
 
 print "</form>\n";
@@ -206,7 +257,11 @@ print '<br>';
 
 $sql = "SELECT f.ref, f.rowid, f.total_ttc, s.nom as name, s.rowid as socid,";
 $sql .= " pfd.date_demande, pfd.amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+if ($type == 'bank-transfer') {
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,";
+} else {
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f,";
+}
 $sql .= " ".MAIN_DB_PREFIX."societe as s,";
 $sql .= " ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.rowid = f.fk_soc";
@@ -215,9 +270,15 @@ if (empty($conf->global->WITHDRAWAL_ALLOW_ANY_INVOICE_STATUS))
 {
 	$sql .= " AND f.fk_statut = ".Facture::STATUS_VALIDATED;
 }
-$sql .= " AND f.total_ttc > 0";
+//$sql .= " AND pfd.amount > 0";
+$sql .= " AND f.total_ttc > 0";		// Avoid credit notes
 $sql .= " AND pfd.traite = 0";
-$sql .= " AND pfd.fk_facture = f.rowid";
+$sql .= " AND pfd.ext_payment_id IS NULL";
+if ($type == 'bank-transfer') {
+	$sql .= " AND pfd.fk_facture_fourn = f.rowid";
+} else {
+	$sql .= " AND pfd.fk_facture = f.rowid";
+}
 if ($socid > 0) $sql .= " AND f.fk_soc = ".$socid;
 
 $nbtotalofrecords = '';
@@ -252,11 +313,20 @@ if ($resql)
 		print '<input type="hidden" name="limit" value="'.$limit.'"/>';
 	}
 
-    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"), $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'invoicing', 0, '', '', $limit);
+	$title = $langs->trans("InvoiceWaitingWithdraw");
+	if ($type == 'bank-transfer') {
+		$title = $langs->trans("InvoiceWaitingPaymentByBankTransfer");
+	}
+    print_barre_liste($title, $page, $_SERVER['PHP_SELF'], $param, '', '', '', $num, $nbtotalofrecords, 'bill', 0, '', '', $limit);
+
+    $tradinvoice = "Invoice";
+    if ($type == 'bank-transfer') {
+    	$tradinvoice = "SupplierInvoice";
+    }
 
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Invoice").'</td>';
+	print '<td>'.$langs->trans($tradinvoice).'</td>';
 	print '<td>'.$langs->trans("ThirdParty").'</td>';
 	print '<td>'.$langs->trans("RIB").'</td>';
 	print '<td>'.$langs->trans("RUM").'</td>';
@@ -273,28 +343,41 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 
+			$bac->fetch(0, $obj->socid);
+
 			print '<tr class="oddeven">';
+
+			// Ref invoice
 			print '<td>';
 			$invoicestatic->id = $obj->rowid;
 			$invoicestatic->ref = $obj->ref;
 			print $invoicestatic->getNomUrl(1, 'withdraw');
 			print '</td>';
+
 			// Thirdparty
 			print '<td>';
 			$thirdpartystatic->fetch($obj->socid);
 			print $thirdpartystatic->getNomUrl(1, 'ban');
 			print '</td>';
+
 			// RIB
 			print '<td>';
-			print $thirdpartystatic->display_rib();
-			$bac->fetch(0, $obj->socid);
+			print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 			if ($bac->verif() <= 0) print img_warning('Error on default bank number for IBAN : '.$bac->error_message);
 			print '</td>';
+
 			// RUM
 			print '<td>';
-			print $thirdpartystatic->display_rib('rum');
-			$format = $thirdpartystatic->display_rib('format');
-			if ($format) print ' ('.$format.')';
+			$rumtoshow = $thirdpartystatic->display_rib('rum');
+			if ($rumtoshow) {
+				print $rumtoshow;
+				$format = $thirdpartystatic->display_rib('format');
+				if ($type != 'bank-transfer') {
+					if ($format) print ' ('.$format.')';
+				}
+			} else {
+				print img_warning($langs->trans("NoBankAccount"));
+			}
 			print '</td>';
 			// Amount
 			print '<td class="right">';
@@ -307,17 +390,13 @@ if ($resql)
 			print '</tr>';
 			$i++;
 		}
-	}
-	else
-	{
+	} else {
 		print '<tr class="oddeven"><td colspan="6"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 	}
 	print "</table>";
 	print "</form>";
 	print "<br>\n";
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

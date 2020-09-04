@@ -41,15 +41,14 @@ if ($actionsave)
 
     $db->begin();
 
-    $i += dolibarr_set_const($db, 'WEBSERVICES_KEY', trim(GETPOST("WEBSERVICES_KEY")), 'chaine', 0, '', $conf->entity);
+    $i += dolibarr_set_const($db, 'WEBSERVICES_KEY', GETPOST("WEBSERVICES_KEY"), 'chaine', 0, '', $conf->entity);
 
     if ($i >= 1)
     {
         $db->commit();
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
     }
-    else
-    {
+    else {
         $db->rollback();
         setEventMessages($langs->trans("Error"), null, 'errors');
     }

@@ -29,14 +29,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("help","members","other","admin"));
+$langs->loadLangs(array("help", "members", "other", "admin"));
 
-$action=GETPOST('action', 'alpha');
+$action = GETPOST('action', 'alpha');
 
-if (! $user->admin) accessforbidden();
+if (!$user->admin) accessforbidden();
 
 $sfurl = '';
-$version='0.0';
+$version = '0.0';
 
 
 /*
@@ -148,9 +148,9 @@ print '</ul>';
 print $langs->trans("Foundation").':';
 
 print '<ul>';
-$url='https://wiki.dolibarr.org/index.php/Subscribe';
-if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
-if (preg_match('/^es_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Subscribirse';
+$url = 'https://wiki.dolibarr.org/index.php/Subscribe';
+if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Adh%C3%A9rer';
+if (preg_match('/^es_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Subscribirse';
 print '<li><a href="'.$url.'" target="_blank" rel="external">'.$langs->trans("SubscribeToFoundation").'</a></li>';
 print '</ul>';
 
@@ -167,13 +167,13 @@ print '</ul>';
 print $langs->trans("OtherResources").':';
 print '<ul>';
 
-$url='https://saas.dolibarr.org'; $title=$langs->trans("OfficialWebHostingService");
-if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
-if (preg_match('/^es_/i', $langs->getDefaultLang())) $url='https://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
+$url = 'https://saas.dolibarr.org'; $title = $langs->trans("OfficialWebHostingService");
+if (preg_match('/^fr_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Solutions_de_Cloud';
+if (preg_match('/^es_/i', $langs->getDefaultLang())) $url = 'https://wiki.dolibarr.org/index.php/Soluciones_en_la_Nube';
 print '<li>';
 print '<a target="_blank" href="'.$url.'" rel="external">'.$title.'</a>';
 print '</li>';
-$url='https://partners.dolibarr.org'; $title=$langs->trans("ReferencedPreferredPartners");
+$url = 'https://partners.dolibarr.org'; $title = $langs->trans("ReferencedPreferredPartners");
 print '<li>';
 print '<a target="_blank" href="'.$url.'" rel="external">'.$title.'</a>';
 print '</li>';
@@ -185,10 +185,10 @@ print '</div>';
 print '<div class="clearboth"></div>';
 
 
-$showpromotemessage=1;
+$showpromotemessage = 1;
 if ($showpromotemessage)
 {
-    $tmp=versiondolibarrarray();
+    $tmp = versiondolibarrarray();
     if (is_numeric($tmp[2]))    // Not alpha, beta or rc
     {
         print '<br>';
@@ -200,9 +200,7 @@ if ($showpromotemessage)
             print '<textarea style="width:80%; min-height: 60px">';
             print $langs->trans("ExampleOfNewsMessageForMajorRelease", DOL_VERSION, DOL_VERSION);
             print '</textarea>';
-        }
-        else
-        {
+        } else {
             print $langs->trans("TitleExampleForMaintenanceRelease").':<br>';
             print '<textarea style="width:80%; min-height: 60px">';
             print $langs->trans("ExampleOfNewsMessageForMaintenanceRelease", DOL_VERSION, DOL_VERSION);

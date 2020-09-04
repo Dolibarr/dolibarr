@@ -84,7 +84,7 @@ $search_montant_vat = GETPOST('search_montant_vat', 'alpha');
 $search_montant_localtax1 = GETPOST('search_montant_localtax1', 'alpha');
 $search_montant_localtax2 = GETPOST('search_montant_localtax2', 'alpha');
 $search_montant_ttc = GETPOST('search_montant_ttc', 'alpha');
-$search_login=GETPOST('search_login', 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
@@ -94,7 +94,7 @@ $search_status = GETPOST('search_status', 'int');
 $search_paymentmode = GETPOST('search_paymentmode', 'int');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_user = GETPOST('search_user', 'int');
@@ -232,7 +232,7 @@ if (empty($reshook))
 		$search_montant_localtax1 = '';
 		$search_montant_localtax2 = '';
 		$search_montant_ttc = '';
-		$search_login='';
+		$search_login = '';
 		$search_multicurrency_code = '';
 		$search_multicurrency_tx = '';
 		$search_multicurrency_montant_ht = '';
@@ -326,7 +326,7 @@ if ($search_user > 0)
 	$sql .= ", ".MAIN_DB_PREFIX."element_contact as ec";
 	$sql .= ", ".MAIN_DB_PREFIX."c_type_contact as tc";
 }
-$sql .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'user AS u ON f.fk_user_author = u.rowid';
+$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= ' WHERE f.fk_soc = s.rowid';
 $sql .= ' AND f.entity IN ('.getEntity('facture_fourn').')';
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
@@ -407,16 +407,15 @@ if (!$search_all)
 	$sql .= " typent.code,";
 	$sql .= " state.code_departement, state.nom,";
 	$sql .= ' country.code,';
-	$sql .= " p.rowid, p.ref, p.title";
+	$sql .= " p.rowid, p.ref, p.title,";
+	$sql .= " u.login";
 	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
 			//prevent error with sql_mode=only_full_group_by
 			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
 		}
 	}
-}
-else
-{
+} else {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
 
@@ -523,11 +522,9 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'invoicing', 0, $newcardbutton, '', $limit);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid ? ' '.$soc->name : ''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_invoice', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendBillRef";
 	$modelmail = "invoice_supplier_send";
@@ -767,7 +764,7 @@ if ($resql)
 		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
-	if (! empty($arrayfields['u.login']['checked']))
+	if (!empty($arrayfields['u.login']['checked']))
 	{
 		// Author
 		print '<td class="liste_titre" align="center">';
@@ -957,6 +954,9 @@ if ($resql)
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
 			$facturestatic->alreadypaid = ($paiement ? $paiement : 0);
+			$facturestatic->paye = $obj->paye;
+			$facturestatic->statut = $obj->fk_statut;
+			$facturestatic->type = $obj->type;
 
 
             //If invoice has been converted and the conversion has been used, we dont have remain to pay on invoice
@@ -1149,7 +1149,7 @@ if ($resql)
 			}
 
 			// Author
-			if (! empty($arrayfields['u.login']['checked']))
+			if (!empty($arrayfields['u.login']['checked']))
 			{
 				$userstatic->id = $obj->fk_user_author;
 				$userstatic->login = $obj->login;
@@ -1228,7 +1228,7 @@ if ($resql)
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 			// Fields from hook
-			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+			$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			// Date creation
@@ -1300,9 +1300,7 @@ if ($resql)
     $title = '';
 
     print $formfile->showdocuments('massfilesarea_supplier_invoice', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

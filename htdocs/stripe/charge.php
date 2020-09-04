@@ -36,13 +36,13 @@ $socid = GETPOST("socid", "int");
 if ($user->socid) $socid = $user->socid;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
 $rowid = GETPOST("rowid", 'alpha');
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -65,9 +65,7 @@ if (!empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETP
 	$service = 'StripeTest';
 	$servicestatus = '0';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), '', 'warning');
-}
-else
-{
+} else {
 	$service = 'StripeLive';
 	$servicestatus = '1';
 }
@@ -85,9 +83,7 @@ if (!$rowid)
 	if ($stripeacc)
 	{
 		$list = \Stripe\Charge::all($option, array("stripe_account" => $stripeacc));
-	}
-	else
-	{
+	} else {
 		$list = \Stripe\Charge::all($option);
 	}
 
@@ -97,7 +93,7 @@ if (!$rowid)
 	$param = '';
 	//if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
-	$param.='&starting_after_'.($page+1).'='.$list->data[($limit-1)]->id;
+	$param .= '&starting_after_'.($page + 1).'='.$list->data[($limit - 1)]->id;
 	//$param.='&ending_before_'.($page+1).'='.$list->data[($limit-1)]->id;
 
 	$moreforfilter = '';
@@ -138,26 +134,26 @@ if (!$rowid)
 			break;
 		}
 
-	    if ($charge->refunded=='1') {
+	    if ($charge->refunded == '1') {
 	    	$status = img_picto($langs->trans("refunded"), 'statut6');
-	    } elseif ($charge->paid=='1') {
+	    } elseif ($charge->paid == '1') {
             $status = img_picto($langs->trans((string) $charge->status), 'statut4');
 	    } else {
 	    	$label = $langs->trans("Message").": ".$charge->failure_message."<br>";
-	    	$label.= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
-	    	$label.= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
+	    	$label .= $langs->trans("Network").": ".$charge->outcome->network_status."<br>";
+	    	$label .= $langs->trans("Status").": ".$langs->trans((string) $charge->outcome->seller_message);
 	    	$status = $form->textwithpicto(img_picto($langs->trans((string) $charge->status), 'statut8'), $label, -1);
 	    }
 
-        if ($charge->payment_method_details->type=='card') {
+        if ($charge->payment_method_details->type == 'card') {
 		    $type = $langs->trans("card");
-	    } elseif ($charge->source->type=='card'){
+	    } elseif ($charge->source->type == 'card') {
 			$type = $langs->trans("card");
-	    } elseif ($charge->payment_method_details->type=='three_d_secure'){
+	    } elseif ($charge->payment_method_details->type == 'three_d_secure') {
 			$type = $langs->trans("card3DS");
-	    } elseif ($charge->payment_method_details->type=='sepa_debit'){
+	    } elseif ($charge->payment_method_details->type == 'sepa_debit') {
 			$type = $langs->trans("sepadebit");
-	    } elseif ($charge->payment_method_details->type=='ideal'){
+	    } elseif ($charge->payment_method_details->type == 'ideal') {
 			$type = $langs->trans("iDEAL");
 	    }
 
@@ -179,21 +175,16 @@ if (!$rowid)
 		if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0)
 		{
 			$societestatic->fetch($tmparray['CUS']);
-		}
-		elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
+		} elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0)
 		{
 			$societestatic->fetch($charge->metadata->dol_thirdparty_id);
-		}
-		else
-		{
+		} else {
 			$societestatic->id = 0;
 		}
 		if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0)
 		{
 			$memberstatic->fetch($tmparray['MEM']);
-		}
-		else
-		{
+		} else {
 			$memberstatic->id = 0;
 		}
 
@@ -231,8 +222,7 @@ if (!$rowid)
 		if ($societestatic->id > 0)
 		{
 			print $societestatic->getNomUrl(1);
-		}
-		elseif ($memberstatic->id > 0)
+		} elseif ($memberstatic->id > 0)
 		{
 			print $memberstatic->getNomUrl(1);
 		}
@@ -240,7 +230,7 @@ if (!$rowid)
 
 		// Origin
 		print "<td>";
-		if ($charge->metadata->dol_type=="order" || $charge->metadata->dol_type=="commande") {
+		if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
 			$object = new Commande($db);
 			$object->fetch($charge->metadata->dol_id);
             if ($object->id > 0) {
@@ -248,7 +238,7 @@ if (!$rowid)
             } else {
                 print $FULLTAG;
             }
-		} elseif ($charge->metadata->dol_type=="invoice" || $charge->metadata->dol_type=="facture") {
+		} elseif ($charge->metadata->dol_type == "invoice" || $charge->metadata->dol_type == "facture") {
 			print $charge->metadata->dol_type.' '.$charge->metadata->dol_id.' - ';
 			$object = new Facture($db);
 			$object->fetch($charge->metadata->dol_id);

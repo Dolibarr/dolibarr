@@ -28,10 +28,10 @@ require '../../main.inc.php';
 $langs->load("bills");
 
 // Security check
-if (! $user->rights->facture->lire)
+if (!$user->rights->facture->lire)
   accessforbidden();
 
-$socid=0;
+$socid = 0;
 if ($user->socid > 0)
 {
     $action = '';
@@ -39,7 +39,7 @@ if ($user->socid > 0)
 }
 
 
-$limit = GETPOST('limit', 'int')?GETPOST('limit', 'int'):$conf->liste_limit;
+$limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
@@ -47,8 +47,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.rowid";
+if (!$sortorder) $sortorder = "DESC";
+if (!$sortfield) $sortfield = "p.rowid";
 
 
 /*
@@ -64,21 +64,21 @@ if (! $sortfield) $sortfield="p.rowid";
 llxHeader();
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
-$sql.=", c.libelle as paiement_type, p.num_paiement as num_payment";
-$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
+$sql .= ", c.libelle as paiement_type, p.num_paiement as num_payment";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 if ($socid)
 {
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
-$sql.= " WHERE p.entity IN (" . getEntity('invoice') . ')';
+$sql .= " WHERE p.entity IN (".getEntity('invoice').')';
 if ($socid)
 {
-    $sql.= " AND f.fk_soc = ".$socid;
+    $sql .= " AND f.fk_soc = ".$socid;
 }
-$sql.= " AND p.statut = 0";
+$sql .= " AND p.statut = 0";
 
-$sql.= $db->order($sortfield, $sortorder);
+$sql .= $db->order($sortfield, $sortorder);
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -93,7 +93,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
     }
 }
 
-$sql.= $db->plimit($limit + 1, $offset);
+$sql .= $db->plimit($limit + 1, $offset);
 
 $resql = $db->query($sql);
 if ($resql)
@@ -126,9 +126,7 @@ if ($resql)
         if ($objp->statut == 0)
         {
             print '<a href="card.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("PaymentStatusToValidShort").'</a>';
-        }
-        else
-        {
+        } else {
             print "-";
         }
 

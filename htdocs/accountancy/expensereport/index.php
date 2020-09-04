@@ -43,8 +43,7 @@ if (!$user->rights->accounting->bind->write)
 
 $month_start = ($conf->global->SOCIETE_FISCAL_MONTH_START ? ($conf->global->SOCIETE_FISCAL_MONTH_START) : 1);
 if (GETPOST("year", 'int')) $year_start = GETPOST("year", 'int');
-else
-{
+else {
 	$year_start = dol_print_date(dol_now(), '%Y');
 	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--; // If current month is lower that starting fiscal month, we start last year
 }
@@ -175,6 +174,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport as er ON er.rowid = erd.fk_e
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 $sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
@@ -190,15 +193,13 @@ if ($resql) {
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
     	for ($i = 2; $i <= 12; $i++) {
             print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -246,6 +247,10 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport as er ON er.rowid = erd.fk_e
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
 $sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NOT NULL";
@@ -261,16 +266,14 @@ if ($resql) {
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("Unknown");
-		}
-		else print length_accountg($row[0]);
+		} else print length_accountg($row[0]);
 		print '</td>';
 
 		print '<td class="left">';
 		if ($row[0] == 'tobind')
 		{
 			print $langs->trans("UseMenuToSetBindindManualy", DOL_URL_ROOT.'/accountancy/expensereport/list.php?search_year='.$y, $langs->transnoentitiesnoconv("ToBind"));
-		}
-		else print $row[1];
+		} else print $row[1];
 		print '</td>';
     	for ($i = 2; $i <= 12; $i++) {
             print '<td class="nowrap right">'.price($row[$i]).'</td>';
@@ -317,6 +320,10 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport as er ON er.rowid = erd.fk_expensereport";
     $sql .= " WHERE er.date_debut >= '".$db->idate($search_date_start)."'";
     $sql .= " AND er.date_debut <= '".$db->idate($search_date_end)."'";
+	// Define begin binding date
+	if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+		$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+	}
     $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
     $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 

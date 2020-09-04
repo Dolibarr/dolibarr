@@ -67,6 +67,15 @@ if ($id > 0 || !empty($ref))
 	$object->getrights();
 }
 
+$account = new UserBankAccount($db);
+if (!$bankid)
+{
+	$account->fetch(0, '', $id);
+} else {
+	$account->fetch($bankid);
+}
+if (empty($account->userid)) $account->userid = $object->id;
+
 
 /*
  *	Actions
@@ -74,9 +83,6 @@ if ($id > 0 || !empty($ref))
 
 if ($action == 'add' && !$cancel)
 {
-	// Modification
-	$account = new UserBankAccount($db);
-
 	$account->userid          = $object->id;
 
 	$account->bank            = GETPOST('bank', 'alpha');
@@ -98,9 +104,7 @@ if ($action == 'add' && !$cancel)
 	{
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
-	}
-	else
-	{
+	} else {
         setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
         $action = '';
 	}
@@ -108,11 +112,6 @@ if ($action == 'add' && !$cancel)
 
 if ($action == 'update' && !$cancel)
 {
-	// Modification
-	$account = new UserBankAccount($db);
-
-    $account->fetch($bankid);
-
     $account->userid = $object->id;
 
 	$account->bank            = GETPOST('bank', 'alpha');
@@ -134,12 +133,26 @@ if ($action == 'update' && !$cancel)
 	{
 		setEventMessages($account->error, $account->errors, 'errors');
 		$action = 'edit'; // Force chargement page edition
-	}
-	else
-	{
+	} else {
         setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
         $action = '';
     }
+}
+
+// update personal email
+if ($action == 'setpersonal_email')
+{
+	$object->personal_email = GETPOST('personal_email');
+	$result = $object->update($user);
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+}
+
+// update personal mobile
+if ($action == 'setpersonal_mobile')
+{
+	$object->personal_mobile = GETPOST('personal_mobile');
+	$result = $object->update($user);
+	if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 
 
@@ -152,18 +165,6 @@ $childids = $user->getAllChildIds(1);
 llxHeader(null, $langs->trans("BankAccounts"));
 
 $head = user_prepare_head($object);
-
-$account = new UserBankAccount($db);
-if (!$bankid)
-{
-    $account->fetch(0, '', $id);
-}
-else
-{
-    $account->fetch($bankid);
-}
-if (empty($account->userid)) $account->userid = $object->id;
-
 
 if ($id && $bankid && $action == 'edit' && $user->rights->user->user->creer)
 {
@@ -206,79 +207,23 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
     print '<td>'.$object->login.'</td>';
     print '</tr>';
 
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer);
+	print '</td><td>';
+	print $form->editfieldval("UserPersonalEmail", 'personal_email', $object->personal_email, $object, $user->rights->user->user->creer, 'email', ($object->personal_email != '' ? dol_print_email($object->personal_email) : ''));
+	print '</td>';
+	print '</tr>';
+
+	print '<tr class="nowrap">';
+	print '<td>';
+	print $form->editfieldkey("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer);
+	print '</td><td>';
+	print $form->editfieldval("UserPersonalMobile", 'personal_mobile', $object->personal_mobile, $object, $user->rights->user->user->creer, 'string', ($object->personal_mobile != '' ? dol_print_phone($object->personal_mobile) : ''));
+	print '</td>';
+	print '</tr>';
+
     print '</table>';
-
-    print '</br>';
-
-    print load_fiche_titre($langs->trans("BAN"));
-
-    print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent tableforfield">';
-
-    print '<tr><td class="titlefield">'.$langs->trans("LabelRIB").'</td>';
-    print '<td>'.$account->label.'</td></tr>';
-
-	print '<tr><td>'.$langs->trans("BankName").'</td>';
-	print '<td>'.$account->bank.'</td></tr>';
-
-	// Show fields of bank account
-	foreach ($account->getFieldsToShow() as $val) {
-		if ($val == 'BankCode') {
-			$content = $account->code_banque;
-		} elseif ($val == 'DeskCode') {
-			$content = $account->code_guichet;
-		} elseif ($val == 'BankAccountNumber') {
-			$content = $account->number;
-		} elseif ($val == 'BankAccountNumberKey') {
-			$content = $account->cle_rib;
-		}
-
-		print '<tr><td>'.$langs->trans($val).'</td>';
-		print '<td colspan="3">'.$content.'</td>';
-		print '</tr>';
-	}
-
-	print '<tr><td class="tdtop">'.$langs->trans("IBAN").'</td>';
-	print '<td>'.$account->iban.'&nbsp;';
-    if (!empty($account->iban)) {
-        if (!checkIbanForAccount($account)) {
-            print img_picto($langs->trans("IbanNotValid"), 'warning');
-        } else {
-            print img_picto($langs->trans("IbanValid"), 'info');
-        }
-    }
-    print '</td></tr>';
-
-	print '<tr><td class="tdtop">'.$langs->trans("BIC").'</td>';
-	print '<td>'.$account->bic.'&nbsp;';
-    if (!empty($account->bic)) {
-        if (!checkSwiftForAccount($account)) {
-            print img_picto($langs->trans("SwiftNotValid"), 'warning');
-        } else {
-            print img_picto($langs->trans("SwiftValid"), 'info');
-        }
-    }
-    print '</td></tr>';
-
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountDomiciliation").'</td><td>';
-	print $account->domiciliation;
-	print "</td></tr>\n";
-
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwner").'</td><td>';
-	print $account->proprio;
-	print "</td></tr>\n";
-
-	print '<tr><td class="tdtop">'.$langs->trans("BankAccountOwnerAddress").'</td><td>';
-	print $account->owner_address;
-	print "</td></tr>\n";
-
-	print '</table>';
-
-	// Check BBAN
-	if ($account->label && !checkBanForAccount($account))
-	{
-		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
-	}
 
 	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
@@ -332,9 +277,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -388,9 +331,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -443,9 +384,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
 			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
 			print "</table>";
-		}
-		else
-		{
+		} else {
 			dol_print_error($db);
 		}
 	}
@@ -455,19 +394,94 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
     dol_fiche_end();
 
-	/*
-	 * Barre d'actions
-	 */
-	print '<div class="tabsAction">';
+	// List of bank accounts (Currently only one bank account possible for each employee)
 
-	if ($user->rights->user->user->creer)
-	{
-		if ($account->id > 0)
-            print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=edit">'.$langs->trans("Edit").'</a>';
-		else
-            print '<a class="butAction" href="bank.php?id='.$object->id.'&bankid='.$account->id.'&action=create">'.$langs->trans("Create").'</a>';
+	$morehtmlright = '';
+	if ($account->id == 0) {
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=create');
 	}
 
+	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank_account');
+
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+	print '<table class="liste centpercent">';
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("LabelRIB");
+	print_liste_field_titre("Bank");
+	print_liste_field_titre("RIB");
+	print_liste_field_titre("IBAN");
+	print_liste_field_titre("BIC");
+	print_liste_field_titre('', $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch ');
+	print "</tr>\n";
+
+	if ($account->id > 0) {
+		print '<tr class="oddeven">';
+		// Label
+		print '<td>'.$account->label.'</td>';
+		// Bank name
+		print '<td>'.$account->bank.'</td>';
+		// Account number
+		print '<td>';
+		$string = '';
+		foreach ($account->getFieldsToShow() as $val) {
+			if ($val == 'BankCode') {
+				$string .= $account->code_banque.' ';
+			} elseif ($val == 'BankAccountNumber') {
+				$string .= $account->number.' ';
+			} elseif ($val == 'DeskCode') {
+				$string .= $account->code_guichet.' ';
+			} elseif ($val == 'BankAccountNumberKey') {
+				$string .= $account->cle_rib.' ';
+			}
+		}
+		if (!empty($account->label) && $account->number) {
+			if (!checkBanForAccount($account)) {
+				$string .= ' '.img_picto($langs->trans("ValueIsNotValid"), 'warning');
+			} else {
+				$string .= ' '.img_picto($langs->trans("ValueIsValid"), 'info');
+			}
+		}
+
+		print $string;
+		print '</td>';
+		// IBAN
+		print '<td>'.$account->iban;
+		if (!empty($account->iban)) {
+			if (!checkIbanForAccount($account)) {
+				print ' '.img_picto($langs->trans("IbanNotValid"), 'warning');
+			}
+		}
+		print '</td>';
+		// BIC
+		print '<td>'.$account->bic;
+		if (!empty($account->bic)) {
+			if (!checkSwiftForAccount($account)) {
+				print ' '.img_picto($langs->trans("SwiftNotValid"), 'warning');
+			}
+		}
+		print '</td>';
+
+		// Edit/Delete
+		print '<td class="right nowraponall">';
+		if ($user->rights->hrm->employee->write || $user->rights->user->creer) {
+			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&bankid='.$account->id.'&action=edit">';
+			print img_picto($langs->trans("Modify"), 'edit');
+			print '</a>';
+		}
+		print '</td>';
+
+		print '</tr>';
+	}
+
+
+	if ($account->id == 0)
+	{
+		$colspan = 6;
+		print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoBANRecord").'</td></tr>';
+	}
+
+	print '</table>';
 	print '</div>';
 }
 

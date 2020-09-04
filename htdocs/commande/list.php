@@ -10,8 +10,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018       Charlene Benke	    <charlie@patas-monkey.com>
-
+ * Copyright (C) 2018       Charlene Benke	        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +65,7 @@ $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $sall = trim((GETPOST('search_all', 'alphanohtml') != '') ?GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
@@ -83,10 +82,10 @@ $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'a
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
-$search_categ_cus = trim(GETPOST("search_categ_cus", 'int'));
+$search_categ_cus = GETPOST("search_categ_cus", 'int');
 $optioncss = GETPOST('optioncss', 'alpha');
 $billed = GETPOST('billed', 'int');
-$viewstatut = GETPOST('viewstatut', 'int');
+$search_status = GETPOST('search_status', 'int');
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
@@ -117,7 +116,7 @@ $hookmanager->initHooks(array('orderlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extrafields->fetch_name_optionals_label('commande');
+$extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // List of fields to search into when doing a "search in all"
@@ -127,6 +126,8 @@ $fieldstosearchall = array(
 	'pd.description'=>'Description',
 	's.nom'=>"ThirdParty",
 	's.name_alias'=>"AliasNameShort",
+	's.zip'=>"Zip",
+	's.town'=>"Town",
 	'c.note_public'=>'NotePublic',
 );
 if (empty($user->socid)) $fieldstosearchall["c.note_private"] = "NotePrivate";
@@ -209,6 +210,7 @@ if (empty($reshook))
 		$search_total_ht = '';
 		$search_total_vat = '';
 		$search_total_ttc = '';
+		$search_warehouse = '';
 		$search_multicurrency_code = '';
 		$search_multicurrency_tx = '';
 		$search_multicurrency_montant_ht = '';
@@ -221,7 +223,7 @@ if (empty($reshook))
 		$search_datedelivery_end = '';
 		$search_project_ref = '';
 		$search_project = '';
-		$viewstatut = '';
+		$search_status = '';
 		$billed = '';
 		$toselect = '';
 		$search_array_options = array();
@@ -308,23 +310,23 @@ if ($search_ref) $sql .= natural_search('c.ref', $search_ref);
 if ($search_ref_customer) $sql .= natural_search('c.ref_client', $search_ref_customer);
 if ($sall) $sql .= natural_search(array_keys($fieldstosearchall), $sall);
 if ($billed != '' && $billed >= 0) $sql .= ' AND c.facture = '.$billed;
-if ($viewstatut <> '')
+if ($search_status <> '')
 {
-	if ($viewstatut < 4 && $viewstatut > -3)
+	if ($search_status < 4 && $search_status > -3)
 	{
-		if ($viewstatut == 1 && empty($conf->expedition->enabled)) $sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
-		else $sql .= ' AND c.fk_statut = '.$viewstatut; // brouillon, validee, en cours, annulee
+		if ($search_status == 1 && empty($conf->expedition->enabled)) $sql .= ' AND c.fk_statut IN (1,2)'; // If module expedition disabled, we include order with status 'sending in process' into 'validated'
+		else $sql .= ' AND c.fk_statut = '.$search_status; // brouillon, validee, en cours, annulee
 	}
-	if ($viewstatut == 4)
+	if ($search_status == 4)
 	{
 		$sql .= ' AND c.facture = 1'; // invoice created
 	}
-	if ($viewstatut == -2)	// To process
+	if ($search_status == -2)	// To process
 	{
 		//$sql.= ' AND c.fk_statut IN (1,2,3) AND c.facture = 0';
 		$sql .= " AND ((c.fk_statut IN (1,2)) OR (c.fk_statut = 3 AND c.facture = 0))"; // If status is 2 and facture=1, it must be selected
 	}
-	if ($viewstatut == -3)	// To bill
+	if ($search_status == -3)	// To bill
 	{
 		//$sql.= ' AND c.fk_statut in (1,2,3)';
 		//$sql.= ' AND c.facture = 0'; // invoice not created
@@ -347,8 +349,8 @@ if ($search_user > 0)                        $sql .= " AND ec.fk_c_type_contact 
 if ($search_total_ht != '')                  $sql .= natural_search('c.total_ht', $search_total_ht, 1);
 if ($search_total_vat != '')                 $sql .= natural_search('c.tva', $search_total_vat, 1);
 if ($search_total_ttc != '')                 $sql .= natural_search('c.total_ttc', $search_total_ttc, 1);
-if ($search_warehouse != '')		             $sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
-if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "' . $db->escape($search_multicurrency_code) . '"';
+if ($search_warehouse != '' && $search_warehouse != '-1') $sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
+if ($search_multicurrency_code != '')        $sql .= ' AND c.multicurrency_code = "'.$db->escape($search_multicurrency_code).'"';
 if ($search_multicurrency_tx != '')          $sql .= natural_search('c.multicurrency_tx', $search_multicurrency_tx, 1);
 if ($search_multicurrency_montant_ht != '')  $sql .= natural_search('c.multicurrency_total_ht', $search_multicurrency_montant_ht, 1);
 if ($search_multicurrency_montant_vat != '') $sql .= natural_search('c.multicurrency_total_tva', $search_multicurrency_montant_vat, 1);
@@ -394,26 +396,24 @@ if ($resql)
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfOrders').' - '.$soc->name;
 		if (empty($search_company)) $search_company = $soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfOrders');
 	}
-	if (strval($viewstatut) == '0')
+	if (strval($search_status) == '0')
 	$title .= ' - '.$langs->trans('StatusOrderDraftShort');
-	if ($viewstatut == 1)
+	if ($search_status == 1)
 	$title .= ' - '.$langs->trans('StatusOrderValidatedShort');
-	if ($viewstatut == 2)
+	if ($search_status == 2)
 	$title .= ' - '.$langs->trans('StatusOrderSentShort');
-	if ($viewstatut == 3)
+	if ($search_status == 3)
 	$title .= ' - '.$langs->trans('StatusOrderToBillShort');
-	if ($viewstatut == 4)
+	if ($search_status == 4)
 	$title .= ' - '.$langs->trans('StatusOrderProcessedShort');
-	if ($viewstatut == -1)
+	if ($search_status == -1)
 	$title .= ' - '.$langs->trans('StatusOrderCanceledShort');
-	if ($viewstatut == -2)
+	if ($search_status == -2)
 	$title .= ' - '.$langs->trans('StatusOrderToProcessShort');
-	if ($viewstatut == -3)
+	if ($search_status == -3)
 	$title .= ' - '.$langs->trans('StatusOrderValidated').', '.(empty($conf->expedition->enabled) ? '' : $langs->trans("StatusOrderSent").', ').$langs->trans('StatusOrderToBill');
 
 	$num = $db->num_rows($resql);
@@ -436,7 +436,7 @@ if ($resql)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
 	if ($sall)						$param .= '&sall='.urlencode($sall);
 	if ($socid > 0)					$param .= '&socid='.urlencode($socid);
-	if ($viewstatut != '')			$param .= '&viewstatut='.urlencode($viewstatut);
+	if ($search_status != '')		$param .= '&search_status='.urlencode($search_status);
 	if ($search_dateorder_start)    $param .= '&search_dateorder_start='.urlencode($search_dateorder_start);
 	if ($search_dateorder_end)      $param .= '&search_dateorder_end='.urlencode($search_dateorder_end);
 	if ($search_datedelivery_start) $param .= '&search_datedelivery_start='.urlencode($search_datedelivery_start);
@@ -497,13 +497,11 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
+	print '<input type="hidden" name="search_status" value="'.$search_status.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'order', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendOrderRef";
 	$modelmail = "order_send";
@@ -542,9 +540,7 @@ if ($resql)
 		{
 			print $form->selectyesno('validate_invoices', 0, 1, 1);
 			print ' ('.$langs->trans("AutoValidationNotPossibleWhenStockIsDecreasedOnInvoiceValidation").')';
-		}
-		else
-		{
+		} else {
 			print $form->selectyesno('validate_invoices', 0, 1);
 		}
 		if (!empty($conf->workflow->enabled) && !empty($conf->global->WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER)) print ' &nbsp; &nbsp; <span class="opacitymedium">'.$langs->trans("IfValidateInvoiceIsNoOrderStayUnbilled").'</span>';
@@ -604,7 +600,7 @@ if ($resql)
 		$moreforfilter .= $formother->select_categories('customer', $search_categ_cus, 'search_categ_cus', 1);
 	 	$moreforfilter .= '</div>';
 	}
-	if (!empty($conf->expedition->enabled) && $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER = 1){
+	if (!empty($conf->expedition->enabled) && !empty($conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER)) {
 		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -814,7 +810,7 @@ if ($resql)
 			-3=>$langs->trans("StatusOrderValidatedShort").'+'.$langs->trans("StatusOrderSentShort").'+'.$langs->trans("StatusOrderDelivered"),
 			Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceledShort")
 		);
-		print $form->selectarray('viewstatut', $liststatus, $viewstatut, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
+		print $form->selectarray('search_status', $liststatus, $search_status, -4, 0, 0, '', 0, 0, 0, '', 'maxwidth100');
 		print '</td>';
 	}
 	// Status billed
@@ -902,6 +898,7 @@ if ($resql)
 		$generic_commande->id = $obj->rowid;
 		$generic_commande->ref = $obj->ref;
 		$generic_commande->statut = $obj->fk_statut;
+		$generic_commande->billed = $obj->billed;
 		$generic_commande->date = $db->jdate($obj->date_commande);
 		$generic_commande->date_livraison = $db->jdate($obj->date_delivery);
 		$generic_commande->ref_client = $obj->ref_client;
@@ -920,11 +917,11 @@ if ($resql)
 		// Ref
 		if (!empty($arrayfields['c.ref']['checked']))
 		{
-			print '<td class="nowrap">';
+			print '<td class="nowraponall">';
 
 			$generic_commande->getLinesArray(); // This set ->lines
 
-			print $generic_commande->getNomUrl(1, ($viewstatut != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
+			print $generic_commande->getNomUrl(1, ($search_status != 2 ? 0 : $obj->fk_statut), 0, 0, 0, 1, 1);
 
 			// Show shippable Icon (create subloop, so may be slow)
 			if ($conf->stock->enabled)
@@ -962,8 +959,7 @@ if ($resql)
 								{
 									$notshippable++;
 								}
-							}
-							else {  // Detailed code, looks bugged
+							} else {  // Detailed code, looks bugged
 								// stock order and stock order_supplier
 								$stock_order = 0;
 								$stock_order_supplier = 0;
@@ -1129,7 +1125,7 @@ if ($resql)
 		if (!empty($arrayfields['typent.code']['checked']))
 		{
 			print '<td class="center">';
-			if (count($typenArray) == 0) $typenArray = $formcompany->typent_array(1);
+			if (empty($typenArray)) $typenArray = $formcompany->typent_array(1);
 			print $typenArray[$obj->typent_code];
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
@@ -1147,7 +1143,7 @@ if ($resql)
 		if (!empty($arrayfields['c.date_delivery']['checked']))
 		{
 			print '<td class="center">';
-			print dol_print_date($db->jdate($obj->date_delivery), 'day');
+			print dol_print_date($db->jdate($obj->date_delivery), 'dayhour');
 			print '</td>';
 			if (!$i) $totalarray['nbfield']++;
 		}
@@ -1226,7 +1222,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -1310,9 +1306,7 @@ if ($resql)
 	$delallowed = $user->rights->commande->creer;
 
 	print $formfile->showdocuments('massfilesarea_orders', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

@@ -59,10 +59,10 @@ $search_user = GETPOST('search_user', 'int');
 $search_sale = GETPOST('search_sale', 'int');
 $search_ref = GETPOST('sf_ref') ?GETPOST('sf_ref', 'alpha') : GETPOST('search_ref', 'alpha');
 $search_societe = GETPOST('search_societe', 'alpha');
-$search_author = GETPOST('search_author', 'alpha');
+$search_login = GETPOST('search_login', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
 $search_zip = GETPOST('search_zip', 'alpha');
-$search_state = trim(GETPOST("search_state"));
+$search_state = GETPOST("search_state");
 $search_country = GETPOST("search_country", 'int');
 $search_type_thirdparty = GETPOST("search_type_thirdparty", 'int');
 $search_montant_ht = GETPOST('search_montant_ht', 'alpha');
@@ -73,7 +73,8 @@ $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
 $search_multicurrency_montant_ht = GETPOST('search_multicurrency_montant_ht', 'alpha');
 $search_multicurrency_montant_vat = GETPOST('search_multicurrency_montant_vat', 'alpha');
 $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 'alpha');
-$search_status = GETPOST('viewstatut', 'alpha') ?GETPOST('viewstatut', 'alpha') : GETPOST('search_status', 'int');
+$search_status = GETPOST('search_status', 'int');
+
 $object_statut = $db->escape(GETPOST('supplier_proposal_statut'));
 $search_btn = GETPOST('button_search', 'alpha');
 $search_remove_btn = GETPOST('button_removefilter', 'alpha');
@@ -214,7 +215,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type = '';
 	$search_country = '';
 	$search_type_thirdparty = '';
-	$search_author = '';
 	$yearvalid = '';
 	$monthvalid = '';
 	$dayvalid = '';
@@ -259,7 +259,7 @@ if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql .= ' s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
 $sql .= " typent.code as typent_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
-$sql .= ' sp.rowid, sp.note_private, sp.total_ht, sp.tva as total_vat, sp.total as total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
+$sql .= ' sp.rowid, sp.note_private, sp.total_ht, sp.tva as total_vat, sp.total as total_ttc, sp.localtax1, sp.localtax2, sp.ref, sp.fk_statut as status, sp.fk_user_author, sp.date_valid, sp.date_livraison as dp,';
 $sql .= ' sp.fk_multicurrency, sp.multicurrency_code, sp.multicurrency_tx, sp.multicurrency_total_ht, sp.multicurrency_total_tva as multicurrency_total_vat, sp.multicurrency_total_ttc,';
 $sql .= ' sp.datec as date_creation, sp.tms as date_update,';
 $sql .= " p.rowid as project_id, p.ref as project_ref,";
@@ -303,7 +303,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$search_type_thirdparty.')';
 if ($search_ref)     $sql .= natural_search('sp.ref', $search_ref);
 if ($search_societe) $sql .= natural_search('s.nom', $search_societe);
-if ($search_author)  $sql .= natural_search('u.login', $search_author);
+if ($search_login)  $sql .= natural_search('u.login', $search_login);
 if ($search_montant_ht) $sql .= natural_search('sp.total_ht=', $search_montant_ht, 1);
 if ($search_montant_vat != '') $sql .= natural_search("sp.tva", $search_montant_vat, 1);
 if ($search_montant_ttc != '') $sql .= natural_search("sp.total", $search_montant_ttc, 1);
@@ -358,9 +358,7 @@ if ($resql)
 		$soc = new Societe($db);
 		$soc->fetch($socid);
 		$title = $langs->trans('ListOfSupplierProposals').' - '.$soc->name;
-	}
-	else
-	{
+	} else {
 		$title = $langs->trans('ListOfSupplierProposals');
 	}
 
@@ -382,27 +380,27 @@ if ($resql)
 	llxHeader('', $langs->trans('CommRequest'), $help_url);
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
-	if ($sall)				 $param .= '&sall='.$sall;
-	if ($month)              $param .= '&month='.$month;
-	if ($year)               $param .= '&year='.$year;
-	if ($search_ref)         $param .= '&search_ref='.$search_ref;
-	if ($search_societe)     $param .= '&search_societe='.$search_societe;
-	if ($search_user > 0)    $param .= '&search_user='.$search_user;
-	if ($search_sale > 0)    $param .= '&search_sale='.$search_sale;
-	if ($search_montant_ht)  $param .= '&search_montant_ht='.$search_montant_ht;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+	if ($sall)				 $param .= '&sall='.urlencode($sall);
+	if ($month)              $param .= '&month='.urlencode($month);
+	if ($year)               $param .= '&year='.urlencode($year);
+	if ($search_ref)         $param .= '&search_ref='.urlencode($search_ref);
+	if ($search_societe)     $param .= '&search_societe='.urlencode($search_societe);
+	if ($search_user > 0)    $param .= '&search_user='.urlencode($search_user);
+	if ($search_sale > 0)    $param .= '&search_sale='.urlencode($search_sale);
+	if ($search_montant_ht)  $param .= '&search_montant_ht='.urlencode($search_montant_ht);
 	if ($search_multicurrency_code != '')  $param .= '&search_multicurrency_code='.urlencode($search_multicurrency_code);
 	if ($search_multicurrency_tx != '')  $param .= '&search_multicurrency_tx='.urlencode($search_multicurrency_tx);
 	if ($search_multicurrency_montant_ht != '')  $param .= '&search_multicurrency_montant_ht='.urlencode($search_multicurrency_montant_ht);
 	if ($search_multicurrency_montant_vat != '')  $param .= '&search_multicurrency_montant_vat='.urlencode($search_multicurrency_montant_vat);
 	if ($search_multicurrency_montant_ttc != '') $param .= '&search_multicurrency_montant_ttc='.urlencode($search_multicurrency_montant_ttc);
-	if ($search_author)  	 $param .= '&search_author='.$search_author;
-	if ($search_town)		 $param .= '&search_town='.$search_town;
-	if ($search_zip)		 $param .= '&search_zip='.$search_zip;
-	if ($socid > 0)          $param .= '&socid='.$socid;
-	if ($search_status != '') $param .= '&search_status='.$search_status;
-	if ($optioncss != '') $param .= '&optioncss='.$optioncss;
+	if ($search_login)  	 $param .= '&search_login='.urlencode($search_login);
+	if ($search_town)		 $param .= '&search_town='.urlencode($search_town);
+	if ($search_zip)		 $param .= '&search_zip='.urlencode($search_zip);
+	if ($socid > 0)          $param .= '&socid='.urlencode($socid);
+	if ($search_status != '') $param .= '&search_status='.urlencode($search_status);
+	if ($optioncss != '') $param .= '&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -430,9 +428,8 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'commercial', 0, $newcardbutton, '', $limit);
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_proposal', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	$topicmail = "SendSupplierProposalRef";
 	$modelmail = "supplier_proposal_send";
@@ -535,7 +532,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_valid']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -546,7 +543,7 @@ if ($resql)
 	// Date
 	if (!empty($arrayfields['sp.date_livraison']['checked']))
 	{
-		print '<td class="liste_titre center" colspan="1">';
+		print '<td class="liste_titre center">';
 		//print $langs->trans('Month').': ';
 		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
@@ -615,7 +612,7 @@ if ($resql)
 	{
 		// Author
 		print '<td class="liste_titre center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_author).'">';
+		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
 	// Extra fields
@@ -696,6 +693,13 @@ if ($resql)
 		$objectstatic->ref = $obj->ref;
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
+		$objectstatic->status = $obj->status;
+
+		// Company
+		$companystatic->id = $obj->socid;
+		$companystatic->name = $obj->name;
+		$companystatic->client = $obj->client;
+		$companystatic->code_client = $obj->code_client;
 
 		print '<tr class="oddeven">';
 
@@ -728,14 +732,6 @@ if ($resql)
 			print "</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
-
-		$url = DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid;
-
-		// Company
-		$companystatic->id = $obj->socid;
-		$companystatic->name = $obj->name;
-		$companystatic->client = $obj->client;
-		$companystatic->code_client = $obj->code_client;
 
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked']))
@@ -880,7 +876,7 @@ if ($resql)
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 		// Date creation
@@ -902,7 +898,7 @@ if ($resql)
 		// Status
 		if (!empty($arrayfields['sp.fk_statut']['checked']))
 		{
-			print '<td class="right">'.$objectstatic->LibStatut($obj->fk_statut, 5)."</td>\n";
+			print '<td class="right">'.$objectstatic->getLibStatut(5)."</td>\n";
 			if (!$i) $totalarray['nbfield']++;
 		}
 
@@ -952,9 +948,7 @@ if ($resql)
 	$delallowed = $user->rights->supplier_proposal->creer;
 
 	print $formfile->showdocuments('massfilesarea_supplier_proposal', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

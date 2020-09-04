@@ -367,8 +367,8 @@ div.cadre td.vide {
 /*Case de tableau contenant les noms dans affichage de sondage*/
 div.cadre td.nom {
 	background-color: #DDDDDD;
-	font-size:12px;
 	text-align:center;
+	padding: 8px;
 }
 div.cadre td.casevide {
 	background-color: white;

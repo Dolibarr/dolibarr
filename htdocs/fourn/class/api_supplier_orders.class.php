@@ -63,16 +63,16 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->lire) {
 			throw new RestException(401);
 		}
 
 		$result = $this->order->fetch($id);
-		if ( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Supplier order not found');
 		}
 
-		if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -108,31 +108,31 @@ class SupplierOrders extends DolibarrApi
 
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+		if (!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
 
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as t";
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as t";
 
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 
-  		if (!empty($product_ids)) $sql.= ", ".MAIN_DB_PREFIX."commande_fournisseurdet as cd"; // We need this table joined to the select in order to filter by product
+  		if (!empty($product_ids)) $sql .= ", ".MAIN_DB_PREFIX."commande_fournisseurdet as cd"; // We need this table joined to the select in order to filter by product
 
-		$sql.= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
-		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND t.fk_soc = sc.fk_soc";
-		if (!empty($product_ids)) $sql.= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$product_ids.")";
-		if ($socids) $sql.= " AND t.fk_soc IN (".$socids.")";
-		if ($search_sale > 0) $sql.= " AND t.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
+		$sql .= ' WHERE t.entity IN ('.getEntity('supplier_order').')';
+		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= " AND t.fk_soc = sc.fk_soc";
+		if (!empty($product_ids)) $sql .= " AND cd.fk_commande = t.rowid AND cd.fk_product IN (".$product_ids.")";
+		if ($socids) $sql .= " AND t.fk_soc IN (".$socids.")";
+		if ($search_sale > 0) $sql .= " AND t.rowid = sc.fk_soc"; // Join for the needed table to filter by sale
 
 		// Filter by status
-		if ($status == 'draft')     $sql.= " AND t.fk_statut IN (0)";
-		if ($status == 'validated') $sql.= " AND t.fk_statut IN (1)";
-		if ($status == 'approved')  $sql.= " AND t.fk_statut IN (2)";
-		if ($status == 'running')   $sql.= " AND t.fk_statut IN (3)";
-		if ($status == 'received_start') $sql.= " AND t.fk_statut IN (4)";
-		if ($status == 'received_end')   $sql.= " AND t.fk_statut IN (5)";
-		if ($status == 'cancelled') $sql.= " AND t.fk_statut IN (6,7)";
-		if ($status == 'refused')   $sql.= " AND t.fk_statut IN (9)";
+		if ($status == 'draft')     $sql .= " AND t.fk_statut IN (0)";
+		if ($status == 'validated') $sql .= " AND t.fk_statut IN (1)";
+		if ($status == 'approved')  $sql .= " AND t.fk_statut IN (2)";
+		if ($status == 'running')   $sql .= " AND t.fk_statut IN (3)";
+		if ($status == 'received_start') $sql .= " AND t.fk_statut IN (4)";
+		if ($status == 'received_end')   $sql .= " AND t.fk_statut IN (5)";
+		if ($status == 'cancelled') $sql .= " AND t.fk_statut IN (6,7)";
+		if ($status == 'refused')   $sql .= " AND t.fk_statut IN (9)";
 		// Insert sale filter
 		if ($search_sale > 0)
 		{
@@ -141,23 +141,23 @@ class SupplierOrders extends DolibarrApi
 		// Add sql filters
 		if ($sqlfilters)
 		{
-			if (! DolibarrApi::_checkFilters($sqlfilters))
+			if (!DolibarrApi::_checkFilters($sqlfilters))
 			{
 				throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
 			}
-			$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
-			$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+			$regexstring = '\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+			$sql .= " AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
 		}
 
-		$sql.= $db->order($sortfield, $sortorder);
-		if ($limit)	{
+		$sql .= $db->order($sortfield, $sortorder);
+		if ($limit) {
 			if ($page < 0)
 			{
 				$page = 0;
 			}
 			$offset = $limit * $page;
 
-			$sql.= $db->plimit($limit + 1, $offset);
+			$sql .= $db->plimit($limit + 1, $offset);
 		}
 
 		$result = $db->query($sql);
@@ -170,16 +170,15 @@ class SupplierOrders extends DolibarrApi
 			{
 				$obj = $db->fetch_object($result);
 				$order_static = new CommandeFournisseur($db);
-				if($order_static->fetch($obj->rowid)) {
+				if ($order_static->fetch($obj->rowid)) {
 					$obj_ret[] = $this->_cleanObjectDatas($order_static);
 				}
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve supplier order list : '.$db->lasterror());
 		}
-		if( ! count($obj_ret)) {
+		if (!count($obj_ret)) {
 			throw new RestException(404, 'No supplier order found');
 		}
 		return $obj_ret;
@@ -188,21 +187,23 @@ class SupplierOrders extends DolibarrApi
 	/**
 	 * Create supplier order object
 	 *
+     * Example: {"ref": "auto", "ref_supplier": "1234", "socid": "1", "multicurrency_code": "SEK", "multicurrency_tx": 1, "tva_tx": 25, "note": "Imported via the REST API"}
+	 *
 	 * @param array $request_data   Request datas
 	 * @return int  ID of supplier order
 	 */
 	public function post($request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401, "Insuffisant rights");
 		}
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
-		foreach($request_data as $field => $value) {
+		foreach ($request_data as $field => $value) {
 			$this->order->$field = $value;
 		}
-		if(! array_keys($request_data, 'date')) {
+		if (!array_keys($request_data, 'date')) {
 			$this->order->date = dol_now();
 		}
 		/* We keep lines as an array
@@ -229,25 +230,25 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function put($id, $request_data = null)
 	{
-		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401);
 		}
 
 		$result = $this->order->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Supplier order not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		foreach($request_data as $field => $value) {
+		foreach ($request_data as $field => $value) {
 			if ($field == 'id') continue;
 			$this->order->$field = $value;
 		}
 
-		if($this->order->update($id, DolibarrApiAccess::$user))
+		if ($this->order->update($id, DolibarrApiAccess::$user))
 			return $this->get($id);
 
 		return false;
@@ -261,19 +262,19 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		if (! DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->supprimer) {
 			throw new RestException(401);
 		}
 		$result = $this->order->fetch($id);
-		if ( ! $result) {
+		if (!$result) {
 			throw new RestException(404, 'Supplier order not found');
 		}
 
-		if ( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if ( $this->order->delete(DolibarrApiAccess::$user) < 0) {
+		if ($this->order->delete(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500);
 		}
 
@@ -306,15 +307,15 @@ class SupplierOrders extends DolibarrApi
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
-		if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
+		if (!DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401);
 		}
 		$result = $this->order->fetch($id);
-		if( ! $result ) {
+		if (!$result) {
 			throw new RestException(404, 'Order not found');
 		}
 
-		if( ! DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
+		if (!DolibarrApi::_checkAccessToResource('fournisseur', $this->order->id, '', 'commande')) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 

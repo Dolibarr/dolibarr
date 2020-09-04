@@ -103,47 +103,40 @@ if ($id > 0 && $removeelem > 0)
 		$tmpobject = new Product($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
-	}
-	elseif ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
+	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier';
-	}
-	elseif ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
+	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
-	}
-	elseif ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
+	} elseif ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
-	}
-	elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
+	} elseif ($type == Categorie::TYPE_CONTACT && $user->rights->societe->creer) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'contact';
-    }
-    elseif ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
+    } elseif ($type == Categorie::TYPE_ACCOUNT && $user->rights->banque->configurer)
     {
         require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
         $tmpobject = new Account($db);
         $result = $tmpobject->fetch($removeelem);
         $elementtype = 'account';
-    }
-    elseif ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
+    } elseif ($type == Categorie::TYPE_PROJECT && $user->rights->projet->creer)
     {
         require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
         $tmpobject = new Project($db);
         $result = $tmpobject->fetch($removeelem);
         $elementtype = 'project';
-    }
-	elseif ($type == Categorie::TYPE_USER && $user->rights->user->user->creer)
+    } elseif ($type == Categorie::TYPE_USER && $user->rights->user->user->creer)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$tmpobject = new User($db);
@@ -161,9 +154,7 @@ if ($user->rights->categorie->supprimer && $action == 'confirm_delete' && $confi
 	{
 		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
 		exit;
-	}
-	else
-	{
+	} else {
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 }
@@ -180,15 +171,11 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 	if ($result >= 0)
 	{
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
-	}
-	else
-	{
+	} else {
 		if ($cat->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			setEventMessages($langs->trans("ObjectAlreadyLinkedToCategory"), null, 'warnings');
-		}
-		else
-		{
+		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
@@ -202,39 +189,30 @@ if ($type == Categorie::TYPE_PRODUCT && $elemid && $action == 'addintocategory' 
 $form = new Form($db);
 $formother = new FormOther($db);
 
-$arrayofjs=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
-$arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
+$arrayofjs = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.js', '/includes/jquery/plugins/jquerytreeview/lib/jquery.cookie.js');
+$arrayofcss = array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css');
 $helpurl = '';
 llxHeader("", $langs->trans("Categories"), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss);
 
-if ($type == Categorie::TYPE_PRODUCT)       { $title=$langs->trans("ProductsCategoriesArea");  $typetext='product'; }
-elseif ($type == Categorie::TYPE_SUPPLIER)  { $title=$langs->trans("SuppliersCategoriesArea"); $typetext='supplier'; }
-elseif ($type == Categorie::TYPE_CUSTOMER)  { $title=$langs->trans("CustomersCategoriesArea"); $typetext='customer'; }
-elseif ($type == Categorie::TYPE_MEMBER)    { $title=$langs->trans("MembersCategoriesArea");   $typetext='member'; }
-elseif ($type == Categorie::TYPE_CONTACT)   { $title=$langs->trans("ContactsCategoriesArea");  $typetext='contact'; }
-elseif ($type == Categorie::TYPE_ACCOUNT)   { $title=$langs->trans("AccountsCategoriesArea");  $typetext='bank_account'; }
-elseif ($type == Categorie::TYPE_PROJECT)   { $title=$langs->trans("ProjectsCategoriesArea");  $typetext='project'; }
-elseif ($type == Categorie::TYPE_USER)      { $title=$langs->trans("UsersCategoriesArea");     $typetext='user'; }
-elseif ($type == Categorie::TYPE_WAREHOUSE) { $title=$langs->trans("StocksCategoriesArea");    $typetext='warehouse'; }
-else                                        { $title=$langs->trans("CategoriesArea");          $typetext='unknown'; }
+$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 $head = categories_prepare_head($object, $type);
 
 
-dol_fiche_head($head, 'card', $title, -1, 'category');
+dol_fiche_head($head, 'card', $langs->trans($title), -1, 'category');
 $backtolist = (GETPOST('backtolist') ? GETPOST('backtolist') : DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
 $linkback = '<a href="'.$backtolist.'">'.$langs->trans("BackToList").'</a>';
-$object->next_prev_filter = ' type = ' . $object->type;
+$object->next_prev_filter = ' type = '.$object->type;
 $object->ref = $object->label;
-$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 $ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 foreach ($ways as $way)
 {
-    $morehtmlref.=$way."<br>\n";
+    $morehtmlref .= $way."<br>\n";
 }
-$morehtmlref.='</div>';
+$morehtmlref .= '</div>';
 
-dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
+dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 
 /*
@@ -250,7 +228,7 @@ print '<br>';
 
 print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
-print '<table width="100%" class="border">';
+print '<table class="border centpercent tableforfield">';
 
 // Description
 print '<tr><td class="titlefield notopnoleft tdtop">';
@@ -293,7 +271,7 @@ if ($user->rights->categorie->supprimer)
 print "</div>";
 
 $newcardbutton = '';
-if (! empty($user->rights->categorie->creer))
+if (!empty($user->rights->categorie->creer))
 {
 	$link = DOL_URL_ROOT.'/categories/card.php';
 	$link .= '?action=create';
@@ -313,7 +291,7 @@ if (! empty($user->rights->categorie->creer))
 
 print '<div class="fichecenter">';
 
-print load_fiche_titre($langs->trans("SubCats"), $newcardbutton);
+print load_fiche_titre($langs->trans("SubCats"), $newcardbutton, 'object_category');
 
 
 print '<table class="liste nohover" width="100%">';
@@ -326,9 +304,9 @@ print '<td class="right">';
 if (!empty($conf->use_javascript_ajax))
 {
 	print '<div id="iddivjstreecontrol">';
-	print '<a class="notasortlink" href="#">'.img_picto('', 'object_category').' '.$langs->trans("UndoExpandAll").'</a>';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder').' '.$langs->trans("UndoExpandAll").'</a>';
 	print " | ";
-	print '<a class="notasortlink" href="#">'.img_picto('', 'object_category-expanded').' '.$langs->trans("ExpandAll").'</a>';
+	print '<a class="notasortlink" href="#">'.img_picto('', 'folder-open').' '.$langs->trans("ExpandAll").'</a>';
 	print '</div>';
 }
 
@@ -339,21 +317,18 @@ $cats = $object->get_filles();
 if ($cats < 0)
 {
 	dol_print_error($db, $cats->error, $cats->errors);
-}
-elseif(count($cats) < 1)
+} elseif (count($cats) < 1)
 {
 	print '<tr class="oddeven">';
 	print '<td colspan="3" class="opacitymedium">'.$langs->trans("NoSubCat").'</td>';
 	print '</tr>';
-}
-else
-{
+} else {
 	$categstatic = new Categorie($db);
 
-	$fulltree = $categstatic->get_full_arbo($typetext, $object->id, 1);
+	$fulltree = $categstatic->get_full_arbo($type, $object->id, 1);
 
 	// Load possible missing includes
-	if($conf->global->CATEGORY_SHOW_COUNTS)
+	if ($conf->global->CATEGORY_SHOW_COUNTS)
 	{
 		if ($type == Categorie::TYPE_MEMBER)	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		if ($type == Categorie::TYPE_ACCOUNT)	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -374,7 +349,7 @@ else
 
 		$counter = 0;
 
-		if($conf->global->CATEGORY_SHOW_COUNTS)
+		if ($conf->global->CATEGORY_SHOW_COUNTS)
 		{
 			// we need only a count of the elements, so it is enough to consume only the id's from the database
 			$elements = $type == Categorie::TYPE_ACCOUNT
@@ -416,9 +391,7 @@ else
 
 		print '</td>';
 		print '</tr>';
-	}
-	else
-	{
+	} else {
 		print '<tr class="pair">';
 		print '<td colspan="3">';
 		print '<table class="nobordernopadding">';
@@ -459,9 +432,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 	if ($prods < 0)
 	{
 		dol_print_error($db, $prods->error, $prods->errors);
-	}
-	else
-	{
+	} else {
 		// Form to add record into a category
 		$showclassifyform = 1;
 		if ($showclassifyform)
@@ -523,9 +494,7 @@ if ($type == Categorie::TYPE_PRODUCT)
 				print '</td>';
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";
@@ -542,9 +511,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 	if ($socs < 0)
 	{
 		dol_print_error($db, $socs->error, $socs->errors);
-	}
-	else
-	{
+	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -584,9 +551,7 @@ if ($type == Categorie::TYPE_SUPPLIER)
 
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";
@@ -603,9 +568,7 @@ if ($type == Categorie::TYPE_CUSTOMER)
 	if ($socs < 0)
 	{
 		dol_print_error($db, $socs->error, $socs->errors);
-	}
-	else
-	{
+	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -644,9 +607,7 @@ if ($type == Categorie::TYPE_CUSTOMER)
 				print '</td>';
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";
@@ -666,9 +627,7 @@ if ($type == Categorie::TYPE_MEMBER)
 	if ($prods < 0)
 	{
 		dol_print_error($db, $prods->error, $prods->errors);
-	}
-	else
-	{
+	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -709,9 +668,7 @@ if ($type == Categorie::TYPE_MEMBER)
 				}
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";
@@ -729,9 +686,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	if ($contacts < 0)
 	{
 		dol_print_error($db, $contacts->error, $contacts->errors);
-	}
-	else
-	{
+	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -744,7 +699,7 @@ if ($type == Categorie::TYPE_CONTACT)
 		$num = count($contacts);
 		$nbtotalofrecords = '';
 		$newcardbutton = '';
-		print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contacts', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("Contact"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'contact', 0, $newcardbutton, '', $limit);
 
 		print '<table class="noborder centpercent">'."\n";
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Ref").'</td></tr>'."\n";
@@ -773,9 +728,7 @@ if ($type == Categorie::TYPE_CONTACT)
 				print '</td>';
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="2" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";
@@ -784,7 +737,7 @@ if ($type == Categorie::TYPE_CONTACT)
 	}
 }
 
-// List of accounts
+// List of bank accounts
 if ($type == Categorie::TYPE_ACCOUNT)
 {
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -795,9 +748,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
     if ($accounts < 0)
     {
         dol_print_error($db, $accounts->error, $accounts->errors);
-    }
-    else
-    {
+    } else {
     	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     	print '<input type="hidden" name="token" value="'.newToken().'">';
     	print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -807,7 +758,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
 
     	print '<br>';
     	$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($accounts); $nbtotalofrecords = ''; $newcardbutton = '';
-    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank', 0, $newcardbutton, '', $limit);
+    	print_barre_liste($langs->trans("Account"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bank_account', 0, $newcardbutton, '', $limit);
 
     	print "<table class='noborder' width='100%'>\n";
         print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
@@ -837,9 +788,7 @@ if ($type == Categorie::TYPE_ACCOUNT)
                 }
                 print "</tr>\n";
             }
-        }
-        else
-        {
+        } else {
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
         }
         print "</table>\n";
@@ -859,9 +808,7 @@ if ($type == Categorie::TYPE_PROJECT)
 	if ($objects < 0)
 	{
 		dol_print_error($db, $object->error, $object->errors);
-	}
-	else
-	{
+	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -902,9 +849,7 @@ if ($type == Categorie::TYPE_PROJECT)
 				}
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";
@@ -922,9 +867,7 @@ if ($type == Categorie::TYPE_USER)
 	if ($users < 0)
 	{
 		dol_print_error($db, $object->error, $object->errors);
-	}
-	else
-	{
+	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -955,16 +898,14 @@ if ($type == Categorie::TYPE_USER)
 				print '<td class="right">';
 				if ($user->rights->user->user->creer)
 				{
-					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid)?'id':'socid')."=".$object->id."&amp;type=".$type."&amp;removeelem=".$userentry->id."'>";
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$type."&amp;removeelem=".$userentry->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
 					print "</a>";
 				}
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";
@@ -985,9 +926,7 @@ if ($type == Categorie::TYPE_WAREHOUSE)
 	if ($objects < 0)
 	{
 		dol_print_error($db, $object->error, $object->errors);
-	}
-	else
-	{
+	} else {
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
@@ -998,7 +937,7 @@ if ($type == Categorie::TYPE_WAREHOUSE)
 		print '<br>';
 		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
 
-		print_barre_liste($langs->trans("Warehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'generic', 0, $newcardbutton, '', $limit);
+		print_barre_liste($langs->trans("Warehouses"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'stock', 0, $newcardbutton, '', $limit);
 
 		print "<table class='noborder' width='100%'>\n";
 		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
@@ -1028,9 +967,7 @@ if ($type == Categorie::TYPE_WAREHOUSE)
 				}
 				print "</tr>\n";
 			}
-		}
-		else
-		{
+		} else {
 			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
 		}
 		print "</table>\n";

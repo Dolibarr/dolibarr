@@ -41,7 +41,14 @@ class MouvementStock extends CommonObject
 	public $table_element = 'stock_mouvement';
 
 
+    /**
+     * @var int ID product
+     */
 	public $product_id;
+
+    /**
+     * @var int ID warehouse
+     */
 	public $warehouse_id;
 	public $qty;
 
@@ -58,7 +65,7 @@ class MouvementStock extends CommonObject
 	public $price;
 
 	/**
-     * @var int ID
+     * @var int ID user author
      */
 	public $fk_user_author;
 
@@ -73,9 +80,14 @@ class MouvementStock extends CommonObject
 	public $fk_origin;
 
 	public $origintype;
+
 	public $inventorycode;
 	public $batch;
 
+	/**
+	 * @var Object		Object set as origin before calling livraison() or reception()
+	 */
+	public $origin;
 
 	public $fields = array(
 		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10, 'showoncombobox'=>1),
@@ -142,7 +154,7 @@ class MouvementStock extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-		$langs->load("errors");
+
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
@@ -384,6 +396,7 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && $entrepot_id > 0)	// Change stock for current product, change for subproduct is done after
 		{
+			// Set $origintype, fk_origin, fk_project
 			$fk_project = 0;
 			if (!empty($this->origin)) {			// This is set by caller for tracking reason
 				$origintype = empty($this->origin->origin_type) ? $this->origin->element : $this->origin->origin_type;
@@ -414,13 +427,13 @@ class MouvementStock extends CommonObject
 			$sql .= " ".($batch ? "'".$batch."'" : "null").", ";
 			$sql .= " ".($eatby ? "'".$this->db->idate($eatby)."'" : "null").", ";
 			$sql .= " ".($sellby ? "'".$this->db->idate($sellby)."'" : "null").", ";
-			$sql .= " ".$this->entrepot_id.", ".$this->qty.", ".$this->type.",";
+			$sql .= " ".$this->entrepot_id.", ".$this->qty.", ".((int) $this->type).",";
 			$sql .= " ".$user->id.",";
 			$sql .= " '".$this->db->escape($label)."',";
 			$sql .= " ".($inventorycode ? "'".$this->db->escape($inventorycode)."'" : "null").",";
-			$sql .= " '".price2num($price)."',";
-			$sql .= " '".$fk_origin."',";
-			$sql .= " '".$origintype."',";
+			$sql .= " ".price2num($price).",";
+			$sql .= " ".$fk_origin.",";
+			$sql .= " '".$this->db->escape($origintype)."',";
 			$sql .= " ".$fk_project;
 			$sql .= ")";
 
@@ -444,7 +457,7 @@ class MouvementStock extends CommonObject
 			$oldpmp = $product->pmp;
 			$oldqtywarehouse = 0;
 
-			// Test if there is already a record for couple (warehouse / product)
+			// Test if there is already a record for couple (warehouse / product), so later we will make an update or create.
 			$alreadyarecord = 0;
 			if (!$error)
 			{
@@ -475,28 +488,34 @@ class MouvementStock extends CommonObject
 			$newpmp = 0;
 			if (!$error)
 			{
-				// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
-				// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
-				if (($type == 0 || $type == 3) && $price > 0)
+				if ($type == 0 || $type == 3)
 				{
-					$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
-					// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
-					if ($oldpmp > 0) $newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
-					else
-					{
-						$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
+					// After a stock increase
+					// Note: PMP is calculated on stock input only (type of movement = 0 or 3). If type == 0 or 3, qty should be > 0.
+					// Note: Price should always be >0 or 0. PMP should be always >0 (calculated on input)
+					if ($price > 0 || (! empty($conf->global->STOCK_UPDATE_AWP_EVEN_WHEN_ENTRY_PRICE_IS_NULL) && $price ==0)) {
+						$oldqtytouse = ($oldqty >= 0 ? $oldqty : 0);
+						// We make a test on oldpmp>0 to avoid to use normal rule on old data with no pmp field defined
+						if ($oldpmp > 0) $newpmp = price2num((($oldqtytouse * $oldpmp) + ($qty * $price)) / ($oldqtytouse + $qty), 'MU');
+						else
+						{
+							$newpmp = $price; // For this product, PMP was not yet set. We set it to input price.
+						}
+						//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
+						//print "qty=".$qty." newpmp=".$newpmp;
+						//exit;
+					} else {
+						$newpmp = $oldpmp;
 					}
-					//print "oldqtytouse=".$oldqtytouse." oldpmp=".$oldpmp." oldqtywarehousetouse=".$oldqtywarehousetouse." ";
-					//print "qty=".$qty." newpmp=".$newpmp;
-					//exit;
 				}
 				elseif ($type == 1 || $type == 2)
 				{
-					// After a stock decrease, we don't change value of PMP for product.
+					// After a stock decrease, we don't change value of the AWP/PMP of a product.
 					$newpmp = $oldpmp;
 				}
 				else
 				{
+					// Type of movement unknown
 					$newpmp = $oldpmp;
 				}
 			}
@@ -546,10 +565,12 @@ class MouvementStock extends CommonObject
 			// Update PMP and denormalized value of stock qty at product level
 			if (!$error)
 			{
+				$newpmp = price2num($newpmp, 'MU');
+
 				// $sql = "UPDATE ".MAIN_DB_PREFIX."product SET pmp = ".$newpmp.", stock = ".$this->db->ifsql("stock IS NULL", 0, "stock") . " + ".$qty;
 				// $sql.= " WHERE rowid = ".$fk_product;
     			// Update pmp + denormalized fields because we change content of produt_stock. Warning: Do not use "SET p.stock", does not works with pgsql
-				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$newpmp.", ";
+				$sql = "UPDATE ".MAIN_DB_PREFIX."product as p SET pmp = ".$newpmp.",";
 				$sql .= " stock=(SELECT SUM(ps.reel) FROM ".MAIN_DB_PREFIX."product_stock as ps WHERE ps.fk_product = p.rowid)";
 				$sql .= " WHERE rowid = ".$fk_product;
 
@@ -900,13 +921,13 @@ class MouvementStock extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock".$error, LOG_ERR);
+				dol_syslog(get_class($this)."::createBatch array param dluo must contain at least key fk_product_stock", LOG_ERR);
 				$result = -1;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::createBatch error invalid param dluo".$error, LOG_ERR);
+			dol_syslog(get_class($this)."::createBatch error invalid param dluo", LOG_ERR);
 			$result = -1;
 		}
 
@@ -1122,20 +1143,16 @@ class MouvementStock extends CommonObject
 		if ($mode == 0 || $mode == 1)
 		{
 			return $langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 2)
+		} elseif ($mode == 2)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 3)
+		} elseif ($mode == 3)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9');
-		}
-		elseif ($mode == 4)
+		} elseif ($mode == 4)
 		{
 			return img_picto($langs->trans('StatusNotApplicable'), 'statut9').' '.$langs->trans('StatusNotApplicable');
-		}
-		elseif ($mode == 5)
+		} elseif ($mode == 5)
 		{
 			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'), 'statut9');
 		}
@@ -1156,6 +1173,7 @@ class MouvementStock extends CommonObject
 		global $conf, $user, $langs;
 
 		$langs->load("stocks");
+		$outputlangs->load("products");
 
 		if (!dol_strlen($modele)) {
 			$modele = 'stdmovement';

@@ -76,7 +76,7 @@ TypeContact_propal_external_BILLING=客户账单联系人
 TypeContact_propal_external_CUSTOMER=跟进报价的客户联系人
 TypeContact_propal_external_SHIPPING=客户联系以便交付
 # Document models
-DocModelAzurDescription=A complete proposal model 
+DocModelAzurDescription=A complete proposal model (old implementation of Cyan template)
 DocModelCyanDescription=A complete proposal model
 DefaultModelPropalCreate=设置默认模板
 DefaultModelPropalToBill=关闭订单时使用的默认模板(待生成账单)
@@ -84,3 +84,4 @@ DefaultModelPropalClosed=关闭订单时使用的默认模板(待付款)
 ProposalCustomerSignature=书面接受,公司盖章,日期和签名
 ProposalsStatisticsSuppliers=Vendor proposals statistics
 CaseFollowedBy=Case followed by
+SignedOnly=Signed only

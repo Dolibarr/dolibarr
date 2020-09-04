@@ -21,7 +21,7 @@
 /**
  * 		\file       htdocs/compta/prelevement/fiche-rejet.php
  *      \ingroup    prelevement
- *		\brief      Withdraw reject
+ *		\brief      Debit order or credit transfer reject
  */
 
 require '../../main.inc.php';
@@ -34,12 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", 'withdrawals', 'bills'));
 
-// Securite acces client
+// Security check
 if ($user->socid > 0) accessforbidden();
 
 // Get supervariables
 $prev_id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
+
+$type = GETPOST('type', 'aZ09');
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ?GETPOST('limit', 'int') : $conf->liste_limit;
@@ -51,8 +53,17 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$object = new BonPrelevement($db, "");
+$object = new BonPrelevement($db);
 
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+
+if (!$user->rights->prelevement->bons->lire && $object->type != 'bank-transfer') {
+	accessforbidden();
+}
+if (!$user->rights->paymentbybanktransfer->read && $object->type == 'bank-transfer') {
+	accessforbidden();
+}
 
 
 
@@ -69,7 +80,7 @@ if ($prev_id > 0 || $ref)
     	$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'rejects', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php'.($object->type != 'bank-transfer' ? '' : '?type=bank-transfer').'">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
@@ -81,13 +92,6 @@ if ($prev_id > 0 || $ref)
 		print '<tr><td class="titlefield">'.$langs->trans("Date").'</td><td>'.dol_print_date($object->datec, 'day').'</td></tr>';
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount).'</td></tr>';
 
-		// Status
-		/*
-		print '<tr><td>'.$langs->trans('Status').'</td>';
-		print '<td>'.$object->getLibStatut(1).'</td>';
-		print '</tr>';
-		*/
-
 		if ($object->date_trans <> 0)
 		{
 			$muser = new User($db);
@@ -95,7 +99,7 @@ if ($prev_id > 0 || $ref)
 
 			print '<tr><td>'.$langs->trans("TransData").'</td><td>';
 			print dol_print_date($object->date_trans, 'day');
-			print ' '.$langs->trans("By").' '.$muser->getFullName($langs).'</td></tr>';
+			print ' <span class="opacitymedium">'.$langs->trans("By").'</span> '.$muser->getFullName($langs).'</td></tr>';
 			print '<tr><td>'.$langs->trans("TransMetod").'</td><td>';
 			print $object->methodes_trans[$object->method_trans];
 			print '</td></tr>';
@@ -118,7 +122,9 @@ if ($prev_id > 0 || $ref)
 		$result = $acc->fetch($conf->global->PRELEVEMENT_ID_BANKACCOUNT);
 
 		print '<tr><td class="titlefield">';
-		print $langs->trans("BankToReceiveWithdraw");
+		$labelofbankfield = "BankToReceiveWithdraw";
+		if ($object->type == 'bank-transfer') $labelofbankfield = 'BankToPayCreditTransfer';
+		print $langs->trans($labelofbankfield);
 		print '</td>';
 		print '<td>';
 		if ($acc->id > 0)
@@ -127,20 +133,23 @@ if ($prev_id > 0 || $ref)
 		print '</tr>';
 
 		print '<tr><td class="titlefield">';
-		print $langs->trans("WithdrawalFile").'</td><td>';
+		$labelfororderfield = 'WithdrawalFile';
+		if ($object->type == 'bank-transfer') $labelfororderfield = 'CreditTransferFile';
+		print $langs->trans($labelfororderfield).'</td><td>';
 		$relativepath = 'receipts/'.$object->ref.'.xml';
-		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
+		$modulepart = 'prelevement';
+		if ($object->type == 'bank-transfer') $modulepart = 'paymentbybanktransfer';
+		print '<a data-ajax="false" href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$relativepath.'</a>';
 		print '</td></tr></table>';
 
 		print '</div>';
 
 		dol_fiche_end();
-    }
-  	else
-    {
+    } else {
       	dol_print_error($db);
     }
 }
+
 
 $rej = new RejetPrelevement($db, $user);
 
@@ -220,10 +229,8 @@ if ($resql)
 
     		$i++;
     	}
-	}
-	else
-	{
-	    print '<tr><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+	} else {
+	    print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	}
 
   	if ($num > 0)
@@ -238,9 +245,7 @@ if ($resql)
     print '</div>';
 
 	$db->free($resql);
-}
-else
-{
+} else {
 	dol_print_error($db);
 }
 

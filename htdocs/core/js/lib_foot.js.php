@@ -21,13 +21,13 @@
  * \brief      File that include javascript functions (included if option use_javascript activated)
  */
 
-if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
-if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
-if (! defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
-if (! defined('NOLOGIN'))         define('NOLOGIN', 1);
-if (! defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
-if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
-if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
+if (!defined('NOREQUIRESOC'))    define('NOREQUIRESOC', '1');
+if (!defined('NOCSRFCHECK'))     define('NOCSRFCHECK', 1);
+if (!defined('NOTOKENRENEWAL'))  define('NOTOKENRENEWAL', 1);
+if (!defined('NOLOGIN'))         define('NOLOGIN', 1);
+if (!defined('NOREQUIREMENU'))   define('NOREQUIREMENU', 1);
+if (!defined('NOREQUIREHTML'))   define('NOREQUIREHTML', 1);
+if (!defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX', '1');
 
 session_cache_limiter('public');
 
@@ -62,7 +62,7 @@ if (empty($conf->dol_no_mouse_hover))
 print '
 jQuery(".classfortooltiponclicktext").dialog(
     { closeOnEscape: true, classes: { "ui-dialog": "highlight" },
-    maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth']-20, 320) : 700).',
+    maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max($_SESSION['dol_screenwidth'] - 20, 320) : 700).',
     modal: true,
     autoOpen: false }).css("z-index: 5000");
 jQuery(".classfortooltiponclick").click(function () {
@@ -79,7 +79,7 @@ print "});\n";
 
 
 // Wrapper to manage dropdown
-if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
+if (!defined('JS_JQUERY_DISABLE_DROPDOWN'))
 {
 	print "\n/* JS CODE TO ENABLE dropdown (hamburger, linkto, ...) */\n";
 	print '
@@ -151,7 +151,7 @@ if (! defined('JS_JQUERY_DISABLE_DROPDOWN'))
 // Wrapper to manage document_preview
 if ($conf->browser->layout != 'phone')
 {
-	print "\n/* JS CODE TO ENABLE document_preview */\n";	// Function document_preview is into header
+	print "\n/* JS CODE TO ENABLE document_preview */\n"; // Function document_preview is into header
 	print '
                 jQuery(document).ready(function () {
 			        jQuery(".documentpreview").click(function () {
@@ -184,7 +184,8 @@ print '
 					{
 						if (this.href)
 						{
-							this.href=this.href+\'&page_y=\'+page_y;
+							var hrefarray = this.href.split("#", 2);
+							this.href=hrefarray[0]+\'&page_y=\'+page_y;
 							console.log("We click on tag with .reposition class. this.ref is now "+this.href);
 						}
 						else

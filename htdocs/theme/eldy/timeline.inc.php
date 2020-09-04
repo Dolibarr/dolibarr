@@ -154,7 +154,7 @@ a.timeline-btn:hover
     border-radius: 50%;
     text-align: center;
     left: 18px;
-    top: 0;
+    top: 5px;
 }
 .timeline > .time-label > span {
     font-weight: 600;

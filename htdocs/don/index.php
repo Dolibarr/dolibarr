@@ -85,7 +85,7 @@ if ($result)
     dol_print_error($db);
 }
 
-print load_fiche_titre($langs->trans("DonationsArea"), '', 'invoicing');
+print load_fiche_titre($langs->trans("DonationsArea"), '', 'object_donation');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -246,8 +246,7 @@ if ($resql)
         }
     }
     print "</table><br>";
-}
-else dol_print_error($db);
+} else dol_print_error($db);
 
 
 print '</div></div></div>';

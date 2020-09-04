@@ -108,13 +108,14 @@ class Contacts extends DolibarrApi
 	 * @param int		$limit		        Limit for list
 	 * @param int		$page		        Page number
 	 * @param string   	$thirdparty_ids	    Thirdparty ids to filter contacts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param  int    	$category   Use this param to filter list by category
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param int       $includecount       Count and return also number of elements the contact is used as a link for
 	 * @return array                        Array of contact objects
      *
 	 * @throws RestException
      */
-    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $includecount = 0)
+    public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $category = 0, $sqlfilters = '', $includecount = 0)
     {
 		global $db, $conf;
 
@@ -135,6 +136,9 @@ class Contacts extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
+    	if ($category > 0) {
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c";
+    	}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			// We need this table joined to the select in order to filter by sale
@@ -153,6 +157,13 @@ class Contacts extends DolibarrApi
 		{
 			$sql .= " AND sc.fk_user = ".$search_sale;
 		}
+
+    	// Select contacts of given category
+    	if ($category > 0) {
+			$sql .= " AND c.fk_categorie = ".$db->escape($category);
+			$sql .= " AND c.fk_socpeople = t.rowid ";
+    	}
+
 	    // Add sql filters
         if ($sqlfilters)
         {
@@ -197,8 +208,7 @@ class Contacts extends DolibarrApi
 
 				$i++;
 			}
-		}
-		else {
+		} else {
 			throw new RestException(503, 'Error when retrieve contacts : '.$sql);
 		}
 		if (!count($obj_ret))

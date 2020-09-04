@@ -24,7 +24,7 @@
 --
 -- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
 -- de l''install et tous les sigles '--' sont supprimés.
--- Not: To replace a string thas is '__, 0' inot a increasing num, you can use vi with comment
+-- Note: To replace a string thas is '__, 0' into an increasing number, you can use vi with comment
 -- :let @a=1 | %s/__, 0/\='__, '.(@a+setreg('a',@a+1))/g
 --                                                         
 

@@ -32,11 +32,11 @@ require '../main.inc.php';
 $langs->load("externalsite");
 
 
-$mainmenu=GETPOST('mainmenu', "aZ09");
-$leftmenu=GETPOST('leftmenu', "aZ09");
-$idmenu=GETPOST('idmenu', 'int');
-$theme=GETPOST('theme', 'alpha');
-$codelang=GETPOST('lang', 'aZ09');
+$mainmenu = GETPOST('mainmenu', "aZ09");
+$leftmenu = GETPOST('leftmenu', "aZ09");
+$idmenu = GETPOST('idmenu', 'int');
+$theme = GETPOST('theme', 'alpha');
+$codelang = GETPOST('lang', 'aZ09');
 $keyforcontent = GETPOST('keyforcontent', 'aZ09');
 
 
@@ -52,30 +52,26 @@ if (empty($keyforcontent) && empty($conf->global->EXTERNALSITE_URL))
 	exit;
 }
 
-if (! empty($keyforcontent))
+if (!empty($keyforcontent))
 {
 	llxHeader();
 
-	print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight']-90).'px">';
+	print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight'] - 90).'px">';
 
-	if (! preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent)
-		 && ! preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
+	if (!preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent)
+		 && !preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
 	{
 		$langs->load("errors");
 		print $langs->trans("ErrorBadSyntaxForParamKeyForContent", 'EXTERNAL_SITE_CONTENT_', 'EXTERNAL_SITE_URL_');
-	}
-	elseif (empty($conf->global->$keyforcontent))
+	} elseif (empty($conf->global->$keyforcontent))
 	{
 		$langs->load("errors");
 		print $langs->trans("ErrorVariableKeyForContentMustBeSet", 'EXTERNAL_SITE_CONTENT_'.$keyforcontent, 'EXTERNAL_SITE_URL_'.$keyforcontent);
-	}
-	else
-	{
+	} else {
 		if (preg_match('/EXTERNAL_SITE_CONTENT_/', $keyforcontent))
 		{
 			print $conf->global->$keyforcontent;
-		}
-		elseif (preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
+		} elseif (preg_match('/EXTERNAL_SITE_URL_/', $keyforcontent))
 		{
 			/*print "
 			<html>
@@ -114,9 +110,7 @@ if (! empty($keyforcontent))
 
 	print '<div>';
 	llxFooter();
-}
-else
-{
+} else {
 	if (preg_match('/^\//', $conf->global->EXTERNALSITE_URL) || preg_match('/^http/i', $conf->global->EXTERNALSITE_URL))
 	{
 		print "
@@ -125,8 +119,8 @@ else
 	<title>Dolibarr frame for external web site</title>
 	</head>
 
-	<frameset ".(empty($conf->global->MAIN_MENU_INVERT)?"rows":"cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
-	    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme?'&theme='.$theme:'').($codelang?'&lang='.$codelang:'')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
+	<frameset ".(empty($conf->global->MAIN_MENU_INVERT) ? "rows" : "cols")."=\"".$heightforframes.",*\" border=0 framespacing=0 frameborder=0>
+	    <frame name=\"barre\" src=\"frametop.php?mainmenu=".$mainmenu."&leftmenu=".$leftmenu."&idmenu=".$idmenu.($theme ? '&theme='.$theme : '').($codelang ? '&lang='.$codelang : '')."&nobackground=1\" noresize scrolling=\"NO\" noborder>
 	  ";
 		print '<frame name="main" src="';
 		print $conf->global->EXTERNALSITE_URL;
@@ -150,11 +144,9 @@ else
 
 	</html>
 	";
-	}
-	else
-	{
+	} else {
 		llxHeader();
-		print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight']-90).'px">';
+		print '<div class="framecontent" style="height: '.($_SESSION['dol_screenheight'] - 90).'px">';
 		print $conf->global->EXTERNALSITE_URL;
 		print '<div>';
 		llxFooter();

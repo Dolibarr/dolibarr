@@ -86,7 +86,7 @@ if ($user->socid > 0)	// Protection if external user
 //$result = restrictedArea($user, 'emailcollector', $id, '');
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -170,7 +170,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 
-$help_url="EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
+$help_url = "EN:Module_EMail_Collector|FR:Module_Collecteur_de_courrier_électronique|ES:Module_EMail_Collector";
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("EmailCollector"));
 
 
@@ -209,7 +209,7 @@ $sql .= $hookmanager->resPrint;
 
 /* If a group by is required
 $sql.= " GROUP BY "
-foreach($object->fields as $key => $val)
+foreach ($object->fields as $key => $val)
 {
 	$sql.='t.'.$key.', ';
 }
@@ -241,9 +241,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
 	$num = $nbtotalofrecords;
-}
-else
-{
+} else {
 	$sql .= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -326,7 +324,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', 'emailcollector_card.php?action=create&backtopage='.urlencode($_SERVER['PHP_SELF']));
 //}
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton.' '.$linkback, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'email', 0, $newcardbutton.' '.$linkback, '', $limit);
 
 // Add code for pre mass action (confirmation or email presend form)
 /*$topicmail="";
@@ -334,12 +332,6 @@ $modelmail="";
 $objecttmp=new EmailCollector($db);
 $trackid='xxxx'.$object->id;*/
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-
-if ($sall)
-{
-	foreach ($fieldstosearchall as $key => $val) $fieldstosearchall[$key] = $langs->trans($val);
-	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall).join(', ', $fieldstosearchall).'</div>';
-}
 
 $moreforfilter = '';
 /*$moreforfilter.='<div class="divsearchfield">';
@@ -476,7 +468,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column

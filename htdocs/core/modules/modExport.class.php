@@ -24,7 +24,7 @@
  *	\brief      Fichier de description et activation du module export
  */
 
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -62,7 +62,7 @@ class modExport extends DolibarrModules
 		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array();
-		$this->phpmin = array(4,2,0);
+		$this->phpmin = array(4, 2, 0);
 		$this->phpmax = array();
 
 		// Constants
@@ -74,7 +74,7 @@ class modExport extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'export';
-		$r=0;
+		$r = 0;
 
 		$r++;
 		$this->rights[$r][0] = 1201;
@@ -93,6 +93,6 @@ class modExport extends DolibarrModules
 
 		// Menus
 		//-------
-		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 	}
 }

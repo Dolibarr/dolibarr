@@ -316,8 +316,7 @@ class SMTPs
 
         if ($_part === true)
         $_retValue = $this->_errorsTo;
-        else
-        $_retValue = $this->_errorsTo[$_part];
+        else $_retValue = $this->_errorsTo[$_part];
 
         return $_retValue;
     }
@@ -373,9 +372,7 @@ class SMTPs
         {
             $this->_setErr(99, $host.' is either offline or is an invalid host name.');
             $_retVal = false;
-        }
-        else
-        {
+        } else {
             //See if we can connect to the SMTP server
             if ($this->socket = @fsockopen(
                 preg_replace('@tls://@i', '', $this->getHost()), // Host to 'hit', IP or domain
@@ -395,8 +392,7 @@ class SMTPs
                 $_retVal = $this->socket;
             }
             // This connection attempt failed.
-            else
-            {
+            else {
                 // @CHANGE LDR
                 if (empty($this->errstr)) $this->errstr = 'Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
                 $this->_setErr($this->errno, $this->errstr);
@@ -428,7 +424,7 @@ class SMTPs
         $host = preg_replace('@ssl://@i', '', $host); // Remove prefix
         $host = preg_replace('@tls://@i', '', $host); // Remove prefix
 
-        if ($usetls) $host = 'tls://'.$host;
+		if ($usetls && ! empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) $host = 'tls://'.$host;
 
         $hosth = $host;
 
@@ -521,9 +517,7 @@ class SMTPs
             if (!$_retVal) {
                 $this->_setErr(130, 'Invalid Authentication Credentials.');
 			}
-        }
-        else
-        {
+        } else {
             $this->_setErr(126, '"'.$host.'" does not support authenticated connections.');
         }
 
@@ -533,12 +527,9 @@ class SMTPs
     /**
      * Now send the message
      *
-     * @param  boolean $_bolTestMsg  whether to run this method in 'Test' mode.
-     * @param  boolean $_bolDebug    whether to log all communication between this Class and the Mail Server.
-     * @return boolean|null   void
-     *                 $_strMsg      If this is run in 'Test' mode, the actual message structure will be returned
+     * @return boolean|null   Result
      */
-    public function sendMsg($_bolTestMsg = false, $_bolDebug = false)
+    public function sendMsg()
     {
         global $conf;
 
@@ -558,8 +549,7 @@ class SMTPs
             }
 
             // This is a "normal" SMTP Server "handshack"
-            else
-            {
+            else {
                 // Send the RFC821 specified HELO.
                 $host = $this->getHost();
                 $usetls = preg_match('@tls://@i', $host);
@@ -567,6 +557,8 @@ class SMTPs
                 $host = preg_replace('@tcp://@i', '', $host); // Remove prefix
                 $host = preg_replace('@ssl://@i', '', $host); // Remove prefix
                 $host = preg_replace('@tls://@i', '', $host); // Remove prefix
+
+                if ($usetls && ! empty($conf->global->MAIN_SMTPS_ADD_TLS_TO_HOST_FOR_HELO)) $host = 'tls://'.$host;
 
                 $hosth = $host;
 
@@ -685,8 +677,7 @@ class SMTPs
         }
 
         // Read the Systems php.ini file
-        else
-        {
+        else {
             // Set these properties ONLY if they are set in the php.ini file.
             // Otherwise the default values will be used.
             if ($_host = ini_get('SMTPs'))
@@ -953,8 +944,7 @@ class SMTPs
 
         if ($_part === true)
         $_retValue = $this->_msgFrom;
-        else
-        $_retValue = $this->_msgFrom[$_part];
+        else $_retValue = $this->_msgFrom[$_part];
 
         return $_retValue;
     }
@@ -983,8 +973,7 @@ class SMTPs
 
         if ($_part === true)
             $_retValue = $this->_msgReplyTo;
-        else
-            $_retValue = $this->_msgReplyTo[$_part];
+        else $_retValue = $this->_msgReplyTo[$_part];
 
         return $_retValue;
     }
@@ -1018,8 +1007,7 @@ class SMTPs
                 $_addrList = explode(',', $_addrList);
 
                 // Stick it in an array
-                else
-                $_addrList = array($_addrList);
+                else $_addrList = array($_addrList);
             }
 
             // take the array of addresses and split them further
@@ -1040,8 +1028,7 @@ class SMTPs
                     $aryHost[$_tmpHost[1]][$_type][$_tmpHost[0]] = $_tmpaddr[0];
                 }
                 // We only have an eMail address
-                else
-                {
+                else {
                     // Strip off the beggining '<'
                     $_strAddr = str_replace('<', '', $_strAddr);
 
@@ -1097,9 +1084,7 @@ class SMTPs
             $_aryEmail['real'] = trim($_tmpAry[0], ' ">');
 
             $_aryEmail['addr'] = $_tmpAry[1];
-        }
-        else
-        $_aryEmail['addr'] = $_tmpAry[0];
+        } else $_aryEmail['addr'] = $_tmpAry[0];
 
         // Pull User Name and Host.tld apart
         list($_aryEmail['user'], $_aryEmail['host']) = explode('@', $_aryEmail['addr']);
@@ -1170,9 +1155,7 @@ class SMTPs
                             {
                                 $_realName = '"'.$_realName.'"';
                                 $_RCPT_list[] = $_realName.' <'.$_addr.'@'.$_host.'>';
-                            }
-                            else
-                            {
+                            } else {
                                 $_RCPT_list[] = $_addr.'@'.$_host;
                             }
                         }
@@ -1180,15 +1163,11 @@ class SMTPs
                 }
 
                 return implode(', ', $_RCPT_list);
-            }
-            else
-            {
+            } else {
                 $this->_setErr(101, 'No eMail Address for message to be sent to.');
                 return false;
             }
-        }
-        else
-        {
+        } else {
             $this->_setErr(102, 'eMail type not defined.');
             return false;
         }
@@ -1321,9 +1300,7 @@ class SMTPs
             $_header .= 'Message-ID: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
             $_header .= 'References: <'.time().'.SMTPs-dolibarr-'.$trackid.'@'.$host.">\r\n";
             $_header .= 'X-Dolibarr-TRACKID: '.$trackid.'@'.$host."\r\n";
-        }
-        else
-        {
+        } else {
             $_header .= 'Message-ID: <'.time().'.SMTPs@'.$host.">\r\n";
         }
         if (!empty($_SERVER['REMOTE_ADDR'])) $_header .= "X-RemoteAddr: ".$_SERVER['REMOTE_ADDR']."\r\n";
@@ -1370,8 +1347,7 @@ class SMTPs
         //{
         if ($strType == 'html')
         $strMimeType = 'text/html';
-        else
-        $strMimeType = 'text/plain';
+        else $strMimeType = 'text/plain';
 
         // Make RFC821 Compliant, replace bare linefeeds
         $strContent = preg_replace("/(?<!\r)\n/si", "\r\n", $strContent);
@@ -1379,9 +1355,10 @@ class SMTPs
         $strContentAltText = '';
         if ($strType == 'html')
         {
-            // Similar code to forge a text from html is also in CMailFile.class.php
-            $strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContent);
-            $strContentAltText = html_entity_decode(strip_tags($strContentAltText));
+        	// Similar code to forge a text from html is also in CMailFile.class.php
+        	$strContentAltText = preg_replace('/<head><title>.*<\/style><\/head>/', '', $strContent);
+        	$strContentAltText = preg_replace("/<br\s*[^>]*>/", " ", $strContentAltText);
+        	$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
             $strContentAltText = trim(wordwrap($strContentAltText, 75, "\r\n"));
         }
 
@@ -1509,12 +1486,10 @@ class SMTPs
                     }
 
                     // always end related and end alternative after inline images
-                    $content .= "--".$this->_getBoundary('related')."--"."\r\n";
-                    $content .= "\r\n"."--".$this->_getBoundary('alternative')."--"."\r\n";
+                    $content .= "--".$this->_getBoundary('related')."--\r\n";
+                    $content .= "\r\n--".$this->_getBoundary('alternative')."--\r\n";
                     $content .= "\r\n";
-                }
-                else
-                {
+                } else {
                     if (key_exists('image', $this->_msgContent))
                     {
                         $content .= "Content-Type: text/plain; charset=".$this->getCharSet()."\r\n";
@@ -1536,34 +1511,25 @@ class SMTPs
                            $content .= "--".$this->_getBoundary('alternative')."\r\n";
                     }
 
-                    $content .= 'Content-Type: '.$_content['mimeType'].'; '
-                    //                             . 'charset="' . $this->getCharSet() . '"';
-                    . 'charset='.$this->getCharSet().'';
+                    $content .= 'Content-Type: '.$_content['mimeType'].'; charset='.$this->getCharSet();
 
-                    //                    $content .= ( $type == 'html') ? '; name="HTML Part"' : '';
                     $content .= "\r\n";
-                    //                    $content .= 'Content-Transfer-Encoding: ';
-                    //                    $content .= ($type == 'html') ? 'quoted-printable' : $this->getTransEncodeType();
-                    //                    $content .=  "\r\n"
-                    //                             . 'Content-Disposition: inline'  . "\r\n"
-                    //                             . 'Content-Description: ' . $type . ' message' . "\r\n";
 
-                    if ($this->getMD5flag())
-                    $content .= 'Content-MD5: '.$_content['md5']."\r\n";
+                    if ($this->getMD5flag()) {
+                    	$content .= 'Content-MD5: '.$_content['md5']."\r\n";
+                    }
 
                     $content .= "\r\n".$_content['data']."\r\n";
 
                     if (!key_exists('image', $this->_msgContent) && $_content['dataText'] && !empty($conf->global->MAIN_MAIL_USE_MULTI_PART))  // Add plain text message part after html part
                     {
-                        $content .= "--".$this->_getBoundary('alternative')."--"."\r\n";
+                        $content .= "--".$this->_getBoundary('alternative')."--\r\n";
                     }
 
                     $content .= "\r\n";
                 }
             }
 
-            // Close message boundries
-            //            $content .= "\r\n--" . $this->_getBoundary() . '--' . "\r\n" ;
             $content .= "--".$this->_getBoundary('mixed').'--'."\r\n";
         }
 

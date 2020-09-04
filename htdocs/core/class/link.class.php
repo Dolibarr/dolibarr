@@ -123,23 +123,17 @@ class Link extends CommonObject
                 dol_syslog(get_class($this)."::Create success id=".$this->id);
                 $this->db->commit();
                 return $this->id;
-            }
-            else
-            {
+            } else {
                 dol_syslog(get_class($this)."::Create echec update ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -3;
             }
-        }
-        else
-        {
+        } else {
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
                 $this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
                 $result = -1;
-            }
-            else
-            {
+            } else {
                 $this->error = $this->db->lasterror();
                 $result = -2;
             }
@@ -211,17 +205,13 @@ class Link extends CommonObject
                 $this->db->rollback();
                 return -1;
             }
-        }
-        else
-        {
+        } else {
             if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
             {
                 // Doublon
                 $this->error = $langs->trans("ErrorDuplicateField");
                 $result = -1;
-            }
-            else
-            {
+            } else {
                 $this->error = $langs->trans("Error sql = ".$sql);
                 $result = -2;
             }
@@ -342,9 +332,7 @@ class Link extends CommonObject
                 $this->objecttype = $obj->objecttype;
                 $this->objectid = $obj->objectid;
                 return 1;
-            }
-            else
-			{
+            } else {
                 return 0;
             }
         } else {

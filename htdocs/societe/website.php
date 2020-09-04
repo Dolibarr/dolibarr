@@ -76,7 +76,7 @@ $search_array_options = $extrafields->getOptionalsFromPost($objectwebsiteaccount
 unset($objectwebsiteaccount->fields['fk_soc']); // Remove this field, we are already on the thirdparty
 
 // Initialize array of search criterias
-$search_all = trim(GETPOST("search_all", 'alpha'));
+$search_all = GETPOST("search_all", 'alpha');
 $search = array();
 foreach ($objectwebsiteaccount->fields as $key => $val)
 {
@@ -449,6 +449,8 @@ while ($i < min($num, $limit))
 
 	// Store properties in $object
 	$objectwebsiteaccount->id = $obj->rowid;
+	$objectwebsiteaccount->login = $obj->login;
+	$objectwebsiteaccount->ref = $obj->login;
 	foreach ($objectwebsiteaccount->fields as $key => $val)
 	{
 		if (property_exists($obj, $key)) $object->$key = $obj->$key;
@@ -481,7 +483,7 @@ while ($i < min($num, $limit))
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $objectwebsiteaccount); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Action column

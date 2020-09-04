@@ -36,7 +36,7 @@ abstract class ModeleNumRefTakepos
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
+	public $error = '';
 
 
 	public $version = '';

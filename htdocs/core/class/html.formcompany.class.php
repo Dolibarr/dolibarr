@@ -3,6 +3,7 @@
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2020       Open-Dsi         	<support@open-dsi.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,10 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
+
+/**
+ * Class of forms component to manage companies
+ */
 class FormCompany extends Form
 {
 
@@ -162,10 +167,61 @@ class FormCompany extends Form
 			}
 
 			print Form::selectarray($htmlname, $options, $selected);
-		}
-		else dol_print_error($this->db);
+		} else dol_print_error($this->db);
 		if (!empty($htmlname) && $user->admin) print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		print '</form>';
+	}
+
+	/**
+	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
+	 *
+	 *  @param	int		$page        	Page
+	 *  @param  int		$selected    	Id or code preselected
+	 *  @param  string	$htmlname   	Nom du formulaire select
+	 *	@param	int		$empty			Add empty value in list
+	 *	@return	void
+	 */
+	public function formProspectContactLevel($page, $selected = '', $htmlname = 'prospect_contact_level_id', $empty = 0)
+	{
+		global $user, $langs;
+
+		print '<form method="post" action="' . $page . '">';
+		print '<input type="hidden" name="action" value="setprospectcontactlevel">';
+		print '<input type="hidden" name="token" value="' . newToken() . '">';
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$sql = "SELECT code, label";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_prospectcontactlevel";
+		$sql .= " WHERE active > 0";
+		$sql .= " ORDER BY sortorder";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$options = array();
+
+			if ($empty)
+			{
+				$options[''] = '';
+			}
+
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				$level = $langs->trans($obj->code);
+
+				if ($level == $obj->code)
+				{
+					$level = $langs->trans($obj->label);
+				}
+
+				$options[$obj->code] = $level;
+			}
+
+			print Form::selectarray($htmlname, $options, $selected);
+		}
+		else dol_print_error($this->db);
+		if (!empty($htmlname) && $user->admin) print ' ' . info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
+		print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("Modify") . '">';
 		print '</form>';
 	}
 
@@ -237,8 +293,7 @@ class FormCompany extends Form
 					if ($obj->code == '0')		// Le code peut etre une chaine
 					{
 						$out .= '<option value="0">&nbsp;</option>';
-					}
-					else {
+					} else {
 						if (!$country || $country != $obj->country)
 						{
 							// Affiche la rupture si on est en mode liste multipays
@@ -252,9 +307,7 @@ class FormCompany extends Form
 						if (!empty($selected) && $selected == $obj->rowid)
 						{
 							$out .= '<option value="'.$obj->rowid.'" selected>';
-						}
-						else
-						{
+						} else {
 							$out .= '<option value="'.$obj->rowid.'">';
 						}
 
@@ -263,16 +316,13 @@ class FormCompany extends Form
 						($conf->global->MAIN_SHOW_STATE_CODE == 1 || $conf->global->MAIN_SHOW_STATE_CODE == 2 || $conf->global->MAIN_SHOW_STATE_CODE === 'all')) {
 							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
 								$out .= $obj->region_name.' - '.$obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
-							}
-							else {
+							} else {
 								$out .= $obj->code.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
-						}
-						else {
+						} else {
 							if (!empty($conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT) && $conf->global->MAIN_SHOW_REGION_IN_STATE_SELECT == 1) {
 								$out .= $obj->region_name.' - '.($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
-							}
-							else {
+							} else {
 								$out .= ($langs->trans($obj->code) != $obj->code ? $langs->trans($obj->code) : ($obj->name != '-' ? $obj->name : ''));
 							}
 						}
@@ -284,9 +334,7 @@ class FormCompany extends Form
 			}
 			if (!empty($htmlname)) $out .= '</select>';
 			if (!empty($htmlname) && $user->admin) $out .= ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -338,8 +386,7 @@ class FormCompany extends Form
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->code == 0) {
 						print '<option value="0">&nbsp;</option>';
-					}
-					else {
+					} else {
 						if ($country == '' || $country != $obj->country)
 						{
 							// Show break
@@ -352,9 +399,7 @@ class FormCompany extends Form
 						if ($selected > 0 && $selected == $obj->code)
 						{
 							print '<option value="'.$obj->code.'" selected>'.$obj->label.'</option>';
-						}
-						else
-						{
+						} else {
 							print '<option value="'.$obj->code.'">'.$obj->label.'</option>';
 						}
 					}
@@ -362,9 +407,7 @@ class FormCompany extends Form
 				}
 			}
 			print '</select>';
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 	}
@@ -376,9 +419,10 @@ class FormCompany extends Form
 	 *  @param  string	$selected   	Civility/Title code preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
 	 *  @param  string  $morecss        Add more css on SELECT element
+	 *  @param	int		$addjscombo		Add js combo
 	 *  @return	string					String with HTML select
 	 */
-	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth100')
+	public function select_civility($selected = '', $htmlname = 'civility_id', $morecss = 'maxwidth150', $addjscombo = 0)
 	{
         // phpcs:enable
 		global $conf, $langs, $user;
@@ -405,12 +449,10 @@ class FormCompany extends Form
 					if ($selected == $obj->code)
 					{
 						$out .= '<option value="'.$obj->code.'" selected>';
-					}
-					else
-					{
+					} else {
 						$out .= '<option value="'.$obj->code.'">';
 					}
-					// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
+					// If translation exists, we use it, otherwise, we use tha had coded label
 					$out .= ($langs->trans("Civility".$obj->code) != "Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->label != '-' ? $obj->label : ''));
 					$out .= '</option>';
 					$i++;
@@ -418,9 +460,13 @@ class FormCompany extends Form
 			}
 			$out .= '</select>';
 			if ($user->admin) $out .= info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-		}
-		else
-		{
+
+			if ($addjscombo) {
+				// Enhance with select2
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$out .= ajax_combobox($htmlname);
+			}
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -479,7 +525,7 @@ class FormCompany extends Form
 		if ($resql)
 		{
 			$out .= '<div id="particulier2" class="visible">';
-			$out .= '<select class="flat minwidth200'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
+			$out .= '<select class="flat minwidth200'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($country_codeid) $out .= '<option value="0">&nbsp;</option>'; // When country_codeid is set, we force to add an empty line because it does not appears from select. When not set, we already get the empty line from select.
 
 			$num = $this->db->num_rows($resql);
@@ -521,9 +567,7 @@ class FormCompany extends Form
 					if ($selected > 0 && $selected == $val['code'])
 					{
 						$out .= '<option value="'.$val['code'].'" selected>';
-					}
-					else
-					{
+					} else {
 						$out .= '<option value="'.$val['code'].'">';
 					}
 					// If translation exists, we use it, otherwise we use default label in database
@@ -539,9 +583,7 @@ class FormCompany extends Form
 	        $out .= ajax_combobox($htmlname);
 
 			$out .= '</div>';
-		}
-		else
-		{
+		} else {
 			dol_print_error($this->db);
 		}
 
@@ -648,9 +690,7 @@ class FormCompany extends Form
 			print '<input type="text" size="30" id="search_'.$htmlname.'" name="search_'.$htmlname.'" value="'.$name.'" />';
 			print ajax_autocompleter(($socid ? $socid : -1), $htmlname, DOL_URL_ROOT.'/societe/ajaxcompanies.php', '', $minLength, 0);
 			return $socid;
-		}
-		else
-		{
+		} else {
 			// Search to list thirdparties
 			$sql = "SELECT s.rowid, s.nom as name FROM";
 			$sql .= " ".MAIN_DB_PREFIX."societe as s";
@@ -688,9 +728,7 @@ class FormCompany extends Form
 							if ($disabled) print ' disabled';
 							print ' selected>'.dol_trunc($obj->name, 24).'</option>';
 							$firstCompany = $obj->rowid;
-						}
-						else
-						{
+						} else {
 							print '<option value="'.$obj->rowid.'"';
 							if ($disabled) print ' disabled';
 							print '>'.dol_trunc($obj->name, 24).'</option>';
@@ -701,9 +739,7 @@ class FormCompany extends Form
 				print "</select>\n";
 				print ajax_combobox($htmlname);
 				return $firstCompany;
-			}
-			else
-			{
+			} else {
 				dol_print_error($this->db);
 				return 0;
 			}
@@ -845,8 +881,7 @@ class FormCompany extends Form
         			elseif ($idprof == 3) $formlength = 5; // 4 chiffres et 1 lettre depuis janvier
         			elseif ($idprof == 4) $formlength = 32; // No maximum as we need to include a town name in this id
         		}
-        	}
-        	elseif ($country_code == 'ES')
+        	} elseif ($country_code == 'ES')
         	{
         		if ($idprof == 1) $formlength = 9; //CIF/NIF/NIE 9 digits
         		if ($idprof == 2) $formlength = 12; //NASS 12 digits without /
@@ -869,8 +904,8 @@ class FormCompany extends Form
         $out = '';
 
         // Execute hook getInputIdProf to complete or replace $out
-        $parameters=array('formlength'=>$formlength, 'selected'=>$preselected, 'idprof'=>$idprof, 'htmlname'=>$htmlname, 'country_code'=>$country_code);
-        $reshook=$hookmanager->executeHooks('getInputIdProf', $parameters);
+        $parameters = array('formlength'=>$formlength, 'selected'=>$preselected, 'idprof'=>$idprof, 'htmlname'=>$htmlname, 'country_code'=>$country_code);
+        $reshook = $hookmanager->executeHooks('getInputIdProf', $parameters);
         if (empty($reshook))
         {
         	$out .= '<input type="text" '.($morecss ? 'class="'.$morecss.'" ' : '').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
@@ -909,9 +944,7 @@ class FormCompany extends Form
     				if ($selected == $valors[$i])
     				{
     					print '<option value="'.$valors[$i].'" selected>';
-    				}
-    				else
-    				{
+    				} else {
     					print '<option value="'.$valors[$i].'">';
     				}
     				print $valors[$i];
@@ -953,11 +986,11 @@ class FormCompany extends Form
 	    	$out .= '<option value="0"'.((string) $selected == '0' ? ' selected' : '').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
     	} elseif ($typeinput == 'list') {
     		$out .= '<option value="-1"'.(($selected == '' || $selected == '-1') ? ' selected' : '').'>&nbsp;</option>';
-    		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
-    			$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
-    		}
     		if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) {
     			$out .= '<option value="2,3"'.($selected == '2,3' ? ' selected' : '').'>'.$langs->trans('Prospect').'</option>';
+    		}
+    		if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+    			$out .= '<option value="1,3"'.($selected == '1,3' ? ' selected' : '').'>'.$langs->trans('Customer').'</option>';
     		}
     		$out .= '<option value="4"'.($selected == '4' ? ' selected' : '').'>'.$langs->trans('Supplier').'</option>';
     		$out .= '<option value="0"'.($selected == '0' ? ' selected' : '').'>'.$langs->trans('Other').'</option>';

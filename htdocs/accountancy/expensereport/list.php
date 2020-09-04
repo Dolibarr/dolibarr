@@ -28,6 +28,7 @@
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -35,18 +36,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "trips", "productbatch"));
+$langs->loadLangs(array("bills", "companies", "compta", "accountancy", "other", "trips", "productbatch", "hrm"));
 
 $action = GETPOST('action', 'alpha');
 $massaction = GETPOST('massaction', 'alpha');
 $show_files = GETPOST('show_files', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'myobjectlist'; // To manage different context of search
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+
 
 // Select Box
 $mesCasesCochees = GETPOST('toselect', 'array');
 
 // Search Getpost
+$search_login = GETPOST('search_login', 'alpha');
 $search_lineid = GETPOST('search_lineid', 'alpha');
 $search_expensereport = GETPOST('search_expensereport', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
@@ -97,6 +102,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers
 {
+    $search_login = '';
     $search_expensereport = '';
     $search_label = '';
     $search_desc = '';
@@ -135,9 +141,7 @@ if ($massaction == 'ventil') {
             {
                 $msg .= '<div><font color="red">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</font></div>';
                 $ko++;
-            }
-            else
-            {
+            } else {
                 $sql = " UPDATE ".MAIN_DB_PREFIX."expensereport_det";
                 $sql .= " SET fk_code_ventilation = ".$monCompte;
                 $sql .= " WHERE rowid = ".$monId;
@@ -183,16 +187,25 @@ if (empty($chartaccountcode))
 }
 
 // Expense report lines
-$sql = "SELECT er.ref, er.rowid as erid, er.date_debut,";
+$sql = "SELECT er.ref, er.rowid as erid, er.date_debut, er.date_valid,";
 $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht as price, erd.fk_code_ventilation, erd.tva_tx as tva_tx_line, erd.vat_src_code, erd.date,";
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label, f.accountancy_code as code_buy,";
+$sql .= " u.rowid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
 $sql .= " aa.rowid as aarowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$chartaccountcode."' AND aa.entity = ".$conf->entity;
 $sql .= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
+// Define begin binding date
+if (!empty($conf->global->ACCOUNTING_DATE_START_BINDING)) {
+	$sql .= " AND er.date_debut >= '".$db->idate($conf->global->ACCOUNTING_DATE_START_BINDING)."'";
+}
 // Add search filter like
+if (strlen(trim($search_login))) {
+    $sql .= natural_search("u.login", $search_login);
+}
 if (strlen(trim($search_expensereport))) {
     $sql .= natural_search("er.ref", $search_expensereport);
 }
@@ -240,8 +253,9 @@ if ($result) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
+	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.urlencode($limit);
+    if ($search_login)       $param .= '&search_login='.urlencode($search_login);
 	if ($search_lineid)      $param .= '&search_lineid='.urlencode($search_lineid);
 	if ($search_day)         $param .= '&search_day='.urlencode($search_day);
 	if ($search_month)       $param .= '&search_month='.urlencode($search_month);
@@ -286,8 +300,12 @@ if ($result) {
 
 	// We add search filter
 	print '<tr class="liste_titre_filter">';
+    print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
+	if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+		print '<td class="liste_titre"></td>';
+	}
 	print '<td class="liste_titre center nowraponall minwidth100imp">';
    	if (!empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat valignmiddle maxwidth25" type="text" maxlength="2" name="search_month" value="'.$search_month.'">';
@@ -306,9 +324,13 @@ if ($result) {
 	print '</tr>';
 
 	print '<tr class="liste_titre">';
+    print_liste_field_titre("Employee", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	print_liste_field_titre("DateOfLine", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
 	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right maxwidth50 ');
@@ -322,6 +344,7 @@ if ($result) {
 
 
 	$expensereport_static = new ExpenseReport($db);
+	$userstatic = new User($db);
 	$form = new Form($db);
 
 	while ($i < min($num_lines, $limit)) {
@@ -333,13 +356,34 @@ if ($result) {
 		$expensereport_static->ref = $objp->ref;
 		$expensereport_static->id = $objp->erid;
 
-		print '<tr class="oddeven">';
+        $userstatic->id = $objp->rowid;
+        $userstatic->ref = $objp->label;
+        $userstatic->login = $objp->login;
+        $userstatic->statut = $objp->statut;
+        $userstatic->email = $objp->email;
+        $userstatic->gender = $objp->gender;
+        $userstatic->firstname = $objp->firstname;
+        $userstatic->lastname = $objp->lastname;
+        $userstatic->employee = $objp->employee;
+        $userstatic->photo = $objp->photo;
+
+        print '<tr class="oddeven">';
+
+        // Login
+        print '<td class="nowraponall">';
+        print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
+        print '</td>';
 
 		// Line id
 		print '<td>'.$objp->rowid.'</td>';
 
 		// Ref Expense report
 		print '<td>'.$expensereport_static->getNomUrl(1).'</td>';
+
+		// Date validation
+		if (! empty($conf->global->ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE)) {
+			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
+		}
 
 		// Date
 		print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
@@ -356,6 +400,7 @@ if ($result) {
 		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 		print '</td>';
 
+        // Amount without taxes
 		print '<td class="nowrap right">';
 		print price($objp->price);
 		print '</td>';

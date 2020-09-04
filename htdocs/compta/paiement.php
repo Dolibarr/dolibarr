@@ -107,7 +107,7 @@ if (empty($reshook))
 			if (substr($key, 0, 7) == 'amount_' && GETPOST($key) != '')
 	        {
 	            $cursorfacid = substr($key, 7);
-	            $amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $amounts[$cursorfacid] = price2num(GETPOST($key));
 	            $totalpayment = $totalpayment + $amounts[$cursorfacid];
 	            if (!empty($amounts[$cursorfacid])) $atleastonepaymentnotnull++;
 	            $result = $tmpinvoice->fetch($cursorfacid);
@@ -131,11 +131,10 @@ if (empty($reshook))
 	            }
 
 	            $formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => $_POST[$key]);
-	        }
-			elseif (substr($key, 0, 21) == 'multicurrency_amount_')
+	        } elseif (substr($key, 0, 21) == 'multicurrency_amount_')
 			{
 				$cursorfacid = substr($key, 21);
-	            $multicurrency_amounts[$cursorfacid] = price2num(trim(GETPOST($key)));
+	            $multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
 	            $multicurrency_totalpayment += $multicurrency_amounts[$cursorfacid];
 	            if (!empty($multicurrency_amounts[$cursorfacid])) $atleastonepaymentnotnull++;
 	            $result = $tmpinvoice->fetch($cursorfacid);
@@ -312,9 +311,7 @@ if (empty($reshook))
 	        else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
 	        header('Location: '.$loc);
 	        exit;
-	    }
-	    else
-	    {
+	    } else {
 	        $db->rollback();
 	    }
 	}
@@ -357,11 +354,11 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		}
 
 		// Invoice with Paypal transaction
-		// TODO add hook possibility (regis)
-		if (!empty($conf->paypalplus->enabled) && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_int))
+		// TODO add hook here
+		if (!empty($conf->paypalplus->enabled) && $conf->global->PAYPAL_ENABLE_TRANSACTION_MANAGEMENT && !empty($facture->ref_ext))
 		{
 			if (!empty($conf->global->PAYPAL_BANK_ACCOUNT)) $accountid = $conf->global->PAYPAL_BANK_ACCOUNT;
-			$paymentnum = $facture->ref_int;
+			$paymentnum = $facture->ref_ext;
 		}
 
 		// Add realtime total information
@@ -503,9 +500,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
             print '<td>';
             $form->select_comptes($accountid, 'accountid', 0, '', 2);
             print '</td>';
-        }
-        else
-        {
+        } else {
             print '<td>&nbsp;</td>';
         }
         print "</tr>\n";
@@ -560,9 +555,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         if ($facture->type != Facture::TYPE_CREDIT_NOTE)
         {
             $sql .= ' AND type IN (0,1,3,5)'; // Standard invoice, replacement, deposit, situation
-        }
-        else
-        {
+        } else {
             $sql .= ' AND type = 2'; // If paying back a credit note, we show all credit notes
         }
         // Sort invoices by date and serial number: the older one comes first
@@ -665,9 +658,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                         }
 
                         print '</td>';
-                    }
-                    else
-                    {
+                    } else {
                         print '<td align="center"></td>';
                     }
 
@@ -710,9 +701,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
     				    			print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $multicurrency_remaintopay)."'");
    				    			print '<input type="text" class="maxwidth75 multicurrency_amount" name="'.$namef.'" value="'.$_POST[$namef].'">';
    				    			print '<input type="hidden" class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-    				    	}
-    				    	else
-    				    	{
+    				    	} else {
     				    		print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.$_POST[$namef].'" disabled>';
     				    		print '<input type="hidden" name="'.$namef.'" value="'.$_POST[$namef].'">';
     				    	}
@@ -746,9 +735,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							print img_picto("Auto fill", 'rightarrow', "class='AutoFillAmout' data-rowname='".$namef."' data-value='".($sign * $remaintopay)."'");
                         print '<input type="text" class="maxwidth75 amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                         print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-                    }
-                    else
-                    {
+                    } else {
                         print '<input type="text" class="maxwidth75" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
                         print '<input type="hidden" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">';
                     }
@@ -803,9 +790,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 //print "</td></tr>\n";
             }
             $db->free($resql);
-        }
-        else
-		{
+        } else {
             dol_print_error($db);
         }
 

@@ -8,6 +8,7 @@ ALL:
 Check "@CHANGE"
 
 
+
 PrestaShopWebservice:
 ---------------------
 Replace
@@ -24,6 +25,19 @@ Replace:
 	body { ... margin: 20px;
 With
 	body { ... margin: 5px;
+
+
+
+DEBUGBAR:
+---------
+
+Move
+    this.options = {
+                bodyMarginBottom: true,
+                bodyMarginBottomHeight: parseInt($('body').css('margin-bottom')),
+    };
+few line lower in the  
+	initialize: function() {
 
 
 
@@ -104,6 +118,27 @@ with
 				//return false;	
 			}
 			
+* Replace in tcpdf.php
+
+		if (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+
+with
+
+		// @CHANGE LDR Add support for src="file://..." links
+		if (strpos($imgsrc, 'file://') === 0) {
+			$imgsrc = str_replace('file://', '/', $imgsrc);
+			$imgsrc = urldecode($imgsrc);
+			$testscrtype = @parse_url($imgsrc);
+			if (empty($testscrtype['query'])) {
+				// convert URL to server path
+				$imgsrc = str_replace(K_PATH_URL, K_PATH_MAIN, $imgsrc);
+			} elseif (preg_match('|^https?://|', $imgsrc) !== 1) {
+				// convert URL to server path
+				$imgsrc = str_replace(K_PATH_MAIN, K_PATH_URL, $imgsrc);
+			}
+		}
+		elseif (($imgsrc[0] === '/') AND !empty($_SERVER['DOCUMENT_ROOT']) AND ($_SERVER['DOCUMENT_ROOT'] != '/')) {
+					
 
 
 * In tecnickcom/tcpdf/include/tcpdf_static, in function fopenLocal, replace
@@ -146,6 +181,7 @@ In htdocs/includes/tecnickcom/tcpdf/tcpdf.php
 TCPDI:
 ------
 Add fpdf_tpl.php 1.2
+
 Add tcpdi.php
 
 Add tcpdi_parser.php and replace:
@@ -181,8 +217,6 @@ vTmpNode.setAttribute('href',vTaskList[i].getLink());
 'comp':'% Comp.'
 with
 'comp':'%'
-
-
 
 
 
@@ -276,4 +310,16 @@ JEDITABLE.JS
 
 * <button type="submit" />  =>  <button class="button" type="submit" />
 * <button type="cancel" />  =>  <button class="button" type="cancel" />
+
+
+
+SELECT2
+-------
+
+Edit CSS to restore line removed between 4.0.5 and 4.0.6. It generates this bug: https://github.com/select2/select2/issues/5832
+
+.select2-hidden-accessible {
+  margin: -1px !important;                /* line to restore */
+}
+
 

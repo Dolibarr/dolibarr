@@ -60,6 +60,9 @@ class Adherent extends CommonObject
 	 */
 	public $ismultientitymanaged = 1;
 
+	public $picto = 'member';
+
+
 	public $mesgs;
 
 	/**
@@ -273,7 +276,7 @@ class Adherent extends CommonObject
 		'zip' => array('type' => 'varchar(10)', 'label' => 'Zip', 'enabled' => 1, 'visible' => -1, 'position' => 80),
 		'town' => array('type' => 'varchar(50)', 'label' => 'Town', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'state_id' => array('type' => 'integer', 'label' => 'State id', 'enabled' => 1, 'visible' => -1, 'position' => 90),
-		'country' => array('type' => 'integer', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 95),
+		'country' => array('type' => 'integer:Ccountry:core/class/ccountry.class.php', 'label' => 'Country', 'enabled' => 1, 'visible' => -1, 'position' => 95),
 		'email' => array('type' => 'varchar(255)', 'label' => 'Email', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 		'socialnetworks' => array('type' => 'text', 'label' => 'Socialnetworks', 'enabled' => 1, 'visible' => -1, 'position' => 105),
 		'phone' => array('type' => 'varchar(30)', 'label' => 'Phone', 'enabled' => 1, 'visible' => -1, 'position' => 115),
@@ -418,7 +421,8 @@ class Adherent extends CommonObject
 			'__PASSWORD__' => $msgishtml ? dol_htmlentitiesbr($this->pass) : ($this->pass ? $this->pass : ''),
 			'__PHONE__' => $msgishtml ? dol_htmlentitiesbr($this->phone) : ($this->phone ? $this->phone : ''),
 			'__PHONEPRO__' => $msgishtml ? dol_htmlentitiesbr($this->phone_perso) : ($this->phone_perso ? $this->phone_perso : ''),
-			'__PHONEMOBILE__' => $msgishtml ? dol_htmlentitiesbr($this->phone_mobile) : ($this->phone_mobile ? $this->phone_mobile : ''));
+			'__PHONEMOBILE__' => $msgishtml ? dol_htmlentitiesbr($this->phone_mobile) : ($this->phone_mobile ? $this->phone_mobile : ''),
+			'__TYPE__' => $msgishtml ? dol_htmlentitiesbr($this->type) : ($this->type ? $this->type : ''));
 
 		complete_substitutions_array($substitutionarray, $langs, $this);
 
@@ -657,8 +661,7 @@ class Adherent extends CommonObject
 			$action = 'update';
 
 			// Actions on extra fields
-			if (!$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
+			if (!$error) {
 				$result = $this->insertExtraFields();
 				if ($result < 0) {
 					$error++;
@@ -701,8 +704,7 @@ class Adherent extends CommonObject
 				}
 			}
 
-			if (!$error && $nbrowsaffected) // If something has change in main data
-			{
+			if (!$error && $nbrowsaffected) { // If something has change in main data
 				// Update information on linked user if it is an update
 				if (!$error && $this->user_id > 0 && !$nosyncuser) {
 					require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -927,14 +929,11 @@ class Adherent extends CommonObject
 
 		// Removed extrafields
 		if (!$error) {
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result = $this->deleteExtraFields();
-				if ($result < 0) {
-					$error++;
-					$errorflag = -4;
-					dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
-				}
+			$result = $this->deleteExtraFields();
+			if ($result < 0) {
+				$error++;
+				$errorflag = -4;
+				dol_syslog(get_class($this)."::delete erreur ".$errorflag." ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -1282,10 +1281,11 @@ class Adherent extends CommonObject
 
 				$this->country_id = $obj->country_id;
 				$this->country_code = $obj->country_code;
-				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code)
+				if ($langs->trans("Country".$obj->country_code) != "Country".$obj->country_code) {
 					$this->country = $langs->transnoentitiesnoconv("Country".$obj->country_code);
-				else
+				} else {
 					$this->country = $obj->country;
+				}
 
 				$this->phone = $obj->phone;
 				$this->phone_perso = $obj->phone_perso;
@@ -1554,8 +1554,7 @@ class Adherent extends CommonObject
 			$customer = new Societe($this->db);
 
 			if (!$error) {
-				if (!($this->fk_soc > 0)) // If not yet linked to a company
-				{
+				if (!($this->fk_soc > 0)) { // If not yet linked to a company
 					if ($autocreatethirdparty) {
 						// Create a linked thirdparty to member
 						$companyalias = '';
@@ -2037,12 +2036,13 @@ class Adherent extends CommonObject
 		if ($withpictoimg > -2 && $withpictoimg != 2) {
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result .= '<span class="nopadding valignmiddle'.((!isset($this->statut) || $this->statut) ? '' : ' strikefordisabled').
 				($morecss ? ' usertext'.$morecss : '').'">';
-			if ($mode == 'login')
+			if ($mode == 'login') {
 				$result .= dol_trunc($this->login, $maxlen);
-			elseif ($mode == 'ref')
+			} elseif ($mode == 'ref') {
 				$result .= $this->id;
-			else
+			} else {
 				$result .= $this->getFullName($langs, '', ($mode == 'firstname' ? 2 : -1), $maxlen);
+			}
 			if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $result .= '</span>';
 		}
 		if ($withpictoimg) $result .= '</div>';
@@ -2181,7 +2181,7 @@ class Adherent extends CommonObject
 		if ($mode == 'expired') {
 			$sql .= " AND a.statut = 1";
 			$sql .= " AND a.entity IN (".getEntity('adherent').")";
-			$sql .= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = 1)";
+			$sql .= " AND ((a.datefin IS NULL or a.datefin < '".$this->db->idate($now)."') AND t.subscription = '1')";
 		} elseif ($mode == 'shift') {
 			$sql .= " AND a.statut = -1";
 			$sql .= " AND a.entity IN (".getEntity('adherent').")";
@@ -2418,8 +2418,7 @@ class Adherent extends CommonObject
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD] = $this->pass; // this->pass = mot de passe non crypte
 			if (!empty($conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED)) $info[$conf->global->LDAP_MEMBER_FIELD_PASSWORD_CRYPTED] = dol_hash($this->pass, 4); // Create OpenLDAP MD5 password (TODO add type of encryption)
 		} // Set LDAP password if possible
-		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
-		{
+		elseif ($conf->global->LDAP_SERVER_PROTOCOLVERSION !== '3') { // If ldap key is modified and LDAPv3 we use ldap_rename function for avoid lose encrypt password
 			if (!empty($conf->global->DATABASE_PWD_ENCRYPTED)) {
 				// Just for the default MD5 !
 				if (empty($conf->global->MAIN_SECURITY_HASH_ALGO)) {
@@ -2618,8 +2617,7 @@ class Adherent extends CommonObject
 
 		$blockingerrormsg = '';
 
-		if (empty($conf->adherent->enabled)) // Should not happen. If module disabled, cron job should not be visible.
-		{
+		if (empty($conf->adherent->enabled)) { // Should not happen. If module disabled, cron job should not be visible.
 			$langs->load("agenda");
 			$this->output = $langs->trans('ModuleNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
 			return 0;
@@ -2638,8 +2636,7 @@ class Adherent extends CommonObject
 		$listofmembersko = array();
 
 		$arraydaysbeforeend = explode(';', $daysbeforeendlist);
-		foreach ($arraydaysbeforeend as $daysbeforeend) // Loop on each delay
-		{
+		foreach ($arraydaysbeforeend as $daysbeforeend) { // Loop on each delay
 			dol_syslog(__METHOD__.' - Process delta = '.$daysbeforeend, LOG_DEBUG);
 
 			if (!is_numeric($daysbeforeend)) {
@@ -2751,7 +2748,7 @@ class Adherent extends CommonObject
 								$actioncomm->datef = $now;
 								$actioncomm->percentage = -1; // Not applicable
 								$actioncomm->socid = $adherent->thirdparty->id;
-								$actioncomm->contactid = 0;
+								$actioncomm->contact_id = 0;
 								$actioncomm->authorid = $user->id; // User saving action
 								$actioncomm->userownerid = $user->id; // Owner of action
 								// Fields when action is en email (content should be added into note)
@@ -2803,10 +2800,11 @@ class Adherent extends CommonObject
 						$listofids .= ', ...';
 						break;
 					}
-					if (empty($listofids))
+					if (empty($listofids)) {
 						$listofids .= ' [';
-					else
+					} else {
 						$listofids .= ', ';
+					}
 					$listofids .= $idmember;
 					$i++;
 				}
@@ -2823,10 +2821,11 @@ class Adherent extends CommonObject
 							$listofids .= ', ...';
 							break;
 						}
-						if (empty($listofids))
+						if (empty($listofids)) {
 							$listofids .= ' [';
-						else
+						} else {
 							$listofids .= ', ';
+						}
 						$listofids .= $idmember;
 						$i++;
 					}

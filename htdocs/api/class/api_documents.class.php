@@ -419,8 +419,10 @@ class Documents extends DolibarrApi
 
 			$object = new Product($this->db);
 			$result = $object->fetch($id, $ref);
-			if (!$result) {
+			if ($result==0) {
 				throw new RestException(404, 'Product not found');
+			} elseif ($result<0) {
+				throw new RestException(500, 'Error while fetching object: '.$object->error);
 			}
 
 			$upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
@@ -608,6 +610,12 @@ class Documents extends DolibarrApi
 				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$object = new ExpenseReport($this->db);
 			}
+			elseif ($modulepart == 'adherent' || $modulepart == 'member')
+			{
+				$modulepart = 'adherent';
+				require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+				$object = new Adherent($this->db);
+			}
 			// TODO Implement additional moduleparts
 			else
 			{
@@ -624,7 +632,7 @@ class Documents extends DolibarrApi
 			    }
 				elseif ($result < 0)
 				{
-					throw new RestException(500, 'Error while fetching object.');
+					throw new RestException(500, 'Error while fetching object: '.$object->error);
 				}
 			}
 
@@ -652,6 +660,7 @@ class Documents extends DolibarrApi
 		else
 		{
 			if ($modulepart == 'invoice') $modulepart = 'facture';
+			if ($modulepart == 'member') $modulepart = 'adherent';
 
 			$relativefile = $subdir;
 

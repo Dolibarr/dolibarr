@@ -31,10 +31,10 @@ include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
  */
 class box_contracts extends ModeleBoxes
 {
-    public $boxcode="lastcontracts";
-    public $boximg="object_contract";
-    public $boxlabel="BoxLastContracts";
-    public $depends = array("contrat");	// conf->contrat->enabled
+    public $boxcode = "lastcontracts";
+    public $boximg = "object_contract";
+    public $boxlabel = "BoxLastContracts";
+    public $depends = array("contrat"); // conf->contrat->enabled
 
     /**
      * @var DoliDB Database handler.
@@ -59,7 +59,7 @@ class box_contracts extends ModeleBoxes
 
         $this->db = $db;
 
-        $this->hidden = ! ($user->rights->contrat->lire);
+        $this->hidden = !($user->rights->contrat->lire);
     }
 
     /**
@@ -72,7 +72,7 @@ class box_contracts extends ModeleBoxes
     {
     	global $user, $langs, $conf;
 
-    	$this->max=$max;
+    	$this->max = $max;
 
     	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
@@ -80,27 +80,27 @@ class box_contracts extends ModeleBoxes
 
     	if ($user->rights->contrat->lire)
     	{
-        	$contractstatic=new Contrat($this->db);
-        	$thirdpartytmp=new Societe($this->db);
+        	$contractstatic = new Contrat($this->db);
+        	$thirdpartytmp = new Societe($this->db);
 
     	    $sql = "SELECT s.nom as name, s.rowid as socid, s.email, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,";
-            $sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
-            $sql.= ", c.ref_customer, c.ref_supplier";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    		$sql.= " WHERE c.fk_soc = s.rowid";
-    		$sql.= " AND c.entity = ".$conf->entity;
-    		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		if($user->socid) $sql.= " AND s.rowid = ".$user->socid;
-    		if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql.= " ORDER BY c.date_contrat DESC, c.ref DESC ";
-    		else $sql.= " ORDER BY c.tms DESC, c.ref DESC ";
-    		$sql.= $this->db->plimit($max, 0);
+            $sql .= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.datec, c.fin_validite, c.date_cloture";
+            $sql .= ", c.ref_customer, c.ref_supplier";
+    		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    		$sql .= " WHERE c.fk_soc = s.rowid";
+    		$sql .= " AND c.entity = ".$conf->entity;
+    		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
+    		if ($user->socid) $sql .= " AND s.rowid = ".$user->socid;
+    		if ($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE) $sql .= " ORDER BY c.date_contrat DESC, c.ref DESC ";
+    		else $sql .= " ORDER BY c.tms DESC, c.ref DESC ";
+    		$sql .= $this->db->plimit($max, 0);
 
     		$resql = $this->db->query($sql);
     		if ($resql)
     		{
     			$num = $this->db->num_rows($resql);
-    			$now=dol_now();
+    			$now = dol_now();
 
     			$line = 0;
 
@@ -110,17 +110,17 @@ class box_contracts extends ModeleBoxes
                 {
     				$objp = $this->db->fetch_object($resql);
 
-    				$datec=$this->db->jdate($objp->datec);
-    				$dateterm=$this->db->jdate($objp->fin_validite);
-    				$dateclose=$this->db->jdate($objp->date_cloture);
+    				$datec = $this->db->jdate($objp->datec);
+    				$dateterm = $this->db->jdate($objp->fin_validite);
+    				$dateclose = $this->db->jdate($objp->date_cloture);
     				$late = '';
 
-    				$contractstatic->statut=$objp->fk_statut;
-    				$contractstatic->id=$objp->rowid;
-    				$contractstatic->ref=$objp->ref;
+    				$contractstatic->statut = $objp->fk_statut;
+    				$contractstatic->id = $objp->rowid;
+    				$contractstatic->ref = $objp->ref;
     				$contractstatic->ref_customer = $objp->ref_customer;
     				$contractstatic->ref_supplier = $objp->ref_supplier;
-    				$result=$contractstatic->fetch_lines();
+    				$result = $contractstatic->fetch_lines();
 
     				$thirdpartytmp->name = $objp->name;
     				$thirdpartytmp->id = $objp->socid;
@@ -162,7 +162,7 @@ class box_contracts extends ModeleBoxes
                     $line++;
                 }
 
-                if ($num==0)
+                if ($num == 0)
                     $this->info_box_contents[$line][0] = array(
                         'td' => 'class="center opacitymedium"',
                         'text'=>$langs->trans("NoRecordedContracts"),

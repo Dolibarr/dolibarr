@@ -119,8 +119,7 @@ if (empty($reshook))
 			{
 				$obj = $db->fetch_object($resql);
 				$country_code = $obj->code;
-			}
-			else dol_print_error($db);
+			} else dol_print_error($db);
 
 			// Try to load sql file
 			if ($country_code)
@@ -143,9 +142,7 @@ if (empty($reshook))
 				if ($result > 0)
 				{
 					setEventMessages($langs->trans("ChartLoaded"), null, 'mesgs');
-				}
-				else
-				{
+				} else {
 					setEventMessages($langs->trans("ErrorDuringChartLoad"), null, 'warnings');
 				}
 			}
@@ -161,7 +158,7 @@ if (empty($reshook))
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
             $mode = GETPOST('mode', 'int');
-    		$result = $accounting->account_desactivate($id, $mode);
+    		$result = $accounting->accountDeactivate($id, $mode);
     	}
 
     	$action = 'update';
@@ -235,8 +232,7 @@ if (strlen(trim($search_account))) {
 			}
 			$sql .= " AND (aa.account_number LIKE '".$startchar.$search_account_tmp_clean."'";
 			$sql .= " OR aa.account_number LIKE '".$startchar.$search_account_clean."%')";
-		}
-		else $sql .= natural_search("aa.account_number", $search_account_tmp);
+		} else $sql .= natural_search("aa.account_number", $search_account_tmp);
 	}
 }
 if (strlen(trim($search_label)))			$sql .= natural_search("aa.label", $search_label);
@@ -267,7 +263,7 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $param = '';
+	$param = '';
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param .= '&contextpage='.$contextpage;
 	if ($limit > 0 && $limit != $conf->liste_limit) $param .= '&limit='.$limit;
 	if ($search_account) $param .= '&search_account='.urlencode($search_account);
@@ -328,11 +324,10 @@ if ($resql)
 
             $i++;
         }
-    }
-    else dol_print_error($db);
+    } else dol_print_error($db);
     print "</select>";
     print ajax_combobox("chartofaccounts");
-    print '<input type="'.(empty($conf->use_javascript_ajax)?'submit':'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+    print '<input type="'.(empty($conf->use_javascript_ajax) ? 'submit' : 'button').'" class="button" name="change_chart" id="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
 
     print '<br>';
 	print '<br>';
@@ -357,7 +352,7 @@ if ($resql)
 		print '</td>';
 	}
 	if (!empty($arrayfields['aa.pcg_type']['checked']))		    print '<td class="liste_titre"><input type="text" class="flat" size="6" name="search_pcgtype" value="'.$search_pcgtype.'"></td>';
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconcilable']['checked']))   print '<td class="liste_titre">&nbsp;</td>'; }
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (!empty($arrayfields['aa.reconcilable']['checked']))   print '<td class="liste_titre">&nbsp;</td>'; }
 	if (!empty($arrayfields['aa.active']['checked']))			print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre maxwidthsearch">';
 	$searchpicto = $form->showFilterAndCheckAddButtons($massactionbutton ? 1 : 0, 'checkforselect', 1);
@@ -371,7 +366,7 @@ if ($resql)
 	if (!empty($arrayfields['aa.labelshort']['checked']))		print_liste_field_titre($arrayfields['aa.labelshort']['label'], $_SERVER["PHP_SELF"], "aa.labelshort", "", $param, '', $sortfield, $sortorder);
 	if (!empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"], "aa.account_parent", "", $param, '', $sortfield, $sortorder, 'left ');
 	if (!empty($arrayfields['aa.pcg_type']['checked']))			print_liste_field_titre($arrayfields['aa.pcg_type']['label'], $_SERVER["PHP_SELF"], 'aa.pcg_type', '', $param, '', $sortfield, $sortorder, '', $arrayfields['aa.pcg_type']['help']);
-	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (! empty($arrayfields['aa.reconcilable']['checked']))	print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder); }
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 2) { if (!empty($arrayfields['aa.reconcilable']['checked']))	print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder); }
 	if (!empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
 	print "</tr>\n";
@@ -431,9 +426,7 @@ if ($resql)
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) $totalarray['nbfield']++;
-			}
-			else
-			{
+			} else {
 				print '<td>&nbsp;</td>';
 				if (!$i) $totalarray['nbfield']++;
 			}
@@ -453,11 +446,11 @@ if ($resql)
 			if (!empty($arrayfields['aa.reconcilable']['checked'])) {
 				print '<td class="center">';
 				if (empty($obj->reconcilable)) {
-					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=enable&mode=1">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=1">';
 					print img_picto($langs->trans("Disabled"), 'switch_off');
 					print '</a>';
 				} else {
-					print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $obj->rowid . '&action=disable&mode=1">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=1">';
 					print img_picto($langs->trans("Activated"), 'switch_on');
 					print '</a>';
 				}
@@ -488,11 +481,11 @@ if ($resql)
 		// Action
 		print '<td class="center">';
 		if ($user->rights->accounting->chartofaccount) {
-			print '<a href="./card.php?action=update&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
+			print '<a class="editfielda" href="./card.php?action=update&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
 			print img_edit();
 			print '</a>';
 			print '&nbsp;';
-			print '<a href="./card.php?action=delete&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
+			print '<a class="marginleftonly" href="./card.php?action=delete&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?chartofaccounts='.$object->id).'">';
 			print img_delete();
 			print '</a>';
 		}

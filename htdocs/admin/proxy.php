@@ -31,7 +31,7 @@ $langs->loadLangs(array("other", "users", "admin"));
 
 if (!$user->admin) accessforbidden();
 
-$upload_dir=$conf->admin->dir_temp;
+$upload_dir = $conf->admin->dir_temp;
 
 
 /*
@@ -40,31 +40,31 @@ $upload_dir=$conf->admin->dir_temp;
 
 if (GETPOST('action', 'aZ09') == 'set_proxy')
 {
-	if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
+	if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && !is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
 	{
 		setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
 		$error++;
 	}
-	if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
+	if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && !is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
 	{
 		setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
 		$error++;
 	}
 
-	if (! $error)
+	if (!$error)
 	{
-		$result=0;
-		$result+=dolibarr_set_const($db, 'MAIN_USE_CONNECT_TIMEOUT', GETPOST("MAIN_USE_CONNECT_TIMEOUT"), 'chaine', 0, '', $conf->entity);
-		$result+=dolibarr_set_const($db, 'MAIN_USE_RESPONSE_TIMEOUT', GETPOST("MAIN_USE_RESPONSE_TIMEOUT"), 'chaine', 0, '', $conf->entity);
-		$result+=dolibarr_set_const($db, 'MAIN_PROXY_USE', GETPOST("MAIN_PROXY_USE"), 'chaine', 0, '', $conf->entity);
-		$result+=dolibarr_set_const($db, 'MAIN_PROXY_HOST', GETPOST("MAIN_PROXY_HOST"), 'chaine', 0, '', $conf->entity);
-		$result+=dolibarr_set_const($db, 'MAIN_PROXY_PORT', GETPOST("MAIN_PROXY_PORT"), 'chaine', 0, '', $conf->entity);
-		$result+=dolibarr_set_const($db, 'MAIN_PROXY_USER', GETPOST("MAIN_PROXY_USER"), 'chaine', 0, '', $conf->entity);
-		$result+=dolibarr_set_const($db, 'MAIN_PROXY_PASS', GETPOST("MAIN_PROXY_PASS"), 'chaine', 0, '', $conf->entity);
+		$result = 0;
+		$result += dolibarr_set_const($db, 'MAIN_USE_CONNECT_TIMEOUT', GETPOST("MAIN_USE_CONNECT_TIMEOUT"), 'chaine', 0, '', $conf->entity);
+		$result += dolibarr_set_const($db, 'MAIN_USE_RESPONSE_TIMEOUT', GETPOST("MAIN_USE_RESPONSE_TIMEOUT"), 'chaine', 0, '', $conf->entity);
+		$result += dolibarr_set_const($db, 'MAIN_PROXY_USE', GETPOST("MAIN_PROXY_USE"), 'chaine', 0, '', $conf->entity);
+		$result += dolibarr_set_const($db, 'MAIN_PROXY_HOST', GETPOST("MAIN_PROXY_HOST"), 'chaine', 0, '', $conf->entity);
+		$result += dolibarr_set_const($db, 'MAIN_PROXY_PORT', GETPOST("MAIN_PROXY_PORT"), 'chaine', 0, '', $conf->entity);
+		$result += dolibarr_set_const($db, 'MAIN_PROXY_USER', GETPOST("MAIN_PROXY_USER"), 'chaine', 0, '', $conf->entity);
+		$result += dolibarr_set_const($db, 'MAIN_PROXY_PASS', GETPOST("MAIN_PROXY_PASS"), 'chaine', 0, '', $conf->entity);
 		if ($result < 5) dol_print_error($db);
 	}
 
-	if (! $error)
+	if (!$error)
 	{
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
@@ -77,7 +77,7 @@ if (GETPOST('action', 'aZ09') == 'set_proxy')
 
 $form = new Form($db);
 
-$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+$wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 llxHeader('', $langs->trans("Proxy"), $wikihelp);
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
@@ -92,9 +92,9 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="set_proxy">';
 
 
-$head=security_prepare_head();
+$head = security_prepare_head();
 
-dol_fiche_head($head, 'proxy', $langs->trans("Security"), -1);
+dol_fiche_head($head, 'proxy', '', -1);
 
 
 if ($conf->use_javascript_ajax)
@@ -135,7 +135,7 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ConnectionTimeout").'</td><td class="right">';
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(isset($_POST["MAIN_USE_CONNECT_TIMEOUT"])?GETPOST("MAIN_USE_CONNECT_TIMEOUT"):$conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
+print '<input class="flat" name="MAIN_USE_CONNECT_TIMEOUT" type="text" size="4" value="'.(isset($_POST["MAIN_USE_CONNECT_TIMEOUT"]) ?GETPOST("MAIN_USE_CONNECT_TIMEOUT") : $conf->global->MAIN_USE_CONNECT_TIMEOUT).'">';
 print ' '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';

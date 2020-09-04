@@ -132,9 +132,7 @@ class Cstate // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
             return $this->id;
 		}
@@ -176,9 +174,7 @@ class Cstate // extends CommonObject
             $this->db->free($resql);
 
             return 1;
-        }
-        else
-        {
+        } else {
       	    $this->error = "Error ".$this->db->lasterror();
             return -1;
         }
@@ -222,8 +218,8 @@ class Cstate // extends CommonObject
 	    // Commit or rollback
 	    if ($error) {
 		    foreach ($this->errors as $errmsg) {
-			    dol_syslog(get_class($this) . "::update " . $errmsg, LOG_ERR);
-			    $this->error .= ($this->error ? ', ' . $errmsg : $errmsg);
+			    dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+			    $this->error .= ($this->error ? ', '.$errmsg : $errmsg);
 		    }
 		    $this->db->rollback();
 		    return -1 * $error;
@@ -264,9 +260,7 @@ class Cstate // extends CommonObject
 			}
 			$this->db->rollback();
 			return -1 * $error;
-		}
-		else
-		{
+		} else {
 			$this->db->commit();
 			return 1;
 		}

@@ -25,7 +25,7 @@
 require '../../main.inc.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("install","user","admin"));
+$langs->loadLangs(array("install", "user", "admin"));
 
 
 if (!$user->admin)
@@ -43,7 +43,7 @@ print load_fiche_titre($langs->trans("SummaryConst"), '', 'title_setup');
 
 print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
 // Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
-$configfileparameters=array(
+$configfileparameters = array(
 							'dolibarr_main_url_root',
 							'dolibarr_main_url_root_alt',
 							'dolibarr_main_document_root',
@@ -84,7 +84,6 @@ $configfileparameters=array(
 							'?dolibarr_js_CKEDITOR',
 							'?dolibarr_js_JQUERY',
 							'?dolibarr_js_JQUERY_UI',
-							'?dolibarr_js_JQUERY_FLOT',
 							'?dolibarr_font_DOL_DEFAULT_TTF',
 							'?dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 							'separator',
@@ -92,7 +91,7 @@ $configfileparameters=array(
 							'?dolibarr_mailing_limit_sendbycli',
 							'?dolibarr_strict_mode'
 						);
-$configfilelib=array(
+$configfilelib = array(
 //					'separator',
 					$langs->trans("URLRoot"),
 					$langs->trans("URLRoot").' (alt)',
@@ -132,7 +131,6 @@ $configfilelib=array(
 					'dolibarr_js_CKEDITOR',
 					'dolibarr_js_JQUERY',
 					'dolibarr_js_JQUERY_UI',
-					'dolibarr_js_JQUERY_FLOT',
 					'dolibarr_font_DOL_DEFAULT_TTF',
 					'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 					'separator',
@@ -145,13 +143,13 @@ print '<tr class="liste_titre"><td width="280">'.$langs->trans("Label").'</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>'."\n";
-$i=0;
-foreach($configfileparameters as $key)
+$i = 0;
+foreach ($configfileparameters as $key)
 {
-	$ignore=0;
+	$ignore = 0;
 
-	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) $ignore=1;
-	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) $ignore=1;
+	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) $ignore = 1;
+	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) $ignore = 1;
 
 	if (empty($ignore))
 	{
@@ -160,7 +158,7 @@ foreach($configfileparameters as $key)
 		if (preg_match('/^\?/', $key) && empty(${$newkey}))
 		{
 			$i++;
-			continue;    // We discard parametes starting with ?
+			continue; // We discard parametes starting with ?
 		}
 
 		if ($newkey == 'separator' && $lastkeyshown == 'separator')
@@ -173,9 +171,7 @@ foreach($configfileparameters as $key)
 		if ($newkey == 'separator')
 		{
 			print '<td colspan="3">&nbsp;</td>';
-		}
-		else
-		{
+		} else {
 			// Label
 			print "<td>".$configfilelib[$i].'</td>';
 			// Key
@@ -189,7 +185,7 @@ foreach($configfileparameters as $key)
 			print "</td>";
 		}
 		print "</tr>\n";
-		$lastkeyshown=$newkey;
+		$lastkeyshown = $newkey;
 	}
 	$i++;
 }
@@ -204,28 +200,26 @@ print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
-if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$langs->trans("Entity").'</td>';	// If superadmin or multicompany disabled
+if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$langs->trans("Entity").'</td>'; // If superadmin or multicompany disabled
 print "</tr>\n";
 
 $sql = "SELECT";
-$sql.= " rowid";
-$sql.= ", ".$db->decrypt('name')." as name";
-$sql.= ", ".$db->decrypt('value')." as value";
-$sql.= ", type";
-$sql.= ", note";
-$sql.= ", entity";
-$sql.= " FROM ".MAIN_DB_PREFIX."const";
+$sql .= " rowid";
+$sql .= ", ".$db->decrypt('name')." as name";
+$sql .= ", ".$db->decrypt('value')." as value";
+$sql .= ", type";
+$sql .= ", note";
+$sql .= ", entity";
+$sql .= " FROM ".MAIN_DB_PREFIX."const";
 if (empty($conf->multicompany->enabled))
 {
 	// If no multicompany mode, admins can see global and their constantes
-	$sql.= " WHERE entity IN (0,".$conf->entity.")";
-}
-else
-{
+	$sql .= " WHERE entity IN (0,".$conf->entity.")";
+} else {
 	// If multicompany mode, superadmin (user->entity=0) can see everything, admin are limited to their entities.
-	if ($user->entity) $sql.= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
+	if ($user->entity) $sql .= " WHERE entity IN (".$user->entity.",".$conf->entity.")";
 }
-$sql.= " ORDER BY entity, name ASC";
+$sql .= " ORDER BY entity, name ASC";
 $resql = $db->query($sql);
 if ($resql)
 {
@@ -239,7 +233,7 @@ if ($resql)
 		print '<tr class="oddeven">';
 		print '<td>'.$obj->name.'</td>'."\n";
 		print '<td>'.$obj->value.'</td>'."\n";
-		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
+		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td>'.$obj->entity.'</td>'."\n"; // If superadmin or multicompany disabled
 		print "</tr>\n";
 
 		$i++;

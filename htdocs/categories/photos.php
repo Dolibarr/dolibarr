@@ -112,33 +112,25 @@ $formother = new FormOther($db);
 
 if ($object->id)
 {
-	if ($type == Categorie::TYPE_PRODUCT)       $title = $langs->trans("ProductsCategoryShort");
-	elseif ($type == Categorie::TYPE_SUPPLIER)  $title = $langs->trans("SuppliersCategoryShort");
-	elseif ($type == Categorie::TYPE_CUSTOMER)  $title = $langs->trans("CustomersCategoryShort");
-	elseif ($type == Categorie::TYPE_MEMBER)    $title = $langs->trans("MembersCategoryShort");
-	elseif ($type == Categorie::TYPE_CONTACT)   $title = $langs->trans("ContactCategoriesShort");
-	elseif ($type == Categorie::TYPE_ACCOUNT)   $title = $langs->trans("AccountsCategoriesShort");
-	elseif ($type == Categorie::TYPE_PROJECT)   $title = $langs->trans("ProjectsCategoriesShort");
-	elseif ($type == Categorie::TYPE_USER)      $title = $langs->trans("UsersCategoriesShort");
-	else                                        $title = $langs->trans("Category");
+	$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
 
 	$head = categories_prepare_head($object, $type);
 
 
-	dol_fiche_head($head, 'photos', $title, -1, 'category');
+	dol_fiche_head($head, 'photos', $langs->trans($title), -1, 'category');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = ' type = ' . $object->type;
+	$object->next_prev_filter = ' type = '.$object->type;
 	$object->ref = $object->label;
-	$morehtmlref='<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
+	$morehtmlref = '<br><div class="refidno"><a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("Root").'</a> >> ';
 	$ways = $object->print_all_ways(" &gt;&gt; ", '', 1);
 	foreach ($ways as $way)
 	{
-	    $morehtmlref.=$way."<br>\n";
+	    $morehtmlref .= $way."<br>\n";
 	}
-	$morehtmlref.='</div>';
+	$morehtmlref .= '</div>';
 
-	dol_banner_tab($object, 'label', $linkback, ($user->socid?0:1), 'label', 'label', $morehtmlref, '&type=' . $type, 0, '', '', 1);
+	dol_banner_tab($object, 'label', $linkback, ($user->socid ? 0 : 1), 'label', 'label', $morehtmlref, '&type='.$type, 0, '', '', 1);
 
 	/*
 	 * Confirmation de la suppression de photo
@@ -152,7 +144,7 @@ if ($object->id)
 
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	print '<table class="border centpercent">';
+	print '<table class="border centpercent tableforfield">';
 
 	// Description
 	print '<tr><td class="titlefield notopnoleft">';
@@ -187,9 +179,7 @@ if ($object->id)
 		{
 			print '<a class="butAction hideonsmartphone" href="'.$_SERVER['PHP_SELF'].'?action=ajout_photo&amp;id='.$object->id.'&amp;type='.$type.'">';
 			print $langs->trans("AddPhoto").'</a>';
-		}
-		else
-		{
+		} else {
 			print '<a class="butActionRefused classfortooltip hideonsmartphone" href="#">';
 			print $langs->trans("AddPhoto").'</a>';
 		}
@@ -239,9 +229,7 @@ if ($object->id)
     			if ($obj['photo_vignette'])
     			{
     				$filename = $obj['photo_vignette'];
-    			}
-    			else
-    			{
+    			} else {
     				$filename = $obj['photo'];
     			}
 
@@ -288,9 +276,7 @@ if ($object->id)
 			print '<div class="opacitymedium">'.$langs->trans("NoPhotoYet")."</div>";
 		}
 	}
-}
-else
-{
+} else {
     print $langs->trans("ErrorUnknown");
 }
 

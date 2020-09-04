@@ -70,12 +70,10 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1')
 			{
 				$nouveauchoix .= "1";
-			}
-			elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
+			} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
 			{
 				$nouveauchoix .= "2";
-			}
-			else { // sinon c'est 0
+			} else { // sinon c'est 0
 				$nouveauchoix .= "0";
 			}
 		}
@@ -93,9 +91,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 		{
 			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
-		}
-		else
-		{
+		} else {
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'opensurvey_user_studs (nom, id_sondage, reponses)';
 			$sql .= " VALUES ('".$db->escape($nom)."', '".$db->escape($numsondage)."','".$db->escape($nouveauchoix)."')";
 			$resql = $db->query($sql);
@@ -135,12 +131,10 @@ if ($testmodifier)
 		if (isset($_POST["choix$i"]) && $_POST["choix$i"] == '1')
 		{
 			$nouveauchoix .= "1";
-		}
-		elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
+		} elseif (isset($_POST["choix$i"]) && $_POST["choix$i"] == '2')
 		{
 			$nouveauchoix .= "2";
-		}
-		else { // sinon c'est 0
+		} else { // sinon c'est 0
 			$nouveauchoix .= "0";
 		}
 	}
@@ -183,34 +177,34 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 	// Security check
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
-	$nouveauxsujets=$object->sujet;
+	$nouveauxsujets = $object->sujet;
 
 	if (isset($_POST["nouveaujour"]) && $_POST["nouveaujour"] != "vide" &&
 		isset($_POST["nouveaumois"]) && $_POST["nouveaumois"] != "vide" &&
 		isset($_POST["nouvelleannee"]) && $_POST["nouvelleannee"] != "vide") {
-		$nouvelledate=dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
+		$nouvelledate = dol_mktime(0, 0, 0, $_POST["nouveaumois"], $_POST["nouveaujour"], $_POST["nouvelleannee"]);
 
-		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"]!="vide"){
-			$nouvelledate.="@";
-			$nouvelledate.=$_POST["nouvelleheuredebut"];
-			$nouvelledate.="h";
+		if (isset($_POST["nouvelleheuredebut"]) && $_POST["nouvelleheuredebut"] != "vide") {
+			$nouvelledate .= "@";
+			$nouvelledate .= $_POST["nouvelleheuredebut"];
+			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutedebut"]!="vide") {
-				$nouvelledate.=$_POST["nouvelleminutedebut"];
+			if ($_POST["nouvelleminutedebut"] != "vide") {
+				$nouvelledate .= $_POST["nouvelleminutedebut"];
 			}
 		}
 
-		if (isset($_POST["nouvelleheurefin"]) && $_POST["nouvelleheurefin"]!="vide"){
-			$nouvelledate.="-";
-			$nouvelledate.=$_POST["nouvelleheurefin"];
-			$nouvelledate.="h";
+		if (isset($_POST["nouvelleheurefin"]) && $_POST["nouvelleheurefin"] != "vide") {
+			$nouvelledate .= "-";
+			$nouvelledate .= $_POST["nouvelleheurefin"];
+			$nouvelledate .= "h";
 
-			if ($_POST["nouvelleminutefin"]!="vide") {
-				$nouvelledate.=$_POST["nouvelleminutefin"];
+			if ($_POST["nouvelleminutefin"] != "vide") {
+				$nouvelledate .= $_POST["nouvelleminutefin"];
 			}
 		}
 
-		if($_POST["nouvelleheuredebut"] == "vide" || (isset($_POST["nouvelleheuredebut"]) && isset($_POST["nouvelleheurefin"]) && (($_POST["nouvelleheuredebut"] < $_POST["nouvelleheurefin"]) || (($_POST["nouvelleheuredebut"] == $_POST["nouvelleheurefin"]) && ($_POST["nouvelleminutedebut"] < $_POST["nouvelleminutefin"]))))) {
+		if ($_POST["nouvelleheuredebut"] == "vide" || (isset($_POST["nouvelleheuredebut"]) && isset($_POST["nouvelleheurefin"]) && (($_POST["nouvelleheuredebut"] < $_POST["nouvelleheurefin"]) || (($_POST["nouvelleheuredebut"] == $_POST["nouvelleheurefin"]) && ($_POST["nouvelleminutedebut"] < $_POST["nouvelleminutefin"]))))) {
 			$erreur_ajout_date = false;
 		} else {
 			$erreur_ajout_date = "yes";
@@ -261,9 +255,7 @@ if (isset($_POST["ajoutercolonne"]) && $object->format == "D")
 		}
 
 		$adresseadmin = $object->mail_admin;
-	}
-	else
-	{
+	} else {
 		$erreur_ajout_date = "yes";
 	}
 }
@@ -421,10 +413,11 @@ $toutsujet = str_replace("°", "'", $toutsujet);
 
 
 print '<form name="formulaire4" action="#" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 $head = opensurvey_prepare_head($object);
 
-dol_fiche_head($head, 'preview', $langs->trans("Survey"), -1, DOL_URL_ROOT.'/opensurvey/img/object_opensurvey.png', 1);
+dol_fiche_head($head, 'preview', $langs->trans("Survey"), -1, 'poll');
 
 $morehtmlref = '';
 
@@ -451,8 +444,7 @@ print $langs->trans("Title").'</td><td colspan="2">';
 if ($action == 'edit')
 {
 	print '<input type="text" name="nouveautitre" size="40" value="'.dol_escape_htmltag(dol_htmlentities($object->titre)).'">';
-}
-else print dol_htmlentities($object->titre);
+} else print dol_htmlentities($object->titre);
 print '</td></tr>';
 
 // Expire date
@@ -507,7 +499,7 @@ print '</form>'."\n";
 
 print '<div class="tabsAction">';
 
-print '<a class="butAction" href="exportcsv.php?id='.$numsondage.'">'.$langs->trans("ExportSpreadsheet").' (.CSV)'.'</a>';
+print '<a class="butAction" href="exportcsv.php?id='.urlencode($numsondage).'">'.$langs->trans("ExportSpreadsheet").' (.CSV)</a>';
 
 print '</div>';
 
@@ -519,10 +511,11 @@ if (GETPOST('ajoutsujet'))
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
 	print '<form name="formulaire" action="" method="POST">'."\n";
+	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage', 'alpha').'">';
 
 	print '<div class="center">'."\n";
-	print "<br><br>"."\n";
+	print "<br><br>\n";
 
 	// Add new column
 	if ($object->format == "A")
@@ -535,9 +528,7 @@ if (GETPOST('ajoutsujet'))
 		print ' &nbsp; &nbsp; ';
 		print '<input type="submit" class="button" name="retoursondage" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
 		print '<br><br>'."\n";
-	}
-	else
-	{
+	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 		$formother = new FormOther($db);
@@ -605,6 +596,7 @@ if ($user->rights->opensurvey->write) {
 $nbcolonnes = substr_count($object->sujet, ',') + 1;
 
 print '<form name="formulaire" action="" method="POST">'."\n";
+print '<input type="hidden" name="token" value="'.newToken().'">';
 
 print '<div class="cadre"> '."\n";
 
@@ -752,9 +744,7 @@ if ($object->format == "D")
 
 		print '</tr>'."\n";
 	}
-}
-else
-{
+} else {
 	// Show titles
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
@@ -766,7 +756,7 @@ else
 		print '<td class="sujet">'.dol_htmlentities($tmp[0]).'</td>'."\n";
 	}
 
-	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'">'.img_picto('', dol_buildpath('/opensurvey/img/add-16.png', 1), '', 1).'</a></td>'."\n";
+	print '<td class="sujet"><a href="'.$_SERVER["PHP_SELF"].'?id='.$numsondage.'&ajoutsujet=1&backtopage='.urlencode($_SERVER["PHP_SELF"]).'"><span class="fa fa-plus-circle valignmiddle btnTitle-icon"></span></a></td>'."\n";
 	print '</tr>'."\n";
 }
 
@@ -840,9 +830,7 @@ while ($compteur < $num)
 				if (((string) $car) == "0") $sumagainst[$i]++;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		//sinon on remplace les choix de l'utilisateur par une ligne de checkbox pour recuperer de nouvelles valeurs
 		if ($compteur == $ligneamodifier)
 		{
@@ -868,9 +856,7 @@ while ($compteur < $num)
 				}
 				print '</td>'."\n";
 			}
-		}
-		else
-		{
+		} else {
 			for ($i = 0; $i < $nbcolonnes; $i++)
 			{
 				$car = substr($ensemblereponses, $i, 1);
@@ -1064,9 +1050,7 @@ for ($i = 0; $i < $nbcolonnes; $i++)
 			} else {
 				$meilleursujet .= dol_print_date($toutsujet[$i], 'daytext').($toutsujet[$i] ? ' ('.dol_print_date($toutsujet[$i], '%A').')' : '');
 			}
-		}
-		else
-		{
+		} else {
 			$tmps = explode('@', $toutsujet[$i]);
 			$meilleursujet .= dol_htmlentities($tmps[0]);
 		}

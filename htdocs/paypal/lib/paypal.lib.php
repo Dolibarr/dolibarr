@@ -112,8 +112,7 @@ function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
         if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
         {
     	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
+            else {
                 $out .= '&securekey='.($mode ? '<font color="#666666">' : '');
                 if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + order_ref)";
                 if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
@@ -130,8 +129,7 @@ function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
         if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
         {
     	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
+            else {
                 $out .= '&securekey='.($mode ? '<font color="#666666">' : '');
                 if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + invoice_ref)";
                 if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
@@ -148,8 +146,7 @@ function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
         if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
         {
     	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
+            else {
                 $out .= '&securekey='.($mode ? '<font color="#666666">' : '');
                 if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + contractline_ref)";
                 if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
@@ -166,8 +163,7 @@ function getPaypalPaymentUrl($mode, $type, $ref = '', $amount = '9.99', $freetag
         if (!empty($conf->global->PAYPAL_SECURITY_TOKEN))
         {
     	    if (empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE)) $out .= '&securekey='.$conf->global->PAYPAL_SECURITY_TOKEN;
-            else
-            {
+            else {
                 $out .= '&securekey='.($mode ? '<font color="#666666">' : '');
                 if ($mode == 1) $out .= "hash('".$conf->global->PAYPAL_SECURITY_TOKEN."' + '".$type."' + member_ref)";
                 if ($mode == 0) $out .= dol_hash($conf->global->PAYPAL_SECURITY_TOKEN.$type.$ref, 2);
@@ -263,9 +259,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
         $payPalURL = $API_Url.$token;
         header("Location: ".$payPalURL);
         exit;
-    }
-    else
-    {
+    } else {
         //Display a user friendly Error on the page using any of the following error information returned by PayPal
         $ErrorCode = urldecode($resArray["L_ERRORCODE0"]);
         $ErrorShortMsg = urldecode($resArray["L_SHORTMESSAGE0"]);
@@ -275,9 +269,7 @@ function print_paypal_redirect($paymentAmount, $currencyCodeType, $paymentType, 
         if ($ErrorCode == 10729)
         {
         	$mesg .= "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
-        }
-        else
-        {
+        } else {
         	$mesg = $langs->trans('SetExpressCheckoutAPICallFailed')."<br>\n";
         	$mesg .= $langs->trans('DetailedErrorMessage').": ".$ErrorLongMsg."<br>\n";
         	$mesg .= $langs->trans('ShortErrorMessage').": ".$ErrorShortMsg."<br>\n";
@@ -351,9 +343,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     if (empty($conf->global->PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS))
     {
     	$nvpstr = $nvpstr."&NOSHIPPING=1"; // An empty or not complete shipping address will be accepted
-    }
-    else
-    {
+    } else {
     	$nvpstr = $nvpstr."&NOSHIPPING=0"; // A valid shipping address is required (full required fields mandatory)
     }
     $nvpstr = $nvpstr."&SOLUTIONTYPE=".urlencode($solutionType);
@@ -596,9 +586,7 @@ function hash_call($methodName, $nvpStr)
 	{
 	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 	    $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";
-	}
-	else
-	{
+	} else {
 	    $API_Endpoint = "https://api-3t.paypal.com/nvp";
 	    $API_Url = "https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=";
 	}
@@ -676,9 +664,7 @@ function hash_call($methodName, $nvpStr)
         $_SESSION['curl_error_msg'] = curl_error($ch);
 
         //Execute the Error handling module to display errors.
-    }
-    else
-    {
+    } else {
         //closing the curl
         curl_close($ch);
     }

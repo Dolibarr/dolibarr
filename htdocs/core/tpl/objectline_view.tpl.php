@@ -45,7 +45,7 @@ if (empty($object) || !is_object($object))
 	exit;
 }
 
-
+global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 
 $usemargins = 0;
@@ -89,8 +89,7 @@ if (($line->info_bits & 2) == 2) {
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
-		}
-		elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
+		} elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0)
 		{
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
@@ -98,35 +97,27 @@ if (($line->info_bits & 2) == 2) {
 			// Add date of deposit
 			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE))
 			    print ' ('.dol_print_date($discount->datec).')';
-		}
-		elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
+		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0)
 		{
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
-		}
-		elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+		} elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
 		{
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print ($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
-		}
-		else
-		{
+		} else {
 			print ($txt ? ' - ' : '').dol_htmlentitiesbr($line->description);
 		}
 	}
-}
-else
-{
+} else {
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
     if ($line->fk_product > 0)
 	{
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
-	}
-	else
-	{
+	} else {
 		$type = (!empty($line->product_type) ? $line->product_type : $line->fk_product_type);
 		if ($type == 1) $text = img_object($langs->trans('Service'), 'service');
 		else $text = img_object($langs->trans('Product'), 'product');
@@ -139,8 +130,7 @@ else
 			if (preg_match('/^\(DEPOSIT\)/', $line->description)) {
 				$newdesc = preg_replace('/^\(DEPOSIT\)/', $langs->trans("Deposit"), $line->description);
 				print $text.' '.dol_htmlentitiesbr($newdesc);
-			}
-			else {
+			} else {
 				print $text.' '.dol_htmlentitiesbr($line->description);
 			}
 		}
@@ -153,8 +143,7 @@ else
 		if ($line->date_start_fill && $line->date_end_fill) print ' - ';
 		if ($line->date_end_fill) print $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
 		if ($line->date_start_fill || $line->date_end_fill) print '</div>';
-	}
-	else {
+	} else {
 		if ($line->date_start || $line->date_end) print '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 		//print get_date_range($line->date_start, $line->date_end, $format);
 	}
@@ -177,9 +166,7 @@ if ($user->rights->fournisseur->lire && $line->fk_fournprice > 0)
 	if ($user->rights->produit->creer || $user->rights->service->creer) // change required right here
 	{
 		print $productfourn->getNomUrl();
-	}
-	else
-	{
+	} else {
 		print $productfourn->ref_supplier;
 	}
 }
@@ -282,13 +269,27 @@ if ($line->special_code == 3) { ?>
 	$coldisplay++;
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
 	{
-    	print '<span class="classfortooltip" title="';
-    	print $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
-    	print '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
-    	if (price2num($line->total_localtax1)) print '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
-    	if (price2num($line->total_localtax2)) print '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
-    	print '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
-    	print '">';
+		$tooltiponprice = $langs->transcountry("TotalHT", $mysoc->country_code).'='.price($line->total_ht);
+		$tooltiponprice .= '<br>'.$langs->transcountry("TotalVAT", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_tva);
+		if (!$senderissupplier && is_object($object->thirdparty)) {
+			if ($mysoc->useLocalTax(1)) {
+				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(1)) {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax1);
+				} else {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT1", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+				}
+			}
+			if ($mysoc->useLocalTax(2)) {
+				if (($mysoc->country_code == $object->thirdparty->country_code) || $object->thirdparty->useLocalTax(2)) {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'='.price($line->total_localtax2);
+				} else {
+					$tooltiponprice .= '<br>'.$langs->transcountry("TotalLT2", ($senderissupplier ? $object->thirdparty->country_code : $mysoc->country_code)).'=<span class="opacitymedium">'.$langs->trans("NotUsedForThisCustomer").'</span>';
+				}
+			}
+		}
+		$tooltiponprice .= '<br>'.$langs->transcountry("TotalTTC", $mysoc->country_code).'='.price($line->total_ttc);
+
+		print '<span class="classfortooltip" title="'.dol_escape_htmltag($tooltiponprice).'">';
 	}
 	print price($line->total_ht);
 	if (empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))

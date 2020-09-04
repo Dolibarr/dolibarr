@@ -75,7 +75,11 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         print "\n";
     }
 
-    // Static methods
+    /**
+     * setUpBeforeClass
+     *
+     * @return void
+     */
     public static function setUpBeforeClass()
     {
         global $conf,$user,$langs,$db;
@@ -91,7 +95,11 @@ class AdherentTest extends PHPUnit\Framework\TestCase
         print __METHOD__."\n";
     }
 
-    // tear down after class
+    /**
+     * tearDownAfterClass
+     *
+     * @return	void
+     */
     public static function tearDownAfterClass()
     {
         global $conf,$user,$langs,$db;
@@ -325,13 +333,13 @@ class AdherentTest extends PHPUnit\Framework\TestCase
 
         $conf->global->MAIN_FIRSTNAME_NAME_POSITION = 0;	// Force setup for firstname+lastname
 
-        $template = '__CIVILITY__,__FIRSTNAME__,__LASTNAME__,__FULLNAME__,__COMPANY__,'.
-                    '__ADDRESS__,__ZIP__,__TOWN__,__COUNTRY__,__EMAIL__,__BIRTH__,__PHOTO__,__LOGIN__';
+        $template = '__CIVILITY__,__FIRSTNAME__,__LASTNAME__,__FULLNAME__,__COMPANY__,';
+        $template .= '__ADDRESS__,__ZIP__,__TOWN__,__COUNTRY__,__EMAIL__,__BIRTH__,__PHOTO__,__LOGIN__';
 
         // If option to store clear password has been set, we get 'dolibspec' into PASSWORD field.
-        $expected = ',New firstname,New name,New firstname New name,'.
-                    'New company label,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,'.
-                    'newlogin';
+        $expected = ',New firstname,New name,New firstname New name,';
+        $expected .= 'New company label,New address,New zip,New town,Belgium,newemail@newemail.com,'.dol_print_date($localobject->birth, 'day').',,';
+        $expected .= 'newlogin';
 
         $result = $localobject->makeSubstitution($template);
         print __METHOD__." result=".$result."\n";

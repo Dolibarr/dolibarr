@@ -22,7 +22,7 @@
  * \brief 		Class file to manage Dolibarr database access
  */
 
-require_once DOL_DOCUMENT_ROOT .'/core/db/Database.interface.php';
+require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
 
 /**
  * Class to manage Dolibarr database access
@@ -34,9 +34,9 @@ abstract class DoliDB implements Database
 	/** @var string Database type */
 	public $type;
 	/** @var string Charset used to force charset when creating database */
-	public $forcecharset='utf8';
+	public $forcecharset = 'utf8';
 	/** @var string Collate used to force collate when creating database */
-	public $forcecollate='utf8_unicode_ci';
+	public $forcecollate = 'utf8_unicode_ci';
 	/** @var resource Resultset of last query */
 	private $_results;
 	/** @var bool true if connected, else false */
@@ -110,9 +110,9 @@ abstract class DoliDB implements Database
 	 */
     public function begin()
 	{
-		if (! $this->transaction_opened)
+		if (!$this->transaction_opened)
 		{
-			$ret=$this->query("BEGIN");
+			$ret = $this->query("BEGIN");
 			if ($ret)
 			{
 				$this->transaction_opened++;
@@ -120,9 +120,7 @@ abstract class DoliDB implements Database
 				dol_syslog('', 0, 1);
 			}
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened++;
 			dol_syslog('', 0, 1);
 			return 1;
@@ -138,22 +136,18 @@ abstract class DoliDB implements Database
     public function commit($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened<=1)
+		if ($this->transaction_opened <= 1)
 		{
-			$ret=$this->query("COMMIT");
+			$ret = $this->query("COMMIT");
 			if ($ret)
 			{
-				$this->transaction_opened=0;
-				dol_syslog("COMMIT Transaction".($log?' '.$log:''), LOG_DEBUG);
+				$this->transaction_opened = 0;
+				dol_syslog("COMMIT Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 				return 1;
-			}
-			else
-			{
+			} else {
 				return 0;
 			}
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
@@ -168,15 +162,13 @@ abstract class DoliDB implements Database
     public function rollback($log = '')
 	{
 		dol_syslog('', 0, -1);
-		if ($this->transaction_opened<=1)
+		if ($this->transaction_opened <= 1)
 		{
-			$ret=$this->query("ROLLBACK");
-			$this->transaction_opened=0;
-			dol_syslog("ROLLBACK Transaction".($log?' '.$log:''), LOG_DEBUG);
+			$ret = $this->query("ROLLBACK");
+			$this->transaction_opened = 0;
+			dol_syslog("ROLLBACK Transaction".($log ? ' '.$log : ''), LOG_DEBUG);
 			return $ret;
-		}
-		else
-		{
+		} else {
 			$this->transaction_opened--;
 			return 1;
 		}
@@ -193,7 +185,7 @@ abstract class DoliDB implements Database
 	{
 		global $conf;
 		if (empty($limit)) return "";
-		if ($limit < 0) $limit=$conf->liste_limit;
+		if ($limit < 0) $limit = $conf->liste_limit;
 		if ($offset > 0) return " LIMIT $offset,$limit ";
 		else return " LIMIT $limit ";
 	}
@@ -227,18 +219,18 @@ abstract class DoliDB implements Database
 	 */
     public function order($sortfield = null, $sortorder = null)
 	{
-		if (! empty($sortfield))
+		if (!empty($sortfield))
 		{
-			$return='';
-			$fields=explode(',', $sortfield);
-			$orders=explode(',', $sortorder);
-			$i=0;
-			foreach($fields as $val)
+			$return = '';
+			$fields = explode(',', $sortfield);
+			$orders = explode(',', $sortorder);
+			$i = 0;
+			foreach ($fields as $val)
 			{
-				if (! $return) $return.=' ORDER BY ';
-				else $return.=', ';
+				if (!$return) $return .= ' ORDER BY ';
+				else $return .= ', ';
 
-				$return.=preg_replace('/[^0-9a-z_\.]/i', '', $val);
+				$return .= preg_replace('/[^0-9a-z_\.]/i', '', $val);
 
 				$tmpsortorder = trim($orders[$i]);
 
@@ -252,9 +244,7 @@ abstract class DoliDB implements Database
 				$i++;
 			}
 			return $return;
-		}
-		else
-		{
+		} else {
 			return '';
 		}
 	}
@@ -281,10 +271,10 @@ abstract class DoliDB implements Database
     public function jdate($string, $gm = false)
 	{
 		// TODO GMT must set param gm to true by default
-		if ($string==0 || $string=="0000-00-00 00:00:00") return '';
-		$string=preg_replace('/([^0-9])/i', '', $string);
-		$tmp=$string.'000000';
-		$date=dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
+		if ($string == 0 || $string == "0000-00-00 00:00:00") return '';
+		$string = preg_replace('/([^0-9])/i', '', $string);
+		$tmp = $string.'000000';
+		$date = dol_mktime((int) substr($tmp, 8, 2), (int) substr($tmp, 10, 2), (int) substr($tmp, 12, 2), (int) substr($tmp, 4, 2), (int) substr($tmp, 6, 2), (int) substr($tmp, 0, 4), $gm);
 		return $date;
 	}
 
@@ -296,5 +286,49 @@ abstract class DoliDB implements Database
     public function lastqueryerror()
 	{
 		return $this->lastqueryerror;
+	}
+
+	/**
+	 * Return first result from query as object
+	 * Note : This method executes a given SQL query and retrieves the first row of results as an object. It should only be used with SELECT queries
+	 * Dont add LIMIT to your query, it will be added by this method
+	 * @param string $sql the sql query string
+	 * @return bool| object
+	 */
+	public function getRow($sql)
+	{
+		$sql .= ' LIMIT 1;';
+
+		$res = $this->query($sql);
+		if ($res)
+		{
+			return $this->fetch_object($res);
+		}
+
+		return false;
+	}
+
+	/**
+	 * return all results from query as an array of objects
+	 * Note : This method executes a given SQL query and retrieves all row of results as an array of objects. It should only be used with SELECT queries
+	 * be carefull with this method use it only with some limit of results to avoid performences loss
+	 * @param string $sql the sql query string
+	 * @return bool| array
+	 */
+	public function getRows($sql)
+	{
+		$res = $this->query($sql);
+		if ($res)
+		{
+			$results = array();
+			if ($this->num_rows($res) > 0){
+				while ($obj = $this->fetch_object($res)){
+					$results[] = $obj;
+				}
+			}
+			return $results;
+		}
+
+		return false;
 	}
 }

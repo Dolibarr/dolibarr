@@ -39,16 +39,16 @@ $langs->load("orders");
 $langs->load("receptions");
 $langs->load("companies");
 
-$id=GETPOST('id', 'int');
-$ref=GETPOST('ref', 'alpha');
-$action=GETPOST('action', 'alpha');
+$id = GETPOST('id', 'int');
+$ref = GETPOST('ref', 'alpha');
+$action = GETPOST('action', 'alpha');
 
 // Security check
-if ($user->socid) $socid=$user->socid;
+if ($user->socid) $socid = $user->socid;
 $result = restrictedArea($user, 'reception', $id, '');
 
 $object = new Reception($db);
-if ($id > 0 || ! empty($ref))
+if ($id > 0 || !empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
@@ -90,9 +90,7 @@ if ($action == 'addcontact' && $user->rights->reception->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else
-	{
+	} else {
 		if ($objectsrc->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 		{
 			$langs->load("errors");
@@ -120,8 +118,7 @@ elseif ($action == 'deletecontact' && $user->rights->reception->creer)
 	{
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
-	}
-	else {
+	} else {
 		dol_print_error($db);
 	}
 }
@@ -158,7 +155,7 @@ if ($id > 0 || !empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = reception_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'sending');
+	dol_fiche_head($head, 'contact', $langs->trans("Reception"), -1, 'dollyrevert');
 
 
 	// Reception card

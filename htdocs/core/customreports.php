@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * This tool can be included into a list page with
+ * Note: This tool can be included into a list page with :
  * define('USE_CUSTOME_REPORT_AS_INCLUDE', 1);
  * include DOL_DOCUMENT_ROOT.'/core/customreports.php';
  */
@@ -129,8 +129,7 @@ if ($objecttype) {
     	}
         $ObjectClassName = $arrayoftype[$objecttype]['ObjectClassName'];
         $object = new $ObjectClassName($db);
-    }
-    catch (Exception $e) {
+    } catch (Exception $e) {
         print 'Failed to load class for type '.$objecttype;
     }
 }
@@ -214,6 +213,7 @@ if ($action == 'viewgraph') {
 }
 
 // Get all possible values of fields when a 'group by' is set, and save this into $arrayofvaluesforgroupby
+// $arrayofvaluesforgroupby will be used to forge lael of each grouped series
 if (is_array($search_groupby) && count($search_groupby)) {
 	foreach ($search_groupby as $gkey => $gval) {
 		$gvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $gval);
@@ -251,19 +251,35 @@ if (is_array($search_groupby) && count($search_groupby)) {
 			if (is_null($obj->val)) {
 				$keytouse = '__NULL__';
 				$valuetranslated = $langs->transnoentitiesnoconv("NotDefined");
-			}
-			elseif ($obj->val === '') {
+			} elseif ($obj->val === '') {
 				$keytouse = '';
 				$valuetranslated = $langs->transnoentitiesnoconv("Empty");
-			}
-			else {
+			} else {
 				$keytouse = (string) $obj->val;
 				$valuetranslated = $obj->val;
 			}
+
+			$regs = array();
 			if (!empty($object->fields[$gvalwithoutprefix]['arrayofkeyval'])) {
 				$valuetranslated = $object->fields[$gvalwithoutprefix]['arrayofkeyval'][$obj->val];
-				if (is_null($valuetranslated)) $valuetranslated =  $langs->transnoentitiesnoconv("UndefinedKey");
+				if (is_null($valuetranslated)) $valuetranslated = $langs->transnoentitiesnoconv("UndefinedKey");
 				$valuetranslated = $langs->trans($valuetranslated);
+			} elseif (preg_match('/integer:([^:]+):([^:]+)$/', $object->fields[$gvalwithoutprefix]['type'], $regs)) {
+				$classname = $regs[1];
+				$classpath = $regs[2];
+				dol_include_once($classpath);
+				if (class_exists($classname)) {
+					$tmpobject = new $classname($db);
+					$tmpobject->fetch($obj->val);
+					foreach ($tmpobject->fields as $fieldkey => $field) {
+						if ($field['showoncombobox']) {
+							$valuetranslated = $tmpobject->$fieldkey;
+							//if ($valuetranslated == '-') $valuetranslated = $langs->transnoentitiesnoconv("Unknown")
+							break;
+						}
+					}
+					//$valuetranslated = $tmpobject->ref.'eee';
+				}
 			}
 
 			$arrayofvaluesforgroupby['g_'.$gkey][$keytouse] = $valuetranslated;
@@ -272,9 +288,17 @@ if (is_array($search_groupby) && count($search_groupby)) {
 
 		if (count($arrayofvaluesforgroupby['g_'.$gkey]) > $MAXUNIQUEVALFORGROUP) {
 			$langs->load("errors");
+			if (strpos($fieldtocount, 'te.') === 0) {
+                //if (!empty($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix])) {
+                //      $langs->load($extrafields->attributes[$object->table_element]['langfile'][$gvalwithoutprefix]);
+                //}
+                $keyforlabeloffield = $extrafields->attributes[$object->table_element]['label'][$gvalwithoutprefix];
+            } else {
+                $keyforlabeloffield = $object->fields[$gvalwithoutprefix]['label'];
+            }
 			//var_dump($gkey.' '.$gval.' '.$gvalwithoutprefix);
 			$gvalwithoutprefix = preg_replace('/\-(year|month|day)/', '', $gvalwithoutprefix);
-			$labeloffield = $langs->transnoentitiesnoconv($object->fields[$gvalwithoutprefix]['label']);
+			$labeloffield = $langs->transnoentitiesnoconv($keyforlabeloffield);
 			setEventMessages($langs->trans("ErrorTooManyDifferentValueForSelectedGroupBy", $MAXUNIQUEVALFORGROUP, $labeloffield), null, 'warnings');
 			$search_groupby = array();
 		}
@@ -313,7 +337,7 @@ foreach ($arrayoftype as $key => $val) {
 	}
 }
 print $form->selectarray('objecttype', $newarrayoftype, $objecttype, 0, 0, 0, '', 1, 0, 0, '', 'minwidth200', 1);
-if (empty($conf->use_javascript_ajax)) print '<input type="submit" class="button" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
+if (empty($conf->use_javascript_ajax)) print '<input type="submit" class="button buttongen" name="changeobjecttype" value="'.$langs->trans("Refresh").'">';
 else {
     print '<script type="text/javascript" language="javascript">
         jQuery(document).ready(function() {
@@ -414,7 +438,7 @@ if ($mode == 'graph') {
     print '</div>';
 }
 print '<div class="divadvancedsearchfield">';
-print '<input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
+print '<input type="submit" class="button buttongen" value="'.$langs->trans("Refresh").'">';
 print '</div>';
 print '</div>';
 print '</form>';
@@ -436,8 +460,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
         } elseif (preg_match('/\-day$/', $val)) {
             $tmpval = preg_replace('/\-day$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as x_".$key.', ';
-        }
-        else $sql .= $val.' as x_'.$key.', ';
+        } else $sql .= $val.' as x_'.$key.', ';
     }
     foreach ($search_groupby as $key => $val) {
     	if (preg_match('/\-year$/', $val)) {
@@ -449,24 +472,20 @@ if (!empty($search_measures) && !empty($search_xaxis))
     	} elseif (preg_match('/\-day$/', $val)) {
     		$tmpval = preg_replace('/\-day$/', '', $val);
     		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d') as g_".$key.', ';
-    	}
-    	else $sql .= $val.' as g_'.$key.', ';
+    	} else $sql .= $val.' as g_'.$key.', ';
     }
     foreach ($search_measures as $key => $val) {
         if ($val == 't.count') $sql .= 'COUNT(t.'.$fieldid.') as y_'.$key.', ';
         elseif (preg_match('/\-sum$/', $val)) {
             $tmpval = preg_replace('/\-sum$/', '', $val);
             $sql .= 'SUM('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
-        }
-        elseif (preg_match('/\-average$/', $val)) {
+        } elseif (preg_match('/\-average$/', $val)) {
             $tmpval = preg_replace('/\-average$/', '', $val);
             $sql .= 'AVG('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
-        }
-        elseif (preg_match('/\-min$/', $val)) {
+        } elseif (preg_match('/\-min$/', $val)) {
         	$tmpval  = preg_replace('/\-min$/', '', $val);
         	$sql .= 'MIN('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
-        }
-        elseif (preg_match('/\-max$/', $val)) {
+        } elseif (preg_match('/\-max$/', $val)) {
         	$tmpval = preg_replace('/\-max$/', '', $val);
         	$sql .= 'MAX('.$db->ifsql($tmpval.' IS NULL', '0', $tmpval).') as y_'.$key.', ';
         }
@@ -504,8 +523,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
         } elseif (preg_match('/\-day$/', $val)) {
             $tmpval = preg_replace('/\-day$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-        }
-        else $sql .= $val.', ';
+        } else $sql .= $val.', ';
     }
     foreach ($search_groupby as $key => $val) {
     	if (preg_match('/\-year$/', $val)) {
@@ -517,8 +535,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
     	} elseif (preg_match('/\-day$/', $val)) {
     		$tmpval = preg_replace('/\-day$/', '', $val);
     		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-    	}
-    	else $sql .= $val.', ';
+    	} else $sql .= $val.', ';
     }
     $sql = preg_replace('/,\s*$/', '', $sql);
     $sql .= ' ORDER BY ';
@@ -532,8 +549,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
         } elseif (preg_match('/\-day$/', $val)) {
             $tmpval = preg_replace('/\-day$/', '', $val);
             $sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-        }
-        else $sql .= $val.', ';
+        } else $sql .= $val.', ';
     }
     foreach ($search_groupby as $key => $val) {
     	if (preg_match('/\-year$/', $val)) {
@@ -545,8 +561,7 @@ if (!empty($search_measures) && !empty($search_xaxis))
     	} elseif (preg_match('/\-day$/', $val)) {
     		$tmpval = preg_replace('/\-day$/', '', $val);
     		$sql .= 'DATE_FORMAT('.$tmpval.", '%Y-%m-%d'), ";
-    	}
-    	else $sql .= $val.', ';
+    	} else $sql .= $val.', ';
     }
     $sql = preg_replace('/,\s*$/', '', $sql);
 }
@@ -578,6 +593,8 @@ if ($sql) {
     		$fieldforxkey = 'x_0';
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
+
+    		// Define $xlabel
     		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
     			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
     		}
@@ -657,6 +674,7 @@ if ($sql) {
     		$xlabel = $obj->$fieldforxkey;
     		$xvalwithoutprefix = preg_replace('/^[a-z]+\./', '', $xval);
 
+    		// Define $xlabel
     		if (!empty($object->fields[$xvalwithoutprefix]['arrayofkeyval'])) {
     			$xlabel = $object->fields[$xvalwithoutprefix]['arrayofkeyval'][$obj->$fieldforxkey];
     		}
@@ -723,7 +741,12 @@ if ($mode == 'graph') {
 
     	$px1->draw($filenamenb, $fileurlnb);
 
-    	print $px1->show($totalnbofrecord ? 0 : $langs->trans("SelectYourGraphOptionsFirst"));
+    	$texttoshow = $langs->trans("NoRecordFound");
+    	if (!GETPOSTISSET('search_measures') || !GETPOSTISSET('search_xaxis')) {
+    		$texttoshow = $langs->trans("SelectYourGraphOptionsFirst");
+    	}
+
+    	print $px1->show($totalnbofrecord ? 0 : $texttoshow);
     }
 }
 

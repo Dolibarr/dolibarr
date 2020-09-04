@@ -33,7 +33,8 @@ class Orders extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'socid'
+        'socid',
+    	'date'
     );
 
     /**
@@ -222,8 +223,7 @@ class Orders extends DolibarrApi
                 }
                 $i++;
             }
-        }
-        else {
+        } else {
             throw new RestException(503, 'Error when retrieve commande list : '.$db->lasterror());
         }
         if (!count($obj_ret)) {
@@ -233,7 +233,9 @@ class Orders extends DolibarrApi
     }
 
     /**
-     * Create order object
+     * Create a sale order
+     *
+     * Exemple: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
      *
      * @param   array   $request_data   Request data
      * @return  int     ID of order
@@ -346,7 +348,8 @@ class Orders extends DolibarrApi
                         $request_data->fk_unit,
                         $request_data->origin,
                         $request_data->origin_id,
-                        $request_data->multicurrency_subprice
+                        $request_data->multicurrency_subprice,
+                        $request_data->ref_ext
         );
 
         if ($updateRes > 0) {
@@ -404,7 +407,9 @@ class Orders extends DolibarrApi
             $request_data->special_code,
             $request_data->array_options,
             $request_data->fk_unit,
-      		$request_data->multicurrency_subprice
+      		$request_data->multicurrency_subprice,
+			0,
+      		$request_data->ref_ext
         );
 
         if ($updateRes > 0) {
@@ -455,6 +460,40 @@ class Orders extends DolibarrApi
     }
 
     /**
+     * Get contacts of given order
+     *
+     * Return an array with contact informations
+     *
+     * @param int    $id   ID of order
+	 * @param string $type Type of the contact (BILLING, SHIPPING, CUSTOMER)
+     *
+     * @url	GET {id}/contacts
+     *
+     * @return 	array data without useless information
+     *
+     * @throws 	RestException
+     */
+    public function getContacts($id, $type = '')
+    {
+        if (! DolibarrApiAccess::$user->rights->commande->lire) {
+            throw new RestException(401);
+        }
+
+        $result = $this->commande->fetch($id);
+        if ( ! $result ) {
+            throw new RestException(404, 'Order not found');
+        }
+
+        if ( ! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $contacts = $this->commande->liste_contact(-1, 'external', 0, $type);
+
+        return $this->_cleanObjectDatas($contacts);
+    }
+
+    /**
 	 * Add a contact type of given order
 	 *
 	 * @param int    $id             Id of order to update
@@ -485,15 +524,24 @@ class Orders extends DolibarrApi
 
         $result = $this->commande->add_contact($contactid, $type, 'external');
 
-        if (!$result) {
+        if ($result < 0) {
             throw new RestException(500, 'Error when added the contact');
         }
 
-        return $this->commande;
+        if ($result == 0) {
+            throw new RestException(304, 'contact already added');
+        }
+
+        return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Contact linked to the order'
+            )
+        );
     }
 
     /**
-	 * Delete a contact type of given order
+	 * Unlink a contact type of given order
 	 *
 	 * @param int    $id             Id of order to update
 	 * @param int    $rowid          Row key of the contact in the array contact_ids.
@@ -508,26 +556,31 @@ class Orders extends DolibarrApi
 	 */
     public function deleteContact($id, $rowid)
     {
-        if (!DolibarrApiAccess::$user->rights->commande->creer) {
+        if (! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
 
         $result = $this->commande->fetch($id);
-        if (!$result) {
+        if (! $result) {
             throw new RestException(404, 'Order not found');
         }
 
-		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+		if (! DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-        $result = $this->commande->delete_contact($rowid);
+        $result = $this->commande->delete_linked_contact($rowid);
 
         if (!$result) {
             throw new RestException(500, 'Error when deleted the contact');
         }
 
-        return $this->commande;
+        return array(
+            'success' => array(
+                'code' => 200,
+                'message' => 'Contact unlinked from order'
+            )
+        );
     }
 
     /**
@@ -566,9 +619,7 @@ class Orders extends DolibarrApi
         if ($this->commande->update(DolibarrApiAccess::$user) > 0)
         {
             return $this->get($id);
-        }
-        else
-        {
+        } else {
         	throw new RestException(500, $this->commande->error);
         }
     }
@@ -696,7 +747,7 @@ class Orders extends DolibarrApi
         $result = $this->commande->set_reopen(DolibarrApiAccess::$user);
         if ($result < 0) {
             throw new RestException(405, $this->commande->error);
-        }elseif ($result == 0) {
+        } elseif ($result == 0) {
             throw new RestException(304);
         }
 
