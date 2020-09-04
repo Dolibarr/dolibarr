@@ -1003,7 +1003,7 @@ class Commande extends CommonOrder
 						$originid = $line->id;
 						$origintype = $this->element;
 					}
-					
+
 					// ref_ext
 					if (empty($line->ref_ext)) {
 						$line->ref_ext = '';
@@ -1221,7 +1221,7 @@ class Commande extends CommonOrder
 		$this->date_creation      = '';
 		$this->date_validation    = '';
 		if (empty($conf->global->MAIN_KEEP_REF_CUSTOMER_ON_CLONING)) $this->ref_client = '';
-		
+
 		// Do not clone ref_ext
 		$num = count($this->lines);
 		for ($i = 0; $i < $num; $i++)
@@ -1461,7 +1461,7 @@ class Commande extends CommonOrder
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
-			
+
 			if (empty($remise_percent)) $remise_percent = 0;
 			if (empty($qty)) $qty = 0;
 			if (empty($info_bits)) $info_bits = 0;
@@ -3991,7 +3991,7 @@ class OrderLine extends CommonOrderLine
 	 * @var string Order lines label
 	 */
 	public $label;
-	
+
 	public $ref_ext;
 
 	public $fk_remise_except;
