@@ -127,6 +127,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+$error = 0;
 if (empty($reshook)) {
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) // All test are required to be compatible with all browsers{
@@ -157,6 +158,8 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
 			$action = 'create';
 		}
+		$ret = $extrafields->setOptionalsFromPost(null, $object);
+		if ($ret < 0)	$error++;
 
 		if (!$error) {
 			$db->begin();
@@ -173,8 +176,6 @@ if (empty($reshook)) {
 			$object->notify_tiers_at_create = empty($notifyTiers) ? 0 : 1;
 
 			$object->fk_project = GETPOST('projectid', 'int');
-
-			$ret = $extrafields->setOptionalsFromPost(null, $object);
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -560,18 +561,22 @@ if (empty($reshook)) {
 	// Action to update one extrafield
 	if ($action == "update_extras" && !empty($permissiontoadd)) {
 		$object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha'));
-		$attributekey = GETPOST('attribute', 'alpha');
-		$attributekeylong = 'options_' . $attributekey;
-		$object->array_options['options_' . $attributekey] = GETPOST($attributekeylong, ' alpha');
 
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-		if ($result > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'edit_extras';
+		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'none'));
+		if ($ret < 0) $error++;
+
+		if (!$error) {
+			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+			if ($result > 0) {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+				$action = 'view';
+			} else {
+				$error++;
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
 		}
+
+		if ($error) $action = 'edit_extras';
 	}
 
 	if ($action == "change_property" && GETPOST('btn_update_ticket_prop', 'alpha') && $user->rights->ticket->write) {
