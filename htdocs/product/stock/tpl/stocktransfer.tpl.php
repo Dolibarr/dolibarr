@@ -107,12 +107,16 @@ if (!empty($conf->productbatch->enabled) &&
 	print '</tr>';
 
 	print '<tr>';
-	print '<td>'.$langs->trans("EatByDate").'</td><td>';
-	print $form->selectDate(($d_eatby ? $d_eatby : $pdluo->eatby), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
-	print '</td>';
-	print '<td>'.$langs->trans("SellByDate").'</td><td>';
-	print $form->selectDate(($d_sellby ? $d_sellby : $pdluo->sellby), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
-	print '</td>';
+	if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+		print '<td>'.$langs->trans("EatByDate").'</td><td>';
+		print $form->selectDate(($d_eatby ? $d_eatby : $pdluo->eatby), 'eatby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
+		print '</td>';
+	}
+	if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+		print '<td>'.$langs->trans("SellByDate").'</td><td>';
+		print $form->selectDate(($d_sellby ? $d_sellby : $pdluo->sellby), 'sellby', '', '', 1, "", 1, 0, ($pdluoid > 0 ? 1 : 0)); // If form was opened for a specific pdluoid, field is disabled
+		print '</td>';
+	}
 	print '</tr>';
 }
 
