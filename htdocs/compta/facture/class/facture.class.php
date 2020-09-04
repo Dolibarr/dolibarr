@@ -3173,7 +3173,7 @@ class Facture extends CommonInvoice
 				return -2;
 			}
 		} else {
-			dol_syslog(get_class($this)."::addline status of order must be Draft to allow use of ->addline()", LOG_ERR);
+			dol_syslog(get_class($this)."::addline status of invoice must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
 	}
