@@ -877,6 +877,7 @@ class Products extends DolibarrApi
 
     /**
      * Get attributes.
+	 *
      * @param  string $sortfield  Sort field
      * @param  string $sortorder  Sort order
      * @param  int    $limit      Limit for list
@@ -920,12 +921,12 @@ class Products extends DolibarrApi
         $result = $this->db->query($sql);
 
         if (!$result) {
-            throw new RestException(503, 'Error when retrieve product list : '.$db->lasterror());
+            throw new RestException(503, 'Error when retrieve product attribute list : '.$db->lasterror());
         }
 
         $return = [];
         while ($result = $this->db->fetch_object($query)) {
-            $tmp = new stdClass();
+            $tmp = new ProductAttribute($this->db);
             $tmp->id = $result->rowid;
             $tmp->ref = $result->ref;
             $tmp->ref_ext = $result->ref_ext;
