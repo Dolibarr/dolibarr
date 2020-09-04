@@ -338,6 +338,8 @@ if ($action == "transfert_stock" && !$cancel)
 			if (isset($object->pmp)) $pricesrc = $object->pmp;
 			$pricedest = $pricesrc;
 
+			$nbpiece = price2num(GETPOST("nbpiece", 'alphanohtml'));
+			
 			if ($object->hasbatch())
 			{
 				$pdluo = new Productbatch($db);
