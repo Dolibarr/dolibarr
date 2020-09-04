@@ -182,9 +182,6 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				$langs->load('ticket');
 
-				$object->fetch('', '', $object->track_id); // Should be useless
-
-
 				// Send email to notification email
 				$sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 				if (!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO) && empty($object->context['disableticketemail']))
