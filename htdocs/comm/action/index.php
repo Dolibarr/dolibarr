@@ -467,7 +467,7 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	$s .= "\n".'<!-- Div to calendars selectors -->'."\n";
 	$s .= '<script type="text/javascript">'."\n";
 	$s .= 'jQuery(document).ready(function () {'."\n";
-	$s .= 'jQuery("#check_birthday").click(function() { console.log("Toggle birthday"); jQuery(".family_birthday").toggle(); });'."\n";
+	$s .= 'jQuery(".check_birthday").click(function() { console.log("Toggle birthday"); jQuery(".family_birthday").toggle(); });'."\n";
 	$s .= 'jQuery(".family_birthday").toggle();'."\n";
 	if ($action == "show_week" || $action == "show_month" || empty($action))
 	{
@@ -510,7 +510,7 @@ if (!empty($conf->use_javascript_ajax))	// If javascript on
 	}
 
 	// Birthdays
-	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday"> '.$langs->trans("AgendaShowBirthdayEvents").' &nbsp; </div>';
+	$s .= '<div class="nowrap inline-block"><input type="checkbox" id="check_birthday" name="check_birthday" class="check_birthday"> <span class="check_birthday_text">'.$langs->trans("AgendaShowBirthdayEvents").'</span> &nbsp; </div>';
 
 	// Calendars from hooks
     $parameters = array(); $object = null;
@@ -1207,13 +1207,15 @@ if (empty($action) || $action == 'show_month')      // View by month
     print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     print '</div>';
 
-    print '<div class="div-table-responsive-no-min">';
+    print '<div class="div-table-responsive-no-min sectioncalendarbymonth maxscreenheightless300">';
     print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
     print ' <tr class="liste_titre">';
+	// Column title of weeks numbers
+	echo '  <td align="center">#</td>';
     $i = 0;
     while ($i < 7)
     {
-        print '  <td class="center bold uppercase">';
+        print '  <td class="center bold uppercase tdfordaytitle">';
         $numdayinweek = (($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7);
         if (!empty($conf->dol_optimize_smallscreen))
         {
@@ -1232,6 +1234,24 @@ if (empty($action) || $action == 'show_month')      // View by month
     //var_dump($eventarray);
     for ($iter_week = 0; $iter_week < 6; $iter_week++) {
         echo " <tr>\n";
+		// Get date of the current day, format 'yyyy-mm-dd'
+		if ($tmpday <= 0) // If number of the current day is in previous month
+		{
+			$currdate0 = sprintf("%04d", $prev_year).sprintf("%02d", $prev_month).sprintf("%02d", $max_day_in_prev_month + $tmpday);
+		}
+		elseif ($tmpday <= $max_day_in_month) // If number of the current day is in current month
+		{
+			$currdate0 = sprintf("%04d", $year).sprintf("%02d", $month).sprintf("%02d", $tmpday);
+		}
+		else // If number of the current day is in next month
+		{
+			$currdate0 = sprintf("%04d", $next_year).sprintf("%02d", $next_month).sprintf("%02d", $tmpday - $max_day_in_month);
+		}
+		// Get week number for the targeted date '$currdate0'
+		$numweek0 = date("W", strtotime(date($currdate0)));
+		// Show the week number, and define column width
+		echo ' <td class="center weeknumber opacitymedium" width="2%">'.$numweek0.'</td>';
+
         for ($iter_day = 0; $iter_day < 7; $iter_day++) {
             if ($tmpday <= 0) {
                 /* Show days before the beginning of the current month (previous month)  */
@@ -1288,12 +1308,12 @@ if (empty($action) || $action == 'show_month')      // View by month
     print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     print '</div></div>';
 
-    print '<div class="div-table-responsive-no-min">';
+    print '<div class="div-table-responsive-no-min sectioncalendarbyweek maxscreenheightless300">';
     print '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
     print ' <tr class="liste_titre">';
     $i = 0;
     while ($i < 7) {
-        echo '  <td class="center bold uppercase">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
+        echo '  <td class="center bold uppercase tdfordaytitle">'.$langs->trans("Day".(($i + (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : 1)) % 7))."</td>\n";
         $i++;
     }
     echo " </tr>\n";
@@ -1348,11 +1368,10 @@ if (empty($action) || $action == 'show_month')      // View by month
     print_actions_filter($form, $canedit, $status, $year, $month, $day, $showbirthday, 0, $filtert, 0, $pid, $socid, $action, -1, $actioncode, $usergroup, '', $resourceid);
     print '</div></div>';
 
-    print '<div class="div-table-responsive-no-min">';
+    print '<div class="div-table-responsive-no-min sectioncalendarbyday maxscreenheightless300">';
     echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month noborderbottom" style="margin-bottom: 5px !important;">';
 
     echo ' <tr class="tagtr liste_titre">';
-    echo '  <td class="tagtd width100"></td>';
     echo '  <td class="tagtd center bold uppercase">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
     echo " </td>\n";
 

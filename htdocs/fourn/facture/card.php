@@ -2015,9 +2015,12 @@ if ($action == 'create')
 	print '</td></tr>';
 
 	// Bank Account
-	print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
-	$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1);
-	print '</td></tr>';
+	if (!empty($conf->banque->enabled))
+	{
+		print '<tr><td>'.$langs->trans('BankAccount').'</td><td>';
+		$form->select_comptes((GETPOSTISSET('fk_account') ?GETPOST('fk_account', 'alpha') : $fk_account), 'fk_account', 0, '', 1);
+		print '</td></tr>';
+	}
 
 	// Multicurrency
 	if (!empty($conf->multicurrency->enabled))
@@ -2589,21 +2592,24 @@ if ($action == 'create')
 		}
 
 		// Bank Account
-		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
-		print $langs->trans('BankAccount');
-		print '<td>';
-		if ($action != 'editbankaccount' && $usercancreate)
-			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
-		} else {
-			 $form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		if (!empty($conf->banque->enabled))
+		{
+			print '<tr><td class="nowrap">';
+			print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+			print $langs->trans('BankAccount');
+			print '<td>';
+			if ($action != 'editbankaccount' && $usercancreate)
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&amp;id='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($action == 'editbankaccount') {
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+			} else {
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+			}
+			print "</td>";
+			print '</tr>';
 		}
-		print "</td>";
-		print '</tr>';
 
 		// Incoterms
 		if (!empty($conf->incoterm->enabled))

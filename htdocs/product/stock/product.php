@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013      Cédric Salvador      <csalvador.gpcsolutions.fr>
- * Copyright (C) 2013-2018 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2014-2015 Cédric Gross         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005      Simon TOSSER            <simon@kornog-computing.com>
+ * Copyright (C) 2005-2009 Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013      Cédric Salvador         <csalvador.gpcsolutions.fr>
+ * Copyright (C) 2013-2018 Juanjo Menent	       <jmenent@2byte.es>
+ * Copyright (C) 2014-2015 Cédric Gross            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018-2019 Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,8 +67,8 @@ $stocklimit = GETPOST('seuil_stock_alerte');
 $desiredstock = GETPOST('desiredstock');
 $cancel = GETPOST('cancel', 'alpha');
 $fieldid = isset($_GET["ref"]) ? 'ref' : 'rowid';
-$d_eatby = dol_mktime(0, 0, 0, $_POST['eatbymonth'], $_POST['eatbyday'], $_POST['eatbyyear']);
-$d_sellby = dol_mktime(0, 0, 0, $_POST['sellbymonth'], $_POST['sellbyday'], $_POST['sellbyyear']);
+$d_eatby = dol_mktime(0, 0, 0, GETPOST('eatbymonth', 'int'), GETPOST('eatbyday', 'int'), GETPOST('eatbyyear', 'int'));
+$d_sellby = dol_mktime(0, 0, 0, GETPOST('sellbymonth', 'int'), GETPOST('sellbyday', 'int'), GETPOST('sellbyyear', 'int'));
 $pdluoid = GETPOST('pdluoid', 'int');
 $batchnumber = GETPOST('batch_number', 'san_alpha');
 if (!empty($batchnumber)) {
@@ -224,7 +224,8 @@ if ($action == "correct_stock" && !$cancel)
 	if (!$error)
 	{
 		$priceunit = price2num(GETPOST("unitprice"));
-		if (is_numeric(GETPOST("nbpiece")) && $id)
+		$nbpiece = price2num(GETPOST("nbpiece", 'alphanohtml'));
+		if (is_numeric($nbpiece) && $nbpiece != 0 && $id)
 		{
 			$origin_element = '';
 			$origin_id = null;
@@ -244,14 +245,14 @@ if ($action == "correct_stock" && !$cancel)
 				$result = $object->correct_stock_batch(
 					$user,
 					GETPOST("id_entrepot", 'int'),
-					GETPOST("nbpiece"),
-					GETPOST("mouvement"),
+					$nbpiece,
+					GETPOST("mouvement", 'int'),
 					GETPOST("label", 'alphanohtml'), // label movement
 					$priceunit,
 					$d_eatby,
 					$d_sellby,
 					$batchnumber,
-					GETPOST('inventorycode'),
+					GETPOST('inventorycode', 'alphanohtml'),
 					$origin_element,
 					$origin_id
 				); // We do not change value of stock for a correction
@@ -259,11 +260,11 @@ if ($action == "correct_stock" && !$cancel)
 				$result = $object->correct_stock(
 		    		$user,
 		    		GETPOST("id_entrepot", 'int'),
-		    		GETPOST("nbpiece"),
-		    		GETPOST("mouvement"),
+					$nbpiece,
+		    		GETPOST("mouvement", 'int'),
 		    		GETPOST("label", 'alphanohtml'),
 		    		$priceunit,
-					GETPOST('inventorycode'),
+					GETPOST('inventorycode', 'alphanohtml'),
 					$origin_element,
 					$origin_id
 				); // We do not change value of stock for a correction
@@ -337,6 +338,8 @@ if ($action == "transfert_stock" && !$cancel)
 			if (isset($object->pmp)) $pricesrc = $object->pmp;
 			$pricedest = $pricesrc;
 
+			$nbpiece = price2num(GETPOST("nbpiece", 'alphanohtml'));
+			
 			if ($object->hasbatch())
 			{
 				$pdluo = new Productbatch($db);
@@ -361,18 +364,20 @@ if ($action == "transfert_stock" && !$cancel)
 					$sellby = $d_sellby;
 				}
 
+				$nbpiece = price2num(GETPOST("nbpiece", 'alphanohtml'));
+
 				if (!$error)
 				{
 					// Remove stock
 					$result1 = $object->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
-						GETPOST("nbpiece", 'int'),
+						$nbpiece,
 						1,
-						GETPOST("label", 'san_alpha'),
+						GETPOST("label", 'alphanohtml'),
 						$pricesrc,
 						$eatby, $sellby, $batch,
-						GETPOST('inventorycode')
+						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result1 < 0) $error++;
 				}
@@ -382,12 +387,12 @@ if ($action == "transfert_stock" && !$cancel)
 					$result2 = $object->correct_stock_batch(
 						$user,
 						GETPOST("id_entrepot_destination", 'int'),
-						GETPOST("nbpiece", 'int'),
+						$nbpiece,
 						0,
-						GETPOST("label", 'san_alpha'),
+						GETPOST("label", 'alphanohtml'),
 						$pricedest,
 						$eatby, $sellby, $batch,
-						GETPOST('inventorycode')
+						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result2 < 0) $error++;
 				}
@@ -398,11 +403,11 @@ if ($action == "transfert_stock" && !$cancel)
     				$result1 = $object->correct_stock(
     					$user,
     					GETPOST("id_entrepot", 'int'),
-    					GETPOST("nbpiece"),
+    					$nbpiece,
     					1,
-    					GETPOST("label"),
+    					GETPOST("label", 'alphanohtml'),
     					$pricesrc,
-    					GETPOST('inventorycode')
+    					GETPOST('inventorycode', 'alphanohtml')
     				);
     				if ($result1 < 0) $error++;
 				}
@@ -412,11 +417,11 @@ if ($action == "transfert_stock" && !$cancel)
     				$result2 = $object->correct_stock(
     					$user,
     					GETPOST("id_entrepot_destination", 'int'),
-    					GETPOST("nbpiece"),
+    					$nbpiece,
     					0,
-    					GETPOST("label"),
+    					GETPOST("label", 'alphanohtml'),
     					$pricedest,
-    					GETPOST('inventorycode')
+    					GETPOST('inventorycode', 'alphanohtml')
     				);
     				if ($result2 < 0) $error++;
 				}
@@ -805,11 +810,18 @@ if (!$variants) {
 	print '<td class="right">'.$langs->trans("EstimatedStockValueSellShort").'</td>';
 	print '</tr>';
 	if ((!empty($conf->productbatch->enabled)) && $object->hasbatch()) {
+		$colspan = 3;
 		print '<tr class="liste_titre"><td width="10%"></td>';
 		print '<td class="right" width="10%">'.$langs->trans("batch_number").'</td>';
-		print '<td class="center" width="10%">'.$langs->trans("EatByDate").'</td>';
-		print '<td class="center" width="10%">'.$langs->trans("SellByDate").'</td>';
-		print '<td></td>';
+		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+			$colspan--;
+			print '<td class="center" width="10%">'.$langs->trans("EatByDate").'</td>';
+		}
+		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+			$colspan--;
+			print '<td class="center" width="10%">'.$langs->trans("SellByDate").'</td>';
+		}
+		print '<td colspan="'.$colspan.'"></td>';
 		print '<td></td>';
 		print '<td></td>';
 		print '<td></td>';
@@ -888,13 +900,17 @@ if (!$variants) {
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="pdluoid" value="'.$pdluo->id.'"><input type="hidden" name="action" value="updateline"><input type="hidden" name="id" value="'.$id.'"><table class="noborder centpercent"><tr><td width="10%"></td>';
 						print '<td class="right" width="10%"><input type="text" name="batch_number" value="'.$pdluo->batch.'"></td>';
-						print '<td class="center" width="10%">';
-						print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
-						print '</td>';
-						print '<td class="center" width="10%">';
-						print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
-						print '</td>';
-						print '<td class="right" width="10%">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							print '<td class="center" width="10%">';
+							print $form->selectDate($pdluo->eatby, 'eatby', '', '', 1, '', 1, 0);
+							print '</td>';
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							print '<td class="center" width="10%">';
+							print $form->selectDate($pdluo->sellby, 'sellby', '', '', 1, '', 1, 0);
+							print '</td>';
+						}
+						print '<td class="right" colspan="3">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
 						print '<td colspan="4"><input type="submit" class="button" id="savelinebutton marginbottomonly" name="save" value="'.$langs->trans("Save").'">';
 						print '<input type="submit" class="button" id="cancellinebutton" name="Cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 						print '</table>';
@@ -911,9 +927,16 @@ if (!$variants) {
 						print '<td class="right">';
 						print $product_lot_static->getNomUrl(1);
 						print '</td>';
-						print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
-						print '<td class="center">'.dol_print_date($pdluo->sellby, 'day').'</td>';
-						print '<td class="right">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
+						$colspan = 3;
+						if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+							$colspan--;
+							print '<td class="center">'.dol_print_date($pdluo->eatby, 'day').'</td>';
+						}
+						if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+							$colspan--;
+							print '<td class="center">'.dol_print_date($pdluo->sellby, 'day').'</td>';
+						}
+						print '<td class="right" colspan="'.$colspan.'">'.$pdluo->qty.($pdluo->qty < 0 ? ' '.img_warning() : '').'</td>';
 						print '<td colspan="4"></td>';
 						print '</tr>';
 					}

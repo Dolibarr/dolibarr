@@ -58,23 +58,23 @@ $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
 
-$fulldayevent = GETPOST('fullday');
+$fulldayevent = GETPOST('fullday', 'alpha');
 
-$aphour = GETPOST('aphour');
-$apmin = GETPOST('apmin');
-$p2hour = GETPOST('p2hour');
-$p2min = GETPOST('p2min');
+$aphour = GETPOST('aphour', 'int');
+$apmin = GETPOST('apmin', 'int');
+$p2hour = GETPOST('p2hour', 'int');
+$p2min = GETPOST('p2min', 'int');
 
-$addreminder = GETPOST('addreminder');
-$offsetvalue = GETPOST('offsetvalue');
-$offsetunit = GETPOST('offsetunittype_duration');
-$remindertype = GETPOST('selectremindertype');
-$modelmail = GETPOST('actioncommsendmodel_mail');
+$addreminder = GETPOST('addreminder', 'alpha');
+$offsetvalue = GETPOST('offsetvalue', 'int');
+$offsetunit = GETPOST('offsetunittype_duration', 'aZ09');
+$remindertype = GETPOST('selectremindertype', 'aZ09');
+$modelmail = GETPOST('actioncommsendmodel_mail', 'int');
 
 //var_dump($_POST); exit;
 
-$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth"), GETPOST("apday"), GETPOST("apyear"));
-$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month"), GETPOST("p2day"), GETPOST("p2year"));
+$datep = dol_mktime($fulldayevent ? '00' : $aphour, $fulldayevent ? '00' : $apmin, 0, GETPOST("apmonth", 'int'), GETPOST("apday", 'int'), GETPOST("apyear", 'int'));
+$datef = dol_mktime($fulldayevent ? '23' : $p2hour, $fulldayevent ? '59' : $p2min, $fulldayevent ? '59' : '0', GETPOST("p2month", 'int'), GETPOST("p2day", 'int'), GETPOST("p2year", 'int'));
 
 // Security check
 $socid = GETPOST('socid', 'int');
@@ -391,21 +391,9 @@ if (empty($reshook) && $action == 'add')
                 if ($addreminder == 'on'){
                     $actionCommReminder = new ActionCommReminder($db);
 
-                    if ($offsetunit == 'minute'){
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
-                    } elseif ($offsetunit == 'hour'){
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'h');
-                    } elseif ($offsetunit == 'day') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'd');
-                    } elseif ($offsetunit == 'week') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'w');
-                    } elseif ($offsetunit == 'month') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'm');
-                    } elseif ($offsetunit == 'year') {
-                        $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'y');
-                    }
+                    $dateremind = dol_time_plus_duree($datep, -$offsetvalue, 'i');
 
-                    $actionCommReminder->dateremind = $db->idate($dateremind);
+                    $actionCommReminder->dateremind = $dateremind;
                     $actionCommReminder->typeremind = $remindertype;
                     $actionCommReminder->fk_user = $user;
                     $actionCommReminder->offsetunit = $offsetunit;
@@ -418,15 +406,20 @@ if (empty($reshook) && $action == 'add')
 
                     if ($res <= 0){
                         // If error
-                        $db->rollback();
+                        $error++;
                         $langs->load("errors");
-                        $error = $langs->trans('ErrorReminderActionCommCreation');
-                        setEventMessages($error, null, 'errors');
+                        $error = $langs->trans('ErrorReminderActionCommCreation').' '.$actionCommReminder->error;
+                        setEventMessages($error, $actionCommReminder->errors, 'errors');
                         $action = 'create'; $donotclearsession = 1;
                     }
                 }
 
-				$db->commit();
+                if ($error) {
+                	$db->rollback();
+                } else {
+					$db->commit();
+                }
+
 				if (!empty($backtopage))
 				{
 					dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
@@ -904,31 +897,48 @@ if ($action == 'create')
     // Full day
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday') ? ' checked' : '').'></td></tr>';
 
-	// Date start
-	$datep = ($datep ? $datep : $object->datep);
-	if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
-	print '<tr><td class="nowrap"><span class="fieldrequired">'.$langs->trans("DateActionStart").'</span></td><td>';
+    $datep = ($datep ? $datep : $object->datep);
+    if (GETPOST('datep', 'int', 1)) $datep = dol_stringtotime(GETPOST('datep', 'int', 1), 0);
+    $datef = ($datef ? $datef : $object->datef);
+    if (GETPOST('datef', 'int', 1)) $datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
+    if (empty($datef) && !empty($datep))
+    {
+    	if (GETPOST("actioncode", 'aZ09') == 'AC_RDV' || empty($conf->global->AGENDA_USE_EVENT_TYPE_DEFAULT)) {
+    		$datef = dol_time_plus_duree($datep, (empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS) ? 1 : $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS), 'h');
+    	}
+    }
+
+    // Date start
+	print '<tr><td class="nowrap">';
+	print '<span class="fieldrequired">'.$langs->trans("DateActionStart").'</span>';
+	print ' - ';
+	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
+	print '</td><td>';
 	if (GETPOST("afaire") == 1) {
         print $form->selectDate($datep, 'ap', 1, 1, 0, "action", 1, 2, 0, 'fulldaystart');	// Empty value not allowed for start date and hours if "todo"
     } else {
         print $form->selectDate($datep, 'ap', 1, 1, 1, "action", 1, 2, 0, 'fulldaystart');
     }
-	print '</td></tr>';
+    print ' <span class="hideonsmartphone">&nbsp; &nbsp; - &nbsp; &nbsp;</span> ';
+	//print ' - ';
+    if (GETPOST("afaire") == 1) {
+    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+    } else {
+    	print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 0, 0, 'fulldayend');
+    }
+    print '</td></tr>';
 
 	// Date end
-	$datef = ($datef ? $datef : $object->datef);
-    if (GETPOST('datef', 'int', 1)) $datef = dol_stringtotime(GETPOST('datef', 'int', 1), 0);
-	if (empty($datef) && !empty($datep) && !empty($conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS))
-	{
-		$datef = dol_time_plus_duree($datep, $conf->global->AGENDA_AUTOSET_END_DATE_WITH_DELTA_HOURS, 'h');
-	}
-	print '<tr><td><span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span></td><td>';
+	/*print '<tr><td>';
+	print '<span id="dateend"'.(GETPOST("actioncode", 'aZ09') == 'AC_RDV' ? ' class="fieldrequired"' : '').'>'.$langs->trans("DateActionEnd").'</span>';
+	print '</td>';
+	print '<td>';
 	if (GETPOST("afaire") == 1) {
         print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
     } else {
         print $form->selectDate($datef, 'p2', 1, 1, 1, "action", 1, 2, 0, 'fulldayend');
     }
-	print '</td></tr>';
+	print '</td></tr>';*/
 
     // Dev in progress
 	$userepeatevent = ($conf->global->MAIN_FEATURES_LEVEL == 2 ? 1 : 0);
@@ -1173,13 +1183,14 @@ if ($action == 'create')
     if ($conf->global->AGENDA_REMINDER_EMAIL || $conf->global->AGENDA_REMINDER_BROWSER)
     {
         //checkbox create reminder
-        print '<br>';
-        print '<tr><td>'.$langs->trans("AddReminder").'</td><td colspan="3"><input type="checkbox" id="addreminder" name="addreminder"></td></tr>';
+        print '<hr>';
+    	print '<br>';
+        print '<label for="addreminder">'.$langs->trans("AddReminder").'</label> <input type="checkbox" id="addreminder" name="addreminder"><br><br>';
 
         print '<div class="reminderparameters" style="display: none;">';
 
-        print '<hr>';
-        print load_fiche_titre($langs->trans("AddReminder"), '', '');
+        //print '<hr>';
+        //print load_fiche_titre($langs->trans("AddReminder"), '', '');
 
         print '<table class="border centpercent">';
 
@@ -1190,7 +1201,7 @@ if ($action == 'create')
 
         //Time Type
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("TimeType").'</td><td colspan="3">';
-        print $form->selectTypeDuration('offsetunit');
+        print $form->selectTypeDuration('offsetunit', 'i');
         print '</td></tr>';
 
         //Reminder Type
@@ -1203,7 +1214,7 @@ if ($action == 'create')
 
         //Mail Model
         print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("EMailTemplates").'</td><td colspan="3">';
-        print $form->selectModelMail('actioncommsend', 'actioncomm_send');
+        print $form->selectModelMail('actioncommsend', 'actioncomm_send', 1);
         print '</td></tr>';
 
 
@@ -1235,9 +1246,13 @@ if ($action == 'create')
     dol_fiche_end();
 
 	print '<div class="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Add").'">';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-	print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	if (empty($backtopage)) {
+		print '<input type="button" class="button" name="cancel" value="'.$langs->trans("Cancel").'" onClick="javascript:history.go(-1)">';
+	} else {
+		print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	}
 	print '</div>';
 
 	print "</form>";
@@ -1579,9 +1594,11 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
-		print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
-		print '</td></tr>';
+		if (! empty($conf->global->AGENDA_SUPPORT_PRIORITY_IN_EVENTS)) {
+			print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
+			print '<input type="text" name="priority" value="'.($object->priority ? $object->priority : '').'" size="5">';
+			print '</td></tr>';
+		}
 
 		// Object linked
 		if (!empty($object->fk_element) && !empty($object->elementtype))

@@ -62,12 +62,12 @@ No vulnerability disclosure, including partial is allowed for the moment.
 
 ## Scope for qualified vulnerabilities
 
-ONLY vulnerabilities discovered when the following setup is used are accepted:
+ONLY vulnerabilities discovered, when the following setup on tested platform is used, are accepted:
 
 * $dolibarr_main_prod must be 1 into conf.php
 * $dolibarr_nocsrfcheck must not be set to 0 (should be 1 by default) into conf.php
-* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this value should be switched soon to 1 by default)
-* ONLY security reports on "stable" modules are allowed (troubles into experimental and developement modules are not accepted).
+* The constant MAIN_SECURITY_CSRF_WITH_TOKEN must be set to 1 into backoffice menu Home - Setup - Other (this value should be hard switched soon to 1 by default)
+* ONLY security reports on "stable" modules are allowed (troubles into "experimental" and "developement" modules are not accepted).
 
 Scope is the web application (back office) and the APIs.
 
@@ -84,6 +84,8 @@ Scope is the web application (back office) and the APIs.
 * CORS with real security impact
 * Horizontal and vertical privilege escalation
 * "HTTP Host Header" XSS
+* Software version disclosure (for non admin users only)
+* Stack traces or path disclosure (for non admin users only)
 
 
 ## Non-qualifying vulnerabilities for Bug bounty programs, but qualified for reporting
@@ -93,8 +95,6 @@ Scope is the web application (back office) and the APIs.
 * Mixed content warnings
 * Denial of Service attacks
 * Clickjacking/UI redressing
-* Software version disclosure
-* Stack traces or path disclosure
 * Physical or social engineering attempts
 * Recently disclosed 0-day vulnerabilities
 * Presence of autocomplete attribute on web forms
@@ -104,5 +104,7 @@ Scope is the web application (back office) and the APIs.
 * Missing security-related HTTP headers which do not lead directly to a vulnerability
 * Reports from automated web vulnerability scanners (Acunetix, Vega, etc.) that have not been validated
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
-* Reports on features flagged as experimental
+* Reports on features flagged as "experimental" or "development"
+* Software version disclosure when logged user is admin
+* Stack traces or path disclosure when logged user is admin
 

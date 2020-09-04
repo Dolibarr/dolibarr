@@ -205,6 +205,8 @@ ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_rec
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitmentcandidature_email_msgid(email_msgid);
 
 
+ALTER TABLE llx_product_attribute ADD COLUMN ref_ext VARCHAR(255) after ref;
+ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
 
 
 CREATE TABLE llx_product_attribute_combination_price_level
@@ -301,7 +303,12 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN entity integer NOT NULL DEFAULT 1;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_actioncomm integer NOT NULL;
 ALTER TABLE llx_actioncomm_reminder ADD COLUMN fk_email_template integer;
-ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique, ADD UNIQUE uk_actioncomm_reminder_unique (fk_user, typeremind, offsetvalue, offsetunit, fk_actioncomm);
+
+ALTER TABLE llx_actioncomm_reminder DROP INDEX uk_actioncomm_reminder_unique;
+ALTER TABLE llx_actioncomm_reminder ADD UNIQUE uk_actioncomm_reminder_unique (fk_user, typeremind, offsetvalue, offsetunit, fk_actioncomm);
+
+ALTER TABLE llx_actioncomm_reminder ADD INDEX idx_actioncomm_reminder_status (status);
+
 
 ALTER TABLE llx_inventorydet ADD UNIQUE uk_inventorydet(fk_inventory, fk_warehouse, fk_product, batch);
 

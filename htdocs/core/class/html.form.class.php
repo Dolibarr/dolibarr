@@ -5680,11 +5680,11 @@ class Form
 	 * @param   string   $selected   Selected type
 	 * @return  string               HTML select string
 	 */
-	public function selectTypeDuration($prefix, $selected = 'minute')
+	public function selectTypeDuration($prefix, $selected = 'i')
 	{
 		global $langs;
 
-        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
+        $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
         $retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
         foreach ($TDurationTypes as $key=>$typeduration) {
@@ -7977,9 +7977,10 @@ class Form
 	 *
 	 * @param   string   $prefix     Prefix
 	 * @param   string   $modelType  Model type
+	 * @param	int		 $default	 1=Show also Default mail template
 	 * @return  string               HTML select string
 	 */
-    public function selectModelMail($prefix, $modelType = '')
+    public function selectModelMail($prefix, $modelType = '', $default = 0)
     {
         global $langs, $db, $user;
 
@@ -7991,6 +7992,7 @@ class Form
         $formmail = new FormMail($db);
         $result =  $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 
+        if ($default) $TModels[0] = $langs->trans('DefaultMailModel');
         if ($result > 0) {
             foreach ($formmail->lines_model as $model){
                 $TModels[$model->id] = $model->label;

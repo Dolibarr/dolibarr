@@ -6244,6 +6244,13 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				if (is_object($object) && $object->element == 'commande') $substitutionarray['__URL_ORDER__'] = DOL_MAIN_URL_ROOT."/commande/card.php?id=".$object->id;
 				if (is_object($object) && $object->element == 'facture') $substitutionarray['__URL_INVOICE__'] = DOL_MAIN_URL_ROOT."/compta/facture/card.php?id=".$object->id;
 			}
+
+            if (is_object($object) && $object->element == 'action')
+            {
+                $substitutionarray['__EVENT_LABEL__'] = $object->label;
+                $substitutionarray['__EVENT_DATE__'] = dol_print_date($object->datep, '%A %d %b %Y');
+                $substitutionarray['__EVENT_TIME__'] = dol_print_date($object->datep, '%H:%M:%S');
+            }
 		}
 	}
 	if (empty($exclude) || !in_array('objectamount', $exclude))

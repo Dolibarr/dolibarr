@@ -215,7 +215,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 	if (!empty(${$statusVarNamePrefix.'badgeStatus'.$statusName})) {
 		print "\n/* ".strtoupper($commentLabel)." */\n";
-		
+
 		$thisBadgeBackgroundColor = $thisBadgeBorderColor = ${$statusVarNamePrefix.'badgeStatus'.$statusName};
 
 
@@ -233,7 +233,7 @@ function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentL
 
 		if (in_array((string) $statusName, array('0', '5', '9'))) $thisBadgeTextColor = '#999999';
 		if (in_array((string) $statusName, array('6'))) $thisBadgeTextColor = '#777777';
-		
+
 		print $cssPrefix.".badge-status".$statusName." {\n";
 		print "        color: ".$thisBadgeTextColor." !important;\n";
 		if (in_array((string) $statusName, $TBadgeBorderOnly)) {

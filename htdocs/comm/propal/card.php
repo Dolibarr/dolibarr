@@ -603,7 +603,7 @@ if (empty($reshook))
 	{
 		$db->begin();
 
-		$result = $object->cloture($user, Propal::STATUS_BILLED, '');
+		$result = $object->cloture($user, $object::STATUS_BILLED, '');
 		if ($result < 0)
 		{
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -617,13 +617,13 @@ if (empty($reshook))
 			$db->rollback();
 		}
 	} // Close proposal
-	elseif ($action == 'setstatut' && $usercanclose && !GETPOST('cancel', 'alpha')) {
+	elseif ($action == 'confirm_closeas' && $usercanclose && !GETPOST('cancel', 'alpha')) {
 		if (!(GETPOST('statut', 'int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
-			$action = 'statut';
+			$action = 'closeas';
 		} else {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut == Propal::STATUS_VALIDATED)
+			if ($object->statut == $object::STATUS_VALIDATED)
 			{
 				$db->begin();
 
@@ -1824,11 +1824,11 @@ if ($action == 'create')
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmClonePropal', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	if ($action == 'statut')
+	if ($action == 'closeas')
 	{
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array(2=>$object->LibStatut(Propal::STATUS_SIGNED), 3=>$object->LibStatut(Propal::STATUS_NOTSIGNED))),
+			array('type' => 'select', 'name' => 'statut', 'label' => '<span class="fieldrequired">'.$langs->trans("CloseAs").'</span>', 'values' => array(2=>$object->LibStatut($object::STATUS_SIGNED), 3=>$object->LibStatut($object::STATUS_NOTSIGNED))),
 			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"), 'value' => '')				// Field to complete private note (not replace)
 		);
 
@@ -1841,7 +1841,7 @@ if ($action == 'create')
 			));
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'setstatut', $formquestion, '', 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetAcceptedRefused'), $text, 'confirm_closeas', $formquestion, '', 1, 250);
 	} // Confirm delete
 	elseif ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp', $object->ref), 'confirm_delete', '', 0, 1);
@@ -2483,9 +2483,9 @@ if ($action == 'create')
 					}
 				}
 
-				// Set accepted/refused
+				// Close as accepted/refused
 				if ($object->statut == Propal::STATUS_VALIDATED && $usercanclose) {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=statut'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=closeas'.(empty($conf->global->MAIN_JUMP_TAG) ? '' : '#close').'"';
 					print '>'.$langs->trans('SetAcceptedRefused').'</a>';
 				}
 

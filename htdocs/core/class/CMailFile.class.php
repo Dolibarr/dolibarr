@@ -168,9 +168,13 @@ class CMailFile
 
 		// Define this->sendmode
 		$this->sendmode = '';
-		if ($this->sendcontext == 'emailing' && !empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default')
-		{
-			$this->sendmode = $conf->global->MAIN_MAIL_SENDMODE_EMAILING;
+		if (!empty($this->sendcontext)) {
+			$smtpContextKey = strtoupper($this->sendcontext);
+			$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_' . $smtpContextKey;
+			$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+			if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
+				$this->sendmode = $smtpContextSendMode;
+			}
 		}
 		if (empty($this->sendmode)) $this->sendmode = $conf->global->MAIN_MAIL_SENDMODE;
 		if (empty($this->sendmode)) $this->sendmode = 'mail';
@@ -635,14 +639,18 @@ class CMailFile
 			$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW';
 			$keyfortls       = 'MAIN_MAIL_EMAIL_TLS';
 			$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS';
-			if ($this->sendcontext == 'emailing' && !empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default')
-			{
-				$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_EMAILING';
-				$keyforsmtpport  = 'MAIN_MAIL_SMTP_PORT_EMAILING';
-				$keyforsmtpid    = 'MAIN_MAIL_SMTPS_ID_EMAILING';
-				$keyforsmtppw    = 'MAIN_MAIL_SMTPS_PW_EMAILING';
-				$keyfortls       = 'MAIN_MAIL_EMAIL_TLS_EMAILING';
-				$keyforstarttls  = 'MAIN_MAIL_EMAIL_STARTTLS_EMAILING';
+			if (!empty($this->sendcontext)) {
+				$smtpContextKey = strtoupper($this->sendcontext);
+				$keyForSMTPSendMode = 'MAIN_MAIL_SENDMODE_' . $smtpContextKey;
+				$smtpContextSendMode = $conf->global->{$keyForSMTPSendMode};
+				if (!empty($smtpContextSendMode) && $smtpContextSendMode != 'default') {
+					$keyforsmtpserver = 'MAIN_MAIL_SMTP_SERVER_' . $smtpContextKey;
+					$keyforsmtpport   = 'MAIN_MAIL_SMTP_PORT_' . $smtpContextKey;
+					$keyforsmtpid     = 'MAIN_MAIL_SMTPS_ID_' . $smtpContextKey;
+					$keyforsmtppw     = 'MAIN_MAIL_SMTPS_PW_' . $smtpContextKey;
+					$keyfortls        = 'MAIN_MAIL_EMAIL_TLS_' . $smtpContextKey;
+					$keyforstarttls   = 'MAIN_MAIL_EMAIL_STARTTLS_' . $smtpContextKey;
+				}
 			}
 
 			// Action according to choosed sending method
