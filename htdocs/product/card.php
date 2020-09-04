@@ -1912,9 +1912,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
             if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
                 $combination = new ProductCombination($db);
 
-                if ($combination->fetchByFkProductChild($object->id) > 0) {
+                if (($fk_product_parent = $combination->getFkProductParentByFkProductChild($object->id)) > 0) {
                     $prodstatic = new Product($db);
-                    $prodstatic->fetch($combination->fk_product_parent);
+                    $prodstatic->fetch($fk_product_parent);
 
                     // Parent product
                     print '<tr><td>'.$langs->trans("ParentProduct").'</td><td colspan="2">';
