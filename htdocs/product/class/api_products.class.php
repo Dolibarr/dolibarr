@@ -456,7 +456,7 @@ class Products extends DolibarrApi
      * @throws RestException 401
      * @throws RestException 404
      *
-     * @url DELETE {id}/subproducts/remove
+     * @url DELETE {id}/subproducts/remove/{subproduct_id}
      */
     public function delSubproducts($id, $subproduct_id)
     {
