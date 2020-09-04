@@ -234,10 +234,10 @@ class ProductCombination
 	}
 
     /**
-     * Get fk_product_parent by fk_product_child
+     * Return the product id of the parent product of a variant product (Get fk_product_parent by fk_product_child)
      *
-     * @param int $fk_child Product row id
-     * @return int >0 OK <0 KO
+     * @param int $fk_child 	Product row id
+     * @return int 				>0 if OK, 0 if product is not a variant, <0 if KO
      */
     public function getFkProductParentByFkProductChild($fk_child)
     {
@@ -251,7 +251,7 @@ class ProductCombination
         }
 
         if (!$this->db->num_rows($query)) {
-            return -1;
+            return 0;
         }
 
         $row = $this->db->fetch_object($query);
