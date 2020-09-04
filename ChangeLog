@@ -341,14 +341,14 @@ Following changes may create regressions for some external modules, but were nec
 
 WARNING FOR DOLIWAMP USERS ONLY:
 
-Only people that installed Dolibarr using the all-in-one autoinstaller for Windows called "DoliWAMP" are concerned by the following warnings:
+Only people that installed Dolibarr using the all-in-one auto-installer for Windows called "DoliWAMP" are concerned by the following warnings:
  
-* DoliWAMP autoinstaller for Windows is not more available on 32bits systems. Use standard package if you need to use such architecture.
-* It is not possible to migrate from an installation done with the old DoliWAMP autoinstaller for Windows by using this new one. You must make a backup 
-  of your database, make a fresh installation using the new installer and reload your backup. Don't forget that DoliWAMP is a good solution to make a 
-  quick test of Dolibarr on your local computer but was never recommanded as a production solution on a local desktop since a desktop computer has not
-  a backup and security policy as good as on a server (when there is one). 
-  DoliWAMP remains a solution for fast test or demo purposes. Prefer using standard package for production.
+* DoliWAMP auto-installer for Windows is no more available on 32 bits systems. Use standard package if you need to use such architecture.
+* It is not possible to migrate from an installation done with the old DoliWAMP auto-installer for Windows by using this new one. 
+  You must make a backup of your database, make a fresh installation using the new installer and reload your backup. 
+  Don't forget that DoliWAMP is a good solution to make a quick test of Dolibarr on your local computer but was never recommended as a production 
+  solution on a local desktop since a local desktop computer has often no backup and security policy, or not as good as on a server (when there is one). 
+  DoliWAMP remains a solution for fast test or demo purposes. Prefer using standard packages for production.
 
 
 ***** ChangeLog for 11.0.5 compared to 11.0.4 *****
