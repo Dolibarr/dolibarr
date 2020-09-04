@@ -206,6 +206,7 @@ ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitme
 
 
 ALTER TABLE llx_product_attribute ADD COLUMN ref_ext VARCHAR(255) after ref;
+ALTER TABLE llx_product_attribute_combination ADD COLUMN variation_ref_ext varchar(255) AFTER variation_weight;
 
 
 CREATE TABLE llx_product_attribute_combination_price_level
