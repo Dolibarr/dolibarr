@@ -205,6 +205,7 @@ ALTER TABLE llx_recruitment_recruitmentcandidature_extrafields ADD INDEX idx_rec
 ALTER TABLE llx_recruitment_recruitmentcandidature ADD UNIQUE INDEX uk_recruitmentcandidature_email_msgid(email_msgid);
 
 
+ALTER TABLE llx_product_attribute ADD COLUMN ref_ext VARCHAR(255) after ref;
 
 
 CREATE TABLE llx_product_attribute_combination_price_level

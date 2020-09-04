@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2016      Marcos García         <marcosgdf@gmail.com>
+-- Copyright (C) 2020      Laurent Destailleur   <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,7 +15,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
--- Table to store all product variants of a parent product
+-- Table to store links between a parent product and its variant products.
 -- ============================================================================
 
 CREATE TABLE llx_product_attribute_combination
