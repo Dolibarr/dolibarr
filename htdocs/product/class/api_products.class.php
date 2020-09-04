@@ -980,7 +980,7 @@ class Products extends DolibarrApi
         $sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
         $sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
         $sql .= " WHERE pac2v.fk_prod_attr = ".((int) $prodattr->id)." AND pac.entity IN (".getEntity('product').")";
-        
+
 		$resql = $this->db->query($sql);
         $obj = $this->db->fetch_object($resql);
         $prodattr->is_used_by_products = (int) $obj->nb;
@@ -1026,7 +1026,7 @@ class Products extends DolibarrApi
         $sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
         $sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
         $sql .= " WHERE pac2v.fk_prod_attr = ".((int) $result->rowid)." AND pac.entity IN (".getEntity('product').")";
-        
+
 		$resql = $this->db->query($sql);
         $obj = $this->db->fetch_object($resql);
 
@@ -1073,7 +1073,7 @@ class Products extends DolibarrApi
         $sql = "SELECT COUNT(*) as nb FROM ".MAIN_DB_PREFIX."product_attribute_combination2val as pac2v";
         $sql .= " JOIN ".MAIN_DB_PREFIX."product_attribute_combination as pac ON pac2v.fk_prod_combination = pac.rowid";
         $sql .= " WHERE pac2v.fk_prod_attr = ".((int) $result->rowid)." AND pac.entity IN (".getEntity('product').")";
-        
+
 		$resql = $this->db->query($sql);
         $obj = $this->db->fetch_object($resql);
         $attr["is_used_by_products"] = (int) $obj->nb;
