@@ -25,5 +25,6 @@ CREATE TABLE llx_product_attribute_combination
   variation_price DOUBLE(24,8) NOT NULL,
   variation_price_percentage INTEGER NULL,
   variation_weight REAL NOT NULL,
+  ref_ext varchar(255) DEFAULT NULL,
   entity INTEGER DEFAULT 1 NOT NULL
 )ENGINE=innodb;
