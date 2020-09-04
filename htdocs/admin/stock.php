@@ -89,14 +89,20 @@ if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg))
     }
 }
 
-if ($action == 'warehouse')
+if ($action == 'setwarehouse')
 {
-	$value = GETPOST('default_warehouse', 'alpha');
-	$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $value, 'chaine', 0, '', $conf->entity);
-	if ($value == -1 || empty($value) && !empty($conf->global->MAIN_DEFAULT_WAREHOUSE)){
-		$res = dolibarr_del_const($db, "MAIN_DEFAULT_WAREHOUSE", $conf->entity);
+	if (GETPOST('default_warehouse', 'int'))
+	{
+		$default_warehouse = GETPOST('default_warehouse', 'alpha');
+		$res = dolibarr_set_const($db, "MAIN_DEFAULT_WAREHOUSE", $default_warehouse, 'chaine', 0, '', $conf->entity);
+		if (!$res > 0) $error++;
+		if (!$error)
+	    {
+		    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	    } else {
+		    setEventMessages($langs->trans("Error"), null, 'errors');
+		}
 	}
-	if (!$res > 0) $error++;
 }
 
 if ($action == 'specimen')
@@ -659,17 +665,12 @@ print "<td>".$langs->trans("Other")."</td>\n";
 print '<td class="right">'.$langs->trans("Status").'</td>'."\n";
 print '</tr>'."\n";
 
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="warehouse">';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
-print $formproduct->selectWarehouses($conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
-print '<input type="submit" $action = "warehouse" class="button" value="'.$langs->trans("Modify").'">';
+print $formproduct->formselectWarehouses('',$conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse',1);
 print "</td>";
 print "</tr>\n";
-print '</form>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserDefaultWarehouse").'</td>';
