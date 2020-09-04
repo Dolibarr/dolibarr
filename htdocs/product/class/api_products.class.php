@@ -1848,7 +1848,7 @@ class Products extends DolibarrApi
 				$this->product->fk_product_parent = $fk_product_parent;
 			}
 		}
-		
+
         return $this->_cleanObjectDatas($this->product);
     }
 }
