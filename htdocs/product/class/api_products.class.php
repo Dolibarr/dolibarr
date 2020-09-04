@@ -1328,7 +1328,7 @@ class Products extends DolibarrApi
         $objectval = new ProductAttributeValue($this->db);
 
         $return = $objectval->fetchAllByProductAttribute((int) $id);
- 
+
         if (count($return) == 0) {
             throw new RestException(404, 'Attribute values not found');
         }
