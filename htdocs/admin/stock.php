@@ -668,7 +668,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
-print $formproduct->formselectWarehouses('',$conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse',1);
+print $formproduct->formselectWarehouses('', $conf->global->MAIN_DEFAULT_WAREHOUSE, 'default_warehouse', 1);
 print "</td>";
 print "</tr>\n";
 
