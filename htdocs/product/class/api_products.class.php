@@ -1787,13 +1787,14 @@ class Products extends DolibarrApi
      * @param  string $barcode            Barcode of element
      * @param  int    $includestockdata   Load also information about stock (slower)
      * @param  bool   $includesubproducts Load information about subproducts
+	 * @param  bool   $includeparentid    Load also ID of parent product if product is a variant
      * @return array|mixed                Data without useless information
      *
      * @throws RestException 401
      * @throws RestException 403
      * @throws RestException 404
      */
-    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false)
+    private function _fetch($id, $ref = '', $ref_ext = '', $barcode = '', $includestockdata = 0, $includesubproducts = false, $includeparentid = false)
     {
         if (empty($id) && empty($ref) && empty($ref_ext) && empty($barcode)) {
             throw new RestException(400, 'bad value for parameter id, ref, ref_ext or barcode');
@@ -1812,12 +1813,6 @@ class Products extends DolibarrApi
 
         if (!DolibarrApi::_checkAccessToResource('product', $this->product->id)) {
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-		$prodcomb = new ProductCombination($this->db);
-        $this->product->fk_product_parent = null;
-        if (($fk_product_parent = $prodcomb->getFkProductParentByFkProductChild($this->product->id)) > 0) {
-            $this->product->fk_product_parent = $fk_product_parent;
         }
 
         if ($includestockdata) {
@@ -1846,6 +1841,14 @@ class Products extends DolibarrApi
             $this->product->sousprods = $childs;
         }
 
+		if ($includeparentid) {
+			$prodcomb = new ProductCombination($this->db);
+			$this->product->fk_product_parent = null;
+			if (($fk_product_parent = $prodcomb->getFkProductParentByFkProductChild($this->product->id)) > 0) {
+				$this->product->fk_product_parent = $fk_product_parent;
+			}
+		}
+		
         return $this->_cleanObjectDatas($this->product);
     }
 }
