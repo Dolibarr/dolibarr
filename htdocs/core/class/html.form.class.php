@@ -5680,11 +5680,11 @@ class Form
 	 * @param   string   $selected   Selected type
 	 * @return  string               HTML select string
 	 */
-	public function selectTypeDuration($prefix, $selected = 'minute')
+	public function selectTypeDuration($prefix, $selected = 'i')
 	{
 		global $langs;
 
-        $TDurationTypes = array('year'=>$langs->trans('Years'), 'month'=>$langs->trans('Month'), 'week'=>$langs->trans('Weeks'), 'day'=>$langs->trans('Days'), 'hour'=>$langs->trans('Hours'), 'minute'=>$langs->trans('Minutes'));
+        $TDurationTypes = array('y'=>$langs->trans('Years'), 'm'=>$langs->trans('Month'), 'w'=>$langs->trans('Weeks'), 'd'=>$langs->trans('Days'), 'h'=>$langs->trans('Hours'), 'i'=>$langs->trans('Minutes'));
 
         $retstring = '<select class="flat" id="select_'.$prefix.'type_duration" name="'.$prefix.'type_duration">';
         foreach ($TDurationTypes as $key=>$typeduration) {
