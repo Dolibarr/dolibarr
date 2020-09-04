@@ -445,8 +445,7 @@ class Products extends DolibarrApi
 
     /**
      * Remove subproduct.
-     *
-     *  Unlink a product/service from a parent product/service
+     * Unlink a product/service from a parent product/service
      *
      * @param  int $id             Id of parent product/service
      * @param  int $subproduct_id  Id of child product/service
