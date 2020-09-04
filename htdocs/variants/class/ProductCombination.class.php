@@ -76,7 +76,7 @@ class ProductCombination
 	 * @var ProductCombinationLevel[]
 	 */
 	public $combination_price_levels;
-	
+
 	/**
      * External ref
      * @var string

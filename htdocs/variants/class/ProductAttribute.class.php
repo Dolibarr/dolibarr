@@ -40,7 +40,7 @@ class ProductAttribute extends CommonObject
 	 * @var string
 	 */
 	public $ref;
-	
+
 	/**
 	 * External ref of the product attribute
 	 * @var string
@@ -86,7 +86,7 @@ class ProductAttribute extends CommonObject
 		}
 
 		$sql = "SELECT rowid, ref, ref_ext, label, rang FROM ".MAIN_DB_PREFIX."product_attribute WHERE rowid = ".(int) $id." AND entity IN (".getEntity('product').")";
-		
+
 		$query = $this->db->query($sql);
 
 		if (!$this->db->num_rows($query)) {
@@ -157,7 +157,7 @@ class ProductAttribute extends CommonObject
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute (ref, ref_ext, label, entity, rang)
 		VALUES ('".$this->db->escape($this->ref)."', '".$this->db->escape($this->ref_ext)."', '".$this->db->escape($this->label)."', ".(int) $this->entity.", ".(int) $this->rang.")";
-		
+
 		$query = $this->db->query($sql);
 		if ($query)
 		{
@@ -192,7 +192,7 @@ class ProductAttribute extends CommonObject
 		$this->label = trim($this->label);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute SET ref = '".$this->db->escape($this->ref)."', ref_ext = '".$this->db->escape($this->ref_ext)."', label = '".$this->db->escape($this->label)."', rang = ".(int) $this->rang." WHERE rowid = ".(int) $this->id;
-		
+
 		if ($this->db->query($sql)) {
 			return 1;
 		}
