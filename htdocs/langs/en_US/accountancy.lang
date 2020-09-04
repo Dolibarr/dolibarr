@@ -305,9 +305,9 @@ ErrorAccountingJournalIsAlreadyUse=This journal is already use
 AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=Number of entries
 NumberOfAccountancyMovements=Number of movements
-ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales
-ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases
-ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports
+ACCOUNTING_DISABLE_BINDING_ON_SALES=Disable binding & transfer in accountancy on sales (customer invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=Disable binding & transfer in accountancy on purchases (vendor invoices will not be taken into account in accounting)
+ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=Disable binding & transfer in accountancy on expense reports (expense reports will not be taken into account in accounting)
 
 ## Export
 ExportDraftJournal=Export draft journal
