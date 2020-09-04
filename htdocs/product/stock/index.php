@@ -170,8 +170,12 @@ if ($resql)
 	if (!empty($conf->productbatch->enabled))
 	{
 		print '<th>'.$langs->trans("Batch").'</th>';
-		print '<th>'.$langs->trans("SellByDate").'</th>';
-		print '<th>'.$langs->trans("EatByDate").'</th>';
+		if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+			print '<th>'.$langs->trans("SellByDate").'</th>';
+		}
+		if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+			print '<th>'.$langs->trans("EatByDate").'</th>';
+		}
 	}
 	print '<th>'.$langs->trans("Warehouse").'</th>';
 	print '<th class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/product/stock/movement_list.php">'.$langs->trans("FullList").'</a></th>';
@@ -202,8 +206,12 @@ if ($resql)
 		if (!empty($conf->productbatch->enabled))
 		{
 			print '<td>'.$objp->batch.'</td>';
-			print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
-			print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+			if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+				print '<td>'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
+			}
+			if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+				print '<td>'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
+			}
 		}
 		print '<td class="tdoverflowmax200">';
 		print $warehouse->getNomUrl(1);

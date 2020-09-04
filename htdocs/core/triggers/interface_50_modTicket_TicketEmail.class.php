@@ -205,9 +205,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 						$message_admin .= '<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
 						$message_admin .= '<li>'.$langs->trans('From').' : '.($object->email_from ? $object->email_from : ($object->fk_user_create > 0 ? $langs->trans('Internal') : '')).'</li>';
 						// Extrafields
+						$extraFields = new ExtraFields($this->db);
+						$extraFields->fetch_name_optionals_label($object->table_element);
 						if (is_array($object->array_options) && count($object->array_options) > 0) {
 							foreach ($object->array_options as $key => $value) {
-								  $message_admin .= '<li>'.$langs->trans($key).' : '.$value.'</li>';
+								$key = substr($key, 8); // remove "options_"
+								$message_admin .= '<li>' . $langs->trans($extraFields->attributes[$object->element]['label'][$key]) . ' : ' . $extraFields->showOutputField($key, $value) . '</li>';
 							}
 						}
 						$message_admin .= '</ul>';
