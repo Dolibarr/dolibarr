@@ -174,6 +174,42 @@ if ($action == 'setenablesubsidiarylist') {
     }
 }
 
+if ($action == 'setdisablebindingonsales') {
+	$setdisablebindingonsales = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_SALES", $setdisablebindingonsales, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setdisablebindingonpurchases') {
+	$setdisablebindingonpurchases = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_PURCHASES", $setdisablebindingonpurchases, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
+if ($action == 'setdisablebindingonexpensereports') {
+	$setdisablebindingonexpensereports = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS", $setdisablebindingonexpensereports, 'yesno', 0, '', $conf->entity);
+	if (!$res > 0)
+		$error++;
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
+
 /*
  * View
  */
@@ -226,82 +262,78 @@ print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('Options').'</td>';
 print "</tr>\n";
 
-if (!empty($user->admin))
+// TO DO Mutualize code for yes/no constants
+
+/* Set this option as a hidden option but keep it for some needs.
+print '<tr>';
+print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
+if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+*/
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
+if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
+if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
+    print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
+    print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_MANAGE_ZERO").'</td>';
+if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=0">';
+    print img_picto($langs->trans("Activated"), 'switch_on');
+    print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=1">';
+    print img_picto($langs->trans("Disabled"), 'switch_off');
+    print '</a></td>';
+}
+print '</tr>';
+
+// Param a user $user->rights->accounting->chartofaccount can access
+foreach ($list as $key)
 {
-    // TO DO Mutualize code for yes/no constants
+	print '<tr class="oddeven value">';
 
-    /* Set this option as a hidden option but keep it for some needs.
-	print '<tr>';
-	print '<td>'.$langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL").'</td>';
-	if (!empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenabledraftexport&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
+	if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
+
+	// Param
+	$label = $langs->trans($key);
+	print '<td>'.$label.'</td>';
+	// Value
+	print '<td class="right">';
+	print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
+
+	print '</td>';
 	print '</tr>';
-	*/
-
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
-	if (!empty($conf->global->BANK_DISABLE_DIRECT_INPUT)) {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisabledirectinput&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
-
-    print '<tr>';
-    print '<td>'.$langs->trans("ACCOUNTANCY_COMBO_FOR_AUX").'</td>';
-    if (!empty($conf->global->ACCOUNTANCY_COMBO_FOR_AUX)) {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=0">';
-        print img_picto($langs->trans("Activated"), 'switch_on');
-        print '</a></td>';
-    } else {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setenablesubsidiarylist&value=1">';
-        print img_picto($langs->trans("Disabled"), 'switch_off');
-        print '</a></td>';
-    }
-    print '</tr>';
-
-    print '<tr>';
-    print '<td>'.$langs->trans("ACCOUNTING_MANAGE_ZERO").'</td>';
-    if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO)) {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=0">';
-        print img_picto($langs->trans("Activated"), 'switch_on');
-        print '</a></td>';
-    } else {
-        print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setmanagezero&value=1">';
-        print img_picto($langs->trans("Disabled"), 'switch_off');
-        print '</a></td>';
-    }
-    print '</tr>';
-
-	// Param a user $user->rights->accounting->chartofaccount can access
-	foreach ($list as $key)
-	{
-		print '<tr class="oddeven value">';
-
-		if (!empty($conf->global->ACCOUNTING_MANAGE_ZERO) && ($key == 'ACCOUNTING_LENGTH_GACCOUNT' || $key == 'ACCOUNTING_LENGTH_AACCOUNT')) continue;
-
-		// Param
-		$label = $langs->trans($key);
-		print '<td>'.$label.'</td>';
-		// Value
-		print '<td class="right">';
-		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-
-		print '</td>';
-
-		print '</tr>';
-	}
 }
 print '</table>';
 print '<br>';
@@ -312,57 +344,91 @@ print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans('BindingOptions').'</td>';
 print "</tr>\n";
 
-if (!empty($user->admin))
-{
-	// TO DO Mutualize code for yes/no constants
-	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
-	if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
-
-	print '<tr>';
-	print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
-	if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on');
-		print '</a></td>';
-	} else {
-		print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=1">';
-		print img_picto($langs->trans("Disabled"), 'switch_off');
-		print '</a></td>';
-	}
-	print '</tr>';
+// TO DO Mutualize code for yes/no constants
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_TODO").'</td>';
+if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_TODO)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsorttodo&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
 }
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_LIST_SORT_VENTILATION_DONE").'</td>';
+if (!empty($conf->global->ACCOUNTING_LIST_SORT_VENTILATION_DONE)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setlistsortdone&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
 
 // Param a user $user->rights->accounting->chartofaccount can access
 foreach ($list_binding as $key)
 {
-    print '<tr class="oddeven value">';
+	print '<tr class="oddeven value">';
 
-    // Param
-    $label = $langs->trans($key);
-    print '<td>'.$label.'</td>';
-    // Value
-    print '<td class="right">';
-    if ($key == 'ACCOUNTING_DATE_START_BINDING') {
+	// Param
+	$label = $langs->trans($key);
+	print '<td>'.$label.'</td>';
+	// Value
+	print '<td class="right">';
+	if ($key == 'ACCOUNTING_DATE_START_BINDING') {
 		print $form->selectDate(($conf->global->$key ? $db->idate($conf->global->$key) : -1), $key, 0, 0, 1);
 	} else {
 		print '<input type="text" class="maxwidth100" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
 	}
 
-    print '</td>';
-
-    print '</tr>';
+	print '</td>';
+	print '</tr>';
 }
 
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_SALES").'</td>';
+if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_SALES)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonsales&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonsales&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_PURCHASES").'</td>';
+if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonpurchases&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonpurchases&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS").'</td>';
+if (!empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonexpensereports&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="right"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setdisablebindingonexpensereports&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
 
 print '</table>';
 
