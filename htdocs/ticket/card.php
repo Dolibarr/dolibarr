@@ -1234,7 +1234,7 @@ if (empty($action) || $action == 'view' || $action == 'addlink' || $action == 'd
 				$object->fetch_thirdparty();
 				$substitutionarray['__THIRDPARTY_NAME__'] = $object->thirdparty->name;
 			}
-			$substitutionarray['__SIGNATURE__'] = $user->signature;
+			$substitutionarray['__USER_SIGNATURE__'] = $user->signature;
 			$substitutionarray['__TICKET_TRACKID__'] = $object->track_id;
 			$substitutionarray['__TICKET_REF__'] = $object->ref;
 			$substitutionarray['__TICKET_SUBJECT__'] = $object->subject;

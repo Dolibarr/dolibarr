@@ -5913,14 +5913,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 		// this will include signature content first and then replace var found into content of signature
 		$signature = $user->signature;
         $substitutionarray = array_merge($substitutionarray, array(
-		'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
+			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
 		)
 			);
-		// For backward compatibility
-		if ($onlykey != 2)
-		{
-			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
-		}
 
         $substitutionarray = array_merge($substitutionarray, array(
 		'__USER_ID__' => (string) $user->id,
@@ -6383,7 +6378,6 @@ function make_substitutions($text, $substitutionarray, $outputlangs = null)
 	{
 		if (!isset($value)) continue; // If value is null, it same than not having substitution key at all into array, we do not replace.
 
-		if ($key == '__SIGNATURE__' && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) $value = ''; // Protection
 		if ($key == '__USER_SIGNATURE__' && (!empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) $value = ''; // Protection
 
 		$text = str_replace("$key", "$value", $text); // We must keep the " to work when value is 123.5 for example
