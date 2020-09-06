@@ -382,8 +382,7 @@ class Stripe extends CommonObject
     						$paymentintent = \Stripe\PaymentIntent::retrieve($intent, array("stripe_account" => $key));
     					}
     				}
-    				catch(Exception $e)
-    				{
+    				catch(Exception $e) {
     				    $error++;
     					$this->error = $e->getMessage();
     				}
