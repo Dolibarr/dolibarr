@@ -486,7 +486,7 @@ class FormMail extends Form
 			if (is_array($this->substit) && count($this->substit)) $helpforsubstitution .= $langs->trans('AvailableVariables').' :<br>'."\n";
 			foreach ($this->substit as $key => $val)
 			{
-				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
+				$helpforsubstitution .= $key.' -> '.$langs->trans(dol_string_nohtmltag(dolGetFirstLineOfText($val))).'<br>';
 			}
 			if (!empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
 			{
