@@ -1305,8 +1305,12 @@ if ($action == 'create')
 
 									$detail = '';
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-									$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
-									$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
+									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+									}
+									if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+										$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
+									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 									$detail .= '<br>';
 									print $detail;
@@ -2308,8 +2312,12 @@ if ($action == 'create')
 								foreach ($lines[$i]->detail_batch as $dbatch)	// $dbatch is instance of ExpeditionLineBatch
 								{
 									$detail .= $langs->trans("Batch").': '.$dbatch->batch;
-									$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
-									$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
+									if (empty($conf->global->PRODUCT_DISABLE_SELLBY)) {
+										$detail .= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby, "day");
+									}
+									if (empty($conf->global->PRODUCT_DISABLE_EATBY)) {
+										$detail .= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby, "day");
+									}
 									$detail .= ' - '.$langs->trans("Qty").': '.$dbatch->qty;
 									$detail .= '<br>';
 								}

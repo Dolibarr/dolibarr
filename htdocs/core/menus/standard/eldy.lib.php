@@ -1231,7 +1231,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 
                 // Binding
                 // $newmenu->add("", $langs->trans("Binding"), 0, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch');
-                if (!empty($conf->facture->enabled))
+                if (!empty($conf->facture->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_SALES))
                 {
                 	$newmenu->add("/accountancy/customer/index.php?leftmenu=accountancy_dispatch_customer&amp;mainmenu=accountancy", $langs->trans("CustomersVentilation"), 1, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch_customer');
                 	if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_customer/', $leftmenu)) {
@@ -1239,7 +1239,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 		$newmenu->add("/accountancy/customer/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_customer", $langs->trans("Binded"), 2, $user->rights->accounting->bind->write);
                 	}
                 }
-                if (!empty($conf->supplier_invoice->enabled))
+                if (!empty($conf->supplier_invoice->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES))
                 {
                 	$newmenu->add("/accountancy/supplier/index.php?leftmenu=accountancy_dispatch_supplier&amp;mainmenu=accountancy", $langs->trans("SuppliersVentilation"), 1, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch_supplier');
                 	if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_supplier/', $leftmenu)) {
@@ -1247,7 +1247,7 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
                 		$newmenu->add("/accountancy/supplier/lines.php?mainmenu=accountancy&amp;leftmenu=accountancy_dispatch_supplier", $langs->trans("Binded"), 2, $user->rights->accounting->bind->write);
                 	}
                 }
-                if (!empty($conf->expensereport->enabled))
+                if (!empty($conf->expensereport->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS))
                 {
                 	$newmenu->add("/accountancy/expensereport/index.php?leftmenu=accountancy_dispatch_expensereport&amp;mainmenu=accountancy", $langs->trans("ExpenseReportsVentilation"), 1, $user->rights->accounting->bind->write, '', $mainmenu, 'dispatch_expensereport');
                 	if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_dispatch_expensereport/', $leftmenu)) {
@@ -1283,10 +1283,13 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 								$nature = '';
 
 								// Must match array $sourceList defined into journals_list.php
-								if ($objp->nature == 2 && !empty($conf->facture->enabled)) $nature = "sells";
-								if ($objp->nature == 3 && (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))) $nature = "purchases";
+								if ($objp->nature == 2 && !empty($conf->facture->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_SALES)) $nature = "sells";
+								if ($objp->nature == 3
+									&& (!empty($conf->fournisseur->enabled) && empty($conf->global->MAIN_USE_NEW_SUPPLIERMOD) || !empty($conf->supplier_invoice->enabled))
+									&& empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_PURCHASES))
+									$nature = "purchases";
 								if ($objp->nature == 4 && !empty($conf->banque->enabled)) $nature = "bank";
-								if ($objp->nature == 5 && !empty($conf->expensereport->enabled)) $nature = "expensereports";
+								if ($objp->nature == 5 && !empty($conf->expensereport->enabled) && empty($conf->global->ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS)) $nature = "expensereports";
 								if ($objp->nature == 1) $nature = "various";
 								if ($objp->nature == 8) $nature = "inventory";
 								if ($objp->nature == 9) $nature = "hasnew";
