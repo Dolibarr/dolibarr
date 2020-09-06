@@ -280,10 +280,16 @@ if (empty($emailforcontact)) {
 }
 print '<b>';
 print $tmpuser->getFullName(-1);
-print ' - '.img_picto('', 'email', 'class="paddingrightonly"').dol_print_email($emailforcontact);
+print ' - '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 1);
 print '</b>';
 print '</b><br>';
 
+if ($object->status == RecruitmentJobPosition::STATUS_RECRUITED) {
+	print info_admin($langs->trans("JobClosedTextCandidateFound"), 0, 0, 0, 'warning');
+}
+if ($object->status == RecruitmentJobPosition::STATUS_CANCELED) {
+	print info_admin($langs->trans("JobClosedTextCanceled"), 0, 0, 0, 'warning');
+}
 
 print '<br>';
 
@@ -291,7 +297,7 @@ print '<br>';
 
 $text = $object->description;
 print $text;
-print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
+print '<input type="hidden" name="ref" value="'.$object->ref.'">';
 
 print '</div>'."\n";
 print "\n";
