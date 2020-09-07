@@ -19,6 +19,7 @@ div.phpdebugbar-openhandler {
     width: 70%;
     height: 70%;
     background: #fff;
+    color: #000;
     border: 2px solid #888;
     overflow: auto;
     z-index: 20001;

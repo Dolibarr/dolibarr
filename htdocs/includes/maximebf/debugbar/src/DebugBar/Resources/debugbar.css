@@ -36,7 +36,7 @@ div.phpdebugbar-drag-capture {
   z-index: 10001;
   background: none;
   display: none;
-  cursor: n-resize;
+  cursor: ns-resize;
 }
 
 div.phpdebugbar-closed {
@@ -108,7 +108,7 @@ div.phpdebugbar-resize-handle {
   width: 100%;
   background: none;
   border-bottom: 1px solid #ccc;
-  cursor: n-resize;
+  cursor: ns-resize;
 }
 
 div.phpdebugbar-closed, div.phpdebugbar-minimized{

@@ -18,7 +18,7 @@
             this.$list = new  PhpDebugBar.Widgets.ListWidget({ itemRenderer: function(li, tpl) {
                 $('<span />').addClass(csscls('name')).text(tpl.name).appendTo(li);
 
-                if (typeof tpl.xdebug_link !== 'undefined') {
+                if (typeof tpl.xdebug_link !== 'undefined' && tpl.xdebug_link !== null) {
                     if (tpl.xdebug_link.ajax) {
                         $('<a title="' + tpl.xdebug_link.url + '"></a>').on('click', function () {
                             $.ajax(tpl.xdebug_link.url);

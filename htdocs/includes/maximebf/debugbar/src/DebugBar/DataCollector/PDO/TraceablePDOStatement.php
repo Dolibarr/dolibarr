@@ -15,7 +15,7 @@ class TraceablePDOStatement extends PDOStatement
     protected $pdo;
 
     /** @var array */
-    protected $boundParameters = array();
+    protected $boundParameters = [];
 
     /**
      * TraceablePDOStatement constructor.
@@ -42,8 +42,8 @@ class TraceablePDOStatement extends PDOStatement
     public function bindColumn($column, &$param, $type = null, $maxlen = null, $driverdata = null)
     {
         $this->boundParameters[$column] = $param;
-        $args = array_merge(array($column, &$param), array_slice(func_get_args(), 2));
-        return call_user_func_array(array("parent", 'bindColumn'), $args);
+        $args = array_merge([$column, &$param], array_slice(func_get_args(), 2));
+        return call_user_func_array(['parent', 'bindColumn'], $args);
     }
 
     /**
@@ -64,8 +64,8 @@ class TraceablePDOStatement extends PDOStatement
     public function bindParam($parameter, &$variable, $data_type = PDO::PARAM_STR, $length = null, $driver_options = null)
     {
         $this->boundParameters[$parameter] = $variable;
-        $args = array_merge(array($parameter, &$variable), array_slice(func_get_args(), 2));
-        return call_user_func_array(array("parent", 'bindParam'), $args);
+        $args = array_merge([$parameter, &$variable], array_slice(func_get_args(), 2));
+        return call_user_func_array(['parent', 'bindParam'], $args);
     }
 
     /**
@@ -83,7 +83,7 @@ class TraceablePDOStatement extends PDOStatement
     public function bindValue($parameter, $value, $data_type = PDO::PARAM_STR)
     {
         $this->boundParameters[$parameter] = $value;
-        return call_user_func_array(array("parent", 'bindValue'), func_get_args());
+        return call_user_func_array(['parent', 'bindValue'], func_get_args());
     }
 
     /**
@@ -93,6 +93,7 @@ class TraceablePDOStatement extends PDOStatement
      * @param  array $input_parameters [optional] An array of values with as many elements as there
      * are bound parameters in the SQL statement being executed. All values are treated as
      * PDO::PARAM_STR.
+     * @throws PDOException
      * @return bool TRUE on success or FALSE on failure.
      */
     public function execute($input_parameters = null)
