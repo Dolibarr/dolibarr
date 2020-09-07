@@ -893,7 +893,7 @@ SCRIPT;
 
 				// Selection of new fields
 				include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-				
+
 				$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
 
@@ -1065,7 +1065,7 @@ SCRIPT;
                             print $productfourn->barcode;
 							print '</td>';
 						}
-						
+
 						// Barcode type
 						if (!empty($arrayfields['pfp.fk_barcode_type']['checked'])) {
                             print '<td class="center">';
